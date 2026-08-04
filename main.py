@@ -41,6 +41,7 @@ from settings import (
     BIRD_HITBOX_HALF_HEIGHT,
     BIRD_HITBOX_HALF_WIDTH,
     BIRD_HITBOX_OFFSET_X,
+    BIRD_HITBOX_OFFSET_Y,
     BIRD_X,
     DEEP_SPACE,
     FLAP_STRENGTH,
@@ -179,6 +180,25 @@ class SkyPulseGame(Widget):
     def ground_y(self):
         return self.height * 0.12
 
+    def bird_collider(self):
+        """Return the centre and radii of the bird's core-body collision ellipse."""
+        scale = self.scale
+        return (
+            BIRD_X * scale + BIRD_HITBOX_OFFSET_X * scale,
+            self.bird_y + BIRD_HITBOX_OFFSET_Y * scale,
+            BIRD_HITBOX_HALF_WIDTH * scale,
+            BIRD_HITBOX_HALF_HEIGHT * scale,
+        )
+
+    @staticmethod
+    def ellipse_hits_rectangle(center_x, center_y, radius_x, radius_y, x, y, width, height):
+        """Test an elliptical bird body against one rectangular tower section."""
+        nearest_x = max(x, min(center_x, x + width))
+        nearest_y = max(y, min(center_y, y + height))
+        distance_x = (center_x - nearest_x) / max(radius_x, 0.001)
+        distance_y = (center_y - nearest_y) / max(radius_y, 0.001)
+        return distance_x * distance_x + distance_y * distance_y < 1
+
     def on_resize(self, *_args):
         if getattr(self, "state", None) == "menu" and not getattr(self, "towers", []):
             self.bird_y = self.height * 0.53
@@ -280,9 +300,7 @@ class SkyPulseGame(Widget):
 
         scale = self.scale
         bird_x = BIRD_X * scale
-        bird_hit_x = bird_x + BIRD_HITBOX_OFFSET_X * scale
-        bird_half_width = BIRD_HITBOX_HALF_WIDTH * scale
-        bird_half_height = BIRD_HITBOX_HALF_HEIGHT * scale
+        bird_hit_x, bird_hit_y, bird_half_width, bird_half_height = self.bird_collider()
         self.bird_speed -= GRAVITY * scale * dt
         self.bird_y += self.bird_speed * dt
         self.flight_trail.insert(0, (bird_x, self.bird_y))
@@ -347,30 +365,65 @@ class SkyPulseGame(Widget):
         self.crystals = [crystal for crystal in self.crystals if crystal["x"] > -40 * scale]
 
         for tower in self.towers:
-            inside_tower = (
-                bird_hit_x + bird_half_width > tower["x"]
-                and bird_hit_x - bird_half_width < tower["x"] + TOWER_WIDTH * scale
-            )
             gap_bottom = tower["gap_y"] - tower["gap"] / 2
             gap_top = tower["gap_y"] + tower["gap"] / 2
-            if inside_tower and (
-                self.bird_y - bird_half_height < gap_bottom or self.bird_y + bird_half_height > gap_top
+            if self.ellipse_hits_rectangle(
+                bird_hit_x,
+                bird_hit_y,
+                bird_half_width,
+                bird_half_height,
+                tower["x"],
+                self.ground_y,
+                TOWER_WIDTH * scale,
+                gap_bottom - self.ground_y,
+            ) or self.ellipse_hits_rectangle(
+                bird_hit_x,
+                bird_hit_y,
+                bird_half_width,
+                bird_half_height,
+                tower["x"],
+                gap_top,
+                TOWER_WIDTH * scale,
+                self.height - gap_top,
             ):
                 self.game_over()
 
-        if self.bird_y - bird_half_height < self.ground_y or self.bird_y + bird_half_height > self.height:
+        if bird_hit_y - bird_half_height < self.ground_y or bird_hit_y + bird_half_height > self.height:
             self.game_over()
         self.draw()
 
     def colour(self, rgb, alpha=1):
         Color(rgb[0], rgb[1], rgb[2], alpha)
 
-    def draw_label(self, text, center_x, y, size, colour):
-        label = CoreLabel(text=text, font_size=size * self.scale, bold=True, color=(*colour, 1))
+    def draw_label(self, text, center_x, y, size, colour, alpha=1, shadow=True):
+        """Draw crisp arcade text with a restrained shadow for legibility."""
+        label = CoreLabel(
+            text=text,
+            font_size=size * self.scale,
+            bold=True,
+            # Keep the label texture white so the canvas colour below can supply
+            # the intended neon tint without multiplying it twice.
+            color=(1, 1, 1, 1),
+        )
         label.refresh()
         texture = label.texture
-        self.colour(WHITE)
+        if shadow:
+            self.colour(DEEP_SPACE, min(0.72, alpha * 0.72))
+            Rectangle(
+                texture=texture,
+                pos=(center_x - texture.width / 2 + 1.4 * self.scale, y - 1.4 * self.scale),
+                size=texture.size,
+            )
+        self.colour(colour, alpha)
         Rectangle(texture=texture, pos=(center_x - texture.width / 2, y), size=texture.size)
+
+    def draw_stat_chip(self, label, value, center_x, y, width, accent):
+        """A compact information tile used where a full button would be misleading."""
+        scale = self.scale
+        height = 45 * scale
+        self.draw_panel(center_x - width / 2, y, width, height, accent, 0.10)
+        self.draw_label(label, center_x, y + 25 * scale, 8, WHITE, alpha=0.72)
+        self.draw_label(value, center_x, y + 8 * scale, 13, accent)
 
     def draw_panel(self, x, y, width, height, accent, alpha=0.16):
         """A translucent, bordered panel used by the HUD and menus."""
@@ -401,6 +454,12 @@ class SkyPulseGame(Widget):
         RoundedRectangle(pos=(left, y), size=(width, height), radius=[height * 0.40])
         self.colour(accent, 0.95)
         Line(rectangle=(left, y, width, height), width=1.35 * scale)
+        self.colour(accent, 0.72)
+        Line(
+            points=[left + 16 * scale, y + height / 2, left + 22 * scale, y + height / 2 + 5 * scale,
+                    left + 16 * scale, y + height / 2 + 10 * scale],
+            width=max(0.8, 1.1 * scale),
+        )
         self.draw_label(text, center_x, y + height * 0.30, 15, WHITE)
         if action:
             self.hitboxes.append((left, y, width, height, action))
@@ -463,8 +522,8 @@ class SkyPulseGame(Widget):
             self.colour(colour, alpha)
             Ellipse(pos=(glow_center_x - diameter / 2, glow_center_y - diameter / 2), size=(diameter, diameter))
 
-        # A scan line moves along the runway and small comet streaks pass in the far sky.
-        scan_y = self.height * (0.018 + (self.time * 0.055 % 0.105))
+        # A scan line moves inside the runway, never crossing its collision rail.
+        scan_y = self.ground_y * (0.16 + (self.time * 0.52 % 0.74))
         self.colour(AQUA, 0.34)
         Line(points=[0, scan_y, self.width, scan_y], width=1.1 * self.scale)
         for index in range(3):
@@ -476,6 +535,48 @@ class SkyPulseGame(Widget):
                 points=[comet_x, comet_y, comet_x + 34 * self.scale, comet_y + 12 * self.scale],
                 width=max(0.7, 1.2 * self.scale),
             )
+
+    def draw_runway(self):
+        """Draw the playable floor so its bright edge exactly matches ground collision."""
+        scale = self.scale
+        floor_y = self.ground_y
+        horizon_x = self.width * 0.50
+
+        # A soft darkening gives the physical runway a distinct surface while
+        # preserving the illustrated reflection beneath it.
+        self.colour(DEEP_SPACE, 0.20)
+        Rectangle(pos=(0, 0), size=(self.width, floor_y))
+        for index, alpha in enumerate((0.025, 0.040, 0.070)):
+            glow_height = (12 + index * 13) * scale
+            self.colour(AQUA if index != 1 else VIOLET, alpha)
+            Rectangle(
+                pos=(0, max(0, floor_y - glow_height)),
+                size=(self.width, glow_height),
+            )
+
+        # Perspective rails make the landing plane read at a glance on a phone.
+        for index, ratio in enumerate((0.11, 0.28, 0.72, 0.89)):
+            end_x = self.width * ratio
+            self.colour(AQUA if index in (1, 2) else VIOLET, 0.15)
+            Line(
+                points=[horizon_x + (end_x - horizon_x) * 0.16, floor_y - 2 * scale, end_x, 0],
+                width=max(0.55, 0.8 * scale),
+            )
+        for ratio, alpha in ((0.25, 0.07), (0.55, 0.11), (0.80, 0.16)):
+            y = floor_y * ratio
+            self.colour(VIOLET, alpha)
+            Line(points=[0, y, self.width, y], width=max(0.45, 0.7 * scale))
+
+        # This is the collision line: its top edge is the precise floor limit.
+        pulse = 0.72 + sin(self.time * 3.2) * 0.12
+        self.colour(AQUA, 0.10)
+        Rectangle(pos=(0, floor_y - 5 * scale), size=(self.width, 10 * scale))
+        self.colour(VIOLET, 0.78)
+        Line(points=[0, floor_y - 1.1 * scale, self.width, floor_y - 1.1 * scale], width=3.5 * scale)
+        self.colour(AQUA, pulse)
+        Line(points=[0, floor_y, self.width, floor_y], width=1.15 * scale)
+        self.colour(WHITE, 0.64)
+        Line(points=[0, floor_y + 1.2 * scale, self.width, floor_y + 1.2 * scale], width=0.48 * scale)
 
     def draw_tower(self, tower):
         scale = self.scale
@@ -585,35 +686,43 @@ class SkyPulseGame(Widget):
 
     def draw_hud(self):
         scale = self.scale
-        top_y = self.height - 46 * scale
-        self.draw_panel(11 * scale, top_y, 38 * scale, 31 * scale, AQUA, 0.12)
-        self.draw_panel(self.width - 101 * scale, top_y, 90 * scale, 31 * scale, AQUA, 0.12)
-        self.draw_label("II", 30 * scale, self.height - 36 * scale, 12, WHITE)
-        self.draw_label(str(self.score), self.width / 2, self.height - 59 * scale, 35, WHITE)
-        self.draw_label("◆ " + str(self.crystal_bank), self.width - 56 * scale, self.height - 36 * scale, 13, AQUA)
+        top_y = self.height - 49 * scale
+        self.draw_panel(11 * scale, top_y, 47 * scale, 33 * scale, AQUA, 0.12)
+        self.draw_panel(self.width - 108 * scale, top_y, 97 * scale, 33 * scale, AQUA, 0.12)
+        self.draw_label("II", 34.5 * scale, self.height - 39 * scale, 12, WHITE)
+        self.draw_panel(self.width / 2 - 35 * scale, self.height - 70 * scale, 70 * scale, 42 * scale, VIOLET, 0.08)
+        self.draw_label(str(self.score), self.width / 2, self.height - 62 * scale, 34, WHITE)
+        self.draw_label("◆ " + str(self.crystal_bank), self.width - 59 * scale, self.height - 39 * scale, 13, AQUA)
         if self.state == "playing":
-            self.hitboxes.append((11 * scale, top_y, 38 * scale, 31 * scale, "pause"))
+            self.hitboxes.append((11 * scale, top_y, 47 * scale, 33 * scale, "pause"))
 
     def draw_menu(self):
         center, scale = self.width / 2, self.scale
         self.draw_panel(self.width * 0.035, self.height * 0.025, self.width * 0.93, self.height * 0.95, VIOLET, 0.20)
-        self.draw_panel(20 * scale, self.height * 0.895, 34 * scale, 30 * scale, VIOLET, 0.17)
-        self.draw_label("*", 37 * scale, self.height * 0.902, 17, WHITE)
+        self.draw_panel(20 * scale, self.height * 0.895, 79 * scale, 30 * scale, VIOLET, 0.17)
+        self.draw_label("ARCADE", 59 * scale, self.height * 0.904, 9, VIOLET)
         self.draw_panel(self.width - 116 * scale, self.height * 0.895, 96 * scale, 30 * scale, AQUA, 0.15)
         self.draw_label("◆ " + str(self.crystal_bank), self.width - 68 * scale, self.height * 0.904, 13, AQUA)
-        self.draw_label("SKYPULSE", center, self.height * 0.755, 40, WHITE)
-        self.draw_label("TAP TO FLY. SURVIVE THE GLOW.", center, self.height * 0.710, 10, AQUA)
-        self.draw_label("BEST SCORE", center, self.height * 0.655, 10, WHITE)
-        self.draw_label(str(self.best_score), center, self.height * 0.620, 24, AQUA)
-        self.draw_bird(center, self.height * 0.525, size=0.66, preview=True)
-        self.draw_action_button("PLAY", center, self.height * 0.365, 246 * scale, 42 * scale, PINK, "play")
-        self.draw_action_button("SHOP", center, self.height * 0.294, 246 * scale, 38 * scale, AQUA, "shop")
-        self.draw_action_button("CUSTOMIZE", center, self.height * 0.231, 246 * scale, 38 * scale, GOLD, "hangar")
-        self.draw_action_button("BACKGROUND", center, self.height * 0.168, 246 * scale, 38 * scale, (0.38, 0.96, 0.70), "backgrounds")
-        for index, text in enumerate(("STATS", "RANK", "SET")):
-            x = 85 * scale + index * 126 * scale
-            self.draw_panel(x - 38 * scale, self.height * 0.066, 76 * scale, 30 * scale, AQUA if index == 1 else VIOLET, 0.10)
-            self.draw_label(text, x, self.height * 0.075, 9, WHITE)
+        self.draw_label("SKYPULSE", center, self.height * 0.765, 40, WHITE)
+        self.colour(PINK, 0.62)
+        Line(points=[center - 92 * scale, self.height * 0.746, center - 39 * scale, self.height * 0.746], width=1.1 * scale)
+        Line(points=[center + 39 * scale, self.height * 0.746, center + 92 * scale, self.height * 0.746], width=1.1 * scale)
+        self.draw_label("TAP TO FLY  •  SURVIVE THE GLOW", center, self.height * 0.717, 10, AQUA)
+        self.draw_stat_chip("BEST SCORE", str(self.best_score), center - 58 * scale, self.height * 0.635, 104 * scale, VIOLET)
+        self.draw_stat_chip("CRYSTALS", "◆ " + str(self.crystal_bank), center + 58 * scale, self.height * 0.635, 104 * scale, AQUA)
+        self.draw_bird(center, self.height * 0.515, size=0.66, preview=True)
+        self.draw_action_button("PLAY", center, self.height * 0.350, 246 * scale, 42 * scale, PINK, "play")
+        self.draw_action_button("SHOP", center, self.height * 0.279, 246 * scale, 38 * scale, AQUA, "shop")
+        self.draw_action_button("CUSTOMIZE", center, self.height * 0.216, 246 * scale, 38 * scale, GOLD, "hangar")
+        self.draw_action_button("WORLD", center, self.height * 0.153, 246 * scale, 38 * scale, (0.38, 0.96, 0.70), "backgrounds")
+        self.draw_label(
+            self.current_skin["name"] + " EQUIPPED",
+            center,
+            self.height * 0.083,
+            10,
+            self.current_skin["accent"],
+            alpha=0.85,
+        )
 
     def draw_backgrounds(self):
         center, scale = self.width / 2, self.scale
@@ -704,26 +813,31 @@ class SkyPulseGame(Widget):
             PushMatrix()
             Translate(shake_x, shake_y)
             self.draw_background()
-            for tower in self.towers:
-                self.draw_tower(tower)
-            for crystal in self.crystals:
-                self.draw_crystal(crystal)
-            if len(self.flight_trail) > 1:
-                primary, secondary = self.current_skin["trail"]
-                trail_points = [coordinate for point in reversed(self.flight_trail) for coordinate in point]
-                self.colour(primary, 0.12)
-                Line(points=trail_points, width=16 * self.scale)
-                self.colour(secondary, 0.26)
-                Line(points=trail_points, width=8 * self.scale)
-                self.colour(primary, 0.80)
-                Line(points=trail_points, width=2.1 * self.scale)
-            for spark in self.sparks:
-                self.colour(spark["colour"], max(0, spark["life"]))
-                size = max(2, 7 * spark["life"]) * self.scale
-                Ellipse(pos=(spark["x"] - size / 2, spark["y"] - size / 2), size=(size, size))
-            self.draw_bird()
+            self.draw_runway()
+            # Menus are clean, curated screens. Only an active or interrupted
+            # flight keeps the live game world (bird, HUD, towers, and effects).
+            if self.state in ("playing", "paused", "game_over"):
+                for tower in self.towers:
+                    self.draw_tower(tower)
+                for crystal in self.crystals:
+                    self.draw_crystal(crystal)
+                if len(self.flight_trail) > 1:
+                    primary, secondary = self.current_skin["trail"]
+                    trail_points = [coordinate for point in reversed(self.flight_trail) for coordinate in point]
+                    self.colour(primary, 0.12)
+                    Line(points=trail_points, width=16 * self.scale)
+                    self.colour(secondary, 0.26)
+                    Line(points=trail_points, width=8 * self.scale)
+                    self.colour(primary, 0.80)
+                    Line(points=trail_points, width=2.1 * self.scale)
+                for spark in self.sparks:
+                    self.colour(spark["colour"], max(0, spark["life"]))
+                    size = max(2, 7 * spark["life"]) * self.scale
+                    Ellipse(pos=(spark["x"] - size / 2, spark["y"] - size / 2), size=(size, size))
+                self.draw_bird()
             PopMatrix()
-            self.draw_hud()
+            if self.state in ("playing", "paused", "game_over"):
+                self.draw_hud()
             self.draw_overlay()
 
     def activate(self, action):

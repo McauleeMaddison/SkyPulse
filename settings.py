@@ -10,13 +10,15 @@ TOWER_GAP = 225
 TOWER_SPAWN_SECONDS = 1.55
 TOWER_WIDTH = 58
 
-# Bird placement, art size, and a forgiving body-only collision box.
-# The art includes big wings and a light trail; neither should clip a tower.
+# Bird placement, art size, and a body-only collision ellipse.
+# The art includes wide wings, feet, and a light trail, so collision follows the
+# luminous core rather than the decorative silhouette.
 BIRD_X = 105
 BIRD_DRAW_WIDTH = 125
-BIRD_HITBOX_HALF_WIDTH = 14
-BIRD_HITBOX_HALF_HEIGHT = 13
-BIRD_HITBOX_OFFSET_X = 7
+BIRD_HITBOX_HALF_WIDTH = 17
+BIRD_HITBOX_HALF_HEIGHT = 18
+BIRD_HITBOX_OFFSET_X = 16
+BIRD_HITBOX_OFFSET_Y = 0
 
 # Colours are red, green, blue values from 0 to 1.
 DEEP_SPACE = (0.02, 0.01, 0.10)
