@@ -1,0 +1,17 @@
+{
+  "name": "SkyPulse",
+  "short_name": "SkyPulse",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#05020f",
+  "theme_color": "#090321",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "../assets/images/branding/skypulse-app-icon.png",
+      "sizes": "1254x1254",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
