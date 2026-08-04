@@ -6,7 +6,7 @@ Press P to pause or resume.
 
 import json
 import random
-from math import hypot, sin
+from math import exp, hypot, sin
 from pathlib import Path
 
 from kivy.config import Config
@@ -15,6 +15,7 @@ from kivy.config import Config
 Config.set("graphics", "width", "420")
 Config.set("graphics", "height", "760")
 Config.set("graphics", "resizable", "1")
+Config.set("graphics", "multisamples", "4")
 
 from kivy.app import App
 from kivy.clock import Clock
@@ -30,7 +31,6 @@ from kivy.graphics import (
     Rectangle,
     Rotate,
     RoundedRectangle,
-    Scale,
     Translate,
 )
 from kivy.uix.widget import Widget
@@ -44,9 +44,12 @@ from settings import (
     BIRD_HITBOX_OFFSET_Y,
     BIRD_X,
     DEEP_SPACE,
+    FLAP_REBOUND,
     FLAP_STRENGTH,
     GOLD,
     GRAVITY,
+    MAX_FALL_SPEED,
+    MAX_RISE_SPEED,
     PINK,
     TOWER_GAP,
     TOWER_SPAWN_SECONDS,
@@ -65,6 +68,7 @@ SKINS = (
         "id": "nova",
         "name": "NOVA",
         "asset": "assets/images/characters/nova.png",
+        "flap_asset": "assets/images/characters/nova-flap.png",
         "price": 0,
         "accent": VIOLET,
         "trail": (VIOLET, AQUA),
@@ -73,6 +77,7 @@ SKINS = (
         "id": "lumen",
         "name": "LUMEN",
         "asset": "assets/images/characters/lumen.png",
+        "flap_asset": "assets/images/characters/lumen-flap.png",
         "price": 20,
         "accent": AQUA,
         "trail": (AQUA, VIOLET),
@@ -81,6 +86,7 @@ SKINS = (
         "id": "ember",
         "name": "EMBER",
         "asset": "assets/images/characters/ember.png",
+        "flap_asset": "assets/images/characters/ember-flap.png",
         "price": 55,
         "accent": PINK,
         "trail": (PINK, GOLD),
@@ -89,6 +95,7 @@ SKINS = (
         "id": "sol",
         "name": "SOL",
         "asset": "assets/images/characters/sol.png",
+        "flap_asset": "assets/images/characters/sol-flap.png",
         "price": 110,
         "accent": GOLD,
         "trail": (GOLD, AQUA),
@@ -96,6 +103,58 @@ SKINS = (
 )
 
 SKINS_BY_ID = {skin["id"]: skin for skin in SKINS}
+MINT = (0.38, 0.96, 0.70)
+
+# World style is deliberately modular: players can mix a bird, a live trail,
+# a city treatment, and a pipe finish instead of being locked to one preset.
+TRAILS = (
+    {"id": "pulse", "name": "PULSE", "price": 0, "accent": AQUA, "colours": (VIOLET, AQUA)},
+    {"id": "solar", "name": "SOLAR", "price": 35, "accent": GOLD, "colours": (GOLD, PINK)},
+    {"id": "aurora", "name": "AURORA", "price": 60, "accent": MINT, "colours": (MINT, VIOLET)},
+)
+
+THEMES = (
+    {
+        "id": "neon_city",
+        "name": "NEON CITY",
+        "price": 0,
+        "accent": AQUA,
+        "tint": DEEP_SPACE,
+        "tint_alpha": 0.13,
+        "sky_colours": (VIOLET, PINK, GOLD),
+        "floor": (0.012, 0.008, 0.045),
+    },
+    {
+        "id": "aurora_rise",
+        "name": "AURORA RISE",
+        "price": 55,
+        "accent": MINT,
+        "tint": (0.008, 0.09, 0.09),
+        "tint_alpha": 0.24,
+        "sky_colours": (MINT, AQUA, VIOLET),
+        "floor": (0.006, 0.045, 0.055),
+    },
+    {
+        "id": "solar_drift",
+        "name": "SOLAR DRIFT",
+        "price": 90,
+        "accent": GOLD,
+        "tint": (0.12, 0.028, 0.018),
+        "tint_alpha": 0.22,
+        "sky_colours": (GOLD, PINK, VIOLET),
+        "floor": (0.065, 0.018, 0.025),
+    },
+)
+
+PIPE_STYLES = (
+    {"id": "ion", "name": "ION", "price": 0, "accent": AQUA, "frame": VIOLET, "panel": (0.04, 0.18, 0.48), "energy": AQUA, "cap": GOLD},
+    {"id": "rose", "name": "ROSE", "price": 40, "accent": PINK, "frame": PINK, "panel": (0.33, 0.04, 0.26), "energy": VIOLET, "cap": GOLD},
+    {"id": "solar", "name": "SOLAR", "price": 70, "accent": GOLD, "frame": GOLD, "panel": (0.35, 0.14, 0.04), "energy": PINK, "cap": AQUA},
+)
+
+TRAILS_BY_ID = {trail["id"]: trail for trail in TRAILS}
+THEMES_BY_ID = {theme["id"]: theme for theme in THEMES}
+PIPE_STYLES_BY_ID = {style["id"]: style for style in PIPE_STYLES}
 SAVE_PATH = Path(__file__).parent / "skypulse_progress.json"
 
 
@@ -111,17 +170,31 @@ class SkyPulseGame(Widget):
             for _ in range(72)
         ]
         self.backdrop_texture = self.load_texture("assets/images/backgrounds/neon-city.png")
-        self.skin_textures = {skin["id"]: self.load_texture(skin["asset"]) for skin in SKINS}
+        self.skin_textures = {
+            skin["id"]: {
+                "up": self.load_texture(skin["asset"]),
+                "down": self.load_texture(skin["flap_asset"]),
+            }
+            for skin in SKINS
+        }
         self.progress = self.load_progress()
         self.best_score = self.progress["best_score"]
         self.crystal_bank = self.progress["crystal_bank"]
         self.unlocked_skins = self.progress["unlocked"]
         self.equipped_skin_id = self.progress["equipped"]
+        self.unlocked_trails = self.progress["unlocked_trails"]
+        self.equipped_trail_id = self.progress["equipped_trail"]
+        self.unlocked_themes = self.progress["unlocked_themes"]
+        self.equipped_theme_id = self.progress["equipped_theme"]
+        self.unlocked_pipes = self.progress["unlocked_pipes"]
+        self.equipped_pipe_id = self.progress["equipped_pipe"]
         self.hitboxes = []
         self.notice = ""
         self.notice_timer = 0
         self.reset("menu")
-        Clock.schedule_interval(self.update, 1 / 60)
+        # Draw on every display frame instead of a fixed 60 Hz tick; all motion
+        # below is delta-time based, so high-refresh screens stay fluid too.
+        Clock.schedule_interval(self.update, 0)
 
     @staticmethod
     def load_texture(relative_path):
@@ -137,20 +210,46 @@ class SkyPulseGame(Widget):
 
     @staticmethod
     def load_progress():
-        default = {"best_score": 0, "crystal_bank": 0, "unlocked": ["nova"], "equipped": "nova"}
+        default = {
+            "best_score": 0,
+            "crystal_bank": 0,
+            "unlocked": ["nova"],
+            "equipped": "nova",
+            "unlocked_trails": ["pulse"],
+            "equipped_trail": "pulse",
+            "unlocked_themes": ["neon_city"],
+            "equipped_theme": "neon_city",
+            "unlocked_pipes": ["ion"],
+            "equipped_pipe": "ion",
+        }
         try:
             saved = json.loads(SAVE_PATH.read_text())
-            unlocked = [skin_id for skin_id in saved.get("unlocked", []) if skin_id in SKINS_BY_ID]
-            if "nova" not in unlocked:
-                unlocked.insert(0, "nova")
-            equipped = saved.get("equipped", "nova")
-            if equipped not in unlocked:
-                equipped = "nova"
+            def owned_ids(saved_key, catalog, starter):
+                owned = [item_id for item_id in saved.get(saved_key, []) if item_id in catalog]
+                if starter not in owned:
+                    owned.insert(0, starter)
+                return owned
+
+            unlocked = owned_ids("unlocked", SKINS_BY_ID, "nova")
+            unlocked_trails = owned_ids("unlocked_trails", TRAILS_BY_ID, "pulse")
+            unlocked_themes = owned_ids("unlocked_themes", THEMES_BY_ID, "neon_city")
+            unlocked_pipes = owned_ids("unlocked_pipes", PIPE_STYLES_BY_ID, "ion")
+
+            equipped = saved.get("equipped", "nova") if saved.get("equipped") in unlocked else "nova"
+            equipped_trail = saved.get("equipped_trail", "pulse")
+            equipped_theme = saved.get("equipped_theme", "neon_city")
+            equipped_pipe = saved.get("equipped_pipe", "ion")
             return {
                 "best_score": max(0, int(saved.get("best_score", 0))),
                 "crystal_bank": max(0, int(saved.get("crystal_bank", 0))),
                 "unlocked": unlocked,
                 "equipped": equipped,
+                "unlocked_trails": unlocked_trails,
+                "equipped_trail": equipped_trail if equipped_trail in unlocked_trails else "pulse",
+                "unlocked_themes": unlocked_themes,
+                "equipped_theme": equipped_theme if equipped_theme in unlocked_themes else "neon_city",
+                "unlocked_pipes": unlocked_pipes,
+                "equipped_pipe": equipped_pipe if equipped_pipe in unlocked_pipes else "ion",
             }
         except (OSError, ValueError, TypeError):
             return default
@@ -161,6 +260,12 @@ class SkyPulseGame(Widget):
             "crystal_bank": self.crystal_bank,
             "unlocked": self.unlocked_skins,
             "equipped": self.equipped_skin_id,
+            "unlocked_trails": self.unlocked_trails,
+            "equipped_trail": self.equipped_trail_id,
+            "unlocked_themes": self.unlocked_themes,
+            "equipped_theme": self.equipped_theme_id,
+            "unlocked_pipes": self.unlocked_pipes,
+            "equipped_pipe": self.equipped_pipe_id,
         }
         try:
             SAVE_PATH.write_text(json.dumps(self.progress, indent=2) + "\n")
@@ -170,6 +275,18 @@ class SkyPulseGame(Widget):
     @property
     def current_skin(self):
         return SKINS_BY_ID[self.equipped_skin_id]
+
+    @property
+    def current_trail(self):
+        return TRAILS_BY_ID[self.equipped_trail_id]
+
+    @property
+    def current_theme(self):
+        return THEMES_BY_ID[self.equipped_theme_id]
+
+    @property
+    def current_pipe(self):
+        return PIPE_STYLES_BY_ID[self.equipped_pipe_id]
 
     @property
     def scale(self):
@@ -207,6 +324,10 @@ class SkyPulseGame(Widget):
         self.state = state
         self.bird_y = self.height * 0.53 if self.height else 400
         self.bird_speed = 0
+        self.bird_tilt = 0
+        self.wing_phase = 0
+        self.flap_energy = 0
+        self.flap_bounce = 0
         self.score = 0
         self.crystals_collected = 0
         self.towers = []
@@ -221,8 +342,19 @@ class SkyPulseGame(Widget):
     def flap(self):
         if self.state != "playing":
             return
-        self.bird_speed = FLAP_STRENGTH * self.scale
-        primary, secondary = self.current_skin["trail"]
+        scale = self.scale
+        # A flap restores lift without making fast consecutive taps jerk upward.
+        self.bird_speed = min(
+            MAX_RISE_SPEED * scale,
+            max(FLAP_STRENGTH * scale, self.bird_speed + FLAP_REBOUND * scale),
+        )
+        self.flap_energy = 1.0
+        self.flap_bounce = 1.0
+        self.wing_phase = -1.5708
+        # A real bird snaps its head up with the wing beat, then settles into
+        # the dive rather than rotating mechanically with raw velocity.
+        self.bird_tilt = max(self.bird_tilt, 17)
+        primary, secondary = self.current_trail["colours"]
         for index in range(8):
             self.sparks.append(
                 {
@@ -280,9 +412,17 @@ class SkyPulseGame(Widget):
             )
 
     def update(self, dt):
+        # Prevent a momentary window stall from causing a visible jump or a
+        # surprise collision when the next frame arrives.
+        dt = min(dt, 1 / 30)
         self.time += dt
         self.screen_shake = max(0, self.screen_shake - dt)
         self.notice_timer = max(0, self.notice_timer - dt)
+        self.flap_energy = max(0, self.flap_energy - dt * 2.8)
+        self.flap_bounce = max(0, self.flap_bounce - dt * 3.6)
+        # A short, even wing cycle reads as a deliberate flap rather than a
+        # rapid sprite flicker, including on high-refresh displays.
+        self.wing_phase += dt * (6.8 + self.flap_energy * 15)
         self.sparks = [
             {
                 **spark,
@@ -300,18 +440,30 @@ class SkyPulseGame(Widget):
 
         scale = self.scale
         bird_x = BIRD_X * scale
-        bird_hit_x, bird_hit_y, bird_half_width, bird_half_height = self.bird_collider()
-        self.bird_speed -= GRAVITY * scale * dt
+        fall_multiplier = 1.0 if self.bird_speed >= 0 else 1.16
+        self.bird_speed = max(
+            -MAX_FALL_SPEED * scale,
+            self.bird_speed - GRAVITY * fall_multiplier * scale * dt,
+        )
         self.bird_y += self.bird_speed * dt
-        self.flight_trail.insert(0, (bird_x, self.bird_y))
-        self.flight_trail = self.flight_trail[:16]
+        target_tilt = max(-42, min(27, self.bird_speed / max(scale, 0.01) * 0.080))
+        tilt_response = 17 if target_tilt > self.bird_tilt else 7
+        self.bird_tilt += (target_tilt - self.bird_tilt) * (1 - exp(-tilt_response * dt))
+        bird_hit_x, bird_hit_y, bird_half_width, bird_half_height = self.bird_collider()
+        self.flight_trail = [
+            (trail_x, trail_y, age + dt)
+            for trail_x, trail_y, age in self.flight_trail
+            if age + dt < 0.48
+        ]
+        self.flight_trail.insert(0, (bird_x, self.bird_y, 0))
+        self.flight_trail = self.flight_trail[:32]
         self.spawn_timer -= dt
         self.trail_timer -= dt
         speed = (TOWER_SPEED + min(self.score, 25) * 4) * scale
 
         if self.trail_timer <= 0:
             self.trail_timer = 0.05
-            primary, secondary = self.current_skin["trail"]
+            primary, secondary = self.current_trail["colours"]
             self.sparks.append(
                 {
                     "x": bird_x - 30 * scale,
@@ -367,23 +519,27 @@ class SkyPulseGame(Widget):
         for tower in self.towers:
             gap_bottom = tower["gap_y"] - tower["gap"] / 2
             gap_top = tower["gap_y"] + tower["gap"] / 2
+            # Every solid part of a pipe is dangerous, including its wider cap.
+            # The soft ambient glow remains decorative and does not cause hits.
+            pipe_x = tower["x"] - 8 * scale
+            pipe_width = TOWER_WIDTH * scale + 16 * scale
             if self.ellipse_hits_rectangle(
                 bird_hit_x,
                 bird_hit_y,
                 bird_half_width,
                 bird_half_height,
-                tower["x"],
+                pipe_x,
                 self.ground_y,
-                TOWER_WIDTH * scale,
-                gap_bottom - self.ground_y,
+                pipe_width,
+                gap_bottom - self.ground_y + 3 * scale,
             ) or self.ellipse_hits_rectangle(
                 bird_hit_x,
                 bird_hit_y,
                 bird_half_width,
                 bird_half_height,
-                tower["x"],
+                pipe_x,
                 gap_top,
-                TOWER_WIDTH * scale,
+                pipe_width,
                 self.height - gap_top,
             ):
                 self.game_over()
@@ -489,11 +645,11 @@ class SkyPulseGame(Widget):
 
     def draw_background(self):
         """Animated sky, city parallax, horizon glow, and a perspective runway."""
+        theme = self.current_theme
         if self.backdrop_texture:
             self.colour(WHITE)
             Rectangle(texture=self.backdrop_texture, pos=(0, 0), size=self.size)
-            # A thin tint makes the artwork sit naturally with the game's neon effects.
-            self.colour(DEEP_SPACE, 0.13)
+            self.colour(theme["tint"], theme["tint_alpha"])
             Rectangle(pos=(0, 0), size=self.size)
         else:
             stripe_height = max(4, int(self.height / 76))
@@ -507,33 +663,33 @@ class SkyPulseGame(Widget):
             drift = (self.time * (10 + index * 3) + index * 133) % (self.width + 180) - 90
             cloud_y = self.height * (0.38 + (index % 3) * 0.17)
             cloud_size = (120 + index * 35) * self.scale
-            self.colour(VIOLET if index % 2 else PINK, 0.025)
+            self.colour(theme["sky_colours"][index % 3], 0.025)
             Ellipse(pos=(drift - cloud_size / 2, cloud_y - cloud_size / 5), size=(cloud_size, cloud_size / 2.5))
 
         for x, y, radius in self.stars:
             shimmer = 0.55 + sin(self.time * 2 + x * 12) * 0.2
             star_x = (x * self.width - self.time * (7 + radius * 4) * self.scale) % self.width
-            self.colour(AQUA if radius == 2 else WHITE, shimmer)
+            self.colour(theme["accent"] if radius == 2 else WHITE, shimmer)
             Ellipse(pos=(star_x, y * self.height), size=(radius * 2, radius * 2))
 
         # A breathing horizon glow is layered over the cinematic city illustration.
         glow_center_x = self.width * 0.50
         glow_center_y = self.height * 0.105
         horizon_breath = sin(self.time * 1.7) * 0.025
-        for multiplier, alpha, colour in ((1.20, 0.020, VIOLET), (0.90, 0.045 + horizon_breath, PINK), (0.58, 0.08, GOLD)):
+        for multiplier, alpha, colour in zip(
+            (1.20, 0.90, 0.58),
+            (0.020, 0.045 + horizon_breath, 0.08),
+            theme["sky_colours"],
+        ):
             diameter = self.width * multiplier
             self.colour(colour, alpha)
             Ellipse(pos=(glow_center_x - diameter / 2, glow_center_y - diameter / 2), size=(diameter, diameter))
 
-        # A scan line moves inside the runway, never crossing its collision rail.
-        scan_y = self.ground_y * (0.16 + (self.time * 0.52 % 0.74))
-        self.colour(AQUA, 0.34)
-        Line(points=[0, scan_y, self.width, scan_y], width=1.1 * self.scale)
         for index in range(3):
             phase = (self.time * (0.15 + index * 0.04) + index * 0.34) % 1
             comet_x = self.width * (1 - phase) + 40 * self.scale
             comet_y = self.height * (0.72 + index * 0.07)
-            self.colour(AQUA if index % 2 else PINK, 0.18)
+            self.colour(theme["accent"] if index % 2 else theme["sky_colours"][1], 0.18)
             Line(
                 points=[comet_x, comet_y, comet_x + 34 * self.scale, comet_y + 12 * self.scale],
                 width=max(0.7, 1.2 * self.scale),
@@ -544,39 +700,62 @@ class SkyPulseGame(Widget):
         scale = self.scale
         floor_y = self.ground_y
         horizon_x = self.width * 0.50
+        theme = self.current_theme
+        accent = theme["accent"]
 
-        # A soft darkening gives the physical runway a distinct surface while
-        # preserving the illustrated reflection beneath it.
-        self.colour(DEEP_SPACE, 0.20)
+        # An opaque deck makes the playable floor unmistakable, while retaining
+        # a little neon depth through layered surface lighting.
+        self.colour(theme["floor"], 1)
         Rectangle(pos=(0, 0), size=(self.width, floor_y))
-        for index, alpha in enumerate((0.025, 0.040, 0.070)):
-            glow_height = (12 + index * 13) * scale
-            self.colour(AQUA if index != 1 else VIOLET, alpha)
+        for index, (height_ratio, colour, alpha) in enumerate(
+            (
+                (0.38, tuple(channel * 0.55 for channel in VIOLET), 0.52),
+                (0.24, tuple(channel * 0.42 for channel in accent), 0.58),
+                (0.14, tuple(channel * 0.34 for channel in theme["sky_colours"][1]), 0.48),
+            )
+        ):
+            glow_height = floor_y * height_ratio
+            self.colour(colour, alpha)
             Rectangle(
-                pos=(0, max(0, floor_y - glow_height)),
+                pos=(0, max(0, floor_y - glow_height - index * 3 * scale)),
                 size=(self.width, glow_height),
             )
 
         # Perspective rails make the landing plane read at a glance on a phone.
         for index, ratio in enumerate((0.11, 0.28, 0.72, 0.89)):
             end_x = self.width * ratio
-            self.colour(AQUA if index in (1, 2) else VIOLET, 0.15)
+            self.colour(accent if index in (1, 2) else theme["sky_colours"][0], 0.15)
             Line(
                 points=[horizon_x + (end_x - horizon_x) * 0.16, floor_y - 2 * scale, end_x, 0],
                 width=max(0.55, 0.8 * scale),
             )
         for ratio, alpha in ((0.25, 0.07), (0.55, 0.11), (0.80, 0.16)):
             y = floor_y * ratio
-            self.colour(VIOLET, alpha)
+            self.colour(theme["sky_colours"][0], alpha)
             Line(points=[0, y, self.width, y], width=max(0.45, 0.7 * scale))
 
-        # This is the collision line: its top edge is the precise floor limit.
+        # A reflected scan sweeps across the actual floor surface, not the sky.
+        scan_y = floor_y * (0.16 + (self.time * 0.52 % 0.64))
+        self.colour(accent, 0.26)
+        Line(points=[0, scan_y, self.width, scan_y], width=1.0 * scale)
+
+        # A dense, raised lip makes the floor unmistakable at a glance.
+        self.colour(tuple(channel * 0.28 for channel in theme["sky_colours"][0]), 1)
+        Rectangle(pos=(0, floor_y - 10 * scale), size=(self.width, 10 * scale))
+        self.colour(tuple(channel * 0.48 for channel in accent), 1)
+        Rectangle(pos=(0, floor_y - 4 * scale), size=(self.width, 4 * scale))
+        for x in range(18, int(self.width), int(48 * scale)):
+            self.colour(accent, 0.38)
+            Ellipse(
+                pos=(x - 1.5 * scale, floor_y - 7 * scale),
+                size=(3 * scale, 3 * scale),
+            )
+
+        # This rail is the collision line: its top edge is the precise floor limit.
         pulse = 0.72 + sin(self.time * 3.2) * 0.12
-        self.colour(AQUA, 0.10)
-        Rectangle(pos=(0, floor_y - 5 * scale), size=(self.width, 10 * scale))
-        self.colour(VIOLET, 0.78)
+        self.colour(theme["sky_colours"][0], 0.78)
         Line(points=[0, floor_y - 1.1 * scale, self.width, floor_y - 1.1 * scale], width=3.5 * scale)
-        self.colour(AQUA, pulse)
+        self.colour(accent, pulse)
         Line(points=[0, floor_y, self.width, floor_y], width=1.15 * scale)
         self.colour(WHITE, 0.64)
         Line(points=[0, floor_y + 1.2 * scale, self.width, floor_y + 1.2 * scale], width=0.48 * scale)
@@ -584,6 +763,7 @@ class SkyPulseGame(Widget):
     def draw_tower(self, tower):
         scale = self.scale
         width = TOWER_WIDTH * scale
+        pipe = self.current_pipe
         gap_bottom = tower["gap_y"] - tower["gap"] / 2
         gap_top = tower["gap_y"] + tower["gap"] / 2
         sections = ((self.ground_y, gap_bottom - self.ground_y, True), (gap_top, self.height - gap_top, False))
@@ -591,7 +771,7 @@ class SkyPulseGame(Widget):
             if height <= 0:
                 continue
             pulse = 0.55 + sin(self.time * 5 + tower["x"] * 0.025) * 0.20
-            self.colour(AQUA, 0.055)
+            self.colour(pipe["energy"], 0.055)
             RoundedRectangle(
                 pos=(tower["x"] - 10 * scale, y - 5 * scale),
                 size=(width + 20 * scale, height + 10 * scale),
@@ -599,25 +779,25 @@ class SkyPulseGame(Widget):
             )
             self.colour((0.025, 0.035, 0.19), 0.98)
             RoundedRectangle(pos=(tower["x"], y), size=(width, height), radius=[8 * scale])
-            self.colour(VIOLET, 0.55)
+            self.colour(pipe["frame"], 0.55)
             Rectangle(pos=(tower["x"] + 9 * scale, y + 3 * scale), size=(width - 18 * scale, max(0, height - 6 * scale)))
-            self.colour((0.04, 0.18, 0.48), 0.95)
+            self.colour(pipe["panel"], 0.95)
             Rectangle(pos=(tower["x"] + 16 * scale, y + 6 * scale), size=(width - 32 * scale, max(0, height - 12 * scale)))
-            self.colour(AQUA, pulse)
+            self.colour(pipe["energy"], pulse)
             Rectangle(pos=(tower["x"] + 29 * scale, y + 8 * scale), size=(7 * scale, max(0, height - 16 * scale)))
             energy_y = y + (self.time * 145 * scale) % max(height, 1)
             self.colour(WHITE, 0.65)
             Rectangle(pos=(tower["x"] + 15 * scale, energy_y), size=(width - 30 * scale, 3 * scale))
-            self.colour(AQUA, 0.92)
+            self.colour(pipe["energy"], 0.92)
             Line(rectangle=(tower["x"], y, width, height), width=1.4 * scale)
             cap_y = y + height - 14 * scale if cap_on_top else y
-            self.colour(GOLD, 0.17)
+            self.colour(pipe["cap"], 0.17)
             RoundedRectangle(
                 pos=(tower["x"] - 12 * scale, cap_y - 4 * scale),
                 size=(width + 24 * scale, 25 * scale),
                 radius=[9 * scale],
             )
-            self.colour(GOLD)
+            self.colour(pipe["cap"])
             RoundedRectangle(pos=(tower["x"] - 8 * scale, cap_y), size=(width + 16 * scale, 17 * scale), radius=[7 * scale])
             self.colour(WHITE, 0.85)
             Line(rectangle=(tower["x"] - 8 * scale, cap_y, width + 16 * scale, 17 * scale), width=1.1 * scale)
@@ -640,36 +820,90 @@ class SkyPulseGame(Widget):
         Line(points=[-9 * scale, 0, 9 * scale, 0], width=1.1 * scale)
         PopMatrix()
 
+    def draw_living_trail(self):
+        """Render the flight path as a gently undulating, pulsing energy ribbon."""
+        if len(self.flight_trail) < 2:
+            return
+        scale = self.scale
+        primary, secondary = self.current_trail["colours"]
+        trail_duration = 0.48
+        ordered_points = list(reversed(self.flight_trail))
+
+        # Three offset ribbons keep the energy in motion without obscuring play.
+        for colour, alpha, width, phase in (
+            (primary, 0.10, 18, 0.0),
+            (secondary, 0.24, 8, 2.1),
+            (primary, 0.84, 2.0, 4.2),
+        ):
+            points = []
+            for index, (x, y, age) in enumerate(ordered_points):
+                life = max(0, 1 - age / trail_duration)
+                wave = sin(self.time * 12 - age * 19 + index * 0.58 + phase)
+                offset = wave * (1.8 + self.flap_energy * 2.5) * life * scale
+                points.extend((x, y + offset))
+            self.colour(colour, alpha)
+            Line(points=points, width=width * scale)
+
+        # Bright pulses flow from the bird out through the ribbon like charged air.
+        point_count = len(ordered_points) - 1
+        for pulse_index in range(3):
+            travel = 1 - ((self.time * 1.85 + pulse_index * 0.33) % 1)
+            position = travel * point_count
+            left_index = min(point_count - 1, int(position))
+            blend = position - left_index
+            tail_x, tail_y, tail_age = ordered_points[left_index]
+            head_x, head_y, head_age = ordered_points[left_index + 1]
+            x = tail_x + (head_x - tail_x) * blend
+            y = tail_y + (head_y - tail_y) * blend
+            life = max(0, 1 - (tail_age + (head_age - tail_age) * blend) / trail_duration)
+            size = (3.0 + sin(self.time * 9 + pulse_index) * 0.8) * life * scale
+            self.colour(WHITE if pulse_index == 1 else secondary, 0.78 * life)
+            Ellipse(pos=(x - size / 2, y - size / 2), size=(size, size))
+
     def draw_bird(self, x=None, y=None, size=1.0, skin=None, preview=False):
         """Draw the equipped bird in-game or as an interactive shop preview."""
         scale = self.scale * size
         x = BIRD_X * self.scale if x is None else x
         y = self.bird_y if y is None else y
         skin = self.current_skin if skin is None else skin
-        primary, secondary = skin["trail"]
-        wing_breath = 1 + sin(self.time * 10) * (0.018 if preview else 0.035)
-        tilt = 0 if preview else max(-22, min(22, self.bird_speed / max(self.scale, 0.01) * 0.052))
+        flutter = sin(self.wing_phase)
+        flap_mix = (
+            0.5 - sin(self.time * 4.5) * 0.5
+            if preview
+            else (0.5 - flutter * 0.5) * self.flap_energy
+        )
+        tilt = 0 if preview else self.bird_tilt + flutter * self.flap_energy * 0.8
+        if preview:
+            y += sin(self.time * 2.2) * 2.2 * scale
+        else:
+            # The wing's downstroke gives the body a small, natural lift.
+            y -= flutter * self.flap_bounce * 2.4 * scale
 
-        # Layered bloom makes every skin feel luminous without obscuring its silhouette.
-        self.colour(primary, 0.075)
-        Ellipse(pos=(x - 72 * scale, y - 55 * scale), size=(144 * scale, 110 * scale))
-        self.colour(secondary, 0.10)
-        Ellipse(pos=(x - 50 * scale, y - 37 * scale), size=(100 * scale, 74 * scale))
-
-        texture = self.skin_textures.get(skin["id"])
-        if texture:
+        frames = self.skin_textures.get(skin["id"], {})
+        up_texture = frames.get("up")
+        down_texture = frames.get("down")
+        if up_texture:
             art_width = BIRD_DRAW_WIDTH * scale
-            art_height = art_width * texture.height / max(texture.width, 1)
             PushMatrix()
             Translate(x, y)
             Rotate(angle=tilt, origin=(0, 0))
-            Scale(wing_breath, wing_breath, 1)
-            self.colour(WHITE)
+            # The eased sine mix turns two drawn wing poses into a fluid flap
+            # with no hard sprite pop at the top or bottom of the beat.
+            up_height = art_width * up_texture.height / max(up_texture.width, 1)
+            self.colour(WHITE, 1 - flap_mix if down_texture else 1)
             Rectangle(
-                texture=texture,
-                pos=(-art_width * 0.60, -art_height * 0.50),
-                size=(art_width, art_height),
+                texture=up_texture,
+                pos=(-art_width * 0.60, -up_height * 0.50),
+                size=(art_width, up_height),
             )
+            if down_texture and flap_mix > 0:
+                down_height = art_width * down_texture.height / max(down_texture.width, 1)
+                self.colour(WHITE, flap_mix)
+                Rectangle(
+                    texture=down_texture,
+                    pos=(-art_width * 0.60, -down_height * 0.50),
+                    size=(art_width, down_height),
+                )
             PopMatrix()
             return
 
@@ -718,6 +952,91 @@ class SkyPulseGame(Widget):
             alpha=0.72,
         )
 
+    def draw_shop_hub(self):
+        """A real storefront: birds are separate from world and effects purchases."""
+        center, scale = self.width / 2, self.scale
+        self.draw_panel(self.width * 0.08, self.height * 0.105, self.width * 0.84, self.height * 0.79, AQUA, 0.18)
+        self.draw_label("STYLE SHOP", center, self.height * 0.810, 28, WHITE)
+        self.draw_label("BUILD YOUR FLIGHT", center, self.height * 0.772, 10, AQUA)
+        self.draw_panel(center - 55 * scale, self.height * 0.715, 110 * scale, 28 * scale, AQUA, 0.10)
+        self.draw_label("◆ " + str(self.crystal_bank), center, self.height * 0.723, 12, AQUA)
+        self.draw_action_button("BIRD SHOP", center, self.height * 0.600, 244 * scale, 39 * scale, GOLD, "shop_birds")
+        self.draw_action_button("WORLD THEMES", center, self.height * 0.485, 244 * scale, 39 * scale, MINT, "themes")
+        self.draw_action_button("TRAIL STYLES", center, self.height * 0.370, 244 * scale, 39 * scale, PINK, "trails")
+        self.draw_action_button("PIPE COLOURS", center, self.height * 0.255, 244 * scale, 39 * scale, VIOLET, "pipes")
+        self.draw_action_button("<  MENU", center, self.height * 0.135, 178 * scale, 36 * scale, VIOLET, "menu")
+
+    def draw_style_card(self, item, category, x, y, width, height):
+        """One purchase/equip card shared by theme, trail, and pipe collections."""
+        ownership = {
+            "theme": (self.unlocked_themes, self.equipped_theme_id),
+            "trail": (self.unlocked_trails, self.equipped_trail_id),
+            "pipe": (self.unlocked_pipes, self.equipped_pipe_id),
+        }
+        owned, equipped_id = ownership[category]
+        is_equipped = item["id"] == equipped_id
+        is_owned = item["id"] in owned
+        scale = self.scale
+        accent = item["accent"]
+        self.draw_panel(x, y, width, height, accent, 0.24 if is_equipped else 0.12)
+
+        preview_left = x + 22 * scale
+        preview_y = y + height * 0.32
+        if category == "theme":
+            self.colour(item["tint"], 0.95)
+            RoundedRectangle(pos=(preview_left, preview_y), size=(88 * scale, 40 * scale), radius=[8 * scale])
+            self.colour(item["accent"], 0.72)
+            Line(points=[preview_left, preview_y + 10 * scale, preview_left + 88 * scale, preview_y + 10 * scale], width=1.1 * scale)
+            self.colour(item["sky_colours"][1], 0.75)
+            Line(points=[preview_left, preview_y + 25 * scale, preview_left + 88 * scale, preview_y + 25 * scale], width=2 * scale)
+        elif category == "trail":
+            primary, secondary = item["colours"]
+            for offset, colour, width_scale in ((-6, primary, 5), (0, secondary, 3), (6, primary, 1.2)):
+                self.colour(colour, 0.88)
+                Line(
+                    points=[preview_left, preview_y + 18 * scale + offset * scale, preview_left + 88 * scale, preview_y + 18 * scale],
+                    width=width_scale * scale,
+                )
+        else:
+            self.colour(item["frame"], 0.80)
+            RoundedRectangle(pos=(preview_left + 28 * scale, preview_y - 5 * scale), size=(32 * scale, 50 * scale), radius=[6 * scale])
+            self.colour(item["panel"], 1)
+            Rectangle(pos=(preview_left + 35 * scale, preview_y), size=(18 * scale, 40 * scale))
+            self.colour(item["energy"], 0.95)
+            Line(points=[preview_left + 44 * scale, preview_y + 3 * scale, preview_left + 44 * scale, preview_y + 37 * scale], width=3 * scale)
+            self.colour(item["cap"], 0.95)
+            Line(points=[preview_left + 20 * scale, preview_y + 44 * scale, preview_left + 68 * scale, preview_y + 44 * scale], width=5 * scale)
+
+        text_x = x + width * 0.67
+        self.draw_label(item["name"], text_x, y + height * 0.59, 15, accent)
+        if is_equipped:
+            status, status_colour = "EQUIPPED", WHITE
+        elif is_owned:
+            status, status_colour = "TAP TO EQUIP", AQUA
+        else:
+            status, status_colour = "◆ " + str(item["price"]), GOLD
+        self.draw_label(status, text_x, y + height * 0.27, 10, status_colour)
+        self.hitboxes.append((x, y, width, height, "style:" + category + ":" + item["id"]))
+
+    def draw_style_collection(self, category):
+        collections = {
+            "theme": (THEMES, "WORLD THEMES", "CITY TREATMENTS"),
+            "trail": (TRAILS, "TRAIL STYLES", "ENERGY IN MOTION"),
+            "pipe": (PIPE_STYLES, "PIPE COLOURS", "MAKE EVERY RUN YOURS"),
+        }
+        items, heading, subtitle = collections[category]
+        center, scale = self.width / 2, self.scale
+        accent = items[0]["accent"]
+        self.draw_panel(self.width * 0.055, self.height * 0.045, self.width * 0.89, self.height * 0.91, accent, 0.18)
+        self.draw_label(heading, center, self.height * 0.855, 26, WHITE)
+        self.draw_label(subtitle, center, self.height * 0.815, 10, accent)
+        self.draw_panel(center - 57 * scale, self.height * 0.755, 114 * scale, 29 * scale, AQUA, 0.11)
+        self.draw_label("◆ " + str(self.crystal_bank), center, self.height * 0.763, 13, AQUA)
+        card_width, card_height = 332 * scale, 102 * scale
+        for item, y in zip(items, (self.height * 0.575, self.height * 0.390, self.height * 0.205)):
+            self.draw_style_card(item, category, center - card_width / 2, y, card_width, card_height)
+        self.draw_action_button("<  SHOP", center, self.height * 0.095, 178 * scale, 35 * scale, VIOLET, "shop")
+
     def draw_backgrounds(self):
         center, scale = self.width / 2, self.scale
         self.draw_panel(self.width * 0.08, self.height * 0.12, self.width * 0.84, self.height * 0.74, AQUA, 0.20)
@@ -740,7 +1059,7 @@ class SkyPulseGame(Widget):
     def draw_collection(self, hangar=False):
         center, scale = self.width / 2, self.scale
         accent = GOLD if hangar else AQUA
-        heading = "BIRD HANGAR" if hangar else "SKYPULSE SHOP"
+        heading = "BIRD HANGAR" if hangar else "BIRD SHOP"
         subtitle = "SELECT YOUR BIRD" if hangar else "UNLOCK WITH CRYSTALS"
         self.draw_panel(self.width * 0.035, self.height * 0.045, self.width * 0.93, self.height * 0.91, accent, 0.22)
         self.draw_label(heading, center, self.height * 0.855, 27, WHITE)
@@ -786,9 +1105,17 @@ class SkyPulseGame(Widget):
         if self.state == "menu":
             self.draw_menu()
         elif self.state == "shop":
+            self.draw_shop_hub()
+        elif self.state == "shop_birds":
             self.draw_collection()
         elif self.state == "hangar":
             self.draw_collection(hangar=True)
+        elif self.state == "themes":
+            self.draw_style_collection("theme")
+        elif self.state == "trails":
+            self.draw_style_collection("trail")
+        elif self.state == "pipes":
+            self.draw_style_collection("pipe")
         elif self.state == "backgrounds":
             self.draw_backgrounds()
         elif self.state == "paused":
@@ -815,15 +1142,7 @@ class SkyPulseGame(Widget):
                     self.draw_tower(tower)
                 for crystal in self.crystals:
                     self.draw_crystal(crystal)
-                if len(self.flight_trail) > 1:
-                    primary, secondary = self.current_skin["trail"]
-                    trail_points = [coordinate for point in reversed(self.flight_trail) for coordinate in point]
-                    self.colour(primary, 0.12)
-                    Line(points=trail_points, width=16 * self.scale)
-                    self.colour(secondary, 0.26)
-                    Line(points=trail_points, width=8 * self.scale)
-                    self.colour(primary, 0.80)
-                    Line(points=trail_points, width=2.1 * self.scale)
+                self.draw_living_trail()
                 for spark in self.sparks:
                     self.colour(spark["colour"], max(0, spark["life"]))
                     size = max(2, 7 * spark["life"]) * self.scale
@@ -843,8 +1162,16 @@ class SkyPulseGame(Widget):
             self.reset("menu")
         elif action == "shop":
             self.state = "shop"
+        elif action == "shop_birds":
+            self.state = "shop_birds"
         elif action == "hangar":
             self.state = "hangar"
+        elif action == "themes":
+            self.state = "themes"
+        elif action == "trails":
+            self.state = "trails"
+        elif action == "pipes":
+            self.state = "pipes"
         elif action == "backgrounds":
             self.state = "backgrounds"
         elif action == "resume":
@@ -853,13 +1180,16 @@ class SkyPulseGame(Widget):
             self.state = "paused"
         elif action.startswith("skin:"):
             self.select_skin(action.split(":", 1)[1])
+        elif action.startswith("style:"):
+            _, category, item_id = action.split(":", 2)
+            self.select_style(category, item_id)
 
     def select_skin(self, skin_id):
         skin = SKINS_BY_ID[skin_id]
         if skin_id in self.unlocked_skins:
             self.equipped_skin_id = skin_id
             self.notice = skin["name"] + " EQUIPPED"
-        elif self.state == "shop" and self.crystal_bank >= skin["price"]:
+        elif self.state == "shop_birds" and self.crystal_bank >= skin["price"]:
             self.crystal_bank -= skin["price"]
             self.unlocked_skins.append(skin_id)
             self.equipped_skin_id = skin_id
@@ -867,6 +1197,30 @@ class SkyPulseGame(Widget):
         else:
             required = max(0, skin["price"] - self.crystal_bank)
             self.notice = "COLLECT " + str(required) + " MORE CRYSTALS"
+            self.notice_timer = 1.7
+            return
+        self.notice_timer = 1.5
+        self.save_progress()
+
+    def select_style(self, category, item_id):
+        """Purchase or equip a trail, theme, or pipe skin from the style shop."""
+        styles = {
+            "theme": (THEMES_BY_ID, self.unlocked_themes, "equipped_theme_id"),
+            "trail": (TRAILS_BY_ID, self.unlocked_trails, "equipped_trail_id"),
+            "pipe": (PIPE_STYLES_BY_ID, self.unlocked_pipes, "equipped_pipe_id"),
+        }
+        catalog, unlocked, equipped_attribute = styles[category]
+        item = catalog[item_id]
+        if item_id in unlocked:
+            setattr(self, equipped_attribute, item_id)
+            self.notice = item["name"] + " EQUIPPED"
+        elif self.crystal_bank >= item["price"]:
+            self.crystal_bank -= item["price"]
+            unlocked.append(item_id)
+            setattr(self, equipped_attribute, item_id)
+            self.notice = item["name"] + " UNLOCKED"
+        else:
+            self.notice = "COLLECT " + str(item["price"] - self.crystal_bank) + " MORE CRYSTALS"
             self.notice_timer = 1.7
             return
         self.notice_timer = 1.5

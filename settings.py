@@ -1,8 +1,12 @@
 """SkyPulse settings — these are the safest values to experiment with first."""
 
-# Movement (increase gravity to fall faster; increase flap strength to rise higher)
-GRAVITY = 1_400
-FLAP_STRENGTH = 455
+# Flight is tuned as a responsive arc: one decisive flap, a soft apex, then a
+# capped dive. These values are all in game-pixels per second.
+GRAVITY = 1_100
+FLAP_STRENGTH = 405
+FLAP_REBOUND = 95
+MAX_RISE_SPEED = 455
+MAX_FALL_SPEED = 540
 
 # Obstacles
 TOWER_SPEED = 180
