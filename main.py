@@ -6,6 +6,7 @@ Press P to pause or resume.
 
 import json
 import random
+from datetime import date
 from math import exp, hypot, sin
 from pathlib import Path
 
@@ -19,6 +20,7 @@ Config.set("graphics", "multisamples", "4")
 
 from kivy.app import App
 from kivy.clock import Clock
+from kivy.core.audio import SoundLoader
 from kivy.core.image import Image as CoreImage
 from kivy.core.text import Label as CoreLabel
 from kivy.core.window import Window
@@ -34,6 +36,7 @@ from kivy.graphics import (
     Translate,
 )
 from kivy.uix.widget import Widget
+from kivy.utils import platform
 
 from settings import (
     AQUA,
@@ -49,6 +52,7 @@ from settings import (
     GOLD,
     GRAVITY,
     MAX_FALL_SPEED,
+    MAX_PARTICLES,
     MAX_RISE_SPEED,
     PINK,
     TOWER_GAP,
@@ -59,6 +63,8 @@ from settings import (
     WHITE,
 )
 
+
+MINT = (0.38, 0.96, 0.70)
 
 # Each bird is a real art asset with its own flight-light palette. Prices are
 # intentionally small in this first build, so new players can unlock birds by
@@ -100,10 +106,49 @@ SKINS = (
         "accent": GOLD,
         "trail": (GOLD, AQUA),
     },
+    {
+        "id": "aurora",
+        "name": "AURORA",
+        "asset": "assets/images/characters/lumen.png",
+        "flap_asset": "assets/images/characters/lumen-flap.png",
+        "price": 80,
+        "accent": MINT,
+        "trail": (MINT, AQUA),
+        "tint": (0.72, 1.0, 0.84),
+    },
+    {
+        "id": "orchid",
+        "name": "ORCHID",
+        "asset": "assets/images/characters/nova.png",
+        "flap_asset": "assets/images/characters/nova-flap.png",
+        "price": 105,
+        "accent": VIOLET,
+        "trail": (VIOLET, PINK),
+        "tint": (0.88, 0.60, 1.0),
+    },
+    {
+        "id": "coral",
+        "name": "CORAL",
+        "asset": "assets/images/characters/ember.png",
+        "flap_asset": "assets/images/characters/ember-flap.png",
+        "price": 135,
+        "accent": PINK,
+        "trail": (PINK, GOLD),
+        "tint": (1.0, 0.70, 0.84),
+    },
+    {
+        "id": "glacier",
+        "name": "GLACIER",
+        "asset": "assets/images/characters/sol.png",
+        "flap_asset": "assets/images/characters/sol-flap.png",
+        "price": 165,
+        "accent": WHITE,
+        "trail": (WHITE, AQUA),
+        "tint": (0.72, 0.92, 1.0),
+    },
 )
 
 SKINS_BY_ID = {skin["id"]: skin for skin in SKINS}
-MINT = (0.38, 0.96, 0.70)
 
 # World style is deliberately modular: players can mix a bird, a live trail,
 # a city treatment, and a pipe finish instead of being locked to one preset.
@@ -111,6 +156,8 @@ TRAILS = (
     {"id": "pulse", "name": "PULSE", "price": 0, "accent": AQUA, "colours": (VIOLET, AQUA)},
     {"id": "solar", "name": "SOLAR", "price": 35, "accent": GOLD, "colours": (GOLD, PINK)},
     {"id": "aurora", "name": "AURORA", "price": 60, "accent": MINT, "colours": (MINT, VIOLET)},
+    {"id": "comet", "name": "COMET", "price": 85, "accent": WHITE, "colours": (WHITE, AQUA)},
+    {"id": "ember", "name": "EMBER", "price": 115, "accent": PINK, "colours": (PINK, GOLD)},
 )
 
 THEMES = (
@@ -144,18 +191,111 @@ THEMES = (
         "sky_colours": (GOLD, PINK, VIOLET),
         "floor": (0.065, 0.018, 0.025),
     },
+    {
+        "id": "midnight_tide",
+        "name": "MIDNIGHT TIDE",
+        "price": 125,
+        "accent": AQUA,
+        "tint": (0.005, 0.025, 0.11),
+        "tint_alpha": 0.36,
+        "sky_colours": (AQUA, VIOLET, WHITE),
+        "floor": (0.004, 0.016, 0.075),
+    },
+    {
+        "id": "velvet_dawn",
+        "name": "VELVET DAWN",
+        "price": 160,
+        "accent": PINK,
+        "tint": (0.11, 0.008, 0.075),
+        "tint_alpha": 0.30,
+        "sky_colours": (PINK, GOLD, VIOLET),
+        "floor": (0.060, 0.006, 0.052),
+    },
 )
 
 PIPE_STYLES = (
-    {"id": "ion", "name": "ION", "price": 0, "accent": AQUA, "frame": VIOLET, "panel": (0.04, 0.18, 0.48), "energy": AQUA, "cap": GOLD},
-    {"id": "rose", "name": "ROSE", "price": 40, "accent": PINK, "frame": PINK, "panel": (0.33, 0.04, 0.26), "energy": VIOLET, "cap": GOLD},
-    {"id": "solar", "name": "SOLAR", "price": 70, "accent": GOLD, "frame": GOLD, "panel": (0.35, 0.14, 0.04), "energy": PINK, "cap": AQUA},
+    {
+        "id": "ion", "name": "ION", "price": 0, "accent": AQUA, "frame": VIOLET,
+        "panel": (0.04, 0.18, 0.48), "energy": AQUA, "cap": GOLD,
+    },
+    {
+        "id": "rose", "name": "ROSE", "price": 40, "accent": PINK, "frame": PINK,
+        "panel": (0.33, 0.04, 0.26), "energy": VIOLET, "cap": GOLD,
+    },
+    {
+        "id": "solar", "name": "SOLAR", "price": 70, "accent": GOLD, "frame": GOLD,
+        "panel": (0.35, 0.14, 0.04), "energy": PINK, "cap": AQUA,
+    },
+    {
+        "id": "mint", "name": "MINT", "price": 105, "accent": MINT, "frame": MINT,
+        "panel": (0.025, 0.26, 0.18), "energy": AQUA, "cap": WHITE,
+    },
+    {
+        "id": "prism", "name": "PRISM", "price": 145, "accent": WHITE, "frame": WHITE,
+        "panel": (0.16, 0.06, 0.34), "energy": PINK, "cap": AQUA,
+    },
 )
 
 TRAILS_BY_ID = {trail["id"]: trail for trail in TRAILS}
 THEMES_BY_ID = {theme["id"]: theme for theme in THEMES}
 PIPE_STYLES_BY_ID = {style["id"]: style for style in PIPE_STYLES}
 SAVE_PATH = Path(__file__).parent / "skypulse_progress.json"
+
+SOUND_FILES = {
+    "flap": "assets/audio/flap.wav",
+    "score": "assets/audio/score.wav",
+    "crystal": "assets/audio/crystal.wav",
+    "crash": "assets/audio/crash.wav",
+    "new_best": "assets/audio/new-best.wav",
+    "unlock": "assets/audio/unlock.wav",
+}
+SOUND_VOLUMES = {
+    "flap": 0.34,
+    "score": 0.38,
+    "crystal": 0.32,
+    "crash": 0.44,
+    "new_best": 0.48,
+    "unlock": 0.44,
+}
+
+# The daily layer is deliberately small: three clear tasks, one score target,
+# and rewards that let players reach a cosmetic faster without turning play
+# into a grind.
+MISSIONS = (
+    {
+        "id": "flaps",
+        "name": "RIDE THE CURRENT",
+        "summary": "Flap 25 times across any flights.",
+        "metric": "flaps",
+        "target": 25,
+        "style_category": "trail",
+        "reward_label": "TRAIL STYLE",
+    },
+    {
+        "id": "score",
+        "name": "CLEAR THE GLOW",
+        "summary": "Pass 8 pipes across any flights.",
+        "metric": "score",
+        "target": 8,
+        "style_category": "pipe",
+        "reward_label": "PIPE FINISH",
+    },
+    {
+        "id": "crystals",
+        "name": "CRYSTAL HUNT",
+        "summary": "Collect 6 crystals across any flights.",
+        "metric": "crystals",
+        "target": 6,
+        "style_category": "theme",
+        "reward_label": "WORLD THEME",
+    },
+)
+ACHIEVEMENTS = {
+    "first_flight": {"name": "FIRST FLIGHT", "reward": 5},
+    "sky_runner": {"name": "SKY RUNNER", "reward": 15},
+    "crystal_keeper": {"name": "CRYSTAL KEEPER", "reward": 15},
+    "style_icon": {"name": "STYLE ICON", "reward": 10},
+}
 
 
 class SkyPulseGame(Widget):
@@ -170,6 +310,8 @@ class SkyPulseGame(Widget):
             for _ in range(72)
         ]
         self.backdrop_texture = self.load_texture("assets/images/backgrounds/neon-city.png")
+        self.app_icon_texture = self.load_texture("assets/images/branding/skypulse-app-icon.png")
+        self.launch_texture = self.load_texture("assets/images/branding/skypulse-launch-art.png")
         self.skin_textures = {
             skin["id"]: {
                 "up": self.load_texture(skin["asset"]),
@@ -180,6 +322,13 @@ class SkyPulseGame(Widget):
         self.progress = self.load_progress()
         self.best_score = self.progress["best_score"]
         self.crystal_bank = self.progress["crystal_bank"]
+        self.sound_enabled = self.progress["sound_enabled"]
+        self.haptics_enabled = self.progress["haptics_enabled"]
+        self.reduce_motion = self.progress["reduce_motion"]
+        self.tutorial_complete = self.progress["tutorial_complete"]
+        self.achievements = self.progress["achievements"]
+        self.lifetime = self.progress["lifetime"]
+        self.daily_state = self.prepare_daily_state(self.progress["daily"])
         self.unlocked_skins = self.progress["unlocked"]
         self.equipped_skin_id = self.progress["equipped"]
         self.unlocked_trails = self.progress["unlocked_trails"]
@@ -191,7 +340,21 @@ class SkyPulseGame(Widget):
         self.hitboxes = []
         self.notice = ""
         self.notice_timer = 0
-        self.reset("menu")
+        self.sounds = self.load_sounds()
+        city_rng = random.Random(7391)
+        self.city_layers = tuple(
+            tuple(
+                (
+                    city_rng.random(),
+                    city_rng.uniform(28, 100),
+                    city_rng.uniform(13, 27),
+                )
+                for _ in range(count)
+            )
+            for count in (9, 13)
+        )
+        self.launch_timer = 1.25
+        self.reset("splash")
         # Draw on every display frame instead of a fixed 60 Hz tick; all motion
         # below is delta-time based, so high-refresh screens stay fluid too.
         Clock.schedule_interval(self.update, 0)
@@ -208,11 +371,100 @@ class SkyPulseGame(Widget):
         except Exception:
             return None
 
+    def load_sounds(self):
+        """Load small local effects once; missing audio never blocks a flight."""
+        sounds = {}
+        for name, relative_path in SOUND_FILES.items():
+            try:
+                sound = SoundLoader.load(str(Path(__file__).parent / relative_path))
+                if sound:
+                    sound.volume = SOUND_VOLUMES[name]
+                sounds[name] = sound
+            except Exception:
+                sounds[name] = None
+        return sounds
+
+    def play_sound(self, name):
+        if not self.sound_enabled:
+            return
+        sound = self.sounds.get(name)
+        if sound:
+            try:
+                sound.stop()
+                sound.play()
+            except Exception:
+                pass
+
+    def trigger_haptic(self, style="light"):
+        """Use native feedback where the packaged mobile build makes it available."""
+        if not self.haptics_enabled:
+            return
+        try:
+            if platform == "android":
+                from jnius import autoclass
+
+                activity = autoclass("org.kivy.android.PythonActivity").mActivity
+                context = autoclass("android.content.Context")
+                vibrator = activity.getSystemService(context.VIBRATOR_SERVICE)
+                vibrator.vibrate({"light": 8, "medium": 16, "heavy": 28}[style])
+            elif platform == "ios":
+                from pyobjus import autoclass
+
+                feedback = autoclass("UIImpactFeedbackGenerator").alloc().initWithStyle_(
+                    {"light": 0, "medium": 1, "heavy": 2}[style]
+                )
+                feedback.prepare()
+                feedback.impactOccurred()
+        except Exception:
+            # Desktop and unsupported mobile runtimes simply skip haptics.
+            pass
+
+    @staticmethod
+    def daily_seed(day_token):
+        return sum((index + 1) * ord(character) for index, character in enumerate(day_token))
+
+    def prepare_daily_state(self, saved_daily):
+        """Keep one deterministic daily challenge and three missions per calendar day."""
+        today = date.today().isoformat()
+        seed = self.daily_seed(today)
+        fresh = {
+            "date": today,
+            "target": 8 + seed % 7,
+            "best": 0,
+            "reward_claimed": False,
+            "missions": {mission["id"]: 0 for mission in MISSIONS},
+            "completed": [],
+        }
+        if not isinstance(saved_daily, dict) or saved_daily.get("date") != today:
+            return fresh
+
+        saved_missions = saved_daily.get("missions", {})
+        saved_missions = saved_missions if isinstance(saved_missions, dict) else {}
+        completed = [mission_id for mission_id in saved_daily.get("completed", []) if mission_id in saved_missions]
+        return {
+            "date": today,
+            "target": fresh["target"],
+            "best": max(0, int(saved_daily.get("best", 0))),
+            "reward_claimed": bool(saved_daily.get("reward_claimed", False)),
+            "missions": {
+                mission["id"]: max(0, int(saved_missions.get(mission["id"], 0)))
+                for mission in MISSIONS
+            },
+            "completed": completed,
+        }
+
     @staticmethod
     def load_progress():
         default = {
             "best_score": 0,
             "crystal_bank": 0,
+            "sound_enabled": True,
+            "haptics_enabled": True,
+            "reduce_motion": False,
+            "tutorial_complete": False,
+            "achievements": [],
+            "lifetime": {"runs": 0, "flaps": 0, "score": 0, "crystals": 0},
+            "daily": {},
             "unlocked": ["nova"],
             "equipped": "nova",
             "unlocked_trails": ["pulse"],
@@ -239,9 +491,29 @@ class SkyPulseGame(Widget):
             equipped_trail = saved.get("equipped_trail", "pulse")
             equipped_theme = saved.get("equipped_theme", "neon_city")
             equipped_pipe = saved.get("equipped_pipe", "ion")
+            lifetime_saved = saved.get("lifetime", {})
+            lifetime_saved = lifetime_saved if isinstance(lifetime_saved, dict) else {}
+            lifetime = {
+                key: max(0, int(lifetime_saved.get(key, 0)))
+                for key in ("runs", "flaps", "score", "crystals")
+            }
+            achievements = [
+                achievement_id
+                for achievement_id in saved.get("achievements", [])
+                if achievement_id in ACHIEVEMENTS
+            ]
+            daily = saved.get("daily", {})
+            daily = daily if isinstance(daily, dict) else {}
             return {
                 "best_score": max(0, int(saved.get("best_score", 0))),
                 "crystal_bank": max(0, int(saved.get("crystal_bank", 0))),
+                "sound_enabled": bool(saved.get("sound_enabled", True)),
+                "haptics_enabled": bool(saved.get("haptics_enabled", True)),
+                "reduce_motion": bool(saved.get("reduce_motion", False)),
+                "tutorial_complete": bool(saved.get("tutorial_complete", False)),
+                "achievements": achievements,
+                "lifetime": lifetime,
+                "daily": daily,
                 "unlocked": unlocked,
                 "equipped": equipped,
                 "unlocked_trails": unlocked_trails,
@@ -258,6 +530,13 @@ class SkyPulseGame(Widget):
         self.progress = {
             "best_score": self.best_score,
             "crystal_bank": self.crystal_bank,
+            "sound_enabled": self.sound_enabled,
+            "haptics_enabled": self.haptics_enabled,
+            "reduce_motion": self.reduce_motion,
+            "tutorial_complete": self.tutorial_complete,
+            "achievements": self.achievements,
+            "lifetime": self.lifetime,
+            "daily": self.daily_state,
             "unlocked": self.unlocked_skins,
             "equipped": self.equipped_skin_id,
             "unlocked_trails": self.unlocked_trails,
@@ -292,6 +571,16 @@ class SkyPulseGame(Widget):
     def scale(self):
         """Keeps the same game proportions if you resize the desktop window."""
         return self.width / 420 if self.width else 1
+
+    @property
+    def safe_top_padding(self):
+        """Conservative inset for a notch/Dynamic Island in the iPhone package."""
+        return (46 if platform == "ios" else 0) * self.scale
+
+    @property
+    def safe_bottom_padding(self):
+        """Keep interactive controls clear of the iPhone home indicator."""
+        return (30 if platform == "ios" else 0) * self.scale
 
     @property
     def ground_y(self):
@@ -330,14 +619,139 @@ class SkyPulseGame(Widget):
         self.flap_bounce = 0
         self.score = 0
         self.crystals_collected = 0
+        self.run_flaps = 0
+        self.run_best_before = self.best_score
+        self.new_best_this_run = False
+        self.new_best_timer = 0
+        self.daily_reward_earned = False
+        self.daily_rewards_this_run = []
+        self.is_daily_run = False
         self.towers = []
         self.crystals = []
         self.sparks = []
+        self.score_bursts = []
         self.flight_trail = []
         self.spawn_timer = 0.8
         self.trail_timer = 0
         self.screen_shake = 0
+        self.impact_flash = 0
+        self.achievement_banner = ""
+        self.achievement_timer = 0
+        self.tutorial_active = state == "playing" and not self.tutorial_complete
+        self.tutorial_phase = 0
+        self.world_event = None
+        self.world_event_timer = random.uniform(10, 16)
+        self.world_event_duration = 0
         self.time = 0
+
+    def start_daily(self):
+        self.reset("playing")
+        self.is_daily_run = True
+        self.lifetime["runs"] += 1
+        self.flap()
+
+    def toggle_setting(self, setting):
+        values = {
+            "sound": "sound_enabled",
+            "haptics": "haptics_enabled",
+            "motion": "reduce_motion",
+        }
+        attribute = values[setting]
+        setattr(self, attribute, not getattr(self, attribute))
+        if setting == "motion" and self.reduce_motion:
+            self.world_event = None
+            self.screen_shake = 0
+        self.notice = {
+            "sound": "SOUND " + ("ON" if self.sound_enabled else "OFF"),
+            "haptics": "HAPTICS " + ("ON" if self.haptics_enabled else "OFF"),
+            "motion": "REDUCED MOTION " + ("ON" if self.reduce_motion else "OFF"),
+        }[setting]
+        self.notice_timer = 1.4
+        self.save_progress()
+
+    def unlock_style_reward(self, category):
+        """Unlock and equip the next cosmetic in a category as a daily prize."""
+        collections = {
+            "theme": (THEMES, self.unlocked_themes, "equipped_theme_id", "WORLD THEME"),
+            "trail": (TRAILS, self.unlocked_trails, "equipped_trail_id", "TRAIL STYLE"),
+            "pipe": (PIPE_STYLES, self.unlocked_pipes, "equipped_pipe_id", "PIPE FINISH"),
+        }
+        items, unlocked, equipped_attribute, label = collections[category]
+        locked = [item for item in items if item["id"] not in unlocked]
+        if not locked:
+            return None, label + " COLLECTION COMPLETE"
+        item = min(locked, key=lambda option: option["price"])
+        unlocked.append(item["id"])
+        setattr(self, equipped_attribute, item["id"])
+        return item, item["name"] + " " + label + " UNLOCKED"
+
+    def unlock_bonus_style_reward(self):
+        """Use the daily seed to rotate the score-challenge cosmetic reward."""
+        order = ("theme", "trail", "pipe")
+        start = self.daily_seed(self.daily_state["date"]) % len(order)
+        for offset in range(len(order)):
+            item, message = self.unlock_style_reward(order[(start + offset) % len(order)])
+            if item:
+                return item, message
+        return None, "STYLE COLLECTION COMPLETE"
+
+    def advance_mission(self, metric, amount=1):
+        """Advance one of today's tiny, visible goals and celebrate completion."""
+        for mission in MISSIONS:
+            if mission["metric"] != metric:
+                continue
+            mission_id = mission["id"]
+            previous = self.daily_state["missions"][mission_id]
+            current = min(mission["target"], previous + amount)
+            self.daily_state["missions"][mission_id] = current
+            if current >= mission["target"] and mission_id not in self.daily_state["completed"]:
+                self.daily_state["completed"].append(mission_id)
+                item, _message = self.unlock_style_reward(mission["style_category"])
+                if item:
+                    self.daily_rewards_this_run.append((mission["reward_label"], item["name"]))
+                self.play_sound("unlock")
+                self.trigger_haptic("medium")
+                self.save_progress()
+
+    def unlock_achievement(self, achievement_id):
+        if achievement_id in self.achievements:
+            return
+        achievement = ACHIEVEMENTS[achievement_id]
+        self.achievements.append(achievement_id)
+        self.crystal_bank += achievement["reward"]
+        self.achievement_banner = achievement["name"] + "  +" + str(achievement["reward"]) + " ◆"
+        self.achievement_timer = 3.4
+        self.play_sound("unlock")
+        self.trigger_haptic("medium")
+        self.save_progress()
+
+    def update_tutorial(self):
+        if not self.tutorial_active:
+            return
+        if self.tutorial_phase == 0 and self.run_flaps >= 2:
+            self.tutorial_phase = 1
+        if self.tutorial_phase == 1 and self.score >= 1:
+            self.tutorial_phase = 2
+        if self.tutorial_phase == 2 and (self.crystals_collected >= 1 or self.score >= 3):
+            self.tutorial_active = False
+            self.tutorial_complete = True
+            self.achievement_banner = "TRAINING COMPLETE"
+            self.achievement_timer = 2.5
+            self.save_progress()
+
+    def update_world_event(self, dt):
+        if self.reduce_motion:
+            return
+        if self.world_event:
+            self.world_event_duration -= dt
+            if self.world_event_duration <= 0:
+                self.world_event = None
+                self.world_event_timer = random.uniform(12, 20)
+            return
+        self.world_event_timer -= dt
+        if self.world_event_timer <= 0:
+            self.world_event = random.choice(("meteor", "ion_rain"))
+            self.world_event_duration = 4.6
 
     def flap(self):
         if self.state != "playing":
@@ -354,6 +768,14 @@ class SkyPulseGame(Widget):
         # A real bird snaps its head up with the wing beat, then settles into
         # the dive rather than rotating mechanically with raw velocity.
         self.bird_tilt = max(self.bird_tilt, 17)
+        self.run_flaps += 1
+        self.lifetime["flaps"] += 1
+        self.advance_mission("flaps")
+        self.unlock_achievement("first_flight")
+        self.play_sound("flap")
+        self.trigger_haptic("light")
+        if not self.reduce_motion:
+            self.screen_shake = max(self.screen_shake, 0.025)
         primary, secondary = self.current_trail["colours"]
         for index in range(8):
             self.sparks.append(
@@ -370,6 +792,7 @@ class SkyPulseGame(Widget):
     def start_or_flap(self):
         if self.state in ("menu", "game_over"):
             self.reset("playing")
+            self.lifetime["runs"] += 1
         elif self.state == "paused":
             self.state = "playing"
             return
@@ -381,7 +804,14 @@ class SkyPulseGame(Widget):
         upper_limit = self.height - gap / 2 - 110 * self.scale
         gap_y = random.uniform(lower_limit, max(lower_limit + 1, upper_limit))
         self.towers.append(
-            {"x": self.width + 35 * self.scale, "gap_y": gap_y, "gap": gap, "passed": False}
+            {
+                "x": self.width + 35 * self.scale,
+                "gap_y": gap_y,
+                "gap": gap,
+                "passed": False,
+                "variant": random.choices(("standard", "striped", "beacon"), weights=(0.66, 0.24, 0.10))[0],
+                "phase": random.random() * 6.28,
+            }
         )
         if random.random() < 0.72:
             self.crystals.append(
@@ -397,8 +827,19 @@ class SkyPulseGame(Widget):
             return
         self.state = "game_over"
         self.best_score = max(self.best_score, self.score)
-        self.save_progress()
-        self.screen_shake = 0.32
+        self.play_sound("crash")
+        self.trigger_haptic("heavy")
+        self.impact_flash = 0.42
+        self.screen_shake = 0 if self.reduce_motion else 0.32
+        if self.is_daily_run:
+            self.daily_state["best"] = max(self.daily_state["best"], self.score)
+            if self.score >= self.daily_state["target"] and not self.daily_state["reward_claimed"]:
+                self.daily_state["reward_claimed"] = True
+                item, _message = self.unlock_bonus_style_reward()
+                self.daily_reward_earned = item is not None
+                if item:
+                    self.daily_rewards_this_run.append(("BONUS STYLE", item["name"]))
+                self.play_sound("new_best")
         for _ in range(18):
             self.sparks.append(
                 {
@@ -410,6 +851,8 @@ class SkyPulseGame(Widget):
                     "vy": random.randint(-160, 160),
                 }
             )
+        self.sparks = self.sparks[-MAX_PARTICLES:]
+        self.save_progress()
 
     def update(self, dt):
         # Prevent a momentary window stall from causing a visible jump or a
@@ -418,6 +861,9 @@ class SkyPulseGame(Widget):
         self.time += dt
         self.screen_shake = max(0, self.screen_shake - dt)
         self.notice_timer = max(0, self.notice_timer - dt)
+        self.impact_flash = max(0, self.impact_flash - dt * 1.9)
+        self.new_best_timer = max(0, self.new_best_timer - dt)
+        self.achievement_timer = max(0, self.achievement_timer - dt)
         self.flap_energy = max(0, self.flap_energy - dt * 2.8)
         self.flap_bounce = max(0, self.flap_bounce - dt * 3.6)
         # A short, even wing cycle reads as a deliberate flap rather than a
@@ -432,7 +878,19 @@ class SkyPulseGame(Widget):
             }
             for spark in self.sparks
             if spark["life"] > 0
+        ][-MAX_PARTICLES:]
+        self.score_bursts = [
+            {**burst, "y": burst["y"] + 42 * self.scale * dt, "life": burst["life"] - dt}
+            for burst in self.score_bursts
+            if burst["life"] > 0
         ]
+
+        if self.state == "splash":
+            self.launch_timer -= dt
+            if self.launch_timer <= 0:
+                self.reset("menu")
+            self.draw()
+            return
 
         if self.state != "playing":
             self.draw()
@@ -460,6 +918,7 @@ class SkyPulseGame(Widget):
         self.spawn_timer -= dt
         self.trail_timer -= dt
         speed = (TOWER_SPEED + min(self.score, 25) * 4) * scale
+        self.update_world_event(dt)
 
         if self.trail_timer <= 0:
             self.trail_timer = 0.05
@@ -484,6 +943,22 @@ class SkyPulseGame(Widget):
             if not tower["passed"] and tower["x"] + TOWER_WIDTH * scale < bird_hit_x - bird_half_width:
                 tower["passed"] = True
                 self.score += 1
+                self.lifetime["score"] += 1
+                self.advance_mission("score")
+                self.play_sound("score")
+                self.trigger_haptic("light")
+                self.impact_flash = max(self.impact_flash, 0.12)
+                if not self.reduce_motion:
+                    self.screen_shake = max(self.screen_shake, 0.07)
+                self.score_bursts.append(
+                    {
+                        "x": bird_x + 6 * scale,
+                        "y": self.bird_y + 28 * scale,
+                        "life": 0.72,
+                        "colour": GOLD,
+                        "text": "+1",
+                    }
+                )
                 self.sparks.append(
                     {
                         "x": bird_x,
@@ -494,6 +969,17 @@ class SkyPulseGame(Widget):
                         "vy": 75,
                     }
                 )
+                if not self.new_best_this_run and self.score > self.run_best_before:
+                    self.new_best_this_run = True
+                    self.best_score = self.score
+                    self.new_best_timer = 2.7
+                    self.achievement_banner = "NEW BEST!"
+                    self.achievement_timer = 2.7
+                    self.play_sound("new_best")
+                    self.trigger_haptic("medium")
+                    self.impact_flash = max(self.impact_flash, 0.22)
+                if self.score >= 10:
+                    self.unlock_achievement("sky_runner")
 
         for crystal in self.crystals:
             crystal["x"] -= speed * dt
@@ -501,6 +987,11 @@ class SkyPulseGame(Widget):
                 crystal["x"] = -100
                 self.crystals_collected += 1
                 self.crystal_bank += 1
+                self.lifetime["crystals"] += 1
+                self.advance_mission("crystals")
+                self.play_sound("crystal")
+                self.trigger_haptic("light")
+                self.impact_flash = max(self.impact_flash, 0.08)
                 for _ in range(12):
                     self.sparks.append(
                         {
@@ -512,9 +1003,12 @@ class SkyPulseGame(Widget):
                             "vy": random.randint(-100, 100),
                         }
                     )
+                if self.lifetime["crystals"] >= 25:
+                    self.unlock_achievement("crystal_keeper")
 
         self.towers = [tower for tower in self.towers if tower["x"] > -100 * scale]
         self.crystals = [crystal for crystal in self.crystals if crystal["x"] > -40 * scale]
+        self.update_tutorial()
 
         for tower in self.towers:
             gap_bottom = tower["gap_y"] - tower["gap"] / 2
@@ -643,9 +1137,50 @@ class SkyPulseGame(Widget):
         if not hangar or owned:
             self.hitboxes.append((x, y, width, height, "skin:" + skin["id"]))
 
+    def draw_city_parallax(self, theme, motion_time):
+        """Low-cost foreground silhouettes give the city depth at every speed."""
+        base_y = self.ground_y
+        layer_specs = (
+            (self.city_layers[0], 7, 0.11, (0.015, 0.018, 0.09)),
+            (self.city_layers[1], 16, 0.20, (0.018, 0.025, 0.14)),
+        )
+        for buildings, speed, alpha, colour in layer_specs:
+            for index, (position, height, width) in enumerate(buildings):
+                building_width = width * self.scale
+                x = (position * (self.width + building_width) - motion_time * speed * self.scale) % (
+                    self.width + building_width
+                ) - building_width
+                building_height = height * self.scale
+                self.colour(colour, 0.90)
+                Rectangle(pos=(x, base_y), size=(building_width, building_height))
+                self.colour(theme["accent"], alpha)
+                for window_y in range(int(base_y + 11 * self.scale), int(base_y + building_height), int(15 * self.scale)):
+                    window_x = x + (6 + (index % 3) * 3) * self.scale
+                    Rectangle(pos=(window_x, window_y), size=(max(1, 2 * self.scale), max(1, 3 * self.scale)))
+
+    def draw_cinematic_event(self, theme, motion_time):
+        """Rare backdrop-only events enrich a run without changing collision rules."""
+        if not self.world_event or self.reduce_motion:
+            return
+        event_alpha = min(1, self.world_event_duration / 0.65)
+        if self.world_event == "meteor":
+            for index in range(9):
+                phase = (motion_time * (0.34 + index * 0.025) + index * 0.17) % 1
+                x = self.width * (1.08 - phase)
+                y = self.height * (0.45 + ((index * 0.13 + phase * 0.17) % 0.45))
+                self.colour(theme["sky_colours"][index % 3], 0.28 * event_alpha)
+                Line(points=[x, y, x + 34 * self.scale, y + 13 * self.scale], width=1.1 * self.scale)
+        else:
+            for index in range(18):
+                x = (index * 47 * self.scale + motion_time * 22 * self.scale) % (self.width + 22 * self.scale) - 11 * self.scale
+                y = (index * 73 * self.scale - motion_time * 270 * self.scale) % self.height
+                self.colour(theme["accent"], 0.18 * event_alpha)
+                Line(points=[x, y, x - 8 * self.scale, y - 34 * self.scale], width=0.85 * self.scale)
+
     def draw_background(self):
         """Animated sky, city parallax, horizon glow, and a perspective runway."""
         theme = self.current_theme
+        motion_time = self.time * (0.16 if self.reduce_motion else 1)
         if self.backdrop_texture:
             self.colour(WHITE)
             Rectangle(texture=self.backdrop_texture, pos=(0, 0), size=self.size)
@@ -660,22 +1195,22 @@ class SkyPulseGame(Widget):
 
         # A separate moving star layer sells motion even while the world art stays crisp.
         for index in range(4):
-            drift = (self.time * (10 + index * 3) + index * 133) % (self.width + 180) - 90
+            drift = (motion_time * (10 + index * 3) + index * 133) % (self.width + 180) - 90
             cloud_y = self.height * (0.38 + (index % 3) * 0.17)
             cloud_size = (120 + index * 35) * self.scale
             self.colour(theme["sky_colours"][index % 3], 0.025)
             Ellipse(pos=(drift - cloud_size / 2, cloud_y - cloud_size / 5), size=(cloud_size, cloud_size / 2.5))
 
         for x, y, radius in self.stars:
-            shimmer = 0.55 + sin(self.time * 2 + x * 12) * 0.2
-            star_x = (x * self.width - self.time * (7 + radius * 4) * self.scale) % self.width
+            shimmer = 0.55 + sin(motion_time * 2 + x * 12) * 0.2
+            star_x = (x * self.width - motion_time * (7 + radius * 4) * self.scale) % self.width
             self.colour(theme["accent"] if radius == 2 else WHITE, shimmer)
             Ellipse(pos=(star_x, y * self.height), size=(radius * 2, radius * 2))
 
         # A breathing horizon glow is layered over the cinematic city illustration.
         glow_center_x = self.width * 0.50
         glow_center_y = self.height * 0.105
-        horizon_breath = sin(self.time * 1.7) * 0.025
+        horizon_breath = sin(motion_time * 1.7) * 0.025
         for multiplier, alpha, colour in zip(
             (1.20, 0.90, 0.58),
             (0.020, 0.045 + horizon_breath, 0.08),
@@ -686,7 +1221,7 @@ class SkyPulseGame(Widget):
             Ellipse(pos=(glow_center_x - diameter / 2, glow_center_y - diameter / 2), size=(diameter, diameter))
 
         for index in range(3):
-            phase = (self.time * (0.15 + index * 0.04) + index * 0.34) % 1
+            phase = (motion_time * (0.15 + index * 0.04) + index * 0.34) % 1
             comet_x = self.width * (1 - phase) + 40 * self.scale
             comet_y = self.height * (0.72 + index * 0.07)
             self.colour(theme["accent"] if index % 2 else theme["sky_colours"][1], 0.18)
@@ -694,6 +1229,8 @@ class SkyPulseGame(Widget):
                 points=[comet_x, comet_y, comet_x + 34 * self.scale, comet_y + 12 * self.scale],
                 width=max(0.7, 1.2 * self.scale),
             )
+        self.draw_city_parallax(theme, motion_time)
+        self.draw_cinematic_event(theme, motion_time)
 
     def draw_runway(self):
         """Draw the playable floor so its bright edge exactly matches ground collision."""
@@ -764,6 +1301,7 @@ class SkyPulseGame(Widget):
         scale = self.scale
         width = TOWER_WIDTH * scale
         pipe = self.current_pipe
+        variant = tower.get("variant", "standard")
         gap_bottom = tower["gap_y"] - tower["gap"] / 2
         gap_top = tower["gap_y"] + tower["gap"] / 2
         sections = ((self.ground_y, gap_bottom - self.ground_y, True), (gap_top, self.height - gap_top, False))
@@ -790,6 +1328,20 @@ class SkyPulseGame(Widget):
             Rectangle(pos=(tower["x"] + 15 * scale, energy_y), size=(width - 30 * scale, 3 * scale))
             self.colour(pipe["energy"], 0.92)
             Line(rectangle=(tower["x"], y, width, height), width=1.4 * scale)
+            if variant == "striped":
+                for stripe_y in range(int(y + 18 * scale), int(y + height - 8 * scale), int(30 * scale)):
+                    self.colour(pipe["cap"], 0.28)
+                    Line(
+                        points=[tower["x"] + 6 * scale, stripe_y, tower["x"] + width - 6 * scale, stripe_y + 12 * scale],
+                        width=2.2 * scale,
+                    )
+            elif variant == "beacon":
+                beacon_y = y + height * 0.5
+                beacon_alpha = 0.40 + sin(self.time * 7 + tower.get("phase", 0)) * 0.28
+                self.colour(pipe["energy"], beacon_alpha)
+                Ellipse(pos=(tower["x"] + width * 0.5 - 6 * scale, beacon_y - 6 * scale), size=(12 * scale, 12 * scale))
+                self.colour(WHITE, 0.78)
+                Ellipse(pos=(tower["x"] + width * 0.5 - 2 * scale, beacon_y - 2 * scale), size=(4 * scale, 4 * scale))
             cap_y = y + height - 14 * scale if cap_on_top else y
             self.colour(pipe["cap"], 0.17)
             RoundedRectangle(
@@ -882,6 +1434,7 @@ class SkyPulseGame(Widget):
         frames = self.skin_textures.get(skin["id"], {})
         up_texture = frames.get("up")
         down_texture = frames.get("down")
+        tint = skin.get("tint", WHITE)
         if up_texture:
             art_width = BIRD_DRAW_WIDTH * scale
             PushMatrix()
@@ -890,7 +1443,7 @@ class SkyPulseGame(Widget):
             # The eased sine mix turns two drawn wing poses into a fluid flap
             # with no hard sprite pop at the top or bottom of the beat.
             up_height = art_width * up_texture.height / max(up_texture.width, 1)
-            self.colour(WHITE, 1 - flap_mix if down_texture else 1)
+            self.colour(tint, 1 - flap_mix if down_texture else 1)
             Rectangle(
                 texture=up_texture,
                 pos=(-art_width * 0.60, -up_height * 0.50),
@@ -898,7 +1451,7 @@ class SkyPulseGame(Widget):
             )
             if down_texture and flap_mix > 0:
                 down_height = art_width * down_texture.height / max(down_texture.width, 1)
-                self.colour(WHITE, flap_mix)
+                self.colour(tint, flap_mix)
                 Rectangle(
                     texture=down_texture,
                     pos=(-art_width * 0.60, -down_height * 0.50),
@@ -921,20 +1474,55 @@ class SkyPulseGame(Widget):
         self.colour(GOLD)
         Ellipse(pos=(x + 31 * scale, y - 1 * scale), size=(17 * scale, 9 * scale))
 
+    def draw_gameplay_fx(self):
+        """Keep feedback readable: a tiny score lift, a soft hit flash, then celebration."""
+        scale = self.scale
+        if self.impact_flash > 0:
+            self.colour(PINK if self.state == "game_over" else WHITE, min(0.20, self.impact_flash * 0.42))
+            Rectangle(pos=(0, 0), size=self.size)
+        for burst in self.score_bursts:
+            alpha = max(0, burst["life"] / 0.72)
+            self.draw_label(burst["text"], burst["x"], burst["y"], 17, burst["colour"], alpha=alpha)
+        if self.new_best_timer > 0:
+            breathe = 1 + sin(self.time * 9) * 0.06
+            self.draw_panel(
+                self.width * 0.5 - 78 * scale * breathe,
+                self.height * 0.735,
+                156 * scale * breathe,
+                29 * scale,
+                GOLD,
+                0.22,
+            )
+            self.draw_label("NEW BEST!", self.width / 2, self.height * 0.744, 15, GOLD)
+        if self.achievement_timer > 0 and self.achievement_banner:
+            self.draw_panel(
+                self.width * 0.5 - 126 * scale,
+                self.height * 0.682,
+                252 * scale,
+                25 * scale,
+                AQUA,
+                0.16,
+            )
+            self.draw_label(self.achievement_banner, self.width / 2, self.height * 0.690, 10, WHITE)
+
     def draw_hud(self):
         scale = self.scale
-        top_y = self.height - 46 * scale
+        top_y = self.height - 46 * scale - self.safe_top_padding
         self.draw_panel(12 * scale, top_y, 34 * scale, 29 * scale, AQUA, 0.08)
-        self.draw_label("II", 29 * scale, self.height - 37 * scale, 11, WHITE)
-        self.draw_label(str(self.score), self.width / 2, self.height - 64 * scale, 38, WHITE)
-        self.draw_label("◆ " + str(self.crystal_bank), self.width - 39 * scale, self.height - 37 * scale, 12, AQUA, alpha=0.82)
+        self.draw_label("II", 29 * scale, self.height - 37 * scale - self.safe_top_padding, 11, WHITE)
+        self.draw_label(str(self.score), self.width / 2, self.height - 64 * scale - self.safe_top_padding, 38, WHITE)
+        self.draw_label("◆ " + str(self.crystal_bank), self.width - 39 * scale, self.height - 37 * scale - self.safe_top_padding, 12, AQUA, alpha=0.82)
         if self.state == "playing":
             self.hitboxes.append((12 * scale, top_y, 34 * scale, 29 * scale, "pause"))
 
     def draw_menu(self):
         center, scale = self.width / 2, self.scale
-        self.draw_panel(self.width - 100 * scale, self.height * 0.905, 80 * scale, 28 * scale, AQUA, 0.08)
-        self.draw_label("◆ " + str(self.crystal_bank), self.width - 60 * scale, self.height * 0.913, 11, AQUA)
+        top_y = self.height - 72 * scale - self.safe_top_padding
+        self.draw_panel(12 * scale, top_y, 58 * scale, 28 * scale, VIOLET, 0.08)
+        self.draw_label("SET", 41 * scale, top_y + 9 * scale, 9, WHITE)
+        self.hitboxes.append((12 * scale, top_y, 58 * scale, 28 * scale, "settings"))
+        self.draw_panel(self.width - 100 * scale, top_y, 80 * scale, 28 * scale, AQUA, 0.08)
+        self.draw_label("◆ " + str(self.crystal_bank), self.width - 60 * scale, top_y + 8 * scale, 11, AQUA)
         self.draw_label("SKYPULSE", center, self.height * 0.780, 38, WHITE)
         self.draw_label("FLY THROUGH THE GLOW", center, self.height * 0.738, 10, AQUA, alpha=0.88)
         self.draw_bird(center, self.height * 0.555, size=0.76, preview=True)
@@ -951,6 +1539,29 @@ class SkyPulseGame(Widget):
             self.current_skin["accent"],
             alpha=0.72,
         )
+        self.draw_secondary_button("DAILY + MISSIONS", center, self.height * 0.050 + self.safe_bottom_padding, 178 * scale, VIOLET, "daily")
+
+    def draw_splash(self):
+        """A brief branded launch moment that also doubles as iOS splash artwork."""
+        if self.launch_texture:
+            self.colour(WHITE)
+            Rectangle(texture=self.launch_texture, pos=(0, 0), size=self.size)
+        else:
+            self.colour(DEEP_SPACE)
+            Rectangle(pos=(0, 0), size=self.size)
+        center, scale = self.width / 2, self.scale
+        self.colour(DEEP_SPACE, 0.20)
+        Rectangle(pos=(0, 0), size=self.size)
+        if self.app_icon_texture:
+            icon_size = 94 * scale
+            self.colour(WHITE)
+            Rectangle(
+                texture=self.app_icon_texture,
+                pos=(center - icon_size / 2, self.height * 0.515),
+                size=(icon_size, icon_size),
+            )
+        self.draw_label("SKYPULSE", center, self.height * 0.445, 28, WHITE)
+        self.draw_label("FLY THROUGH THE GLOW", center, self.height * 0.405, 9, AQUA)
 
     def draw_shop_hub(self):
         """A real storefront: birds are separate from world and effects purchases."""
@@ -1032,10 +1643,85 @@ class SkyPulseGame(Widget):
         self.draw_label(subtitle, center, self.height * 0.815, 10, accent)
         self.draw_panel(center - 57 * scale, self.height * 0.755, 114 * scale, 29 * scale, AQUA, 0.11)
         self.draw_label("◆ " + str(self.crystal_bank), center, self.height * 0.763, 13, AQUA)
-        card_width, card_height = 332 * scale, 102 * scale
-        for item, y in zip(items, (self.height * 0.575, self.height * 0.390, self.height * 0.205)):
+        if len(items) <= 3:
+            card_height = 102 * scale
+            card_positions = (self.height * 0.575, self.height * 0.390, self.height * 0.205)
+        else:
+            card_height = 72 * scale
+            card_positions = (
+                self.height * 0.655,
+                self.height * 0.530,
+                self.height * 0.405,
+                self.height * 0.280,
+                self.height * 0.155,
+            )
+        card_width = 332 * scale
+        for item, y in zip(items, card_positions):
             self.draw_style_card(item, category, center - card_width / 2, y, card_width, card_height)
         self.draw_action_button("<  SHOP", center, self.height * 0.095, 178 * scale, 35 * scale, VIOLET, "shop")
+
+    def draw_settings(self):
+        center, scale = self.width / 2, self.scale
+        self.draw_panel(self.width * 0.11, self.height * 0.18, self.width * 0.78, self.height * 0.61, VIOLET, 0.22)
+        self.draw_label("SETTINGS", center, self.height * 0.705, 28, WHITE)
+        self.draw_label("MAKE FLIGHT FEEL RIGHT", center, self.height * 0.665, 10, AQUA)
+        toggles = (
+            ("SOUND", self.sound_enabled, AQUA, "sound"),
+            ("HAPTICS", self.haptics_enabled, PINK, "haptics"),
+            ("REDUCED MOTION", self.reduce_motion, MINT, "motion"),
+        )
+        for (label, enabled, colour, setting), y in zip(toggles, (self.height * 0.555, self.height * 0.465, self.height * 0.375)):
+            self.draw_action_button(
+                label + "  " + ("ON" if enabled else "OFF"),
+                center,
+                y,
+                244 * scale,
+                35 * scale,
+                colour,
+                "toggle:" + setting,
+            )
+        self.draw_action_button("<  MENU", center, self.height * 0.245, 178 * scale, 35 * scale, VIOLET, "menu")
+
+    def draw_daily(self):
+        """A compact retention screen: one daily score target and three visible missions."""
+        center, scale = self.width / 2, self.scale
+        daily = self.daily_state
+        self.draw_panel(self.width * 0.055, self.height * 0.050, self.width * 0.89, self.height * 0.90, VIOLET, 0.20)
+        self.draw_label("DAILY FLIGHT", center, self.height * 0.862, 26, WHITE)
+        self.draw_label(daily["date"].replace("-", " · "), center, self.height * 0.823, 10, AQUA)
+        self.draw_panel(center - 138 * scale, self.height * 0.674, 276 * scale, 92 * scale, GOLD, 0.15)
+        self.draw_label("REACH SCORE " + str(daily["target"]), center, self.height * 0.744, 16, GOLD)
+        self.draw_label("IN ONE DAILY FLIGHT", center, self.height * 0.719, 8, WHITE, alpha=0.78)
+        self.draw_label("BEST  " + str(daily["best"]), center, self.height * 0.696, 9, WHITE, alpha=0.82)
+        reward_label = "BONUS STYLE CLAIMED" if daily["reward_claimed"] else "BONUS COSMETIC UNLOCK"
+        self.draw_label(reward_label, center, self.height * 0.679, 9, MINT if daily["reward_claimed"] else AQUA)
+        self.draw_action_button("PLAY TODAY", center, self.height * 0.610, 216 * scale, 37 * scale, PINK, "daily_play")
+        self.draw_label("TODAY'S MISSIONS", center, self.height * 0.548, 11, WHITE)
+        card_width, card_height = 318 * scale, 55 * scale
+        for mission, y in zip(MISSIONS, (self.height * 0.450, self.height * 0.350, self.height * 0.250)):
+            progress = self.daily_state["missions"][mission["id"]]
+            complete = mission["id"] in self.daily_state["completed"]
+            colour = MINT if complete else AQUA
+            self.draw_panel(center - card_width / 2, y, card_width, card_height, colour, 0.18 if complete else 0.10)
+            self.draw_label(mission["name"], center - 47 * scale, y + 32 * scale, 10, WHITE)
+            self.draw_label(mission["summary"], center - 47 * scale, y + 14 * scale, 8, WHITE, alpha=0.72)
+            status = "DONE" if complete else str(progress) + " / " + str(mission["target"])
+            self.draw_label(status, center + 112 * scale, y + 32 * scale, 10, colour)
+            if not complete:
+                progress_width = 154 * scale * min(1, progress / mission["target"])
+                self.colour(colour, 0.58)
+                Rectangle(pos=(center - 124 * scale, y + 13 * scale), size=(progress_width, 2 * scale))
+            else:
+                self.draw_label(mission["reward_label"] + " UNLOCKED", center, y + 10 * scale, 8, MINT)
+        self.draw_label(
+            "ACHIEVEMENTS  " + str(len(self.achievements)) + " / " + str(len(ACHIEVEMENTS)),
+            center,
+            self.height * 0.158,
+            9,
+            AQUA,
+            alpha=0.82,
+        )
+        self.draw_action_button("<  MENU", center, self.height * 0.055 + self.safe_bottom_padding, 170 * scale, 32 * scale, VIOLET, "menu")
 
     def draw_backgrounds(self):
         center, scale = self.width / 2, self.scale
@@ -1067,12 +1753,16 @@ class SkyPulseGame(Widget):
         self.draw_panel(center - 63 * scale, self.height * 0.755, 126 * scale, 31 * scale, AQUA, 0.13)
         self.draw_label("◆  " + str(self.crystal_bank), center, self.height * 0.764, 14, AQUA)
 
-        card_width, card_height = 178 * scale, 155 * scale
+        card_width, card_height = 178 * scale, 95 * scale
         positions = (
-            (22 * scale, self.height * 0.515),
-            (220 * scale, self.height * 0.515),
-            (22 * scale, self.height * 0.290),
-            (220 * scale, self.height * 0.290),
+            (22 * scale, self.height * 0.600),
+            (220 * scale, self.height * 0.600),
+            (22 * scale, self.height * 0.460),
+            (220 * scale, self.height * 0.460),
+            (22 * scale, self.height * 0.320),
+            (220 * scale, self.height * 0.320),
+            (22 * scale, self.height * 0.180),
+            (220 * scale, self.height * 0.180),
         )
         for skin, (x, y) in zip(SKINS, positions):
             self.draw_skin_card(skin, x, y, card_width, card_height, hangar=hangar)
@@ -1080,23 +1770,49 @@ class SkyPulseGame(Widget):
 
     def draw_pause(self):
         center, scale = self.width / 2, self.scale
-        self.draw_panel(self.width * 0.12, self.height * 0.35, self.width * 0.76, self.height * 0.30, VIOLET, 0.22)
-        self.draw_label("PAUSED", center, self.height * 0.55, 38, WHITE)
-        self.draw_action_button("RESUME", center, self.height * 0.445, 205 * scale, 40 * scale, AQUA, "resume")
-        self.draw_label("Press P or tap resume", center, self.height * 0.385, 12, WHITE)
+        self.draw_panel(self.width * 0.12, self.height * 0.275, self.width * 0.76, self.height * 0.42, VIOLET, 0.22)
+        self.draw_label("PAUSED", center, self.height * 0.610, 36, WHITE)
+        self.draw_label("TAKE A BREATH", center, self.height * 0.568, 10, AQUA)
+        self.draw_action_button("RESUME", center, self.height * 0.490, 205 * scale, 38 * scale, AQUA, "resume")
+        self.draw_action_button("RESTART", center, self.height * 0.425, 205 * scale, 34 * scale, PINK, "restart")
+        self.draw_action_button("MENU", center, self.height * 0.365, 205 * scale, 32 * scale, VIOLET, "menu")
+        self.draw_label("Press P to resume", center, self.height * 0.305, 9, WHITE, alpha=0.68)
 
     def draw_game_over(self):
         center, scale = self.width / 2, self.scale
-        self.draw_panel(self.width * 0.10, self.height * 0.145, self.width * 0.80, self.height * 0.61, PINK, 0.22)
-        self.draw_label("GAME OVER", center, self.height * 0.665, 31, PINK)
-        self.draw_label("SCORE  " + str(self.score), center, self.height * 0.575, 20, WHITE)
-        self.draw_label("BEST SCORE  " + str(self.best_score), center, self.height * 0.525, 14, WHITE)
-        self.draw_label("CRYSTALS  +" + str(self.crystals_collected), center, self.height * 0.470, 15, AQUA)
-        self.draw_action_button("RETRY", center, self.height * 0.365, 220 * scale, 39 * scale, PINK, "retry")
-        self.draw_action_button("SHOP", center, self.height * 0.300, 220 * scale, 36 * scale, AQUA, "shop")
-        self.draw_action_button("MENU", center, self.height * 0.240, 220 * scale, 36 * scale, VIOLET, "menu")
+        self.draw_panel(self.width * 0.10, self.height * 0.085, self.width * 0.80, self.height * 0.70, PINK, 0.22)
+        self.draw_label("GAME OVER", center, self.height * 0.705, 31, PINK)
+        self.draw_label("SCORE  " + str(self.score), center, self.height * 0.625, 20, WHITE)
+        best_text = "NEW BEST  " + str(self.best_score) if self.new_best_this_run else "BEST SCORE  " + str(self.best_score)
+        self.draw_label(best_text, center, self.height * 0.580, 14, GOLD if self.new_best_this_run else WHITE)
+        self.draw_label("CRYSTALS  +" + str(self.crystals_collected), center, self.height * 0.535, 15, AQUA)
+        if self.is_daily_run:
+            daily_text = "DAILY STYLE UNLOCKED" if self.daily_reward_earned else "DAILY BEST  " + str(self.daily_state["best"])
+            self.draw_label(daily_text, center, self.height * 0.495, 10, MINT if self.daily_reward_earned else VIOLET)
+        if self.daily_rewards_this_run:
+            rewards = self.daily_rewards_this_run[-3:]
+            self.draw_panel(center - 132 * scale, self.height * 0.330, 264 * scale, 88 * scale, MINT, 0.15)
+            self.draw_label("DAILY UNLOCKS", center, self.height * 0.405, 10, MINT)
+            for index, (category, item_name) in enumerate(rewards):
+                self.draw_label(
+                    item_name + "  " + category,
+                    center,
+                    self.height * (0.380 - index * 0.025),
+                    8,
+                    WHITE,
+                    alpha=0.88,
+                )
+            hidden_count = len(self.daily_rewards_this_run) - len(rewards)
+            if hidden_count:
+                self.draw_label("+" + str(hidden_count) + " MORE STYLE", center, self.height * 0.337, 8, MINT)
+        self.draw_action_button("RETRY", center, self.height * 0.250, 220 * scale, 39 * scale, PINK, "daily_retry" if self.is_daily_run else "retry")
+        self.draw_action_button("SHOP", center, self.height * 0.190, 220 * scale, 34 * scale, AQUA, "shop")
+        self.draw_action_button("MENU", center, self.height * 0.130, 220 * scale, 34 * scale, VIOLET, "menu")
 
     def draw_overlay(self):
+        if self.state == "splash":
+            self.draw_splash()
+            return
         if self.state == "playing":
             return
         overlay_alpha = 0.36 if self.state == "menu" else 0.60
@@ -1116,6 +1832,10 @@ class SkyPulseGame(Widget):
             self.draw_style_collection("trail")
         elif self.state == "pipes":
             self.draw_style_collection("pipe")
+        elif self.state == "settings":
+            self.draw_settings()
+        elif self.state == "daily":
+            self.draw_daily()
         elif self.state == "backgrounds":
             self.draw_backgrounds()
         elif self.state == "paused":
@@ -1150,13 +1870,17 @@ class SkyPulseGame(Widget):
                 self.draw_bird()
             PopMatrix()
             if self.state in ("playing", "paused", "game_over"):
+                self.draw_gameplay_fx()
                 self.draw_hud()
             self.draw_overlay()
 
     def activate(self, action):
         """Run a simple visual-button action without a separate widget tree."""
-        if action in ("play", "retry"):
+        if action in ("daily_play", "daily_retry") or (action == "restart" and self.is_daily_run):
+            self.start_daily()
+        elif action in ("play", "retry", "restart"):
             self.reset("playing")
+            self.lifetime["runs"] += 1
             self.flap()
         elif action == "menu":
             self.reset("menu")
@@ -1172,12 +1896,18 @@ class SkyPulseGame(Widget):
             self.state = "trails"
         elif action == "pipes":
             self.state = "pipes"
+        elif action == "settings":
+            self.state = "settings"
+        elif action == "daily":
+            self.state = "daily"
         elif action == "backgrounds":
             self.state = "backgrounds"
         elif action == "resume":
             self.state = "playing"
         elif action == "pause":
             self.state = "paused"
+        elif action.startswith("toggle:"):
+            self.toggle_setting(action.split(":", 1)[1])
         elif action.startswith("skin:"):
             self.select_skin(action.split(":", 1)[1])
         elif action.startswith("style:"):
@@ -1186,6 +1916,7 @@ class SkyPulseGame(Widget):
 
     def select_skin(self, skin_id):
         skin = SKINS_BY_ID[skin_id]
+        unlocked_now = False
         if skin_id in self.unlocked_skins:
             self.equipped_skin_id = skin_id
             self.notice = skin["name"] + " EQUIPPED"
@@ -1194,12 +1925,15 @@ class SkyPulseGame(Widget):
             self.unlocked_skins.append(skin_id)
             self.equipped_skin_id = skin_id
             self.notice = skin["name"] + " UNLOCKED"
+            unlocked_now = True
         else:
             required = max(0, skin["price"] - self.crystal_bank)
             self.notice = "COLLECT " + str(required) + " MORE CRYSTALS"
             self.notice_timer = 1.7
             return
         self.notice_timer = 1.5
+        if unlocked_now:
+            self.unlock_achievement("style_icon")
         self.save_progress()
 
     def select_style(self, category, item_id):
@@ -1211,6 +1945,7 @@ class SkyPulseGame(Widget):
         }
         catalog, unlocked, equipped_attribute = styles[category]
         item = catalog[item_id]
+        unlocked_now = False
         if item_id in unlocked:
             setattr(self, equipped_attribute, item_id)
             self.notice = item["name"] + " EQUIPPED"
@@ -1219,11 +1954,14 @@ class SkyPulseGame(Widget):
             unlocked.append(item_id)
             setattr(self, equipped_attribute, item_id)
             self.notice = item["name"] + " UNLOCKED"
+            unlocked_now = True
         else:
             self.notice = "COLLECT " + str(item["price"] - self.crystal_bank) + " MORE CRYSTALS"
             self.notice_timer = 1.7
             return
         self.notice_timer = 1.5
+        if unlocked_now:
+            self.unlock_achievement("style_icon")
         self.save_progress()
 
     def on_touch_down(self, touch):
@@ -1251,6 +1989,8 @@ class SkyPulseGame(Widget):
 
 
 class SkyPulseApp(App):
+    icon = str(Path(__file__).parent / "assets/images/branding/skypulse-app-icon.png")
+
     def build(self):
         self.title = "SkyPulse"
         return SkyPulseGame()

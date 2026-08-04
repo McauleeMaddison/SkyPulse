@@ -14,6 +14,9 @@ TOWER_GAP = 225
 TOWER_SPAWN_SECONDS = 1.55
 TOWER_WIDTH = 58
 
+# A hard ceiling keeps the action smooth and battery-friendly on phones.
+MAX_PARTICLES = 96
+
 # Bird placement, art size, and a body-only collision ellipse.
 # The art includes wide wings, feet, and a light trail, so collision follows the
 # luminous core rather than the decorative silhouette.
