@@ -1529,8 +1529,7 @@ class SkyPulseGame(Widget):
         self.draw_label("BEST  •  " + str(self.best_score), center, self.height * 0.425, 12, WHITE, alpha=0.82)
         self.draw_action_button("FLY", center, self.height * 0.335, 210 * scale, 44 * scale, PINK, "play")
         self.draw_label("TAP ANYWHERE TO START", center, self.height * 0.295, 9, WHITE, alpha=0.62)
-        self.draw_secondary_button("BIRDS", center - 64 * scale, self.height * 0.210, 116 * scale, GOLD, "hangar")
-        self.draw_secondary_button("SHOP", center + 64 * scale, self.height * 0.210, 116 * scale, AQUA, "shop")
+        self.draw_secondary_button("CUSTOMIZE", center, self.height * 0.210, 210 * scale, AQUA, "shop")
         self.draw_label(
             self.current_skin["name"] + " EQUIPPED",
             center,
@@ -1567,7 +1566,7 @@ class SkyPulseGame(Widget):
         """A real storefront: birds are separate from world and effects purchases."""
         center, scale = self.width / 2, self.scale
         self.draw_panel(self.width * 0.08, self.height * 0.105, self.width * 0.84, self.height * 0.79, AQUA, 0.18)
-        self.draw_label("STYLE SHOP", center, self.height * 0.810, 28, WHITE)
+        self.draw_label("CUSTOMIZE", center, self.height * 0.810, 28, WHITE)
         self.draw_label("BUILD YOUR FLIGHT", center, self.height * 0.772, 10, AQUA)
         self.draw_panel(center - 55 * scale, self.height * 0.715, 110 * scale, 28 * scale, AQUA, 0.10)
         self.draw_label("◆ " + str(self.crystal_bank), center, self.height * 0.723, 12, AQUA)
@@ -1806,7 +1805,7 @@ class SkyPulseGame(Widget):
             if hidden_count:
                 self.draw_label("+" + str(hidden_count) + " MORE STYLE", center, self.height * 0.337, 8, MINT)
         self.draw_action_button("RETRY", center, self.height * 0.250, 220 * scale, 39 * scale, PINK, "daily_retry" if self.is_daily_run else "retry")
-        self.draw_action_button("SHOP", center, self.height * 0.190, 220 * scale, 34 * scale, AQUA, "shop")
+        self.draw_action_button("CUSTOMIZE", center, self.height * 0.190, 220 * scale, 34 * scale, AQUA, "shop")
         self.draw_action_button("MENU", center, self.height * 0.130, 220 * scale, 34 * scale, VIOLET, "menu")
 
     def draw_overlay(self):
