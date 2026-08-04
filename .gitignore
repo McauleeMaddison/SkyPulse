@@ -3,4 +3,5 @@ __pycache__/
 *.pyc
 .DS_Store
 skypulse_progress.json
+skypulse_progress.backup.json
 .tools/

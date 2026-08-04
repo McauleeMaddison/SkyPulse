@@ -6,7 +6,7 @@ Press P to pause or resume.
 
 import json
 import random
-from datetime import date
+from datetime import date, timedelta
 from math import exp, hypot, sin
 from pathlib import Path
 
@@ -16,7 +16,9 @@ from kivy.config import Config
 Config.set("graphics", "width", "420")
 Config.set("graphics", "height", "760")
 Config.set("graphics", "resizable", "1")
-Config.set("graphics", "multisamples", "4")
+# Textures carry the visual polish here; disabling costly multisampling keeps
+# touch response and the flight frame rate ahead of ornamental edge smoothing.
+Config.set("graphics", "multisamples", "0")
 
 from kivy.app import App
 from kivy.clock import Clock
@@ -25,8 +27,11 @@ from kivy.core.image import Image as CoreImage
 from kivy.core.text import Label as CoreLabel
 from kivy.core.window import Window
 from kivy.graphics import (
+    ClearBuffers,
+    ClearColor,
     Color,
     Ellipse,
+    Fbo,
     Line,
     PopMatrix,
     PushMatrix,
@@ -240,6 +245,7 @@ TRAILS_BY_ID = {trail["id"]: trail for trail in TRAILS}
 THEMES_BY_ID = {theme["id"]: theme for theme in THEMES}
 PIPE_STYLES_BY_ID = {style["id"]: style for style in PIPE_STYLES}
 SAVE_PATH = Path(__file__).parent / "skypulse_progress.json"
+BACKUP_PATH = Path(__file__).parent / "skypulse_progress.backup.json"
 
 SOUND_FILES = {
     "flap": "assets/audio/flap.wav",
@@ -291,11 +297,41 @@ MISSIONS = (
     },
 )
 ACHIEVEMENTS = {
-    "first_flight": {"name": "FIRST FLIGHT", "reward": 5},
-    "sky_runner": {"name": "SKY RUNNER", "reward": 15},
-    "crystal_keeper": {"name": "CRYSTAL KEEPER", "reward": 15},
-    "style_icon": {"name": "STYLE ICON", "reward": 10},
+    "first_flight": {"name": "FIRST FLIGHT", "summary": "Take off for the first time.", "reward": 5},
+    "sky_runner": {"name": "SKY RUNNER", "summary": "Score 10 in one flight.", "reward": 15},
+    "crystal_keeper": {"name": "CRYSTAL KEEPER", "summary": "Collect 25 crystals in total.", "reward": 15},
+    "style_icon": {"name": "STYLE ICON", "summary": "Unlock a style in Customize.", "reward": 10},
 }
+
+# Long-form goals deliberately reward visible play rather than a vague currency
+# grind. Every completed track either unlocks a cosmetic or clearly advances a
+# player-facing rank.
+SCORE_MILESTONES = (
+    {"id": "score_10", "target": 10, "name": "FIRST ASCENT", "category": "trail"},
+    {"id": "score_25", "target": 25, "name": "SKYLINE RUN", "category": "pipe"},
+    {"id": "score_50", "target": 50, "name": "HALO FLIGHT", "category": "theme"},
+    {"id": "score_100", "target": 100, "name": "CENTURY PILOT", "category": "skin"},
+)
+
+WEEKLY_STAGES = (
+    {"id": "weekly_score", "name": "RISING ROUTE", "summary": "Pass 20 pipes this week.", "metric": "score", "target": 20},
+    {"id": "weekly_crystals", "name": "CRYSTAL CURRENT", "summary": "Collect 14 crystals this week.", "metric": "crystals", "target": 14},
+    {"id": "weekly_flight", "name": "STEADY WINGS", "summary": "Flap 80 times this week.", "metric": "flaps", "target": 80},
+)
+
+CHALLENGE_MEDALS = (
+    {"id": "perfect_ten", "name": "PERFECT TEN", "summary": "Score 10 without collecting a crystal.", "reward": "TRAIL STYLE"},
+    {"id": "crystal_dash", "name": "CRYSTAL DASH", "summary": "Collect 5 crystals in one flight.", "reward": "PIPE FINISH"},
+    {"id": "high_current", "name": "HIGH CURRENT", "summary": "Score 20 in one flight.", "reward": "WORLD THEME"},
+)
+
+RANKS = (
+    {"name": "ROOKIE", "score": 0, "accent": WHITE},
+    {"name": "SCOUT", "score": 10, "accent": AQUA},
+    {"name": "PILOT", "score": 25, "accent": MINT},
+    {"name": "ACE", "score": 50, "accent": GOLD},
+    {"name": "NOVA", "score": 100, "accent": PINK},
+)
 
 
 class SkyPulseGame(Widget):
@@ -307,7 +343,7 @@ class SkyPulseGame(Widget):
         self.bind(size=self.on_resize)
         self.stars = [
             (random.random(), random.uniform(0.35, 0.98), random.choice((1, 1, 2)))
-            for _ in range(72)
+            for _ in range(36)
         ]
         self.backdrop_texture = self.load_texture("assets/images/backgrounds/neon-city.png")
         self.app_icon_texture = self.load_texture("assets/images/branding/skypulse-app-icon.png")
@@ -329,6 +365,16 @@ class SkyPulseGame(Widget):
         self.achievements = self.progress["achievements"]
         self.lifetime = self.progress["lifetime"]
         self.daily_state = self.prepare_daily_state(self.progress["daily"])
+        self.weekly_state = self.prepare_weekly_state(self.progress.get("weekly", {}))
+        self.streak_state = self.prepare_streak_state(self.progress.get("streak", {}))
+        self.mastery = self.prepare_mastery(self.progress.get("mastery", {}))
+        self.score_milestones = self.prepare_id_collection(
+            self.progress.get("score_milestones", []), SCORE_MILESTONES
+        )
+        self.challenge_medals = self.prepare_id_collection(
+            self.progress.get("challenge_medals", []), CHALLENGE_MEDALS
+        )
+        self.best_ghost = self.prepare_ghost(self.progress.get("best_ghost", []))
         self.unlocked_skins = self.progress["unlocked"]
         self.equipped_skin_id = self.progress["equipped"]
         self.unlocked_trails = self.progress["unlocked_trails"]
@@ -338,6 +384,7 @@ class SkyPulseGame(Widget):
         self.unlocked_pipes = self.progress["unlocked_pipes"]
         self.equipped_pipe_id = self.progress["equipped_pipe"]
         self.hitboxes = []
+        self.label_cache = {}
         self.notice = ""
         self.notice_timer = 0
         self.sounds = self.load_sounds()
@@ -351,13 +398,19 @@ class SkyPulseGame(Widget):
                 )
                 for _ in range(count)
             )
-            for count in (9, 13)
+            for count in (6, 8)
         )
+        self.scene_fbo = Fbo(size=(1, 1), with_stencilbuffer=True)
+        self.blur_fbo = Fbo(size=(1, 1))
+        self.game_over_backdrop_dirty = True
+        self.resize_render_targets()
         self.launch_timer = 1.25
+        self.frame_accumulator = 0
+        self.force_frame = True
         self.reset("splash")
-        # Draw on every display frame instead of a fixed 60 Hz tick; all motion
-        # below is delta-time based, so high-refresh screens stay fluid too.
-        Clock.schedule_interval(self.update, 0)
+        # A stable 60 Hz simulation keeps taps, sound, and animation in step
+        # without burning frames on a static menu or mobile display.
+        Clock.schedule_interval(self.update, 1 / 60)
 
     @staticmethod
     def load_texture(relative_path):
@@ -370,6 +423,17 @@ class SkyPulseGame(Widget):
             return texture
         except Exception:
             return None
+
+    def resize_render_targets(self):
+        """Keep the game scene and soft-focus copy in sync with the viewport."""
+        scene_size = (max(1, int(self.width)), max(1, int(self.height)))
+        blur_size = (max(1, int(scene_size[0] * 0.42)), max(1, int(scene_size[1] * 0.42)))
+        self.scene_fbo.size = scene_size
+        self.scene_fbo.texture.mag_filter = "linear"
+        self.scene_fbo.texture.min_filter = "linear"
+        self.blur_fbo.size = blur_size
+        self.blur_fbo.texture.mag_filter = "linear"
+        self.blur_fbo.texture.min_filter = "linear"
 
     def load_sounds(self):
         """Load small local effects once; missing audio never blocks a flight."""
@@ -454,6 +518,78 @@ class SkyPulseGame(Widget):
         }
 
     @staticmethod
+    def prepare_id_collection(saved, catalog):
+        valid_ids = {item["id"] for item in catalog}
+        return [item_id for item_id in saved if item_id in valid_ids] if isinstance(saved, list) else []
+
+    @staticmethod
+    def week_token(day=None):
+        year, week, _weekday = (day or date.today()).isocalendar()
+        return f"{year}-W{week:02d}"
+
+    def prepare_weekly_state(self, saved_weekly):
+        """Create a single, clear three-step route for the current week."""
+        token = self.week_token()
+        fresh = {
+            "week": token,
+            "progress": {stage["id"]: 0 for stage in WEEKLY_STAGES},
+            "completed": [],
+            "reward_claimed": False,
+        }
+        if not isinstance(saved_weekly, dict) or saved_weekly.get("week") != token:
+            return fresh
+        saved_progress = saved_weekly.get("progress", {})
+        saved_progress = saved_progress if isinstance(saved_progress, dict) else {}
+        return {
+            "week": token,
+            "progress": {
+                stage["id"]: min(stage["target"], max(0, int(saved_progress.get(stage["id"], 0))))
+                for stage in WEEKLY_STAGES
+            },
+            "completed": [
+                stage_id for stage_id in saved_weekly.get("completed", [])
+                if stage_id in {stage["id"] for stage in WEEKLY_STAGES}
+            ],
+            "reward_claimed": bool(saved_weekly.get("reward_claimed", False)),
+        }
+
+    @staticmethod
+    def prepare_streak_state(saved_streak):
+        saved_streak = saved_streak if isinstance(saved_streak, dict) else {}
+        claimed = saved_streak.get("claimed", [])
+        return {
+            "last_date": str(saved_streak.get("last_date", "")),
+            "current": max(0, int(saved_streak.get("current", 0))),
+            "longest": max(0, int(saved_streak.get("longest", 0))),
+            "claimed": [int(day) for day in claimed if isinstance(day, int) and day in (3, 7, 14)],
+        }
+
+    @staticmethod
+    def prepare_mastery(saved_mastery):
+        saved_mastery = saved_mastery if isinstance(saved_mastery, dict) else {}
+        return {
+            skin["id"]: max(0, int(saved_mastery.get(skin["id"], 0)))
+            for skin in SKINS
+        }
+
+    @staticmethod
+    def prepare_ghost(saved_ghost):
+        """Keep a compact, validated best-flight replay for the practice ghost."""
+        if not isinstance(saved_ghost, list):
+            return []
+        ghost = []
+        for point in saved_ghost[:720]:
+            if not isinstance(point, (list, tuple)) or len(point) != 3:
+                continue
+            try:
+                moment, height, tilt = (float(value) for value in point)
+            except (TypeError, ValueError):
+                continue
+            if moment >= 0 and 0 <= height <= 1:
+                ghost.append((moment, height, max(-50, min(35, tilt))))
+        return ghost
+
+    @staticmethod
     def load_progress():
         default = {
             "best_score": 0,
@@ -465,6 +601,12 @@ class SkyPulseGame(Widget):
             "achievements": [],
             "lifetime": {"runs": 0, "flaps": 0, "score": 0, "crystals": 0},
             "daily": {},
+            "weekly": {},
+            "streak": {},
+            "mastery": {},
+            "score_milestones": [],
+            "challenge_medals": [],
+            "best_ghost": [],
             "unlocked": ["nova"],
             "equipped": "nova",
             "unlocked_trails": ["pulse"],
@@ -475,7 +617,15 @@ class SkyPulseGame(Widget):
             "equipped_pipe": "ion",
         }
         try:
-            saved = json.loads(SAVE_PATH.read_text())
+            saved = None
+            for candidate in (SAVE_PATH, BACKUP_PATH):
+                try:
+                    saved = json.loads(candidate.read_text())
+                    break
+                except (OSError, ValueError, TypeError):
+                    continue
+            if not isinstance(saved, dict):
+                return default
             def owned_ids(saved_key, catalog, starter):
                 owned = [item_id for item_id in saved.get(saved_key, []) if item_id in catalog]
                 if starter not in owned:
@@ -514,6 +664,12 @@ class SkyPulseGame(Widget):
                 "achievements": achievements,
                 "lifetime": lifetime,
                 "daily": daily,
+                "weekly": saved.get("weekly", {}),
+                "streak": saved.get("streak", {}),
+                "mastery": saved.get("mastery", {}),
+                "score_milestones": saved.get("score_milestones", []),
+                "challenge_medals": saved.get("challenge_medals", []),
+                "best_ghost": saved.get("best_ghost", []),
                 "unlocked": unlocked,
                 "equipped": equipped,
                 "unlocked_trails": unlocked_trails,
@@ -537,6 +693,12 @@ class SkyPulseGame(Widget):
             "achievements": self.achievements,
             "lifetime": self.lifetime,
             "daily": self.daily_state,
+            "weekly": self.weekly_state,
+            "streak": self.streak_state,
+            "mastery": self.mastery,
+            "score_milestones": self.score_milestones,
+            "challenge_medals": self.challenge_medals,
+            "best_ghost": self.best_ghost,
             "unlocked": self.unlocked_skins,
             "equipped": self.equipped_skin_id,
             "unlocked_trails": self.unlocked_trails,
@@ -547,7 +709,12 @@ class SkyPulseGame(Widget):
             "equipped_pipe": self.equipped_pipe_id,
         }
         try:
-            SAVE_PATH.write_text(json.dumps(self.progress, indent=2) + "\n")
+            payload = json.dumps(self.progress, indent=2) + "\n"
+            SAVE_PATH.write_text(payload)
+            # A second recovery snapshot protects player unlocks if the main
+            # save is interrupted or damaged. Cloud sync remains an iPhone
+            # packaging integration, not something this local build pretends.
+            BACKUP_PATH.write_text(payload)
         except OSError:
             pass
 
@@ -606,17 +773,27 @@ class SkyPulseGame(Widget):
         return distance_x * distance_x + distance_y * distance_y < 1
 
     def on_resize(self, *_args):
+        # Text textures depend on the active scale, so invalidate them only
+        # when the viewport actually changes rather than every frame.
+        getattr(self, "label_cache", {}).clear()
+        if hasattr(self, "scene_fbo"):
+            self.resize_render_targets()
+            self.game_over_backdrop_dirty = True
         if getattr(self, "state", None) == "menu" and not getattr(self, "towers", []):
             self.bird_y = self.height * 0.53
 
     def reset(self, state="playing"):
         self.state = state
+        # Discard stale menu hit areas immediately. This matters for a quick
+        # double tap on FLY: tap one starts the run, tap two must be a flap.
+        self.hitboxes = []
         self.bird_y = self.height * 0.53 if self.height else 400
         self.bird_speed = 0
         self.bird_tilt = 0
         self.wing_phase = 0
         self.flap_energy = 0
         self.flap_bounce = 0
+        self.glide_bob = 0
         self.score = 0
         self.crystals_collected = 0
         self.run_flaps = 0
@@ -625,12 +802,18 @@ class SkyPulseGame(Widget):
         self.new_best_timer = 0
         self.daily_reward_earned = False
         self.daily_rewards_this_run = []
+        self.weekly_rewards_this_run = []
+        self.progress_rewards_this_run = []
         self.is_daily_run = False
         self.towers = []
         self.crystals = []
         self.sparks = []
         self.score_bursts = []
         self.flight_trail = []
+        self.trail_sample_timer = 0
+        self.run_replay = []
+        self.replay_sample_timer = 0
+        self.run_time = 0
         self.spawn_timer = 0.8
         self.trail_timer = 0
         self.screen_shake = 0
@@ -643,6 +826,7 @@ class SkyPulseGame(Widget):
         self.world_event_timer = random.uniform(10, 16)
         self.world_event_duration = 0
         self.time = 0
+        self.game_over_backdrop_dirty = True
 
     def start_daily(self):
         self.reset("playing")
@@ -694,6 +878,166 @@ class SkyPulseGame(Widget):
             if item:
                 return item, message
         return None, "STYLE COLLECTION COMPLETE"
+
+    def unlock_skin_reward(self):
+        """Weekly and century rewards favour a new bird before duplicate styles."""
+        locked = [skin for skin in SKINS if skin["id"] not in self.unlocked_skins]
+        if not locked:
+            return self.unlock_bonus_style_reward()
+        skin = min(locked, key=lambda option: option["price"])
+        self.unlocked_skins.append(skin["id"])
+        self.equipped_skin_id = skin["id"]
+        return skin, skin["name"] + " BIRD UNLOCKED"
+
+    def unlock_progress_reward(self, category):
+        if category == "skin":
+            return self.unlock_skin_reward()
+        return self.unlock_style_reward(category)
+
+    def award_progress_reward(self, category, label, destination):
+        """Award a cosmetic once and retain it for the Game Over results card."""
+        item, message = self.unlock_progress_reward(category)
+        if item:
+            destination.append((label, item["name"]))
+            self.play_sound("unlock")
+            self.trigger_haptic("medium")
+        return item, message
+
+    def register_daily_visit(self):
+        """Count one calendar-day check-in, never one visit per menu open."""
+        today = date.today()
+        today_token = today.isoformat()
+        if self.streak_state["last_date"] == today_token:
+            return
+        try:
+            previous_day = date.fromisoformat(self.streak_state["last_date"])
+        except ValueError:
+            previous_day = None
+        self.streak_state["current"] = (
+            self.streak_state["current"] + 1
+            if previous_day == today - timedelta(days=1)
+            else 1
+        )
+        self.streak_state["last_date"] = today_token
+        self.streak_state["longest"] = max(self.streak_state["longest"], self.streak_state["current"])
+        streak_categories = {3: "trail", 7: "pipe", 14: "theme"}
+        for day_count, category in streak_categories.items():
+            if self.streak_state["current"] >= day_count and day_count not in self.streak_state["claimed"]:
+                self.streak_state["claimed"].append(day_count)
+                item, _message = self.unlock_progress_reward(category)
+                self.notice = (
+                    f"{day_count}-DAY STREAK: {item['name']} UNLOCKED"
+                    if item else f"{day_count}-DAY STREAK COMPLETE"
+                )
+                self.notice_timer = 2.8
+                self.play_sound("unlock")
+                self.trigger_haptic("medium")
+        self.save_progress()
+
+    def advance_weekly(self, metric, amount=1):
+        completed_now = False
+        for stage in WEEKLY_STAGES:
+            if stage["metric"] != metric:
+                continue
+            stage_id = stage["id"]
+            previous = self.weekly_state["progress"][stage_id]
+            current = min(stage["target"], previous + amount)
+            self.weekly_state["progress"][stage_id] = current
+            if current >= stage["target"] and stage_id not in self.weekly_state["completed"]:
+                self.weekly_state["completed"].append(stage_id)
+                completed_now = True
+        if (
+            len(self.weekly_state["completed"]) == len(WEEKLY_STAGES)
+            and not self.weekly_state["reward_claimed"]
+        ):
+            self.weekly_state["reward_claimed"] = True
+            item, _message = self.award_progress_reward("skin", "WEEKLY BIRD", self.weekly_rewards_this_run)
+            if not item:
+                self.weekly_rewards_this_run.append(("WEEKLY ROUTE", "COMPLETE"))
+            completed_now = True
+        # Persist meaningful milestones, not every wing beat. This keeps input
+        # smooth on phones while the normal Game Over save still protects work.
+        if completed_now:
+            self.save_progress()
+
+    def advance_mastery(self, amount=1):
+        skin_id = self.equipped_skin_id
+        previous = self.mastery[skin_id]
+        current = previous + amount
+        self.mastery[skin_id] = current
+        # Levels 2, 4, and 7 provide the bird's personal cosmetic journey.
+        rewards = ((10, "trail", "MASTERY TRAIL"), (30, "pipe", "MASTERY PIPE"), (60, "theme", "MASTERY THEME"))
+        for threshold, category, label in rewards:
+            if previous < threshold <= current:
+                self.award_progress_reward(category, label, self.progress_rewards_this_run)
+
+    def award_score_milestones(self):
+        for milestone in SCORE_MILESTONES:
+            if self.best_score < milestone["target"] or milestone["id"] in self.score_milestones:
+                continue
+            self.score_milestones.append(milestone["id"])
+            self.award_progress_reward(milestone["category"], milestone["name"], self.progress_rewards_this_run)
+
+    def unlock_challenge_medal(self, medal_id, category):
+        if medal_id in self.challenge_medals:
+            return
+        self.challenge_medals.append(medal_id)
+        medal = next(medal for medal in CHALLENGE_MEDALS if medal["id"] == medal_id)
+        self.award_progress_reward(category, medal["name"], self.progress_rewards_this_run)
+
+    def evaluate_challenge_medals(self):
+        if self.score >= 10 and self.crystals_collected == 0:
+            self.unlock_challenge_medal("perfect_ten", "trail")
+        if self.crystals_collected >= 5:
+            self.unlock_challenge_medal("crystal_dash", "pipe")
+        if self.score >= 20:
+            self.unlock_challenge_medal("high_current", "theme")
+
+    @property
+    def current_rank(self):
+        return max((rank for rank in RANKS if self.best_score >= rank["score"]), key=lambda rank: rank["score"])
+
+    @property
+    def next_rank(self):
+        return next((rank for rank in RANKS if rank["score"] > self.best_score), None)
+
+    def mastery_level(self, skin_id=None):
+        return 1 + self.mastery.get(skin_id or self.equipped_skin_id, 0) // 10
+
+    def active_goal(self):
+        """One calm, useful goal for the home screen; no overwhelming task wall."""
+        next_milestone = next(
+            (milestone for milestone in SCORE_MILESTONES if milestone["id"] not in self.score_milestones),
+            None,
+        )
+        if next_milestone:
+            return (
+                next_milestone["name"],
+                f"Reach a best score of {next_milestone['target']}.",
+                self.best_score,
+                next_milestone["target"],
+                GOLD,
+            )
+        weekly_stage = next(
+            (stage for stage in WEEKLY_STAGES if stage["id"] not in self.weekly_state["completed"]),
+            None,
+        )
+        if weekly_stage:
+            return (
+                weekly_stage["name"],
+                weekly_stage["summary"],
+                self.weekly_state["progress"][weekly_stage["id"]],
+                weekly_stage["target"],
+                AQUA,
+            )
+        level = self.mastery_level()
+        return (
+            self.current_skin["name"] + " MASTERY",
+            f"Earn 10 score with {self.current_skin['name']} to reach level {level + 1}.",
+            self.mastery[self.equipped_skin_id] % 10,
+            10,
+            self.current_skin["accent"],
+        )
 
     def advance_mission(self, metric, amount=1):
         """Advance one of today's tiny, visible goals and celebrate completion."""
@@ -757,14 +1101,20 @@ class SkyPulseGame(Widget):
         if self.state != "playing":
             return
         scale = self.scale
-        # A flap restores lift without making fast consecutive taps jerk upward.
-        self.bird_speed = min(
-            MAX_RISE_SPEED * scale,
-            max(FLAP_STRENGTH * scale, self.bird_speed + FLAP_REBOUND * scale),
-        )
+        # Every physical tap is a full wing beat. A fast second tap reaches a
+        # clear second lift instead of being swallowed as an almost-invisible
+        # velocity nudge.
+        if self.bird_speed <= 0:
+            self.bird_speed = FLAP_STRENGTH * scale
+        else:
+            self.bird_speed = min(
+                MAX_RISE_SPEED * scale,
+                max(FLAP_STRENGTH * scale, self.bird_speed + FLAP_REBOUND * scale),
+            )
         self.flap_energy = 1.0
         self.flap_bounce = 1.0
-        self.wing_phase = -1.5708
+        # Begin on a firm downstroke, then flow into the glide rhythm.
+        self.wing_phase = -1.24
         # A real bird snaps its head up with the wing beat, then settles into
         # the dive rather than rotating mechanically with raw velocity.
         self.bird_tilt = max(self.bird_tilt, 17)
@@ -777,14 +1127,14 @@ class SkyPulseGame(Widget):
         if not self.reduce_motion:
             self.screen_shake = max(self.screen_shake, 0.025)
         primary, secondary = self.current_trail["colours"]
-        for index in range(8):
+        for index in range(2):
             self.sparks.append(
                 {
                     "x": BIRD_X * self.scale - 22 - index * 5,
                     "y": self.bird_y + random.randint(-12, 12),
-                    "life": 0.45,
+                    "life": 0.34,
                     "colour": primary if index % 2 else secondary,
-                    "vx": -135 * self.scale - index * 12,
+                    "vx": -118 * self.scale - index * 12,
                     "vy": random.randint(-35, 35),
                 }
             )
@@ -831,6 +1181,7 @@ class SkyPulseGame(Widget):
         self.trigger_haptic("heavy")
         self.impact_flash = 0.42
         self.screen_shake = 0 if self.reduce_motion else 0.32
+        self.game_over_backdrop_dirty = True
         if self.is_daily_run:
             self.daily_state["best"] = max(self.daily_state["best"], self.score)
             if self.score >= self.daily_state["target"] and not self.daily_state["reward_claimed"]:
@@ -840,7 +1191,7 @@ class SkyPulseGame(Widget):
                 if item:
                     self.daily_rewards_this_run.append(("BONUS STYLE", item["name"]))
                 self.play_sound("new_best")
-        for _ in range(18):
+        for _ in range(10):
             self.sparks.append(
                 {
                     "x": BIRD_X * self.scale + random.randint(-22, 22),
@@ -855,20 +1206,29 @@ class SkyPulseGame(Widget):
         self.save_progress()
 
     def update(self, dt):
+        # Flight needs a steady 60 fps for fair taps and collision timing.
+        # Menu art and the frozen results screen are deliberately lighter so
+        # they do not burn battery or make the interface feel sluggish.
+        self.frame_accumulator += dt
+        target_interval = 1 / 60 if self.state == "playing" else 1 / 20
+        if not self.force_frame and self.frame_accumulator < target_interval:
+            return
+        dt = min(self.frame_accumulator, 1 / 30)
+        self.frame_accumulator = 0
+        self.force_frame = False
         # Prevent a momentary window stall from causing a visible jump or a
         # surprise collision when the next frame arrives.
-        dt = min(dt, 1 / 30)
         self.time += dt
         self.screen_shake = max(0, self.screen_shake - dt)
         self.notice_timer = max(0, self.notice_timer - dt)
         self.impact_flash = max(0, self.impact_flash - dt * 1.9)
         self.new_best_timer = max(0, self.new_best_timer - dt)
         self.achievement_timer = max(0, self.achievement_timer - dt)
-        self.flap_energy = max(0, self.flap_energy - dt * 2.8)
-        self.flap_bounce = max(0, self.flap_bounce - dt * 3.6)
-        # A short, even wing cycle reads as a deliberate flap rather than a
-        # rapid sprite flicker, including on high-refresh displays.
-        self.wing_phase += dt * (6.8 + self.flap_energy * 15)
+        self.flap_energy = max(0, self.flap_energy - dt * 2.15)
+        self.flap_bounce = max(0, self.flap_bounce - dt * 2.9)
+        # Wings never freeze in a dive: a restrained glide rhythm keeps every
+        # bird alive, while a tap briefly adds a stronger downstroke.
+        self.wing_phase += dt * (7.4 + self.flap_energy * 8.6)
         self.sparks = [
             {
                 **spark,
@@ -898,14 +1258,14 @@ class SkyPulseGame(Widget):
 
         scale = self.scale
         bird_x = BIRD_X * scale
-        fall_multiplier = 1.0 if self.bird_speed >= 0 else 1.16
+        fall_multiplier = 0.93 if self.bird_speed >= 0 else 1.08
         self.bird_speed = max(
             -MAX_FALL_SPEED * scale,
             self.bird_speed - GRAVITY * fall_multiplier * scale * dt,
         )
         self.bird_y += self.bird_speed * dt
-        target_tilt = max(-42, min(27, self.bird_speed / max(scale, 0.01) * 0.080))
-        tilt_response = 17 if target_tilt > self.bird_tilt else 7
+        target_tilt = max(-34, min(23, self.bird_speed / max(scale, 0.01) * 0.063))
+        tilt_response = 12 if target_tilt > self.bird_tilt else 5.5
         self.bird_tilt += (target_tilt - self.bird_tilt) * (1 - exp(-tilt_response * dt))
         bird_hit_x, bird_hit_y, bird_half_width, bird_half_height = self.bird_collider()
         self.flight_trail = [
@@ -913,8 +1273,11 @@ class SkyPulseGame(Widget):
             for trail_x, trail_y, age in self.flight_trail
             if age + dt < 0.48
         ]
-        self.flight_trail.insert(0, (bird_x, self.bird_y, 0))
-        self.flight_trail = self.flight_trail[:32]
+        self.trail_sample_timer -= dt
+        if self.trail_sample_timer <= 0:
+            self.trail_sample_timer = 1 / 40
+            self.flight_trail.insert(0, (bird_x, self.bird_y, 0))
+            self.flight_trail = self.flight_trail[:22]
         self.spawn_timer -= dt
         self.trail_timer -= dt
         speed = (TOWER_SPEED + min(self.score, 25) * 4) * scale
@@ -992,7 +1355,7 @@ class SkyPulseGame(Widget):
                 self.play_sound("crystal")
                 self.trigger_haptic("light")
                 self.impact_flash = max(self.impact_flash, 0.08)
-                for _ in range(12):
+                for _ in range(6):
                     self.sparks.append(
                         {
                             "x": bird_x + random.randint(-12, 12),
@@ -1047,16 +1410,24 @@ class SkyPulseGame(Widget):
 
     def draw_label(self, text, center_x, y, size, colour, alpha=1, shadow=True):
         """Draw crisp arcade text with a restrained shadow for legibility."""
-        label = CoreLabel(
-            text=text,
-            font_size=size * self.scale,
-            bold=True,
-            # Keep the label texture white so the canvas colour below can supply
-            # the intended neon tint without multiplying it twice.
-            color=(1, 1, 1, 1),
-        )
-        label.refresh()
-        texture = label.texture
+        cache_key = (text, round(size * self.scale, 2))
+        texture = self.label_cache.get(cache_key)
+        if texture is None:
+            label = CoreLabel(
+                text=text,
+                font_size=size * self.scale,
+                bold=True,
+                # Keep the label texture white so the canvas colour below can
+                # supply the intended neon tint without multiplying it twice.
+                color=(1, 1, 1, 1),
+            )
+            label.refresh()
+            texture = label.texture
+            # Score/bank values are the only unbounded labels. A small cache is
+            # enough to make menus tap instantly without growing forever.
+            if len(self.label_cache) >= 256:
+                self.label_cache.clear()
+            self.label_cache[cache_key] = texture
         if shadow:
             self.colour(DEEP_SPACE, min(0.72, alpha * 0.72))
             Rectangle(
@@ -1154,9 +1525,13 @@ class SkyPulseGame(Widget):
                 self.colour(colour, 0.90)
                 Rectangle(pos=(x, base_y), size=(building_width, building_height))
                 self.colour(theme["accent"], alpha)
-                for window_y in range(int(base_y + 11 * self.scale), int(base_y + building_height), int(15 * self.scale)):
-                    window_x = x + (6 + (index % 3) * 3) * self.scale
-                    Rectangle(pos=(window_x, window_y), size=(max(1, 2 * self.scale), max(1, 3 * self.scale)))
+                # One moving facade accent reads as a live city at speed while
+                # avoiding dozens of tiny per-frame window draw calls.
+                window_x = x + (6 + (index % 3) * 3) * self.scale
+                Rectangle(
+                    pos=(window_x, base_y + 10 * self.scale),
+                    size=(max(1, 2 * self.scale), max(1, building_height - 20 * self.scale)),
+                )
 
     def draw_cinematic_event(self, theme, motion_time):
         """Rare backdrop-only events enrich a run without changing collision rules."""
@@ -1194,7 +1569,7 @@ class SkyPulseGame(Widget):
                 Rectangle(pos=(0, y), size=(self.width, stripe_height + 1))
 
         # A separate moving star layer sells motion even while the world art stays crisp.
-        for index in range(4):
+        for index in range(2):
             drift = (motion_time * (10 + index * 3) + index * 133) % (self.width + 180) - 90
             cloud_y = self.height * (0.38 + (index % 3) * 0.17)
             cloud_size = (120 + index * 35) * self.scale
@@ -1212,15 +1587,15 @@ class SkyPulseGame(Widget):
         glow_center_y = self.height * 0.105
         horizon_breath = sin(motion_time * 1.7) * 0.025
         for multiplier, alpha, colour in zip(
-            (1.20, 0.90, 0.58),
-            (0.020, 0.045 + horizon_breath, 0.08),
+            (1.08, 0.68),
+            (0.035 + horizon_breath, 0.075),
             theme["sky_colours"],
         ):
             diameter = self.width * multiplier
             self.colour(colour, alpha)
             Ellipse(pos=(glow_center_x - diameter / 2, glow_center_y - diameter / 2), size=(diameter, diameter))
 
-        for index in range(3):
+        for index in range(2):
             phase = (motion_time * (0.15 + index * 0.04) + index * 0.34) % 1
             comet_x = self.width * (1 - phase) + 40 * self.scale
             comet_y = self.height * (0.72 + index * 0.07)
@@ -1229,8 +1604,11 @@ class SkyPulseGame(Widget):
                 points=[comet_x, comet_y, comet_x + 34 * self.scale, comet_y + 12 * self.scale],
                 width=max(0.7, 1.2 * self.scale),
             )
-        self.draw_city_parallax(theme, motion_time)
-        self.draw_cinematic_event(theme, motion_time)
+        # The close city layer belongs to the flight, not to menu typography.
+        # Keeping it off curated screens preserves clean, readable controls.
+        if self.state in ("playing", "paused", "game_over"):
+            self.draw_city_parallax(theme, motion_time)
+            self.draw_cinematic_event(theme, motion_time)
 
     def draw_runway(self):
         """Draw the playable floor so its bright edge exactly matches ground collision."""
@@ -1381,55 +1759,80 @@ class SkyPulseGame(Widget):
         trail_duration = 0.48
         ordered_points = list(reversed(self.flight_trail))
 
-        # Three offset ribbons keep the energy in motion without obscuring play.
+        # Two offset ribbons keep the energy alive without costing a full
+        # extra line pass every frame.
         for colour, alpha, width, phase in (
-            (primary, 0.10, 18, 0.0),
-            (secondary, 0.24, 8, 2.1),
-            (primary, 0.84, 2.0, 4.2),
+            (secondary, 0.18, 10, 1.6),
+            (primary, 0.82, 2.0, 4.2),
         ):
             points = []
             for index, (x, y, age) in enumerate(ordered_points):
                 life = max(0, 1 - age / trail_duration)
                 wave = sin(self.time * 12 - age * 19 + index * 0.58 + phase)
                 offset = wave * (1.8 + self.flap_energy * 2.5) * life * scale
-                points.extend((x, y + offset))
+                # The bird is screen-anchored, so raw history would stack into
+                # a vertical slash during a flap. Age offsets the ribbon back
+                # through the air, producing a real trailing wake instead.
+                points.extend((x - age * 238 * scale, y + offset))
             self.colour(colour, alpha)
             Line(points=points, width=width * scale)
 
         # Bright pulses flow from the bird out through the ribbon like charged air.
         point_count = len(ordered_points) - 1
-        for pulse_index in range(3):
+        for pulse_index in range(1):
             travel = 1 - ((self.time * 1.85 + pulse_index * 0.33) % 1)
             position = travel * point_count
             left_index = min(point_count - 1, int(position))
             blend = position - left_index
             tail_x, tail_y, tail_age = ordered_points[left_index]
             head_x, head_y, head_age = ordered_points[left_index + 1]
-            x = tail_x + (head_x - tail_x) * blend
+            age = tail_age + (head_age - tail_age) * blend
+            x = tail_x + (head_x - tail_x) * blend - age * 238 * scale
             y = tail_y + (head_y - tail_y) * blend
-            life = max(0, 1 - (tail_age + (head_age - tail_age) * blend) / trail_duration)
+            life = max(0, 1 - age / trail_duration)
             size = (3.0 + sin(self.time * 9 + pulse_index) * 0.8) * life * scale
-            self.colour(WHITE if pulse_index == 1 else secondary, 0.78 * life)
+            self.colour(secondary, 0.78 * life)
             Ellipse(pos=(x - size / 2, y - size / 2), size=(size, size))
 
-    def draw_bird(self, x=None, y=None, size=1.0, skin=None, preview=False):
+    def draw_best_ghost(self):
+        """A quiet replay of the best flight gives players a useful practice target."""
+        if self.state != "playing" or not self.best_ghost or self.run_time <= 0.08:
+            return
+        sample_index = min(len(self.best_ghost) - 1, int(self.run_time * 12))
+        _moment, height, tilt = self.best_ghost[sample_index]
+        ghost_y = height * self.height
+        if not self.ground_y + 20 * self.scale < ghost_y < self.height - 20 * self.scale:
+            return
+        self.draw_bird(
+            BIRD_X * self.scale,
+            ghost_y,
+            size=0.90,
+            skin=self.current_skin,
+            alpha=0.19,
+            tilt_override=tilt,
+        )
+
+    def draw_bird(self, x=None, y=None, size=1.0, skin=None, preview=False, alpha=1.0, tilt_override=None):
         """Draw the equipped bird in-game or as an interactive shop preview."""
         scale = self.scale * size
         x = BIRD_X * self.scale if x is None else x
         y = self.bird_y if y is None else y
         skin = self.current_skin if skin is None else skin
         flutter = sin(self.wing_phase)
+        wing_amplitude = 0.42 + self.flap_energy * 0.58
         flap_mix = (
-            0.5 - sin(self.time * 4.5) * 0.5
+            0.5 - sin(self.time * 5.2) * 0.34
             if preview
-            else (0.5 - flutter * 0.5) * self.flap_energy
+            else 0.5 - flutter * 0.5 * wing_amplitude
         )
-        tilt = 0 if preview else self.bird_tilt + flutter * self.flap_energy * 0.8
+        tilt = 0 if preview else (self.bird_tilt if tilt_override is None else tilt_override) + flutter * wing_amplitude * 0.38
         if preview:
             y += sin(self.time * 2.2) * 2.2 * scale
         else:
-            # The wing's downstroke gives the body a small, natural lift.
-            y -= flutter * self.flap_bounce * 2.4 * scale
+            # A small breathing bob follows the wing beat without moving the
+            # actual collision body, so the flight feels alive but remains fair.
+            y += sin(self.wing_phase + 0.72) * (0.75 + self.flap_bounce * 1.25) * scale
+            y += sin(self.time * 1.85) * 0.42 * scale
 
         frames = self.skin_textures.get(skin["id"], {})
         up_texture = frames.get("up")
@@ -1443,7 +1846,7 @@ class SkyPulseGame(Widget):
             # The eased sine mix turns two drawn wing poses into a fluid flap
             # with no hard sprite pop at the top or bottom of the beat.
             up_height = art_width * up_texture.height / max(up_texture.width, 1)
-            self.colour(tint, 1 - flap_mix if down_texture else 1)
+            self.colour(tint, alpha * (1 - flap_mix if down_texture else 1))
             Rectangle(
                 texture=up_texture,
                 pos=(-art_width * 0.60, -up_height * 0.50),
@@ -1451,7 +1854,7 @@ class SkyPulseGame(Widget):
             )
             if down_texture and flap_mix > 0:
                 down_height = art_width * down_texture.height / max(down_texture.width, 1)
-                self.colour(tint, flap_mix)
+                self.colour(tint, alpha * flap_mix)
                 Rectangle(
                     texture=down_texture,
                     pos=(-art_width * 0.60, -down_height * 0.50),
@@ -1461,17 +1864,18 @@ class SkyPulseGame(Widget):
             return
 
         # A simple fallback keeps the game usable even if the image is accidentally moved.
-        self.colour(primary)
+        primary = skin["trail"][0]
+        self.colour(primary, alpha)
         Ellipse(pos=(x - 28 * scale, y - 23 * scale), size=(54 * scale, 46 * scale))
-        self.colour((0.43, 0.66, 1.0))
+        self.colour((0.43, 0.66, 1.0), alpha)
         Ellipse(pos=(x - 4 * scale, y - 15 * scale), size=(39 * scale, 39 * scale))
-        self.colour((0.62, 0.40, 1.0))
+        self.colour((0.62, 0.40, 1.0), alpha)
         Ellipse(pos=(x - 46 * scale, y - 15 * scale), size=(38 * scale, 32 * scale))
-        self.colour(WHITE)
+        self.colour(WHITE, alpha)
         Ellipse(pos=(x + 11 * scale, y + 8 * scale), size=(12 * scale, 12 * scale))
-        self.colour(DEEP_SPACE)
+        self.colour(DEEP_SPACE, alpha)
         Ellipse(pos=(x + 16 * scale, y + 11 * scale), size=(5 * scale, 5 * scale))
-        self.colour(GOLD)
+        self.colour(GOLD, alpha)
         Ellipse(pos=(x + 31 * scale, y - 1 * scale), size=(17 * scale, 9 * scale))
 
     def draw_gameplay_fx(self):
@@ -1712,15 +2116,119 @@ class SkyPulseGame(Widget):
                 Rectangle(pos=(center - 124 * scale, y + 13 * scale), size=(progress_width, 2 * scale))
             else:
                 self.draw_label(mission["reward_label"] + " UNLOCKED", center, y + 10 * scale, 8, MINT)
-        self.draw_label(
-            "ACHIEVEMENTS  " + str(len(self.achievements)) + " / " + str(len(ACHIEVEMENTS)),
-            center,
-            self.height * 0.158,
-            9,
-            AQUA,
-            alpha=0.82,
-        )
         self.draw_action_button("<  MENU", center, self.height * 0.055 + self.safe_bottom_padding, 170 * scale, 32 * scale, VIOLET, "menu")
+
+    def draw_progress_card(self, x, y, width, height, accent, title, summary, progress, target, action=None):
+        self.draw_panel(x, y, width, height, accent, 0.15)
+        self.draw_label(title, x + width * 0.5, y + height * 0.59, 11, accent)
+        self.draw_label(summary, x + width * 0.5, y + height * 0.33, 8, WHITE, alpha=0.76)
+        self.draw_label(str(progress) + " / " + str(target), x + width * 0.5, y + height * 0.12, 8, WHITE, alpha=0.90)
+        self.colour(accent, 0.62)
+        Rectangle(pos=(x + 28 * self.scale, y + 5 * self.scale), size=((width - 56 * self.scale) * min(1, progress / max(target, 1)), 1.8 * self.scale))
+        if action:
+            self.hitboxes.append((x, y, width, height, action))
+
+    def draw_goals(self):
+        """A compact roadmap that makes every major loop understandable at a glance."""
+        center, scale = self.width / 2, self.scale
+        card_width, card_height = 320 * scale, 74 * scale
+        self.draw_panel(self.width * 0.05, self.height * 0.045, self.width * 0.90, self.height * 0.91, GOLD, 0.18)
+        self.draw_label("FLIGHT PATH", center, self.height * 0.855, 27, WHITE)
+        self.draw_label(self.current_rank["name"] + " RANK  •  EARN YOUR NEXT COSMETIC", center, self.height * 0.815, 9, self.current_rank["accent"])
+        goal_name, goal_summary, goal_progress, goal_target, goal_colour = self.active_goal()
+        self.draw_progress_card(
+            center - card_width / 2, self.height * 0.660, card_width, card_height,
+            goal_colour, goal_name, goal_summary, goal_progress, goal_target, "weekly",
+        )
+        mastery_xp = self.mastery[self.equipped_skin_id]
+        mastery_progress = mastery_xp % 10
+        self.draw_progress_card(
+            center - card_width / 2, self.height * 0.520, card_width, card_height,
+            self.current_skin["accent"], self.current_skin["name"] + " MASTERY  •  LV " + str(self.mastery_level()),
+            "Score with this bird to unlock its next style.", mastery_progress, 10, "shop_birds",
+        )
+        weekly_progress = sum(self.weekly_state["progress"].values())
+        weekly_target = sum(stage["target"] for stage in WEEKLY_STAGES)
+        self.draw_progress_card(
+            center - card_width / 2, self.height * 0.380, card_width, card_height,
+            GOLD, "WEEKLY SKY TOUR", "Finish all 3 stages to unlock a new bird.", weekly_progress, weekly_target, "weekly",
+        )
+        self.draw_progress_card(
+            center - card_width / 2, self.height * 0.240, card_width, card_height,
+            PINK, "CHALLENGE MEDALS", "Optional skill runs earn permanent cosmetic rewards.",
+            len(self.challenge_medals), len(CHALLENGE_MEDALS), "challenges",
+        )
+        next_rank = self.next_rank
+        if next_rank:
+            self.draw_label(
+                "NEXT RANK: " + next_rank["name"] + " AT BEST " + str(next_rank["score"]),
+                center, self.height * 0.165, 9, next_rank["accent"], alpha=0.90,
+            )
+        self.draw_action_button("<  MENU", center, self.height * 0.075 + self.safe_bottom_padding, 170 * scale, 32 * scale, VIOLET, "menu")
+
+    def draw_weekly(self):
+        center, scale = self.width / 2, self.scale
+        weekly = self.weekly_state
+        self.draw_panel(self.width * 0.055, self.height * 0.050, self.width * 0.89, self.height * 0.90, GOLD, 0.20)
+        self.draw_label("WEEKLY SKY TOUR", center, self.height * 0.862, 25, WHITE)
+        self.draw_label(weekly["week"] + "  •  THREE STAGES, ONE BIRD REWARD", center, self.height * 0.823, 8, GOLD)
+        reward_text = "BIRD REWARD CLAIMED" if weekly["reward_claimed"] else "COMPLETE ALL STAGES: NEW BIRD"
+        self.draw_label(reward_text, center, self.height * 0.762, 10, MINT if weekly["reward_claimed"] else AQUA)
+        card_width, card_height = 320 * scale, 86 * scale
+        for stage, y in zip(WEEKLY_STAGES, (self.height * 0.610, self.height * 0.450, self.height * 0.290)):
+            progress = weekly["progress"][stage["id"]]
+            complete = stage["id"] in weekly["completed"]
+            colour = MINT if complete else GOLD
+            self.draw_panel(center - card_width / 2, y, card_width, card_height, colour, 0.18 if complete else 0.10)
+            self.draw_label(stage["name"], center, y + 52 * scale, 12, colour)
+            self.draw_label(stage["summary"], center, y + 31 * scale, 8, WHITE, alpha=0.76)
+            self.draw_label("COMPLETE" if complete else str(progress) + " / " + str(stage["target"]), center, y + 12 * scale, 9, colour)
+            self.colour(colour, 0.60)
+            Rectangle(pos=(center - 116 * scale, y + 6 * scale), size=(232 * scale * min(1, progress / stage["target"]), 1.8 * scale))
+        self.draw_action_button("<  DAILY", center, self.height * 0.105, 170 * scale, 32 * scale, VIOLET, "daily")
+
+    def draw_challenges(self):
+        """Skill medals stay optional, but every requirement and reward is explicit."""
+        center, scale = self.width / 2, self.scale
+        self.draw_panel(self.width * 0.055, self.height * 0.050, self.width * 0.89, self.height * 0.90, PINK, 0.19)
+        self.draw_label("CHALLENGE MEDALS", center, self.height * 0.855, 24, WHITE)
+        self.draw_label("OPTIONAL SKILL RUNS  •  EARN PERMANENT STYLES", center, self.height * 0.815, 8, PINK)
+        card_width, card_height = 320 * scale, 102 * scale
+        for medal, y in zip(CHALLENGE_MEDALS, (self.height * 0.610, self.height * 0.435, self.height * 0.260)):
+            unlocked = medal["id"] in self.challenge_medals
+            colour = MINT if unlocked else PINK
+            self.draw_panel(center - card_width / 2, y, card_width, card_height, colour, 0.18 if unlocked else 0.10)
+            self.draw_label(medal["name"], center, y + 62 * scale, 13, colour)
+            self.draw_label(medal["summary"], center, y + 39 * scale, 8, WHITE, alpha=0.80)
+            self.draw_label("EARNED" if unlocked else "REWARD  •  " + medal["reward"], center, y + 16 * scale, 9, MINT if unlocked else GOLD)
+        self.draw_action_button("<  FLIGHT PATH", center, self.height * 0.095, 190 * scale, 32 * scale, VIOLET, "goals")
+
+    def draw_achievements(self):
+        """Make progression inspectable instead of hiding it behind a counter."""
+        center, scale = self.width / 2, self.scale
+        self.draw_panel(self.width * 0.055, self.height * 0.045, self.width * 0.89, self.height * 0.91, AQUA, 0.18)
+        self.draw_label("ACHIEVEMENTS", center, self.height * 0.855, 26, WHITE)
+        self.draw_label("FLIGHT MILESTONES", center, self.height * 0.815, 10, AQUA)
+        self.draw_label(
+            "SCORE REWARDS  " + str(len(self.score_milestones)) + " / " + str(len(SCORE_MILESTONES))
+            + "  •  MEDALS  " + str(len(self.challenge_medals)) + " / " + str(len(CHALLENGE_MEDALS)),
+            center,
+            self.height * 0.790,
+            8,
+            GOLD,
+        )
+        self.draw_panel(center - 65 * scale, self.height * 0.750, 130 * scale, 28 * scale, AQUA, 0.10)
+        self.draw_label(str(len(self.achievements)) + " / " + str(len(ACHIEVEMENTS)) + " UNLOCKED", center, self.height * 0.758, 10, AQUA)
+        card_width, card_height = 318 * scale, 72 * scale
+        for (achievement_id, achievement), y in zip(ACHIEVEMENTS.items(), (self.height * 0.610, self.height * 0.460, self.height * 0.310, self.height * 0.160)):
+            unlocked = achievement_id in self.achievements
+            colour = MINT if unlocked else VIOLET
+            self.draw_panel(center - card_width / 2, y, card_width, card_height, colour, 0.19 if unlocked else 0.09)
+            self.draw_label(achievement["name"], center - 49 * scale, y + 43 * scale, 11, WHITE)
+            self.draw_label(achievement["summary"], center - 49 * scale, y + 22 * scale, 8, WHITE, alpha=0.72)
+            status = "UNLOCKED" if unlocked else "◆ " + str(achievement["reward"])
+            self.draw_label(status, center + 113 * scale, y + 43 * scale, 9, colour)
+        self.draw_action_button("<  DAILY", center, self.height * 0.070 + self.safe_bottom_padding, 170 * scale, 32 * scale, VIOLET, "daily")
 
     def draw_backgrounds(self):
         center, scale = self.width / 2, self.scale
@@ -1788,10 +2296,11 @@ class SkyPulseGame(Widget):
         if self.is_daily_run:
             daily_text = "DAILY STYLE UNLOCKED" if self.daily_reward_earned else "DAILY BEST  " + str(self.daily_state["best"])
             self.draw_label(daily_text, center, self.height * 0.495, 10, MINT if self.daily_reward_earned else VIOLET)
-        if self.daily_rewards_this_run:
-            rewards = self.daily_rewards_this_run[-3:]
+        earned_rewards = self.daily_rewards_this_run
+        if earned_rewards:
+            rewards = earned_rewards[-3:]
             self.draw_panel(center - 132 * scale, self.height * 0.330, 264 * scale, 88 * scale, MINT, 0.15)
-            self.draw_label("DAILY UNLOCKS", center, self.height * 0.405, 10, MINT)
+            self.draw_label("FLIGHT UNLOCKS", center, self.height * 0.405, 10, MINT)
             for index, (category, item_name) in enumerate(rewards):
                 self.draw_label(
                     item_name + "  " + category,
@@ -1801,7 +2310,7 @@ class SkyPulseGame(Widget):
                     WHITE,
                     alpha=0.88,
                 )
-            hidden_count = len(self.daily_rewards_this_run) - len(rewards)
+            hidden_count = len(earned_rewards) - len(rewards)
             if hidden_count:
                 self.draw_label("+" + str(hidden_count) + " MORE STYLE", center, self.height * 0.337, 8, MINT)
         self.draw_action_button("RETRY", center, self.height * 0.250, 220 * scale, 39 * scale, PINK, "daily_retry" if self.is_daily_run else "retry")
@@ -1835,6 +2344,14 @@ class SkyPulseGame(Widget):
             self.draw_settings()
         elif self.state == "daily":
             self.draw_daily()
+        elif self.state == "weekly":
+            self.draw_weekly()
+        elif self.state == "goals":
+            self.draw_goals()
+        elif self.state == "challenges":
+            self.draw_challenges()
+        elif self.state == "achievements":
+            self.draw_achievements()
         elif self.state == "backgrounds":
             self.draw_backgrounds()
         elif self.state == "paused":
@@ -1844,33 +2361,71 @@ class SkyPulseGame(Widget):
         if self.notice_timer > 0:
             self.draw_label(self.notice, self.width / 2, self.height * 0.065, 12, PINK)
 
+    def draw_world(self):
+        """Draw the unfiltered game world into whichever canvas is active."""
+        shake_x = random.uniform(-1, 1) * self.screen_shake * 22 * self.scale
+        shake_y = random.uniform(-1, 1) * self.screen_shake * 16 * self.scale
+        PushMatrix()
+        Translate(shake_x, shake_y)
+        self.draw_background()
+        self.draw_runway()
+        # Menus are clean, curated screens. Only an active or interrupted
+        # flight keeps the live game world (bird, HUD, towers, and effects).
+        if self.state in ("playing", "paused", "game_over"):
+            for tower in self.towers:
+                self.draw_tower(tower)
+            for crystal in self.crystals:
+                self.draw_crystal(crystal)
+            self.draw_living_trail()
+            for spark in self.sparks:
+                self.colour(spark["colour"], max(0, spark["life"]))
+                size = max(2, 7 * spark["life"]) * self.scale
+                Ellipse(pos=(spark["x"] - size / 2, spark["y"] - size / 2), size=(size, size))
+            self.draw_bird()
+        PopMatrix()
+        if self.state in ("playing", "paused", "game_over"):
+            self.draw_gameplay_fx()
+            self.draw_hud()
+
+    def draw_scene(self):
+        """Capture only the Game Over world for soft-focus presentation."""
+        self.scene_fbo.clear()
+        with self.scene_fbo:
+            ClearColor(0, 0, 0, 1)
+            ClearBuffers()
+            self.draw_world()
+
+    def draw_soft_focus_scene(self):
+        """Downsample once for a smooth, battery-friendly Game Over blur."""
+        self.blur_fbo.clear()
+        with self.blur_fbo:
+            ClearColor(0, 0, 0, 1)
+            ClearBuffers()
+            Color(1, 1, 1, 1)
+            Rectangle(texture=self.scene_fbo.texture, pos=(0, 0), size=self.blur_fbo.size)
+
     def draw(self):
         self.hitboxes = []
+        if self.state == "game_over":
+            # The world is frozen behind results, so build its downsampled
+            # blur once and reuse it. Re-rendering two full scenes every frame
+            # was the source of the Game Over hitch.
+            if self.game_over_backdrop_dirty:
+                self.draw_scene()
+                self.draw_soft_focus_scene()
+                self.game_over_backdrop_dirty = False
+            self.canvas.clear()
+            with self.canvas:
+                self.colour(WHITE)
+                Rectangle(texture=self.blur_fbo.texture, pos=(0, 0), size=self.size)
+                self.draw_overlay()
+            return
+
+        # All normal gameplay and non-Game-Over screens render directly to the
+        # display, preserving their original clarity and responsiveness.
         self.canvas.clear()
         with self.canvas:
-            shake_x = random.uniform(-1, 1) * self.screen_shake * 22 * self.scale
-            shake_y = random.uniform(-1, 1) * self.screen_shake * 16 * self.scale
-            PushMatrix()
-            Translate(shake_x, shake_y)
-            self.draw_background()
-            self.draw_runway()
-            # Menus are clean, curated screens. Only an active or interrupted
-            # flight keeps the live game world (bird, HUD, towers, and effects).
-            if self.state in ("playing", "paused", "game_over"):
-                for tower in self.towers:
-                    self.draw_tower(tower)
-                for crystal in self.crystals:
-                    self.draw_crystal(crystal)
-                self.draw_living_trail()
-                for spark in self.sparks:
-                    self.colour(spark["colour"], max(0, spark["life"]))
-                    size = max(2, 7 * spark["life"]) * self.scale
-                    Ellipse(pos=(spark["x"] - size / 2, spark["y"] - size / 2), size=(size, size))
-                self.draw_bird()
-            PopMatrix()
-            if self.state in ("playing", "paused", "game_over"):
-                self.draw_gameplay_fx()
-                self.draw_hud()
+            self.draw_world()
             self.draw_overlay()
 
     def activate(self, action):
@@ -1899,6 +2454,15 @@ class SkyPulseGame(Widget):
             self.state = "settings"
         elif action == "daily":
             self.state = "daily"
+            self.register_daily_visit()
+        elif action == "weekly":
+            self.state = "weekly"
+        elif action == "goals":
+            self.state = "goals"
+        elif action == "challenges":
+            self.state = "challenges"
+        elif action == "achievements":
+            self.state = "achievements"
         elif action == "backgrounds":
             self.state = "backgrounds"
         elif action == "resume":
@@ -1966,14 +2530,22 @@ class SkyPulseGame(Widget):
     def on_touch_down(self, touch):
         for x, y, width, height, action in reversed(self.hitboxes):
             if x <= touch.x <= x + width and y <= touch.y <= y + height:
+                # The next touch can arrive before the following draw tick.
+                # Clear this screen's controls first so a double tap never
+                # fires the same menu action twice.
+                self.hitboxes = []
                 self.activate(action)
+                self.force_frame = True
                 return True
         if self.state == "playing":
+            # There is intentionally no tap debounce: two quick touches are
+            # two natural wing beats, exactly as players expect in Flappy play.
             self.flap()
         elif self.state == "menu":
             self.start_or_flap()
         elif self.state == "paused":
             self.state = "playing"
+        self.force_frame = True
         return True
 
     def on_key_down(self, _window, key, _scancode, _codepoint, _modifiers):
@@ -1984,6 +2556,7 @@ class SkyPulseGame(Widget):
                 self.state = "paused"
             elif self.state == "paused":
                 self.state = "playing"
+        self.force_frame = True
         return True
 
 
