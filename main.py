@@ -417,14 +417,6 @@ class SkyPulseGame(Widget):
         self.colour(colour, alpha)
         Rectangle(texture=texture, pos=(center_x - texture.width / 2, y), size=texture.size)
 
-    def draw_stat_chip(self, label, value, center_x, y, width, accent):
-        """A compact information tile used where a full button would be misleading."""
-        scale = self.scale
-        height = 45 * scale
-        self.draw_panel(center_x - width / 2, y, width, height, accent, 0.10)
-        self.draw_label(label, center_x, y + 25 * scale, 8, WHITE, alpha=0.72)
-        self.draw_label(value, center_x, y + 8 * scale, 13, accent)
-
     def draw_panel(self, x, y, width, height, accent, alpha=0.16):
         """A translucent, bordered panel used by the HUD and menus."""
         scale = self.scale
@@ -440,29 +432,40 @@ class SkyPulseGame(Widget):
         Line(rectangle=(x, y, width, height), width=max(0.8, 1.1 * scale))
 
     def draw_action_button(self, text, center_x, y, width, height, accent=VIOLET, action=None):
-        """A non-rectangular, softly pulsing arcade-style call-to-action."""
+        """A restrained neon call-to-action with one clear visual emphasis."""
         scale = self.scale
-        pulse = 0.13 + sin(self.time * 3.0) * 0.035
+        pulse = 0.065 + sin(self.time * 3.0) * 0.018
         left = center_x - width / 2
         self.colour(accent, pulse)
         RoundedRectangle(
-            pos=(left - 7 * scale, y - 7 * scale),
-            size=(width + 14 * scale, height + 14 * scale),
-            radius=[height * 0.46],
+            pos=(left - 5 * scale, y - 5 * scale),
+            size=(width + 10 * scale, height + 10 * scale),
+            radius=[height * 0.42],
         )
-        self.colour((0.14, 0.035, 0.30), 0.92)
-        RoundedRectangle(pos=(left, y), size=(width, height), radius=[height * 0.40])
-        self.colour(accent, 0.95)
-        Line(rectangle=(left, y, width, height), width=1.35 * scale)
-        self.colour(accent, 0.72)
+        self.colour((0.055, 0.025, 0.14), 0.90)
+        RoundedRectangle(pos=(left, y), size=(width, height), radius=[height * 0.34])
+        self.colour(accent, 0.70)
+        Line(rectangle=(left, y, width, height), width=max(0.8, 1.0 * scale))
+        self.colour(WHITE, 0.16)
         Line(
-            points=[left + 16 * scale, y + height / 2, left + 22 * scale, y + height / 2 + 5 * scale,
-                    left + 16 * scale, y + height / 2 + 10 * scale],
-            width=max(0.8, 1.1 * scale),
+            points=[left + 15 * scale, y + height - 4 * scale, left + width - 15 * scale, y + height - 4 * scale],
+            width=max(0.45, 0.65 * scale),
         )
-        self.draw_label(text, center_x, y + height * 0.30, 15, WHITE)
+        self.draw_label(text, center_x, y + height * 0.30, 14, WHITE)
         if action:
             self.hitboxes.append((left, y, width, height, action))
+
+    def draw_secondary_button(self, text, center_x, y, width, accent, action):
+        """A low-profile utility action for navigation that should not compete with FLY."""
+        scale = self.scale
+        height = 34 * scale
+        left = center_x - width / 2
+        self.colour((0.025, 0.015, 0.09), 0.58)
+        RoundedRectangle(pos=(left, y), size=(width, height), radius=[10 * scale])
+        self.colour(accent, 0.48)
+        Line(rectangle=(left, y, width, height), width=max(0.65, 0.8 * scale))
+        self.draw_label(text, center_x, y + 10 * scale, 10, WHITE, alpha=0.88)
+        self.hitboxes.append((left, y, width, height, action))
 
     def draw_skin_card(self, skin, x, y, width, height, hangar=False):
         """A compact, tappable bird card for the shop and hangar screens."""
@@ -686,42 +689,33 @@ class SkyPulseGame(Widget):
 
     def draw_hud(self):
         scale = self.scale
-        top_y = self.height - 49 * scale
-        self.draw_panel(11 * scale, top_y, 47 * scale, 33 * scale, AQUA, 0.12)
-        self.draw_panel(self.width - 108 * scale, top_y, 97 * scale, 33 * scale, AQUA, 0.12)
-        self.draw_label("II", 34.5 * scale, self.height - 39 * scale, 12, WHITE)
-        self.draw_panel(self.width / 2 - 35 * scale, self.height - 70 * scale, 70 * scale, 42 * scale, VIOLET, 0.08)
-        self.draw_label(str(self.score), self.width / 2, self.height - 62 * scale, 34, WHITE)
-        self.draw_label("◆ " + str(self.crystal_bank), self.width - 59 * scale, self.height - 39 * scale, 13, AQUA)
+        top_y = self.height - 46 * scale
+        self.draw_panel(12 * scale, top_y, 34 * scale, 29 * scale, AQUA, 0.08)
+        self.draw_label("II", 29 * scale, self.height - 37 * scale, 11, WHITE)
+        self.draw_label(str(self.score), self.width / 2, self.height - 64 * scale, 38, WHITE)
+        self.draw_label("◆ " + str(self.crystal_bank), self.width - 39 * scale, self.height - 37 * scale, 12, AQUA, alpha=0.82)
         if self.state == "playing":
-            self.hitboxes.append((11 * scale, top_y, 47 * scale, 33 * scale, "pause"))
+            self.hitboxes.append((12 * scale, top_y, 34 * scale, 29 * scale, "pause"))
 
     def draw_menu(self):
         center, scale = self.width / 2, self.scale
-        self.draw_panel(self.width * 0.035, self.height * 0.025, self.width * 0.93, self.height * 0.95, VIOLET, 0.20)
-        self.draw_panel(20 * scale, self.height * 0.895, 79 * scale, 30 * scale, VIOLET, 0.17)
-        self.draw_label("ARCADE", 59 * scale, self.height * 0.904, 9, VIOLET)
-        self.draw_panel(self.width - 116 * scale, self.height * 0.895, 96 * scale, 30 * scale, AQUA, 0.15)
-        self.draw_label("◆ " + str(self.crystal_bank), self.width - 68 * scale, self.height * 0.904, 13, AQUA)
-        self.draw_label("SKYPULSE", center, self.height * 0.765, 40, WHITE)
-        self.colour(PINK, 0.62)
-        Line(points=[center - 92 * scale, self.height * 0.746, center - 39 * scale, self.height * 0.746], width=1.1 * scale)
-        Line(points=[center + 39 * scale, self.height * 0.746, center + 92 * scale, self.height * 0.746], width=1.1 * scale)
-        self.draw_label("TAP TO FLY  •  SURVIVE THE GLOW", center, self.height * 0.717, 10, AQUA)
-        self.draw_stat_chip("BEST SCORE", str(self.best_score), center - 58 * scale, self.height * 0.635, 104 * scale, VIOLET)
-        self.draw_stat_chip("CRYSTALS", "◆ " + str(self.crystal_bank), center + 58 * scale, self.height * 0.635, 104 * scale, AQUA)
-        self.draw_bird(center, self.height * 0.515, size=0.66, preview=True)
-        self.draw_action_button("PLAY", center, self.height * 0.350, 246 * scale, 42 * scale, PINK, "play")
-        self.draw_action_button("SHOP", center, self.height * 0.279, 246 * scale, 38 * scale, AQUA, "shop")
-        self.draw_action_button("CUSTOMIZE", center, self.height * 0.216, 246 * scale, 38 * scale, GOLD, "hangar")
-        self.draw_action_button("WORLD", center, self.height * 0.153, 246 * scale, 38 * scale, (0.38, 0.96, 0.70), "backgrounds")
+        self.draw_panel(self.width - 100 * scale, self.height * 0.905, 80 * scale, 28 * scale, AQUA, 0.08)
+        self.draw_label("◆ " + str(self.crystal_bank), self.width - 60 * scale, self.height * 0.913, 11, AQUA)
+        self.draw_label("SKYPULSE", center, self.height * 0.780, 38, WHITE)
+        self.draw_label("FLY THROUGH THE GLOW", center, self.height * 0.738, 10, AQUA, alpha=0.88)
+        self.draw_bird(center, self.height * 0.555, size=0.76, preview=True)
+        self.draw_label("BEST  •  " + str(self.best_score), center, self.height * 0.425, 12, WHITE, alpha=0.82)
+        self.draw_action_button("FLY", center, self.height * 0.335, 210 * scale, 44 * scale, PINK, "play")
+        self.draw_label("TAP ANYWHERE TO START", center, self.height * 0.295, 9, WHITE, alpha=0.62)
+        self.draw_secondary_button("BIRDS", center - 64 * scale, self.height * 0.210, 116 * scale, GOLD, "hangar")
+        self.draw_secondary_button("SHOP", center + 64 * scale, self.height * 0.210, 116 * scale, AQUA, "shop")
         self.draw_label(
             self.current_skin["name"] + " EQUIPPED",
             center,
-            self.height * 0.083,
-            10,
+            self.height * 0.145,
+            9,
             self.current_skin["accent"],
-            alpha=0.85,
+            alpha=0.72,
         )
 
     def draw_backgrounds(self):
@@ -786,7 +780,7 @@ class SkyPulseGame(Widget):
     def draw_overlay(self):
         if self.state == "playing":
             return
-        overlay_alpha = 0.44 if self.state == "menu" else 0.60
+        overlay_alpha = 0.36 if self.state == "menu" else 0.60
         self.colour(DEEP_SPACE, overlay_alpha)
         Rectangle(pos=(0, 0), size=self.size)
         if self.state == "menu":
@@ -885,6 +879,8 @@ class SkyPulseGame(Widget):
                 return True
         if self.state == "playing":
             self.flap()
+        elif self.state == "menu":
+            self.start_or_flap()
         elif self.state == "paused":
             self.state = "playing"
         return True
