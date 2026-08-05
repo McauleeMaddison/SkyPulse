@@ -1,6 +1,6 @@
-const CACHE = "skypulse-web-v13";
+const CACHE = "skypulse-web-v14";
 const CORE = [
-  "./", "./index.html", "./privacy.html", "./styles.css?v=0.5.0", "./game.js?v=0.5.0", "./manifest.webmanifest",
+  "./", "./index.html", "./privacy.html", "./styles.css?v=0.6.0", "./game.js?v=0.6.0", "./manifest.webmanifest",
   "../assets/images/branding/skypulse-app-icon.png",
   "../assets/images/backgrounds/neon-city.png",
   "../assets/images/characters/nova.png", "../assets/images/characters/nova-flap.png",

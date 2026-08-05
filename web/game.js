@@ -12,6 +12,8 @@
     menuCurrency: document.querySelector("#menu-currency"),
     best: document.querySelector("#best-score"),
     menuBird: document.querySelector("#menu-bird"),
+    menuWing: document.querySelector("#menu-wing"),
+    difficulty: document.querySelector("#difficulty-button"),
     equipped: document.querySelector("#equipped-copy"),
     menu: document.querySelector("#menu"),
     customize: document.querySelector("#customize"),
@@ -115,8 +117,14 @@
   const themeById = byId(themes);
   const trailById = byId(trails);
   const pipeById = byId(pipes);
+  const difficulties = [
+    { id: "easy", label: "EASY", note: "WIDER GAPS", gapStart: .276, gapMinimum: .214, gapShrink: .95 },
+    { id: "classic", label: "CLASSIC", note: "BALANCED", gapStart: .246, gapMinimum: .184, gapShrink: 1.15 },
+    { id: "expert", label: "EXPERT", note: "TIGHT GAPS", gapStart: .222, gapMinimum: .166, gapShrink: 1.34 },
+  ];
+  const difficultyById = byId(difficulties);
   const STORE_KEY = "skypulse-web-progress-v1";
-  const BUILD = "0.5.0-beta";
+  const BUILD = "0.6.0-beta";
   const milestoneRewards = [
     { id: "score-10", target: 10, category: "trails", rewardId: "solar" },
     { id: "score-25", target: 25, category: "pipes", rewardId: "rose" },
@@ -146,6 +154,7 @@
     sound: true,
     reduceMotion: false,
     highContrast: false,
+    difficulty: "classic",
     hasSeenTutorial: false,
     daily: emptyDaily(),
     milestones: { claimed: [] },
@@ -163,6 +172,7 @@
       result.sound = saved.sound !== false;
       result.reduceMotion = Boolean(saved.reduceMotion);
       result.highContrast = Boolean(saved.highContrast);
+      result.difficulty = difficultyById[saved.difficulty] ? saved.difficulty : "classic";
       result.hasSeenTutorial = Boolean(saved.hasSeenTutorial);
       const today = emptyDaily();
       if (saved.daily?.date === today.date) {
@@ -278,7 +288,7 @@
   }
 
   const flight = {
-    bird: { x: 0, y: 0, velocity: 0, tilt: 0, wing: 0, wingPhase: 0 },
+    bird: { x: 0, y: 0, velocity: 0, tilt: 0, wing: 0, wingDisplay: 0, wingPhase: 0 },
     pipes: [],
     crests: [],
     trail: [],
@@ -361,6 +371,8 @@
   function currentTheme() { return themeById[progress.equipped.theme]; }
   function currentTrail() { return trailById[progress.equipped.trail]; }
   function currentPipe() { return pipeById[progress.equipped.pipe]; }
+  function currentDifficulty() { return difficultyById[progress.difficulty] || difficultyById.classic; }
+  function flightDifficulty() { return flight.dailyRun ? difficultyById.classic : currentDifficulty(); }
   function previewArt(relativePath) { return relativePath.replace("images/characters/", "images/characters/thumbs/"); }
 
   function updateWorldBackground() {
@@ -411,6 +423,11 @@
     ui.shopCurrency.textContent = `✦ ${progress.crystals}`;
     ui.best.textContent = `BEST · ${progress.best}`;
     ui.menuBird.src = ASSET + skin.art;
+    ui.menuWing.src = ASSET + skin.flap;
+    const difficulty = currentDifficulty();
+    ui.difficulty.textContent = `${difficulty.label} · ${difficulty.note}`;
+    ui.difficulty.dataset.difficulty = difficulty.id;
+    ui.difficulty.setAttribute("aria-label", `Change flight difficulty. Currently ${difficulty.label}.`);
     ui.equipped.textContent = `${skin.name} EQUIPPED`;
     ui.sound.textContent = `SOUND  ${progress.sound ? "ON" : "OFF"}`;
     ui.motion.textContent = `REDUCED MOTION  ${progress.reduceMotion ? "ON" : "OFF"}`;
@@ -453,6 +470,7 @@
     bird.velocity = 0;
     bird.tilt = 0;
     bird.wing = 0;
+    bird.wingDisplay = 0;
     bird.wingPhase = 0;
     flight.pipes = [];
     flight.crests = [];
@@ -479,7 +497,7 @@
     mode = "playing";
     flight.tutorialActive = !progress.hasSeenTutorial;
     const daily = dailyMissions()[0];
-    showFlightHint(dailyRun ? `DAILY ROUTE · TARGET ${daily.target}` : flight.tutorialActive ? "TAP TO FLAP · FLY THROUGH THE GAPS" : "");
+    showFlightHint(dailyRun ? `DAILY ROUTE · CLASSIC · TARGET ${daily.target}` : flight.tutorialActive ? "TAP TO FLAP · FLY THROUGH THE GAPS" : "");
     flap();
     renderUi();
   }
@@ -492,6 +510,7 @@
     bird.y = Math.max(-20, bird.y - 1.5);
     bird.tilt = Math.min(bird.tilt, -14);
     bird.wing = 1;
+    bird.wingDisplay = Math.max(bird.wingDisplay, .72);
     bird.wingPhase += .45;
     flight.trailTimer = Math.min(flight.trailTimer, 0);
     playSound("flap");
@@ -508,7 +527,8 @@
 
   function addPipe() {
     const ground = height * .88;
-    const gap = Math.max(height * .184, height * .246 - Math.min(flight.score, 25) * 1.15);
+    const difficulty = flightDifficulty();
+    const gap = Math.max(height * difficulty.gapMinimum, height * difficulty.gapStart - Math.min(flight.score, 25) * difficulty.gapShrink);
     const min = height * .17 + gap / 2;
     const max = ground - gap / 2 - height * .05;
     const gapY = min + nextRouteRandom() * Math.max(1, max - min);
@@ -595,12 +615,15 @@
         flight.worldEventTimer = 9 + Math.random() * 8;
       }
     }
-    bird.wing = Math.max(0, bird.wing - dt * 3.8);
+    bird.wing = Math.max(0, bird.wing - dt * 3.45);
     bird.wingPhase += dt * (bird.velocity < 0 ? 16 : 8);
+    const idleWing = .12 + (Math.sin(bird.wingPhase) + 1) * .09;
+    const wingTarget = Math.min(1, idleWing + bird.wing * .76);
+    bird.wingDisplay += (wingTarget - bird.wingDisplay) * Math.min(1, dt * 20);
     bird.velocity = Math.min(730, bird.velocity + 1070 * dt);
     bird.y += bird.velocity * dt;
     const targetTilt = Math.max(-30, Math.min(24, bird.velocity * .072));
-    bird.tilt += (targetTilt - bird.tilt) * Math.min(1, dt * (targetTilt > bird.tilt ? 12 : 5.5));
+    bird.tilt += (targetTilt - bird.tilt) * Math.min(1, dt * (targetTilt < bird.tilt ? 18 : 7.5));
     for (let index = flight.trail.length - 1; index >= 0; index -= 1) {
       flight.trail[index].age += dt;
       if (flight.trail[index].age >= .46) flight.trail.splice(index, 1);
@@ -902,8 +925,7 @@
     const skin = currentSkin();
     const base = image(skin.art);
     const flapFrame = image(skin.flap);
-    const idleWing = .12 + (Math.sin(bird.wingPhase) + 1) * .09;
-    const wingMix = mode === "playing" ? Math.max(0, Math.min(1, idleWing + bird.wing * .76)) : .42 + Math.sin(performance.now() * .005) * .18;
+    const wingMix = mode === "playing" ? bird.wingDisplay : .42 + Math.sin(performance.now() * .005) * .18;
     const artWidth = width * .30 * (skin.scale || 1);
     ctx.save();
     const lifeBob = mode === "playing" ? Math.sin(bird.wingPhase * .48) * .8 : Math.sin(performance.now() * .005) * 1.5;
@@ -1048,6 +1070,15 @@
     showShop(category);
   }
 
+  function cycleDifficulty() {
+    const currentIndex = difficulties.findIndex((item) => item.id === currentDifficulty().id);
+    const next = difficulties[(currentIndex + 1) % difficulties.length];
+    progress.difficulty = next.id;
+    saveProgress();
+    renderUi();
+    toast(`${next.label} · ${next.note}`);
+  }
+
   function goMenu() {
     mode = "menu";
     resetFlight();
@@ -1060,6 +1091,7 @@
     return [
       `SkyPulse ${BUILD} feedback`,
       `Best score: ${progress.best}`,
+      `Flight mode: ${currentDifficulty().label}`,
       `Daily route: ${completed}/1`,
       "Touch felt: ",
       "Any lag or glitches: ",
@@ -1140,6 +1172,7 @@
   ui.sound.addEventListener("click", () => { progress.sound = !progress.sound; saveProgress(); renderUi(); });
   ui.motion.addEventListener("click", () => { progress.reduceMotion = !progress.reduceMotion; saveProgress(); renderUi(); });
   ui.contrast.addEventListener("click", () => { progress.highContrast = !progress.highContrast; saveProgress(); renderUi(); });
+  ui.difficulty.addEventListener("click", cycleDifficulty);
   ui.feedback.addEventListener("click", shareFeedback);
   ui.resultShare.addEventListener("click", shareResult);
   ui.shopTabs.addEventListener("click", (event) => { if (event.target.dataset.category) showShop(event.target.dataset.category); });
