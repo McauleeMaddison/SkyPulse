@@ -76,7 +76,11 @@ button:focus-visible { outline: 2px solid #f2f7ff; outline-offset: 3px; }
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow: hidden;
+  --skin-aura: rgba(143, 100, 255, .22);
+  --skin-orbit: rgba(69, 234, 255, .65);
 }
+.menu-screen > * { position: relative; z-index: 1; }
 
 .tiny-button, .icon-button, .currency {
   border: 2px solid rgba(98, 245, 255, .75);
@@ -105,20 +109,62 @@ h1 { font-size: clamp(37px, 11vw, 54px); letter-spacing: -.05em; line-height: .9
 h2 { font-size: 29px; letter-spacing: -.035em; text-shadow: 0 5px 20px rgba(4, 1, 18, .35); }
 .menu-copy p, header p, .settings-card > p { margin-top: 14px; color: #49edff; font-size: 11px; font-weight: 850; }
 
+.menu-flight-stage {
+  width: min(64vw, 270px);
+  height: clamp(118px, 19vh, 164px);
+  display: grid;
+  place-items: center;
+  position: relative;
+  isolation: isolate;
+  margin-top: clamp(72px, 12vh, 124px);
+}
+.menu-flight-stage::before {
+  content: "";
+  position: absolute;
+  width: 88%;
+  height: 41%;
+  border: 1px solid var(--skin-orbit);
+  border-radius: 50%;
+  transform: rotate(-9deg) translateY(16px);
+  opacity: .38;
+  animation: orbitDrift 9s linear infinite;
+}
+.menu-flight-stage::after {
+  content: "";
+  position: absolute;
+  inset: 8% 0 0;
+  z-index: -1;
+  background: radial-gradient(ellipse at 50% 58%, var(--skin-aura), transparent 64%);
+  transform: scale(.92);
+  opacity: .7;
+  animation: stageBreathe 4.8s ease-in-out infinite;
+}
 .menu-bird {
   width: min(49vw, 205px);
   max-height: 160px;
   object-fit: contain;
-  margin-top: clamp(78px, 15vh, 145px);
   filter: drop-shadow(0 8px 18px rgba(0, 0, 0, .5));
-  animation: birdFloat 2.8s ease-in-out infinite;
+  animation: birdGlide 3.8s cubic-bezier(.42,0,.24,1) infinite;
+  will-change: transform;
 }
 
-@keyframes birdFloat { 50% { transform: translateY(-6px) rotate(-1deg); } }
+@keyframes birdGlide {
+  0%, 100% { transform: translate3d(-3px, 3px, 0) rotate(-1.5deg); }
+  48% { transform: translate3d(5px, -7px, 0) rotate(1deg); }
+  72% { transform: translate3d(2px, -2px, 0) rotate(.1deg); }
+}
+@keyframes orbitDrift {
+  0% { transform: rotate(-9deg) translate3d(0, 16px, 0) scaleX(.96); opacity: .27; }
+  50% { transform: rotate(-5deg) translate3d(0, 13px, 0) scaleX(1.04); opacity: .48; }
+  100% { transform: rotate(-9deg) translate3d(0, 16px, 0) scaleX(.96); opacity: .27; }
+}
+@keyframes stageBreathe {
+  50% { transform: scale(1.06); opacity: .96; }
+}
 
-.best-score { margin-top: 26px; color: rgba(237,245,255,.84); font-weight: 800; font-size: 15px; }
-.tap-copy { margin-top: 14px; color: rgba(237,245,255,.65); font-size: 10px; font-weight: 750; }
-.equipped-copy { margin-top: 18px; color: #5af1ff; font-size: 11px; font-weight: 800; }
+.best-score { margin-top: 20px; padding: 7px 12px; border: 1px solid rgba(237,245,255,.14); border-radius: 999px; background: rgba(5, 6, 30, .30); color: rgba(237,245,255,.88); font-weight: 800; font-size: 12px; letter-spacing: .04em; }
+.tap-copy { margin-top: 14px; color: rgba(237,245,255,.65); font-size: 10px; font-weight: 750; letter-spacing: .055em; }
+.equipped-copy { margin-top: 16px; display: inline-flex; align-items: center; min-height: 26px; padding: 0 11px; border: 1px solid rgba(90, 241, 255, .22); border-radius: 999px; background: rgba(8, 14, 43, .34); color: #5af1ff; font-size: 10px; font-weight: 850; letter-spacing: .055em; }
 
 .primary-button, .secondary-button, .text-button {
   min-width: min(72vw, 276px);
@@ -134,7 +180,7 @@ h2 { font-size: 29px; letter-spacing: -.035em; text-shadow: 0 5px 20px rgba(4, 1
 .menu-screen .secondary-button { margin-top: 26px; }
 .text-button { background: transparent; color: #c8c6e8; min-height: 34px; font-size: 13px; }
 .legal-link { display: inline-grid; place-items: center; margin-top: 8px; text-decoration: none; }
-.menu-daily { min-width: 176px; margin-top: 10px; color: #66f1ff; }
+.menu-daily { min-width: 176px; margin-top: 10px; border: 1px solid rgba(102, 241, 255, .14); border-radius: 999px; color: #66f1ff; }
 
 .hud { display: flex; align-items: flex-start; justify-content: space-between; padding: max(20px, env(safe-area-inset-top)) 16px 0; pointer-events: none; }
 .hud > * { pointer-events: auto; }
@@ -241,7 +287,7 @@ h2 { font-size: 29px; letter-spacing: -.035em; text-shadow: 0 5px 20px rgba(4, 1
 
 @media (max-height: 760px) {
   .menu-copy { margin-top: 10vh; }
-  .menu-bird { margin-top: 8vh; }
+  .menu-flight-stage { margin-top: 7vh; height: 120px; }
   .best-score { margin-top: 14px; }
   .primary-button { margin-top: 19px; }
   .menu-screen .secondary-button { margin-top: 16px; }
