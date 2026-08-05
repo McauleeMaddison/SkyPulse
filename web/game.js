@@ -116,7 +116,7 @@
   const trailById = byId(trails);
   const pipeById = byId(pipes);
   const STORE_KEY = "skypulse-web-progress-v1";
-  const BUILD = "0.4.0-beta";
+  const BUILD = "0.4.1-beta";
   const milestoneRewards = [
     { id: "score-10", target: 10, category: "trails", rewardId: "solar" },
     { id: "score-25", target: 25, category: "pipes", rewardId: "rose" },
@@ -858,7 +858,8 @@
       for (let pointIndex = 0; pointIndex < points.length; pointIndex += 1) {
         const point = points[pointIndex];
         const x = point.x - point.age * 132;
-        const y = point.y + Math.sin(point.age * 16 + index * 2) * (index ? 3 : 1);
+        const verticalBend = Math.max(-34, Math.min(34, (point.y - flight.bird.y) * .28));
+        const y = flight.bird.y + verticalBend + Math.sin(point.age * 16 + index * 2) * (index ? 3 : 1);
         if (pointIndex === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
       }
       ctx.stroke();
@@ -869,9 +870,10 @@
     for (let pointIndex = 2; pointIndex < points.length; pointIndex += 4) {
       const point = points[pointIndex];
       const life = Math.max(0, 1 - point.age / .46);
+      const verticalBend = Math.max(-34, Math.min(34, (point.y - flight.bird.y) * .28));
       ctx.globalAlpha = life * .5;
       ctx.beginPath();
-      ctx.arc(point.x - point.age * 142, point.y + Math.sin(point.age * 19) * 2, pointIndex % 8 === 2 ? 1.7 : 1.1, 0, Math.PI * 2);
+      ctx.arc(point.x - point.age * 142, flight.bird.y + verticalBend + Math.sin(point.age * 19) * 2, pointIndex % 8 === 2 ? 1.7 : 1.1, 0, Math.PI * 2);
       ctx.fill();
     }
     ctx.restore();
