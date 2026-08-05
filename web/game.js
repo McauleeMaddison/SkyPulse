@@ -4,6 +4,7 @@
   const canvas = document.querySelector("#game");
   const ctx = canvas.getContext("2d", { alpha: true, desynchronized: true });
   const ui = {
+    app: document.querySelector("#app"),
     world: document.querySelector("#world"),
     hud: document.querySelector("#hud"),
     score: document.querySelector("#score"),
@@ -15,16 +16,22 @@
     menu: document.querySelector("#menu"),
     customize: document.querySelector("#customize"),
     shopCurrency: document.querySelector("#shop-currency"),
+    collection: document.querySelector("#collection-progress"),
     shopGrid: document.querySelector("#shop-grid"),
     shopTabs: document.querySelector("#shop-tabs"),
     gameOver: document.querySelector("#game-over"),
     resultScore: document.querySelector("#result-score"),
     resultBest: document.querySelector("#result-best"),
     resultCrystals: document.querySelector("#result-crystals"),
+    resultCelebration: document.querySelector("#result-celebration"),
+    resultMedal: document.querySelector("#result-medal"),
+    resultMilestone: document.querySelector("#result-milestone"),
+    resultShare: document.querySelector("#share-result"),
     pause: document.querySelector("#pause"),
     settings: document.querySelector("#settings"),
     sound: document.querySelector("#sound-toggle"),
     motion: document.querySelector("#motion-toggle"),
+    contrast: document.querySelector("#contrast-toggle"),
     flightHint: document.querySelector("#flight-hint"),
     daily: document.querySelector("#daily"),
     dailyDate: document.querySelector("#daily-date"),
@@ -109,7 +116,14 @@
   const trailById = byId(trails);
   const pipeById = byId(pipes);
   const STORE_KEY = "skypulse-web-progress-v1";
-  const BUILD = "0.2.3-beta";
+  const BUILD = "0.3.0-beta";
+  const milestoneRewards = [
+    { id: "score-10", target: 10, category: "trails", rewardId: "solar" },
+    { id: "score-25", target: 25, category: "pipes", rewardId: "rose" },
+    { id: "score-50", target: 50, category: "skins", rewardId: "lumen" },
+    { id: "score-75", target: 75, category: "themes", rewardId: "aurora_rise" },
+    { id: "score-100", target: 100, category: "skins", rewardId: "aether" },
+  ];
 
   function localDayKey() {
     const now = new Date();
@@ -131,8 +145,10 @@
     best: 0,
     sound: true,
     reduceMotion: false,
+    highContrast: false,
     hasSeenTutorial: false,
     daily: emptyDaily(),
+    milestones: { claimed: [] },
     equipped: { skin: "nova", theme: "neon_city", trail: "pulse", pipe: "ion" },
     unlocked: { skins: ["nova"], themes: ["neon_city"], trails: ["pulse"], pipes: ["ion"] },
   };
@@ -146,15 +162,17 @@
       result.best = Math.max(0, Number(saved.best) || 0);
       result.sound = saved.sound !== false;
       result.reduceMotion = Boolean(saved.reduceMotion);
+      result.highContrast = Boolean(saved.highContrast);
       result.hasSeenTutorial = Boolean(saved.hasSeenTutorial);
       const today = emptyDaily();
       if (saved.daily?.date === today.date) {
         result.daily.bestScore = Math.max(0, Number(saved.daily.bestScore) || 0);
         result.daily.crests = Math.max(0, Number(saved.daily.crests) || 0);
         result.daily.flights = Math.max(0, Number(saved.daily.flights) || 0);
-        result.daily.claimed = Array.isArray(saved.daily.claimed) ? saved.daily.claimed.filter((item) => ["score", "crests", "flights"].includes(item)) : [];
+        result.daily.claimed = Array.isArray(saved.daily.claimed) ? saved.daily.claimed.filter((item) => item === "daily") : [];
         result.daily.rewards = typeof saved.daily.rewards === "object" && saved.daily.rewards ? saved.daily.rewards : {};
       }
+      result.milestones.claimed = Array.isArray(saved.milestones?.claimed) ? saved.milestones.claimed.filter((item) => milestoneRewards.some((milestone) => milestone.id === item)) : [];
       for (const key of Object.keys(result.equipped)) {
         const group = key === "skin" ? "skins" : `${key}s`;
         const available = catalog[group];
@@ -187,15 +205,15 @@
 
   function dailyMissions() {
     const seed = daySeed(progress.daily.date);
+    const categories = ["trails", "pipes", "themes"];
+    const target = 8 + seed % 5;
     return [
-      { id: "score", title: "CLEAR THE GLOW", target: 5 + seed % 3, category: "trails", detail: (target) => `Reach score ${target} in one flight.` },
-      { id: "crests", title: "CREST HUNT", target: 3 + (seed >>> 3) % 3, category: "pipes", detail: (target) => `Collect ${target} crests today.` },
-      { id: "flights", title: "TAKE FLIGHT", target: 2 + (seed >>> 6) % 2, category: "themes", detail: (target) => `Complete ${target} flights today.` },
+      { id: "daily", title: "SKYLINE RUN", target, category: categories[(seed >>> 4) % categories.length], detail: (value) => `Today’s shared route — reach score ${value}.` },
     ];
   }
 
   function dailyValue(mission) {
-    return mission.id === "score" ? progress.daily.bestScore : progress.daily[mission.id];
+    return progress.daily.bestScore;
   }
 
   function rewardFor(mission, index) {
@@ -220,6 +238,26 @@
         unlocked.push(reward);
       }
     });
+    return unlocked;
+  }
+
+  function milestoneReward(milestone) {
+    const choices = catalog[milestone.category].filter((item) => item.price > 0);
+    const preferred = choices.find((item) => item.id === milestone.rewardId);
+    if (preferred && !progress.unlocked[milestone.category].includes(preferred.id)) return preferred;
+    return choices.find((item) => !progress.unlocked[milestone.category].includes(item.id));
+  }
+
+  function settleMilestoneRewards() {
+    const unlocked = [];
+    for (const milestone of milestoneRewards) {
+      if (progress.best < milestone.target || progress.milestones.claimed.includes(milestone.id)) continue;
+      progress.milestones.claimed.push(milestone.id);
+      const reward = milestoneReward(milestone);
+      if (!reward) continue;
+      progress.unlocked[milestone.category].push(reward.id);
+      unlocked.push({ ...reward, target: milestone.target });
+    }
     return unlocked;
   }
 
@@ -252,6 +290,12 @@
     hintTimer: 0,
     impactAt: 0,
     impactType: "",
+    dailyRun: false,
+    routeState: 0,
+    perfectPasses: 0,
+    newBestUntil: 0,
+    comet: null,
+    worldEventTimer: 6,
   };
 
   function saveProgress() {
@@ -287,7 +331,7 @@
     image(skin.flap);
     if (progress.sound && !audioWarmed) {
       audioWarmed = true;
-      for (const name of ["flap", "score", "crash"]) {
+      for (const name of ["flap", "score", "crash", "crystal", "best", "unlock"]) {
         for (const sound of audioPool(name)) sound.load();
       }
     }
@@ -358,8 +402,10 @@
     ui.equipped.textContent = `${skin.name} EQUIPPED`;
     ui.sound.textContent = `SOUND  ${progress.sound ? "ON" : "OFF"}`;
     ui.motion.textContent = `REDUCED MOTION  ${progress.reduceMotion ? "ON" : "OFF"}`;
+    ui.contrast.textContent = `HIGH CONTRAST  ${progress.highContrast ? "ON" : "OFF"}`;
+    ui.app.classList.toggle("high-contrast", progress.highContrast);
     setVisible(ui.menu, mode === "menu");
-    setVisible(ui.hud, mode === "playing");
+    setVisible(ui.hud, mode === "playing" || mode === "newbest");
     setVisible(ui.customize, mode === "shop");
     setVisible(ui.daily, mode === "daily");
     setVisible(ui.gameOver, mode === "gameover");
@@ -388,7 +434,7 @@
     }
   }
 
-  function resetFlight() {
+  function resetFlight(dailyRun = false) {
     const bird = flight.bird;
     bird.x = width * .31;
     bird.y = height * .52;
@@ -407,13 +453,21 @@
     flight.impactAt = 0;
     flight.impactType = "";
     flight.trailTimer = 0;
+    flight.dailyRun = dailyRun;
+    flight.routeState = (daySeed(progress.daily.date) ^ 0x9e3779b9) >>> 0;
+    flight.perfectPasses = 0;
+    flight.newBestUntil = 0;
+    flight.comet = null;
+    flight.worldEventTimer = 5.8 + Math.random() * 3;
+    ui.hud.classList.remove("new-best-flash");
   }
 
-  function startFlight() {
-    resetFlight();
+  function startFlight(dailyRun = false) {
+    resetFlight(dailyRun);
     mode = "playing";
     flight.tutorialActive = !progress.hasSeenTutorial;
-    showFlightHint(flight.tutorialActive ? "TAP TO FLAP · FLY THROUGH THE GAPS" : "");
+    const daily = dailyMissions()[0];
+    showFlightHint(dailyRun ? `DAILY ROUTE · TARGET ${daily.target}` : flight.tutorialActive ? "TAP TO FLAP · FLY THROUGH THE GAPS" : "");
     flap();
     renderUi();
   }
@@ -431,39 +485,71 @@
     const gap = Math.max(height * .198, height * .267 - Math.min(flight.score, 25) * 1.25);
     const min = height * .17 + gap / 2;
     const max = ground - gap / 2 - height * .05;
-    const gapY = min + Math.random() * Math.max(1, max - min);
+    const gapY = min + nextRouteRandom() * Math.max(1, max - min);
     flight.pipes.push({ x: width + 35, gapY, gap, passed: false });
-    if (Math.random() < .61) flight.crests.push({ x: width + 78, y: gapY + (Math.random() - .5) * gap * .30, phase: Math.random() * Math.PI * 2 });
+    if (nextRouteRandom() < .61) flight.crests.push({ x: width + 78, y: gapY + (nextRouteRandom() - .5) * gap * .30, phase: nextRouteRandom() * Math.PI * 2 });
+  }
+
+  function nextRouteRandom() {
+    if (!flight.dailyRun) return Math.random();
+    flight.routeState = (flight.routeState * 1664525 + 1013904223) >>> 0;
+    return flight.routeState / 4294967296;
   }
 
   function endFlight(impactType = "pipe") {
     if (mode !== "playing") return;
     const previousBest = progress.best;
+    const newBest = flight.score > previousBest && flight.score > 0;
     progress.daily.bestScore = Math.max(progress.daily.bestScore, flight.score);
     progress.daily.flights += 1;
-    const dailyUnlocks = settleDailyRewards();
-    mode = "gameover";
     progress.best = Math.max(progress.best, flight.score);
+    const dailyUnlocks = settleDailyRewards();
+    const milestoneUnlocks = settleMilestoneRewards();
     flight.impactAt = performance.now();
     flight.impactType = impactType;
     saveProgress();
     playSound("crash");
-    if (flight.score > previousBest && flight.score > 0) playSound("best");
-    if (dailyUnlocks.length) playSound("unlock");
+    if (newBest) playSound("best");
+    if (dailyUnlocks.length || milestoneUnlocks.length) playSound("unlock");
     haptic([16, 36, 26], 130);
     ui.resultScore.textContent = `SCORE  ${flight.score}`;
-    ui.resultBest.textContent = flight.score > previousBest ? `NEW BEST  ${progress.best}` : `BEST  ${progress.best}`;
+    ui.resultBest.textContent = newBest ? `NEW BEST  ${progress.best}` : `BEST  ${progress.best}`;
     ui.resultCrystals.textContent = `CRESTS  +${flight.earned}`;
+    ui.gameOver.style.setProperty("--result-accent", currentSkin().accent);
+    ui.hud.style.setProperty("--result-accent", currentSkin().accent);
+    ui.gameOver.classList.toggle("new-best", newBest);
+    setVisible(ui.resultCelebration, newBest);
+    const medal = perfectFlightMedal();
+    ui.resultMedal.textContent = medal;
+    setVisible(ui.resultMedal, Boolean(medal));
     const dailyComplete = progress.daily.claimed.length;
     if (dailyUnlocks.length) {
       ui.resultDaily.textContent = `DAILY UNLOCKED · ${dailyUnlocks.map((item) => item.name).join(" · ")}`;
-      setVisible(ui.resultDaily, true);
     } else {
-      ui.resultDaily.textContent = `DAILY FLIGHT · ${dailyComplete} / 3 GOALS COMPLETE`;
-      setVisible(ui.resultDaily, true);
+      ui.resultDaily.textContent = `DAILY SKYLINE RUN · ${dailyComplete} / 1 COMPLETE`;
+    }
+    setVisible(ui.resultDaily, true);
+    if (milestoneUnlocks.length) {
+      ui.resultMilestone.textContent = `SCORE ${milestoneUnlocks.map((item) => item.target).join(" + ")} UNLOCKED · ${milestoneUnlocks.map((item) => item.name).join(" · ")}`;
+      setVisible(ui.resultMilestone, true);
+    } else {
+      setVisible(ui.resultMilestone, false);
     }
     setFlightHint("");
-    renderUi();
+    if (newBest) {
+      mode = "newbest";
+      flight.newBestUntil = performance.now() + 360;
+      ui.hud.classList.add("new-best-flash");
+      setFlightHint("NEW BEST");
+    } else {
+      mode = "gameover";
+      renderUi();
+    }
+  }
+
+  function perfectFlightMedal() {
+    if (flight.score >= 10 && flight.perfectPasses >= 10) return "CENTERLINE · 10 PERFECT GAPS";
+    return "";
   }
 
   function update(dt) {
@@ -472,6 +558,17 @@
     const ground = height * .88;
     const speed = width * (.57 + Math.min(flight.score, 25) * .007);
     flight.runningTime += dt;
+    if (!progress.reduceMotion) {
+      flight.worldEventTimer -= dt;
+      if (flight.comet) {
+        flight.comet.age += dt;
+        if (flight.comet.age >= .92) flight.comet = null;
+      }
+      if (flight.runningTime > 5 && flight.worldEventTimer <= 0) {
+        flight.comet = { age: 0, y: height * (.16 + Math.random() * .30) };
+        flight.worldEventTimer = 9 + Math.random() * 8;
+      }
+    }
     bird.wing = Math.max(0, bird.wing - dt * 3.8);
     bird.wingPhase += dt * (bird.velocity < 0 ? 16 : 8);
     bird.velocity = Math.min(730, bird.velocity + 1070 * dt);
@@ -501,6 +598,7 @@
       if (!pipe.passed && pipe.x + pipeWidth < bird.x - bodyHalfW) {
         pipe.passed = true;
         flight.score += 1;
+        if (Math.abs(bird.y - pipe.gapY) <= Math.min(22, pipe.gap * .13)) flight.perfectPasses += 1;
         flight.bursts.push({ x: bird.x + 24, y: bird.y + 23, age: 0, colour: currentSkin().accent });
         playSound("score");
         if (flight.tutorialActive) {
@@ -561,7 +659,27 @@
         const y = height * (.20 + (index * .067) % .55);
         ctx.fillRect(x, y, index % 4 === 0 ? 2 : 1, index % 4 === 0 ? 2 : 1);
       }
+      if (flight.comet) drawComet(theme);
     }
+  }
+
+  function drawComet(theme) {
+    const progressValue = flight.comet.age / .92;
+    const x = width * (1.12 - progressValue * 1.34);
+    const y = flight.comet.y + progressValue * height * .16;
+    ctx.save();
+    ctx.globalAlpha = Math.sin(progressValue * Math.PI) * .78;
+    ctx.strokeStyle = theme.accent;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(x + 56, y - 25);
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    ctx.fillStyle = "#f4fbff";
+    ctx.beginPath();
+    ctx.arc(x, y, 2.2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
   }
 
   function drawFloor() {
@@ -750,7 +868,7 @@
   function draw() {
     ctx.clearRect(0, 0, width, height);
     drawBackground();
-    if (mode === "playing" || mode === "paused" || mode === "gameover") {
+    if (mode === "playing" || mode === "paused" || mode === "gameover" || mode === "newbest") {
       for (const pipe of flight.pipes) drawPipe(pipe);
       for (const crest of flight.crests) drawCrest(crest);
       drawTrail();
@@ -765,6 +883,11 @@
   function tick(now) {
     const dt = Math.min(.034, Math.max(0, (now - lastFrame) / 1000));
     lastFrame = now;
+    if (mode === "newbest" && now >= flight.newBestUntil) {
+      mode = "gameover";
+      ui.hud.classList.remove("new-best-flash");
+      renderUi();
+    }
     update(dt);
     draw();
     requestAnimationFrame(tick);
@@ -773,6 +896,7 @@
   function showShop(category = activeCategory) {
     activeCategory = category;
     const items = catalog[category];
+    ui.collection.textContent = `COLLECTION · ${progress.unlocked[category].length} / ${items.length}`;
     for (const button of ui.shopTabs.querySelectorAll("button")) button.classList.toggle("active", button.dataset.category === category);
     ui.shopGrid.replaceChildren(...items.map((item) => makeShopCard(category, item)));
   }
@@ -830,7 +954,7 @@
     return [
       `SkyPulse ${BUILD} feedback`,
       `Best score: ${progress.best}`,
-      `Daily goals: ${completed}/3`,
+      `Daily route: ${completed}/1`,
       "Touch felt: ",
       "Any lag or glitches: ",
       "One thing you loved: ",
@@ -856,12 +980,32 @@
     window.prompt("Copy your SkyPulse beta feedback:", message);
   }
 
+  async function shareResult() {
+    const skin = currentSkin();
+    const message = `I scored ${flight.score} in SkyPulse with ${skin.name}. Can you beat ${progress.best}? ${location.origin}${location.pathname}`;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: "SkyPulse flight", text: message });
+        toast("FLIGHT SHARED");
+        return;
+      }
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(message);
+        toast("FLIGHT LINK COPIED");
+        return;
+      }
+    } catch (error) {
+      if (error?.name === "AbortError") return;
+    }
+    window.prompt("Copy your SkyPulse flight:", message);
+  }
+
   document.querySelector("#fly-button").addEventListener("click", startFlight);
   document.querySelector("#customize-button").addEventListener("click", () => { mode = "shop"; renderUi(); showShop(); });
   document.querySelector("#close-customize").addEventListener("click", goMenu);
   document.querySelector("#daily-button").addEventListener("click", () => { mode = "daily"; renderDaily(); saveProgress(); renderUi(); });
   document.querySelector("#close-daily").addEventListener("click", goMenu);
-  document.querySelector("#daily-play").addEventListener("click", startFlight);
+  document.querySelector("#daily-play").addEventListener("click", () => startFlight(true));
   document.querySelector("#retry-button").addEventListener("click", startFlight);
   document.querySelector("#results-menu").addEventListener("click", goMenu);
   document.querySelector("#pause-button").addEventListener("click", () => { mode = "paused"; renderUi(); });
@@ -872,7 +1016,9 @@
   document.querySelector("#close-settings").addEventListener("click", goMenu);
   ui.sound.addEventListener("click", () => { progress.sound = !progress.sound; saveProgress(); renderUi(); });
   ui.motion.addEventListener("click", () => { progress.reduceMotion = !progress.reduceMotion; saveProgress(); renderUi(); });
+  ui.contrast.addEventListener("click", () => { progress.highContrast = !progress.highContrast; saveProgress(); renderUi(); });
   ui.feedback.addEventListener("click", shareFeedback);
+  ui.resultShare.addEventListener("click", shareResult);
   ui.shopTabs.addEventListener("click", (event) => { if (event.target.dataset.category) showShop(event.target.dataset.category); });
   ui.menu.addEventListener("pointerdown", (event) => {
     if (event.target.closest?.("button, a")) return;

@@ -57,6 +57,7 @@
           <button data-category="pipes">PIPES</button>
         </nav>
         <p id="shop-hint" class="shop-hint">Unlock with crystals or daily rewards.</p>
+        <p id="collection-progress" class="collection-progress">COLLECTION · 1 / 1</p>
         <div id="shop-grid" class="shop-grid"></div>
       </section>
 
@@ -66,7 +67,7 @@
           <h2>DAILY FLIGHT</h2>
           <p id="daily-date">TODAY</p>
         </header>
-        <p class="daily-intro">Three short flights goals. Complete them today to unlock cosmetics.</p>
+        <p class="daily-intro">One shared route. One score target. One cosmetic reward.</p>
         <div id="daily-list" class="daily-list"></div>
         <button id="daily-play" class="primary-button">PLAY TODAY</button>
       </section>
@@ -74,10 +75,14 @@
       <section id="game-over" class="screen game-over hidden" aria-label="Game over">
         <div class="result-card">
           <h2>GAME OVER</h2>
+          <p id="result-celebration" class="result-celebration hidden" aria-live="polite">NEW PERSONAL BEST</p>
           <p id="result-score" class="result-score">SCORE 0</p>
           <p id="result-best" class="result-best">BEST 0</p>
           <p id="result-crystals" class="result-crystals">CRESTS +0</p>
+          <div id="result-medal" class="result-medal hidden"></div>
           <div id="result-daily" class="result-daily hidden" aria-live="polite"></div>
+          <div id="result-milestone" class="result-milestone hidden" aria-live="polite"></div>
+          <button id="share-result" class="text-button share-button">SHARE FLIGHT</button>
           <button id="retry-button" class="primary-button">FLY AGAIN</button>
           <button id="results-menu" class="secondary-button">MENU</button>
         </div>
@@ -98,8 +103,9 @@
           <p>MAKE FLIGHT FEEL RIGHT</p>
           <button id="sound-toggle" class="secondary-button"></button>
           <button id="motion-toggle" class="secondary-button"></button>
+          <button id="contrast-toggle" class="secondary-button"></button>
           <button id="feedback-button" class="secondary-button">SEND BETA FEEDBACK</button>
-          <p class="build-copy">BUILD 0.2.3 · FRIEND BETA</p>
+          <p class="build-copy">BUILD 0.3.0 · FRIEND BETA</p>
           <a class="text-button legal-link" href="./privacy.html">PRIVACY</a>
           <button id="close-settings" class="text-button">MENU</button>
         </div>
