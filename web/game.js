@@ -2,8 +2,9 @@
   "use strict";
 
   const canvas = document.querySelector("#game");
-  const ctx = canvas.getContext("2d", { alpha: false });
+  const ctx = canvas.getContext("2d", { alpha: true, desynchronized: true });
   const ui = {
+    world: document.querySelector("#world"),
     hud: document.querySelector("#hud"),
     score: document.querySelector("#score"),
     crystals: document.querySelector("#crystals"),
@@ -171,7 +172,7 @@
   const progress = readProgress();
   const imageCache = new Map();
   const audioCache = new Map();
-  let visibleBackground = null;
+  let worldRequest = 0;
   const audioPaths = {
     flap: "audio/flap.wav", score: "audio/score.wav", crash: "audio/crash.wav", crystal: "audio/crystal.wav", best: "audio/new-best.wav", unlock: "audio/unlock.wav",
   };
@@ -279,14 +280,28 @@
   function currentTrail() { return trailById[progress.equipped.trail]; }
   function currentPipe() { return pipeById[progress.equipped.pipe]; }
 
+  function updateWorldBackground() {
+    const theme = currentTheme();
+    const source = ASSET + theme.background;
+    const request = ++worldRequest;
+    const apply = () => {
+      if (request !== worldRequest) return;
+      ui.world.style.setProperty("--world-image", `url("${source}")`);
+    };
+    const backdrop = image(theme.background);
+    if (backdrop.complete && backdrop.naturalWidth) apply();
+    else backdrop.addEventListener("load", apply, { once: true });
+  }
+
   function resize() {
     const rect = canvas.getBoundingClientRect();
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     width = Math.max(1, rect.width);
     height = Math.max(1, rect.height);
     canvas.width = Math.round(width * dpr);
     canvas.height = Math.round(height * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.imageSmoothingQuality = "medium";
     if (mode !== "playing") resetFlight();
   }
 
@@ -294,6 +309,7 @@
 
   function renderUi() {
     const skin = currentSkin();
+    updateWorldBackground();
     ui.crystals.textContent = `✦ ${progress.crystals}`;
     ui.menuCurrency.textContent = `✦ ${progress.crystals}`;
     ui.shopCurrency.textContent = `✦ ${progress.crystals}`;
@@ -422,8 +438,12 @@
     bird.y += bird.velocity * dt;
     const targetTilt = Math.max(-30, Math.min(24, bird.velocity * .072));
     bird.tilt += (targetTilt - bird.tilt) * Math.min(1, dt * (targetTilt > bird.tilt ? 12 : 5.5));
+    for (let index = flight.trail.length - 1; index >= 0; index -= 1) {
+      flight.trail[index].age += dt;
+      if (flight.trail[index].age >= .46) flight.trail.splice(index, 1);
+    }
     flight.trail.unshift({ x: bird.x - 27, y: bird.y, age: 0 });
-    flight.trail = flight.trail.slice(0, 22).map((point) => ({ ...point, age: point.age + dt })).filter((point) => point.age < .46);
+    if (flight.trail.length > 22) flight.trail.pop();
     flight.spawnTimer -= dt;
     if (flight.spawnTimer <= 0) {
       addPipe();
@@ -465,18 +485,12 @@
       }
     }
     flight.crests = flight.crests.filter((crest) => crest.x > -40);
-    flight.bursts = flight.bursts.map((burst) => ({ ...burst, age: burst.age + dt })).filter((burst) => burst.age < .66);
+    for (let index = flight.bursts.length - 1; index >= 0; index -= 1) {
+      flight.bursts[index].age += dt;
+      if (flight.bursts[index].age >= .66) flight.bursts.splice(index, 1);
+    }
     if (bird.y < -20) endFlight("sky");
     if (bird.y + bodyHalfH >= ground) endFlight("floor");
-  }
-
-  function cover(imageItem) {
-    if (!imageItem?.complete || !imageItem.naturalWidth) return false;
-    const scale = Math.max(width / imageItem.naturalWidth, height / imageItem.naturalHeight);
-    const drawW = imageItem.naturalWidth * scale;
-    const drawH = imageItem.naturalHeight * scale;
-    ctx.drawImage(imageItem, (width - drawW) / 2, (height - drawH) / 2, drawW, drawH);
-    return true;
   }
 
   function roundedRect(x, y, w, h, radius) {
@@ -492,16 +506,9 @@
 
   function drawBackground() {
     const theme = currentTheme();
-    const requestedBackground = image(theme.background);
-    if (requestedBackground.complete && requestedBackground.naturalWidth) visibleBackground = requestedBackground;
-    ctx.fillStyle = "#07031b";
-    ctx.fillRect(0, 0, width, height);
-    cover(visibleBackground || requestedBackground);
-    ctx.fillStyle = "rgba(7, 2, 28, .10)";
-    ctx.fillRect(0, 0, width, height);
     if (mode === "playing" && !progress.reduceMotion) {
-      ctx.fillStyle = `${theme.accent}16`;
-      for (let index = 0; index < 13; index += 1) {
+      ctx.fillStyle = `${theme.accent}14`;
+      for (let index = 0; index < 7; index += 1) {
         const x = (index * 71 + flight.runningTime * (5 + index % 3)) % (width + 16) - 8;
         const y = height * (.20 + (index * .067) % .55);
         ctx.fillRect(x, y, index % 4 === 0 ? 2 : 1, index % 4 === 0 ? 2 : 1);
@@ -680,6 +687,7 @@
   }
 
   function draw() {
+    ctx.clearRect(0, 0, width, height);
     drawBackground();
     if (mode === "playing" || mode === "paused" || mode === "gameover") {
       for (const pipe of flight.pipes) drawPipe(pipe);
