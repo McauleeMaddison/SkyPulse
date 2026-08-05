@@ -116,7 +116,7 @@
   const trailById = byId(trails);
   const pipeById = byId(pipes);
   const STORE_KEY = "skypulse-web-progress-v1";
-  const BUILD = "0.3.0-beta";
+  const BUILD = "0.3.1-beta";
   const milestoneRewards = [
     { id: "score-10", target: 10, category: "trails", rewardId: "solar" },
     { id: "score-25", target: 25, category: "pipes", rewardId: "rose" },
