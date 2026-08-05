@@ -109,7 +109,7 @@
   const trailById = byId(trails);
   const pipeById = byId(pipes);
   const STORE_KEY = "skypulse-web-progress-v1";
-  const BUILD = "0.2.0-beta";
+  const BUILD = "0.2.1-beta";
 
   function localDayKey() {
     const now = new Date();
@@ -171,8 +171,10 @@
 
   const progress = readProgress();
   const imageCache = new Map();
-  const audioCache = new Map();
+  const audioPools = new Map();
   let worldRequest = 0;
+  let lastHapticAt = 0;
+  let audioWarmed = false;
   const audioPaths = {
     flap: "audio/flap.wav", score: "audio/score.wav", crash: "audio/crash.wav", crystal: "audio/crystal.wav", best: "audio/new-best.wav", unlock: "audio/unlock.wav",
   };
@@ -240,6 +242,7 @@
     pipes: [],
     crests: [],
     trail: [],
+    trailTimer: 0,
     bursts: [],
     score: 0,
     earned: 0,
@@ -265,14 +268,47 @@
     return item;
   }
 
+  function audioPool(name) {
+    if (audioPools.has(name)) return audioPools.get(name);
+    const voices = name === "flap" ? 3 : name === "score" ? 2 : 1;
+    const pool = Array.from({ length: voices }, () => {
+      const sound = new Audio(ASSET + audioPaths[name]);
+      sound.preload = "auto";
+      sound.volume = name === "crash" ? .45 : .32;
+      return sound;
+    });
+    audioPools.set(name, pool);
+    return pool;
+  }
+
+  function warmFlightAssets() {
+    const skin = currentSkin();
+    image(skin.art);
+    image(skin.flap);
+    if (progress.sound && !audioWarmed) {
+      audioWarmed = true;
+      for (const name of ["flap", "score", "crash"]) {
+        for (const sound of audioPool(name)) sound.load();
+      }
+    }
+  }
+
   function playSound(name) {
     if (!progress.sound || !audioPaths[name]) return;
     try {
-      if (!audioCache.has(name)) audioCache.set(name, new Audio(ASSET + audioPaths[name]));
-      const sound = audioCache.get(name).cloneNode();
-      sound.volume = name === "crash" ? .45 : .32;
+      const pool = audioPool(name);
+      const sound = pool.find((voice) => voice.paused || voice.ended) || pool[0];
+      sound.currentTime = 0;
       sound.play().catch(() => {});
     } catch { /* audio is optional */ }
+  }
+
+  function haptic(pattern, cooldown = 0) {
+    if (!navigator.vibrate) return;
+    const now = performance.now();
+    if (now - lastHapticAt < cooldown) return;
+    lastHapticAt = now;
+    navigator.vibrate(pattern);
   }
 
   function currentSkin() { return skinById[progress.equipped.skin]; }
@@ -295,7 +331,7 @@
 
   function resize() {
     const rect = canvas.getBoundingClientRect();
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.35);
     width = Math.max(1, rect.width);
     height = Math.max(1, rect.height);
     canvas.width = Math.round(width * dpr);
@@ -310,6 +346,7 @@
   function renderUi() {
     const skin = currentSkin();
     updateWorldBackground();
+    warmFlightAssets();
     ui.crystals.textContent = `✦ ${progress.crystals}`;
     ui.menuCurrency.textContent = `✦ ${progress.crystals}`;
     ui.shopCurrency.textContent = `✦ ${progress.crystals}`;
@@ -366,6 +403,7 @@
     flight.runningTime = 0;
     flight.impactAt = 0;
     flight.impactType = "";
+    flight.trailTimer = 0;
   }
 
   function startFlight() {
@@ -383,12 +421,11 @@
     bird.velocity = -390;
     bird.wing = 1;
     playSound("flap");
-    if (navigator.vibrate) navigator.vibrate(8);
   }
 
   function addPipe() {
     const ground = height * .88;
-    const gap = Math.max(height * .205, height * .284 - Math.min(flight.score, 25) * 1.4);
+    const gap = Math.max(height * .198, height * .267 - Math.min(flight.score, 25) * 1.25);
     const min = height * .17 + gap / 2;
     const max = ground - gap / 2 - height * .05;
     const gapY = min + Math.random() * Math.max(1, max - min);
@@ -410,7 +447,7 @@
     playSound("crash");
     if (flight.score > previousBest && flight.score > 0) playSound("best");
     if (dailyUnlocks.length) playSound("unlock");
-    if (navigator.vibrate) navigator.vibrate([16, 36, 26]);
+    haptic([16, 36, 26], 130);
     ui.resultScore.textContent = `SCORE  ${flight.score}`;
     ui.resultBest.textContent = flight.score > previousBest ? `NEW BEST  ${progress.best}` : `BEST  ${progress.best}`;
     ui.resultCrystals.textContent = `CRESTS  +${flight.earned}`;
@@ -442,8 +479,12 @@
       flight.trail[index].age += dt;
       if (flight.trail[index].age >= .46) flight.trail.splice(index, 1);
     }
-    flight.trail.unshift({ x: bird.x - 27, y: bird.y, age: 0 });
-    if (flight.trail.length > 22) flight.trail.pop();
+    flight.trailTimer -= dt;
+    if (flight.trailTimer <= 0) {
+      flight.trail.unshift({ x: bird.x - 27, y: bird.y, age: 0 });
+      if (flight.trail.length > 14) flight.trail.pop();
+      flight.trailTimer += 1 / 30;
+    }
     flight.spawnTimer -= dt;
     if (flight.spawnTimer <= 0) {
       addPipe();
@@ -471,7 +512,9 @@
       const dangerousBottom = pipe.gapY + pipe.gap / 2 - 4;
       if (overlapsX && (bird.y - bodyHalfH < dangerousTop || bird.y + bodyHalfH > dangerousBottom)) endFlight("pipe");
     }
-    flight.pipes = flight.pipes.filter((pipe) => pipe.x + pipeWidth > -50);
+    for (let index = flight.pipes.length - 1; index >= 0; index -= 1) {
+      if (flight.pipes[index].x + pipeWidth <= -50) flight.pipes.splice(index, 1);
+    }
     for (const crest of flight.crests) {
       crest.x -= speed * dt;
       crest.phase += dt * 3;
@@ -484,7 +527,9 @@
         playSound("crystal");
       }
     }
-    flight.crests = flight.crests.filter((crest) => crest.x > -40);
+    for (let index = flight.crests.length - 1; index >= 0; index -= 1) {
+      if (flight.crests[index].x <= -40) flight.crests.splice(index, 1);
+    }
     for (let index = flight.bursts.length - 1; index >= 0; index -= 1) {
       flight.bursts[index].age += dt;
       if (flight.bursts[index].age >= .66) flight.bursts.splice(index, 1);
@@ -598,18 +643,20 @@
     const points = flight.trail;
     if (points.length < 2) return;
     const trail = currentTrail();
-    for (const [index, colour] of trail.colours.entries()) {
+    for (let index = 0; index < trail.colours.length; index += 1) {
+      const colour = trail.colours[index];
       ctx.save();
       ctx.strokeStyle = colour;
       ctx.globalAlpha = index ? .42 : .78;
       ctx.lineWidth = index ? 7 : 3;
       ctx.lineCap = "round";
       ctx.beginPath();
-      points.forEach((point, pointIndex) => {
+      for (let pointIndex = 0; pointIndex < points.length; pointIndex += 1) {
+        const point = points[pointIndex];
         const x = point.x - point.age * 132;
         const y = point.y + Math.sin(point.age * 16 + index * 2) * (index ? 3 : 1);
         if (pointIndex === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-      });
+      }
       ctx.stroke();
       ctx.restore();
     }
@@ -811,7 +858,11 @@
   ui.feedback.addEventListener("click", shareFeedback);
   ui.shopTabs.addEventListener("click", (event) => { if (event.target.dataset.category) showShop(event.target.dataset.category); });
   ui.menu.addEventListener("pointerdown", (event) => { if (event.target === ui.menu) startFlight(); });
-  canvas.addEventListener("pointerdown", (event) => { if (mode === "playing") { event.preventDefault(); flap(); } });
+  canvas.addEventListener("pointerdown", (event) => {
+    if (mode !== "playing" || event.isPrimary === false) return;
+    event.preventDefault();
+    flap();
+  }, { passive: false });
   window.addEventListener("keydown", (event) => {
     if (event.code === "Space" || event.code === "ArrowUp") { event.preventDefault(); if (mode === "playing") flap(); else if (mode === "menu" || mode === "gameover") startFlight(); }
     if (event.code === "KeyP" && mode === "playing") { mode = "paused"; renderUi(); }
