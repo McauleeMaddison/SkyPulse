@@ -315,6 +315,7 @@
   function currentTheme() { return themeById[progress.equipped.theme]; }
   function currentTrail() { return trailById[progress.equipped.trail]; }
   function currentPipe() { return pipeById[progress.equipped.pipe]; }
+  function previewArt(relativePath) { return relativePath.replace("images/characters/", "images/characters/thumbs/"); }
 
   function updateWorldBackground() {
     const theme = currentTheme();
@@ -771,7 +772,10 @@
     card.className = `shop-card ${unlocked ? "owned" : "locked"} ${equipped ? "equipped" : ""}`;
     card.type = "button";
     let preview = "";
-    if (category === "skins") preview = `<div class="shop-preview"><img src="${ASSET + item.art}" alt=""></div>`;
+    if (category === "skins") {
+      const generated = item.art.includes("/generated/") ? " generated" : "";
+      preview = `<div class="shop-preview skin-preview"><img class="shop-skin-art${generated}" src="${ASSET + previewArt(item.art)}" alt="${item.name} bird" decoding="async"></div>`;
+    }
     if (category === "themes") preview = `<div class="shop-preview"><span class="theme-preview" style="background-image:url('${ASSET + item.background}')"></span></div>`;
     if (category === "trails") preview = `<div class="shop-preview"><span class="trail-preview" style="color:${item.colours[0]};background:${item.colours[1]}"></span></div>`;
     if (category === "pipes") preview = `<div class="shop-preview"><span class="pipe-preview" style="color:${item.accent};--panel:${item.panel};--energy:${item.energy}"></span></div>`;
