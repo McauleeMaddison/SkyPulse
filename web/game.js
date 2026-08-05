@@ -124,7 +124,7 @@
   ];
   const difficultyById = byId(difficulties);
   const STORE_KEY = "skypulse-web-progress-v1";
-  const BUILD = "0.6.0-beta";
+  const BUILD = "0.7.0-beta";
   const milestoneRewards = [
     { id: "score-10", target: 10, category: "trails", rewardId: "solar" },
     { id: "score-25", target: 25, category: "pipes", rewardId: "rose" },
@@ -214,6 +214,10 @@
   let toastTimer = 0;
   let width = 420;
   let height = 860;
+  // Keep the core flight render lightweight, then quietly trim atmosphere on a device
+  // that proves it cannot sustain a responsive frame budget. There is deliberately no
+  // player-facing popup: controls must stay instant and the world must stay calm.
+  const renderProfile = { lean: false, slowFrames: 0, smoothFrames: 0 };
 
   function dailyMissions() {
     const seed = daySeed(progress.daily.date);
@@ -396,8 +400,10 @@
 
   function resize() {
     const rect = canvas.getBoundingClientRect();
-    // A restrained internal resolution preserves a consistently smooth frame rate on iPhone.
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.2);
+    // The painted background remains crisp in CSS. Rendering the moving canvas at one
+    // device pixel per CSS pixel leaves substantially more time for touch and physics,
+    // especially on older iPhones.
+    const dpr = 1;
     width = Math.max(1, rect.width);
     height = Math.max(1, rect.height);
     canvas.width = Math.round(width * dpr);
@@ -489,6 +495,9 @@
     flight.newBestUntil = 0;
     flight.comet = null;
     flight.worldEventTimer = 5.8 + Math.random() * 3;
+    renderProfile.lean = false;
+    renderProfile.slowFrames = 0;
+    renderProfile.smoothFrames = 0;
     ui.hud.classList.remove("new-best-flash");
   }
 
@@ -604,7 +613,7 @@
     const ground = height * .88;
     const speed = width * (.57 + Math.min(flight.score, 25) * .007);
     flight.runningTime += dt;
-    if (!progress.reduceMotion) {
+    if (!progress.reduceMotion && !renderProfile.lean) {
       flight.worldEventTimer -= dt;
       if (flight.comet) {
         flight.comet.age += dt;
@@ -631,8 +640,8 @@
     flight.trailTimer -= dt;
     if (flight.trailTimer <= 0) {
       flight.trail.unshift({ x: bird.x - 27, y: bird.y, age: 0 });
-      if (flight.trail.length > 14) flight.trail.pop();
-      flight.trailTimer += 1 / 30;
+      if (flight.trail.length > 8) flight.trail.pop();
+      flight.trailTimer += 1 / 24;
     }
     flight.spawnTimer -= dt;
     if (flight.spawnTimer <= 0) {
@@ -702,11 +711,11 @@
 
   function drawBackground() {
     const theme = currentTheme();
-    if (mode === "playing" && !progress.reduceMotion) {
+    if (mode === "playing" && !progress.reduceMotion && !renderProfile.lean) {
       ctx.save();
       ctx.fillStyle = `${theme.accent}18`;
       ctx.fillRect(0, height * .745, width, 1);
-      for (let index = 0; index < 9; index += 1) {
+      for (let index = 0; index < 3; index += 1) {
         const x = (index * 71 + flight.runningTime * (4 + index % 3)) % (width + 18) - 9;
         const y = height * (.18 + (index * .067) % .54);
         const size = index % 4 === 0 ? 2 : 1;
@@ -775,7 +784,6 @@
   function drawFloor() {
     const theme = currentTheme();
     const floorY = height * .88;
-    const runningTime = mode === "playing" ? flight.runningTime : 0;
     ctx.fillStyle = "#02030d";
     ctx.fillRect(0, floorY, width, height - floorY);
     ctx.fillStyle = theme.floor;
@@ -794,21 +802,22 @@
     ctx.stroke();
     ctx.strokeStyle = `${theme.accent}33`;
     ctx.lineWidth = 1;
-    const laneEnds = [width * .08, width * .28, width * .5, width * .72, width * .92];
+    const laneEnds = [width * .18, width * .5, width * .82];
     for (const endX of laneEnds) {
       ctx.beginPath();
       ctx.moveTo(width * .5 + (endX - width * .5) * .16, floorY + 7);
       ctx.lineTo(endX, height);
       ctx.stroke();
     }
-    const firstGridLine = floorY + 14 + (runningTime * 38) % 19;
-    for (let y = firstGridLine; y < height; y += 19) {
-      const depth = (y - floorY) / Math.max(1, height - floorY);
-      ctx.globalAlpha = .16 + depth * .30;
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(width, y);
-      ctx.stroke();
+    if (!renderProfile.lean) {
+      for (const y of [floorY + 22, floorY + 50, floorY + 84]) {
+        const depth = (y - floorY) / Math.max(1, height - floorY);
+        ctx.globalAlpha = .16 + depth * .26;
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(width, y);
+        ctx.stroke();
+      }
     }
     ctx.globalAlpha = 1;
   }
@@ -834,8 +843,6 @@
       ctx.fillRect(pipe.x + 14, y + 7, Math.max(0, pipeWidth - 30), 1.2);
       ctx.fillStyle = pipeStyle.energy;
       ctx.fillRect(pipe.x + pipeWidth / 2 - 1.5, y + 7, 3, Math.max(0, h - 14));
-      ctx.fillStyle = `${pipeStyle.energy}30`;
-      for (let stripeY = y + 22; stripeY < y + h - 12; stripeY += 29) ctx.fillRect(pipe.x + 17, stripeY, Math.max(0, pipeWidth - 34), 1);
       ctx.strokeStyle = pipeStyle.accent;
       ctx.globalAlpha = .82;
       ctx.lineWidth = 1.4;
@@ -871,8 +878,6 @@
     ctx.strokeStyle = skin.trail[1];
     ctx.lineWidth = 3.1;
     ctx.lineCap = "round";
-    ctx.shadowColor = skin.accent;
-    ctx.shadowBlur = 10;
     ctx.beginPath();
     ctx.moveTo(-size, -2); ctx.lineTo(-7, 9); ctx.lineTo(-1, 3); ctx.lineTo(4, 12); ctx.lineTo(size, -2);
     ctx.stroke();
@@ -888,6 +893,7 @@
     const points = flight.trail;
     if (points.length < 2) return;
     const trail = currentTrail();
+    const firstPoint = Math.max(0, points.length - 8);
     for (let index = 0; index < trail.colours.length; index += 1) {
       const colour = trail.colours[index];
       ctx.save();
@@ -896,7 +902,7 @@
       ctx.lineWidth = index ? 7 : 3;
       ctx.lineCap = "round";
       ctx.beginPath();
-      for (let pointIndex = 0; pointIndex < points.length; pointIndex += 1) {
+      for (let pointIndex = firstPoint; pointIndex < points.length; pointIndex += 1) {
         const point = points[pointIndex];
         const x = point.x - point.age * 132;
         const verticalBend = Math.max(-34, Math.min(34, (point.y - flight.bird.y) * .28));
@@ -906,18 +912,6 @@
       ctx.stroke();
       ctx.restore();
     }
-    ctx.save();
-    ctx.fillStyle = trail.colours[0];
-    for (let pointIndex = 2; pointIndex < points.length; pointIndex += 4) {
-      const point = points[pointIndex];
-      const life = Math.max(0, 1 - point.age / .46);
-      const verticalBend = Math.max(-34, Math.min(34, (point.y - flight.bird.y) * .28));
-      ctx.globalAlpha = life * .5;
-      ctx.beginPath();
-      ctx.arc(point.x - point.age * 142, flight.bird.y + verticalBend + Math.sin(point.age * 19) * 2, pointIndex % 8 === 2 ? 1.7 : 1.1, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    ctx.restore();
   }
 
   function drawBird() {
@@ -933,12 +927,9 @@
     ctx.rotate(bird.tilt * Math.PI / 180);
     const wingLift = wingMix * .035;
     ctx.scale(1 + wingLift, 1 - wingLift * .72);
-    ctx.globalAlpha = 1 - wingMix;
-    drawBirdFrame(base, artWidth, skin.tint);
-    if (wingMix > .01) {
-      ctx.globalAlpha = wingMix;
-      drawBirdFrame(flapFrame, artWidth, skin.tint);
-    }
+    // Flappy Bird-style animation uses a decisive wing frame. Drawing one sprite rather
+    // than blending two oversized source images every frame removes a major iPhone hitch.
+    drawBirdFrame(wingMix >= .44 ? flapFrame : base, artWidth, skin.tint);
     ctx.restore();
   }
 
@@ -1008,9 +999,27 @@
     if (mode === "playing") ui.score.textContent = flight.score;
   }
 
+  function updateRenderProfile(rawDt) {
+    if (mode !== "playing") return;
+    if (rawDt > .025) {
+      renderProfile.slowFrames += 1;
+      renderProfile.smoothFrames = 0;
+    } else {
+      renderProfile.smoothFrames += 1;
+      renderProfile.slowFrames = Math.max(0, renderProfile.slowFrames - 1);
+    }
+    if (!renderProfile.lean && renderProfile.slowFrames >= 8) renderProfile.lean = true;
+    if (renderProfile.lean && renderProfile.smoothFrames >= 180) {
+      renderProfile.lean = false;
+      renderProfile.slowFrames = 0;
+    }
+  }
+
   function tick(now) {
-    const dt = Math.min(.034, Math.max(0, (now - lastFrame) / 1000));
+    const rawDt = Math.max(0, (now - lastFrame) / 1000);
+    const dt = Math.min(.034, rawDt);
     lastFrame = now;
+    updateRenderProfile(rawDt);
     if (mode === "newbest" && now >= flight.newBestUntil) {
       mode = "gameover";
       ui.hud.classList.remove("new-best-flash");
