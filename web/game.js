@@ -62,19 +62,19 @@
   ];
 
   const themes = [
-    { id: "neon_city", name: "NEON CITY", price: 0, accent: "#45eaff", background: "images/backgrounds/neon-city.png", floor: "#0a0522", pipe: "#45eaff" },
-    { id: "aurora_rise", name: "AURORA RISE", price: 55, accent: "#61f5b3", background: "images/backgrounds/neon-city.png", floor: "#05251e", pipe: "#61f5b3" },
-    { id: "solar_drift", name: "SOLAR DRIFT", price: 90, accent: "#ffc34d", background: "images/backgrounds/neon-city.png", floor: "#2b0d10", pipe: "#ffc34d" },
-    { id: "midnight_tide", name: "MIDNIGHT TIDE", price: 125, accent: "#45eaff", background: "images/backgrounds/neon-city.png", floor: "#07113d", pipe: "#45eaff" },
-    { id: "velvet_dawn", name: "VELVET DAWN", price: 160, accent: "#f05bc6", background: "images/backgrounds/neon-city.png", floor: "#26051f", pipe: "#f05bc6" },
-    { id: "crystal_night", name: "CRYSTAL NIGHT", price: 190, accent: "#edf7ff", background: "images/backgrounds/themes/crystal-night.png", floor: "#071239", pipe: "#edf7ff" },
-    { id: "jade_horizon", name: "JADE HORIZON", price: 215, accent: "#61f5b3", background: "images/backgrounds/themes/jade-horizon.png", floor: "#063523", pipe: "#61f5b3" },
-    { id: "rose_orbit", name: "ROSE ORBIT", price: 240, accent: "#f05bc6", background: "images/backgrounds/themes/rose-orbit.png", floor: "#3d0925", pipe: "#f05bc6" },
-    { id: "cobalt_storm", name: "COBALT STORM", price: 265, accent: "#45eaff", background: "images/backgrounds/themes/cobalt-storm.png", floor: "#06153c", pipe: "#45eaff" },
-    { id: "amber_skies", name: "AMBER SKIES", price: 290, accent: "#ffc34d", background: "images/backgrounds/themes/amber-skies.png", floor: "#3b1208", pipe: "#ffc34d" },
-    { id: "violet_rain", name: "VIOLET RAIN", price: 315, accent: "#b17cff", background: "images/backgrounds/themes/violet-rain.png", floor: "#210842", pipe: "#b17cff" },
-    { id: "polar_glow", name: "POLAR GLOW", price: 340, accent: "#edf7ff", background: "images/backgrounds/themes/polar-glow.png", floor: "#073144", pipe: "#edf7ff" },
-    { id: "eclipse", name: "ECLIPSE", price: 365, accent: "#b17cff", background: "images/backgrounds/themes/eclipse.png", floor: "#10051f", pipe: "#b17cff" },
+    { id: "neon_city", name: "NEON CITY", price: 0, accent: "#45eaff", background: "images/backgrounds/neon-city.png", floor: "#0a0522", sky: "rgba(54, 233, 255, .16)", horizon: "rgba(105, 55, 225, .28)", veil: "rgba(2, 8, 38, .18)", event: "comet" },
+    { id: "aurora_rise", name: "AURORA RISE", price: 55, accent: "#61f5b3", background: "images/backgrounds/themes/polar-glow.png", floor: "#05251e", sky: "rgba(96, 255, 185, .16)", horizon: "rgba(43, 183, 147, .28)", veil: "rgba(1, 28, 25, .18)", event: "aurora" },
+    { id: "solar_drift", name: "SOLAR DRIFT", price: 90, accent: "#ffc34d", background: "images/backgrounds/themes/amber-skies.png", floor: "#2b0d10", sky: "rgba(255, 195, 77, .14)", horizon: "rgba(242, 85, 54, .30)", veil: "rgba(45, 11, 8, .18)", event: "embers" },
+    { id: "midnight_tide", name: "MIDNIGHT TIDE", price: 125, accent: "#45eaff", background: "images/backgrounds/themes/cobalt-storm.png", floor: "#07113d", sky: "rgba(73, 177, 255, .14)", horizon: "rgba(29, 69, 194, .28)", veil: "rgba(2, 10, 45, .22)", event: "rain" },
+    { id: "velvet_dawn", name: "VELVET DAWN", price: 160, accent: "#f05bc6", background: "images/backgrounds/themes/rose-orbit.png", floor: "#26051f", sky: "rgba(255, 111, 207, .15)", horizon: "rgba(245, 83, 128, .30)", veil: "rgba(49, 5, 34, .18)", event: "spark" },
+    { id: "crystal_night", name: "CRYSTAL NIGHT", price: 190, accent: "#edf7ff", background: "images/backgrounds/themes/crystal-night.png", floor: "#071239", sky: "rgba(210, 238, 255, .14)", horizon: "rgba(100, 129, 255, .27)", veil: "rgba(3, 14, 52, .20)", event: "spark" },
+    { id: "jade_horizon", name: "JADE HORIZON", price: 215, accent: "#61f5b3", background: "images/backgrounds/themes/jade-horizon.png", floor: "#063523", sky: "rgba(89, 247, 172, .14)", horizon: "rgba(14, 135, 90, .30)", veil: "rgba(1, 35, 22, .19)", event: "aurora" },
+    { id: "rose_orbit", name: "ROSE ORBIT", price: 240, accent: "#f05bc6", background: "images/backgrounds/themes/rose-orbit.png", floor: "#3d0925", sky: "rgba(255, 93, 185, .17)", horizon: "rgba(157, 45, 149, .31)", veil: "rgba(52, 4, 40, .19)", event: "spark" },
+    { id: "cobalt_storm", name: "COBALT STORM", price: 265, accent: "#45eaff", background: "images/backgrounds/themes/cobalt-storm.png", floor: "#06153c", sky: "rgba(77, 183, 255, .18)", horizon: "rgba(27, 69, 214, .32)", veil: "rgba(2, 9, 43, .24)", event: "rain" },
+    { id: "amber_skies", name: "AMBER SKIES", price: 290, accent: "#ffc34d", background: "images/backgrounds/themes/amber-skies.png", floor: "#3b1208", sky: "rgba(255, 198, 80, .18)", horizon: "rgba(255, 89, 45, .34)", veil: "rgba(53, 13, 4, .19)", event: "embers" },
+    { id: "violet_rain", name: "VIOLET RAIN", price: 315, accent: "#b17cff", background: "images/backgrounds/themes/violet-rain.png", floor: "#210842", sky: "rgba(184, 124, 255, .16)", horizon: "rgba(115, 62, 228, .31)", veil: "rgba(25, 4, 55, .22)", event: "rain" },
+    { id: "polar_glow", name: "POLAR GLOW", price: 340, accent: "#edf7ff", background: "images/backgrounds/themes/polar-glow.png", floor: "#073144", sky: "rgba(224, 249, 255, .17)", horizon: "rgba(70, 213, 217, .26)", veil: "rgba(2, 29, 47, .18)", event: "aurora" },
+    { id: "eclipse", name: "ECLIPSE", price: 365, accent: "#b17cff", background: "images/backgrounds/themes/eclipse.png", floor: "#10051f", sky: "rgba(178, 111, 255, .13)", horizon: "rgba(74, 35, 122, .34)", veil: "rgba(13, 2, 28, .26)", event: "comet" },
   ];
 
   const trails = [
@@ -116,7 +116,7 @@
   const trailById = byId(trails);
   const pipeById = byId(pipes);
   const STORE_KEY = "skypulse-web-progress-v1";
-  const BUILD = "0.3.1-beta";
+  const BUILD = "0.4.0-beta";
   const milestoneRewards = [
     { id: "score-10", target: 10, category: "trails", rewardId: "solar" },
     { id: "score-25", target: 25, category: "pipes", rewardId: "rose" },
@@ -364,6 +364,12 @@
   function updateWorldBackground() {
     const theme = currentTheme();
     const source = ASSET + theme.background;
+    ui.app.style.setProperty("--theme-accent", theme.accent);
+    ui.app.style.setProperty("--theme-accent-soft", `${theme.accent}24`);
+    ui.app.style.setProperty("--world-sky", theme.sky);
+    ui.app.style.setProperty("--world-horizon", theme.horizon);
+    ui.app.style.setProperty("--world-veil", theme.veil);
+    ui.app.dataset.world = theme.id;
     const request = ++worldRequest;
     const apply = () => {
       if (request !== worldRequest) return;
@@ -390,10 +396,13 @@
 
   function renderUi() {
     const skin = currentSkin();
+    const theme = currentTheme();
     updateWorldBackground();
     warmFlightAssets();
     ui.menu.style.setProperty("--skin-aura", `${skin.accent}38`);
     ui.menu.style.setProperty("--skin-orbit", `${skin.trail[1]}a6`);
+    ui.menu.style.setProperty("--skin-accent", skin.accent);
+    ui.menu.style.setProperty("--world-highlight", theme.horizon);
     ui.crystals.textContent = `✦ ${progress.crystals}`;
     ui.menuCurrency.textContent = `✦ ${progress.crystals}`;
     ui.shopCurrency.textContent = `✦ ${progress.crystals}`;
@@ -653,58 +662,114 @@
   function drawBackground() {
     const theme = currentTheme();
     if (mode === "playing" && !progress.reduceMotion) {
-      ctx.fillStyle = `${theme.accent}14`;
-      for (let index = 0; index < 7; index += 1) {
-        const x = (index * 71 + flight.runningTime * (5 + index % 3)) % (width + 16) - 8;
-        const y = height * (.20 + (index * .067) % .55);
-        ctx.fillRect(x, y, index % 4 === 0 ? 2 : 1, index % 4 === 0 ? 2 : 1);
+      ctx.save();
+      ctx.fillStyle = `${theme.accent}18`;
+      ctx.fillRect(0, height * .745, width, 1);
+      for (let index = 0; index < 9; index += 1) {
+        const x = (index * 71 + flight.runningTime * (4 + index % 3)) % (width + 18) - 9;
+        const y = height * (.18 + (index * .067) % .54);
+        const size = index % 4 === 0 ? 2 : 1;
+        ctx.globalAlpha = index % 3 === 0 ? .82 : .48;
+        ctx.fillStyle = index % 2 ? theme.accent : "#eef9ff";
+        ctx.fillRect(x, y, size, size);
       }
-      if (flight.comet) drawComet(theme);
+      ctx.restore();
+      if (flight.comet) drawWorldEvent(theme);
     }
   }
 
-  function drawComet(theme) {
+  function drawWorldEvent(theme) {
     const progressValue = flight.comet.age / .92;
     const x = width * (1.12 - progressValue * 1.34);
     const y = flight.comet.y + progressValue * height * .16;
     ctx.save();
-    ctx.globalAlpha = Math.sin(progressValue * Math.PI) * .78;
-    ctx.strokeStyle = theme.accent;
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(x + 56, y - 25);
-    ctx.lineTo(x, y);
-    ctx.stroke();
-    ctx.fillStyle = "#f4fbff";
-    ctx.beginPath();
-    ctx.arc(x, y, 2.2, 0, Math.PI * 2);
-    ctx.fill();
+    const alpha = Math.sin(progressValue * Math.PI) * .78;
+    ctx.globalAlpha = alpha;
+    ctx.lineCap = "round";
+    if (theme.event === "aurora") {
+      ctx.strokeStyle = theme.accent;
+      ctx.lineWidth = 1.4;
+      for (let strand = 0; strand < 3; strand += 1) {
+        const offset = strand * 16;
+        ctx.globalAlpha = alpha * (.17 + strand * .07);
+        ctx.beginPath();
+        ctx.moveTo(-10, y + offset);
+        ctx.bezierCurveTo(width * .24, y - 28 + offset, width * .63, y + 37 - offset, width + 12, y + 6 + offset);
+        ctx.stroke();
+      }
+    } else if (theme.event === "rain") {
+      ctx.strokeStyle = theme.accent;
+      ctx.lineWidth = 1;
+      for (let streak = 0; streak < 6; streak += 1) {
+        const streakX = (x + streak * 53) % (width + 18) - 9;
+        const streakY = y - 48 + streak * 17;
+        ctx.beginPath();
+        ctx.moveTo(streakX + 7, streakY - 13);
+        ctx.lineTo(streakX, streakY + 8);
+        ctx.stroke();
+      }
+    } else if (theme.event === "embers" || theme.event === "spark") {
+      ctx.fillStyle = theme.event === "embers" ? "#ffc34d" : theme.accent;
+      for (let spark = 0; spark < 7; spark += 1) {
+        const sparkX = (x + spark * 31) % (width + 14) - 7;
+        const sparkY = y - 20 + Math.sin(progressValue * 7 + spark) * 22 + spark * 5;
+        const size = spark % 3 === 0 ? 2 : 1;
+        ctx.fillRect(sparkX, sparkY, size, size);
+      }
+    } else {
+      ctx.strokeStyle = theme.accent;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(x + 56, y - 25);
+      ctx.lineTo(x, y);
+      ctx.stroke();
+      ctx.fillStyle = "#f4fbff";
+      ctx.beginPath();
+      ctx.arc(x, y, 2.2, 0, Math.PI * 2);
+      ctx.fill();
+    }
     ctx.restore();
   }
 
   function drawFloor() {
     const theme = currentTheme();
     const floorY = height * .88;
-    ctx.fillStyle = theme.floor;
+    const runningTime = mode === "playing" ? flight.runningTime : 0;
+    ctx.fillStyle = "#02030d";
     ctx.fillRect(0, floorY, width, height - floorY);
-    ctx.fillStyle = `${theme.accent}36`;
-    ctx.fillRect(0, floorY, width, 9);
-    ctx.fillStyle = "rgba(255,255,255,.12)";
-    ctx.fillRect(0, floorY + 2, width, 1);
+    ctx.fillStyle = theme.floor;
+    ctx.fillRect(0, floorY + 7, width, height - floorY - 7);
+    ctx.fillStyle = `${theme.accent}4a`;
+    ctx.fillRect(0, floorY, width, 10);
+    ctx.fillStyle = "rgba(255,255,255,.18)";
+    ctx.fillRect(0, floorY + 2, width, 1.2);
+    ctx.fillStyle = "rgba(0,0,0,.36)";
+    ctx.fillRect(0, floorY + 10, width, 4);
     ctx.strokeStyle = `${theme.accent}bb`;
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 2.25;
     ctx.beginPath();
     ctx.moveTo(0, floorY + 1);
     ctx.lineTo(width, floorY + 1);
     ctx.stroke();
-    ctx.strokeStyle = `${theme.accent}28`;
+    ctx.strokeStyle = `${theme.accent}33`;
     ctx.lineWidth = 1;
-    for (const endX of [width * .23, width * .77]) {
+    const laneEnds = [width * .08, width * .28, width * .5, width * .72, width * .92];
+    for (const endX of laneEnds) {
       ctx.beginPath();
       ctx.moveTo(width * .5 + (endX - width * .5) * .16, floorY + 7);
       ctx.lineTo(endX, height);
       ctx.stroke();
     }
+    const firstGridLine = floorY + 14 + (runningTime * 38) % 19;
+    for (let y = firstGridLine; y < height; y += 19) {
+      const depth = (y - floorY) / Math.max(1, height - floorY);
+      ctx.globalAlpha = .16 + depth * .30;
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(width, y);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
   }
 
   function drawPipe(pipe) {
@@ -714,18 +779,22 @@
     const sections = [[0, pipe.gapY - pipe.gap / 2], [pipe.gapY + pipe.gap / 2, floorY - (pipe.gapY + pipe.gap / 2)]];
     for (const [y, h] of sections) {
       if (h <= 0) continue;
-      ctx.fillStyle = "#070b23";
+      ctx.fillStyle = "#030613";
       roundedRect(pipe.x, y, pipeWidth, h, 7);
       ctx.fill();
       ctx.fillStyle = pipeStyle.panel;
       roundedRect(pipe.x + 8, y + 4, pipeWidth - 16, Math.max(0, h - 8), 4);
       ctx.fill();
-      ctx.fillStyle = `${pipeStyle.accent}20`;
-      ctx.fillRect(pipe.x + 10, y + 7, 2, Math.max(0, h - 14));
-      ctx.fillStyle = "rgba(255,255,255,.10)";
-      ctx.fillRect(pipe.x + 13, y + 7, Math.max(0, pipeWidth - 26), 1);
+      ctx.fillStyle = "rgba(0,0,0,.23)";
+      ctx.fillRect(pipe.x + pipeWidth - 16, y + 7, 7, Math.max(0, h - 14));
+      ctx.fillStyle = `${pipeStyle.accent}24`;
+      ctx.fillRect(pipe.x + 11, y + 7, 2, Math.max(0, h - 14));
+      ctx.fillStyle = "rgba(255,255,255,.13)";
+      ctx.fillRect(pipe.x + 14, y + 7, Math.max(0, pipeWidth - 30), 1.2);
       ctx.fillStyle = pipeStyle.energy;
       ctx.fillRect(pipe.x + pipeWidth / 2 - 1.5, y + 7, 3, Math.max(0, h - 14));
+      ctx.fillStyle = `${pipeStyle.energy}30`;
+      for (let stripeY = y + 22; stripeY < y + h - 12; stripeY += 29) ctx.fillRect(pipe.x + 17, stripeY, Math.max(0, pipeWidth - 34), 1);
       ctx.strokeStyle = pipeStyle.accent;
       ctx.globalAlpha = .82;
       ctx.lineWidth = 1.4;
@@ -733,19 +802,22 @@
       ctx.globalAlpha = 1;
     }
     for (const y of [pipe.gapY - pipe.gap / 2 - 11, pipe.gapY + pipe.gap / 2 - 4]) {
+      ctx.fillStyle = "#030613";
+      roundedRect(pipe.x - 7, y - 1, pipeWidth + 14, 16, 5);
+      ctx.fill();
       ctx.fillStyle = pipeStyle.accent;
-      roundedRect(pipe.x - 6, y, pipeWidth + 12, 14, 5);
+      roundedRect(pipe.x - 5, y + 1, pipeWidth + 10, 12, 4);
       ctx.fill();
       ctx.fillStyle = pipeStyle.panel;
-      roundedRect(pipe.x - 3, y + 3, pipeWidth + 6, 8, 3);
+      roundedRect(pipe.x - 2, y + 4, pipeWidth + 4, 6, 3);
       ctx.fill();
       ctx.fillStyle = pipeStyle.energy;
-      ctx.fillRect(pipe.x + pipeWidth / 2 - 1.5, y + 3, 3, 8);
-      ctx.strokeStyle = "rgba(255,255,255,.55)";
+      ctx.fillRect(pipe.x + pipeWidth / 2 - 1.5, y + 4, 3, 6);
+      ctx.strokeStyle = "rgba(255,255,255,.58)";
       ctx.lineWidth = 1;
       ctx.beginPath();
-      ctx.moveTo(pipe.x - 3, y + 10);
-      ctx.lineTo(pipe.x + pipeWidth + 3, y + 10);
+      ctx.moveTo(pipe.x - 2, y + 10);
+      ctx.lineTo(pipe.x + pipeWidth + 2, y + 10);
       ctx.stroke();
     }
   }
@@ -792,6 +864,17 @@
       ctx.stroke();
       ctx.restore();
     }
+    ctx.save();
+    ctx.fillStyle = trail.colours[0];
+    for (let pointIndex = 2; pointIndex < points.length; pointIndex += 4) {
+      const point = points[pointIndex];
+      const life = Math.max(0, 1 - point.age / .46);
+      ctx.globalAlpha = life * .5;
+      ctx.beginPath();
+      ctx.arc(point.x - point.age * 142, point.y + Math.sin(point.age * 19) * 2, pointIndex % 8 === 2 ? 1.7 : 1.1, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
   }
 
   function drawBird() {
@@ -803,8 +886,11 @@
     const wingMix = mode === "playing" ? Math.max(0, Math.min(1, idleWing + bird.wing * .76)) : .42 + Math.sin(performance.now() * .005) * .18;
     const artWidth = width * .30 * (skin.scale || 1);
     ctx.save();
-    ctx.translate(bird.x, bird.y);
+    const lifeBob = mode === "playing" ? Math.sin(bird.wingPhase * .48) * .8 : Math.sin(performance.now() * .005) * 1.5;
+    ctx.translate(bird.x, bird.y + lifeBob);
     ctx.rotate(bird.tilt * Math.PI / 180);
+    const wingLift = wingMix * .035;
+    ctx.scale(1 + wingLift, 1 - wingLift * .72);
     ctx.globalAlpha = 1 - wingMix;
     drawBirdFrame(base, artWidth, skin.tint);
     if (wingMix > .01) {
@@ -913,7 +999,7 @@
       const generated = item.art.includes("/generated/") ? " generated" : "";
       preview = `<div class="shop-preview skin-preview"><img class="shop-skin-art${generated}" src="${ASSET + previewArt(item.art)}" alt="${item.name} bird" decoding="async"></div>`;
     }
-    if (category === "themes") preview = `<div class="shop-preview"><span class="theme-preview" style="background-image:url('${ASSET + item.background}')"></span></div>`;
+    if (category === "themes") preview = `<div class="shop-preview"><span class="theme-preview" style="--theme-glow:${item.accent}88;background-image:url('${ASSET + item.background}')"></span></div>`;
     if (category === "trails") preview = `<div class="shop-preview"><span class="trail-preview" style="color:${item.colours[0]};background:${item.colours[1]}"></span></div>`;
     if (category === "pipes") preview = `<div class="shop-preview"><span class="pipe-preview" style="color:${item.accent};--panel:${item.panel};--energy:${item.energy}"></span></div>`;
     const status = equipped ? "EQUIPPED" : unlocked ? "TAP TO EQUIP" : `✦ ${item.price}`;
