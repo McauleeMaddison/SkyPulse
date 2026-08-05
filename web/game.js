@@ -109,7 +109,7 @@
   const trailById = byId(trails);
   const pipeById = byId(pipes);
   const STORE_KEY = "skypulse-web-progress-v1";
-  const BUILD = "0.2.1-beta";
+  const BUILD = "0.2.2-beta";
 
   function localDayKey() {
     const now = new Date();
@@ -569,6 +569,8 @@
     ctx.fillRect(0, floorY, width, height - floorY);
     ctx.fillStyle = `${theme.accent}36`;
     ctx.fillRect(0, floorY, width, 9);
+    ctx.fillStyle = "rgba(255,255,255,.12)";
+    ctx.fillRect(0, floorY + 2, width, 1);
     ctx.strokeStyle = `${theme.accent}bb`;
     ctx.lineWidth = 2;
     ctx.beginPath();
@@ -598,6 +600,10 @@
       ctx.fillStyle = pipeStyle.panel;
       roundedRect(pipe.x + 8, y + 4, pipeWidth - 16, Math.max(0, h - 8), 4);
       ctx.fill();
+      ctx.fillStyle = `${pipeStyle.accent}20`;
+      ctx.fillRect(pipe.x + 10, y + 7, 2, Math.max(0, h - 14));
+      ctx.fillStyle = "rgba(255,255,255,.10)";
+      ctx.fillRect(pipe.x + 13, y + 7, Math.max(0, pipeWidth - 26), 1);
       ctx.fillStyle = pipeStyle.energy;
       ctx.fillRect(pipe.x + pipeWidth / 2 - 1.5, y + 7, 3, Math.max(0, h - 14));
       ctx.strokeStyle = pipeStyle.accent;
@@ -610,6 +616,11 @@
       ctx.fillStyle = pipeStyle.accent;
       roundedRect(pipe.x - 6, y, pipeWidth + 12, 14, 5);
       ctx.fill();
+      ctx.fillStyle = pipeStyle.panel;
+      roundedRect(pipe.x - 3, y + 3, pipeWidth + 6, 8, 3);
+      ctx.fill();
+      ctx.fillStyle = pipeStyle.energy;
+      ctx.fillRect(pipe.x + pipeWidth / 2 - 1.5, y + 3, 3, 8);
       ctx.strokeStyle = "rgba(255,255,255,.55)";
       ctx.lineWidth = 1;
       ctx.beginPath();
