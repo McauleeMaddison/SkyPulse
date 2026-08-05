@@ -24,6 +24,12 @@
     settings: document.querySelector("#settings"),
     sound: document.querySelector("#sound-toggle"),
     motion: document.querySelector("#motion-toggle"),
+    flightHint: document.querySelector("#flight-hint"),
+    daily: document.querySelector("#daily"),
+    dailyDate: document.querySelector("#daily-date"),
+    dailyList: document.querySelector("#daily-list"),
+    resultDaily: document.querySelector("#result-daily"),
+    feedback: document.querySelector("#feedback-button"),
     toast: document.querySelector("#toast"),
   };
 
@@ -102,12 +108,30 @@
   const trailById = byId(trails);
   const pipeById = byId(pipes);
   const STORE_KEY = "skypulse-web-progress-v1";
+  const BUILD = "0.2.0-beta";
+
+  function localDayKey() {
+    const now = new Date();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    return `${now.getFullYear()}-${month}-${day}`;
+  }
+
+  function daySeed(day = localDayKey()) {
+    return [...day].reduce((total, character) => total * 31 + character.charCodeAt(0), 17) >>> 0;
+  }
+
+  function emptyDaily() {
+    return { date: localDayKey(), bestScore: 0, crests: 0, flights: 0, claimed: [], rewards: {} };
+  }
 
   const fallbackProgress = {
     crystals: 0,
     best: 0,
     sound: true,
     reduceMotion: false,
+    hasSeenTutorial: false,
+    daily: emptyDaily(),
     equipped: { skin: "nova", theme: "neon_city", trail: "pulse", pipe: "ion" },
     unlocked: { skins: ["nova"], themes: ["neon_city"], trails: ["pulse"], pipes: ["ion"] },
   };
@@ -121,6 +145,15 @@
       result.best = Math.max(0, Number(saved.best) || 0);
       result.sound = saved.sound !== false;
       result.reduceMotion = Boolean(saved.reduceMotion);
+      result.hasSeenTutorial = Boolean(saved.hasSeenTutorial);
+      const today = emptyDaily();
+      if (saved.daily?.date === today.date) {
+        result.daily.bestScore = Math.max(0, Number(saved.daily.bestScore) || 0);
+        result.daily.crests = Math.max(0, Number(saved.daily.crests) || 0);
+        result.daily.flights = Math.max(0, Number(saved.daily.flights) || 0);
+        result.daily.claimed = Array.isArray(saved.daily.claimed) ? saved.daily.claimed.filter((item) => ["score", "crests", "flights"].includes(item)) : [];
+        result.daily.rewards = typeof saved.daily.rewards === "object" && saved.daily.rewards ? saved.daily.rewards : {};
+      }
       for (const key of Object.keys(result.equipped)) {
         const group = key === "skin" ? "skins" : `${key}s`;
         const available = catalog[group];
@@ -138,8 +171,9 @@
   const progress = readProgress();
   const imageCache = new Map();
   const audioCache = new Map();
+  let visibleBackground = null;
   const audioPaths = {
-    flap: "audio/flap.wav", score: "audio/score.wav", crash: "audio/crash.wav", crystal: "audio/crystal.wav", best: "audio/new-best.wav",
+    flap: "audio/flap.wav", score: "audio/score.wav", crash: "audio/crash.wav", crystal: "audio/crystal.wav", best: "audio/new-best.wav", unlock: "audio/unlock.wav",
   };
   let activeCategory = "skins";
   let mode = "menu";
@@ -148,8 +182,60 @@
   let width = 420;
   let height = 860;
 
+  function dailyMissions() {
+    const seed = daySeed(progress.daily.date);
+    return [
+      { id: "score", title: "CLEAR THE GLOW", target: 5 + seed % 3, category: "trails", detail: (target) => `Reach score ${target} in one flight.` },
+      { id: "crests", title: "CREST HUNT", target: 3 + (seed >>> 3) % 3, category: "pipes", detail: (target) => `Collect ${target} crests today.` },
+      { id: "flights", title: "TAKE FLIGHT", target: 2 + (seed >>> 6) % 2, category: "themes", detail: (target) => `Complete ${target} flights today.` },
+    ];
+  }
+
+  function dailyValue(mission) {
+    return mission.id === "score" ? progress.daily.bestScore : progress.daily[mission.id];
+  }
+
+  function rewardFor(mission, index) {
+    const choices = catalog[mission.category].filter((item) => item.price > 0);
+    const stored = choices.find((item) => item.id === progress.daily.rewards[mission.id]);
+    if (stored && !progress.unlocked[mission.category].includes(stored.id)) return stored;
+    const seed = daySeed(progress.daily.date) + index * 7;
+    const available = choices.filter((item) => !progress.unlocked[mission.category].includes(item.id));
+    const reward = (available.length ? available : choices)[seed % (available.length || choices.length)];
+    progress.daily.rewards[mission.id] = reward.id;
+    return reward;
+  }
+
+  function settleDailyRewards() {
+    const unlocked = [];
+    dailyMissions().forEach((mission, index) => {
+      if (dailyValue(mission) < mission.target || progress.daily.claimed.includes(mission.id)) return;
+      const reward = rewardFor(mission, index);
+      progress.daily.claimed.push(mission.id);
+      if (!progress.unlocked[mission.category].includes(reward.id)) {
+        progress.unlocked[mission.category].push(reward.id);
+        unlocked.push(reward);
+      }
+    });
+    return unlocked;
+  }
+
+  function renderDaily() {
+    const date = new Date(`${progress.daily.date}T12:00:00`);
+    ui.dailyDate.textContent = new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric" }).format(date).toUpperCase();
+    ui.dailyList.replaceChildren(...dailyMissions().map((mission, index) => {
+      const reward = rewardFor(mission, index);
+      const value = Math.min(mission.target, dailyValue(mission));
+      const complete = progress.daily.claimed.includes(mission.id);
+      const card = document.createElement("article");
+      card.className = `daily-card${complete ? " complete" : ""}`;
+      card.innerHTML = `<h3>${mission.title}</h3><p>${mission.detail(mission.target)}</p><footer><span>${value} / ${mission.target}</span><span>${complete ? "UNLOCKED" : `REWARD · ${reward.name}`}</span></footer>`;
+      return card;
+    }));
+  }
+
   const flight = {
-    bird: { x: 0, y: 0, velocity: 0, tilt: 0, wing: 0 },
+    bird: { x: 0, y: 0, velocity: 0, tilt: 0, wing: 0, wingPhase: 0 },
     pipes: [],
     crests: [],
     trail: [],
@@ -158,6 +244,10 @@
     earned: 0,
     spawnTimer: 1.15,
     runningTime: 0,
+    tutorialActive: false,
+    hintTimer: 0,
+    impactAt: 0,
+    impactType: "",
   };
 
   function saveProgress() {
@@ -215,6 +305,7 @@
     setVisible(ui.menu, mode === "menu");
     setVisible(ui.hud, mode === "playing");
     setVisible(ui.customize, mode === "shop");
+    setVisible(ui.daily, mode === "daily");
     setVisible(ui.gameOver, mode === "gameover");
     setVisible(ui.pause, mode === "paused");
     setVisible(ui.settings, mode === "settings");
@@ -227,6 +318,20 @@
     toastTimer = setTimeout(() => setVisible(ui.toast, false), 1800);
   }
 
+  function setFlightHint(message) {
+    ui.flightHint.textContent = message;
+  }
+
+  function showFlightHint(message, duration = 0) {
+    clearTimeout(flight.hintTimer);
+    setFlightHint(message);
+    if (duration) {
+      flight.hintTimer = setTimeout(() => {
+        if (mode === "playing") setFlightHint("");
+      }, duration);
+    }
+  }
+
   function resetFlight() {
     const bird = flight.bird;
     bird.x = width * .31;
@@ -234,6 +339,7 @@
     bird.velocity = 0;
     bird.tilt = 0;
     bird.wing = 0;
+    bird.wingPhase = 0;
     flight.pipes = [];
     flight.crests = [];
     flight.trail = [];
@@ -242,11 +348,15 @@
     flight.earned = 0;
     flight.spawnTimer = .82;
     flight.runningTime = 0;
+    flight.impactAt = 0;
+    flight.impactType = "";
   }
 
   function startFlight() {
     resetFlight();
     mode = "playing";
+    flight.tutorialActive = !progress.hasSeenTutorial;
+    showFlightHint(flight.tutorialActive ? "TAP TO FLAP · FLY THROUGH THE GAPS" : "");
     flap();
     renderUi();
   }
@@ -254,8 +364,8 @@
   function flap() {
     if (mode !== "playing") return;
     const bird = flight.bird;
-    bird.velocity = Math.min(bird.velocity < 0 ? -430 : bird.velocity - 340, -395);
-    bird.wing = .34;
+    bird.velocity = -390;
+    bird.wing = 1;
     playSound("flap");
     if (navigator.vibrate) navigator.vibrate(8);
   }
@@ -270,16 +380,33 @@
     if (Math.random() < .61) flight.crests.push({ x: width + 78, y: gapY + (Math.random() - .5) * gap * .30, phase: Math.random() * Math.PI * 2 });
   }
 
-  function endFlight() {
+  function endFlight(impactType = "pipe") {
     if (mode !== "playing") return;
+    const previousBest = progress.best;
+    progress.daily.bestScore = Math.max(progress.daily.bestScore, flight.score);
+    progress.daily.flights += 1;
+    const dailyUnlocks = settleDailyRewards();
     mode = "gameover";
     progress.best = Math.max(progress.best, flight.score);
+    flight.impactAt = performance.now();
+    flight.impactType = impactType;
     saveProgress();
     playSound("crash");
+    if (flight.score > previousBest && flight.score > 0) playSound("best");
+    if (dailyUnlocks.length) playSound("unlock");
     if (navigator.vibrate) navigator.vibrate([16, 36, 26]);
     ui.resultScore.textContent = `SCORE  ${flight.score}`;
-    ui.resultBest.textContent = flight.score >= progress.best && flight.score > 0 ? `NEW BEST  ${progress.best}` : `BEST  ${progress.best}`;
+    ui.resultBest.textContent = flight.score > previousBest ? `NEW BEST  ${progress.best}` : `BEST  ${progress.best}`;
     ui.resultCrystals.textContent = `CRESTS  +${flight.earned}`;
+    const dailyComplete = progress.daily.claimed.length;
+    if (dailyUnlocks.length) {
+      ui.resultDaily.textContent = `DAILY UNLOCKED · ${dailyUnlocks.map((item) => item.name).join(" · ")}`;
+      setVisible(ui.resultDaily, true);
+    } else {
+      ui.resultDaily.textContent = `DAILY FLIGHT · ${dailyComplete} / 3 GOALS COMPLETE`;
+      setVisible(ui.resultDaily, true);
+    }
+    setFlightHint("");
     renderUi();
   }
 
@@ -289,7 +416,8 @@
     const ground = height * .88;
     const speed = width * (.57 + Math.min(flight.score, 25) * .007);
     flight.runningTime += dt;
-    bird.wing = Math.max(0, bird.wing - dt);
+    bird.wing = Math.max(0, bird.wing - dt * 3.8);
+    bird.wingPhase += dt * (bird.velocity < 0 ? 16 : 8);
     bird.velocity = Math.min(730, bird.velocity + 1070 * dt);
     bird.y += bird.velocity * dt;
     const targetTilt = Math.max(-30, Math.min(24, bird.velocity * .072));
@@ -311,9 +439,17 @@
         flight.score += 1;
         flight.bursts.push({ x: bird.x + 24, y: bird.y + 23, age: 0, colour: currentSkin().accent });
         playSound("score");
+        if (flight.tutorialActive) {
+          flight.tutorialActive = false;
+          progress.hasSeenTutorial = true;
+          saveProgress();
+          showFlightHint("NICE FLIGHT", 1100);
+        }
       }
-      const overlapsX = bird.x + bodyHalfW > pipe.x && bird.x - bodyHalfW < pipe.x + pipeWidth;
-      if (overlapsX && (bird.y - bodyHalfH < pipe.gapY - pipe.gap / 2 || bird.y + bodyHalfH > pipe.gapY + pipe.gap / 2)) endFlight();
+      const overlapsX = bird.x + bodyHalfW > pipe.x - 6 && bird.x - bodyHalfW < pipe.x + pipeWidth + 6;
+      const dangerousTop = pipe.gapY - pipe.gap / 2 + 3;
+      const dangerousBottom = pipe.gapY + pipe.gap / 2 - 4;
+      if (overlapsX && (bird.y - bodyHalfH < dangerousTop || bird.y + bodyHalfH > dangerousBottom)) endFlight("pipe");
     }
     flight.pipes = flight.pipes.filter((pipe) => pipe.x + pipeWidth > -50);
     for (const crest of flight.crests) {
@@ -322,6 +458,7 @@
       if (Math.hypot(crest.x - bird.x, crest.y - bird.y) < 32) {
         crest.x = -100;
         progress.crystals += 1;
+        progress.daily.crests += 1;
         flight.earned += 1;
         saveProgress();
         playSound("crystal");
@@ -329,7 +466,8 @@
     }
     flight.crests = flight.crests.filter((crest) => crest.x > -40);
     flight.bursts = flight.bursts.map((burst) => ({ ...burst, age: burst.age + dt })).filter((burst) => burst.age < .66);
-    if (bird.y < -20 || bird.y + bodyHalfH >= ground) endFlight();
+    if (bird.y < -20) endFlight("sky");
+    if (bird.y + bodyHalfH >= ground) endFlight("floor");
   }
 
   function cover(imageItem) {
@@ -354,9 +492,11 @@
 
   function drawBackground() {
     const theme = currentTheme();
+    const requestedBackground = image(theme.background);
+    if (requestedBackground.complete && requestedBackground.naturalWidth) visibleBackground = requestedBackground;
     ctx.fillStyle = "#07031b";
     ctx.fillRect(0, 0, width, height);
-    cover(image(theme.background));
+    cover(visibleBackground || requestedBackground);
     ctx.fillStyle = "rgba(7, 2, 28, .10)";
     ctx.fillRect(0, 0, width, height);
     if (mode === "playing" && !progress.reduceMotion) {
@@ -473,7 +613,8 @@
     const skin = currentSkin();
     const base = image(skin.art);
     const flapFrame = image(skin.flap);
-    const wingMix = mode === "playing" ? Math.max(0, Math.min(1, bird.wing / .34)) : .42 + Math.sin(performance.now() * .005) * .18;
+    const idleWing = .12 + (Math.sin(bird.wingPhase) + 1) * .09;
+    const wingMix = mode === "playing" ? Math.max(0, Math.min(1, idleWing + bird.wing * .76)) : .42 + Math.sin(performance.now() * .005) * .18;
     const artWidth = width * .30 * (skin.scale || 1);
     ctx.save();
     ctx.translate(bird.x, bird.y);
@@ -496,11 +637,13 @@
     const artHeight = artWidth * frame.naturalHeight / frame.naturalWidth;
     ctx.drawImage(frame, -artWidth * .60, -artHeight * .50, artWidth, artHeight);
     if (tint) {
+      const frameOpacity = ctx.globalAlpha;
       ctx.globalCompositeOperation = "source-atop";
       ctx.fillStyle = tint;
-      ctx.globalAlpha *= .22;
+      ctx.globalAlpha = frameOpacity * .22;
       ctx.fillRect(-artWidth * .60, -artHeight * .50, artWidth, artHeight);
       ctx.globalCompositeOperation = "source-over";
+      ctx.globalAlpha = frameOpacity;
     }
   }
 
@@ -516,6 +659,26 @@
     }
   }
 
+  function drawImpact() {
+    if (!flight.impactAt) return;
+    const age = (performance.now() - flight.impactAt) / 1000;
+    if (age > .34) return;
+    const alpha = (1 - age / .34) * .34;
+    const colour = currentSkin().accent;
+    ctx.save();
+    ctx.fillStyle = colour;
+    ctx.globalAlpha = alpha;
+    if (flight.impactType === "floor") {
+      const y = height * .88;
+      ctx.fillRect(0, y - 4 - age * 32, width, 8 + age * 56);
+    } else {
+      ctx.beginPath();
+      ctx.arc(flight.bird.x, flight.bird.y, 15 + age * 80, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
   function draw() {
     drawBackground();
     if (mode === "playing" || mode === "paused" || mode === "gameover") {
@@ -525,6 +688,7 @@
       drawBird();
       drawBursts();
       drawFloor();
+      drawImpact();
     }
     if (mode === "playing") ui.score.textContent = flight.score;
   }
@@ -585,12 +749,47 @@
   function goMenu() {
     mode = "menu";
     resetFlight();
+    setFlightHint("");
     renderUi();
+  }
+
+  function feedbackText() {
+    const completed = progress.daily.claimed.length;
+    return [
+      `SkyPulse ${BUILD} feedback`,
+      `Best score: ${progress.best}`,
+      `Daily goals: ${completed}/3`,
+      "Touch felt: ",
+      "Any lag or glitches: ",
+      "One thing you loved: ",
+      "One thing to improve: ",
+    ].join("\n");
+  }
+
+  async function shareFeedback() {
+    const message = feedbackText();
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: "SkyPulse beta feedback", text: message });
+        return;
+      }
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(message);
+        toast("FEEDBACK TEMPLATE COPIED");
+        return;
+      }
+    } catch (error) {
+      if (error?.name === "AbortError") return;
+    }
+    window.prompt("Copy your SkyPulse beta feedback:", message);
   }
 
   document.querySelector("#fly-button").addEventListener("click", startFlight);
   document.querySelector("#customize-button").addEventListener("click", () => { mode = "shop"; renderUi(); showShop(); });
   document.querySelector("#close-customize").addEventListener("click", goMenu);
+  document.querySelector("#daily-button").addEventListener("click", () => { mode = "daily"; renderDaily(); saveProgress(); renderUi(); });
+  document.querySelector("#close-daily").addEventListener("click", goMenu);
+  document.querySelector("#daily-play").addEventListener("click", startFlight);
   document.querySelector("#retry-button").addEventListener("click", startFlight);
   document.querySelector("#results-menu").addEventListener("click", goMenu);
   document.querySelector("#pause-button").addEventListener("click", () => { mode = "paused"; renderUi(); });
@@ -601,6 +800,7 @@
   document.querySelector("#close-settings").addEventListener("click", goMenu);
   ui.sound.addEventListener("click", () => { progress.sound = !progress.sound; saveProgress(); renderUi(); });
   ui.motion.addEventListener("click", () => { progress.reduceMotion = !progress.reduceMotion; saveProgress(); renderUi(); });
+  ui.feedback.addEventListener("click", shareFeedback);
   ui.shopTabs.addEventListener("click", (event) => { if (event.target.dataset.category) showShop(event.target.dataset.category); });
   ui.menu.addEventListener("pointerdown", (event) => { if (event.target === ui.menu) startFlight(); });
   canvas.addEventListener("pointerdown", (event) => { if (mode === "playing") { event.preventDefault(); flap(); } });
