@@ -109,7 +109,7 @@
   const trailById = byId(trails);
   const pipeById = byId(pipes);
   const STORE_KEY = "skypulse-web-progress-v1";
-  const BUILD = "0.2.2-beta";
+  const BUILD = "0.2.3-beta";
 
   function localDayKey() {
     const now = new Date();
@@ -348,6 +348,8 @@
     const skin = currentSkin();
     updateWorldBackground();
     warmFlightAssets();
+    ui.menu.style.setProperty("--skin-aura", `${skin.accent}38`);
+    ui.menu.style.setProperty("--skin-orbit", `${skin.trail[1]}a6`);
     ui.crystals.textContent = `✦ ${progress.crystals}`;
     ui.menuCurrency.textContent = `✦ ${progress.crystals}`;
     ui.shopCurrency.textContent = `✦ ${progress.crystals}`;
@@ -872,7 +874,10 @@
   ui.motion.addEventListener("click", () => { progress.reduceMotion = !progress.reduceMotion; saveProgress(); renderUi(); });
   ui.feedback.addEventListener("click", shareFeedback);
   ui.shopTabs.addEventListener("click", (event) => { if (event.target.dataset.category) showShop(event.target.dataset.category); });
-  ui.menu.addEventListener("pointerdown", (event) => { if (event.target === ui.menu) startFlight(); });
+  ui.menu.addEventListener("pointerdown", (event) => {
+    if (event.target.closest?.("button, a")) return;
+    startFlight();
+  });
   canvas.addEventListener("pointerdown", (event) => {
     if (mode !== "playing" || event.isPrimary === false) return;
     event.preventDefault();
