@@ -1,6 +1,6 @@
-const CACHE = "skypulse-web-v8";
+const CACHE = "skypulse-web-v9";
 const CORE = [
-  "./", "./index.html", "./privacy.html", "./styles.css", "./game.js", "./manifest.webmanifest",
+  "./", "./index.html", "./privacy.html", "./styles.css?v=0.3.1", "./game.js?v=0.3.1", "./manifest.webmanifest",
   "../assets/images/branding/skypulse-app-icon.png",
   "../assets/images/backgrounds/neon-city.png",
   "../assets/images/characters/nova.png", "../assets/images/characters/nova-flap.png",
@@ -18,11 +18,21 @@ self.addEventListener("activate", (event) => event.waitUntil(
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
-  event.respondWith(caches.match(event.request).then((cached) => cached || fetch(event.request).then((response) => {
+  const url = new URL(event.request.url);
+  const appShell = url.origin === self.location.origin && (
+    event.request.mode === "navigate" ||
+    ["/web/index.html", "/web/styles.css", "/web/game.js", "/web/manifest.webmanifest"].some((path) => url.pathname.endsWith(path))
+  );
+  const cacheResponse = (response) => {
     if (response.ok && new URL(event.request.url).origin === self.location.origin) {
       const copy = response.clone();
       caches.open(CACHE).then((cache) => cache.put(event.request, copy));
     }
     return response;
-  })));
+  };
+  if (appShell) {
+    event.respondWith(fetch(event.request).then(cacheResponse).catch(() => caches.match(event.request).then((cached) => cached || caches.match("./"))));
+    return;
+  }
+  event.respondWith(caches.match(event.request).then((cached) => cached || fetch(event.request).then(cacheResponse)));
 });
