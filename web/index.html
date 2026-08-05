@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+    <meta name="theme-color" content="#090321">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SkyPulse">
+    <link rel="manifest" href="./manifest.webmanifest">
+    <link rel="icon" href="../assets/images/branding/skypulse-app-icon.png" type="image/png">
+    <link rel="apple-touch-icon" href="../assets/images/branding/skypulse-app-icon.png">
+    <link rel="stylesheet" href="./styles.css">
+    <title>SkyPulse</title>
+  </head>
+  <body>
+    <main id="app" aria-label="SkyPulse game">
+      <canvas id="game" aria-label="SkyPulse flight game"></canvas>
+
+      <section id="hud" class="hud hidden" aria-label="Game score">
+        <button id="pause-button" class="icon-button" aria-label="Pause game">Ⅱ</button>
+        <div id="score" class="score">0</div>
+        <div id="crystals" class="currency">✦ 0</div>
+        <p id="flight-hint" class="flight-hint" aria-live="polite"></p>
+      </section>
+
+      <section id="menu" class="screen menu-screen">
+        <button id="settings-button" class="tiny-button">SET</button>
+        <div id="menu-currency" class="currency menu-currency">✦ 0</div>
+        <div class="menu-copy">
+          <h1>SKYPULSE</h1>
+          <p>FLY THROUGH THE GLOW</p>
+        </div>
+        <img id="menu-bird" class="menu-bird" alt="Selected SkyPulse bird">
+        <p id="best-score" class="best-score">BEST · 0</p>
+        <button id="fly-button" class="primary-button">FLY</button>
+        <p class="tap-copy">TAP ANYWHERE TO START</p>
+        <button id="customize-button" class="secondary-button">CUSTOMIZE</button>
+        <button id="daily-button" class="text-button menu-daily">DAILY FLIGHT</button>
+        <p id="equipped-copy" class="equipped-copy"></p>
+      </section>
+
+      <section id="customize" class="screen customize-screen hidden" aria-label="Customize your flight">
+        <button id="close-customize" class="back-button">‹ MENU</button>
+        <header>
+          <h2>CUSTOMIZE</h2>
+          <p>BUILD YOUR FLIGHT</p>
+          <div id="shop-currency" class="currency">✦ 0</div>
+        </header>
+        <nav id="shop-tabs" class="tabs" aria-label="Customization categories">
+          <button data-category="skins" class="active">BIRDS</button>
+          <button data-category="themes">WORLDS</button>
+          <button data-category="trails">TRAILS</button>
+          <button data-category="pipes">PIPES</button>
+        </nav>
+        <p id="shop-hint" class="shop-hint">Unlock with crystals or daily rewards.</p>
+        <div id="shop-grid" class="shop-grid"></div>
+      </section>
+
+      <section id="daily" class="screen daily-screen hidden" aria-label="Daily flight">
+        <button id="close-daily" class="back-button">‹ MENU</button>
+        <header>
+          <h2>DAILY FLIGHT</h2>
+          <p id="daily-date">TODAY</p>
+        </header>
+        <p class="daily-intro">Three short flights goals. Complete them today to unlock cosmetics.</p>
+        <div id="daily-list" class="daily-list"></div>
+        <button id="daily-play" class="primary-button">PLAY TODAY</button>
+      </section>
+
+      <section id="game-over" class="screen game-over hidden" aria-label="Game over">
+        <div class="result-card">
+          <h2>GAME OVER</h2>
+          <p id="result-score" class="result-score">SCORE 0</p>
+          <p id="result-best" class="result-best">BEST 0</p>
+          <p id="result-crystals" class="result-crystals">CRESTS +0</p>
+          <div id="result-daily" class="result-daily hidden" aria-live="polite"></div>
+          <button id="retry-button" class="primary-button">FLY AGAIN</button>
+          <button id="results-menu" class="secondary-button">MENU</button>
+        </div>
+      </section>
+
+      <section id="pause" class="screen pause-screen hidden" aria-label="Pause menu">
+        <div class="pause-card">
+          <h2>PAUSED</h2>
+          <button id="resume-button" class="primary-button">RESUME</button>
+          <button id="restart-button" class="secondary-button">RESTART</button>
+          <button id="pause-menu" class="text-button">MENU</button>
+        </div>
+      </section>
+
+      <section id="settings" class="screen settings-screen hidden" aria-label="Settings">
+        <div class="settings-card">
+          <h2>SETTINGS</h2>
+          <p>MAKE FLIGHT FEEL RIGHT</p>
+          <button id="sound-toggle" class="secondary-button"></button>
+          <button id="motion-toggle" class="secondary-button"></button>
+          <button id="feedback-button" class="secondary-button">SEND BETA FEEDBACK</button>
+          <p class="build-copy">BUILD 0.2.0 · FRIEND BETA</p>
+          <a class="text-button legal-link" href="./privacy.html">PRIVACY</a>
+          <button id="close-settings" class="text-button">MENU</button>
+        </div>
+      </section>
+
+      <div id="toast" class="toast hidden" role="status"></div>
+    </main>
+    <script src="./game.js"></script>
+  </body>
+</html>
