@@ -116,7 +116,7 @@
   const trailById = byId(trails);
   const pipeById = byId(pipes);
   const STORE_KEY = "skypulse-web-progress-v1";
-  const BUILD = "0.4.2-beta";
+  const BUILD = "0.5.0-beta";
   const milestoneRewards = [
     { id: "score-10", target: 10, category: "trails", rewardId: "solar" },
     { id: "score-25", target: 25, category: "pipes", rewardId: "rose" },
@@ -199,6 +199,8 @@
   let activeCategory = "skins";
   let mode = "menu";
   let lastFrame = performance.now();
+  let lastFlapInputAt = -Infinity;
+  let lastStartInputAt = -Infinity;
   let toastTimer = 0;
   let width = 420;
   let height = 860;
@@ -382,7 +384,8 @@
 
   function resize() {
     const rect = canvas.getBoundingClientRect();
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.35);
+    // A restrained internal resolution preserves a consistently smooth frame rate on iPhone.
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.2);
     width = Math.max(1, rect.width);
     height = Math.max(1, rect.height);
     canvas.width = Math.round(width * dpr);
@@ -481,17 +484,31 @@
     renderUi();
   }
 
-  function flap() {
+  function flap(inputTime = performance.now()) {
     if (mode !== "playing") return;
     const bird = flight.bird;
-    bird.velocity = -390;
+    lastFlapInputAt = inputTime;
+    bird.velocity = -405;
+    bird.y = Math.max(-20, bird.y - 1.5);
+    bird.tilt = Math.min(bird.tilt, -14);
     bird.wing = 1;
+    bird.wingPhase += .45;
+    flight.trailTimer = Math.min(flight.trailTimer, 0);
     playSound("flap");
+  }
+
+  function requestFlap(event) {
+    if (mode !== "playing" || event?.isPrimary === false) return;
+    event?.preventDefault();
+    const inputTime = performance.now();
+    // Safari can issue both Pointer and Touch events for one press. Accept only one flap.
+    if (inputTime - lastFlapInputAt < 28) return;
+    flap(inputTime);
   }
 
   function addPipe() {
     const ground = height * .88;
-    const gap = Math.max(height * .198, height * .267 - Math.min(flight.score, 25) * 1.25);
+    const gap = Math.max(height * .184, height * .246 - Math.min(flight.score, 25) * 1.15);
     const min = height * .17 + gap / 2;
     const max = ground - gap / 2 - height * .05;
     const gapY = min + nextRouteRandom() * Math.max(1, max - min);
@@ -1089,17 +1106,34 @@
     window.prompt("Copy your SkyPulse flight:", message);
   }
 
-  document.querySelector("#fly-button").addEventListener("click", startFlight);
+  function requestStart(event, dailyRun = false) {
+    if (event?.type === "pointerdown") event.preventDefault();
+    if (event?.type === "click" && mode === "playing") return;
+    const inputTime = performance.now();
+    if (inputTime - lastStartInputAt < 260) return;
+    lastStartInputAt = inputTime;
+    startFlight(dailyRun);
+  }
+
+  const flyButton = document.querySelector("#fly-button");
+  flyButton.addEventListener("pointerdown", requestStart, { passive: false });
+  flyButton.addEventListener("click", requestStart);
   document.querySelector("#customize-button").addEventListener("click", () => { mode = "shop"; renderUi(); showShop(); });
   document.querySelector("#close-customize").addEventListener("click", goMenu);
   document.querySelector("#daily-button").addEventListener("click", () => { mode = "daily"; renderDaily(); saveProgress(); renderUi(); });
   document.querySelector("#close-daily").addEventListener("click", goMenu);
-  document.querySelector("#daily-play").addEventListener("click", () => startFlight(true));
-  document.querySelector("#retry-button").addEventListener("click", startFlight);
+  const dailyPlayButton = document.querySelector("#daily-play");
+  dailyPlayButton.addEventListener("pointerdown", (event) => requestStart(event, true), { passive: false });
+  dailyPlayButton.addEventListener("click", (event) => requestStart(event, true));
+  const retryButton = document.querySelector("#retry-button");
+  retryButton.addEventListener("pointerdown", requestStart, { passive: false });
+  retryButton.addEventListener("click", requestStart);
   document.querySelector("#results-menu").addEventListener("click", goMenu);
   document.querySelector("#pause-button").addEventListener("click", () => { mode = "paused"; renderUi(); });
   document.querySelector("#resume-button").addEventListener("click", () => { mode = "playing"; renderUi(); });
-  document.querySelector("#restart-button").addEventListener("click", startFlight);
+  const restartButton = document.querySelector("#restart-button");
+  restartButton.addEventListener("pointerdown", requestStart, { passive: false });
+  restartButton.addEventListener("click", requestStart);
   document.querySelector("#pause-menu").addEventListener("click", goMenu);
   document.querySelector("#settings-button").addEventListener("click", () => { mode = "settings"; renderUi(); });
   document.querySelector("#close-settings").addEventListener("click", goMenu);
@@ -1113,11 +1147,8 @@
     if (event.target.closest?.("button, a")) return;
     startFlight();
   });
-  canvas.addEventListener("pointerdown", (event) => {
-    if (mode !== "playing" || event.isPrimary === false) return;
-    event.preventDefault();
-    flap();
-  }, { passive: false });
+  canvas.addEventListener("pointerdown", requestFlap, { passive: false });
+  canvas.addEventListener("touchstart", requestFlap, { passive: false });
   window.addEventListener("keydown", (event) => {
     if (event.code === "Space" || event.code === "ArrowUp") { event.preventDefault(); if (mode === "playing") flap(); else if (mode === "menu" || mode === "gameover") startFlight(); }
     if (event.code === "KeyP" && mode === "playing") { mode = "paused"; renderUi(); }
