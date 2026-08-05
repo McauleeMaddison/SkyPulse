@@ -66,6 +66,14 @@ Open the `web/` build in Safari on your iPhone. It has touch controls, flight ph
 
 For a same-Wi-Fi test, serve only the `web/` folder and `assets/images/` from a small static host, then open its `/web/` address on the iPhone. This is a quick play-test route; the desktop and web builds save their progress separately on the device running them.
 
+## Friend beta link
+
+The friend beta is published from a dedicated GitHub Pages branch that contains only the mobile game and its game assets. In GitHub, open **SkyPulse → Settings → Pages**, choose **Deploy from a branch**, then select **`gh-pages`** and **`/(root)`** once. The secure beta link is:
+
+`https://mcauleemaddison.github.io/SkyPulse/web/`
+
+This is an unlisted-style friend beta: it is not in the App Store, but anyone with the link can open it.
+
 ## Native iPhone release handoff
 
 This Mac has full Xcode 15.2 installed. It can build the project’s existing desktop tooling, but cannot directly deploy a native build to an iPhone running iOS 27 because that iOS version requires a much newer Xcode and macOS than this 2017 Mac supports. This is an Apple toolchain compatibility limit, not a problem with SkyPulse or the iPhone.
