@@ -5,3 +5,15 @@ __pycache__/
 skypulse_progress.json
 skypulse_progress.backup.json
 .tools/
+
+# Unity mobile project (generated locally by the editor)
+mobile/Library/
+mobile/Logs/
+mobile/Temp/
+mobile/Obj/
+mobile/Build/
+mobile/Builds/
+mobile/UserSettings/
+mobile/.vs/
+mobile/*.csproj
+mobile/*.sln

@@ -1,9 +1,10 @@
 # SkyPulse
 
-SkyPulse is a touch-first neon flight game with two play surfaces:
+SkyPulse is a touch-first neon flight game with three clearly separated surfaces:
 
-- the full desktop game, built with **Python and Kivy**;
-- a touch-first Safari/PWA test build in `web/`, for immediate iPhone play-testing.
+- `mobile/`: the new **Unity 6 + C#** native, cross-platform mobile game;
+- `web/`: the live touch-first PWA friend beta, for immediate iPhone and Android testing;
+- the old Python/Kivy desktop game, frozen as a private visual and gameplay reference.
 
 ## The whole project
 
@@ -26,6 +27,10 @@ SkyPulse/
 │   ├── index.html
 │   ├── game.js
 │   └── styles.css
+├── mobile/            # Unity 6 + C# native mobile project
+│   ├── Assets/
+│   ├── Packages/
+│   └── ProjectSettings/
 └── README.md         # This guide
 ```
 
@@ -74,17 +79,21 @@ The friend beta is published from a dedicated GitHub Pages branch that contains 
 
 This is an unlisted-style friend beta: it is not in the App Store, but anyone with the link can open it.
 
-## Native iPhone release handoff
+## Native mobile route
 
-This Mac has full Xcode 15.2 installed. It can build the project’s existing desktop tooling, but cannot directly deploy a native build to an iPhone running iOS 27 because that iOS version requires a much newer Xcode and macOS than this 2017 Mac supports. This is an Apple toolchain compatibility limit, not a problem with SkyPulse or the iPhone.
+SkyPulse’s native mobile game lives in `mobile/` and uses Unity 6 + C#. This is the correct long-term route for one high-performance game that can export to both Android and iPhone.
 
-The Safari/PWA build above works around that limitation for immediate gameplay testing. For a later native/TestFlight release, move the project to a newer Xcode-compatible Mac. The release art is ready for the Xcode project:
+The first native flight loop already has direct tap input, native physics, pooled pipes, a compact trail, Nova/Neon City art, and native sound hooks. The web beta remains live while the native project reaches feature parity.
+
+This Mac has full Xcode 15.2 installed, but cannot directly deploy a native build to an iPhone running iOS 27 because that iOS version requires a much newer Xcode and macOS than this 2017 Mac supports. This is an Apple toolchain compatibility limit, not a problem with SkyPulse or the iPhone. The Unity install also needs its free Personal licence activated in Unity Hub, plus Android and iOS export modules, before it can make device packages.
+
+The Safari/PWA build above remains the immediate route for mobile gameplay testing. For a later native/TestFlight or Android release, use a newer Xcode-compatible Mac for iPhone packaging and install the Unity Android export support. The release art is ready for the project:
 
 - `assets/images/branding/skypulse-app-icon.png` — square source icon
 - `assets/images/branding/skypulse-launch-art.png` — portrait launch-screen artwork
 
 On a Mac with Xcode, add those files to an iOS asset catalog, test on at least one notched iPhone and one smaller iPhone, verify sound/haptics/settings, then archive through Xcode for TestFlight.
 
-## What this Mac can do
+## What this Mac can do now
 
-This Mac can build and test the complete Kivy desktop game and the iPhone-friendly Safari build. Both cover gameplay, graphics, menus, score saving, and the cosmetic collection; this lets you test the game immediately on your own iPhone and with friends before native packaging.
+This Mac can run the frozen Kivy desktop reference and the live mobile web beta immediately. Once Unity Personal is activated, it can run the native SkyPulse simulator too. Device packaging still needs Unity’s respective export modules and, for your current iPhone, a newer Xcode-compatible Mac.
