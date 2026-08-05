@@ -116,7 +116,7 @@
   const trailById = byId(trails);
   const pipeById = byId(pipes);
   const STORE_KEY = "skypulse-web-progress-v1";
-  const BUILD = "0.4.1-beta";
+  const BUILD = "0.4.2-beta";
   const milestoneRewards = [
     { id: "score-10", target: 10, category: "trails", rewardId: "solar" },
     { id: "score-25", target: 25, category: "pipes", rewardId: "rose" },
@@ -600,8 +600,9 @@
       flight.spawnTimer = 1.48;
     }
     const pipeWidth = Math.max(62, width * .16);
-    const bodyHalfW = 18;
-    const bodyHalfH = 14;
+    // Keep the generous visual silhouette, but judge contact from its compact inner body.
+    const bodyHalfW = 17;
+    const bodyHalfH = 13;
     for (const pipe of flight.pipes) {
       pipe.x -= speed * dt;
       if (!pipe.passed && pipe.x + pipeWidth < bird.x - bodyHalfW) {
