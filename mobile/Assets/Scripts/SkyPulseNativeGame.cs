@@ -15,6 +15,7 @@ namespace SkyPulse.Mobile
     {
         private enum FlightState { Menu, Playing, Paused, GameOver, Customize }
         private enum CosmeticCategory { Birds, Worlds, Trails, Pipes }
+        private enum PowerUpKind { SlowField, PulseShield, CrystalCache }
 
         private sealed class Skin
         {
@@ -24,8 +25,9 @@ namespace SkyPulse.Mobile
             public string FlapPath;
             public Color Accent;
             public Color Trail;
+            public int Price;
 
-            public Skin(string id, string name, string artPath, string flapPath, string accent, string trail)
+            public Skin(string id, string name, string artPath, string flapPath, string accent, string trail, int price)
             {
                 Id = id;
                 Name = name;
@@ -33,6 +35,7 @@ namespace SkyPulse.Mobile
                 FlapPath = flapPath;
                 Accent = Hex(accent);
                 Trail = Hex(trail);
+                Price = price;
             }
         }
 
@@ -122,6 +125,23 @@ namespace SkyPulse.Mobile
             public float BaseSize;
         }
 
+        private sealed class PowerUpPickup
+        {
+            public GameObject Root;
+            public Transform Transform;
+            public SpriteRenderer Glow;
+            public SpriteRenderer Ring;
+            public SpriteRenderer Core;
+            public SpriteRenderer Icon;
+            public SpriteRenderer Orbit;
+            public PowerUpKind Kind;
+            public float X;
+            public float Y;
+            public float Phase;
+            public float RespawnTimer;
+            public bool Active;
+        }
+
         private const float CameraHeight = 18f;
         private const float GroundY = -6.82f;
         private const float BirdX = -2.45f;
@@ -133,25 +153,27 @@ namespace SkyPulse.Mobile
         private const float FlapVelocity = 6.25f;
         private const float MaxFallVelocity = -11.2f;
         private const int PipeCount = 4;
+        private const int PowerUpCount = 3;
+        private const float PickupRadius = .43f;
 
         private static readonly Skin[] Skins =
         {
-            new Skin("nova", "NOVA", "SkyPulse/characters/nova", "SkyPulse/characters/nova-flap", "#8f64ff", "#45eaff"),
-            new Skin("lumen", "LUMEN", "SkyPulse/characters/lumen", "SkyPulse/characters/lumen-flap", "#45eaff", "#8f64ff"),
-            new Skin("ember", "EMBER", "SkyPulse/characters/ember", "SkyPulse/characters/ember-flap", "#f05bc6", "#ffc34d"),
-            new Skin("sol", "SOL", "SkyPulse/characters/sol", "SkyPulse/characters/sol-flap", "#ffc34d", "#45eaff"),
-            new Skin("aurora", "AURORA", "SkyPulse/characters/lumen", "SkyPulse/characters/lumen-flap", "#61f5b3", "#45eaff"),
-            new Skin("orchid", "ORCHID", "SkyPulse/characters/nova", "SkyPulse/characters/nova-flap", "#b17cff", "#f05bc6"),
-            new Skin("coral", "CORAL", "SkyPulse/characters/ember", "SkyPulse/characters/ember-flap", "#f082af", "#ffc34d"),
-            new Skin("glacier", "GLACIER", "SkyPulse/characters/sol", "SkyPulse/characters/sol-flap", "#edf7ff", "#45eaff"),
-            new Skin("prism", "PRISM", "SkyPulse/characters/generated/prism", "SkyPulse/characters/generated/prism-flap", "#45eaff", "#edf7ff"),
-            new Skin("verdant", "VERDANT", "SkyPulse/characters/generated/verdant", "SkyPulse/characters/generated/verdant-flap", "#61f5b3", "#45eaff"),
-            new Skin("cinder", "CINDER", "SkyPulse/characters/generated/cinder", "SkyPulse/characters/generated/cinder-flap", "#f05bc6", "#ffc34d"),
-            new Skin("tide", "TIDE", "SkyPulse/characters/generated/tide", "SkyPulse/characters/generated/tide-flap", "#45eaff", "#8f64ff"),
-            new Skin("wisp", "WISP", "SkyPulse/characters/generated/wisp", "SkyPulse/characters/generated/wisp-flap", "#edf7ff", "#45eaff"),
-            new Skin("bloom", "BLOOM", "SkyPulse/characters/generated/bloom", "SkyPulse/characters/generated/bloom-flap", "#f05bc6", "#b17cff"),
-            new Skin("emberwing", "EMBERWING", "SkyPulse/characters/generated/emberwing", "SkyPulse/characters/generated/emberwing-flap", "#ffc34d", "#f05bc6"),
-            new Skin("steel", "STEEL", "SkyPulse/characters/generated/steel", "SkyPulse/characters/generated/steel-flap", "#edf7ff", "#45eaff"),
+            new Skin("nova", "NOVA", "SkyPulse/characters/nova", "SkyPulse/characters/nova-flap", "#8f64ff", "#45eaff", 0),
+            new Skin("lumen", "LUMEN", "SkyPulse/characters/lumen", "SkyPulse/characters/lumen-flap", "#45eaff", "#8f64ff", 24),
+            new Skin("ember", "EMBER", "SkyPulse/characters/ember", "SkyPulse/characters/ember-flap", "#f05bc6", "#ffc34d", 32),
+            new Skin("sol", "SOL", "SkyPulse/characters/sol", "SkyPulse/characters/sol-flap", "#ffc34d", "#45eaff", 40),
+            new Skin("aurora", "AURORA", "SkyPulse/characters/lumen", "SkyPulse/characters/lumen-flap", "#61f5b3", "#45eaff", 48),
+            new Skin("orchid", "ORCHID", "SkyPulse/characters/nova", "SkyPulse/characters/nova-flap", "#b17cff", "#f05bc6", 52),
+            new Skin("coral", "CORAL", "SkyPulse/characters/ember", "SkyPulse/characters/ember-flap", "#f082af", "#ffc34d", 56),
+            new Skin("glacier", "GLACIER", "SkyPulse/characters/sol", "SkyPulse/characters/sol-flap", "#edf7ff", "#45eaff", 60),
+            new Skin("prism", "PRISM", "SkyPulse/characters/generated/prism", "SkyPulse/characters/generated/prism-flap", "#45eaff", "#edf7ff", 68),
+            new Skin("verdant", "VERDANT", "SkyPulse/characters/generated/verdant", "SkyPulse/characters/generated/verdant-flap", "#61f5b3", "#45eaff", 72),
+            new Skin("cinder", "CINDER", "SkyPulse/characters/generated/cinder", "SkyPulse/characters/generated/cinder-flap", "#f05bc6", "#ffc34d", 76),
+            new Skin("tide", "TIDE", "SkyPulse/characters/generated/tide", "SkyPulse/characters/generated/tide-flap", "#45eaff", "#8f64ff", 80),
+            new Skin("wisp", "WISP", "SkyPulse/characters/generated/wisp", "SkyPulse/characters/generated/wisp-flap", "#edf7ff", "#45eaff", 88),
+            new Skin("bloom", "BLOOM", "SkyPulse/characters/generated/bloom", "SkyPulse/characters/generated/bloom-flap", "#f05bc6", "#b17cff", 92),
+            new Skin("emberwing", "EMBERWING", "SkyPulse/characters/generated/emberwing", "SkyPulse/characters/generated/emberwing-flap", "#ffc34d", "#f05bc6", 100),
+            new Skin("steel", "STEEL", "SkyPulse/characters/generated/steel", "SkyPulse/characters/generated/steel-flap", "#edf7ff", "#45eaff", 108),
         };
 
         private static readonly WorldTheme[] Worlds =
@@ -202,14 +224,18 @@ namespace SkyPulse.Mobile
         };
 
         private readonly PipePair[] pipePool = new PipePair[PipeCount];
+        private readonly PowerUpPickup[] powerUpPool = new PowerUpPickup[PowerUpCount];
         private readonly Vector3[] trailPoints = new Vector3[9];
         private readonly List<AmbientStar> ambientStars = new List<AmbientStar>();
         private readonly Dictionary<string, Sprite> spriteCache = new Dictionary<string, Sprite>();
+        private readonly HashSet<string> ownedSkinIds = new HashSet<string>();
 
         private FlightState state;
         private CosmeticCategory cosmeticCategory;
         private Camera flightCamera;
         private Sprite whiteSprite;
+        private Sprite softCircleSprite;
+        private Sprite ringSprite;
         private SpriteRenderer backgroundRenderer;
         private SpriteRenderer backgroundVeil;
         private LineRenderer cometTrail;
@@ -222,12 +248,16 @@ namespace SkyPulse.Mobile
         private Transform birdFlapArt;
         private SpriteRenderer birdRenderer;
         private SpriteRenderer birdFlapRenderer;
+        private SpriteRenderer shieldAuraRenderer;
+        private SpriteRenderer slowAuraRenderer;
         private LineRenderer trailGlow;
         private LineRenderer trailCore;
         private AudioSource audioSource;
         private AudioClip flapSound;
         private AudioClip scoreSound;
         private AudioClip crashSound;
+        private AudioClip crystalSound;
+        private AudioClip unlockSound;
         private Font uiFont;
 
         private GameObject uiRoot;
@@ -236,12 +266,14 @@ namespace SkyPulse.Mobile
         private GameObject pauseScreen;
         private GameObject gameOverScreen;
         private GameObject customizeScreen;
+        private GameObject purchaseModal;
         private Text menuCrystalText;
         private Text menuBestText;
         private Text menuEquippedText;
         private Text difficultyText;
         private Text hudScoreText;
         private Text hudCrystalText;
+        private Text hudPowerUpText;
         private Text scoreBurstText;
         private Text resultScoreText;
         private Text resultBestText;
@@ -250,11 +282,18 @@ namespace SkyPulse.Mobile
         private RectTransform menuBirdTransform;
         private RectTransform customizeContent;
         private Text customizeTitle;
+        private Text purchaseTitleText;
+        private Text purchaseDetailText;
+        private Text purchaseBalanceText;
+        private Text purchaseConfirmText;
+        private Image purchasePreviewImage;
+        private Button purchaseConfirmButton;
 
         private Skin equippedSkin;
         private WorldTheme equippedWorld;
         private TrailStyle equippedTrail;
         private PipeStyle equippedPipe;
+        private Skin pendingSkin;
         private int difficultyIndex;
         private int score;
         private int best;
@@ -267,6 +306,10 @@ namespace SkyPulse.Mobile
         private float spawnX;
         private float scoreBurstTimer;
         private float ambientTime;
+        private float slowFieldTimer;
+        private float shieldFlashTimer;
+        private int shieldCharges;
+        private int displayedSlowTenths = -1;
         private bool newBest;
         private Vector3 idleBirdBaseScale = Vector3.one;
         private Vector3 flapBirdBaseScale = Vector3.one;
@@ -311,6 +354,8 @@ namespace SkyPulse.Mobile
         private void CreateVisuals()
         {
             whiteSprite = CreateSprite(Texture2D.whiteTexture, 1f);
+            softCircleSprite = CreateRadialSprite("Soft neon orb", 96, 0f, .5f);
+            ringSprite = CreateRadialSprite("Neon ring", 96, .31f, .5f);
 
             backgroundRenderer = CreateRenderer("Cinematic world", LoadSprite("SkyPulse/backgrounds/neon-city"), Color.white, -40);
             backgroundRenderer.transform.position = new Vector3(0f, .12f, 0f);
@@ -325,6 +370,7 @@ namespace SkyPulse.Mobile
             CreateBird();
             CreateTrail();
             for (var index = 0; index < pipePool.Length; index += 1) pipePool[index] = CreatePipePair(index);
+            for (var index = 0; index < powerUpPool.Length; index += 1) powerUpPool[index] = CreatePowerUp(index);
 
             audioSource = gameObject.AddComponent<AudioSource>();
             audioSource.playOnAwake = false;
@@ -332,6 +378,8 @@ namespace SkyPulse.Mobile
             flapSound = Resources.Load<AudioClip>("SkyPulse/audio/flap");
             scoreSound = Resources.Load<AudioClip>("SkyPulse/audio/score");
             crashSound = Resources.Load<AudioClip>("SkyPulse/audio/crash");
+            crystalSound = Resources.Load<AudioClip>("SkyPulse/audio/crystal");
+            unlockSound = Resources.Load<AudioClip>("SkyPulse/audio/unlock");
         }
 
         private void CreateAmbientStars()
@@ -424,6 +472,12 @@ namespace SkyPulse.Mobile
         {
             bird = new GameObject("Flight bird").transform;
             bird.SetParent(transform, false);
+            var slowAura = CreateRenderer("Slow field aura", ringSprite, new Color(.45f, .3f, 1f, 0f), 12, bird);
+            slowAura.transform.localScale = Vector3.one * 1.42f;
+            slowAuraRenderer = slowAura;
+            var shieldAura = CreateRenderer("Pulse shield aura", ringSprite, new Color(.38f, 1f, .70f, 0f), 13, bird);
+            shieldAura.transform.localScale = Vector3.one * 1.22f;
+            shieldAuraRenderer = shieldAura;
             birdArt = new GameObject("Bird idle artwork").transform;
             birdArt.SetParent(bird, false);
             birdRenderer = birdArt.gameObject.AddComponent<SpriteRenderer>();
@@ -433,6 +487,32 @@ namespace SkyPulse.Mobile
             birdFlapRenderer = birdFlapArt.gameObject.AddComponent<SpriteRenderer>();
             birdFlapRenderer.sortingOrder = 15;
             birdFlapRenderer.color = new Color(1f, 1f, 1f, 0f);
+        }
+
+        private PowerUpPickup CreatePowerUp(int index)
+        {
+            var root = new GameObject($"Power-up pickup {index + 1}");
+            root.transform.SetParent(transform, false);
+            var glow = CreateRenderer("Outer glow", softCircleSprite, Color.white, 10, root.transform);
+            glow.transform.localScale = Vector3.one * .88f;
+            var ring = CreateRenderer("Orbit ring", ringSprite, Color.white, 11, root.transform);
+            ring.transform.localScale = Vector3.one * .64f;
+            var core = CreateRenderer("Energy core", softCircleSprite, Color.white, 12, root.transform);
+            core.transform.localScale = Vector3.one * .34f;
+            var icon = CreateRenderer("Power icon", whiteSprite, Color.white, 13, root.transform);
+            icon.transform.localScale = new Vector3(.16f, .16f, 1f);
+            var orbit = CreateRenderer("Orbit spark", softCircleSprite, Color.white, 13, root.transform);
+            orbit.transform.localScale = Vector3.one * .12f;
+            return new PowerUpPickup
+            {
+                Root = root,
+                Transform = root.transform,
+                Glow = glow,
+                Ring = ring,
+                Core = core,
+                Icon = icon,
+                Orbit = orbit,
+            };
         }
 
         private void CreateTrail()
@@ -520,6 +600,8 @@ namespace SkyPulse.Mobile
             pauseScreen = CreatePauseScreen(uiRoot.transform);
             gameOverScreen = CreateGameOverScreen(uiRoot.transform);
             customizeScreen = CreateCustomizeScreen(uiRoot.transform);
+            purchaseModal = CreatePurchaseModal(uiRoot.transform);
+            purchaseModal.SetActive(false);
         }
 
         private GameObject CreateHomeScreen(Transform parent)
@@ -564,6 +646,8 @@ namespace SkyPulse.Mobile
             hudScoreText = CreateText(root.transform, "0", new Vector2(0f, 708f), new Vector2(260f, 120f), 76, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             scoreBurstText = CreateText(root.transform, "+1", new Vector2(0f, 612f), new Vector2(220f, 70f), 34, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             scoreBurstText.gameObject.SetActive(false);
+            hudPowerUpText = CreateText(root.transform, "", new Vector2(0f, 576f), new Vector2(600f, 38f), 19, Hex("#61f5b3"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            hudPowerUpText.gameObject.SetActive(false);
             return root;
         }
 
@@ -638,6 +722,30 @@ namespace SkyPulse.Mobile
             return root;
         }
 
+        private GameObject CreatePurchaseModal(Transform parent)
+        {
+            var root = CreateScreen(parent, "Bird skin purchase confirmation");
+            CreateFullPanel(root.transform, "Purchase dim", new Color(.008f, .004f, .04f, .86f));
+            var card = CreatePanel(root.transform, "Purchase card", new Vector2(0f, 18f), new Vector2(850f, 720f), new Color(.035f, .018f, .13f, .99f));
+            AddOutline(card.gameObject, Hex("#45eaff"), 4f);
+            var halo = CreateImage(card, "Purchase halo", new Vector2(0f, 128f), new Vector2(370f, 370f), new Color(.27f, .92f, 1f, .07f));
+            halo.sprite = softCircleSprite;
+            halo.raycastTarget = false;
+            purchasePreviewImage = CreateImage(card, "Bird skin preview", new Vector2(0f, 128f), new Vector2(355f, 220f), Color.white);
+            purchasePreviewImage.preserveAspect = true;
+            purchasePreviewImage.raycastTarget = false;
+            purchaseTitleText = CreateText(card, "UNLOCK BIRD?", new Vector2(0f, 278f), new Vector2(710f, 52f), 35, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            purchaseDetailText = CreateText(card, "", new Vector2(0f, -38f), new Vector2(700f, 52f), 24, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            purchaseBalanceText = CreateText(card, "", new Vector2(0f, -84f), new Vector2(700f, 36f), 19, new Color(.9f, .94f, 1f, .72f), TextAnchor.MiddleCenter, FontStyle.Bold);
+            CreateText(card, "THIS BIRD WILL BE EQUIPPED AFTER UNLOCKING", new Vector2(0f, -142f), new Vector2(720f, 32f), 15, new Color(.9f, .94f, 1f, .57f), TextAnchor.MiddleCenter, FontStyle.Bold);
+            var cancel = CreateNeonButton(card, "CANCEL", new Vector2(-190f, -250f), new Vector2(330f, 78f), Hex("#8f64ff"));
+            cancel.onClick.AddListener(ClosePurchaseModal);
+            purchaseConfirmButton = CreateNeonButton(card, "UNLOCK", new Vector2(190f, -250f), new Vector2(330f, 78f), Hex("#45eaff"));
+            purchaseConfirmText = purchaseConfirmButton.GetComponentInChildren<Text>();
+            purchaseConfirmButton.onClick.AddListener(ConfirmSkinPurchase);
+            return root;
+        }
+
         private void Update()
         {
             var deltaTime = Mathf.Min(Time.unscaledDeltaTime, 1f / 30f);
@@ -661,9 +769,11 @@ namespace SkyPulse.Mobile
             if (state != FlightState.Playing) return;
 
             if (WasTapped() && !PointerOverUi()) Flap();
+            UpdatePowerUpEffects(deltaTime);
             UpdateBird(deltaTime);
             if (state != FlightState.Playing) return;
             UpdatePipes(deltaTime);
+            UpdatePowerUps(deltaTime);
             UpdateTrail();
         }
 
@@ -732,12 +842,23 @@ namespace SkyPulse.Mobile
             bird.rotation = Quaternion.Euler(0f, 0f, birdTilt);
             UpdateBirdWingMotion();
 
-            if (birdY + BirdCollisionRadius >= CameraHeight * .5f || birdY - BirdCollisionRadius <= GroundY) EndFlight();
+            if (birdY + BirdCollisionRadius >= CameraHeight * .5f || birdY - BirdCollisionRadius <= GroundY)
+            {
+                if (!UseShield())
+                {
+                    EndFlight();
+                    return;
+                }
+
+                birdY = Mathf.Clamp(birdY, GroundY + BirdCollisionRadius + .14f, CameraHeight * .5f - BirdCollisionRadius - .14f);
+                birdVelocity = FlapVelocity * .52f;
+                bird.position = new Vector3(BirdX, birdY, 0f);
+            }
         }
 
         private void UpdatePipes(float deltaTime)
         {
-            var speed = 4.3f + Mathf.Min(score, 24) * .045f;
+            var speed = ActiveScrollSpeed();
             var furthestX = float.MinValue;
             foreach (var pair in pipePool) if (pair.X > furthestX) furthestX = pair.X;
 
@@ -758,19 +879,183 @@ namespace SkyPulse.Mobile
                 var hitsPipe = birdY + BirdCollisionRadius > pair.GapCenter + halfGap || birdY - BirdCollisionRadius < pair.GapCenter - halfGap;
                 if (overlapsPipe && hitsPipe)
                 {
-                    EndFlight();
-                    return;
+                    if (!UseShield())
+                    {
+                        EndFlight();
+                        return;
+                    }
+
+                    pair.X = BirdX - physicalWidth - .22f;
+                    pair.Root.transform.localPosition = new Vector3(pair.X, 0f, 0f);
+                    pair.Passed = true;
+                    continue;
                 }
 
                 if (!pair.Passed && pair.X + PipeWidth * .5f < BirdX - BirdCollisionRadius)
                 {
                     pair.Passed = true;
                     score += 1;
+                    crystals += 1;
                     hudScoreText.text = score.ToString();
                     ShowScoreBurst();
                     Play(scoreSound);
+                    UpdateCrystalLabels();
                 }
             }
+        }
+
+        private float ActiveScrollSpeed()
+        {
+            var speed = 4.3f + Mathf.Min(score, 24) * .045f;
+            return slowFieldTimer > 0f ? speed * .52f : speed;
+        }
+
+        private void UpdatePowerUps(float deltaTime)
+        {
+            var furthestX = GetWorldWidth() * .5f + 1.5f;
+            foreach (var pickup in powerUpPool) if (pickup.Active && pickup.X > furthestX) furthestX = pickup.X;
+
+            foreach (var pickup in powerUpPool)
+            {
+                if (!pickup.Active)
+                {
+                    pickup.RespawnTimer -= deltaTime;
+                    if (pickup.RespawnTimer <= 0f)
+                    {
+                        ConfigurePowerUp(pickup, furthestX + UnityEngine.Random.Range(7.5f, 10.2f));
+                        furthestX = pickup.X;
+                    }
+                    continue;
+                }
+                pickup.X -= ActiveScrollSpeed() * deltaTime;
+                var bob = Mathf.Sin(ambientTime * 3.2f + pickup.Phase) * .12f;
+                pickup.Transform.localPosition = new Vector3(pickup.X, pickup.Y + bob, 0f);
+                var pulse = 1f + Mathf.Sin(ambientTime * 4.2f + pickup.Phase) * .10f;
+                pickup.Glow.transform.localScale = Vector3.one * (.88f * pulse);
+                pickup.Ring.transform.localRotation = Quaternion.Euler(0f, 0f, ambientTime * 88f + pickup.Phase * 40f);
+                pickup.Orbit.transform.localPosition = new Vector3(Mathf.Cos(ambientTime * 4.3f + pickup.Phase) * .35f, Mathf.Sin(ambientTime * 4.3f + pickup.Phase) * .35f, 0f);
+
+                if (Vector2.Distance(new Vector2(BirdX, birdY), new Vector2(pickup.X, pickup.Y + bob)) <= BirdCollisionRadius + PickupRadius)
+                {
+                    CollectPowerUp(pickup);
+                    continue;
+                }
+
+                if (pickup.X < -GetWorldWidth() * .5f - 1.2f)
+                {
+                    ConfigurePowerUp(pickup, furthestX + UnityEngine.Random.Range(7.5f, 10.2f));
+                }
+                furthestX = Mathf.Max(furthestX, pickup.X);
+            }
+        }
+
+        private void ConfigurePowerUp(PowerUpPickup pickup, float x)
+        {
+            pickup.Root.SetActive(true);
+            pickup.Active = true;
+            pickup.RespawnTimer = 0f;
+            pickup.X = x;
+            pickup.Y = UnityEngine.Random.Range(-3.65f, 4.45f);
+            pickup.Phase = UnityEngine.Random.Range(0f, Mathf.PI * 2f);
+            pickup.Kind = (PowerUpKind)UnityEngine.Random.Range(0, 3);
+            var colour = Hex("#8f64ff");
+            var secondary = Hex("#45eaff");
+            switch (pickup.Kind)
+            {
+                case PowerUpKind.PulseShield:
+                    colour = Hex("#61f5b3");
+                    secondary = Hex("#edf7ff");
+                    pickup.Icon.transform.localScale = new Vector3(.14f, .20f, 1f);
+                    pickup.Icon.transform.localRotation = Quaternion.identity;
+                    break;
+                case PowerUpKind.CrystalCache:
+                    colour = Hex("#ffc34d");
+                    secondary = Hex("#f05bc6");
+                    pickup.Icon.transform.localScale = new Vector3(.17f, .17f, 1f);
+                    pickup.Icon.transform.localRotation = Quaternion.Euler(0f, 0f, 45f);
+                    break;
+                default:
+                    pickup.Icon.transform.localScale = new Vector3(.13f, .13f, 1f);
+                    pickup.Icon.transform.localRotation = Quaternion.Euler(0f, 0f, 45f);
+                    break;
+            }
+
+            pickup.Glow.color = new Color(colour.r, colour.g, colour.b, .20f);
+            pickup.Ring.color = new Color(secondary.r, secondary.g, secondary.b, .95f);
+            pickup.Core.color = colour;
+            pickup.Icon.color = Color.white;
+            pickup.Orbit.color = secondary;
+            pickup.Transform.localPosition = new Vector3(pickup.X, pickup.Y, 0f);
+        }
+
+        private void CollectPowerUp(PowerUpPickup pickup)
+        {
+            pickup.Active = false;
+            pickup.Root.SetActive(false);
+            pickup.RespawnTimer = UnityEngine.Random.Range(5.5f, 8.5f);
+            switch (pickup.Kind)
+            {
+                case PowerUpKind.SlowField:
+                    slowFieldTimer = Mathf.Min(9f, Mathf.Max(slowFieldTimer, 0f) + 5.5f);
+                    Play(crystalSound);
+                    break;
+                case PowerUpKind.PulseShield:
+                    shieldCharges = 1;
+                    shieldFlashTimer = .6f;
+                    Play(unlockSound);
+                    break;
+                default:
+                    crystals += 12;
+                    UpdateCrystalLabels();
+                    Play(crystalSound);
+                    break;
+            }
+            UpdatePowerUpHud();
+        }
+
+        private void UpdatePowerUpEffects(float deltaTime)
+        {
+            if (slowFieldTimer > 0f) slowFieldTimer = Mathf.Max(0f, slowFieldTimer - deltaTime);
+            if (shieldFlashTimer > 0f) shieldFlashTimer = Mathf.Max(0f, shieldFlashTimer - deltaTime);
+            UpdatePowerUpHud();
+        }
+
+        private void UpdatePowerUpHud()
+        {
+            if (hudPowerUpText == null) return;
+            if (slowFieldTimer > 0f)
+            {
+                var remainingTenths = Mathf.CeilToInt(slowFieldTimer * 10f);
+                if (remainingTenths != displayedSlowTenths || !hudPowerUpText.gameObject.activeSelf)
+                {
+                    hudPowerUpText.text = $"◌  SLOW FIELD  {remainingTenths / 10f:0.0}s";
+                    displayedSlowTenths = remainingTenths;
+                }
+                hudPowerUpText.color = Hex("#b17cff");
+            }
+            else if (shieldCharges > 0)
+            {
+                hudPowerUpText.text = "◈  PULSE SHIELD READY";
+                hudPowerUpText.color = Hex("#61f5b3");
+                displayedSlowTenths = -1;
+            }
+            else
+            {
+                hudPowerUpText.gameObject.SetActive(false);
+                displayedSlowTenths = -1;
+                return;
+            }
+            hudPowerUpText.gameObject.SetActive(true);
+        }
+
+        private bool UseShield()
+        {
+            if (shieldCharges <= 0) return false;
+            shieldCharges = 0;
+            shieldFlashTimer = .85f;
+            Play(unlockSound);
+            UpdatePowerUpHud();
+            return true;
         }
 
         private void UpdateTrail()
@@ -793,6 +1078,7 @@ namespace SkyPulse.Mobile
 
         private void StartFlight()
         {
+            ClosePurchaseModal();
             state = FlightState.Playing;
             score = 0;
             newBest = false;
@@ -800,12 +1086,17 @@ namespace SkyPulse.Mobile
             birdVelocity = 0f;
             birdTilt = 0f;
             wingTimer = 1f;
+            slowFieldTimer = 0f;
+            shieldFlashTimer = 0f;
+            shieldCharges = 0;
             trailGlow.positionCount = 0;
             trailCore.positionCount = 0;
             spawnX = GetWorldWidth() * .5f + 3.2f;
             for (var index = 0; index < pipePool.Length; index += 1) ConfigurePipe(pipePool[index], spawnX + index * PipeSpacing);
+            for (var index = 0; index < powerUpPool.Length; index += 1) ConfigurePowerUp(powerUpPool[index], spawnX + 7.8f + index * 8.9f);
             RefreshScreens();
             hudScoreText.text = "0";
+            UpdatePowerUpHud();
             bird.gameObject.SetActive(true);
             Flap();
         }
@@ -817,6 +1108,7 @@ namespace SkyPulse.Mobile
 
         private void ResetToMenu()
         {
+            ClosePurchaseModal();
             state = FlightState.Menu;
             birdY = .15f;
             birdVelocity = 0f;
@@ -826,6 +1118,16 @@ namespace SkyPulse.Mobile
             trailGlow.positionCount = 0;
             trailCore.positionCount = 0;
             foreach (var pair in pipePool) pair.Root.SetActive(false);
+            foreach (var pickup in powerUpPool)
+            {
+                pickup.Active = false;
+                pickup.Root.SetActive(false);
+            }
+            slowFieldTimer = 0f;
+            shieldFlashTimer = 0f;
+            shieldCharges = 0;
+            UpdatePowerUpHud();
+            SaveProgress();
             RefreshScreens();
         }
 
@@ -949,7 +1251,10 @@ namespace SkyPulse.Mobile
                     for (var index = 0; index < Skins.Length; index += 1)
                     {
                         var skin = Skins[index];
-                        CreateCosmeticCard(index, skin.Name, equippedSkin.Id == skin.Id ? "EQUIPPED" : "TAP TO EQUIP", skin.Accent, LoadSprite(skin.ArtPath), () => EquipSkin(skin));
+                        var status = equippedSkin.Id == skin.Id
+                            ? "EQUIPPED"
+                            : IsSkinOwned(skin) ? "TAP TO EQUIP" : $"UNLOCK · {skin.Price} ✦";
+                        CreateCosmeticCard(index, skin.Name, status, skin.Accent, LoadSprite(skin.ArtPath), () => SelectSkin(skin));
                     }
                     SetContentRows(Skins.Length);
                     break;
@@ -998,7 +1303,7 @@ namespace SkyPulse.Mobile
             card.anchorMin = new Vector2(.5f, 1f);
             card.anchorMax = new Vector2(.5f, 1f);
             card.pivot = new Vector2(.5f, 1f);
-            AddOutline(card.gameObject, accent, equippedSkin != null && status == "EQUIPPED" ? 3f : 1.5f);
+            AddOutline(card.gameObject, accent, status == "EQUIPPED" ? 3f : 1.5f);
             var button = card.gameObject.AddComponent<Button>();
             button.targetGraphic = card.GetComponent<Image>();
             button.onClick.AddListener(() => select());
@@ -1033,6 +1338,55 @@ namespace SkyPulse.Mobile
             equippedSkin = skin;
             ApplyEquippedVisuals();
             SaveProgress();
+            RebuildCustomizeGrid();
+        }
+
+        private bool IsSkinOwned(Skin skin)
+        {
+            return skin.Price <= 0 || ownedSkinIds.Contains(skin.Id);
+        }
+
+        private void SelectSkin(Skin skin)
+        {
+            if (IsSkinOwned(skin))
+            {
+                EquipSkin(skin);
+                return;
+            }
+            OpenPurchaseModal(skin);
+        }
+
+        private void OpenPurchaseModal(Skin skin)
+        {
+            pendingSkin = skin;
+            purchasePreviewImage.sprite = LoadSprite(skin.ArtPath);
+            purchaseTitleText.text = $"UNLOCK {skin.Name}?";
+            purchaseDetailText.text = $"SPEND  {skin.Price}  ✦  TO ADD THIS BIRD";
+            var remainder = Mathf.Max(0, skin.Price - crystals);
+            purchaseBalanceText.text = remainder == 0
+                ? $"YOUR BALANCE · {crystals} ✦"
+                : $"YOUR BALANCE · {crystals} ✦   ·   NEED {remainder} MORE";
+            purchaseConfirmButton.interactable = crystals >= skin.Price;
+            purchaseConfirmText.text = crystals >= skin.Price ? $"UNLOCK · {skin.Price} ✦" : "NOT ENOUGH ✦";
+            purchaseModal.SetActive(true);
+        }
+
+        private void ClosePurchaseModal()
+        {
+            if (purchaseModal != null) purchaseModal.SetActive(false);
+            pendingSkin = null;
+        }
+
+        private void ConfirmSkinPurchase()
+        {
+            if (pendingSkin == null || crystals < pendingSkin.Price) return;
+            crystals -= pendingSkin.Price;
+            ownedSkinIds.Add(pendingSkin.Id);
+            equippedSkin = pendingSkin;
+            ClosePurchaseModal();
+            ApplyEquippedVisuals();
+            SaveProgress();
+            Play(unlockSound);
             RebuildCustomizeGrid();
         }
 
@@ -1075,8 +1429,7 @@ namespace SkyPulse.Mobile
             floorLip.color = Darken(equippedWorld.Floor, .65f);
             SetBirdArtwork();
             if (menuBirdImage != null) menuBirdImage.sprite = LoadSprite(equippedSkin.ArtPath);
-            if (menuCrystalText != null) menuCrystalText.text = $"✦  {crystals}";
-            if (hudCrystalText != null) hudCrystalText.text = $"✦  {crystals}";
+            UpdateCrystalLabels();
             if (menuBestText != null) menuBestText.text = $"BEST · {best}";
             if (menuEquippedText != null) menuEquippedText.text = $"{equippedSkin.Name} EQUIPPED";
             UpdateDifficultyCopy();
@@ -1085,6 +1438,12 @@ namespace SkyPulse.Mobile
             {
                 if (pair != null && pair.Root.activeSelf) ConfigurePipe(pair, pair.X);
             }
+        }
+
+        private void UpdateCrystalLabels()
+        {
+            if (menuCrystalText != null) menuCrystalText.text = $"✦  {crystals}";
+            if (hudCrystalText != null) hudCrystalText.text = $"✦  {crystals}";
         }
 
         private void ApplyTrailColors()
@@ -1140,9 +1499,34 @@ namespace SkyPulse.Mobile
             birdFlapRenderer.color = flapColour;
             birdRenderer.color = new Color(1f, 1f, 1f, 1f - flapStrength * .16f);
             var breathing = 1f + Mathf.Sin(ambientTime * 5.2f) * .012f + flapStrength * .025f;
-            birdArt.localScale = idleBirdBaseScale * breathing;
-            birdFlapArt.localScale = flapBirdBaseScale * (1f + flapStrength * .025f);
+            var glideStretch = Mathf.Clamp(birdVelocity / FlapVelocity, -1f, 1f) * .028f;
+            birdArt.localScale = Vector3.Scale(idleBirdBaseScale, new Vector3(breathing + glideStretch, breathing - glideStretch * .7f, 1f));
+            birdFlapArt.localScale = Vector3.Scale(flapBirdBaseScale, new Vector3(1f + flapStrength * .038f, 1f - flapStrength * .022f, 1f));
+            birdArt.localPosition = new Vector3(-flapStrength * .035f, Mathf.Sin(ambientTime * 7f) * .012f, 0f);
+            birdFlapArt.localPosition = new Vector3(flapStrength * .02f, flapStrength * .045f, 0f);
             birdFlapArt.localRotation = Quaternion.Euler(0f, 0f, -flapStrength * 4f);
+            UpdateBirdPowerUpVisuals();
+        }
+
+        private void UpdateBirdPowerUpVisuals()
+        {
+            if (slowAuraRenderer != null)
+            {
+                var slowPulse = 1f + Mathf.Sin(ambientTime * 6.5f) * .12f;
+                slowAuraRenderer.enabled = slowFieldTimer > 0f;
+                slowAuraRenderer.color = new Color(.55f, .35f, 1f, .48f + Mathf.Sin(ambientTime * 5f) * .12f);
+                slowAuraRenderer.transform.localScale = Vector3.one * (1.42f * slowPulse);
+                slowAuraRenderer.transform.localRotation = Quaternion.Euler(0f, 0f, -ambientTime * 110f);
+            }
+            if (shieldAuraRenderer != null)
+            {
+                var visible = shieldCharges > 0 || shieldFlashTimer > 0f;
+                var flash = shieldFlashTimer > 0f ? 1f : .5f;
+                shieldAuraRenderer.enabled = visible;
+                shieldAuraRenderer.color = new Color(.38f, 1f, .70f, visible ? flash : 0f);
+                shieldAuraRenderer.transform.localScale = Vector3.one * (1.2f + Mathf.Sin(ambientTime * 8f) * .08f + shieldFlashTimer * .25f);
+                shieldAuraRenderer.transform.localRotation = Quaternion.Euler(0f, 0f, ambientTime * 95f);
+            }
         }
 
         private void UpdateDifficultyCopy()
@@ -1214,6 +1598,21 @@ namespace SkyPulse.Mobile
             equippedWorld = FindById(Worlds, PlayerPrefs.GetString("skypulse.native.world", "neon_city")) ?? Worlds[0];
             equippedTrail = FindById(Trails, PlayerPrefs.GetString("skypulse.native.trail", "pulse")) ?? Trails[0];
             equippedPipe = FindById(PipeStyles, PlayerPrefs.GetString("skypulse.native.pipe", "ion")) ?? PipeStyles[0];
+            var savedOwnedSkins = PlayerPrefs.GetString("skypulse.native.owned-skins", string.Empty);
+            if (!string.IsNullOrEmpty(savedOwnedSkins))
+            {
+                foreach (var id in savedOwnedSkins.Split(','))
+                {
+                    if (!string.IsNullOrEmpty(id)) ownedSkinIds.Add(id);
+                }
+            }
+            else
+            {
+                // Existing native players keep the bird they were already using when the
+                // collection gains unlock states; new players simply begin with Nova.
+                ownedSkinIds.Add(Skins[0].Id);
+                if (equippedSkin != null) ownedSkinIds.Add(equippedSkin.Id);
+            }
         }
 
         private void SaveProgress()
@@ -1225,6 +1624,7 @@ namespace SkyPulse.Mobile
             PlayerPrefs.SetString("skypulse.native.world", equippedWorld.Id);
             PlayerPrefs.SetString("skypulse.native.trail", equippedTrail.Id);
             PlayerPrefs.SetString("skypulse.native.pipe", equippedPipe.Id);
+            PlayerPrefs.SetString("skypulse.native.owned-skins", string.Join(",", ownedSkinIds));
             PlayerPrefs.Save();
         }
 
@@ -1252,6 +1652,40 @@ namespace SkyPulse.Mobile
         private static Sprite CreateSprite(Texture2D texture, float pixelsPerUnit = 100f)
         {
             return Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(.5f, .5f), pixelsPerUnit);
+        }
+
+        private static Sprite CreateRadialSprite(string name, int size, float innerRadius, float outerRadius)
+        {
+            var texture = new Texture2D(size, size, TextureFormat.RGBA32, false)
+            {
+                name = name,
+                filterMode = FilterMode.Bilinear,
+                wrapMode = TextureWrapMode.Clamp,
+            };
+            var pixels = new Color[size * size];
+            for (var y = 0; y < size; y += 1)
+            {
+                for (var x = 0; x < size; x += 1)
+                {
+                    var point = new Vector2((x + .5f) / size - .5f, (y + .5f) / size - .5f);
+                    var distance = point.magnitude;
+                    var alpha = 0f;
+                    if (innerRadius <= 0f)
+                    {
+                        alpha = 1f - Mathf.SmoothStep(0f, outerRadius, distance);
+                    }
+                    else if (distance >= innerRadius && distance <= outerRadius)
+                    {
+                        var innerFade = Mathf.InverseLerp(innerRadius, innerRadius + .045f, distance);
+                        var outerFade = 1f - Mathf.InverseLerp(outerRadius - .06f, outerRadius, distance);
+                        alpha = Mathf.Min(innerFade, outerFade);
+                    }
+                    pixels[y * size + x] = new Color(1f, 1f, 1f, alpha);
+                }
+            }
+            texture.SetPixels(pixels);
+            texture.Apply(false, true);
+            return CreateSprite(texture, size);
         }
 
         private Sprite LoadSprite(string path)
