@@ -11,8 +11,10 @@ The first native flight loop is intentionally focused and lightweight:
 - an object pool for pipes and a compact trail with no per-frame allocations;
 - 60 FPS target, capped simulation delta, and native audio hooks;
 - a locally saved bird collection with clear crystal prices and an explicit confirm/cancel unlock dialog;
-- three animated neon pickups: **Slow Field** cuts obstacle scroll speed for 5.5 seconds, **Pulse Shield** absorbs one impact, and **Crystal Cache** awards 12 crystals;
-- liquid bird motion with cross-faded wing poses, flight stretch, breathing, shield/slow-field auras, and animated orbital pickup art;
+- seven animated neon pickups: **Slow Field** slows obstacle scroll, **Pulse Shield** absorbs an impact, **Crystal Cache** awards currency, **Sky Surge** boosts lift, **Score Prism** increases gate rewards, **Magnet Halo** pulls in pickups, and **Phase Shift** lets the bird pass through pipes briefly;
+- a 12-item, locally saved **Flight Tech** upgrade collection: Thrust Plumes, Featherweight, Air Brakes, Rescue Feather, Time Weaver, Shield Cell, Cache Cores, Magnet Array, Phase Stabilizer, Prism Resonator, Comet Trail, and Starheart;
+- world-driven challenge: every selectable world defines its own speed and gap profile, ranging from Easy through Apex, while all visual customization stays available;
+- liquid bird motion with cross-faded wing poses, flight stretch, breathing, power auras, wider comet trails, and animated orbital pickup art;
 - Nova, its flap frame, the Neon City world, and the core sound effects brought across as the first art bridge.
 
 The live `web/` game remains the friend beta while this native project reaches feature parity. Do not add new gameplay to both long-term: build and prove the native loop first, then move menus, cosmetics, progress, Daily Flight, and sharing across in deliberate passes.

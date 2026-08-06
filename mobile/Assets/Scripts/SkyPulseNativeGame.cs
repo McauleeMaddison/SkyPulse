@@ -14,8 +14,9 @@ namespace SkyPulse.Mobile
     public sealed class SkyPulseNativeGame : MonoBehaviour
     {
         private enum FlightState { Menu, Playing, Paused, GameOver, Customize }
-        private enum CosmeticCategory { Birds, Worlds, Trails, Pipes }
-        private enum PowerUpKind { SlowField, PulseShield, CrystalCache }
+        private enum CosmeticCategory { Birds, Worlds, Trails, Pipes, Upgrades }
+        private enum PowerUpKind { SlowField, PulseShield, CrystalCache, SkySurge, ScorePrism, MagnetHalo, PhaseShift }
+        private enum PendingPurchase { None, Skin, Upgrade }
 
         private sealed class Skin
         {
@@ -46,14 +47,38 @@ namespace SkyPulse.Mobile
             public string BackgroundPath;
             public Color Accent;
             public Color Floor;
+            public string DifficultyLabel;
+            public float ScrollMultiplier;
+            public float GapSize;
 
-            public WorldTheme(string id, string name, string backgroundPath, string accent, string floor)
+            public WorldTheme(string id, string name, string backgroundPath, string accent, string floor, string difficultyLabel, float scrollMultiplier, float gapSize)
             {
                 Id = id;
                 Name = name;
                 BackgroundPath = backgroundPath;
                 Accent = Hex(accent);
                 Floor = Hex(floor);
+                DifficultyLabel = difficultyLabel;
+                ScrollMultiplier = scrollMultiplier;
+                GapSize = gapSize;
+            }
+        }
+
+        private sealed class Upgrade
+        {
+            public string Id;
+            public string Name;
+            public string Description;
+            public int Price;
+            public Color Accent;
+
+            public Upgrade(string id, string name, string description, int price, string accent)
+            {
+                Id = id;
+                Name = name;
+                Description = description;
+                Price = price;
+                Accent = Hex(accent);
             }
         }
 
@@ -178,15 +203,31 @@ namespace SkyPulse.Mobile
 
         private static readonly WorldTheme[] Worlds =
         {
-            new WorldTheme("neon_city", "NEON CITY", "SkyPulse/backgrounds/neon-city", "#45eaff", "#0a0522"),
-            new WorldTheme("aurora_rise", "AURORA RISE", "SkyPulse/backgrounds/themes/polar-glow", "#61f5b3", "#05251e"),
-            new WorldTheme("solar_drift", "SOLAR DRIFT", "SkyPulse/backgrounds/themes/amber-skies", "#ffc34d", "#2b0d10"),
-            new WorldTheme("midnight_tide", "MIDNIGHT TIDE", "SkyPulse/backgrounds/themes/cobalt-storm", "#45eaff", "#07113d"),
-            new WorldTheme("velvet_dawn", "VELVET DAWN", "SkyPulse/backgrounds/themes/rose-orbit", "#f05bc6", "#26051f"),
-            new WorldTheme("crystal_night", "CRYSTAL NIGHT", "SkyPulse/backgrounds/themes/crystal-night", "#edf7ff", "#071239"),
-            new WorldTheme("jade_horizon", "JADE HORIZON", "SkyPulse/backgrounds/themes/jade-horizon", "#61f5b3", "#063523"),
-            new WorldTheme("violet_rain", "VIOLET RAIN", "SkyPulse/backgrounds/themes/violet-rain", "#b17cff", "#210842"),
-            new WorldTheme("eclipse", "ECLIPSE", "SkyPulse/backgrounds/themes/eclipse", "#b17cff", "#10051f"),
+            new WorldTheme("neon_city", "NEON CITY", "SkyPulse/backgrounds/neon-city", "#45eaff", "#0a0522", "EASY", .88f, 5.10f),
+            new WorldTheme("aurora_rise", "AURORA RISE", "SkyPulse/backgrounds/themes/polar-glow", "#61f5b3", "#05251e", "EASY", .94f, 4.92f),
+            new WorldTheme("solar_drift", "SOLAR DRIFT", "SkyPulse/backgrounds/themes/amber-skies", "#ffc34d", "#2b0d10", "CLASSIC", 1f, 4.46f),
+            new WorldTheme("midnight_tide", "MIDNIGHT TIDE", "SkyPulse/backgrounds/themes/cobalt-storm", "#45eaff", "#07113d", "CLASSIC", 1.04f, 4.30f),
+            new WorldTheme("velvet_dawn", "VELVET DAWN", "SkyPulse/backgrounds/themes/rose-orbit", "#f05bc6", "#26051f", "ADVANCED", 1.08f, 4.14f),
+            new WorldTheme("crystal_night", "CRYSTAL NIGHT", "SkyPulse/backgrounds/themes/crystal-night", "#edf7ff", "#071239", "ADVANCED", 1.12f, 4.00f),
+            new WorldTheme("jade_horizon", "JADE HORIZON", "SkyPulse/backgrounds/themes/jade-horizon", "#61f5b3", "#063523", "EXPERT", 1.18f, 3.86f),
+            new WorldTheme("violet_rain", "VIOLET RAIN", "SkyPulse/backgrounds/themes/violet-rain", "#b17cff", "#210842", "EXPERT", 1.24f, 3.72f),
+            new WorldTheme("eclipse", "ECLIPSE", "SkyPulse/backgrounds/themes/eclipse", "#b17cff", "#10051f", "APEX", 1.32f, 3.56f),
+        };
+
+        private static readonly Upgrade[] Upgrades =
+        {
+            new Upgrade("thrust_plumes", "THRUST PLUMES", "+10% flap lift", 38, "#45eaff"),
+            new Upgrade("featherweight", "FEATHERWEIGHT", "-8% gravity", 44, "#61f5b3"),
+            new Upgrade("air_brakes", "AIR BRAKES", "Softer maximum fall speed", 48, "#edf7ff"),
+            new Upgrade("rescue_feather", "RESCUE FEATHER", "One extra life each flight", 74, "#f05bc6"),
+            new Upgrade("time_weaver", "TIME WEAVER", "Slow Field lasts +2 seconds", 58, "#b17cff"),
+            new Upgrade("shield_cell", "SHIELD CELL", "Begin flights shielded", 82, "#61f5b3"),
+            new Upgrade("cache_cores", "CACHE CORES", "Crystal Cache grants +8", 66, "#ffc34d"),
+            new Upgrade("magnet_array", "MAGNET ARRAY", "A stronger, wider pickup pull", 62, "#45eaff"),
+            new Upgrade("phase_stabilizer", "PHASE STABILIZER", "Phase Shift lasts +1.5 seconds", 76, "#b17cff"),
+            new Upgrade("prism_resonator", "PRISM RESONATOR", "Score Prism grants extra crystals", 70, "#f05bc6"),
+            new Upgrade("comet_trail", "COMET TRAIL", "A broader living light trail", 46, "#edf7ff"),
+            new Upgrade("starheart", "STARHEART", "Bonus crystals every four gates", 86, "#ffc34d"),
         };
 
         private static readonly TrailStyle[] Trails =
@@ -229,6 +270,7 @@ namespace SkyPulse.Mobile
         private readonly List<AmbientStar> ambientStars = new List<AmbientStar>();
         private readonly Dictionary<string, Sprite> spriteCache = new Dictionary<string, Sprite>();
         private readonly HashSet<string> ownedSkinIds = new HashSet<string>();
+        private readonly HashSet<string> ownedUpgradeIds = new HashSet<string>();
 
         private FlightState state;
         private CosmeticCategory cosmeticCategory;
@@ -250,6 +292,7 @@ namespace SkyPulse.Mobile
         private SpriteRenderer birdFlapRenderer;
         private SpriteRenderer shieldAuraRenderer;
         private SpriteRenderer slowAuraRenderer;
+        private SpriteRenderer effectAuraRenderer;
         private LineRenderer trailGlow;
         private LineRenderer trailCore;
         private AudioSource audioSource;
@@ -287,6 +330,7 @@ namespace SkyPulse.Mobile
         private Text purchaseBalanceText;
         private Text purchaseConfirmText;
         private Image purchasePreviewImage;
+        private Image purchaseHalo;
         private Button purchaseConfirmButton;
 
         private Skin equippedSkin;
@@ -294,7 +338,8 @@ namespace SkyPulse.Mobile
         private TrailStyle equippedTrail;
         private PipeStyle equippedPipe;
         private Skin pendingSkin;
-        private int difficultyIndex;
+        private Upgrade pendingUpgrade;
+        private PendingPurchase pendingPurchase;
         private int score;
         private int best;
         private int crystals;
@@ -308,8 +353,15 @@ namespace SkyPulse.Mobile
         private float ambientTime;
         private float slowFieldTimer;
         private float shieldFlashTimer;
+        private float skySurgeTimer;
+        private float scorePrismTimer;
+        private float magnetHaloTimer;
+        private float phaseShiftTimer;
         private int shieldCharges;
+        private int rescueCharges;
+        private int gatesSinceStarheart;
         private int displayedSlowTenths = -1;
+        private int displayedPowerUpCode = -1;
         private bool newBest;
         private Vector3 idleBirdBaseScale = Vector3.one;
         private Vector3 flapBirdBaseScale = Vector3.one;
@@ -475,6 +527,9 @@ namespace SkyPulse.Mobile
             var slowAura = CreateRenderer("Slow field aura", ringSprite, new Color(.45f, .3f, 1f, 0f), 12, bird);
             slowAura.transform.localScale = Vector3.one * 1.42f;
             slowAuraRenderer = slowAura;
+            var effectAura = CreateRenderer("Active power aura", softCircleSprite, new Color(.45f, .9f, 1f, 0f), 12, bird);
+            effectAura.transform.localScale = Vector3.one * 1.16f;
+            effectAuraRenderer = effectAura;
             var shieldAura = CreateRenderer("Pulse shield aura", ringSprite, new Color(.38f, 1f, .70f, 0f), 13, bird);
             shieldAura.transform.localScale = Vector3.one * 1.22f;
             shieldAuraRenderer = shieldAura;
@@ -608,9 +663,9 @@ namespace SkyPulse.Mobile
         {
             var root = CreateScreen(parent, "Home screen");
 
-            var difficulty = CreateNeonButton(root.transform, "CLASSIC", new Vector2(-402f, 799f), new Vector2(184f, 70f), Hex("#8f64ff"));
+            var difficulty = CreateNeonButton(root.transform, "EASY", new Vector2(-402f, 799f), new Vector2(184f, 70f), Hex("#8f64ff"));
             difficultyText = difficulty.GetComponentInChildren<Text>();
-            difficulty.onClick.AddListener(CycleDifficulty);
+            difficulty.onClick.AddListener(OpenWorldCollection);
             menuCrystalText = CreateChip(root.transform, new Vector2(365f, 799f), "✦  0", Hex("#45eaff"));
 
             CreateText(root.transform, "SKYPULSE", new Vector2(0f, 442f), new Vector2(880f, 130f), 82, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
@@ -692,11 +747,11 @@ namespace SkyPulse.Mobile
             customizeTitle = CreateText(root.transform, "CUSTOMIZE", new Vector2(0f, 690f), new Vector2(720f, 80f), 48, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             CreateText(root.transform, "CHOOSE YOUR FLIGHT STYLE", new Vector2(0f, 638f), new Vector2(720f, 38f), 18, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
 
-            var labels = new[] { "BIRDS", "WORLDS", "TRAILS", "PIPES" };
-            var categories = new[] { CosmeticCategory.Birds, CosmeticCategory.Worlds, CosmeticCategory.Trails, CosmeticCategory.Pipes };
+            var labels = new[] { "BIRDS", "WORLDS", "TRAILS", "PIPES", "TECH" };
+            var categories = new[] { CosmeticCategory.Birds, CosmeticCategory.Worlds, CosmeticCategory.Trails, CosmeticCategory.Pipes, CosmeticCategory.Upgrades };
             for (var index = 0; index < labels.Length; index += 1)
             {
-                var tab = CreateNeonButton(root.transform, labels[index], new Vector2(-342f + index * 228f, 560f), new Vector2(210f, 60f), index == 0 ? Hex("#45eaff") : Hex("#8f64ff"));
+                var tab = CreateNeonButton(root.transform, labels[index], new Vector2(-360f + index * 180f, 560f), new Vector2(166f, 60f), index == 0 ? Hex("#45eaff") : Hex("#8f64ff"));
                 var category = categories[index];
                 tab.onClick.AddListener(() => SetCosmeticCategory(category));
             }
@@ -728,21 +783,21 @@ namespace SkyPulse.Mobile
             CreateFullPanel(root.transform, "Purchase dim", new Color(.008f, .004f, .04f, .86f));
             var card = CreatePanel(root.transform, "Purchase card", new Vector2(0f, 18f), new Vector2(850f, 720f), new Color(.035f, .018f, .13f, .99f));
             AddOutline(card.gameObject, Hex("#45eaff"), 4f);
-            var halo = CreateImage(card, "Purchase halo", new Vector2(0f, 128f), new Vector2(370f, 370f), new Color(.27f, .92f, 1f, .07f));
-            halo.sprite = softCircleSprite;
-            halo.raycastTarget = false;
+            purchaseHalo = CreateImage(card, "Purchase halo", new Vector2(0f, 128f), new Vector2(370f, 370f), new Color(.27f, .92f, 1f, .07f));
+            purchaseHalo.sprite = softCircleSprite;
+            purchaseHalo.raycastTarget = false;
             purchasePreviewImage = CreateImage(card, "Bird skin preview", new Vector2(0f, 128f), new Vector2(355f, 220f), Color.white);
             purchasePreviewImage.preserveAspect = true;
             purchasePreviewImage.raycastTarget = false;
             purchaseTitleText = CreateText(card, "UNLOCK BIRD?", new Vector2(0f, 278f), new Vector2(710f, 52f), 35, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             purchaseDetailText = CreateText(card, "", new Vector2(0f, -38f), new Vector2(700f, 52f), 24, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             purchaseBalanceText = CreateText(card, "", new Vector2(0f, -84f), new Vector2(700f, 36f), 19, new Color(.9f, .94f, 1f, .72f), TextAnchor.MiddleCenter, FontStyle.Bold);
-            CreateText(card, "THIS BIRD WILL BE EQUIPPED AFTER UNLOCKING", new Vector2(0f, -142f), new Vector2(720f, 32f), 15, new Color(.9f, .94f, 1f, .57f), TextAnchor.MiddleCenter, FontStyle.Bold);
+            CreateText(card, "CONFIRM YOUR PURCHASE", new Vector2(0f, -142f), new Vector2(720f, 32f), 15, new Color(.9f, .94f, 1f, .57f), TextAnchor.MiddleCenter, FontStyle.Bold);
             var cancel = CreateNeonButton(card, "CANCEL", new Vector2(-190f, -250f), new Vector2(330f, 78f), Hex("#8f64ff"));
             cancel.onClick.AddListener(ClosePurchaseModal);
             purchaseConfirmButton = CreateNeonButton(card, "UNLOCK", new Vector2(190f, -250f), new Vector2(330f, 78f), Hex("#45eaff"));
             purchaseConfirmText = purchaseConfirmButton.GetComponentInChildren<Text>();
-            purchaseConfirmButton.onClick.AddListener(ConfirmSkinPurchase);
+            purchaseConfirmButton.onClick.AddListener(ConfirmPurchase);
             return root;
         }
 
@@ -833,7 +888,7 @@ namespace SkyPulse.Mobile
 
         private void UpdateBird(float deltaTime)
         {
-            birdVelocity = Mathf.Max(MaxFallVelocity, birdVelocity + Gravity * deltaTime);
+            birdVelocity = Mathf.Max(ActiveMaxFallVelocity(), birdVelocity + ActiveGravity() * deltaTime);
             birdY += birdVelocity * deltaTime;
             wingTimer += deltaTime;
             bird.position = new Vector3(BirdX, birdY, 0f);
@@ -851,7 +906,7 @@ namespace SkyPulse.Mobile
                 }
 
                 birdY = Mathf.Clamp(birdY, GroundY + BirdCollisionRadius + .14f, CameraHeight * .5f - BirdCollisionRadius - .14f);
-                birdVelocity = FlapVelocity * .52f;
+                birdVelocity = ActiveFlapVelocity() * .52f;
                 bird.position = new Vector3(BirdX, birdY, 0f);
             }
         }
@@ -877,7 +932,7 @@ namespace SkyPulse.Mobile
                 var overlapsPipe = BirdX + BirdCollisionRadius > pair.X - physicalWidth * .5f && BirdX - BirdCollisionRadius < pair.X + physicalWidth * .5f;
                 var halfGap = ActiveGap() * .5f;
                 var hitsPipe = birdY + BirdCollisionRadius > pair.GapCenter + halfGap || birdY - BirdCollisionRadius < pair.GapCenter - halfGap;
-                if (overlapsPipe && hitsPipe)
+                if (phaseShiftTimer <= 0f && overlapsPipe && hitsPipe)
                 {
                     if (!UseShield())
                     {
@@ -895,9 +950,20 @@ namespace SkyPulse.Mobile
                 {
                     pair.Passed = true;
                     score += 1;
-                    crystals += 1;
+                    var crystalReward = 1;
+                    if (scorePrismTimer > 0f) crystalReward += HasUpgrade("prism_resonator") ? 2 : 1;
+                    if (HasUpgrade("starheart"))
+                    {
+                        gatesSinceStarheart += 1;
+                        if (gatesSinceStarheart >= 4)
+                        {
+                            crystalReward += 4;
+                            gatesSinceStarheart = 0;
+                        }
+                    }
+                    crystals += crystalReward;
                     hudScoreText.text = score.ToString();
-                    ShowScoreBurst();
+                    ShowScoreBurst(crystalReward);
                     Play(scoreSound);
                     UpdateCrystalLabels();
                 }
@@ -906,8 +972,29 @@ namespace SkyPulse.Mobile
 
         private float ActiveScrollSpeed()
         {
-            var speed = 4.3f + Mathf.Min(score, 24) * .045f;
+            var speed = (4.3f + Mathf.Min(score, 24) * .045f) * equippedWorld.ScrollMultiplier;
             return slowFieldTimer > 0f ? speed * .52f : speed;
+        }
+
+        private float ActiveGravity()
+        {
+            var gravity = Gravity;
+            if (HasUpgrade("featherweight")) gravity *= .92f;
+            if (skySurgeTimer > 0f) gravity *= .64f;
+            return gravity;
+        }
+
+        private float ActiveMaxFallVelocity()
+        {
+            return HasUpgrade("air_brakes") ? MaxFallVelocity * .88f : MaxFallVelocity;
+        }
+
+        private float ActiveFlapVelocity()
+        {
+            var lift = FlapVelocity;
+            if (HasUpgrade("thrust_plumes")) lift *= 1.10f;
+            if (skySurgeTimer > 0f) lift *= 1.18f;
+            return lift;
         }
 
         private void UpdatePowerUps(float deltaTime)
@@ -927,7 +1014,16 @@ namespace SkyPulse.Mobile
                     }
                     continue;
                 }
-                pickup.X -= ActiveScrollSpeed() * deltaTime;
+                if (magnetHaloTimer > 0f)
+                {
+                    var pullSpeed = HasUpgrade("magnet_array") ? 8.8f : 6.2f;
+                    pickup.X = Mathf.MoveTowards(pickup.X, BirdX, pullSpeed * deltaTime);
+                    pickup.Y = Mathf.MoveTowards(pickup.Y, birdY, pullSpeed * .72f * deltaTime);
+                }
+                else
+                {
+                    pickup.X -= ActiveScrollSpeed() * deltaTime;
+                }
                 var bob = Mathf.Sin(ambientTime * 3.2f + pickup.Phase) * .12f;
                 pickup.Transform.localPosition = new Vector3(pickup.X, pickup.Y + bob, 0f);
                 var pulse = 1f + Mathf.Sin(ambientTime * 4.2f + pickup.Phase) * .10f;
@@ -957,7 +1053,7 @@ namespace SkyPulse.Mobile
             pickup.X = x;
             pickup.Y = UnityEngine.Random.Range(-3.65f, 4.45f);
             pickup.Phase = UnityEngine.Random.Range(0f, Mathf.PI * 2f);
-            pickup.Kind = (PowerUpKind)UnityEngine.Random.Range(0, 3);
+            pickup.Kind = (PowerUpKind)UnityEngine.Random.Range(0, 7);
             var colour = Hex("#8f64ff");
             var secondary = Hex("#45eaff");
             switch (pickup.Kind)
@@ -973,6 +1069,30 @@ namespace SkyPulse.Mobile
                     secondary = Hex("#f05bc6");
                     pickup.Icon.transform.localScale = new Vector3(.17f, .17f, 1f);
                     pickup.Icon.transform.localRotation = Quaternion.Euler(0f, 0f, 45f);
+                    break;
+                case PowerUpKind.SkySurge:
+                    colour = Hex("#ffc34d");
+                    secondary = Hex("#edf7ff");
+                    pickup.Icon.transform.localScale = new Vector3(.08f, .25f, 1f);
+                    pickup.Icon.transform.localRotation = Quaternion.Euler(0f, 0f, -24f);
+                    break;
+                case PowerUpKind.ScorePrism:
+                    colour = Hex("#f05bc6");
+                    secondary = Hex("#edf7ff");
+                    pickup.Icon.transform.localScale = new Vector3(.20f, .09f, 1f);
+                    pickup.Icon.transform.localRotation = Quaternion.Euler(0f, 0f, 45f);
+                    break;
+                case PowerUpKind.MagnetHalo:
+                    colour = Hex("#45eaff");
+                    secondary = Hex("#61f5b3");
+                    pickup.Icon.transform.localScale = new Vector3(.22f, .065f, 1f);
+                    pickup.Icon.transform.localRotation = Quaternion.identity;
+                    break;
+                case PowerUpKind.PhaseShift:
+                    colour = Hex("#b17cff");
+                    secondary = Hex("#45eaff");
+                    pickup.Icon.transform.localScale = new Vector3(.18f, .18f, 1f);
+                    pickup.Icon.transform.localRotation = Quaternion.Euler(0f, 0f, 22f);
                     break;
                 default:
                     pickup.Icon.transform.localScale = new Vector3(.13f, .13f, 1f);
@@ -996,7 +1116,7 @@ namespace SkyPulse.Mobile
             switch (pickup.Kind)
             {
                 case PowerUpKind.SlowField:
-                    slowFieldTimer = Mathf.Min(9f, Mathf.Max(slowFieldTimer, 0f) + 5.5f);
+                    slowFieldTimer = Mathf.Min(11f, Mathf.Max(slowFieldTimer, 0f) + (HasUpgrade("time_weaver") ? 7.5f : 5.5f));
                     Play(crystalSound);
                     break;
                 case PowerUpKind.PulseShield:
@@ -1004,8 +1124,24 @@ namespace SkyPulse.Mobile
                     shieldFlashTimer = .6f;
                     Play(unlockSound);
                     break;
+                case PowerUpKind.SkySurge:
+                    skySurgeTimer = Mathf.Min(9f, Mathf.Max(skySurgeTimer, 0f) + 5f);
+                    Play(unlockSound);
+                    break;
+                case PowerUpKind.ScorePrism:
+                    scorePrismTimer = Mathf.Min(10f, Mathf.Max(scorePrismTimer, 0f) + 6f);
+                    Play(crystalSound);
+                    break;
+                case PowerUpKind.MagnetHalo:
+                    magnetHaloTimer = Mathf.Min(10f, Mathf.Max(magnetHaloTimer, 0f) + 6.5f);
+                    Play(unlockSound);
+                    break;
+                case PowerUpKind.PhaseShift:
+                    phaseShiftTimer = Mathf.Min(8f, Mathf.Max(phaseShiftTimer, 0f) + (HasUpgrade("phase_stabilizer") ? 4.7f : 3.2f));
+                    Play(unlockSound);
+                    break;
                 default:
-                    crystals += 12;
+                    crystals += HasUpgrade("cache_cores") ? 20 : 12;
                     UpdateCrystalLabels();
                     Play(crystalSound);
                     break;
@@ -1017,42 +1153,59 @@ namespace SkyPulse.Mobile
         {
             if (slowFieldTimer > 0f) slowFieldTimer = Mathf.Max(0f, slowFieldTimer - deltaTime);
             if (shieldFlashTimer > 0f) shieldFlashTimer = Mathf.Max(0f, shieldFlashTimer - deltaTime);
+            if (skySurgeTimer > 0f) skySurgeTimer = Mathf.Max(0f, skySurgeTimer - deltaTime);
+            if (scorePrismTimer > 0f) scorePrismTimer = Mathf.Max(0f, scorePrismTimer - deltaTime);
+            if (magnetHaloTimer > 0f) magnetHaloTimer = Mathf.Max(0f, magnetHaloTimer - deltaTime);
+            if (phaseShiftTimer > 0f) phaseShiftTimer = Mathf.Max(0f, phaseShiftTimer - deltaTime);
             UpdatePowerUpHud();
         }
 
         private void UpdatePowerUpHud()
         {
             if (hudPowerUpText == null) return;
-            if (slowFieldTimer > 0f)
-            {
-                var remainingTenths = Mathf.CeilToInt(slowFieldTimer * 10f);
-                if (remainingTenths != displayedSlowTenths || !hudPowerUpText.gameObject.activeSelf)
-                {
-                    hudPowerUpText.text = $"◌  SLOW FIELD  {remainingTenths / 10f:0.0}s";
-                    displayedSlowTenths = remainingTenths;
-                }
-                hudPowerUpText.color = Hex("#b17cff");
-            }
-            else if (shieldCharges > 0)
-            {
-                hudPowerUpText.text = "◈  PULSE SHIELD READY";
-                hudPowerUpText.color = Hex("#61f5b3");
-                displayedSlowTenths = -1;
-            }
+            var code = -1;
+            var timer = 0f;
+            var label = string.Empty;
+            var colour = Hex("#f4fbff");
+            if (phaseShiftTimer > 0f) { code = 0; timer = phaseShiftTimer; label = "◇  PHASE SHIFT"; colour = Hex("#b17cff"); }
+            else if (slowFieldTimer > 0f) { code = 1; timer = slowFieldTimer; label = "◌  SLOW FIELD"; colour = Hex("#b17cff"); }
+            else if (skySurgeTimer > 0f) { code = 2; timer = skySurgeTimer; label = "↟  SKY SURGE"; colour = Hex("#ffc34d"); }
+            else if (scorePrismTimer > 0f) { code = 3; timer = scorePrismTimer; label = "✦  SCORE PRISM"; colour = Hex("#f05bc6"); }
+            else if (magnetHaloTimer > 0f) { code = 4; timer = magnetHaloTimer; label = "◌  MAGNET HALO"; colour = Hex("#45eaff"); }
+            else if (shieldCharges > 0) { code = 5; label = "◈  PULSE SHIELD READY"; colour = Hex("#61f5b3"); }
+            else if (rescueCharges > 0) { code = 6; label = "♥  RESCUE FEATHER READY"; colour = Hex("#f05bc6"); }
             else
             {
                 hudPowerUpText.gameObject.SetActive(false);
                 displayedSlowTenths = -1;
+                displayedPowerUpCode = -1;
                 return;
             }
+
+            var remainingTenths = timer > 0f ? Mathf.CeilToInt(timer * 10f) : 0;
+            if (code != displayedPowerUpCode || remainingTenths != displayedSlowTenths || !hudPowerUpText.gameObject.activeSelf)
+            {
+                hudPowerUpText.text = timer > 0f ? $"{label}  {remainingTenths / 10f:0.0}s" : label;
+                displayedPowerUpCode = code;
+                displayedSlowTenths = remainingTenths;
+            }
+            hudPowerUpText.color = colour;
             hudPowerUpText.gameObject.SetActive(true);
         }
 
         private bool UseShield()
         {
-            if (shieldCharges <= 0) return false;
-            shieldCharges = 0;
-            shieldFlashTimer = .85f;
+            if (shieldCharges > 0)
+            {
+                shieldCharges = 0;
+                shieldFlashTimer = .85f;
+                Play(unlockSound);
+                UpdatePowerUpHud();
+                return true;
+            }
+            if (rescueCharges <= 0) return false;
+            rescueCharges = 0;
+            shieldFlashTimer = .5f;
             Play(unlockSound);
             UpdatePowerUpHud();
             return true;
@@ -1060,6 +1213,11 @@ namespace SkyPulse.Mobile
 
         private void UpdateTrail()
         {
+            var trailScale = HasUpgrade("comet_trail") ? 1.32f : 1f;
+            if (skySurgeTimer > 0f) trailScale *= 1.18f;
+            if (phaseShiftTimer > 0f) trailScale *= 1.10f;
+            trailGlow.startWidth = .19f * trailScale;
+            trailCore.startWidth = .082f * trailScale;
             for (var index = trailPoints.Length - 1; index > 0; index -= 1) trailPoints[index] = trailPoints[index - 1];
             trailPoints[0] = bird.position + new Vector3(-.66f, .02f, .1f);
             trailGlow.positionCount = trailPoints.Length;
@@ -1068,10 +1226,10 @@ namespace SkyPulse.Mobile
             trailCore.SetPositions(trailPoints);
         }
 
-        private void ShowScoreBurst()
+        private void ShowScoreBurst(int crystalReward)
         {
             scoreBurstTimer = .36f;
-            scoreBurstText.text = "+1";
+            scoreBurstText.text = crystalReward > 1 ? $"+1  ·  +{crystalReward} ✦" : "+1  ·  +1 ✦";
             scoreBurstText.rectTransform.anchoredPosition = new Vector2(0f, 612f);
             scoreBurstText.gameObject.SetActive(true);
         }
@@ -1088,7 +1246,13 @@ namespace SkyPulse.Mobile
             wingTimer = 1f;
             slowFieldTimer = 0f;
             shieldFlashTimer = 0f;
-            shieldCharges = 0;
+            skySurgeTimer = 0f;
+            scorePrismTimer = 0f;
+            magnetHaloTimer = 0f;
+            phaseShiftTimer = 0f;
+            shieldCharges = HasUpgrade("shield_cell") ? 1 : 0;
+            rescueCharges = HasUpgrade("rescue_feather") ? 1 : 0;
+            gatesSinceStarheart = 0;
             trailGlow.positionCount = 0;
             trailCore.positionCount = 0;
             spawnX = GetWorldWidth() * .5f + 3.2f;
@@ -1125,7 +1289,12 @@ namespace SkyPulse.Mobile
             }
             slowFieldTimer = 0f;
             shieldFlashTimer = 0f;
+            skySurgeTimer = 0f;
+            scorePrismTimer = 0f;
+            magnetHaloTimer = 0f;
+            phaseShiftTimer = 0f;
             shieldCharges = 0;
+            rescueCharges = 0;
             UpdatePowerUpHud();
             SaveProgress();
             RefreshScreens();
@@ -1195,17 +1364,12 @@ namespace SkyPulse.Mobile
 
         private float ActiveGap()
         {
-            switch (difficultyIndex)
-            {
-                case 0: return 5.00f;
-                case 2: return 3.78f;
-                default: return 4.36f;
-            }
+            return equippedWorld != null ? equippedWorld.GapSize : 4.46f;
         }
 
         private void Flap()
         {
-            birdVelocity = FlapVelocity;
+            birdVelocity = ActiveFlapVelocity();
             wingTimer = 0f;
             Play(flapSound);
         }
@@ -1229,6 +1393,15 @@ namespace SkyPulse.Mobile
             state = FlightState.Customize;
             bird.gameObject.SetActive(false);
             cosmeticCategory = CosmeticCategory.Birds;
+            RebuildCustomizeGrid();
+            RefreshScreens();
+        }
+
+        private void OpenWorldCollection()
+        {
+            state = FlightState.Customize;
+            bird.gameObject.SetActive(false);
+            cosmeticCategory = CosmeticCategory.Worlds;
             RebuildCustomizeGrid();
             RefreshScreens();
         }
@@ -1263,7 +1436,8 @@ namespace SkyPulse.Mobile
                     for (var index = 0; index < Worlds.Length; index += 1)
                     {
                         var world = Worlds[index];
-                        CreateCosmeticCard(index, world.Name, equippedWorld.Id == world.Id ? "EQUIPPED" : "TAP TO EQUIP", world.Accent, LoadSprite(world.BackgroundPath), () => EquipWorld(world));
+                        var status = equippedWorld.Id == world.Id ? "EQUIPPED" : $"{world.DifficultyLabel} · {world.ScrollMultiplier:0.00}X SPEED";
+                        CreateCosmeticCard(index, world.Name, status, world.Accent, LoadSprite(world.BackgroundPath), () => EquipWorld(world));
                     }
                     SetContentRows(Worlds.Length);
                     break;
@@ -1276,7 +1450,7 @@ namespace SkyPulse.Mobile
                     }
                     SetContentRows(Trails.Length);
                     break;
-                default:
+                case CosmeticCategory.Pipes:
                     customizeTitle.text = "PIPE COLLECTION";
                     for (var index = 0; index < PipeStyles.Length; index += 1)
                     {
@@ -1284,6 +1458,15 @@ namespace SkyPulse.Mobile
                         CreateCosmeticCard(index, style.Name, equippedPipe.Id == style.Id ? "EQUIPPED" : "TAP TO EQUIP", style.Accent, null, () => EquipPipe(style), style.Panel, style.Energy, true);
                     }
                     SetContentRows(PipeStyles.Length);
+                    break;
+                default:
+                    customizeTitle.text = "FLIGHT TECH";
+                    for (var index = 0; index < Upgrades.Length; index += 1)
+                    {
+                        var upgrade = Upgrades[index];
+                        CreateUpgradeCard(index, upgrade);
+                    }
+                    SetContentRows(Upgrades.Length);
                     break;
             }
         }
@@ -1333,6 +1516,32 @@ namespace SkyPulse.Mobile
             CreateText(card, status, new Vector2(-185f, -99f), new Vector2(330f, 28f), 15, status == "EQUIPPED" ? accent : new Color(.85f, .9f, 1f, .68f), TextAnchor.MiddleLeft, FontStyle.Bold).raycastTarget = false;
         }
 
+        private void CreateUpgradeCard(int index, Upgrade upgrade)
+        {
+            var column = index % 2;
+            var row = index / 2;
+            var owned = HasUpgrade(upgrade.Id);
+            var card = CreatePanel(customizeContent, $"{upgrade.Name} upgrade", new Vector2(column == 0 ? -235f : 235f, -12f - row * 250f), new Vector2(440f, 222f), new Color(.02f, .025f, .11f, .97f));
+            card.anchorMin = new Vector2(.5f, 1f);
+            card.anchorMax = new Vector2(.5f, 1f);
+            card.pivot = new Vector2(.5f, 1f);
+            AddOutline(card.gameObject, upgrade.Accent, owned ? 3f : 1.5f);
+            var button = card.gameObject.AddComponent<Button>();
+            button.targetGraphic = card.GetComponent<Image>();
+            button.onClick.AddListener(() => SelectUpgrade(upgrade));
+
+            var halo = CreateImage(card, "Upgrade glow", new Vector2(-146f, 34f), new Vector2(102f, 102f), new Color(upgrade.Accent.r, upgrade.Accent.g, upgrade.Accent.b, .18f));
+            halo.sprite = softCircleSprite;
+            halo.raycastTarget = false;
+            var core = CreateImage(card, "Upgrade core", new Vector2(-146f, 34f), new Vector2(42f, 42f), upgrade.Accent);
+            core.sprite = softCircleSprite;
+            core.raycastTarget = false;
+            CreateText(card, upgrade.Name, new Vector2(-70f, 53f), new Vector2(250f, 34f), 18, Hex("#f4fbff"), TextAnchor.MiddleLeft, FontStyle.Bold).raycastTarget = false;
+            CreateText(card, upgrade.Description, new Vector2(-70f, 17f), new Vector2(270f, 44f), 15, new Color(.86f, .91f, 1f, .73f), TextAnchor.MiddleLeft, FontStyle.Normal).raycastTarget = false;
+            var status = owned ? "OWNED" : $"BUY · {upgrade.Price} ✦";
+            CreateText(card, status, new Vector2(-185f, -85f), new Vector2(350f, 28f), 16, owned ? upgrade.Accent : new Color(.85f, .9f, 1f, .68f), TextAnchor.MiddleLeft, FontStyle.Bold).raycastTarget = false;
+        }
+
         private void EquipSkin(Skin skin)
         {
             equippedSkin = skin;
@@ -1346,6 +1555,11 @@ namespace SkyPulse.Mobile
             return skin.Price <= 0 || ownedSkinIds.Contains(skin.Id);
         }
 
+        private bool HasUpgrade(string id)
+        {
+            return ownedUpgradeIds.Contains(id);
+        }
+
         private void SelectSkin(Skin skin)
         {
             if (IsSkinOwned(skin))
@@ -1356,18 +1570,36 @@ namespace SkyPulse.Mobile
             OpenPurchaseModal(skin);
         }
 
+        private void SelectUpgrade(Upgrade upgrade)
+        {
+            if (HasUpgrade(upgrade.Id)) return;
+            pendingUpgrade = upgrade;
+            pendingSkin = null;
+            pendingPurchase = PendingPurchase.Upgrade;
+            OpenPurchaseModal(upgrade.Name, upgrade.Description, upgrade.Price, upgrade.Accent, softCircleSprite);
+        }
+
         private void OpenPurchaseModal(Skin skin)
         {
             pendingSkin = skin;
-            purchasePreviewImage.sprite = LoadSprite(skin.ArtPath);
-            purchaseTitleText.text = $"UNLOCK {skin.Name}?";
-            purchaseDetailText.text = $"SPEND  {skin.Price}  ✦  TO ADD THIS BIRD";
-            var remainder = Mathf.Max(0, skin.Price - crystals);
+            pendingUpgrade = null;
+            pendingPurchase = PendingPurchase.Skin;
+            OpenPurchaseModal(skin.Name, "THIS BIRD WILL BE EQUIPPED AFTER UNLOCKING", skin.Price, skin.Accent, LoadSprite(skin.ArtPath));
+        }
+
+        private void OpenPurchaseModal(string itemName, string detail, int price, Color accent, Sprite preview)
+        {
+            purchasePreviewImage.sprite = preview;
+            purchasePreviewImage.color = preview == softCircleSprite ? new Color(accent.r, accent.g, accent.b, .88f) : Color.white;
+            purchaseHalo.color = new Color(accent.r, accent.g, accent.b, .10f);
+            purchaseTitleText.text = $"UNLOCK {itemName}?";
+            purchaseDetailText.text = $"SPEND  {price}  ✦  ·  {detail}";
+            var remainder = Mathf.Max(0, price - crystals);
             purchaseBalanceText.text = remainder == 0
                 ? $"YOUR BALANCE · {crystals} ✦"
                 : $"YOUR BALANCE · {crystals} ✦   ·   NEED {remainder} MORE";
-            purchaseConfirmButton.interactable = crystals >= skin.Price;
-            purchaseConfirmText.text = crystals >= skin.Price ? $"UNLOCK · {skin.Price} ✦" : "NOT ENOUGH ✦";
+            purchaseConfirmButton.interactable = crystals >= price;
+            purchaseConfirmText.text = crystals >= price ? $"UNLOCK · {price} ✦" : "NOT ENOUGH ✦";
             purchaseModal.SetActive(true);
         }
 
@@ -1375,14 +1607,25 @@ namespace SkyPulse.Mobile
         {
             if (purchaseModal != null) purchaseModal.SetActive(false);
             pendingSkin = null;
+            pendingUpgrade = null;
+            pendingPurchase = PendingPurchase.None;
         }
 
-        private void ConfirmSkinPurchase()
+        private void ConfirmPurchase()
         {
-            if (pendingSkin == null || crystals < pendingSkin.Price) return;
-            crystals -= pendingSkin.Price;
-            ownedSkinIds.Add(pendingSkin.Id);
-            equippedSkin = pendingSkin;
+            var price = pendingPurchase == PendingPurchase.Skin && pendingSkin != null ? pendingSkin.Price
+                : pendingPurchase == PendingPurchase.Upgrade && pendingUpgrade != null ? pendingUpgrade.Price : -1;
+            if (price < 0 || crystals < price) return;
+            crystals -= price;
+            if (pendingPurchase == PendingPurchase.Skin)
+            {
+                ownedSkinIds.Add(pendingSkin.Id);
+                equippedSkin = pendingSkin;
+            }
+            else
+            {
+                ownedUpgradeIds.Add(pendingUpgrade.Id);
+            }
             ClosePurchaseModal();
             ApplyEquippedVisuals();
             SaveProgress();
@@ -1518,6 +1761,18 @@ namespace SkyPulse.Mobile
                 slowAuraRenderer.transform.localScale = Vector3.one * (1.42f * slowPulse);
                 slowAuraRenderer.transform.localRotation = Quaternion.Euler(0f, 0f, -ambientTime * 110f);
             }
+            if (effectAuraRenderer != null)
+            {
+                var active = skySurgeTimer > 0f || scorePrismTimer > 0f || magnetHaloTimer > 0f || phaseShiftTimer > 0f;
+                var colour = Hex("#ffc34d");
+                if (phaseShiftTimer > 0f) colour = Hex("#b17cff");
+                else if (scorePrismTimer > 0f) colour = Hex("#f05bc6");
+                else if (magnetHaloTimer > 0f) colour = Hex("#45eaff");
+                colour.a = active ? .22f + Mathf.Sin(ambientTime * 9f) * .08f : 0f;
+                effectAuraRenderer.enabled = active;
+                effectAuraRenderer.color = colour;
+                effectAuraRenderer.transform.localScale = Vector3.one * (1.12f + Mathf.Sin(ambientTime * 7.5f) * .10f);
+            }
             if (shieldAuraRenderer != null)
             {
                 var visible = shieldCharges > 0 || shieldFlashTimer > 0f;
@@ -1531,30 +1786,9 @@ namespace SkyPulse.Mobile
 
         private void UpdateDifficultyCopy()
         {
-            if (difficultyText == null) return;
-            switch (difficultyIndex)
-            {
-                case 0:
-                    difficultyText.text = "EASY";
-                    difficultyText.color = Hex("#61f5b3");
-                    break;
-                case 2:
-                    difficultyText.text = "EXPERT";
-                    difficultyText.color = Hex("#ffc34d");
-                    break;
-                default:
-                    difficultyText.text = "CLASSIC";
-                    difficultyText.color = Hex("#45eaff");
-                    break;
-            }
-        }
-
-        private void CycleDifficulty()
-        {
-            difficultyIndex = (difficultyIndex + 1) % 3;
-            UpdateDifficultyCopy();
-            PlayerPrefs.SetInt("skypulse.native.difficulty", difficultyIndex);
-            PlayerPrefs.Save();
+            if (difficultyText == null || equippedWorld == null) return;
+            difficultyText.text = equippedWorld.DifficultyLabel;
+            difficultyText.color = equippedWorld.Accent;
         }
 
         private void RefreshScreens()
@@ -1593,7 +1827,6 @@ namespace SkyPulse.Mobile
         {
             best = PlayerPrefs.GetInt("skypulse.native.best", 0);
             crystals = PlayerPrefs.GetInt("skypulse.native.crystals", 0);
-            difficultyIndex = Mathf.Clamp(PlayerPrefs.GetInt("skypulse.native.difficulty", 1), 0, 2);
             equippedSkin = FindById(Skins, PlayerPrefs.GetString("skypulse.native.skin", "nova")) ?? Skins[0];
             equippedWorld = FindById(Worlds, PlayerPrefs.GetString("skypulse.native.world", "neon_city")) ?? Worlds[0];
             equippedTrail = FindById(Trails, PlayerPrefs.GetString("skypulse.native.trail", "pulse")) ?? Trails[0];
@@ -1613,18 +1846,26 @@ namespace SkyPulse.Mobile
                 ownedSkinIds.Add(Skins[0].Id);
                 if (equippedSkin != null) ownedSkinIds.Add(equippedSkin.Id);
             }
+            var savedOwnedUpgrades = PlayerPrefs.GetString("skypulse.native.owned-upgrades", string.Empty);
+            if (!string.IsNullOrEmpty(savedOwnedUpgrades))
+            {
+                foreach (var id in savedOwnedUpgrades.Split(','))
+                {
+                    if (!string.IsNullOrEmpty(id)) ownedUpgradeIds.Add(id);
+                }
+            }
         }
 
         private void SaveProgress()
         {
             PlayerPrefs.SetInt("skypulse.native.best", best);
             PlayerPrefs.SetInt("skypulse.native.crystals", crystals);
-            PlayerPrefs.SetInt("skypulse.native.difficulty", difficultyIndex);
             PlayerPrefs.SetString("skypulse.native.skin", equippedSkin.Id);
             PlayerPrefs.SetString("skypulse.native.world", equippedWorld.Id);
             PlayerPrefs.SetString("skypulse.native.trail", equippedTrail.Id);
             PlayerPrefs.SetString("skypulse.native.pipe", equippedPipe.Id);
             PlayerPrefs.SetString("skypulse.native.owned-skins", string.Join(",", ownedSkinIds));
+            PlayerPrefs.SetString("skypulse.native.owned-upgrades", string.Join(",", ownedUpgradeIds));
             PlayerPrefs.Save();
         }
 
