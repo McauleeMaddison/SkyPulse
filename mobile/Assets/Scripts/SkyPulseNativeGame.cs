@@ -6,6 +6,37 @@ using UnityEngine.UI;
 
 namespace SkyPulse.Mobile
 {
+    /// <summary>Small, allocation-free press response for touch-first controls.</summary>
+    public sealed class SkyPulseButtonFeedback : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler
+    {
+        private RectTransform target;
+        private Vector3 restingScale;
+        private float pressAmount;
+
+        private void Awake()
+        {
+            target = transform as RectTransform;
+            restingScale = target != null ? target.localScale : Vector3.one;
+        }
+
+        private void OnEnable()
+        {
+            pressAmount = 0f;
+            if (target != null) target.localScale = restingScale;
+        }
+
+        public void OnPointerDown(PointerEventData eventData) => pressAmount = 1f;
+        public void OnPointerUp(PointerEventData eventData) => pressAmount = 0f;
+        public void OnPointerExit(PointerEventData eventData) => pressAmount = 0f;
+
+        private void Update()
+        {
+            if (target == null) return;
+            var scale = Vector3.one * (1f - pressAmount * .045f);
+            target.localScale = Vector3.Lerp(target.localScale, Vector3.Scale(restingScale, scale), 1f - Mathf.Exp(-Time.unscaledDeltaTime * 24f));
+        }
+    }
+
     /// <summary>
     /// Native, portrait-first SkyPulse presentation and flight loop.  This deliberately
     /// uses a small fixed pool of renderers: the game stays smooth on older phones while
@@ -331,7 +362,6 @@ namespace SkyPulse.Mobile
         private Image menuPortalImage;
         private RectTransform menuBirdTransform;
         private RectTransform menuHeroTransform;
-        private RectTransform menuFlyButtonTransform;
         private RectTransform customizeContent;
         private Text customizeTitle;
         private Text purchaseTitleText;
@@ -355,6 +385,7 @@ namespace SkyPulse.Mobile
         private float birdY;
         private float birdVelocity;
         private float birdTilt;
+        private float birdTiltVelocity;
         private float wingTimer;
         private float menuWingTimer;
         private float menuPresentationTime;
@@ -676,7 +707,6 @@ namespace SkyPulse.Mobile
             menuBestText = CreateChip(root.transform, new Vector2(0f, -114f), "BEST · 0", Hex("#8fa7c4"));
             var fly = CreateNeonButton(root.transform, "FLY", new Vector2(0f, -248f), new Vector2(592f, 108f), Hex("#f05bc6"));
             fly.onClick.AddListener(StartFlight);
-            menuFlyButtonTransform = fly.GetComponent<RectTransform>();
             CreateText(root.transform, "TAP ANYWHERE TO TAKE FLIGHT", new Vector2(0f, -326f), new Vector2(650f, 34f), 16, new Color(.91f, .92f, 1f, .68f), TextAnchor.MiddleCenter, FontStyle.Bold);
 
             var customize = CreateNeonButton(root.transform, "CUSTOMIZE", new Vector2(0f, -421f), new Vector2(592f, 82f), Hex("#45eaff"));
@@ -827,7 +857,7 @@ namespace SkyPulse.Mobile
             if (state != FlightState.Playing) return;
             UpdatePipes(deltaTime);
             UpdatePowerUps(deltaTime);
-            UpdateTrail();
+            UpdateTrail(deltaTime);
         }
 
         private void UpdateAmbientVisuals()
@@ -888,10 +918,6 @@ namespace SkyPulse.Mobile
             {
                 menuTitleText.rectTransform.localScale = Vector3.one * (1f + Mathf.Sin(ambientTime * 2.1f) * .012f);
             }
-            if (menuFlyButtonTransform != null)
-            {
-                menuFlyButtonTransform.localScale = Vector3.one * (1f + Mathf.Sin(ambientTime * 2.8f) * .018f);
-            }
         }
 
         private void UpdateScoreBurst(float deltaTime)
@@ -917,8 +943,9 @@ namespace SkyPulse.Mobile
             birdY += birdVelocity * deltaTime;
             wingTimer += deltaTime;
             bird.position = new Vector3(BirdX, birdY, 0f);
-            var targetTilt = Mathf.Clamp(birdVelocity * 3.05f, -31f, 25f);
-            birdTilt = Mathf.Lerp(birdTilt, targetTilt, 1f - Mathf.Exp(-deltaTime * 11f));
+            var flapKick = Mathf.Exp(-wingTimer * 12f);
+            var targetTilt = Mathf.Clamp(birdVelocity * 3.55f + flapKick * 5.5f, -37f, 28f);
+            birdTilt = Mathf.SmoothDamp(birdTilt, targetTilt, ref birdTiltVelocity, .075f, 360f, deltaTime);
             bird.rotation = Quaternion.Euler(0f, 0f, birdTilt);
             UpdateBirdWingMotion();
 
@@ -1277,15 +1304,19 @@ namespace SkyPulse.Mobile
             return true;
         }
 
-        private void UpdateTrail()
+        private void UpdateTrail(float deltaTime)
         {
             var trailScale = HasUpgrade("comet_trail") ? 1.32f : 1f;
             if (skySurgeTimer > 0f) trailScale *= 1.18f;
             if (phaseShiftTimer > 0f) trailScale *= 1.10f;
             trailGlow.startWidth = .19f * trailScale;
             trailCore.startWidth = .082f * trailScale;
-            for (var index = trailPoints.Length - 1; index > 0; index -= 1) trailPoints[index] = trailPoints[index - 1];
             trailPoints[0] = bird.position + new Vector3(-.66f, .02f, .1f);
+            for (var index = 1; index < trailPoints.Length; index += 1)
+            {
+                var follow = 1f - Mathf.Exp(-deltaTime * Mathf.Lerp(19f, 8f, index / (float)(trailPoints.Length - 1)));
+                trailPoints[index] = Vector3.Lerp(trailPoints[index], trailPoints[index - 1], follow);
+            }
             trailGlow.positionCount = trailPoints.Length;
             trailCore.positionCount = trailPoints.Length;
             trailGlow.SetPositions(trailPoints);
@@ -1309,6 +1340,7 @@ namespace SkyPulse.Mobile
             birdY = 0f;
             birdVelocity = 0f;
             birdTilt = 0f;
+            birdTiltVelocity = 0f;
             wingTimer = 1f;
             slowFieldTimer = 0f;
             shieldFlashTimer = 0f;
@@ -1321,6 +1353,8 @@ namespace SkyPulse.Mobile
             gatesSinceStarheart = 0;
             trailGlow.positionCount = 0;
             trailCore.positionCount = 0;
+            var launchTrailPoint = new Vector3(BirdX, birdY, .1f);
+            for (var index = 0; index < trailPoints.Length; index += 1) trailPoints[index] = launchTrailPoint;
             spawnX = GetWorldWidth() * .5f + 3.2f;
             foreach (var pickup in powerUpPool)
             {
@@ -1355,6 +1389,7 @@ namespace SkyPulse.Mobile
             birdY = .15f;
             birdVelocity = 0f;
             birdTilt = 0f;
+            birdTiltVelocity = 0f;
             bird.position = new Vector3(BirdX, birdY, 0f);
             bird.gameObject.SetActive(false);
             trailGlow.positionCount = 0;
@@ -1441,11 +1476,26 @@ namespace SkyPulse.Mobile
                 art.color = Color.Lerp(Color.white, style.Accent, style.Id == "ion" ? 0f : .34f);
             }
 
+            // A restrained illuminated seam gives every pipe theme a readable edge at
+            // speed. It sits just inside the obstacle, so the opening remains clean.
+            var insideOffset = topPipe ? .055f : -.055f;
+            surface.Energy.enabled = true;
+            surface.Energy.sortingOrder = 7;
+            var seamColor = style.Energy;
+            seamColor.a = .64f;
+            surface.Energy.color = seamColor;
+            surface.Energy.transform.localPosition = new Vector3(0f, capY + insideOffset, 0f);
+            surface.Energy.transform.localScale = new Vector3(PipeWidth * .70f, .035f, 1f);
+
+            surface.Highlight.enabled = true;
+            surface.Highlight.sortingOrder = 8;
+            surface.Highlight.color = new Color(1f, 1f, 1f, .16f);
+            surface.Highlight.transform.localPosition = new Vector3(0f, capY + insideOffset * .45f, 0f);
+            surface.Highlight.transform.localScale = new Vector3(PipeWidth * .62f, .011f, 1f);
+
             surface.Outer.enabled = false;
             surface.Panel.enabled = false;
             surface.Shade.enabled = false;
-            surface.Highlight.enabled = false;
-            surface.Energy.enabled = false;
             surface.CapOuter.enabled = false;
             surface.CapAccent.enabled = false;
             surface.CapPanel.enabled = false;
@@ -1459,7 +1509,7 @@ namespace SkyPulse.Mobile
 
         private void Flap()
         {
-            birdVelocity = ActiveFlapVelocity();
+            birdVelocity = Mathf.Max(ActiveFlapVelocity(), birdVelocity * .18f);
             wingTimer = 0f;
             Play(flapSound);
         }
@@ -1866,21 +1916,25 @@ namespace SkyPulse.Mobile
         private void UpdateBirdWingMotion()
         {
             if (birdRenderer == null || birdFlapRenderer == null) return;
-            // Cross-fading the two original SkyPulse wing poses is deliberately smoother
-            // than snapping sprites on a timer. The idle body stays readable throughout.
-            var flapStrength = Mathf.Clamp01(1f - wingTimer / .23f);
-            flapStrength = flapStrength * flapStrength * (3f - 2f * flapStrength);
+            // A tap gives the bird a quick body compression, then a soft wing wave and
+            // glide recovery. The visual timing is separate from collision physics, so
+            // the controls stay instant while the bird feels alive.
+            var flapProgress = Mathf.Clamp01(wingTimer / .36f);
+            var flapKick = 1f - flapProgress * flapProgress * (3f - 2f * flapProgress);
+            var wingWave = Mathf.Sin(flapProgress * Mathf.PI);
             var flapColour = Color.white;
-            flapColour.a = flapStrength * .84f;
+            flapColour.a = (.32f + wingWave * .62f) * flapKick;
             birdFlapRenderer.color = flapColour;
-            birdRenderer.color = new Color(1f, 1f, 1f, 1f - flapStrength * .16f);
-            var breathing = 1f + Mathf.Sin(ambientTime * 5.2f) * .012f + flapStrength * .025f;
-            var glideStretch = Mathf.Clamp(birdVelocity / FlapVelocity, -1f, 1f) * .028f;
-            birdArt.localScale = Vector3.Scale(idleBirdBaseScale, new Vector3(breathing + glideStretch, breathing - glideStretch * .7f, 1f));
-            birdFlapArt.localScale = Vector3.Scale(flapBirdBaseScale, new Vector3(1f + flapStrength * .038f, 1f - flapStrength * .022f, 1f));
-            birdArt.localPosition = new Vector3(-flapStrength * .035f, Mathf.Sin(ambientTime * 7f) * .012f, 0f);
-            birdFlapArt.localPosition = new Vector3(flapStrength * .02f, flapStrength * .045f, 0f);
-            birdFlapArt.localRotation = Quaternion.Euler(0f, 0f, -flapStrength * 4f);
+            birdRenderer.color = new Color(1f, 1f, 1f, 1f - wingWave * .10f);
+            var breathing = 1f + Mathf.Sin(ambientTime * 5.2f) * .010f;
+            var glide = Mathf.Clamp(birdVelocity / Mathf.Abs(ActiveMaxFallVelocity()), -1f, 1f);
+            var liftSquash = flapKick * .065f;
+            var diveStretch = Mathf.Clamp01(-glide) * .024f;
+            birdArt.localScale = Vector3.Scale(idleBirdBaseScale, new Vector3(breathing + liftSquash + diveStretch, breathing - liftSquash - diveStretch * .55f, 1f));
+            birdFlapArt.localScale = Vector3.Scale(flapBirdBaseScale, new Vector3(1f + wingWave * .075f, 1f - wingWave * .050f, 1f));
+            birdArt.localPosition = new Vector3(-flapKick * .052f, Mathf.Sin(ambientTime * 7f) * .009f, 0f);
+            birdFlapArt.localPosition = new Vector3(flapKick * .032f, .025f + wingWave * .052f, 0f);
+            birdFlapArt.localRotation = Quaternion.Euler(0f, 0f, -flapKick * 5.5f + wingWave * 3f);
             UpdateBirdPowerUpVisuals();
         }
 
@@ -2246,6 +2300,7 @@ namespace SkyPulse.Mobile
             text.raycastTarget = false;
             var button = shell.gameObject.AddComponent<Button>();
             button.targetGraphic = shellImage;
+            shell.gameObject.AddComponent<SkyPulseButtonFeedback>();
             var colors = button.colors;
             colors.normalColor = Color.white;
             colors.highlightedColor = new Color(1f, 1f, 1f, .94f);
