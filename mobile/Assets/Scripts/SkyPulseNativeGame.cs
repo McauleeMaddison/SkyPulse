@@ -323,8 +323,14 @@ namespace SkyPulse.Mobile
         private Text resultScoreText;
         private Text resultBestText;
         private Text resultNewBestText;
+        private Text menuTitleText;
         private Image menuBirdImage;
+        private Image menuBirdFlapImage;
+        private Image menuBirdGlowImage;
+        private Image menuPortalImage;
         private RectTransform menuBirdTransform;
+        private RectTransform menuHeroTransform;
+        private RectTransform menuFlyButtonTransform;
         private RectTransform customizeContent;
         private Text customizeTitle;
         private Text purchaseTitleText;
@@ -350,6 +356,7 @@ namespace SkyPulse.Mobile
         private float birdTilt;
         private float wingTimer;
         private float menuWingTimer;
+        private float menuPresentationTime;
         private float spawnX;
         private float scoreBurstTimer;
         private float ambientTime;
@@ -627,8 +634,9 @@ namespace SkyPulse.Mobile
 
         private void CreateInterface()
         {
-            uiFont = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            uiFont = Font.CreateDynamicFontFromOSFont("Avenir Next", 16);
             if (uiFont == null) uiFont = Font.CreateDynamicFontFromOSFont("Arial", 16);
+            if (uiFont == null) uiFont = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
 
             uiRoot = new GameObject("SkyPulse interface", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
             DontDestroyOnLoad(uiRoot);
@@ -639,7 +647,9 @@ namespace SkyPulse.Mobile
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1080f, 1920f);
             scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
-            scaler.matchWidthOrHeight = .65f;
+            // This is a portrait game. Matching height keeps the whole menu visible
+            // in Unity's Free Aspect preview as well as on a phone.
+            scaler.matchWidthOrHeight = 1f;
 
             if (EventSystem.current == null)
             {
@@ -659,33 +669,58 @@ namespace SkyPulse.Mobile
         private GameObject CreateHomeScreen(Transform parent)
         {
             var root = CreateScreen(parent, "Home screen");
+            CreateFullPanel(root.transform, "Home contrast veil", new Color(.005f, .012f, .05f, .30f));
 
-            var difficulty = CreateNeonButton(root.transform, "EASY", new Vector2(-402f, 799f), new Vector2(184f, 70f), Hex("#8f64ff"));
+            var difficulty = CreateNeonButton(root.transform, "EASY", new Vector2(-365f, 790f), new Vector2(202f, 68f), Hex("#8f64ff"));
             difficultyText = difficulty.GetComponentInChildren<Text>();
             difficulty.onClick.AddListener(OpenWorldCollection);
-            menuCrystalText = CreateChip(root.transform, new Vector2(365f, 799f), "✦  0", Hex("#45eaff"));
+            menuCrystalText = CreateChip(root.transform, new Vector2(355f, 790f), "✦  0", Hex("#45eaff"));
 
-            CreateText(root.transform, "SKYPULSE", new Vector2(0f, 442f), new Vector2(880f, 130f), 82, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            CreateText(root.transform, "FLY THROUGH THE GLOW", new Vector2(0f, 348f), new Vector2(700f, 44f), 24, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            menuTitleText = CreateText(root.transform, "SKYPULSE", new Vector2(0f, 574f), new Vector2(900f, 112f), 76, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            AddOutline(menuTitleText.gameObject, new Color(.22f, .86f, 1f, .62f), 1.25f);
+            CreateText(root.transform, "THE SKY IS YOURS", new Vector2(0f, 497f), new Vector2(700f, 36f), 21, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            var titleRule = CreateImage(root.transform, "Title energy rule", new Vector2(0f, 462f), new Vector2(220f, 3f), new Color(.25f, .91f, 1f, .82f));
+            titleRule.sprite = softCircleSprite;
+            titleRule.raycastTarget = false;
 
-            menuBirdImage = CreateImage(root.transform, "Menu bird", new Vector2(0f, 56f), new Vector2(410f, 226f), Color.white);
+            var heroObject = new GameObject("Animated menu hero", typeof(RectTransform));
+            heroObject.transform.SetParent(root.transform, false);
+            menuHeroTransform = heroObject.GetComponent<RectTransform>();
+            menuHeroTransform.anchorMin = new Vector2(.5f, .5f);
+            menuHeroTransform.anchorMax = new Vector2(.5f, .5f);
+            menuHeroTransform.pivot = new Vector2(.5f, .5f);
+            menuHeroTransform.anchoredPosition = new Vector2(0f, 146f);
+            menuHeroTransform.sizeDelta = new Vector2(680f, 510f);
+
+            menuBirdGlowImage = CreateImage(menuHeroTransform, "Menu bird bloom", Vector2.zero, new Vector2(330f, 250f), new Color(.20f, .84f, 1f, .17f));
+            menuBirdGlowImage.sprite = softCircleSprite;
+            menuBirdGlowImage.raycastTarget = false;
+            menuPortalImage = CreateImage(menuHeroTransform, "Menu flight portal", Vector2.zero, new Vector2(590f, 590f), Color.white);
+            menuPortalImage.sprite = LoadSprite("SkyPulse/art/ui/menu-flight-portal-v1");
+            menuPortalImage.preserveAspect = true;
+            menuPortalImage.raycastTarget = false;
+            menuBirdImage = CreateImage(menuHeroTransform, "Menu bird", Vector2.zero, new Vector2(432f, 240f), Color.white);
             menuBirdImage.preserveAspect = true;
             menuBirdImage.raycastTarget = false;
             menuBirdTransform = menuBirdImage.rectTransform;
+            menuBirdFlapImage = CreateImage(menuHeroTransform, "Menu bird wing motion", Vector2.zero, new Vector2(432f, 240f), new Color(1f, 1f, 1f, 0f));
+            menuBirdFlapImage.preserveAspect = true;
+            menuBirdFlapImage.raycastTarget = false;
 
-            menuBestText = CreateText(root.transform, "BEST · 0", new Vector2(0f, -214f), new Vector2(480f, 44f), 25, new Color(.93f, .95f, 1f, .86f), TextAnchor.MiddleCenter, FontStyle.Bold);
-            var fly = CreateNeonButton(root.transform, "FLY", new Vector2(0f, -335f), new Vector2(576f, 104f), Hex("#f05bc6"));
+            menuBestText = CreateChip(root.transform, new Vector2(0f, -114f), "BEST · 0", Hex("#edf7ff"));
+            var fly = CreateNeonButton(root.transform, "FLY", new Vector2(0f, -248f), new Vector2(592f, 108f), Hex("#f05bc6"));
             fly.onClick.AddListener(StartFlight);
-            CreateText(root.transform, "TAP ANYWHERE TO START", new Vector2(0f, -414f), new Vector2(650f, 34f), 17, new Color(.91f, .92f, 1f, .64f), TextAnchor.MiddleCenter, FontStyle.Bold);
+            menuFlyButtonTransform = fly.GetComponent<RectTransform>();
+            CreateText(root.transform, "TAP ANYWHERE TO TAKE FLIGHT", new Vector2(0f, -326f), new Vector2(650f, 34f), 16, new Color(.91f, .92f, 1f, .68f), TextAnchor.MiddleCenter, FontStyle.Bold);
 
-            var customize = CreateNeonButton(root.transform, "CUSTOMIZE", new Vector2(0f, -524f), new Vector2(576f, 88f), Hex("#45eaff"));
+            var customize = CreateNeonButton(root.transform, "CUSTOMIZE", new Vector2(0f, -421f), new Vector2(592f, 82f), Hex("#45eaff"));
             customize.onClick.AddListener(OpenCustomize);
-            var daily = CreateText(root.transform, "DAILY FLIGHT", new Vector2(0f, -625f), new Vector2(520f, 40f), 21, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            var daily = CreateText(root.transform, "DAILY FLIGHT  ·  TAKE THE LONG WAY", new Vector2(0f, -518f), new Vector2(650f, 40f), 18, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             daily.raycastTarget = true;
             var dailyButton = daily.gameObject.AddComponent<Button>();
             dailyButton.targetGraphic = daily;
             dailyButton.onClick.AddListener(StartDailyFlight);
-            menuEquippedText = CreateText(root.transform, "NOVA EQUIPPED", new Vector2(0f, -700f), new Vector2(650f, 36f), 17, Hex("#8f64ff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            menuEquippedText = CreateText(root.transform, "NOVA  ·  SIGNATURE GLIDER", new Vector2(0f, -595f), new Vector2(650f, 36f), 16, Hex("#8f64ff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             return root;
         }
 
@@ -855,15 +890,52 @@ namespace SkyPulse.Mobile
         private void UpdateMenuBird(float deltaTime)
         {
             if (state != FlightState.Menu || menuBirdImage == null) return;
+            menuPresentationTime += deltaTime;
             menuWingTimer += deltaTime;
             if (menuWingTimer > .72f) menuWingTimer = 0f;
-            // Keeping one clean silhouette here avoids the pop caused by swapping
-            // differently-sized artwork frames in the menu.
+
+            // The menu uses the same paired bird poses as flight, but cross-fades them
+            // with a gentle hover so the hero feels like a living character, not a card.
+            var flapStrength = Mathf.SmoothStep(0f, 1f, Mathf.PingPong(menuWingTimer * 2.78f, 1f));
             menuBirdImage.sprite = LoadSprite(equippedSkin.ArtPath);
-            var floatY = 47f + Mathf.Sin(ambientTime * 1.7f) * 12f;
-            menuBirdTransform.anchoredPosition = new Vector2(Mathf.Sin(ambientTime * .85f) * 5f, floatY);
-            menuBirdTransform.localRotation = Quaternion.Euler(0f, 0f, Mathf.Sin(ambientTime * 1.7f) * 2f);
+            menuBirdImage.color = new Color(1f, 1f, 1f, 1f - flapStrength * .13f);
+            if (menuBirdFlapImage != null)
+            {
+                menuBirdFlapImage.sprite = LoadSprite(equippedSkin.FlapPath);
+                menuBirdFlapImage.color = new Color(1f, 1f, 1f, flapStrength * .78f);
+                menuBirdFlapImage.rectTransform.anchoredPosition = new Vector2(flapStrength * 5f, flapStrength * 7f);
+                menuBirdFlapImage.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -flapStrength * 4.5f);
+            }
+
+            var hover = Mathf.Sin(ambientTime * 1.7f);
+            var intro = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(menuPresentationTime / .48f));
+            if (menuHeroTransform != null)
+            {
+                menuHeroTransform.anchoredPosition = new Vector2(Mathf.Sin(ambientTime * .82f) * 8f, 146f + hover * 13f);
+                menuHeroTransform.localScale = Vector3.one * Mathf.Lerp(.92f, 1f + Mathf.Sin(ambientTime * 3.4f) * .018f, intro);
+            }
+            menuBirdTransform.localRotation = Quaternion.Euler(0f, 0f, hover * 2.2f - flapStrength * 1.6f);
             menuBirdTransform.localScale = Vector3.one * (1f + Mathf.Sin(ambientTime * 3.4f) * .018f);
+            if (menuBirdGlowImage != null)
+            {
+                var glow = equippedSkin.Accent;
+                glow.a = .15f + Mathf.Sin(ambientTime * 3.1f) * .045f;
+                menuBirdGlowImage.color = glow;
+                menuBirdGlowImage.rectTransform.localScale = Vector3.one * (1f + Mathf.Sin(ambientTime * 2.2f) * .07f);
+            }
+            if (menuPortalImage != null)
+            {
+                menuPortalImage.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -ambientTime * 7.5f);
+                menuPortalImage.rectTransform.localScale = Vector3.one * (1f + Mathf.Sin(ambientTime * 1.6f) * .025f);
+            }
+            if (menuTitleText != null)
+            {
+                menuTitleText.rectTransform.localScale = Vector3.one * (1f + Mathf.Sin(ambientTime * 2.1f) * .012f);
+            }
+            if (menuFlyButtonTransform != null)
+            {
+                menuFlyButtonTransform.localScale = Vector3.one * (1f + Mathf.Sin(ambientTime * 2.8f) * .018f);
+            }
         }
 
         private void UpdateScoreBurst(float deltaTime)
@@ -1322,6 +1394,8 @@ namespace SkyPulse.Mobile
         {
             ClosePurchaseModal();
             state = FlightState.Menu;
+            menuPresentationTime = 0f;
+            menuWingTimer = 0f;
             birdY = .15f;
             birdVelocity = 0f;
             birdTilt = 0f;
@@ -1768,9 +1842,10 @@ namespace SkyPulse.Mobile
             floorLip.color = Darken(equippedWorld.Floor, .65f);
             SetBirdArtwork();
             if (menuBirdImage != null) menuBirdImage.sprite = LoadSprite(equippedSkin.ArtPath);
+            if (menuBirdFlapImage != null) menuBirdFlapImage.sprite = LoadSprite(equippedSkin.FlapPath);
             UpdateCrystalLabels();
             if (menuBestText != null) menuBestText.text = $"BEST · {best}";
-            if (menuEquippedText != null) menuEquippedText.text = $"{equippedSkin.Name} EQUIPPED";
+            if (menuEquippedText != null) menuEquippedText.text = $"{equippedSkin.Name}  ·  SIGNATURE GLIDER";
             UpdateDifficultyCopy();
             ApplyTrailColors();
             foreach (var pair in pipePool)
@@ -1897,7 +1972,7 @@ namespace SkyPulse.Mobile
             if (state == FlightState.Menu)
             {
                 menuBestText.text = $"BEST · {best}";
-                menuEquippedText.text = $"{equippedSkin.Name} EQUIPPED";
+                menuEquippedText.text = $"{equippedSkin.Name}  ·  SIGNATURE GLIDER";
             }
         }
 
@@ -2144,6 +2219,9 @@ namespace SkyPulse.Mobile
             text.horizontalOverflow = HorizontalWrapMode.Overflow;
             text.verticalOverflow = VerticalWrapMode.Overflow;
             text.raycastTarget = false;
+            var shadow = objectRoot.AddComponent<Shadow>();
+            shadow.effectColor = new Color(.002f, .004f, .025f, .86f);
+            shadow.effectDistance = new Vector2(1.5f, -1.5f);
             return text;
         }
 
@@ -2156,12 +2234,17 @@ namespace SkyPulse.Mobile
 
         private Button CreateNeonButton(Transform parent, string label, Vector2 position, Vector2 size, Color accent)
         {
-            var shell = CreatePanel(parent, "Button · " + label, position, size, accent);
+            var shell = CreatePanel(parent, "Button · " + label, position, size, new Color(.018f, .025f, .095f, .95f));
             var shellImage = shell.GetComponent<Image>();
-            var inner = CreatePanel(shell, "Button inner", Vector2.zero, size - new Vector2(8f, 8f), new Color(.05f, .02f, .15f, .94f));
+            AddOutline(shell.gameObject, new Color(accent.r, accent.g, accent.b, .86f), 1.5f);
+            var fill = Color.Lerp(new Color(.022f, .028f, .105f, .94f), accent, label == "FLY" ? .24f : .12f);
+            fill.a = .94f;
+            var inner = CreatePanel(shell, "Button inner", Vector2.zero, size - new Vector2(10f, 10f), fill);
             inner.GetComponent<Image>().raycastTarget = false;
-            var sheen = CreatePanel(shell, "Button sheen", new Vector2(0f, size.y * .30f), new Vector2(size.x - 46f, 2f), new Color(1f, 1f, 1f, .20f));
+            var sheen = CreatePanel(shell, "Button sheen", new Vector2(0f, size.y * .28f), new Vector2(size.x - 44f, 1.5f), new Color(1f, 1f, 1f, .19f));
             sheen.GetComponent<Image>().raycastTarget = false;
+            var energy = CreatePanel(shell, "Button energy line", new Vector2(0f, -size.y * .29f), new Vector2(size.x - 62f, 2f), new Color(accent.r, accent.g, accent.b, .72f));
+            energy.GetComponent<Image>().raycastTarget = false;
             var text = CreateText(shell, label, Vector2.zero, size - new Vector2(22f, 14f), label == "FLY" ? 34 : 22, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             text.raycastTarget = false;
             var button = shell.gameObject.AddComponent<Button>();
