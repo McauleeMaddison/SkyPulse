@@ -204,7 +204,7 @@ namespace SkyPulse.Mobile
 
         private static readonly WorldTheme[] Worlds =
         {
-            new WorldTheme("neon_city", "NEON CITY", "SkyPulse/backgrounds/neon-city-v2", "#45eaff", "#0a0522", "EASY", .88f, 5.10f),
+            new WorldTheme("neon_city", "NEON CITY", "SkyPulse/backgrounds/neon-veil-v3", "#45eaff", "#0a0522", "EASY", .88f, 5.10f),
             new WorldTheme("aurora_rise", "AURORA RISE", "SkyPulse/backgrounds/themes/polar-glow", "#61f5b3", "#05251e", "EASY", .94f, 4.92f),
             new WorldTheme("solar_drift", "SOLAR DRIFT", "SkyPulse/backgrounds/themes/amber-skies", "#ffc34d", "#2b0d10", "CLASSIC", 1f, 4.46f),
             new WorldTheme("midnight_tide", "MIDNIGHT TIDE", "SkyPulse/backgrounds/themes/cobalt-storm", "#45eaff", "#07113d", "CLASSIC", 1.04f, 4.30f),
@@ -283,7 +283,6 @@ namespace SkyPulse.Mobile
         private Sprite roundedPanelSprite;
         private SpriteRenderer backgroundRenderer;
         private SpriteRenderer backgroundVeil;
-        private LineRenderer cometTrail;
         private SpriteRenderer floorBase;
         private SpriteRenderer floorSurface;
         private SpriteRenderer floorLip;
@@ -421,7 +420,7 @@ namespace SkyPulse.Mobile
             ringSprite = CreateRadialSprite("Neon ring", 96, .31f, .5f);
             roundedPanelSprite = CreateRoundedRectSprite("Premium rounded panel", 128, 28);
 
-            backgroundRenderer = CreateRenderer("Cinematic world", LoadSprite("SkyPulse/backgrounds/neon-city-v2") ?? midnightSprite, Color.white, -40);
+            backgroundRenderer = CreateRenderer("Cinematic world", LoadSprite("SkyPulse/backgrounds/neon-veil-v3") ?? midnightSprite, Color.white, -40);
             backgroundRenderer.transform.position = new Vector3(0f, .12f, 0f);
             FitBackgroundToCamera(backgroundRenderer, .5f);
 
@@ -449,12 +448,14 @@ namespace SkyPulse.Mobile
         private void CreateAmbientStars()
         {
             var random = new System.Random(742);
-            for (var index = 0; index < 22; index += 1)
+            // The backdrop already carries the detail. These are only a whisper of
+            // parallax depth, never the large square particles of the old treatment.
+            for (var index = 0; index < 8; index += 1)
             {
-                var star = CreateRenderer($"Ambient light {index + 1}", whiteSprite, new Color(.35f, .95f, 1f, .16f), -33);
+                var star = CreateRenderer($"Ambient light {index + 1}", softCircleSprite, new Color(.60f, .84f, 1f, .14f), -33);
                 var x = Mathf.Lerp(-GetWorldWidth() * .48f, GetWorldWidth() * .48f, (float)random.NextDouble());
                 var y = Mathf.Lerp(-5.8f, 8.3f, (float)random.NextDouble());
-                var size = Mathf.Lerp(.018f, .055f, (float)random.NextDouble());
+                var size = Mathf.Lerp(.016f, .034f, (float)random.NextDouble());
                 star.transform.position = new Vector3(x, y, 0f);
                 star.transform.localScale = Vector3.one * size;
                 ambientStars.Add(new AmbientStar
@@ -463,22 +464,10 @@ namespace SkyPulse.Mobile
                     X = x,
                     Y = y,
                     Phase = (float)random.NextDouble() * Mathf.PI * 2f,
-                    Speed = Mathf.Lerp(.45f, 1.15f, (float)random.NextDouble()),
+                    Speed = Mathf.Lerp(.16f, .32f, (float)random.NextDouble()),
                     BaseSize = size,
                 });
             }
-
-            var comet = new GameObject("Distant comet");
-            comet.transform.SetParent(transform, false);
-            cometTrail = comet.AddComponent<LineRenderer>();
-            cometTrail.useWorldSpace = true;
-            cometTrail.positionCount = 2;
-            cometTrail.startWidth = .028f;
-            cometTrail.endWidth = .007f;
-            cometTrail.startColor = new Color(.83f, .95f, 1f, .72f);
-            cometTrail.endColor = new Color(.45f, .30f, 1f, 0f);
-            cometTrail.sortingOrder = -32;
-            ConfigureLineMaterial(cometTrail);
         }
 
         private void CreateFloor()
@@ -488,48 +477,21 @@ namespace SkyPulse.Mobile
             floorBase.transform.position = new Vector3(0f, GroundY - 1.1f, 0f);
             floorBase.transform.localScale = new Vector3(width, 2.24f, 1f);
 
-            floorSurface = CreateRenderer("Floor material", whiteSprite, Hex("#130a32"), -8);
+            floorSurface = CreateRenderer("Floor material", whiteSprite, new Color(.03f, .05f, .15f, .62f), -8);
             floorSurface.transform.position = new Vector3(0f, GroundY - 1.04f, 0f);
             floorSurface.transform.localScale = new Vector3(width, 1.90f, 1f);
 
-            floorLip = CreateRenderer("Floor solid edge", whiteSprite, Hex("#271252"), -7);
+            floorLip = CreateRenderer("Floor solid edge", whiteSprite, new Color(.05f, .10f, .25f, .85f), -7);
             floorLip.transform.position = new Vector3(0f, GroundY - .08f, 0f);
-            floorLip.transform.localScale = new Vector3(width, .28f, 1f);
+            floorLip.transform.localScale = new Vector3(width, .12f, 1f);
 
-            floorGlow = CreateRenderer("Floor energy rail", whiteSprite, Hex("#45eaff"), -6);
+            floorGlow = CreateRenderer("Floor energy rail", whiteSprite, new Color(.27f, .86f, 1f, .38f), -6);
             floorGlow.transform.position = new Vector3(0f, GroundY + .035f, 0f);
-            floorGlow.transform.localScale = new Vector3(width, .072f, 1f);
+            floorGlow.transform.localScale = new Vector3(width, .026f, 1f);
 
-            var floorHighlight = CreateRenderer("Floor edge highlight", whiteSprite, new Color(1f, 1f, 1f, .42f), -5);
+            var floorHighlight = CreateRenderer("Floor edge highlight", whiteSprite, new Color(.78f, .94f, 1f, .18f), -5);
             floorHighlight.transform.position = new Vector3(0f, GroundY + .105f, 0f);
-            floorHighlight.transform.localScale = new Vector3(width, .018f, 1f);
-
-            CreateFloorLane("Left flight lane", new Vector3(-.72f, GroundY - .12f), new Vector3(-4.6f, -9f));
-            CreateFloorLane("Centre flight lane", new Vector3(0f, GroundY - .12f), new Vector3(0f, -9f));
-            CreateFloorLane("Right flight lane", new Vector3(.72f, GroundY - .12f), new Vector3(4.6f, -9f));
-            for (var index = 0; index < 4; index += 1)
-            {
-                var rail = CreateRenderer($"Floor depth rail {index + 1}", whiteSprite, new Color(.28f, .9f, 1f, .16f), -7);
-                rail.transform.position = new Vector3(0f, GroundY - .38f - index * .43f, 0f);
-                rail.transform.localScale = new Vector3(width, .028f, 1f);
-            }
-        }
-
-        private void CreateFloorLane(string name, Vector3 from, Vector3 to)
-        {
-            var lane = new GameObject(name);
-            lane.transform.SetParent(transform, false);
-            var renderer = lane.AddComponent<LineRenderer>();
-            renderer.useWorldSpace = true;
-            renderer.positionCount = 2;
-            renderer.SetPosition(0, from);
-            renderer.SetPosition(1, to);
-            renderer.startWidth = .018f;
-            renderer.endWidth = .038f;
-            renderer.startColor = new Color(.28f, .92f, 1f, .16f);
-            renderer.endColor = new Color(.28f, .92f, 1f, .42f);
-            renderer.sortingOrder = -7;
-            ConfigureLineMaterial(renderer);
+            floorHighlight.transform.localScale = new Vector3(width, .010f, 1f);
         }
 
         private void CreateBird()
@@ -870,22 +832,14 @@ namespace SkyPulse.Mobile
         {
             if (backgroundRenderer != null)
             {
-                backgroundRenderer.transform.position = new Vector3(Mathf.Sin(ambientTime * .16f) * .045f, .12f + Mathf.Sin(ambientTime * .23f) * .035f, 0f);
+                backgroundRenderer.transform.position = new Vector3(Mathf.Sin(ambientTime * .08f) * .012f, .12f + Mathf.Sin(ambientTime * .11f) * .008f, 0f);
             }
             foreach (var star in ambientStars)
             {
-                var y = star.Y + Mathf.Sin(ambientTime * star.Speed + star.Phase) * .07f;
+                var y = star.Y + Mathf.Sin(ambientTime * star.Speed + star.Phase) * .025f;
                 star.Transform.position = new Vector3(star.X, y, 0f);
-                var scale = .86f + Mathf.Sin(ambientTime * star.Speed * 1.6f + star.Phase) * .22f;
+                var scale = .96f + Mathf.Sin(ambientTime * star.Speed * 1.6f + star.Phase) * .04f;
                 star.Transform.localScale = Vector3.one * Mathf.Max(.012f, star.BaseSize * scale);
-            }
-            if (cometTrail != null)
-            {
-                var range = GetWorldWidth() + 3.4f;
-                var x = Mathf.Repeat(ambientTime * 1.12f, range) - range * .5f;
-                var y = 4.7f + Mathf.Sin(ambientTime * .42f) * .5f;
-                cometTrail.SetPosition(0, new Vector3(x, y, 0f));
-                cometTrail.SetPosition(1, new Vector3(x - .85f, y - .27f, 0f));
             }
         }
 
@@ -899,11 +853,9 @@ namespace SkyPulse.Mobile
             // The menu uses the same paired bird poses as flight, but cross-fades them
             // with a gentle hover so the hero feels like a living character, not a card.
             var flapStrength = Mathf.SmoothStep(0f, 1f, Mathf.PingPong(menuWingTimer * 2.78f, 1f));
-            menuBirdImage.sprite = LoadSprite(equippedSkin.ArtPath);
             menuBirdImage.color = new Color(1f, 1f, 1f, 1f - flapStrength * .13f);
             if (menuBirdFlapImage != null)
             {
-                menuBirdFlapImage.sprite = LoadSprite(equippedSkin.FlapPath);
                 menuBirdFlapImage.color = new Color(1f, 1f, 1f, flapStrength * .78f);
                 menuBirdFlapImage.rectTransform.anchoredPosition = new Vector2(flapStrength * 5f, flapStrength * 7f);
                 menuBirdFlapImage.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -flapStrength * 4.5f);
@@ -1839,9 +1791,15 @@ namespace SkyPulse.Mobile
             backgroundRenderer.sprite = LoadSprite(equippedWorld.BackgroundPath) ?? midnightSprite;
             FitBackgroundToCamera(backgroundRenderer, .5f);
             backgroundVeil.color = new Color(equippedWorld.Accent.r, equippedWorld.Accent.g, equippedWorld.Accent.b, .11f);
-            floorSurface.color = equippedWorld.Floor;
-            floorGlow.color = equippedWorld.Accent;
-            floorLip.color = Darken(equippedWorld.Floor, .65f);
+            var floorColour = equippedWorld.Floor;
+            floorColour.a = .54f;
+            floorSurface.color = floorColour;
+            var railColour = equippedWorld.Accent;
+            railColour.a = .38f;
+            floorGlow.color = railColour;
+            var lipColour = Darken(equippedWorld.Floor, .65f);
+            lipColour.a = .78f;
+            floorLip.color = lipColour;
             SetBirdArtwork();
             if (menuBirdImage != null) menuBirdImage.sprite = LoadSprite(equippedSkin.ArtPath);
             if (menuBirdFlapImage != null) menuBirdFlapImage.sprite = LoadSprite(equippedSkin.FlapPath);
