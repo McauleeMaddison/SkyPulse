@@ -222,21 +222,21 @@ namespace SkyPulse.Mobile
         private static readonly Skin[] Skins =
         {
             new Skin("nova", "NOVA", "SkyPulse/characters/nova", "SkyPulse/characters/nova-flap", "#8f64ff", "#45eaff", 0, "SkyPulse/characters/animated/nova-rise-v1"),
-            new Skin("lumen", "LUMEN", "SkyPulse/characters/lumen", "SkyPulse/characters/lumen-flap", "#45eaff", "#8f64ff", 24),
-            new Skin("ember", "EMBER", "SkyPulse/characters/ember", "SkyPulse/characters/ember-flap", "#f05bc6", "#ffc34d", 32),
-            new Skin("sol", "SOL", "SkyPulse/characters/sol", "SkyPulse/characters/sol-flap", "#ffc34d", "#45eaff", 40),
-            new Skin("aurora", "AURORA", "SkyPulse/characters/lumen", "SkyPulse/characters/lumen-flap", "#61f5b3", "#45eaff", 48),
-            new Skin("orchid", "ORCHID", "SkyPulse/characters/nova", "SkyPulse/characters/nova-flap", "#b17cff", "#f05bc6", 52),
-            new Skin("coral", "CORAL", "SkyPulse/characters/ember", "SkyPulse/characters/ember-flap", "#f082af", "#ffc34d", 56),
-            new Skin("glacier", "GLACIER", "SkyPulse/characters/sol", "SkyPulse/characters/sol-flap", "#edf7ff", "#45eaff", 60),
-            new Skin("prism", "PRISM", "SkyPulse/characters/generated/prism", "SkyPulse/characters/generated/prism-flap", "#45eaff", "#edf7ff", 68),
-            new Skin("verdant", "VERDANT", "SkyPulse/characters/generated/verdant", "SkyPulse/characters/generated/verdant-flap", "#61f5b3", "#45eaff", 72),
-            new Skin("cinder", "CINDER", "SkyPulse/characters/generated/cinder", "SkyPulse/characters/generated/cinder-flap", "#f05bc6", "#ffc34d", 76),
-            new Skin("tide", "TIDE", "SkyPulse/characters/generated/tide", "SkyPulse/characters/generated/tide-flap", "#45eaff", "#8f64ff", 80),
-            new Skin("wisp", "WISP", "SkyPulse/characters/generated/wisp", "SkyPulse/characters/generated/wisp-flap", "#edf7ff", "#45eaff", 88),
-            new Skin("bloom", "BLOOM", "SkyPulse/characters/generated/bloom", "SkyPulse/characters/generated/bloom-flap", "#f05bc6", "#b17cff", 92),
-            new Skin("emberwing", "EMBERWING", "SkyPulse/characters/generated/emberwing", "SkyPulse/characters/generated/emberwing-flap", "#ffc34d", "#f05bc6", 100),
-            new Skin("steel", "STEEL", "SkyPulse/characters/generated/steel", "SkyPulse/characters/generated/steel-flap", "#edf7ff", "#45eaff", 108),
+            new Skin("lumen", "LUMEN", "SkyPulse/characters/lumen", "SkyPulse/characters/lumen-flap", "#45eaff", "#8f64ff", 24, "SkyPulse/characters/animated/lumen-rise-v1"),
+            new Skin("ember", "EMBER", "SkyPulse/characters/ember", "SkyPulse/characters/ember-flap", "#f05bc6", "#ffc34d", 32, "SkyPulse/characters/animated/ember-rise-v1"),
+            new Skin("sol", "SOL", "SkyPulse/characters/sol", "SkyPulse/characters/sol-flap", "#ffc34d", "#45eaff", 40, "SkyPulse/characters/animated/sol-rise-v1"),
+            new Skin("aurora", "AURORA", "SkyPulse/characters/lumen", "SkyPulse/characters/lumen-flap", "#61f5b3", "#45eaff", 48, "SkyPulse/characters/animated/lumen-rise-v1"),
+            new Skin("orchid", "ORCHID", "SkyPulse/characters/nova", "SkyPulse/characters/nova-flap", "#b17cff", "#f05bc6", 52, "SkyPulse/characters/animated/nova-rise-v1"),
+            new Skin("coral", "CORAL", "SkyPulse/characters/ember", "SkyPulse/characters/ember-flap", "#f082af", "#ffc34d", 56, "SkyPulse/characters/animated/ember-rise-v1"),
+            new Skin("glacier", "GLACIER", "SkyPulse/characters/sol", "SkyPulse/characters/sol-flap", "#edf7ff", "#45eaff", 60, "SkyPulse/characters/animated/sol-rise-v1"),
+            new Skin("prism", "PRISM", "SkyPulse/characters/generated/prism", "SkyPulse/characters/generated/prism-flap", "#45eaff", "#edf7ff", 68, "SkyPulse/characters/animated/prism-rise-v1"),
+            new Skin("verdant", "VERDANT", "SkyPulse/characters/generated/verdant", "SkyPulse/characters/generated/verdant-flap", "#61f5b3", "#45eaff", 72, "SkyPulse/characters/animated/verdant-rise-v1"),
+            new Skin("cinder", "CINDER", "SkyPulse/characters/generated/cinder", "SkyPulse/characters/generated/cinder-flap", "#f05bc6", "#ffc34d", 76, "SkyPulse/characters/animated/cinder-rise-v1"),
+            new Skin("tide", "TIDE", "SkyPulse/characters/generated/tide", "SkyPulse/characters/generated/tide-flap", "#45eaff", "#8f64ff", 80, "SkyPulse/characters/animated/tide-rise-v1"),
+            new Skin("wisp", "WISP", "SkyPulse/characters/generated/wisp", "SkyPulse/characters/generated/wisp-flap", "#edf7ff", "#45eaff", 88, "SkyPulse/characters/animated/wisp-rise-v1"),
+            new Skin("bloom", "BLOOM", "SkyPulse/characters/generated/bloom", "SkyPulse/characters/generated/bloom-flap", "#f05bc6", "#b17cff", 92, "SkyPulse/characters/animated/bloom-rise-v1"),
+            new Skin("emberwing", "EMBERWING", "SkyPulse/characters/generated/emberwing", "SkyPulse/characters/generated/emberwing-flap", "#ffc34d", "#f05bc6", 100, "SkyPulse/characters/animated/cinder-rise-v1"),
+            new Skin("steel", "STEEL", "SkyPulse/characters/generated/steel", "SkyPulse/characters/generated/steel-flap", "#edf7ff", "#45eaff", 108, "SkyPulse/characters/animated/prism-rise-v1"),
         };
 
         private static readonly WorldTheme[] Worlds =
@@ -332,6 +332,8 @@ namespace SkyPulse.Mobile
         private SpriteRenderer birdRenderer;
         private SpriteRenderer birdFlapRenderer;
         private SpriteRenderer birdRiseRenderer;
+        private SpriteRenderer birdDepthRenderer;
+        private SpriteRenderer birdEyeGlintRenderer;
         private SpriteRenderer shieldAuraRenderer;
         private SpriteRenderer slowAuraRenderer;
         private SpriteRenderer effectAuraRenderer;
@@ -368,6 +370,8 @@ namespace SkyPulse.Mobile
         private Image menuBirdFlapImage;
         private Image menuBirdRiseImage;
         private Image menuBirdGlowImage;
+        private Image menuBirdDepthImage;
+        private Image menuBirdEyeGlintImage;
         private Image menuPortalImage;
         private RectTransform menuBirdTransform;
         private RectTransform menuHeroTransform;
@@ -549,6 +553,9 @@ namespace SkyPulse.Mobile
             var shieldAura = CreateRenderer("Pulse shield aura", ringSprite, new Color(.38f, 1f, .70f, 0f), 13, bird);
             shieldAura.transform.localScale = Vector3.one * 1.22f;
             shieldAuraRenderer = shieldAura;
+            var bodyDepth = CreateRenderer("Bird dimensional bloom", softCircleSprite, new Color(.35f, .85f, 1f, 0f), 12, bird);
+            bodyDepth.transform.localScale = new Vector3(1.52f, .62f, 1f);
+            birdDepthRenderer = bodyDepth;
             birdArt = new GameObject("Bird idle artwork").transform;
             birdArt.SetParent(bird, false);
             birdRenderer = birdArt.gameObject.AddComponent<SpriteRenderer>();
@@ -563,6 +570,9 @@ namespace SkyPulse.Mobile
             birdFlapRenderer = birdFlapArt.gameObject.AddComponent<SpriteRenderer>();
             birdFlapRenderer.sortingOrder = 15;
             birdFlapRenderer.color = new Color(1f, 1f, 1f, 0f);
+            var eyeGlint = CreateRenderer("Bird living eye glint", softCircleSprite, new Color(1f, 1f, 1f, 0f), 16, bird);
+            eyeGlint.transform.localScale = Vector3.one * .062f;
+            birdEyeGlintRenderer = eyeGlint;
         }
 
         private PowerUpPickup CreatePowerUp(int index)
@@ -709,6 +719,9 @@ namespace SkyPulse.Mobile
             menuBirdGlowImage = CreateImage(menuHeroTransform, "Menu bird bloom", Vector2.zero, new Vector2(430f, 285f), new Color(.20f, .84f, 1f, .15f));
             menuBirdGlowImage.sprite = softCircleSprite;
             menuBirdGlowImage.raycastTarget = false;
+            menuBirdDepthImage = CreateImage(menuHeroTransform, "Menu bird dimensional bloom", new Vector2(-18f, -8f), new Vector2(432f, 126f), new Color(.20f, .84f, 1f, .10f));
+            menuBirdDepthImage.sprite = softCircleSprite;
+            menuBirdDepthImage.raycastTarget = false;
             menuPortalImage = CreateImage(menuHeroTransform, "Menu flight portal", Vector2.zero, new Vector2(470f, 470f), new Color(1f, 1f, 1f, .54f));
             menuPortalImage.sprite = LoadSprite("SkyPulse/art/ui/menu-flight-portal-v1");
             menuPortalImage.preserveAspect = true;
@@ -724,6 +737,9 @@ namespace SkyPulse.Mobile
             menuBirdFlapImage = CreateImage(menuHeroTransform, "Menu bird wing motion", Vector2.zero, new Vector2(448f, 250f), new Color(1f, 1f, 1f, 0f));
             menuBirdFlapImage.preserveAspect = true;
             menuBirdFlapImage.raycastTarget = false;
+            menuBirdEyeGlintImage = CreateImage(menuHeroTransform, "Menu bird living eye glint", new Vector2(132f, 36f), new Vector2(24f, 24f), new Color(1f, 1f, 1f, .42f));
+            menuBirdEyeGlintImage.sprite = softCircleSprite;
+            menuBirdEyeGlintImage.raycastTarget = false;
 
             menuBestText = CreateChip(root.transform, new Vector2(0f, -114f), "BEST · 0", Hex("#8fa7c4"));
             var fly = CreateNeonButton(root.transform, "FLY", new Vector2(0f, -248f), new Vector2(592f, 108f), Hex("#f05bc6"));
@@ -925,14 +941,34 @@ namespace SkyPulse.Mobile
             }
 
             var hover = Mathf.Sin(ambientTime * 1.7f);
+            var flightTilt = hover * 2.2f - flapStrength * 1.6f;
+            var glideLean = Mathf.Sin(ambientTime * 1.16f) * .65f;
             var intro = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(menuPresentationTime / .48f));
             if (menuHeroTransform != null)
             {
                 menuHeroTransform.anchoredPosition = new Vector2(Mathf.Sin(ambientTime * .82f) * 8f, 132f + hover * 13f);
                 menuHeroTransform.localScale = Vector3.one * Mathf.Lerp(.92f, 1f + Mathf.Sin(ambientTime * 3.4f) * .018f, intro);
             }
-            menuBirdTransform.localRotation = Quaternion.Euler(0f, 0f, hover * 2.2f - flapStrength * 1.6f);
-            menuBirdTransform.localScale = Vector3.one * (1f + Mathf.Sin(ambientTime * 3.4f) * .018f);
+            menuBirdTransform.localRotation = Quaternion.Euler(0f, 0f, flightTilt + glideLean);
+            menuBirdTransform.localScale = new Vector3(1f + Mathf.Sin(ambientTime * 3.4f) * .018f + riseStrength * .035f, 1f - riseStrength * .018f, 1f);
+            if (menuBirdDepthImage != null)
+            {
+                var depth = equippedSkin.Accent;
+                depth.a = .075f + riseStrength * .10f + flapStrength * .045f;
+                menuBirdDepthImage.color = depth;
+                menuBirdDepthImage.rectTransform.anchoredPosition = new Vector2(-20f - riseStrength * 9f, -10f + hover * 2.2f);
+                menuBirdDepthImage.rectTransform.localScale = new Vector3(1f + riseStrength * .12f + flapStrength * .07f, 1f + riseStrength * .05f, 1f);
+            }
+            if (menuBirdEyeGlintImage != null)
+            {
+                var blinkCycle = Mathf.Repeat(ambientTime * .27f + .18f, 1f);
+                var eyelid = blinkCycle < .045f ? Mathf.SmoothStep(.12f, 1f, blinkCycle / .045f) : 1f;
+                var glint = Color.Lerp(Color.white, equippedSkin.Accent, .18f);
+                glint.a = (.34f + riseStrength * .12f) * eyelid;
+                menuBirdEyeGlintImage.color = glint;
+                menuBirdEyeGlintImage.rectTransform.anchoredPosition = new Vector2(132f + riseStrength * 5f, 36f + hover * 2.4f);
+                menuBirdEyeGlintImage.rectTransform.localScale = Vector3.one * (.92f + riseStrength * .18f);
+            }
             if (menuBirdGlowImage != null)
             {
                 var glow = equippedSkin.Accent;
@@ -1986,12 +2022,40 @@ namespace SkyPulse.Mobile
             var glide = Mathf.Clamp(birdVelocity / Mathf.Abs(ActiveMaxFallVelocity()), -1f, 1f);
             var liftSquash = (flapKick - riseWeight * .34f) * .065f;
             var diveStretch = Mathf.Clamp01(-glide) * .024f;
+            var bodyRoll = riseWeight * 3.2f - wingWave * 2.4f + glide * 1.8f;
+            var depthPulse = riseWeight * .075f + wingWave * .050f;
+            bird.localScale = new Vector3(1f + depthPulse + diveStretch * .30f, 1f - depthPulse * .62f + diveStretch * .12f, 1f);
             birdArt.localScale = Vector3.Scale(idleBirdBaseScale, new Vector3(breathing + liftSquash + diveStretch, breathing - liftSquash - diveStretch * .55f, 1f));
             birdFlapArt.localScale = Vector3.Scale(flapBirdBaseScale, new Vector3(1f + wingWave * .075f, 1f - wingWave * .050f, 1f));
-            birdArt.localPosition = new Vector3(-flapKick * .052f, Mathf.Sin(ambientTime * 7f) * .009f, 0f);
+            birdArt.localPosition = new Vector3(-flapKick * .052f - glide * .020f, Mathf.Sin(ambientTime * 7f) * .014f + riseWeight * .018f, 0f);
+            birdArt.localRotation = Quaternion.Euler(0f, 0f, bodyRoll);
             birdFlapArt.localPosition = new Vector3(flapKick * .032f, .025f + wingWave * .052f, 0f);
-            birdFlapArt.localRotation = Quaternion.Euler(0f, 0f, -flapKick * 5.5f + wingWave * 3f);
+            birdFlapArt.localRotation = Quaternion.Euler(0f, 0f, -flapKick * 6.6f + wingWave * 4.4f + glide * 1.2f);
+            UpdateBirdLifeDepth(riseWeight, wingWave, glide);
             UpdateBirdPowerUpVisuals();
+        }
+
+        private void UpdateBirdLifeDepth(float riseWeight, float wingWave, float glide)
+        {
+            if (equippedSkin == null) return;
+            if (birdDepthRenderer != null)
+            {
+                var bodyLight = equippedSkin.Accent;
+                bodyLight.a = .085f + riseWeight * .09f + wingWave * .045f;
+                birdDepthRenderer.color = bodyLight;
+                birdDepthRenderer.transform.localPosition = new Vector3(-.10f - glide * .025f, -.035f, 0f);
+                birdDepthRenderer.transform.localScale = new Vector3(1.52f + riseWeight * .16f + wingWave * .10f, .62f + riseWeight * .08f, 1f);
+            }
+            if (birdEyeGlintRenderer != null)
+            {
+                var blinkPhase = Mathf.Repeat(ambientTime * .27f + .18f, 1f);
+                var blink = blinkPhase < .045f ? Mathf.SmoothStep(.16f, 1f, blinkPhase / .045f) : 1f;
+                var glint = Color.Lerp(Color.white, equippedSkin.Accent, .18f);
+                glint.a = .36f * blink + riseWeight * .10f;
+                birdEyeGlintRenderer.color = glint;
+                birdEyeGlintRenderer.transform.localPosition = new Vector3(.53f + glide * .020f, .19f + Mathf.Sin(ambientTime * 4.2f) * .010f, 0f);
+                birdEyeGlintRenderer.transform.localScale = Vector3.one * (.060f + riseWeight * .010f);
+            }
         }
 
         private void UpdateBirdPowerUpVisuals()
