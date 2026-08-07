@@ -55,16 +55,18 @@ namespace SkyPulse.Mobile
             public string Name;
             public string ArtPath;
             public string FlapPath;
+            public string RisePath;
             public Color Accent;
             public Color Trail;
             public int Price;
 
-            public Skin(string id, string name, string artPath, string flapPath, string accent, string trail, int price)
+            public Skin(string id, string name, string artPath, string flapPath, string accent, string trail, int price, string risePath = null)
             {
                 Id = id;
                 Name = name;
                 ArtPath = artPath;
                 FlapPath = flapPath;
+                RisePath = risePath;
                 Accent = Hex(accent);
                 Trail = Hex(trail);
                 Price = price;
@@ -81,8 +83,10 @@ namespace SkyPulse.Mobile
             public string DifficultyLabel;
             public float ScrollMultiplier;
             public float GapSize;
+            public string PresetPipeId;
+            public string PresetTrailId;
 
-            public WorldTheme(string id, string name, string backgroundPath, string accent, string floor, string difficultyLabel, float scrollMultiplier, float gapSize)
+            public WorldTheme(string id, string name, string backgroundPath, string accent, string floor, string difficultyLabel, float scrollMultiplier, float gapSize, string presetPipeId, string presetTrailId)
             {
                 Id = id;
                 Name = name;
@@ -92,6 +96,8 @@ namespace SkyPulse.Mobile
                 DifficultyLabel = difficultyLabel;
                 ScrollMultiplier = scrollMultiplier;
                 GapSize = gapSize;
+                PresetPipeId = presetPipeId;
+                PresetTrailId = presetTrailId;
             }
         }
 
@@ -215,7 +221,7 @@ namespace SkyPulse.Mobile
 
         private static readonly Skin[] Skins =
         {
-            new Skin("nova", "NOVA", "SkyPulse/characters/nova", "SkyPulse/characters/nova-flap", "#8f64ff", "#45eaff", 0),
+            new Skin("nova", "NOVA", "SkyPulse/characters/nova", "SkyPulse/characters/nova-flap", "#8f64ff", "#45eaff", 0, "SkyPulse/characters/animated/nova-rise-v1"),
             new Skin("lumen", "LUMEN", "SkyPulse/characters/lumen", "SkyPulse/characters/lumen-flap", "#45eaff", "#8f64ff", 24),
             new Skin("ember", "EMBER", "SkyPulse/characters/ember", "SkyPulse/characters/ember-flap", "#f05bc6", "#ffc34d", 32),
             new Skin("sol", "SOL", "SkyPulse/characters/sol", "SkyPulse/characters/sol-flap", "#ffc34d", "#45eaff", 40),
@@ -235,16 +241,16 @@ namespace SkyPulse.Mobile
 
         private static readonly WorldTheme[] Worlds =
         {
-            new WorldTheme("neon_city", "NEON CITY", "SkyPulse/backgrounds/neon-flightsky-v4", "#45eaff", "#0a0522", "EASY", .88f, 5.10f),
-            new WorldTheme("aurora_rise", "AURORA RISE", "SkyPulse/backgrounds/themes/polar-glow", "#61f5b3", "#05251e", "EASY", .94f, 4.92f),
-            new WorldTheme("solar_drift", "SOLAR DRIFT", "SkyPulse/backgrounds/themes/amber-skies", "#ffc34d", "#2b0d10", "CLASSIC", 1f, 4.46f),
-            new WorldTheme("midnight_tide", "MIDNIGHT TIDE", "SkyPulse/backgrounds/themes/cobalt-storm", "#45eaff", "#07113d", "CLASSIC", 1.04f, 4.30f),
-            new WorldTheme("velvet_dawn", "VELVET DAWN", "SkyPulse/backgrounds/themes/rose-orbit-v2", "#f05bc6", "#26051f", "ADVANCED", 1.08f, 4.14f),
-            new WorldTheme("crystal_night", "CRYSTAL NIGHT", "SkyPulse/backgrounds/themes/crystal-night", "#edf7ff", "#071239", "ADVANCED", 1.12f, 4.00f),
-            new WorldTheme("jade_horizon", "JADE HORIZON", "SkyPulse/backgrounds/themes/jade-horizon", "#61f5b3", "#063523", "EXPERT", 1.18f, 3.86f),
-            new WorldTheme("violet_rain", "VIOLET RAIN", "SkyPulse/backgrounds/themes/violet-rain", "#b17cff", "#210842", "EXPERT", 1.24f, 3.72f),
-            new WorldTheme("eclipse", "ECLIPSE", "SkyPulse/backgrounds/themes/eclipse", "#b17cff", "#10051f", "APEX", 1.32f, 3.56f),
-            new WorldTheme("night_circuit", "NIGHT CIRCUIT", "SkyPulse/backgrounds/neon-city-v2", "#f05bc6", "#12092b", "APEX", 1.38f, 3.42f),
+            new WorldTheme("neon_city", "NEON CITY", "SkyPulse/backgrounds/neon-flightsky-v4", "#45eaff", "#0a0522", "EASY", .88f, 5.10f, "ion", "pulse"),
+            new WorldTheme("aurora_rise", "AURORA RISE", "SkyPulse/backgrounds/themes/polar-glow", "#61f5b3", "#05251e", "EASY", .94f, 4.92f, "frost", "aurora"),
+            new WorldTheme("solar_drift", "SOLAR DRIFT", "SkyPulse/backgrounds/themes/amber-skies", "#ffc34d", "#2b0d10", "CLASSIC", 1f, 4.46f, "solar", "solar"),
+            new WorldTheme("midnight_tide", "MIDNIGHT TIDE", "SkyPulse/backgrounds/themes/cobalt-storm", "#45eaff", "#07113d", "CLASSIC", 1.04f, 4.30f, "cobalt", "seaglass"),
+            new WorldTheme("velvet_dawn", "VELVET DAWN", "SkyPulse/backgrounds/themes/rose-orbit-v2", "#f05bc6", "#26051f", "ADVANCED", 1.08f, 4.14f, "rose", "sakura"),
+            new WorldTheme("crystal_night", "CRYSTAL NIGHT", "SkyPulse/backgrounds/themes/crystal-night", "#edf7ff", "#071239", "ADVANCED", 1.12f, 4.00f, "prism", "glacial"),
+            new WorldTheme("jade_horizon", "JADE HORIZON", "SkyPulse/backgrounds/themes/jade-horizon", "#61f5b3", "#063523", "EXPERT", 1.18f, 3.86f, "jade", "mintwave"),
+            new WorldTheme("violet_rain", "VIOLET RAIN", "SkyPulse/backgrounds/themes/violet-rain", "#b17cff", "#210842", "EXPERT", 1.24f, 3.72f, "amethyst", "nebula"),
+            new WorldTheme("eclipse", "ECLIPSE", "SkyPulse/backgrounds/themes/eclipse", "#b17cff", "#10051f", "APEX", 1.32f, 3.56f, "obsidian", "starlight"),
+            new WorldTheme("night_circuit", "NIGHT CIRCUIT", "SkyPulse/backgrounds/neon-city-v2", "#f05bc6", "#12092b", "APEX", 1.38f, 3.42f, "emberline", "voltage"),
         };
 
         private static readonly Upgrade[] Upgrades =
@@ -322,8 +328,10 @@ namespace SkyPulse.Mobile
         private Transform bird;
         private Transform birdArt;
         private Transform birdFlapArt;
+        private Transform birdRiseArt;
         private SpriteRenderer birdRenderer;
         private SpriteRenderer birdFlapRenderer;
+        private SpriteRenderer birdRiseRenderer;
         private SpriteRenderer shieldAuraRenderer;
         private SpriteRenderer slowAuraRenderer;
         private SpriteRenderer effectAuraRenderer;
@@ -358,6 +366,7 @@ namespace SkyPulse.Mobile
         private Text menuTitleText;
         private Image menuBirdImage;
         private Image menuBirdFlapImage;
+        private Image menuBirdRiseImage;
         private Image menuBirdGlowImage;
         private Image menuPortalImage;
         private RectTransform menuBirdTransform;
@@ -406,6 +415,7 @@ namespace SkyPulse.Mobile
         private bool newBest;
         private Vector3 idleBirdBaseScale = Vector3.one;
         private Vector3 flapBirdBaseScale = Vector3.one;
+        private Vector3 riseBirdBaseScale = Vector3.one;
 
         private void Awake()
         {
@@ -543,6 +553,11 @@ namespace SkyPulse.Mobile
             birdArt.SetParent(bird, false);
             birdRenderer = birdArt.gameObject.AddComponent<SpriteRenderer>();
             birdRenderer.sortingOrder = 14;
+            birdRiseArt = new GameObject("Bird rise artwork").transform;
+            birdRiseArt.SetParent(bird, false);
+            birdRiseRenderer = birdRiseArt.gameObject.AddComponent<SpriteRenderer>();
+            birdRiseRenderer.sortingOrder = 13;
+            birdRiseRenderer.color = new Color(1f, 1f, 1f, 0f);
             birdFlapArt = new GameObject("Bird wing motion artwork").transform;
             birdFlapArt.SetParent(bird, false);
             birdFlapRenderer = birdFlapArt.gameObject.AddComponent<SpriteRenderer>();
@@ -669,6 +684,9 @@ namespace SkyPulse.Mobile
 
             var difficulty = CreateNeonButton(root.transform, "EASY", new Vector2(-365f, 790f), new Vector2(202f, 68f), Hex("#8f64ff"));
             difficultyText = difficulty.GetComponentInChildren<Text>();
+            difficultyText.resizeTextForBestFit = true;
+            difficultyText.resizeTextMinSize = 13;
+            difficultyText.resizeTextMaxSize = 20;
             difficulty.onClick.AddListener(OpenWorldCollection);
             menuCrystalText = CreateChip(root.transform, new Vector2(355f, 790f), "✦  0", Hex("#45eaff"));
 
@@ -696,6 +714,9 @@ namespace SkyPulse.Mobile
             menuPortalImage.preserveAspect = true;
             menuPortalImage.raycastTarget = false;
             menuPortalImage.gameObject.SetActive(false);
+            menuBirdRiseImage = CreateImage(menuHeroTransform, "Menu bird wing rise", Vector2.zero, new Vector2(448f, 250f), new Color(1f, 1f, 1f, 0f));
+            menuBirdRiseImage.preserveAspect = true;
+            menuBirdRiseImage.raycastTarget = false;
             menuBirdImage = CreateImage(menuHeroTransform, "Menu bird", Vector2.zero, new Vector2(448f, 250f), Color.white);
             menuBirdImage.preserveAspect = true;
             menuBirdImage.raycastTarget = false;
@@ -877,18 +898,28 @@ namespace SkyPulse.Mobile
 
         private void UpdateMenuBird(float deltaTime)
         {
-            if (state != FlightState.Menu || menuBirdImage == null) return;
+            if (state != FlightState.Menu || menuBirdImage == null || menuBirdTransform == null || equippedSkin == null) return;
             menuPresentationTime += deltaTime;
             menuWingTimer += deltaTime;
             if (menuWingTimer > .72f) menuWingTimer = 0f;
 
-            // The menu uses the same paired bird poses as flight, but cross-fades them
-            // with a gentle hover so the hero feels like a living character, not a card.
-            var flapStrength = Mathf.SmoothStep(0f, 1f, Mathf.PingPong(menuWingTimer * 2.78f, 1f));
-            menuBirdImage.color = new Color(1f, 1f, 1f, 1f - flapStrength * .13f);
+            // The menu loops through a raised wing, downstroke and settle instead of
+            // bouncing between two drawings. The transition is continuous at 60 fps.
+            var wingPhase = menuWingTimer / .72f;
+            var riseStrength = Mathf.SmoothStep(1f, 0f, Mathf.Clamp01(wingPhase * 3.1f));
+            var flapStrength = Mathf.Sin(Mathf.Clamp01((wingPhase - .16f) / .62f) * Mathf.PI);
+            menuBirdImage.color = new Color(1f, 1f, 1f, 1f - Mathf.Max(riseStrength * .78f, flapStrength * .50f));
+            if (menuBirdRiseImage != null)
+            {
+                var showRise = menuBirdRiseImage.sprite != null;
+                menuBirdRiseImage.color = new Color(1f, 1f, 1f, showRise ? riseStrength * .92f : 0f);
+                menuBirdRiseImage.rectTransform.anchoredPosition = new Vector2(-riseStrength * 6f, riseStrength * 10f);
+                menuBirdRiseImage.rectTransform.localRotation = Quaternion.Euler(0f, 0f, riseStrength * 4.4f);
+                menuBirdRiseImage.rectTransform.localScale = Vector3.one * (1f + riseStrength * .06f);
+            }
             if (menuBirdFlapImage != null)
             {
-                menuBirdFlapImage.color = new Color(1f, 1f, 1f, flapStrength * .78f);
+                menuBirdFlapImage.color = new Color(1f, 1f, 1f, flapStrength * (1f - riseStrength * .84f) * .84f);
                 menuBirdFlapImage.rectTransform.anchoredPosition = new Vector2(flapStrength * 5f, flapStrength * 7f);
                 menuBirdFlapImage.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -flapStrength * 4.5f);
             }
@@ -1576,7 +1607,9 @@ namespace SkyPulse.Mobile
                     for (var index = 0; index < Worlds.Length; index += 1)
                     {
                         var world = Worlds[index];
-                        var status = equippedWorld.Id == world.Id ? "EQUIPPED" : $"{world.DifficultyLabel} · {world.ScrollMultiplier:0.00}X SPEED";
+                        var presetPipe = FindById(PipeStyles, world.PresetPipeId);
+                        var pipeName = presetPipe != null ? presetPipe.Name : "PIPE PRESET";
+                        var status = equippedWorld.Id == world.Id ? $"EQUIPPED · {pipeName}" : $"{world.DifficultyLabel} · {pipeName}";
                         CreateCosmeticCard(index, world.Name, status, world.Accent, LoadSprite(world.BackgroundPath), () => EquipWorld(world));
                     }
                     SetContentRows(Worlds.Length);
@@ -1812,6 +1845,11 @@ namespace SkyPulse.Mobile
         private void EquipWorld(WorldTheme world)
         {
             equippedWorld = world;
+            // Worlds are the replacement for a difficulty selector: selecting one
+            // applies its authored backdrop, obstacle treatment and matching trail.
+            // Players can still override either cosmetic afterwards in its collection.
+            equippedPipe = FindById(PipeStyles, world.PresetPipeId) ?? equippedPipe ?? PipeStyles[0];
+            equippedTrail = FindById(Trails, world.PresetTrailId) ?? equippedTrail ?? Trails[0];
             ApplyEquippedVisuals();
             SaveProgress();
             RebuildCustomizeGrid();
@@ -1855,6 +1893,7 @@ namespace SkyPulse.Mobile
             SetBirdArtwork();
             if (menuBirdImage != null) menuBirdImage.sprite = LoadSprite(equippedSkin.ArtPath);
             if (menuBirdFlapImage != null) menuBirdFlapImage.sprite = LoadSprite(equippedSkin.FlapPath);
+            if (menuBirdRiseImage != null) menuBirdRiseImage.sprite = string.IsNullOrEmpty(equippedSkin.RisePath) ? LoadSprite(equippedSkin.FlapPath) : LoadSprite(equippedSkin.RisePath);
             UpdateCrystalLabels();
             if (menuBestText != null) menuBestText.text = $"BEST · {best}";
             if (menuEquippedText != null) menuEquippedText.text = $"EQUIPPED  ·  {equippedSkin.Name}";
@@ -1890,9 +1929,10 @@ namespace SkyPulse.Mobile
 
         private void SetBirdArtwork()
         {
-            if (birdRenderer == null || birdFlapRenderer == null) return;
+            if (birdRenderer == null || birdFlapRenderer == null || birdRiseRenderer == null) return;
             var idle = LoadSprite(equippedSkin.ArtPath);
             var flap = LoadSprite(equippedSkin.FlapPath);
+            var rise = string.IsNullOrEmpty(equippedSkin.RisePath) ? flap : LoadSprite(equippedSkin.RisePath);
             if (idle != null)
             {
                 birdRenderer.sprite = idle;
@@ -1905,6 +1945,13 @@ namespace SkyPulse.Mobile
                 flapBirdBaseScale = ArtworkScale(flap, BirdDisplayWidth);
                 birdFlapArt.localScale = flapBirdBaseScale;
             }
+            birdRiseRenderer.enabled = rise != null;
+            if (rise != null)
+            {
+                birdRiseRenderer.sprite = rise;
+                riseBirdBaseScale = ArtworkScale(rise, BirdDisplayWidth);
+                birdRiseArt.localScale = riseBirdBaseScale;
+            }
         }
 
         private static Vector3 ArtworkScale(Sprite sprite, float targetWidth)
@@ -1916,19 +1963,28 @@ namespace SkyPulse.Mobile
         private void UpdateBirdWingMotion()
         {
             if (birdRenderer == null || birdFlapRenderer == null) return;
-            // A tap gives the bird a quick body compression, then a soft wing wave and
-            // glide recovery. The visual timing is separate from collision physics, so
-            // the controls stay instant while the bird feels alive.
+            // A tap travels through raised-wing recovery, downstroke and glide rather
+            // than swapping a pair of sprites. Physics stays instant; the rendering is
+            // a continuous, three-pose flight cycle.
             var flapProgress = Mathf.Clamp01(wingTimer / .36f);
             var flapKick = 1f - flapProgress * flapProgress * (3f - 2f * flapProgress);
-            var wingWave = Mathf.Sin(flapProgress * Mathf.PI);
+            var riseWeight = Mathf.SmoothStep(1f, 0f, Mathf.Clamp01(flapProgress * 3.15f));
+            var wingWave = Mathf.Sin(Mathf.Clamp01((flapProgress - .12f) / .72f) * Mathf.PI);
             var flapColour = Color.white;
-            flapColour.a = (.32f + wingWave * .62f) * flapKick;
+            flapColour.a = (.10f + wingWave * .82f) * flapKick * (1f - riseWeight * .84f);
             birdFlapRenderer.color = flapColour;
-            birdRenderer.color = new Color(1f, 1f, 1f, 1f - wingWave * .10f);
+            birdRenderer.color = new Color(1f, 1f, 1f, 1f - Mathf.Max(riseWeight * .78f, wingWave * .50f));
+            if (birdRiseRenderer != null)
+            {
+                var showRise = birdRiseRenderer.enabled && birdRiseRenderer.sprite != null;
+                birdRiseRenderer.color = new Color(1f, 1f, 1f, showRise ? riseWeight * .94f : 0f);
+                birdRiseArt.localScale = Vector3.Scale(riseBirdBaseScale, new Vector3(1f + riseWeight * .065f, 1f - riseWeight * .025f, 1f));
+                birdRiseArt.localPosition = new Vector3(-riseWeight * .060f, riseWeight * .065f, 0f);
+                birdRiseArt.localRotation = Quaternion.Euler(0f, 0f, riseWeight * 4.7f);
+            }
             var breathing = 1f + Mathf.Sin(ambientTime * 5.2f) * .010f;
             var glide = Mathf.Clamp(birdVelocity / Mathf.Abs(ActiveMaxFallVelocity()), -1f, 1f);
-            var liftSquash = flapKick * .065f;
+            var liftSquash = (flapKick - riseWeight * .34f) * .065f;
             var diveStretch = Mathf.Clamp01(-glide) * .024f;
             birdArt.localScale = Vector3.Scale(idleBirdBaseScale, new Vector3(breathing + liftSquash + diveStretch, breathing - liftSquash - diveStretch * .55f, 1f));
             birdFlapArt.localScale = Vector3.Scale(flapBirdBaseScale, new Vector3(1f + wingWave * .075f, 1f - wingWave * .050f, 1f));
@@ -1974,7 +2030,7 @@ namespace SkyPulse.Mobile
         private void UpdateDifficultyCopy()
         {
             if (difficultyText == null || equippedWorld == null) return;
-            difficultyText.text = equippedWorld.DifficultyLabel;
+            difficultyText.text = equippedWorld.Name;
             difficultyText.color = equippedWorld.Accent;
         }
 
