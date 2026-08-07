@@ -155,15 +155,16 @@ namespace SkyPulse.Mobile
             public GameObject Root;
             public Transform Transform;
             public SpriteRenderer Glow;
-            public SpriteRenderer Ring;
-            public SpriteRenderer Core;
-            public SpriteRenderer Icon;
-            public SpriteRenderer Orbit;
+            public SpriteRenderer Artwork;
+            public SpriteRenderer Spark;
             public PowerUpKind Kind;
+            public PipePair Gate;
             public float X;
             public float Y;
+            public float GapOffset;
             public float Phase;
             public float RespawnTimer;
+            public Vector3 ArtworkBaseScale;
             public bool Active;
         }
 
@@ -203,11 +204,11 @@ namespace SkyPulse.Mobile
 
         private static readonly WorldTheme[] Worlds =
         {
-            new WorldTheme("neon_city", "NEON CITY", "SkyPulse/backgrounds/neon-city", "#45eaff", "#0a0522", "EASY", .88f, 5.10f),
+            new WorldTheme("neon_city", "NEON CITY", "SkyPulse/backgrounds/neon-city-v2", "#45eaff", "#0a0522", "EASY", .88f, 5.10f),
             new WorldTheme("aurora_rise", "AURORA RISE", "SkyPulse/backgrounds/themes/polar-glow", "#61f5b3", "#05251e", "EASY", .94f, 4.92f),
             new WorldTheme("solar_drift", "SOLAR DRIFT", "SkyPulse/backgrounds/themes/amber-skies", "#ffc34d", "#2b0d10", "CLASSIC", 1f, 4.46f),
             new WorldTheme("midnight_tide", "MIDNIGHT TIDE", "SkyPulse/backgrounds/themes/cobalt-storm", "#45eaff", "#07113d", "CLASSIC", 1.04f, 4.30f),
-            new WorldTheme("velvet_dawn", "VELVET DAWN", "SkyPulse/backgrounds/themes/rose-orbit", "#f05bc6", "#26051f", "ADVANCED", 1.08f, 4.14f),
+            new WorldTheme("velvet_dawn", "VELVET DAWN", "SkyPulse/backgrounds/themes/rose-orbit-v2", "#f05bc6", "#26051f", "ADVANCED", 1.08f, 4.14f),
             new WorldTheme("crystal_night", "CRYSTAL NIGHT", "SkyPulse/backgrounds/themes/crystal-night", "#edf7ff", "#071239", "ADVANCED", 1.12f, 4.00f),
             new WorldTheme("jade_horizon", "JADE HORIZON", "SkyPulse/backgrounds/themes/jade-horizon", "#61f5b3", "#063523", "EXPERT", 1.18f, 3.86f),
             new WorldTheme("violet_rain", "VIOLET RAIN", "SkyPulse/backgrounds/themes/violet-rain", "#b17cff", "#210842", "EXPERT", 1.24f, 3.72f),
@@ -276,6 +277,7 @@ namespace SkyPulse.Mobile
         private CosmeticCategory cosmeticCategory;
         private Camera flightCamera;
         private Sprite whiteSprite;
+        private Sprite midnightSprite;
         private Sprite softCircleSprite;
         private Sprite ringSprite;
         private SpriteRenderer backgroundRenderer;
@@ -406,10 +408,11 @@ namespace SkyPulse.Mobile
         private void CreateVisuals()
         {
             whiteSprite = CreateSprite(Texture2D.whiteTexture, 1f);
+            midnightSprite = CreateSolidSprite("Midnight fallback", Hex("#060817"));
             softCircleSprite = CreateRadialSprite("Soft neon orb", 96, 0f, .5f);
             ringSprite = CreateRadialSprite("Neon ring", 96, .31f, .5f);
 
-            backgroundRenderer = CreateRenderer("Cinematic world", LoadSprite("SkyPulse/backgrounds/neon-city"), Color.white, -40);
+            backgroundRenderer = CreateRenderer("Cinematic world", LoadSprite("SkyPulse/backgrounds/neon-city-v2") ?? midnightSprite, Color.white, -40);
             backgroundRenderer.transform.position = new Vector3(0f, .12f, 0f);
             FitToCameraHeight(backgroundRenderer, CameraHeight + .5f);
 
@@ -548,25 +551,19 @@ namespace SkyPulse.Mobile
         {
             var root = new GameObject($"Power-up pickup {index + 1}");
             root.transform.SetParent(transform, false);
-            var glow = CreateRenderer("Outer glow", softCircleSprite, Color.white, 10, root.transform);
-            glow.transform.localScale = Vector3.one * .88f;
-            var ring = CreateRenderer("Orbit ring", ringSprite, Color.white, 11, root.transform);
-            ring.transform.localScale = Vector3.one * .64f;
-            var core = CreateRenderer("Energy core", softCircleSprite, Color.white, 12, root.transform);
-            core.transform.localScale = Vector3.one * .34f;
-            var icon = CreateRenderer("Power icon", whiteSprite, Color.white, 13, root.transform);
-            icon.transform.localScale = new Vector3(.16f, .16f, 1f);
-            var orbit = CreateRenderer("Orbit spark", softCircleSprite, Color.white, 13, root.transform);
-            orbit.transform.localScale = Vector3.one * .12f;
+            var glow = CreateRenderer("Power-up halo", softCircleSprite, Color.white, 10, root.transform);
+            glow.transform.localScale = Vector3.one * 1.12f;
+            var artwork = CreateRenderer("Premium power-up artwork", whiteSprite, Color.white, 13, root.transform);
+            var spark = CreateRenderer("Power-up glint", softCircleSprite, Color.white, 14, root.transform);
+            spark.transform.localScale = Vector3.one * .075f;
             return new PowerUpPickup
             {
                 Root = root,
                 Transform = root.transform,
                 Glow = glow,
-                Ring = ring,
-                Core = core,
-                Icon = icon,
-                Orbit = orbit,
+                Artwork = artwork,
+                Spark = spark,
+                ArtworkBaseScale = Vector3.one,
             };
         }
 
@@ -671,7 +668,7 @@ namespace SkyPulse.Mobile
             CreateText(root.transform, "SKYPULSE", new Vector2(0f, 442f), new Vector2(880f, 130f), 82, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             CreateText(root.transform, "FLY THROUGH THE GLOW", new Vector2(0f, 348f), new Vector2(700f, 44f), 24, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
 
-            menuBirdImage = CreateImage(root.transform, "Menu bird", new Vector2(0f, 47f), new Vector2(510f, 290f), Color.white);
+            menuBirdImage = CreateImage(root.transform, "Menu bird", new Vector2(0f, 56f), new Vector2(410f, 226f), Color.white);
             menuBirdImage.preserveAspect = true;
             menuBirdImage.raycastTarget = false;
             menuBirdTransform = menuBirdImage.rectTransform;
@@ -999,9 +996,6 @@ namespace SkyPulse.Mobile
 
         private void UpdatePowerUps(float deltaTime)
         {
-            var furthestX = GetWorldWidth() * .5f + 1.5f;
-            foreach (var pickup in powerUpPool) if (pickup.Active && pickup.X > furthestX) furthestX = pickup.X;
-
             foreach (var pickup in powerUpPool)
             {
                 if (!pickup.Active)
@@ -1009,11 +1003,22 @@ namespace SkyPulse.Mobile
                     pickup.RespawnTimer -= deltaTime;
                     if (pickup.RespawnTimer <= 0f)
                     {
-                        ConfigurePowerUp(pickup, furthestX + UnityEngine.Random.Range(7.5f, 10.2f));
-                        furthestX = pickup.X;
+                        var gate = FindAvailablePowerUpGate(pickup);
+                        if (gate != null) ConfigurePowerUp(pickup, gate);
                     }
                     continue;
                 }
+
+                // A pickup belongs to a live gate, so it is always presented in open air
+                // rather than floating into a pipe body or spawning at a random height.
+                if (pickup.Gate == null || !pickup.Gate.Root.activeSelf || pickup.Gate.Passed)
+                {
+                    DeferPowerUp(pickup, UnityEngine.Random.Range(1.15f, 2.1f));
+                    continue;
+                }
+
+                var targetX = pickup.Gate.X;
+                var targetY = pickup.Gate.GapCenter + pickup.GapOffset;
                 if (magnetHaloTimer > 0f)
                 {
                     var pullSpeed = HasUpgrade("magnet_array") ? 8.8f : 6.2f;
@@ -1022,36 +1027,68 @@ namespace SkyPulse.Mobile
                 }
                 else
                 {
-                    pickup.X -= ActiveScrollSpeed() * deltaTime;
+                    pickup.X = targetX;
+                    pickup.Y = targetY;
                 }
                 var bob = Mathf.Sin(ambientTime * 3.2f + pickup.Phase) * .12f;
                 pickup.Transform.localPosition = new Vector3(pickup.X, pickup.Y + bob, 0f);
                 var pulse = 1f + Mathf.Sin(ambientTime * 4.2f + pickup.Phase) * .10f;
-                pickup.Glow.transform.localScale = Vector3.one * (.88f * pulse);
-                pickup.Ring.transform.localRotation = Quaternion.Euler(0f, 0f, ambientTime * 88f + pickup.Phase * 40f);
-                pickup.Orbit.transform.localPosition = new Vector3(Mathf.Cos(ambientTime * 4.3f + pickup.Phase) * .35f, Mathf.Sin(ambientTime * 4.3f + pickup.Phase) * .35f, 0f);
+                pickup.Glow.transform.localScale = Vector3.one * (1.14f * pulse);
+                pickup.Artwork.transform.localScale = pickup.ArtworkBaseScale * (1f + Mathf.Sin(ambientTime * 3.5f + pickup.Phase) * .025f);
+                pickup.Artwork.transform.localRotation = Quaternion.Euler(0f, 0f, Mathf.Sin(ambientTime * 2.1f + pickup.Phase) * 2.4f);
+                pickup.Spark.transform.localPosition = new Vector3(Mathf.Cos(ambientTime * 4.3f + pickup.Phase) * .46f, Mathf.Sin(ambientTime * 4.3f + pickup.Phase) * .46f, 0f);
 
                 if (Vector2.Distance(new Vector2(BirdX, birdY), new Vector2(pickup.X, pickup.Y + bob)) <= BirdCollisionRadius + PickupRadius)
                 {
                     CollectPowerUp(pickup);
-                    continue;
                 }
-
-                if (pickup.X < -GetWorldWidth() * .5f - 1.2f)
-                {
-                    ConfigurePowerUp(pickup, furthestX + UnityEngine.Random.Range(7.5f, 10.2f));
-                }
-                furthestX = Mathf.Max(furthestX, pickup.X);
             }
         }
 
-        private void ConfigurePowerUp(PowerUpPickup pickup, float x)
+        private PipePair FindAvailablePowerUpGate(PowerUpPickup ignoredPickup)
         {
+            PipePair best = null;
+            foreach (var candidate in pipePool)
+            {
+                if (candidate == null || !candidate.Root.activeSelf || candidate.Passed || candidate.X <= BirdX + 1.05f) continue;
+                var claimed = false;
+                foreach (var pickup in powerUpPool)
+                {
+                    if (pickup != ignoredPickup && pickup.Active && pickup.Gate == candidate)
+                    {
+                        claimed = true;
+                        break;
+                    }
+                }
+                if (claimed) continue;
+                if (best == null || candidate.X > best.X) best = candidate;
+            }
+            return best;
+        }
+
+        private void DeferPowerUp(PowerUpPickup pickup, float delay)
+        {
+            pickup.Active = false;
+            pickup.Gate = null;
+            pickup.RespawnTimer = delay;
+            pickup.Root.SetActive(false);
+        }
+
+        private void ConfigurePowerUp(PowerUpPickup pickup, PipePair gate)
+        {
+            if (gate == null)
+            {
+                DeferPowerUp(pickup, 1f);
+                return;
+            }
             pickup.Root.SetActive(true);
             pickup.Active = true;
             pickup.RespawnTimer = 0f;
-            pickup.X = x;
-            pickup.Y = UnityEngine.Random.Range(-3.65f, 4.45f);
+            pickup.Gate = gate;
+            pickup.X = gate.X;
+            var safeGapOffset = Mathf.Max(.28f, ActiveGap() * .5f - .92f);
+            pickup.GapOffset = UnityEngine.Random.Range(-safeGapOffset, safeGapOffset);
+            pickup.Y = gate.GapCenter + pickup.GapOffset;
             pickup.Phase = UnityEngine.Random.Range(0f, Mathf.PI * 2f);
             pickup.Kind = (PowerUpKind)UnityEngine.Random.Range(0, 7);
             var colour = Hex("#8f64ff");
@@ -1061,51 +1098,52 @@ namespace SkyPulse.Mobile
                 case PowerUpKind.PulseShield:
                     colour = Hex("#61f5b3");
                     secondary = Hex("#edf7ff");
-                    pickup.Icon.transform.localScale = new Vector3(.14f, .20f, 1f);
-                    pickup.Icon.transform.localRotation = Quaternion.identity;
                     break;
                 case PowerUpKind.CrystalCache:
                     colour = Hex("#ffc34d");
                     secondary = Hex("#f05bc6");
-                    pickup.Icon.transform.localScale = new Vector3(.17f, .17f, 1f);
-                    pickup.Icon.transform.localRotation = Quaternion.Euler(0f, 0f, 45f);
                     break;
                 case PowerUpKind.SkySurge:
                     colour = Hex("#ffc34d");
                     secondary = Hex("#edf7ff");
-                    pickup.Icon.transform.localScale = new Vector3(.08f, .25f, 1f);
-                    pickup.Icon.transform.localRotation = Quaternion.Euler(0f, 0f, -24f);
                     break;
                 case PowerUpKind.ScorePrism:
                     colour = Hex("#f05bc6");
                     secondary = Hex("#edf7ff");
-                    pickup.Icon.transform.localScale = new Vector3(.20f, .09f, 1f);
-                    pickup.Icon.transform.localRotation = Quaternion.Euler(0f, 0f, 45f);
                     break;
                 case PowerUpKind.MagnetHalo:
                     colour = Hex("#45eaff");
                     secondary = Hex("#61f5b3");
-                    pickup.Icon.transform.localScale = new Vector3(.22f, .065f, 1f);
-                    pickup.Icon.transform.localRotation = Quaternion.identity;
                     break;
                 case PowerUpKind.PhaseShift:
                     colour = Hex("#b17cff");
                     secondary = Hex("#45eaff");
-                    pickup.Icon.transform.localScale = new Vector3(.18f, .18f, 1f);
-                    pickup.Icon.transform.localRotation = Quaternion.Euler(0f, 0f, 22f);
-                    break;
-                default:
-                    pickup.Icon.transform.localScale = new Vector3(.13f, .13f, 1f);
-                    pickup.Icon.transform.localRotation = Quaternion.Euler(0f, 0f, 45f);
                     break;
             }
 
+            var artwork = LoadSprite(PowerUpArtworkPath(pickup.Kind));
             pickup.Glow.color = new Color(colour.r, colour.g, colour.b, .20f);
-            pickup.Ring.color = new Color(secondary.r, secondary.g, secondary.b, .95f);
-            pickup.Core.color = colour;
-            pickup.Icon.color = Color.white;
-            pickup.Orbit.color = secondary;
+            pickup.Artwork.sprite = artwork ?? softCircleSprite;
+            pickup.Artwork.color = artwork == null ? colour : Color.white;
+            pickup.ArtworkBaseScale = ArtworkScale(pickup.Artwork.sprite, 1.24f);
+            pickup.Artwork.transform.localScale = pickup.ArtworkBaseScale;
+            pickup.Artwork.transform.localRotation = Quaternion.identity;
+            pickup.Spark.color = new Color(secondary.r, secondary.g, secondary.b, .92f);
             pickup.Transform.localPosition = new Vector3(pickup.X, pickup.Y, 0f);
+        }
+
+        private static string PowerUpArtworkPath(PowerUpKind kind)
+        {
+            switch (kind)
+            {
+                case PowerUpKind.PulseShield: return "SkyPulse/art/powerups/pulse-shield";
+                case PowerUpKind.CrystalCache: return "SkyPulse/art/powerups/crystal-cache";
+                case PowerUpKind.SkySurge: return "SkyPulse/art/powerups/sky-surge";
+                case PowerUpKind.ScorePrism: return "SkyPulse/art/powerups/score-prism";
+                case PowerUpKind.MagnetHalo: return "SkyPulse/art/powerups/magnet-halo";
+                case PowerUpKind.PhaseShift: return "SkyPulse/art/powerups/phase-shift";
+                default: return "SkyPulse/art/powerups/slow-field";
+            }
         }
 
         private void CollectPowerUp(PowerUpPickup pickup)
@@ -1256,8 +1294,18 @@ namespace SkyPulse.Mobile
             trailGlow.positionCount = 0;
             trailCore.positionCount = 0;
             spawnX = GetWorldWidth() * .5f + 3.2f;
+            foreach (var pickup in powerUpPool)
+            {
+                pickup.Active = false;
+                pickup.Gate = null;
+                pickup.Root.SetActive(false);
+            }
             for (var index = 0; index < pipePool.Length; index += 1) ConfigurePipe(pipePool[index], spawnX + index * PipeSpacing);
-            for (var index = 0; index < powerUpPool.Length; index += 1) ConfigurePowerUp(powerUpPool[index], spawnX + 7.8f + index * 8.9f);
+            foreach (var pickup in powerUpPool)
+            {
+                var gate = FindAvailablePowerUpGate(pickup);
+                if (gate != null) ConfigurePowerUp(pickup, gate);
+            }
             RefreshScreens();
             hudScoreText.text = "0";
             UpdatePowerUpHud();
@@ -1316,6 +1364,7 @@ namespace SkyPulse.Mobile
 
         private void ConfigurePipe(PipePair pair, float x)
         {
+            RetirePowerUpsForGate(pair);
             pair.Root.SetActive(true);
             pair.X = x;
             pair.Passed = false;
@@ -1330,6 +1379,17 @@ namespace SkyPulse.Mobile
             var bottomUpperEdge = pair.GapCenter - halfGap;
             var bottomHeight = bottomUpperEdge - GroundY;
             LayoutPipeSurface(pair.Bottom, GroundY + bottomHeight * .5f, bottomHeight, bottomUpperEdge, false);
+        }
+
+        private void RetirePowerUpsForGate(PipePair gate)
+        {
+            foreach (var pickup in powerUpPool)
+            {
+                if (pickup != null && pickup.Active && pickup.Gate == gate)
+                {
+                    DeferPowerUp(pickup, UnityEngine.Random.Range(.8f, 1.4f));
+                }
+            }
         }
 
         private void LayoutPipeSurface(PipeSurface surface, float centreY, float height, float capY, bool topPipe)
@@ -1530,16 +1590,52 @@ namespace SkyPulse.Mobile
             button.targetGraphic = card.GetComponent<Image>();
             button.onClick.AddListener(() => SelectUpgrade(upgrade));
 
-            var halo = CreateImage(card, "Upgrade glow", new Vector2(-146f, 34f), new Vector2(102f, 102f), new Color(upgrade.Accent.r, upgrade.Accent.g, upgrade.Accent.b, .18f));
+            var halo = CreateImage(card, "Upgrade glow", new Vector2(-146f, 34f), new Vector2(112f, 112f), new Color(upgrade.Accent.r, upgrade.Accent.g, upgrade.Accent.b, .18f));
             halo.sprite = softCircleSprite;
             halo.raycastTarget = false;
-            var core = CreateImage(card, "Upgrade core", new Vector2(-146f, 34f), new Vector2(42f, 42f), upgrade.Accent);
-            core.sprite = softCircleSprite;
-            core.raycastTarget = false;
+            var previewSprite = GetUpgradeArtwork(upgrade);
+            var artwork = CreateImage(card, "Upgrade artwork", new Vector2(-146f, 34f), new Vector2(94f, 94f), previewSprite == null ? upgrade.Accent : Color.white);
+            artwork.sprite = previewSprite ?? softCircleSprite;
+            artwork.preserveAspect = true;
+            artwork.raycastTarget = false;
             CreateText(card, upgrade.Name, new Vector2(-70f, 53f), new Vector2(250f, 34f), 18, Hex("#f4fbff"), TextAnchor.MiddleLeft, FontStyle.Bold).raycastTarget = false;
             CreateText(card, upgrade.Description, new Vector2(-70f, 17f), new Vector2(270f, 44f), 15, new Color(.86f, .91f, 1f, .73f), TextAnchor.MiddleLeft, FontStyle.Normal).raycastTarget = false;
             var status = owned ? "OWNED" : $"BUY · {upgrade.Price} ✦";
             CreateText(card, status, new Vector2(-185f, -85f), new Vector2(350f, 28f), 16, owned ? upgrade.Accent : new Color(.85f, .9f, 1f, .68f), TextAnchor.MiddleLeft, FontStyle.Bold).raycastTarget = false;
+        }
+
+        private Sprite GetUpgradeArtwork(Upgrade upgrade)
+        {
+            PowerUpKind kind;
+            switch (upgrade.Id)
+            {
+                case "thrust_plumes":
+                case "comet_trail":
+                    kind = PowerUpKind.SkySurge;
+                    break;
+                case "featherweight":
+                case "time_weaver":
+                    kind = PowerUpKind.SlowField;
+                    break;
+                case "air_brakes":
+                case "phase_stabilizer":
+                    kind = PowerUpKind.PhaseShift;
+                    break;
+                case "rescue_feather":
+                case "shield_cell":
+                    kind = PowerUpKind.PulseShield;
+                    break;
+                case "cache_cores":
+                    kind = PowerUpKind.CrystalCache;
+                    break;
+                case "magnet_array":
+                    kind = PowerUpKind.MagnetHalo;
+                    break;
+                default:
+                    kind = PowerUpKind.ScorePrism;
+                    break;
+            }
+            return LoadSprite(PowerUpArtworkPath(kind));
         }
 
         private void EquipSkin(Skin skin)
@@ -1664,7 +1760,7 @@ namespace SkyPulse.Mobile
             if (equippedTrail == null) equippedTrail = Trails[0];
             if (equippedPipe == null) equippedPipe = PipeStyles[0];
 
-            backgroundRenderer.sprite = LoadSprite(equippedWorld.BackgroundPath) ?? whiteSprite;
+            backgroundRenderer.sprite = LoadSprite(equippedWorld.BackgroundPath) ?? midnightSprite;
             FitToCameraHeight(backgroundRenderer, CameraHeight + .5f);
             backgroundVeil.color = new Color(equippedWorld.Accent.r, equippedWorld.Accent.g, equippedWorld.Accent.b, .11f);
             floorSurface.color = equippedWorld.Floor;
@@ -1893,6 +1989,19 @@ namespace SkyPulse.Mobile
         private static Sprite CreateSprite(Texture2D texture, float pixelsPerUnit = 100f)
         {
             return Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(.5f, .5f), pixelsPerUnit);
+        }
+
+        private static Sprite CreateSolidSprite(string name, Color color)
+        {
+            var texture = new Texture2D(1, 1, TextureFormat.RGBA32, false)
+            {
+                name = name,
+                filterMode = FilterMode.Bilinear,
+                wrapMode = TextureWrapMode.Clamp,
+            };
+            texture.SetPixel(0, 0, color);
+            texture.Apply(false, true);
+            return CreateSprite(texture, 1f);
         }
 
         private static Sprite CreateRadialSprite(string name, int size, float innerRadius, float outerRadius)
