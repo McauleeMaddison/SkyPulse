@@ -213,6 +213,7 @@ namespace SkyPulse.Mobile
             new WorldTheme("jade_horizon", "JADE HORIZON", "SkyPulse/backgrounds/themes/jade-horizon", "#61f5b3", "#063523", "EXPERT", 1.18f, 3.86f),
             new WorldTheme("violet_rain", "VIOLET RAIN", "SkyPulse/backgrounds/themes/violet-rain", "#b17cff", "#210842", "EXPERT", 1.24f, 3.72f),
             new WorldTheme("eclipse", "ECLIPSE", "SkyPulse/backgrounds/themes/eclipse", "#b17cff", "#10051f", "APEX", 1.32f, 3.56f),
+            new WorldTheme("night_circuit", "NIGHT CIRCUIT", "SkyPulse/backgrounds/neon-city-v2", "#f05bc6", "#12092b", "APEX", 1.38f, 3.42f),
         };
 
         private static readonly Upgrade[] Upgrades =
@@ -1437,7 +1438,7 @@ namespace SkyPulse.Mobile
                 art.transform.localScale = new Vector3(PipeWidth / artWidth, (height + .12f) / artHeight, 1f);
                 // The other cosmetic pipe sets tint the shared premium base very gently,
                 // keeping metal readable rather than turning it into a coloured block.
-                art.color = Color.Lerp(Color.white, style.Accent, style.Id == "ion" ? 0f : .14f);
+                art.color = Color.Lerp(Color.white, style.Accent, style.Id == "ion" ? 0f : .34f);
             }
 
             surface.Outer.enabled = false;
