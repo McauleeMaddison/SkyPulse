@@ -204,7 +204,7 @@ namespace SkyPulse.Mobile
 
         private static readonly WorldTheme[] Worlds =
         {
-            new WorldTheme("neon_city", "NEON CITY", "SkyPulse/backgrounds/neon-veil-v3", "#45eaff", "#0a0522", "EASY", .88f, 5.10f),
+            new WorldTheme("neon_city", "NEON CITY", "SkyPulse/backgrounds/neon-flightsky-v4", "#45eaff", "#0a0522", "EASY", .88f, 5.10f),
             new WorldTheme("aurora_rise", "AURORA RISE", "SkyPulse/backgrounds/themes/polar-glow", "#61f5b3", "#05251e", "EASY", .94f, 4.92f),
             new WorldTheme("solar_drift", "SOLAR DRIFT", "SkyPulse/backgrounds/themes/amber-skies", "#ffc34d", "#2b0d10", "CLASSIC", 1f, 4.46f),
             new WorldTheme("midnight_tide", "MIDNIGHT TIDE", "SkyPulse/backgrounds/themes/cobalt-storm", "#45eaff", "#07113d", "CLASSIC", 1.04f, 4.30f),
@@ -420,7 +420,7 @@ namespace SkyPulse.Mobile
             ringSprite = CreateRadialSprite("Neon ring", 96, .31f, .5f);
             roundedPanelSprite = CreateRoundedRectSprite("Premium rounded panel", 128, 28);
 
-            backgroundRenderer = CreateRenderer("Cinematic world", LoadSprite("SkyPulse/backgrounds/neon-veil-v3") ?? midnightSprite, Color.white, -40);
+            backgroundRenderer = CreateRenderer("Cinematic world", LoadSprite("SkyPulse/backgrounds/neon-flightsky-v4") ?? midnightSprite, Color.white, -40);
             backgroundRenderer.transform.position = new Vector3(0f, .12f, 0f);
             FitBackgroundToCamera(backgroundRenderer, .5f);
 
@@ -640,10 +640,10 @@ namespace SkyPulse.Mobile
             difficulty.onClick.AddListener(OpenWorldCollection);
             menuCrystalText = CreateChip(root.transform, new Vector2(355f, 790f), "✦  0", Hex("#45eaff"));
 
-            menuTitleText = CreateText(root.transform, "SKYPULSE", new Vector2(0f, 574f), new Vector2(900f, 112f), 76, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            menuTitleText = CreateText(root.transform, "SKYPULSE", new Vector2(0f, 584f), new Vector2(900f, 112f), 76, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             AddOutline(menuTitleText.gameObject, new Color(.22f, .86f, 1f, .62f), 1.25f);
-            CreateText(root.transform, "THE SKY IS YOURS", new Vector2(0f, 497f), new Vector2(700f, 36f), 21, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            var titleRule = CreateImage(root.transform, "Title energy rule", new Vector2(0f, 462f), new Vector2(220f, 3f), new Color(.25f, .91f, 1f, .82f));
+            CreateText(root.transform, "FLAP  ·  FLOW  ·  FLY", new Vector2(0f, 514f), new Vector2(700f, 36f), 21, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            var titleRule = CreateImage(root.transform, "Title energy rule", new Vector2(0f, 478f), new Vector2(160f, 2f), new Color(.25f, .91f, 1f, .62f));
             titleRule.sprite = softCircleSprite;
             titleRule.raycastTarget = false;
 
@@ -653,21 +653,22 @@ namespace SkyPulse.Mobile
             menuHeroTransform.anchorMin = new Vector2(.5f, .5f);
             menuHeroTransform.anchorMax = new Vector2(.5f, .5f);
             menuHeroTransform.pivot = new Vector2(.5f, .5f);
-            menuHeroTransform.anchoredPosition = new Vector2(0f, 146f);
+            menuHeroTransform.anchoredPosition = new Vector2(0f, 132f);
             menuHeroTransform.sizeDelta = new Vector2(680f, 510f);
 
-            menuBirdGlowImage = CreateImage(menuHeroTransform, "Menu bird bloom", Vector2.zero, new Vector2(330f, 250f), new Color(.20f, .84f, 1f, .17f));
+            menuBirdGlowImage = CreateImage(menuHeroTransform, "Menu bird bloom", Vector2.zero, new Vector2(430f, 285f), new Color(.20f, .84f, 1f, .15f));
             menuBirdGlowImage.sprite = softCircleSprite;
             menuBirdGlowImage.raycastTarget = false;
             menuPortalImage = CreateImage(menuHeroTransform, "Menu flight portal", Vector2.zero, new Vector2(470f, 470f), new Color(1f, 1f, 1f, .54f));
             menuPortalImage.sprite = LoadSprite("SkyPulse/art/ui/menu-flight-portal-v1");
             menuPortalImage.preserveAspect = true;
             menuPortalImage.raycastTarget = false;
-            menuBirdImage = CreateImage(menuHeroTransform, "Menu bird", Vector2.zero, new Vector2(500f, 278f), Color.white);
+            menuPortalImage.gameObject.SetActive(false);
+            menuBirdImage = CreateImage(menuHeroTransform, "Menu bird", Vector2.zero, new Vector2(448f, 250f), Color.white);
             menuBirdImage.preserveAspect = true;
             menuBirdImage.raycastTarget = false;
             menuBirdTransform = menuBirdImage.rectTransform;
-            menuBirdFlapImage = CreateImage(menuHeroTransform, "Menu bird wing motion", Vector2.zero, new Vector2(500f, 278f), new Color(1f, 1f, 1f, 0f));
+            menuBirdFlapImage = CreateImage(menuHeroTransform, "Menu bird wing motion", Vector2.zero, new Vector2(448f, 250f), new Color(1f, 1f, 1f, 0f));
             menuBirdFlapImage.preserveAspect = true;
             menuBirdFlapImage.raycastTarget = false;
 
@@ -679,12 +680,12 @@ namespace SkyPulse.Mobile
 
             var customize = CreateNeonButton(root.transform, "CUSTOMIZE", new Vector2(0f, -421f), new Vector2(592f, 82f), Hex("#45eaff"));
             customize.onClick.AddListener(OpenCustomize);
-            var daily = CreateText(root.transform, "DAILY FLIGHT  ·  TAKE THE LONG WAY", new Vector2(0f, -518f), new Vector2(650f, 40f), 18, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            var daily = CreateText(root.transform, "DAILY RUN", new Vector2(0f, -518f), new Vector2(650f, 40f), 20, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             daily.raycastTarget = true;
             var dailyButton = daily.gameObject.AddComponent<Button>();
             dailyButton.targetGraphic = daily;
             dailyButton.onClick.AddListener(StartDailyFlight);
-            menuEquippedText = CreateText(root.transform, "NOVA  ·  SIGNATURE GLIDER", new Vector2(0f, -595f), new Vector2(650f, 36f), 16, Hex("#8f64ff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            menuEquippedText = CreateText(root.transform, "EQUIPPED  ·  NOVA", new Vector2(0f, -595f), new Vector2(650f, 36f), 17, Hex("#8f64ff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             return root;
         }
 
@@ -865,7 +866,7 @@ namespace SkyPulse.Mobile
             var intro = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(menuPresentationTime / .48f));
             if (menuHeroTransform != null)
             {
-                menuHeroTransform.anchoredPosition = new Vector2(Mathf.Sin(ambientTime * .82f) * 8f, 146f + hover * 13f);
+                menuHeroTransform.anchoredPosition = new Vector2(Mathf.Sin(ambientTime * .82f) * 8f, 132f + hover * 13f);
                 menuHeroTransform.localScale = Vector3.one * Mathf.Lerp(.92f, 1f + Mathf.Sin(ambientTime * 3.4f) * .018f, intro);
             }
             menuBirdTransform.localRotation = Quaternion.Euler(0f, 0f, hover * 2.2f - flapStrength * 1.6f);
@@ -1805,7 +1806,7 @@ namespace SkyPulse.Mobile
             if (menuBirdFlapImage != null) menuBirdFlapImage.sprite = LoadSprite(equippedSkin.FlapPath);
             UpdateCrystalLabels();
             if (menuBestText != null) menuBestText.text = $"BEST · {best}";
-            if (menuEquippedText != null) menuEquippedText.text = $"{equippedSkin.Name}  ·  SIGNATURE GLIDER";
+            if (menuEquippedText != null) menuEquippedText.text = $"EQUIPPED  ·  {equippedSkin.Name}";
             UpdateDifficultyCopy();
             ApplyTrailColors();
             foreach (var pair in pipePool)
@@ -1932,7 +1933,7 @@ namespace SkyPulse.Mobile
             if (state == FlightState.Menu)
             {
                 menuBestText.text = $"BEST · {best}";
-                menuEquippedText.text = $"{equippedSkin.Name}  ·  SIGNATURE GLIDER";
+                menuEquippedText.text = $"EQUIPPED  ·  {equippedSkin.Name}";
             }
         }
 
