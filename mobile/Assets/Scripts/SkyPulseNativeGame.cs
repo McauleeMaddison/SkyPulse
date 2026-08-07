@@ -280,6 +280,7 @@ namespace SkyPulse.Mobile
         private Sprite midnightSprite;
         private Sprite softCircleSprite;
         private Sprite ringSprite;
+        private Sprite roundedPanelSprite;
         private SpriteRenderer backgroundRenderer;
         private SpriteRenderer backgroundVeil;
         private LineRenderer cometTrail;
@@ -418,10 +419,11 @@ namespace SkyPulse.Mobile
             midnightSprite = CreateSolidSprite("Midnight fallback", Hex("#060817"));
             softCircleSprite = CreateRadialSprite("Soft neon orb", 96, 0f, .5f);
             ringSprite = CreateRadialSprite("Neon ring", 96, .31f, .5f);
+            roundedPanelSprite = CreateRoundedRectSprite("Premium rounded panel", 128, 28);
 
             backgroundRenderer = CreateRenderer("Cinematic world", LoadSprite("SkyPulse/backgrounds/neon-city-v2") ?? midnightSprite, Color.white, -40);
             backgroundRenderer.transform.position = new Vector3(0f, .12f, 0f);
-            FitToCameraHeight(backgroundRenderer, CameraHeight + .5f);
+            FitBackgroundToCamera(backgroundRenderer, .5f);
 
             backgroundVeil = CreateRenderer("World colour veil", whiteSprite, new Color(.015f, .01f, .08f, .20f), -39);
             backgroundVeil.transform.position = new Vector3(0f, .1f, 0f);
@@ -695,19 +697,19 @@ namespace SkyPulse.Mobile
             menuBirdGlowImage = CreateImage(menuHeroTransform, "Menu bird bloom", Vector2.zero, new Vector2(330f, 250f), new Color(.20f, .84f, 1f, .17f));
             menuBirdGlowImage.sprite = softCircleSprite;
             menuBirdGlowImage.raycastTarget = false;
-            menuPortalImage = CreateImage(menuHeroTransform, "Menu flight portal", Vector2.zero, new Vector2(590f, 590f), Color.white);
+            menuPortalImage = CreateImage(menuHeroTransform, "Menu flight portal", Vector2.zero, new Vector2(470f, 470f), new Color(1f, 1f, 1f, .54f));
             menuPortalImage.sprite = LoadSprite("SkyPulse/art/ui/menu-flight-portal-v1");
             menuPortalImage.preserveAspect = true;
             menuPortalImage.raycastTarget = false;
-            menuBirdImage = CreateImage(menuHeroTransform, "Menu bird", Vector2.zero, new Vector2(432f, 240f), Color.white);
+            menuBirdImage = CreateImage(menuHeroTransform, "Menu bird", Vector2.zero, new Vector2(500f, 278f), Color.white);
             menuBirdImage.preserveAspect = true;
             menuBirdImage.raycastTarget = false;
             menuBirdTransform = menuBirdImage.rectTransform;
-            menuBirdFlapImage = CreateImage(menuHeroTransform, "Menu bird wing motion", Vector2.zero, new Vector2(432f, 240f), new Color(1f, 1f, 1f, 0f));
+            menuBirdFlapImage = CreateImage(menuHeroTransform, "Menu bird wing motion", Vector2.zero, new Vector2(500f, 278f), new Color(1f, 1f, 1f, 0f));
             menuBirdFlapImage.preserveAspect = true;
             menuBirdFlapImage.raycastTarget = false;
 
-            menuBestText = CreateChip(root.transform, new Vector2(0f, -114f), "BEST · 0", Hex("#edf7ff"));
+            menuBestText = CreateChip(root.transform, new Vector2(0f, -114f), "BEST · 0", Hex("#8fa7c4"));
             var fly = CreateNeonButton(root.transform, "FLY", new Vector2(0f, -248f), new Vector2(592f, 108f), Hex("#f05bc6"));
             fly.onClick.AddListener(StartFlight);
             menuFlyButtonTransform = fly.GetComponent<RectTransform>();
@@ -1835,7 +1837,7 @@ namespace SkyPulse.Mobile
             if (equippedPipe == null) equippedPipe = PipeStyles[0];
 
             backgroundRenderer.sprite = LoadSprite(equippedWorld.BackgroundPath) ?? midnightSprite;
-            FitToCameraHeight(backgroundRenderer, CameraHeight + .5f);
+            FitBackgroundToCamera(backgroundRenderer, .5f);
             backgroundVeil.color = new Color(equippedWorld.Accent.r, equippedWorld.Accent.g, equippedWorld.Accent.b, .11f);
             floorSurface.color = equippedWorld.Floor;
             floorGlow.color = equippedWorld.Accent;
@@ -2079,6 +2081,33 @@ namespace SkyPulse.Mobile
             return CreateSprite(texture, 1f);
         }
 
+        private static Sprite CreateRoundedRectSprite(string name, int size, int radius)
+        {
+            var texture = new Texture2D(size, size, TextureFormat.RGBA32, false)
+            {
+                name = name,
+                filterMode = FilterMode.Bilinear,
+                wrapMode = TextureWrapMode.Clamp,
+            };
+            var pixels = new Color[size * size];
+            var half = size * .5f;
+            var straightEdge = half - radius;
+            for (var y = 0; y < size; y += 1)
+            {
+                for (var x = 0; x < size; x += 1)
+                {
+                    var point = new Vector2(Mathf.Abs(x + .5f - half), Mathf.Abs(y + .5f - half));
+                    var corner = new Vector2(Mathf.Max(point.x - straightEdge, 0f), Mathf.Max(point.y - straightEdge, 0f));
+                    var signedDistance = corner.magnitude + Mathf.Min(Mathf.Max(point.x - straightEdge, point.y - straightEdge), 0f) - radius;
+                    var alpha = 1f - Mathf.SmoothStep(-1f, 1f, signedDistance);
+                    pixels[y * size + x] = new Color(1f, 1f, 1f, alpha);
+                }
+            }
+            texture.SetPixels(pixels);
+            texture.Apply(false, true);
+            return Sprite.Create(texture, new Rect(0f, 0f, size, size), new Vector2(.5f, .5f), size, 0, SpriteMeshType.FullRect, new Vector4(radius, radius, radius, radius));
+        }
+
         private static Sprite CreateRadialSprite(string name, int size, float innerRadius, float outerRadius)
         {
             var texture = new Texture2D(size, size, TextureFormat.RGBA32, false)
@@ -2124,11 +2153,14 @@ namespace SkyPulse.Mobile
             return sprite;
         }
 
-        private void FitToCameraHeight(SpriteRenderer renderer, float targetHeight)
+        private void FitBackgroundToCamera(SpriteRenderer renderer, float padding)
         {
             if (renderer == null || renderer.sprite == null) return;
             var sourceHeight = Mathf.Max(.01f, renderer.sprite.bounds.size.y);
-            renderer.transform.localScale = Vector3.one * (targetHeight / sourceHeight);
+            var sourceWidth = Mathf.Max(.01f, renderer.sprite.bounds.size.x);
+            var heightScale = (CameraHeight + padding) / sourceHeight;
+            var widthScale = (GetWorldWidth() + padding) / sourceWidth;
+            renderer.transform.localScale = Vector3.one * Mathf.Max(heightScale, widthScale);
         }
 
         private static void SetBlock(SpriteRenderer renderer, Vector2 position, Vector2 size)
@@ -2181,6 +2213,11 @@ namespace SkyPulse.Mobile
         private RectTransform CreatePanel(Transform parent, string name, Vector2 position, Vector2 size, Color color)
         {
             var image = CreateImage(parent, name, position, size, color);
+            if (roundedPanelSprite != null)
+            {
+                image.sprite = roundedPanelSprite;
+                image.type = Image.Type.Sliced;
+            }
             return image.rectTransform;
         }
 
@@ -2227,8 +2264,8 @@ namespace SkyPulse.Mobile
 
         private Text CreateChip(Transform parent, Vector2 position, string value, Color accent)
         {
-            var shell = CreatePanel(parent, "Crystal chip", position, new Vector2(200f, 68f), new Color(.015f, .02f, .10f, .80f));
-            AddOutline(shell.gameObject, accent, 2.5f);
+            var shell = CreatePanel(parent, "Crystal chip", position, new Vector2(200f, 68f), new Color(.018f, .025f, .09f, .88f));
+            AddOutline(shell.gameObject, new Color(accent.r, accent.g, accent.b, .50f), 1f);
             return CreateText(shell, value, Vector2.zero, new Vector2(180f, 48f), 23, accent, TextAnchor.MiddleCenter, FontStyle.Bold);
         }
 
@@ -2236,14 +2273,14 @@ namespace SkyPulse.Mobile
         {
             var shell = CreatePanel(parent, "Button · " + label, position, size, new Color(.018f, .025f, .095f, .95f));
             var shellImage = shell.GetComponent<Image>();
-            AddOutline(shell.gameObject, new Color(accent.r, accent.g, accent.b, .86f), 1.5f);
-            var fill = Color.Lerp(new Color(.022f, .028f, .105f, .94f), accent, label == "FLY" ? .24f : .12f);
+            AddOutline(shell.gameObject, new Color(accent.r, accent.g, accent.b, .58f), 1f);
+            var fill = Color.Lerp(new Color(.018f, .025f, .085f, .96f), accent, label == "FLY" ? .10f : .055f);
             fill.a = .94f;
-            var inner = CreatePanel(shell, "Button inner", Vector2.zero, size - new Vector2(10f, 10f), fill);
+            var inner = CreatePanel(shell, "Button inner", Vector2.zero, size - new Vector2(8f, 8f), fill);
             inner.GetComponent<Image>().raycastTarget = false;
-            var sheen = CreatePanel(shell, "Button sheen", new Vector2(0f, size.y * .28f), new Vector2(size.x - 44f, 1.5f), new Color(1f, 1f, 1f, .19f));
+            var sheen = CreatePanel(shell, "Button sheen", new Vector2(0f, size.y * .25f), new Vector2(size.x - 68f, 1f), new Color(1f, 1f, 1f, .13f));
             sheen.GetComponent<Image>().raycastTarget = false;
-            var energy = CreatePanel(shell, "Button energy line", new Vector2(0f, -size.y * .29f), new Vector2(size.x - 62f, 2f), new Color(accent.r, accent.g, accent.b, .72f));
+            var energy = CreatePanel(shell, "Button energy line", new Vector2(0f, -size.y * .25f), new Vector2(label == "FLY" ? 128f : 88f, 1.5f), new Color(accent.r, accent.g, accent.b, .60f));
             energy.GetComponent<Image>().raycastTarget = false;
             var text = CreateText(shell, label, Vector2.zero, size - new Vector2(22f, 14f), label == "FLY" ? 34 : 22, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             text.raycastTarget = false;
