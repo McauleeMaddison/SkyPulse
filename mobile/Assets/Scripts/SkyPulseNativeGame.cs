@@ -457,6 +457,7 @@ namespace SkyPulse.Mobile
         private Image menuBirdImage;
         private Image menuBirdFlapImage;
         private Image menuBirdRiseImage;
+        private Image menuBirdShadowImage;
         private Image menuBirdEyeGlintImage;
         private RectTransform menuBirdTransform;
         private RectTransform menuHeroTransform;
@@ -861,6 +862,9 @@ namespace SkyPulse.Mobile
 
             // No diffuse circles or faux glass behind the bird. Its silhouette and
             // animation carry the presentation, which stays crisp on phone screens.
+            menuBirdShadowImage = CreateImage(menuHeroTransform, "Menu bird depth extrusion", new Vector2(-16f, -14f), new Vector2(800f, 400f), new Color(.004f, .010f, .040f, .48f));
+            menuBirdShadowImage.preserveAspect = true;
+            menuBirdShadowImage.raycastTarget = false;
             menuBirdRiseImage = CreateImage(menuHeroTransform, "Menu bird wing rise", Vector2.zero, new Vector2(800f, 400f), new Color(1f, 1f, 1f, 0f));
             menuBirdRiseImage.preserveAspect = true;
             menuBirdRiseImage.raycastTarget = false;
@@ -1110,6 +1114,7 @@ namespace SkyPulse.Mobile
                 // that made the previous flight loop look like a blurred sticker.
                 var pose = SelectAetherwingPose(riseStrength, flapStrength);
                 if (pose != null && menuBirdImage.sprite != pose) menuBirdImage.sprite = pose;
+                if (pose != null && menuBirdShadowImage != null && menuBirdShadowImage.sprite != pose) menuBirdShadowImage.sprite = pose;
                 menuBirdImage.color = Color.white;
                 if (menuBirdRiseImage != null) menuBirdRiseImage.color = Color.clear;
                 if (menuBirdFlapImage != null) menuBirdFlapImage.color = Color.clear;
@@ -1146,6 +1151,19 @@ namespace SkyPulse.Mobile
             menuBirdTransform.localScale = premiumRig
                 ? new Vector3(1f + riseStrength * .012f, 1f - riseStrength * .008f, 1f)
                 : new Vector3(1f + Mathf.Sin(ambientTime * 3.4f) * .018f + riseStrength * .035f, 1f - riseStrength * .018f, 1f);
+            if (menuBirdShadowImage != null)
+            {
+                // A crisp, offset silhouette gives the hero real spatial separation
+                // from the deck without a bloom, blur, or translucent glass effect.
+                menuBirdShadowImage.color = premiumRig ? new Color(.004f, .010f, .040f, .48f) : Color.clear;
+                menuBirdShadowImage.rectTransform.anchoredPosition = premiumRig
+                    ? new Vector2(-17f - riseStrength * 3f, -16f - flapStrength * 2f)
+                    : Vector2.zero;
+                menuBirdShadowImage.rectTransform.localRotation = menuBirdTransform.localRotation;
+                menuBirdShadowImage.rectTransform.localScale = premiumRig
+                    ? menuBirdTransform.localScale * 1.012f
+                    : Vector3.one;
+            }
             if (menuBirdEyeGlintImage != null)
             {
                 // Aetherwing has a small, authored visor light. The old floating UI
@@ -2396,6 +2414,7 @@ namespace SkyPulse.Mobile
             if (menuBirdImage != null) menuBirdImage.sprite = idleBirdSprite;
             if (menuBirdFlapImage != null) menuBirdFlapImage.sprite = flapBirdSprite;
             if (menuBirdRiseImage != null) menuBirdRiseImage.sprite = riseBirdSprite;
+            if (menuBirdShadowImage != null) menuBirdShadowImage.sprite = idleBirdSprite;
             if (menuBirdEyeGlintImage != null) menuBirdEyeGlintImage.gameObject.SetActive(!UsesAetherwing());
             UpdateCrystalLabels();
             if (menuEquippedText != null) menuEquippedText.text = $"EQUIPPED  ·  {equippedSkin.Name}";
@@ -2462,7 +2481,7 @@ namespace SkyPulse.Mobile
             var premiumRig = UsesAetherwing();
             birdFlapRenderer.enabled = !premiumRig && flapBirdSprite != null;
             birdRiseRenderer.enabled = !premiumRig && riseBirdSprite != null;
-            if (birdParallaxRenderer != null) birdParallaxRenderer.enabled = !premiumRig && idleBirdSprite != null;
+            if (birdParallaxRenderer != null) birdParallaxRenderer.enabled = idleBirdSprite != null;
             if (birdDepthRenderer != null) birdDepthRenderer.enabled = !premiumRig;
             if (birdEyeGlintRenderer != null) birdEyeGlintRenderer.enabled = !UsesAetherwing();
         }
@@ -2510,7 +2529,11 @@ namespace SkyPulse.Mobile
                 birdRenderer.color = Color.white;
                 birdFlapRenderer.enabled = false;
                 if (birdRiseRenderer != null) birdRiseRenderer.enabled = false;
-                if (birdParallaxRenderer != null) birdParallaxRenderer.enabled = false;
+                if (birdParallaxRenderer != null)
+                {
+                    birdParallaxRenderer.enabled = pose != null;
+                    if (pose != null && birdParallaxRenderer.sprite != pose) birdParallaxRenderer.sprite = pose;
+                }
             }
             else
             {
@@ -2565,12 +2588,25 @@ namespace SkyPulse.Mobile
             }
             if (birdParallaxRenderer != null)
             {
-                var parallaxColour = equippedSkin.Accent;
-                parallaxColour.a = .055f + riseWeight * .045f + wingWave * .025f;
-                birdParallaxRenderer.color = parallaxColour;
-                birdParallaxRenderer.transform.localPosition = new Vector3(-.075f - glide * .055f, -.020f - riseWeight * .025f, 0f);
-                birdParallaxRenderer.transform.localRotation = Quaternion.Euler(0f, 0f, glide * -2.5f + riseWeight * 2.4f);
-                birdParallaxRenderer.transform.localScale = parallaxBirdBaseScale * (1.025f + riseWeight * .045f + wingWave * .020f);
+                if (UsesAetherwing())
+                {
+                    var pose = birdRenderer != null ? birdRenderer.sprite : idleBirdSprite;
+                    if (pose != null && birdParallaxRenderer.sprite != pose) birdParallaxRenderer.sprite = pose;
+                    birdParallaxRenderer.enabled = pose != null;
+                    birdParallaxRenderer.color = new Color(.004f, .010f, .040f, .52f);
+                    birdParallaxRenderer.transform.localPosition = new Vector3(-.080f - glide * .012f, -.078f - riseWeight * .010f, 0f);
+                    birdParallaxRenderer.transform.localRotation = birdArt != null ? birdArt.localRotation : Quaternion.identity;
+                    birdParallaxRenderer.transform.localScale = BaseScaleForBirdPose(pose) * 1.018f;
+                }
+                else
+                {
+                    var parallaxColour = equippedSkin.Accent;
+                    parallaxColour.a = .055f + riseWeight * .045f + wingWave * .025f;
+                    birdParallaxRenderer.color = parallaxColour;
+                    birdParallaxRenderer.transform.localPosition = new Vector3(-.075f - glide * .055f, -.020f - riseWeight * .025f, 0f);
+                    birdParallaxRenderer.transform.localRotation = Quaternion.Euler(0f, 0f, glide * -2.5f + riseWeight * 2.4f);
+                    birdParallaxRenderer.transform.localScale = parallaxBirdBaseScale * (1.025f + riseWeight * .045f + wingWave * .020f);
+                }
             }
             if (birdEyeGlintRenderer != null && !UsesAetherwing())
             {
