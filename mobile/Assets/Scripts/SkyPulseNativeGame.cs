@@ -670,6 +670,9 @@ namespace SkyPulse.Mobile
             birdArt.SetParent(bird, false);
             birdRenderer = birdArt.gameObject.AddComponent<SpriteRenderer>();
             birdRenderer.sortingOrder = 14;
+            // Never let a renderer spend even one frame with Unity's default white
+            // graphic while artwork is resolving from Resources.
+            birdRenderer.enabled = false;
             var parallaxArt = new GameObject("Bird parallax body artwork").transform;
             parallaxArt.SetParent(bird, false);
             birdParallaxRenderer = parallaxArt.gameObject.AddComponent<SpriteRenderer>();
@@ -1114,7 +1117,9 @@ namespace SkyPulse.Mobile
                 // that made the previous flight loop look like a blurred sticker.
                 var pose = SelectAetherwingPose(riseStrength, flapStrength);
                 if (pose != null && menuBirdImage.sprite != pose) menuBirdImage.sprite = pose;
+                if (pose != null) menuBirdImage.enabled = true;
                 if (pose != null && menuBirdShadowImage != null && menuBirdShadowImage.sprite != pose) menuBirdShadowImage.sprite = pose;
+                if (pose != null && menuBirdShadowImage != null) menuBirdShadowImage.enabled = true;
                 menuBirdImage.color = Color.white;
                 if (menuBirdRiseImage != null) menuBirdRiseImage.color = Color.clear;
                 if (menuBirdFlapImage != null) menuBirdFlapImage.color = Color.clear;
@@ -1155,7 +1160,9 @@ namespace SkyPulse.Mobile
             {
                 // A crisp, offset silhouette gives the hero real spatial separation
                 // from the deck without a bloom, blur, or translucent glass effect.
-                menuBirdShadowImage.color = premiumRig ? new Color(.004f, .010f, .040f, .48f) : Color.clear;
+                var showPremiumDepth = premiumRig && menuBirdShadowImage.sprite != null;
+                menuBirdShadowImage.enabled = showPremiumDepth;
+                menuBirdShadowImage.color = showPremiumDepth ? new Color(.004f, .010f, .040f, .48f) : Color.clear;
                 menuBirdShadowImage.rectTransform.anchoredPosition = premiumRig
                     ? new Vector2(-17f - riseStrength * 3f, -16f - flapStrength * 2f)
                     : Vector2.zero;
@@ -2411,10 +2418,10 @@ namespace SkyPulse.Mobile
             lipColour.a = .78f;
             floorLip.color = lipColour;
             SetBirdArtwork();
-            if (menuBirdImage != null) menuBirdImage.sprite = idleBirdSprite;
-            if (menuBirdFlapImage != null) menuBirdFlapImage.sprite = flapBirdSprite;
-            if (menuBirdRiseImage != null) menuBirdRiseImage.sprite = riseBirdSprite;
-            if (menuBirdShadowImage != null) menuBirdShadowImage.sprite = idleBirdSprite;
+            SetArtworkImage(menuBirdImage, idleBirdSprite);
+            SetArtworkImage(menuBirdFlapImage, flapBirdSprite);
+            SetArtworkImage(menuBirdRiseImage, riseBirdSprite);
+            SetArtworkImage(menuBirdShadowImage, idleBirdSprite);
             if (menuBirdEyeGlintImage != null) menuBirdEyeGlintImage.gameObject.SetActive(!UsesAetherwing());
             UpdateCrystalLabels();
             if (menuEquippedText != null) menuEquippedText.text = $"EQUIPPED  ·  {equippedSkin.Name}";
@@ -2451,9 +2458,14 @@ namespace SkyPulse.Mobile
         private void SetBirdArtwork()
         {
             if (birdRenderer == null || birdFlapRenderer == null || birdRiseRenderer == null) return;
-            idleBirdSprite = LoadSprite(equippedSkin.ArtPath);
-            flapBirdSprite = LoadSprite(equippedSkin.FlapPath);
-            riseBirdSprite = string.IsNullOrEmpty(equippedSkin.RisePath) ? flapBirdSprite : LoadSprite(equippedSkin.RisePath);
+            var aetherwing = UsesAetherwing();
+            idleBirdSprite = LoadSprite(equippedSkin.ArtPath)
+                ?? (aetherwing ? LoadSprite("SkyPulse/characters/premium/aetherwing-glide-v2") : null);
+            flapBirdSprite = LoadSprite(equippedSkin.FlapPath)
+                ?? (aetherwing ? LoadSprite("SkyPulse/characters/premium/aetherwing-flap-v1") : idleBirdSprite);
+            riseBirdSprite = string.IsNullOrEmpty(equippedSkin.RisePath)
+                ? flapBirdSprite
+                : LoadSprite(equippedSkin.RisePath) ?? flapBirdSprite;
             if (idleBirdSprite != null)
             {
                 birdRenderer.sprite = idleBirdSprite;
@@ -2479,6 +2491,7 @@ namespace SkyPulse.Mobile
                 birdRiseArt.localScale = riseBirdBaseScale;
             }
             var premiumRig = UsesAetherwing();
+            birdRenderer.enabled = idleBirdSprite != null;
             birdFlapRenderer.enabled = !premiumRig && flapBirdSprite != null;
             birdRiseRenderer.enabled = !premiumRig && riseBirdSprite != null;
             if (birdParallaxRenderer != null) birdParallaxRenderer.enabled = idleBirdSprite != null;
@@ -2891,11 +2904,28 @@ namespace SkyPulse.Mobile
         {
             if (string.IsNullOrEmpty(path)) return null;
             if (spriteCache.TryGetValue(path, out var sprite)) return sprite;
+            // Imported art can be authored as either a Sprite or a default texture.
+            // Supporting both makes Resources loading robust across Unity reimports.
+            sprite = Resources.Load<Sprite>(path);
+            if (sprite != null)
+            {
+                spriteCache[path] = sprite;
+                return sprite;
+            }
             var texture = Resources.Load<Texture2D>(path);
             if (texture == null) return null;
             sprite = CreateSprite(texture);
             spriteCache[path] = sprite;
             return sprite;
+        }
+
+        private static void SetArtworkImage(Image image, Sprite sprite)
+        {
+            if (image == null) return;
+            image.sprite = sprite;
+            // An Image without a sprite renders Unity's built-in white rectangle.
+            // Disabling it is both visually safe and cheaper on the UI canvas.
+            image.enabled = sprite != null;
         }
 
         private void FitBackgroundToCamera(SpriteRenderer renderer, float padding)
