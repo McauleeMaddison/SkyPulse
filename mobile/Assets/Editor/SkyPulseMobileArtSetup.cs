@@ -59,7 +59,10 @@ namespace SkyPulse.Mobile.Editor
 
         private static int MaximumSizeFor(string path)
         {
-            if (path.Contains("/backgrounds/")) return 1024;
+            // Backgrounds carry the world's atmosphere and are already only one
+            // portrait texture each. Preserve their source resolution, while ASTC
+            // compression keeps the mobile memory cost predictable.
+            if (path.Contains("/backgrounds/")) return 2048;
             if (path.Contains("/characters/")) return 1024;
             if (path.Contains("/powerups/") || path.Contains("/art/")) return 512;
             return 512;

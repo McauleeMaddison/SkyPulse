@@ -282,6 +282,12 @@ namespace SkyPulse.Mobile
         private const float PickupRadius = .43f;
         private const float SimulationStep = 1f / 120f;
         private const float MaximumSimulationCatchup = 1f / 12f;
+        // Every theme uses the same authored three-pose Aetherwing silhouette. Themes
+        // change the material tint, trail, gates and world—not the bird's anatomy or
+        // visual quality—so a player never unlocks a lower-fidelity mascot.
+        private const string AetherwingGlidePath = "SkyPulse/characters/aetherwing_v2/aetherwing-glide-v3";
+        private const string AetherwingFlapPath = "SkyPulse/characters/aetherwing_v2/aetherwing-downstroke-v3";
+        private const string AetherwingRisePath = "SkyPulse/characters/aetherwing_v2/aetherwing-lift-v3";
 
         // These profiles are deliberately conservative. A play-test should alter one
         // value here at a time, never spread physics magic numbers through the loop.
@@ -303,36 +309,36 @@ namespace SkyPulse.Mobile
 
         private static readonly Skin[] Skins =
         {
-            new Skin("nova", "NOVA", "SkyPulse/characters/aetherwing_v2/aetherwing-glide-v3", "SkyPulse/characters/aetherwing_v2/aetherwing-downstroke-v3", "#8f64ff", "#45eaff", 0, "SkyPulse/characters/aetherwing_v2/aetherwing-lift-v3"),
-            new Skin("lumen", "LUMEN", "SkyPulse/characters/lumen", "SkyPulse/characters/lumen-flap", "#45eaff", "#8f64ff", 24, "SkyPulse/characters/animated/lumen-rise-v1"),
-            new Skin("ember", "EMBER", "SkyPulse/characters/ember", "SkyPulse/characters/ember-flap", "#f05bc6", "#ffc34d", 32, "SkyPulse/characters/animated/ember-rise-v1"),
-            new Skin("sol", "SOL", "SkyPulse/characters/sol", "SkyPulse/characters/sol-flap", "#ffc34d", "#45eaff", 40, "SkyPulse/characters/animated/sol-rise-v1"),
-            new Skin("aurora", "AURORA", "SkyPulse/characters/lumen", "SkyPulse/characters/lumen-flap", "#61f5b3", "#45eaff", 48, "SkyPulse/characters/animated/lumen-rise-v1"),
-            new Skin("orchid", "ORCHID", "SkyPulse/characters/nova", "SkyPulse/characters/nova-flap", "#b17cff", "#f05bc6", 52, "SkyPulse/characters/animated/nova-rise-v1"),
-            new Skin("coral", "CORAL", "SkyPulse/characters/ember", "SkyPulse/characters/ember-flap", "#f082af", "#ffc34d", 56, "SkyPulse/characters/animated/ember-rise-v1"),
-            new Skin("glacier", "GLACIER", "SkyPulse/characters/aetherwing_v2/aetherwing-glide-v3", "SkyPulse/characters/aetherwing_v2/aetherwing-downstroke-v3", "#edf7ff", "#45eaff", 60, "SkyPulse/characters/aetherwing_v2/aetherwing-lift-v3"),
-            new Skin("prism", "PRISM", "SkyPulse/characters/generated/prism", "SkyPulse/characters/generated/prism-flap", "#45eaff", "#edf7ff", 68, "SkyPulse/characters/animated/prism-rise-v1"),
-            new Skin("verdant", "VERDANT", "SkyPulse/characters/generated/verdant", "SkyPulse/characters/generated/verdant-flap", "#61f5b3", "#45eaff", 72, "SkyPulse/characters/animated/verdant-rise-v1"),
-            new Skin("cinder", "CINDER", "SkyPulse/characters/generated/cinder", "SkyPulse/characters/generated/cinder-flap", "#f05bc6", "#ffc34d", 76, "SkyPulse/characters/animated/cinder-rise-v1"),
-            new Skin("tide", "TIDE", "SkyPulse/characters/generated/tide", "SkyPulse/characters/generated/tide-flap", "#45eaff", "#8f64ff", 80, "SkyPulse/characters/animated/tide-rise-v1"),
-            new Skin("wisp", "WISP", "SkyPulse/characters/generated/wisp", "SkyPulse/characters/generated/wisp-flap", "#edf7ff", "#45eaff", 88, "SkyPulse/characters/animated/wisp-rise-v1"),
-            new Skin("bloom", "BLOOM", "SkyPulse/characters/generated/bloom", "SkyPulse/characters/generated/bloom-flap", "#f05bc6", "#b17cff", 92, "SkyPulse/characters/animated/bloom-rise-v1"),
-            new Skin("emberwing", "EMBERWING", "SkyPulse/characters/generated/emberwing", "SkyPulse/characters/generated/emberwing-flap", "#ffc34d", "#f05bc6", 100, "SkyPulse/characters/animated/cinder-rise-v1"),
-            new Skin("steel", "STEEL", "SkyPulse/characters/generated/steel", "SkyPulse/characters/generated/steel-flap", "#edf7ff", "#45eaff", 108, "SkyPulse/characters/animated/prism-rise-v1"),
+            new Skin("nova", "NOVA", AetherwingGlidePath, AetherwingFlapPath, "#8f64ff", "#45eaff", 0, AetherwingRisePath),
+            new Skin("lumen", "LUMEN", AetherwingGlidePath, AetherwingFlapPath, "#45eaff", "#8f64ff", 24, AetherwingRisePath),
+            new Skin("ember", "EMBER", AetherwingGlidePath, AetherwingFlapPath, "#f05bc6", "#ffc34d", 32, AetherwingRisePath),
+            new Skin("sol", "SOL", AetherwingGlidePath, AetherwingFlapPath, "#ffc34d", "#45eaff", 40, AetherwingRisePath),
+            new Skin("aurora", "AURORA", AetherwingGlidePath, AetherwingFlapPath, "#61f5b3", "#45eaff", 48, AetherwingRisePath),
+            new Skin("orchid", "ORCHID", AetherwingGlidePath, AetherwingFlapPath, "#b17cff", "#f05bc6", 52, AetherwingRisePath),
+            new Skin("coral", "CORAL", AetherwingGlidePath, AetherwingFlapPath, "#f082af", "#ffc34d", 56, AetherwingRisePath),
+            new Skin("glacier", "GLACIER", AetherwingGlidePath, AetherwingFlapPath, "#edf7ff", "#45eaff", 60, AetherwingRisePath),
+            new Skin("prism", "PRISM", AetherwingGlidePath, AetherwingFlapPath, "#45eaff", "#edf7ff", 68, AetherwingRisePath),
+            new Skin("verdant", "VERDANT", AetherwingGlidePath, AetherwingFlapPath, "#61f5b3", "#45eaff", 72, AetherwingRisePath),
+            new Skin("cinder", "CINDER", AetherwingGlidePath, AetherwingFlapPath, "#f05bc6", "#ffc34d", 76, AetherwingRisePath),
+            new Skin("tide", "TIDE", AetherwingGlidePath, AetherwingFlapPath, "#45eaff", "#8f64ff", 80, AetherwingRisePath),
+            new Skin("wisp", "WISP", AetherwingGlidePath, AetherwingFlapPath, "#edf7ff", "#45eaff", 88, AetherwingRisePath),
+            new Skin("bloom", "BLOOM", AetherwingGlidePath, AetherwingFlapPath, "#f05bc6", "#b17cff", 92, AetherwingRisePath),
+            new Skin("emberwing", "EMBERWING", AetherwingGlidePath, AetherwingFlapPath, "#ffc34d", "#f05bc6", 100, AetherwingRisePath),
+            new Skin("steel", "STEEL", AetherwingGlidePath, AetherwingFlapPath, "#edf7ff", "#45eaff", 108, AetherwingRisePath),
         };
 
         private static readonly WorldTheme[] Worlds =
         {
             new WorldTheme("neon_city", "NEON CITY", "SkyPulse/backgrounds/neon-flightdeck-v1", "#45eaff", "#0a0522", "EASY", .88f, 5.10f, "ion", "pulse"),
-            new WorldTheme("aurora_rise", "AURORA RISE", "SkyPulse/backgrounds/themes/polar-glow", "#61f5b3", "#05251e", "EASY", .94f, 4.92f, "frost", "aurora"),
-            new WorldTheme("solar_drift", "SOLAR DRIFT", "SkyPulse/backgrounds/themes/amber-skies", "#ffc34d", "#2b0d10", "CLASSIC", 1f, 4.46f, "solar", "solar"),
-            new WorldTheme("midnight_tide", "MIDNIGHT TIDE", "SkyPulse/backgrounds/themes/cobalt-storm", "#45eaff", "#07113d", "CLASSIC", 1.04f, 4.30f, "cobalt", "seaglass"),
-            new WorldTheme("velvet_dawn", "VELVET DAWN", "SkyPulse/backgrounds/themes/rose-orbit-v2", "#f05bc6", "#26051f", "ADVANCED", 1.08f, 4.14f, "rose", "sakura"),
-            new WorldTheme("crystal_night", "CRYSTAL NIGHT", "SkyPulse/backgrounds/themes/crystal-night", "#edf7ff", "#071239", "ADVANCED", 1.12f, 4.00f, "prism", "glacial"),
-            new WorldTheme("jade_horizon", "JADE HORIZON", "SkyPulse/backgrounds/themes/jade-horizon", "#61f5b3", "#063523", "EXPERT", 1.18f, 3.86f, "jade", "mintwave"),
-            new WorldTheme("violet_rain", "VIOLET RAIN", "SkyPulse/backgrounds/themes/violet-rain", "#b17cff", "#210842", "EXPERT", 1.24f, 3.72f, "amethyst", "nebula"),
-            new WorldTheme("eclipse", "ECLIPSE", "SkyPulse/backgrounds/themes/eclipse", "#b17cff", "#10051f", "APEX", 1.32f, 3.56f, "obsidian", "starlight"),
-            new WorldTheme("night_circuit", "NIGHT CIRCUIT", "SkyPulse/backgrounds/neon-city-v2", "#f05bc6", "#12092b", "APEX", 1.38f, 3.42f, "emberline", "voltage"),
+            new WorldTheme("aurora_rise", "AURORA RISE", "SkyPulse/backgrounds/themes/aurora-rise-v2", "#61f5b3", "#05251e", "EASY", .94f, 4.92f, "frost", "aurora"),
+            new WorldTheme("solar_drift", "SOLAR DRIFT", "SkyPulse/backgrounds/themes/solar-drift-v2", "#ffc34d", "#2b0d10", "CLASSIC", 1f, 4.46f, "solar", "solar"),
+            new WorldTheme("midnight_tide", "MIDNIGHT TIDE", "SkyPulse/backgrounds/themes/midnight-tide-v2", "#45eaff", "#07113d", "CLASSIC", 1.04f, 4.30f, "cobalt", "seaglass"),
+            new WorldTheme("velvet_dawn", "VELVET DAWN", "SkyPulse/backgrounds/themes/velvet-dawn-v3", "#f05bc6", "#26051f", "ADVANCED", 1.08f, 4.14f, "rose", "sakura"),
+            new WorldTheme("crystal_night", "CRYSTAL NIGHT", "SkyPulse/backgrounds/themes/crystal-night-v2", "#edf7ff", "#071239", "ADVANCED", 1.12f, 4.00f, "prism", "glacial"),
+            new WorldTheme("jade_horizon", "JADE HORIZON", "SkyPulse/backgrounds/themes/jade-horizon-v2", "#61f5b3", "#063523", "EXPERT", 1.18f, 3.86f, "jade", "mintwave"),
+            new WorldTheme("violet_rain", "VIOLET RAIN", "SkyPulse/backgrounds/themes/violet-rain-v2", "#b17cff", "#210842", "EXPERT", 1.24f, 3.72f, "amethyst", "nebula"),
+            new WorldTheme("eclipse", "ECLIPSE", "SkyPulse/backgrounds/themes/eclipse-v2", "#b17cff", "#10051f", "APEX", 1.32f, 3.56f, "obsidian", "starlight"),
+            new WorldTheme("night_circuit", "NIGHT CIRCUIT", "SkyPulse/backgrounds/themes/night-circuit-v3", "#f05bc6", "#12092b", "APEX", 1.38f, 3.42f, "emberline", "voltage"),
         };
 
         private static readonly Upgrade[] Upgrades =
@@ -591,7 +597,7 @@ namespace SkyPulse.Mobile
             ringSprite = CreateRadialSprite("Neon ring", 96, .31f, .5f);
             roundedPanelSprite = CreateRoundedRectSprite("Premium rounded panel", 128, 28);
 
-            backgroundRenderer = CreateRenderer("Cinematic world", LoadSprite("SkyPulse/backgrounds/neon-flightsky-v4") ?? midnightSprite, Color.white, -40);
+            backgroundRenderer = CreateRenderer("Cinematic world", LoadSprite("SkyPulse/backgrounds/neon-flightdeck-v1") ?? midnightSprite, Color.white, -40);
             backgroundRenderer.transform.position = new Vector3(0f, .12f, 0f);
             FitBackgroundToCamera(backgroundRenderer, .5f);
 
@@ -1164,7 +1170,7 @@ namespace SkyPulse.Mobile
                 if (pose != null) menuBirdImage.enabled = true;
                 if (pose != null && menuBirdShadowImage != null && menuBirdShadowImage.sprite != pose) menuBirdShadowImage.sprite = pose;
                 if (pose != null && menuBirdShadowImage != null) menuBirdShadowImage.enabled = true;
-                menuBirdImage.color = Color.white;
+                menuBirdImage.color = PremiumBirdTint();
                 if (menuBirdRiseImage != null) menuBirdRiseImage.color = Color.clear;
                 if (menuBirdFlapImage != null) menuBirdFlapImage.color = Color.clear;
             }
@@ -1954,6 +1960,10 @@ namespace SkyPulse.Mobile
             // makes the gateway feel alive without ever changing the visible safe gap.
             var pulse = .5f + .5f * Mathf.Sin(ambientTime * 6.4f + pipeX * 1.7f);
             var direction = topPipe ? 1f : -1f;
+            // Keep the shared deep-metal shell legible, then let the selected gate
+            // material breathe through a tiny controlled light pulse.
+            var shellColour = Color.Lerp(Color.white, equippedPipe.Accent, equippedPipe.Id == "ion" ? .04f : .34f);
+            surface.Artwork.color = Color.Lerp(shellColour, Color.white, pulse * .075f);
             var seamColour = surface.Energy.color;
             seamColour.a = Mathf.Lerp(.38f, .88f, pulse);
             surface.Energy.color = seamColour;
@@ -2577,6 +2587,14 @@ namespace SkyPulse.Mobile
             return equippedSkin != null && equippedSkin.ArtPath.StartsWith("SkyPulse/characters/aetherwing", StringComparison.Ordinal);
         }
 
+        private Color PremiumBirdTint()
+        {
+            if (equippedSkin == null) return Color.white;
+            var tint = Color.Lerp(Color.white, equippedSkin.Accent, .14f);
+            tint.a = 1f;
+            return tint;
+        }
+
         private Sprite SelectAetherwingPose(float riseWeight, float flapWeight)
         {
             if (riseWeight > .43f && riseBirdSprite != null) return riseBirdSprite;
@@ -2612,7 +2630,7 @@ namespace SkyPulse.Mobile
                 // This deliberately avoids translucent full-body crossfades.
                 var pose = SelectAetherwingPose(riseWeight, wingWave);
                 if (pose != null && birdRenderer.sprite != pose) birdRenderer.sprite = pose;
-                birdRenderer.color = Color.white;
+                birdRenderer.color = PremiumBirdTint();
                 birdFlapRenderer.enabled = false;
                 if (birdRiseRenderer != null) birdRiseRenderer.enabled = false;
                 if (birdParallaxRenderer != null)

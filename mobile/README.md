@@ -15,8 +15,8 @@ The native flight loop is now tuned for a deliberate feel-and-performance pass:
 - seven animated neon pickups: **Slow Field** slows obstacle scroll, **Pulse Shield** absorbs an impact, **Crystal Cache** awards currency, **Sky Surge** boosts lift, **Score Prism** increases gate rewards, **Magnet Halo** pulls in pickups, and **Phase Shift** lets the bird pass through pipes briefly;
 - a 12-item, locally saved **Flight Tech** upgrade collection: Thrust Plumes, Featherweight, Air Brakes, Rescue Feather, Time Weaver, Shield Cell, Cache Cores, Magnet Array, Phase Stabilizer, Prism Resonator, Comet Trail, and Starheart;
 - Adventure world profiles ranging from Easy through Apex, while Classic and Daily keep world selection cosmetic for fair scores;
-- dimensional bird motion with cross-faded wing poses, breathing, layered body depth, flight stretch, trails, auras, and impact/perfect-pass blooms;
-- the premium three-pose **Aetherwing** flight rig for Nova and Glacier: tucked glide, raised lift, and power downstroke with authored visor detail instead of a generic mascot eye;
+- dimensional bird motion with three authored full-body poses, breathing, layered body depth, flight stretch, trails, auras, and impact/perfect-pass blooms;
+- the premium three-pose **Aetherwing** flight rig for the entire bird collection: tucked glide, raised lift, and power downstroke with authored visor detail instead of a generic mascot eye; each theme keeps its own restrained material tint and trail;
 - animated cobalt-neon pipe gateways and seven new dimensional, transparent power-up artworks with pulsing depth and orbital motion;
 - native crystal/unlock effects alongside Nova, Neon City, and the core sound bridge.
 
@@ -30,7 +30,7 @@ The live `web/` game remains the friend beta while this native project reaches f
 2. Add this `mobile/` folder as a project.
 3. Open `Assets/Scenes/SkyPulse.unity` and press Play.
 
-For a quick visual-performance pass after importing new art, run **SkyPulse → Optimise Mobile Art** in the Unity menu. It sets transparent, clamp, non-mipmapped texture imports and ASTC 6×6 platform compression, with a 512 px budget for gameplay art and 1024 px for birds/backgrounds.
+For a quick visual-performance pass after importing new art, run **SkyPulse → Optimise Mobile Art** in the Unity menu. It sets transparent, clamp, non-mipmapped texture imports and ASTC 6×6 platform compression, with a 512 px budget for gameplay art, 1024 px for birds, and source-preserving 2048 px for cinematic backgrounds.
 
 The Unity editor installed here can run the Mac simulation. Its mobile export modules are not installed yet, so Android/iPhone packages are a separate toolchain step once the native loop is approved.
 
