@@ -399,6 +399,7 @@ namespace SkyPulse.Mobile
         private Sprite softCircleSprite;
         private Sprite ringSprite;
         private Sprite roundedPanelSprite;
+        private Sprite emergencyBirdSprite;
         private Sprite idleBirdSprite;
         private Sprite flapBirdSprite;
         private Sprite riseBirdSprite;
@@ -432,6 +433,9 @@ namespace SkyPulse.Mobile
         private Font uiFont;
 
         private GameObject uiRoot;
+        private RectTransform safeAreaRoot;
+        private Rect appliedSafeArea;
+        private Vector2Int appliedScreenSize;
         private GameObject homeScreen;
         private GameObject hudScreen;
         private GameObject pauseScreen;
@@ -548,6 +552,16 @@ namespace SkyPulse.Mobile
             CreateInterface();
             ApplyEquippedVisuals();
             ResetToMenu();
+        }
+
+        private void OnApplicationFocus(bool hasFocus)
+        {
+            if (!hasFocus) PauseFlight();
+        }
+
+        private void OnApplicationPause(bool paused)
+        {
+            if (paused) PauseFlight();
         }
 
         private void CreateCamera()
@@ -811,19 +825,40 @@ namespace SkyPulse.Mobile
             // in Unity's Free Aspect preview as well as on a phone.
             scaler.matchWidthOrHeight = 1f;
 
+            var safeRoot = new GameObject("Safe area", typeof(RectTransform));
+            safeRoot.transform.SetParent(uiRoot.transform, false);
+            safeAreaRoot = safeRoot.GetComponent<RectTransform>();
+            ApplySafeArea();
+
             if (EventSystem.current == null)
             {
                 var eventSystem = new GameObject("SkyPulse input", typeof(EventSystem), typeof(StandaloneInputModule));
                 DontDestroyOnLoad(eventSystem);
             }
 
-            homeScreen = CreateHomeScreen(uiRoot.transform);
-            hudScreen = CreateHud(uiRoot.transform);
-            pauseScreen = CreatePauseScreen(uiRoot.transform);
-            gameOverScreen = CreateGameOverScreen(uiRoot.transform);
-            customizeScreen = CreateCustomizeScreen(uiRoot.transform);
-            purchaseModal = CreatePurchaseModal(uiRoot.transform);
+            homeScreen = CreateHomeScreen(safeAreaRoot);
+            hudScreen = CreateHud(safeAreaRoot);
+            pauseScreen = CreatePauseScreen(safeAreaRoot);
+            gameOverScreen = CreateGameOverScreen(safeAreaRoot);
+            customizeScreen = CreateCustomizeScreen(safeAreaRoot);
+            purchaseModal = CreatePurchaseModal(safeAreaRoot);
             purchaseModal.SetActive(false);
+        }
+
+        private void ApplySafeArea()
+        {
+            if (safeAreaRoot == null) return;
+            var safeArea = Screen.safeArea;
+            var screenSize = new Vector2Int(Screen.width, Screen.height);
+            if (safeArea == appliedSafeArea && screenSize == appliedScreenSize) return;
+
+            appliedSafeArea = safeArea;
+            appliedScreenSize = screenSize;
+            if (screenSize.x <= 0 || screenSize.y <= 0) return;
+            safeAreaRoot.anchorMin = new Vector2(safeArea.xMin / screenSize.x, safeArea.yMin / screenSize.y);
+            safeAreaRoot.anchorMax = new Vector2(safeArea.xMax / screenSize.x, safeArea.yMax / screenSize.y);
+            safeAreaRoot.offsetMin = Vector2.zero;
+            safeAreaRoot.offsetMax = Vector2.zero;
         }
 
         private GameObject CreateHomeScreen(Transform parent)
@@ -1012,6 +1047,7 @@ namespace SkyPulse.Mobile
 
         private void Update()
         {
+            ApplySafeArea();
             var frameDelta = Mathf.Min(Time.unscaledDeltaTime, MaximumSimulationCatchup);
             ambientTime += frameDelta;
             UpdateAmbientVisuals();
@@ -2913,6 +2949,7 @@ namespace SkyPulse.Mobile
                 return sprite;
             }
             var texture = Resources.Load<Texture2D>(path);
+            if (texture == null) texture = LoadTextureFromResourceFolder(path);
 #if UNITY_EDITOR
             // Unity's Device Simulator can occasionally omit a dynamically-created
             // Sprite from its Resources lookup even though the imported texture is
@@ -2923,10 +2960,110 @@ namespace SkyPulse.Mobile
                 texture = UnityEditor.AssetDatabase.LoadAssetAtPath<Texture2D>($"Assets/Resources/{path}.png");
             }
 #endif
+            if (texture == null && path.StartsWith("SkyPulse/characters/", StringComparison.Ordinal))
+            {
+                // A public build must never turn a missing cosmetic into an invisible
+                // player. This is only reached if an authored asset was omitted from
+                // the player; usual play uses the high-detail Aetherwing artwork.
+                if (emergencyBirdSprite == null) emergencyBirdSprite = CreateEmergencyBirdSprite();
+                spriteCache[path] = emergencyBirdSprite;
+                return emergencyBirdSprite;
+            }
             if (texture == null) return null;
             sprite = CreateSprite(texture);
             spriteCache[path] = sprite;
             return sprite;
+        }
+
+        private static Texture2D LoadTextureFromResourceFolder(string path)
+        {
+            var separator = path.LastIndexOf('/');
+            if (separator <= 0 || separator >= path.Length - 1) return null;
+            var folder = path.Substring(0, separator);
+            var assetName = path.Substring(separator + 1);
+            var candidates = Resources.LoadAll<Texture2D>(folder);
+            foreach (var candidate in candidates)
+            {
+                if (candidate != null && string.Equals(candidate.name, assetName, StringComparison.Ordinal)) return candidate;
+            }
+            return null;
+        }
+
+        private static Sprite CreateEmergencyBirdSprite()
+        {
+            // A clean, high-resolution neon swift rendered procedurally. It is not
+            // part of the normal art path; it protects the player silhouette in the
+            // unlikely event a cosmetic texture is unavailable in a release build.
+            const int width = 512;
+            const int height = 256;
+            var texture = new Texture2D(width, height, TextureFormat.RGBA32, false)
+            {
+                name = "Aetherwing emergency silhouette",
+                filterMode = FilterMode.Bilinear,
+                wrapMode = TextureWrapMode.Clamp,
+            };
+            var pixels = new Color[width * height];
+            for (var y = 0; y < height; y += 1)
+            {
+                for (var x = 0; x < width; x += 1)
+                {
+                    var px = (x + .5f) / width - .5f;
+                    var py = (y + .5f) / height - .5f;
+                    var colour = Color.clear;
+
+                    var tail = SoftEllipse(px, py, -.315f, -.055f, .255f, .072f);
+                    colour = AlphaComposite(colour, new Color(.035f, .075f, .20f, 1f), tail);
+                    var lowerWing = SoftEllipse(px, py, -.085f, -.115f, .355f, .112f);
+                    colour = AlphaComposite(colour, new Color(.045f, .11f, .31f, 1f), lowerWing);
+                    var wing = SoftEllipse(px, py, -.055f, .105f, .395f, .135f);
+                    var wingShade = new Color(.05f, .12f + Mathf.Clamp01(py + .18f) * .10f, .34f + Mathf.Clamp01(px + .42f) * .12f, 1f);
+                    colour = AlphaComposite(colour, wingShade, wing);
+                    var featherEdge = Mathf.Clamp01(wing - SoftEllipse(px, py, -.055f, .105f, .365f, .105f)) * 7f;
+                    colour = AlphaComposite(colour, new Color(.16f, .86f, 1f, 1f), featherEdge * .62f);
+
+                    var body = SoftEllipse(px, py, .075f, -.015f, .325f, .175f);
+                    var bodyShade = new Color(.13f + Mathf.Clamp01(py + .15f) * .22f, .20f + Mathf.Clamp01(py + .15f) * .21f, .47f + Mathf.Clamp01(px + .25f) * .24f, 1f);
+                    colour = AlphaComposite(colour, bodyShade, body);
+                    var breast = SoftEllipse(px, py, .145f, -.09f, .215f, .095f);
+                    colour = AlphaComposite(colour, new Color(.62f, .76f, 1f, 1f), breast * .76f);
+                    var head = SoftEllipse(px, py, .335f, .035f, .125f, .128f);
+                    colour = AlphaComposite(colour, new Color(.10f, .20f, .49f, 1f), head);
+                    var face = SoftEllipse(px, py, .385f, -.005f, .065f, .075f);
+                    colour = AlphaComposite(colour, new Color(.80f, .88f, 1f, 1f), face * .76f);
+                    var beak = SoftEllipse(px, py, .455f, -.010f, .055f, .032f);
+                    colour = AlphaComposite(colour, new Color(.85f, .94f, 1f, 1f), beak);
+                    var eye = SoftEllipse(px, py, .365f, .058f, .024f, .024f);
+                    colour = AlphaComposite(colour, new Color(.04f, .96f, 1f, 1f), eye);
+                    var eyeCore = SoftEllipse(px, py, .365f, .058f, .010f, .010f);
+                    colour = AlphaComposite(colour, new Color(.005f, .02f, .08f, 1f), eyeCore);
+                    pixels[y * width + x] = colour;
+                }
+            }
+            texture.SetPixels(pixels);
+            texture.Apply(false, true);
+            return CreateSprite(texture);
+        }
+
+        private static float SoftEllipse(float x, float y, float centreX, float centreY, float radiusX, float radiusY)
+        {
+            var normalizedX = (x - centreX) / radiusX;
+            var normalizedY = (y - centreY) / radiusY;
+            var distance = Mathf.Sqrt(normalizedX * normalizedX + normalizedY * normalizedY);
+            return 1f - Mathf.SmoothStep(.94f, 1.02f, distance);
+        }
+
+        private static Color AlphaComposite(Color background, Color foreground, float opacity)
+        {
+            var sourceAlpha = Mathf.Clamp01(foreground.a * opacity);
+            if (sourceAlpha <= 0f) return background;
+            var destinationAlpha = background.a;
+            var alpha = sourceAlpha + destinationAlpha * (1f - sourceAlpha);
+            if (alpha <= .0001f) return Color.clear;
+            return new Color(
+                (foreground.r * sourceAlpha + background.r * destinationAlpha * (1f - sourceAlpha)) / alpha,
+                (foreground.g * sourceAlpha + background.g * destinationAlpha * (1f - sourceAlpha)) / alpha,
+                (foreground.b * sourceAlpha + background.b * destinationAlpha * (1f - sourceAlpha)) / alpha,
+                alpha);
         }
 
         private static void SetArtworkImage(Image image, Sprite sprite)
