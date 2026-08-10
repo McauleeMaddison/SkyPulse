@@ -431,6 +431,7 @@ namespace SkyPulse.Mobile
         private Transform birdFlapArt;
         private Transform birdRiseArt;
         private SpriteRenderer birdRenderer;
+        private SpriteRenderer birdSafetyRenderer;
         private SpriteRenderer birdFlapRenderer;
         private SpriteRenderer birdRiseRenderer;
         private SpriteRenderer birdParallaxRenderer;
@@ -478,6 +479,7 @@ namespace SkyPulse.Mobile
         private Text resultReasonText;
         private Text menuTitleText;
         private Image menuBirdImage;
+        private Image menuBirdSafetyImage;
         private Image menuBirdFlapImage;
         private Image menuBirdRiseImage;
         private Image menuBirdShadowImage;
@@ -548,6 +550,7 @@ namespace SkyPulse.Mobile
         private Color flightFeedbackColour;
         private SpriteRenderer flightFeedbackRenderer;
         private Vector3 idleBirdBaseScale = Vector3.one;
+        private Vector3 safetyBirdBaseScale = Vector3.one;
         private Vector3 parallaxBirdBaseScale = Vector3.one;
         private Vector3 flapBirdBaseScale = Vector3.one;
         private Vector3 riseBirdBaseScale = Vector3.one;
@@ -706,6 +709,11 @@ namespace SkyPulse.Mobile
         {
             bird = new GameObject("Flight bird").transform;
             bird.SetParent(transform, false);
+            // This compact, opaque inner silhouette is deliberately independent of
+            // imported artwork. It gives every bird a readable body against bright
+            // worlds and makes a missing/unsupported texture impossible to turn the
+            // player avatar invisible on a phone.
+            if (emergencyBirdSprite == null) emergencyBirdSprite = CreateEmergencyBirdSprite();
             var slowAura = CreateRenderer("Slow field aura", ringSprite, new Color(.45f, .3f, 1f, 0f), 12, bird);
             slowAura.transform.localScale = Vector3.one * 1.42f;
             slowAuraRenderer = slowAura;
@@ -730,6 +738,12 @@ namespace SkyPulse.Mobile
             birdParallaxRenderer = parallaxArt.gameObject.AddComponent<SpriteRenderer>();
             birdParallaxRenderer.sortingOrder = 13;
             birdParallaxRenderer.color = new Color(1f, 1f, 1f, 0f);
+            var safetyArt = new GameObject("Bird visibility silhouette").transform;
+            safetyArt.SetParent(bird, false);
+            birdSafetyRenderer = safetyArt.gameObject.AddComponent<SpriteRenderer>();
+            birdSafetyRenderer.sprite = emergencyBirdSprite;
+            birdSafetyRenderer.sortingOrder = 13;
+            birdSafetyRenderer.color = Color.clear;
             birdRiseArt = new GameObject("Bird rise artwork").transform;
             birdRiseArt.SetParent(bird, false);
             birdRiseRenderer = birdRiseArt.gameObject.AddComponent<SpriteRenderer>();
@@ -962,6 +976,10 @@ namespace SkyPulse.Mobile
 
             // No diffuse circles or faux glass behind the bird. Its silhouette and
             // animation carry the presentation, which stays crisp on phone screens.
+            menuBirdSafetyImage = CreateImage(menuHeroTransform, "Menu bird visibility silhouette", Vector2.zero, new Vector2(630f, 304f), Color.clear);
+            menuBirdSafetyImage.sprite = emergencyBirdSprite;
+            menuBirdSafetyImage.preserveAspect = true;
+            menuBirdSafetyImage.raycastTarget = false;
             menuBirdShadowImage = CreateImage(menuHeroTransform, "Menu bird depth extrusion", new Vector2(-16f, -14f), new Vector2(850f, 420f), new Color(.004f, .010f, .040f, .48f));
             menuBirdShadowImage.preserveAspect = true;
             menuBirdShadowImage.raycastTarget = false;
@@ -1323,6 +1341,16 @@ namespace SkyPulse.Mobile
                 menuBirdShadowImage.rectTransform.localScale = premiumRig
                     ? menuBirdTransform.localScale * 1.012f
                     : Vector3.one;
+            }
+            if (menuBirdSafetyImage != null)
+            {
+                // The readable core sits inside the authored art rather than around
+                // it, so it behaves as depth when the texture is present and as a
+                // complete, polished bird if an import ever fails.
+                menuBirdSafetyImage.enabled = true;
+                menuBirdSafetyImage.color = BirdSafetyColour();
+                menuBirdSafetyImage.rectTransform.localRotation = menuBirdTransform.localRotation;
+                menuBirdSafetyImage.rectTransform.localScale = menuBirdTransform.localScale * (1f + riseStrength * .018f);
             }
             if (menuBirdEyeGlintImage != null)
             {
@@ -2687,6 +2715,15 @@ namespace SkyPulse.Mobile
             birdFlapRenderer.enabled = !premiumRig && flapBirdSprite != null;
             birdRiseRenderer.enabled = !premiumRig && riseBirdSprite != null;
             if (birdParallaxRenderer != null) birdParallaxRenderer.enabled = idleBirdSprite != null;
+            if (birdSafetyRenderer != null)
+            {
+                birdSafetyRenderer.sprite = emergencyBirdSprite;
+                safetyBirdBaseScale = ArtworkScale(emergencyBirdSprite, BirdDisplayWidth * .72f);
+                birdSafetyRenderer.transform.localScale = safetyBirdBaseScale;
+                birdSafetyRenderer.transform.localPosition = new Vector3(-.005f, -.012f, 0f);
+                birdSafetyRenderer.color = BirdSafetyColour();
+                birdSafetyRenderer.enabled = true;
+            }
             if (birdDepthRenderer != null) birdDepthRenderer.enabled = !premiumRig;
             if (birdEyeGlintRenderer != null) birdEyeGlintRenderer.enabled = !UsesAetherwing();
         }
@@ -2702,6 +2739,18 @@ namespace SkyPulse.Mobile
             var tint = Color.Lerp(Color.white, equippedSkin.Accent, .14f);
             tint.a = 1f;
             return tint;
+        }
+
+        private Color BirdSafetyColour()
+        {
+            // A rich cobalt inner body remains legible on every world, including
+            // bright fire and glacier themes. A small share of the selected accent
+            // keeps the safety layer feeling like the equipped bird, not a UI icon.
+            var cobalt = Hex("#102b70");
+            var accent = equippedSkin != null ? equippedSkin.Accent : Hex("#45eaff");
+            var colour = Color.Lerp(cobalt, accent, .24f);
+            colour.a = .86f;
+            return colour;
         }
 
         private Sprite SelectAetherwingPose(float riseWeight, float flapWeight)
