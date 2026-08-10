@@ -16,8 +16,11 @@ The native flight loop is now tuned for a deliberate feel-and-performance pass:
 - a 12-item, locally saved **Flight Tech** upgrade collection: Thrust Plumes, Featherweight, Air Brakes, Rescue Feather, Time Weaver, Shield Cell, Cache Cores, Magnet Array, Phase Stabilizer, Prism Resonator, Comet Trail, and Starheart;
 - Adventure world profiles ranging from Easy through Apex, while Classic and Daily keep world selection cosmetic for fair scores;
 - dimensional bird motion with cross-faded wing poses, breathing, layered body depth, flight stretch, trails, auras, and impact/perfect-pass blooms;
+- the premium three-pose **Aetherwing** flight rig for Nova and Glacier: tucked glide, raised lift, and power downstroke with authored visor detail instead of a generic mascot eye;
 - animated cobalt-neon pipe gateways and seven new dimensional, transparent power-up artworks with pulsing depth and orbital motion;
 - native crystal/unlock effects alongside Nova, Neon City, and the core sound bridge.
+
+On a device, high-value moments also get a single restrained haptic pulse: perfect passes, power-up pickups, shield/rescue saves, and impacts. Normal flaps remain haptic-free so the game never turns into continuous vibration.
 
 The live `web/` game remains the friend beta while this native project reaches feature parity. Do not add new gameplay to both long-term: build and prove the native loop first, then move menus, cosmetics, progress, Daily Flight, and sharing across in deliberate passes.
 

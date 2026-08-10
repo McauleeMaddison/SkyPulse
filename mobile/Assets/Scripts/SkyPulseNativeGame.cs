@@ -301,14 +301,14 @@ namespace SkyPulse.Mobile
 
         private static readonly Skin[] Skins =
         {
-            new Skin("nova", "NOVA", "SkyPulse/characters/nova", "SkyPulse/characters/nova-flap", "#8f64ff", "#45eaff", 0, "SkyPulse/characters/animated/nova-rise-v1"),
+            new Skin("nova", "NOVA", "SkyPulse/characters/premium/aetherwing-glide-v2", "SkyPulse/characters/premium/aetherwing-flap-v1", "#8f64ff", "#45eaff", 0, "SkyPulse/characters/premium/aetherwing-glide-v1"),
             new Skin("lumen", "LUMEN", "SkyPulse/characters/lumen", "SkyPulse/characters/lumen-flap", "#45eaff", "#8f64ff", 24, "SkyPulse/characters/animated/lumen-rise-v1"),
             new Skin("ember", "EMBER", "SkyPulse/characters/ember", "SkyPulse/characters/ember-flap", "#f05bc6", "#ffc34d", 32, "SkyPulse/characters/animated/ember-rise-v1"),
             new Skin("sol", "SOL", "SkyPulse/characters/sol", "SkyPulse/characters/sol-flap", "#ffc34d", "#45eaff", 40, "SkyPulse/characters/animated/sol-rise-v1"),
             new Skin("aurora", "AURORA", "SkyPulse/characters/lumen", "SkyPulse/characters/lumen-flap", "#61f5b3", "#45eaff", 48, "SkyPulse/characters/animated/lumen-rise-v1"),
             new Skin("orchid", "ORCHID", "SkyPulse/characters/nova", "SkyPulse/characters/nova-flap", "#b17cff", "#f05bc6", 52, "SkyPulse/characters/animated/nova-rise-v1"),
             new Skin("coral", "CORAL", "SkyPulse/characters/ember", "SkyPulse/characters/ember-flap", "#f082af", "#ffc34d", 56, "SkyPulse/characters/animated/ember-rise-v1"),
-            new Skin("glacier", "GLACIER", "SkyPulse/characters/sol", "SkyPulse/characters/sol-flap", "#edf7ff", "#45eaff", 60, "SkyPulse/characters/animated/sol-rise-v1"),
+            new Skin("glacier", "GLACIER", "SkyPulse/characters/premium/aetherwing-glide-v2", "SkyPulse/characters/premium/aetherwing-flap-v1", "#edf7ff", "#45eaff", 60, "SkyPulse/characters/premium/aetherwing-glide-v1"),
             new Skin("prism", "PRISM", "SkyPulse/characters/generated/prism", "SkyPulse/characters/generated/prism-flap", "#45eaff", "#edf7ff", 68, "SkyPulse/characters/animated/prism-rise-v1"),
             new Skin("verdant", "VERDANT", "SkyPulse/characters/generated/verdant", "SkyPulse/characters/generated/verdant-flap", "#61f5b3", "#45eaff", 72, "SkyPulse/characters/animated/verdant-rise-v1"),
             new Skin("cinder", "CINDER", "SkyPulse/characters/generated/cinder", "SkyPulse/characters/generated/cinder-flap", "#f05bc6", "#ffc34d", 76, "SkyPulse/characters/animated/cinder-rise-v1"),
@@ -505,6 +505,9 @@ namespace SkyPulse.Mobile
         private float simulationAccumulator;
         private float bufferedFlapUntil = -1f;
         private float flightFeedbackTimer;
+#if !UNITY_EDITOR
+        private float hapticCooldownUntil;
+#endif
         private int shieldCharges;
         private int rescueCharges;
         private int gatesSinceStarheart;
@@ -845,28 +848,30 @@ namespace SkyPulse.Mobile
             menuHeroTransform.anchorMin = new Vector2(.5f, .5f);
             menuHeroTransform.anchorMax = new Vector2(.5f, .5f);
             menuHeroTransform.pivot = new Vector2(.5f, .5f);
-            menuHeroTransform.anchoredPosition = new Vector2(0f, 132f);
-            menuHeroTransform.sizeDelta = new Vector2(680f, 510f);
+            menuHeroTransform.anchoredPosition = new Vector2(0f, 118f);
+            menuHeroTransform.sizeDelta = new Vector2(760f, 510f);
 
-            menuBirdGlowImage = CreateImage(menuHeroTransform, "Menu bird bloom", Vector2.zero, new Vector2(430f, 285f), new Color(.20f, .84f, 1f, .15f));
+            menuBirdGlowImage = CreateImage(menuHeroTransform, "Menu bird bloom", Vector2.zero, new Vector2(390f, 390f), new Color(.20f, .84f, 1f, .07f));
             menuBirdGlowImage.sprite = softCircleSprite;
+            menuBirdGlowImage.preserveAspect = true;
             menuBirdGlowImage.raycastTarget = false;
-            menuBirdDepthImage = CreateImage(menuHeroTransform, "Menu bird dimensional bloom", new Vector2(-18f, -8f), new Vector2(432f, 126f), new Color(.20f, .84f, 1f, .10f));
+            menuBirdDepthImage = CreateImage(menuHeroTransform, "Menu bird dimensional bloom", new Vector2(-12f, -5f), new Vector2(300f, 300f), new Color(.20f, .84f, 1f, .035f));
             menuBirdDepthImage.sprite = softCircleSprite;
+            menuBirdDepthImage.preserveAspect = true;
             menuBirdDepthImage.raycastTarget = false;
             menuPortalImage = CreateImage(menuHeroTransform, "Menu flight portal", Vector2.zero, new Vector2(470f, 470f), new Color(1f, 1f, 1f, .54f));
             menuPortalImage.sprite = LoadSprite("SkyPulse/art/ui/menu-flight-portal-v1");
             menuPortalImage.preserveAspect = true;
             menuPortalImage.raycastTarget = false;
             menuPortalImage.gameObject.SetActive(false);
-            menuBirdRiseImage = CreateImage(menuHeroTransform, "Menu bird wing rise", Vector2.zero, new Vector2(448f, 250f), new Color(1f, 1f, 1f, 0f));
+            menuBirdRiseImage = CreateImage(menuHeroTransform, "Menu bird wing rise", Vector2.zero, new Vector2(540f, 360f), new Color(1f, 1f, 1f, 0f));
             menuBirdRiseImage.preserveAspect = true;
             menuBirdRiseImage.raycastTarget = false;
-            menuBirdImage = CreateImage(menuHeroTransform, "Menu bird", Vector2.zero, new Vector2(448f, 250f), Color.white);
+            menuBirdImage = CreateImage(menuHeroTransform, "Menu bird", Vector2.zero, new Vector2(540f, 360f), Color.white);
             menuBirdImage.preserveAspect = true;
             menuBirdImage.raycastTarget = false;
             menuBirdTransform = menuBirdImage.rectTransform;
-            menuBirdFlapImage = CreateImage(menuHeroTransform, "Menu bird wing motion", Vector2.zero, new Vector2(448f, 250f), new Color(1f, 1f, 1f, 0f));
+            menuBirdFlapImage = CreateImage(menuHeroTransform, "Menu bird wing motion", Vector2.zero, new Vector2(540f, 360f), new Color(1f, 1f, 1f, 0f));
             menuBirdFlapImage.preserveAspect = true;
             menuBirdFlapImage.raycastTarget = false;
             menuBirdEyeGlintImage = CreateImage(menuHeroTransform, "Menu bird living eye glint", new Vector2(132f, 36f), new Vector2(24f, 24f), new Color(1f, 1f, 1f, .42f));
@@ -1125,7 +1130,7 @@ namespace SkyPulse.Mobile
             var intro = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(menuPresentationTime / .48f));
             if (menuHeroTransform != null)
             {
-                menuHeroTransform.anchoredPosition = new Vector2(Mathf.Sin(ambientTime * .82f) * 8f, 132f + hover * 13f);
+                menuHeroTransform.anchoredPosition = new Vector2(Mathf.Sin(ambientTime * .82f) * 8f, 118f + hover * 13f);
                 menuHeroTransform.localScale = Vector3.one * Mathf.Lerp(.92f, 1f + Mathf.Sin(ambientTime * 3.4f) * .018f, intro);
             }
             menuBirdTransform.localRotation = Quaternion.Euler(0f, 0f, flightTilt + glideLean);
@@ -1133,27 +1138,33 @@ namespace SkyPulse.Mobile
             if (menuBirdDepthImage != null)
             {
                 var depth = equippedSkin.Accent;
-                depth.a = .075f + riseStrength * .10f + flapStrength * .045f;
+                depth.a = .025f + riseStrength * .045f + flapStrength * .020f;
                 menuBirdDepthImage.color = depth;
-                menuBirdDepthImage.rectTransform.anchoredPosition = new Vector2(-20f - riseStrength * 9f, -10f + hover * 2.2f);
-                menuBirdDepthImage.rectTransform.localScale = new Vector3(1f + riseStrength * .12f + flapStrength * .07f, 1f + riseStrength * .05f, 1f);
+                menuBirdDepthImage.rectTransform.anchoredPosition = new Vector2(-12f - riseStrength * 7f, -5f + hover * 1.5f);
+                menuBirdDepthImage.rectTransform.localScale = Vector3.one * (1f + riseStrength * .08f + flapStrength * .04f);
             }
             if (menuBirdEyeGlintImage != null)
             {
-                var blinkCycle = Mathf.Repeat(ambientTime * .27f + .18f, 1f);
-                var eyelid = blinkCycle < .045f ? Mathf.SmoothStep(.12f, 1f, blinkCycle / .045f) : 1f;
-                var glint = Color.Lerp(Color.white, equippedSkin.Accent, .18f);
-                glint.a = (.34f + riseStrength * .12f) * eyelid;
-                menuBirdEyeGlintImage.color = glint;
-                menuBirdEyeGlintImage.rectTransform.anchoredPosition = new Vector2(132f + riseStrength * 5f, 36f + hover * 2.4f);
-                menuBirdEyeGlintImage.rectTransform.localScale = Vector3.one * (.92f + riseStrength * .18f);
+                // Aetherwing has a small, authored visor light. The old floating UI
+                // glint belongs only to the legacy round-eyed birds.
+                menuBirdEyeGlintImage.gameObject.SetActive(!UsesAetherwing());
+                if (!UsesAetherwing())
+                {
+                    var blinkCycle = Mathf.Repeat(ambientTime * .27f + .18f, 1f);
+                    var eyelid = blinkCycle < .045f ? Mathf.SmoothStep(.12f, 1f, blinkCycle / .045f) : 1f;
+                    var glint = Color.Lerp(Color.white, equippedSkin.Accent, .18f);
+                    glint.a = (.34f + riseStrength * .12f) * eyelid;
+                    menuBirdEyeGlintImage.color = glint;
+                    menuBirdEyeGlintImage.rectTransform.anchoredPosition = new Vector2(132f + riseStrength * 5f, 36f + hover * 2.4f);
+                    menuBirdEyeGlintImage.rectTransform.localScale = Vector3.one * (.92f + riseStrength * .18f);
+                }
             }
             if (menuBirdGlowImage != null)
             {
                 var glow = equippedSkin.Accent;
-                glow.a = .15f + Mathf.Sin(ambientTime * 3.1f) * .045f;
+                glow.a = .07f + Mathf.Sin(ambientTime * 3.1f) * .020f;
                 menuBirdGlowImage.color = glow;
-                menuBirdGlowImage.rectTransform.localScale = Vector3.one * (1f + Mathf.Sin(ambientTime * 2.2f) * .07f);
+                menuBirdGlowImage.rectTransform.localScale = Vector3.one * (1f + Mathf.Sin(ambientTime * 2.2f) * .045f);
             }
             if (menuPortalImage != null)
             {
@@ -1272,6 +1283,7 @@ namespace SkyPulse.Mobile
                     hudScoreText.text = score.ToString();
                     ShowScoreBurst(crystalReward, perfect);
                     TriggerFlightFeedback(perfect ? equippedSkin.Accent : Hex("#45eaff"), perfect ? .26f : .13f);
+                    if (perfect) PulseHaptic(.10f);
                     Play(scoreSound);
                     UpdateCrystalLabels();
                 }
@@ -1507,6 +1519,7 @@ namespace SkyPulse.Mobile
             var tuning = ActiveTuning();
             pickup.RespawnTimer = RouteRange(tuning.PowerUpRespawnMinimum, tuning.PowerUpRespawnMaximum);
             TriggerFlightFeedback(pickup.Glow.color, .22f);
+            PulseHaptic(.08f);
             switch (pickup.Kind)
             {
                 case PowerUpKind.SlowField:
@@ -1595,6 +1608,7 @@ namespace SkyPulse.Mobile
                 shieldCharges = 0;
                 shieldFlashTimer = .85f;
                 TriggerFlightFeedback(Hex("#61f5b3"), .34f);
+                PulseHaptic(.16f);
                 Play(unlockSound);
                 UpdatePowerUpHud();
                 return true;
@@ -1603,6 +1617,7 @@ namespace SkyPulse.Mobile
             rescueCharges = 0;
             shieldFlashTimer = .5f;
             TriggerFlightFeedback(Hex("#f05bc6"), .30f);
+            PulseHaptic(.16f);
             Play(unlockSound);
             UpdatePowerUpHud();
             return true;
@@ -2006,6 +2021,7 @@ namespace SkyPulse.Mobile
             SetBestFor(flightMode, Mathf.Max(previousBest, score));
             SaveProgress();
             TriggerFlightFeedback(Hex("#f05bc6"), .36f);
+            PulseHaptic(.28f);
             Play(crashSound);
             resultScoreText.text = flightMode == FlightMode.Daily ? $"DAILY SCORE  {score}" : $"SCORE  {score}";
             resultBestText.text = flightMode == FlightMode.Daily
@@ -2389,6 +2405,7 @@ namespace SkyPulse.Mobile
             if (menuBirdImage != null) menuBirdImage.sprite = LoadSprite(equippedSkin.ArtPath);
             if (menuBirdFlapImage != null) menuBirdFlapImage.sprite = LoadSprite(equippedSkin.FlapPath);
             if (menuBirdRiseImage != null) menuBirdRiseImage.sprite = string.IsNullOrEmpty(equippedSkin.RisePath) ? LoadSprite(equippedSkin.FlapPath) : LoadSprite(equippedSkin.RisePath);
+            if (menuBirdEyeGlintImage != null) menuBirdEyeGlintImage.gameObject.SetActive(!UsesAetherwing());
             UpdateCrystalLabels();
             if (menuEquippedText != null) menuEquippedText.text = $"EQUIPPED  ·  {equippedSkin.Name}";
             UpdateModeCopy();
@@ -2452,6 +2469,12 @@ namespace SkyPulse.Mobile
                 riseBirdBaseScale = ArtworkScale(rise, BirdDisplayWidth);
                 birdRiseArt.localScale = riseBirdBaseScale;
             }
+            if (birdEyeGlintRenderer != null) birdEyeGlintRenderer.enabled = !UsesAetherwing();
+        }
+
+        private bool UsesAetherwing()
+        {
+            return equippedSkin != null && equippedSkin.ArtPath.StartsWith("SkyPulse/characters/premium/", StringComparison.Ordinal);
         }
 
         private static Vector3 ArtworkScale(Sprite sprite, float targetWidth)
@@ -2519,7 +2542,7 @@ namespace SkyPulse.Mobile
                 birdParallaxRenderer.transform.localRotation = Quaternion.Euler(0f, 0f, glide * -2.5f + riseWeight * 2.4f);
                 birdParallaxRenderer.transform.localScale = parallaxBirdBaseScale * (1.025f + riseWeight * .045f + wingWave * .020f);
             }
-            if (birdEyeGlintRenderer != null)
+            if (birdEyeGlintRenderer != null && !UsesAetherwing())
             {
                 var blinkPhase = Mathf.Repeat(ambientTime * .27f + .18f, 1f);
                 var blink = blinkPhase < .045f ? Mathf.SmoothStep(.16f, 1f, blinkPhase / .045f) : 1f;
@@ -2624,6 +2647,18 @@ namespace SkyPulse.Mobile
         private void Play(AudioClip clip)
         {
             if (clip != null && audioSource != null) audioSource.PlayOneShot(clip);
+        }
+
+        private void PulseHaptic(float cooldown)
+        {
+#if !UNITY_EDITOR
+            // Keep tactile feedback reserved for high-value moments. Flaps remain
+            // silent to the haptic motor, while perfect passes, pickups, saves and
+            // impacts earn a single crisp pulse without rapid-fire vibration.
+            if (Time.unscaledTime < hapticCooldownUntil) return;
+            hapticCooldownUntil = Time.unscaledTime + cooldown;
+            Handheld.Vibrate();
+#endif
         }
 
         private void LoadProgress()
