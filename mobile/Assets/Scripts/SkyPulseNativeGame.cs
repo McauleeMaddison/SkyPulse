@@ -2913,6 +2913,16 @@ namespace SkyPulse.Mobile
                 return sprite;
             }
             var texture = Resources.Load<Texture2D>(path);
+#if UNITY_EDITOR
+            // Unity's Device Simulator can occasionally omit a dynamically-created
+            // Sprite from its Resources lookup even though the imported texture is
+            // present. Resolve the same project asset directly in the editor so the
+            // preview is faithful to the native build instead of losing the bird.
+            if (texture == null)
+            {
+                texture = UnityEditor.AssetDatabase.LoadAssetAtPath<Texture2D>($"Assets/Resources/{path}.png");
+            }
+#endif
             if (texture == null) return null;
             sprite = CreateSprite(texture);
             spriteCache[path] = sprite;
