@@ -555,6 +555,18 @@ namespace SkyPulse.Mobile
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         private bool collisionDebugEnabled;
         private SpriteRenderer collisionBirdDebug;
+
+        // These caps exercise the exact same fixed-step route at the refresh rates
+        // we need to validate before a real-device session. They never alter the
+        // flight tuning itself, which keeps a comparison meaningful.
+        private int developmentFrameRateCap = 60;
+#endif
+
+#if UNITY_EDITOR
+        private Text editorQualityText;
+        private float editorFrameSampleTime;
+        private int editorFrameSampleCount;
+        private float editorDisplayedFps;
 #endif
 
         private void Awake()
@@ -871,7 +883,29 @@ namespace SkyPulse.Mobile
             customizeScreen = CreateCustomizeScreen(safeAreaRoot);
             purchaseModal = CreatePurchaseModal(safeAreaRoot);
             purchaseModal.SetActive(false);
+
+#if UNITY_EDITOR
+            CreateEditorQualityHarness(safeAreaRoot);
+#endif
         }
+
+#if UNITY_EDITOR
+        /// <summary>
+        /// Editor-only mobile QA readout. It makes frame-rate and collision checks
+        /// visible in the Game view without adding a single element to a player build.
+        /// F1/F2/F3 set a 30/60/120 FPS render cap; F4 shows the collision volumes.
+        /// </summary>
+        private void CreateEditorQualityHarness(Transform parent)
+        {
+            var bar = CreatePanel(parent, "Editor mobile quality harness", new Vector2(0f, -856f), new Vector2(796f, 44f), new Color(.008f, .014f, .04f, .78f));
+            var image = bar.GetComponent<Image>();
+            image.raycastTarget = false;
+            AddOutline(bar.gameObject, new Color(.27f, .86f, 1f, .23f), .75f);
+            editorQualityText = CreateText(bar, "EDITOR QA  ·  STARTING…", Vector2.zero, new Vector2(760f, 34f), 13, new Color(.75f, .92f, 1f, .82f), TextAnchor.MiddleCenter, FontStyle.Bold);
+            editorQualityText.raycastTarget = false;
+            UpdateEditorQualityHarness(0f);
+        }
+#endif
 
         private void ApplySafeArea()
         {
@@ -1098,7 +1132,11 @@ namespace SkyPulse.Mobile
             UpdateFlightFeedback(frameDelta);
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            if (Input.GetKeyDown(KeyCode.F3)) collisionDebugEnabled = !collisionDebugEnabled;
+            UpdateDevelopmentQualityControls();
+#endif
+
+#if UNITY_EDITOR
+            UpdateEditorQualityHarness(frameDelta);
 #endif
 
             if (state == FlightState.Menu)
@@ -1133,6 +1171,41 @@ namespace SkyPulse.Mobile
             UpdateCollisionDebug();
 #endif
         }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        private void UpdateDevelopmentQualityControls()
+        {
+            if (Input.GetKeyDown(KeyCode.F1)) SetDevelopmentFrameRateCap(30);
+            if (Input.GetKeyDown(KeyCode.F2)) SetDevelopmentFrameRateCap(60);
+            if (Input.GetKeyDown(KeyCode.F3)) SetDevelopmentFrameRateCap(120);
+            if (Input.GetKeyDown(KeyCode.F4)) collisionDebugEnabled = !collisionDebugEnabled;
+        }
+
+        private void SetDevelopmentFrameRateCap(int frameRate)
+        {
+            developmentFrameRateCap = frameRate;
+            QualitySettings.vSyncCount = 0;
+            Application.targetFrameRate = frameRate;
+        }
+#endif
+
+#if UNITY_EDITOR
+        private void UpdateEditorQualityHarness(float deltaTime)
+        {
+            if (editorQualityText == null) return;
+            editorFrameSampleTime += Mathf.Max(0f, deltaTime);
+            editorFrameSampleCount += 1;
+            if (editorFrameSampleTime >= .25f)
+            {
+                editorDisplayedFps = editorFrameSampleCount / editorFrameSampleTime;
+                editorFrameSampleTime = 0f;
+                editorFrameSampleCount = 0;
+            }
+
+            var hitboxState = collisionDebugEnabled ? "HITBOX ON" : "F4 HITBOX";
+            editorQualityText.text = $"EDITOR QA  ·  {developmentFrameRateCap} FPS CAP  ·  {Mathf.RoundToInt(editorDisplayedFps)} FPS  ·  F1 30  F2 60  F3 120  ·  {hitboxState}";
+        }
+#endif
 
         private void SimulateFlight(float deltaTime)
         {
@@ -1779,7 +1852,7 @@ namespace SkyPulse.Mobile
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         /// <summary>
-        /// Press F3 in an Editor or Development build to expose the exact collision
+        /// Press F4 in an Editor or Development build to expose the exact collision
         /// space. It is compiled out of release builds, so it can never distract a
         /// player or cost production frame time.
         /// </summary>
