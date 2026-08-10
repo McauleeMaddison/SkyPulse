@@ -34,6 +34,26 @@ For a quick visual-performance pass after importing new art, run **SkyPulse → 
 
 The Unity editor installed here can run the Mac simulation. Its mobile export modules are not installed yet, so Android/iPhone packages are a separate toolchain step once the native loop is approved.
 
+## Test on a physical phone
+
+You do not install Unity on the phone. Unity runs on the Mac, creates an app build, and installs that app onto the connected phone.
+
+### Android (fastest first device test)
+
+1. In **Unity Hub → Installs**, find Unity `6000.0.47f1`, choose **Add modules**, and install **Android Build Support**, including **Android SDK & NDK Tools** and **OpenJDK**.
+2. On the Android phone, enable **Developer options** and **USB debugging**, then connect it to the Mac using a data-capable USB cable and accept the phone’s trust/debugging prompt.
+3. In Unity, open **File → Build Profiles**, add/switch to **Android**, select the phone under **Run Device**, then use **Build And Run**.
+4. For performance work, tick **Development Build** and **Autoconnect Profiler** for one test build only; turn them off for normal play tests.
+
+### iPhone (requires iOS support and Xcode on this Mac)
+
+1. Install **Xcode** from the Mac App Store, open it once, and sign in with the Apple ID you use for testing.
+2. In Unity Hub, add **iOS Build Support** to Unity `6000.0.47f1`.
+3. In Unity, set a unique iOS Bundle Identifier under **Edit → Project Settings → Player → iOS**, connect and trust the iPhone, then choose **File → Build Profiles → iOS → Build And Run**.
+4. Unity creates an Xcode project; Xcode signs it with your team and installs it on the connected iPhone. A free Apple ID is sufficient for your own device testing; App Store/TestFlight distribution is a later Apple Developer Program step.
+
+Record each first device session: device model, OS version, average FPS, first-run score, accidental taps, unclear deaths, and any visual hitch. That is the evidence needed to make final release calls rather than guessing from the editor.
+
 ## Native build order
 
 1. Validate tap feel, gravity, collision fairness, sound, and frame stability in the Unity simulator.
