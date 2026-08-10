@@ -301,14 +301,14 @@ namespace SkyPulse.Mobile
 
         private static readonly Skin[] Skins =
         {
-            new Skin("nova", "NOVA", "SkyPulse/characters/premium/aetherwing-glide-v2", "SkyPulse/characters/premium/aetherwing-flap-v1", "#8f64ff", "#45eaff", 0, "SkyPulse/characters/premium/aetherwing-glide-v1"),
+            new Skin("nova", "NOVA", "SkyPulse/characters/aetherwing_v2/aetherwing-glide-v3", "SkyPulse/characters/aetherwing_v2/aetherwing-downstroke-v3", "#8f64ff", "#45eaff", 0, "SkyPulse/characters/aetherwing_v2/aetherwing-lift-v3"),
             new Skin("lumen", "LUMEN", "SkyPulse/characters/lumen", "SkyPulse/characters/lumen-flap", "#45eaff", "#8f64ff", 24, "SkyPulse/characters/animated/lumen-rise-v1"),
             new Skin("ember", "EMBER", "SkyPulse/characters/ember", "SkyPulse/characters/ember-flap", "#f05bc6", "#ffc34d", 32, "SkyPulse/characters/animated/ember-rise-v1"),
             new Skin("sol", "SOL", "SkyPulse/characters/sol", "SkyPulse/characters/sol-flap", "#ffc34d", "#45eaff", 40, "SkyPulse/characters/animated/sol-rise-v1"),
             new Skin("aurora", "AURORA", "SkyPulse/characters/lumen", "SkyPulse/characters/lumen-flap", "#61f5b3", "#45eaff", 48, "SkyPulse/characters/animated/lumen-rise-v1"),
             new Skin("orchid", "ORCHID", "SkyPulse/characters/nova", "SkyPulse/characters/nova-flap", "#b17cff", "#f05bc6", 52, "SkyPulse/characters/animated/nova-rise-v1"),
             new Skin("coral", "CORAL", "SkyPulse/characters/ember", "SkyPulse/characters/ember-flap", "#f082af", "#ffc34d", 56, "SkyPulse/characters/animated/ember-rise-v1"),
-            new Skin("glacier", "GLACIER", "SkyPulse/characters/premium/aetherwing-glide-v2", "SkyPulse/characters/premium/aetherwing-flap-v1", "#edf7ff", "#45eaff", 60, "SkyPulse/characters/premium/aetherwing-glide-v1"),
+            new Skin("glacier", "GLACIER", "SkyPulse/characters/aetherwing_v2/aetherwing-glide-v3", "SkyPulse/characters/aetherwing_v2/aetherwing-downstroke-v3", "#edf7ff", "#45eaff", 60, "SkyPulse/characters/aetherwing_v2/aetherwing-lift-v3"),
             new Skin("prism", "PRISM", "SkyPulse/characters/generated/prism", "SkyPulse/characters/generated/prism-flap", "#45eaff", "#edf7ff", 68, "SkyPulse/characters/animated/prism-rise-v1"),
             new Skin("verdant", "VERDANT", "SkyPulse/characters/generated/verdant", "SkyPulse/characters/generated/verdant-flap", "#61f5b3", "#45eaff", 72, "SkyPulse/characters/animated/verdant-rise-v1"),
             new Skin("cinder", "CINDER", "SkyPulse/characters/generated/cinder", "SkyPulse/characters/generated/cinder-flap", "#f05bc6", "#ffc34d", 76, "SkyPulse/characters/animated/cinder-rise-v1"),
@@ -399,6 +399,9 @@ namespace SkyPulse.Mobile
         private Sprite softCircleSprite;
         private Sprite ringSprite;
         private Sprite roundedPanelSprite;
+        private Sprite idleBirdSprite;
+        private Sprite flapBirdSprite;
+        private Sprite riseBirdSprite;
         private SpriteRenderer backgroundRenderer;
         private SpriteRenderer backgroundVeil;
         private SpriteRenderer floorBase;
@@ -454,10 +457,7 @@ namespace SkyPulse.Mobile
         private Image menuBirdImage;
         private Image menuBirdFlapImage;
         private Image menuBirdRiseImage;
-        private Image menuBirdGlowImage;
-        private Image menuBirdDepthImage;
         private Image menuBirdEyeGlintImage;
-        private Image menuPortalImage;
         private RectTransform menuBirdTransform;
         private RectTransform menuHeroTransform;
         private RectTransform customizeContent;
@@ -825,7 +825,9 @@ namespace SkyPulse.Mobile
         private GameObject CreateHomeScreen(Transform parent)
         {
             var root = CreateScreen(parent, "Home screen");
-            CreateFullPanel(root.transform, "Home contrast veil", new Color(.005f, .012f, .05f, .30f));
+            // The home screen is a clear flight deck, not a frosted layer over the
+            // world. Keep the world visible, then give controls a solid place to sit.
+            CreateFullPanel(root.transform, "Home contrast veil", new Color(.005f, .012f, .05f, .10f));
 
             var difficulty = CreateNeonButton(root.transform, "CLASSIC", new Vector2(-365f, 790f), new Vector2(202f, 68f), Hex("#8f64ff"));
             difficultyText = difficulty.GetComponentInChildren<Text>();
@@ -842,36 +844,31 @@ namespace SkyPulse.Mobile
             titleRule.sprite = softCircleSprite;
             titleRule.raycastTarget = false;
 
+            var flightDeck = CreatePanel(root.transform, "Flight deck", new Vector2(0f, -388f), new Vector2(790f, 604f), Hex("#080c1c"));
+            AddOutline(flightDeck.gameObject, new Color(.27f, .86f, 1f, .34f), 1f);
+            var deckRule = CreateImage(flightDeck, "Flight deck rule", new Vector2(0f, 252f), new Vector2(642f, 1.5f), new Color(.27f, .86f, 1f, .40f));
+            deckRule.sprite = whiteSprite;
+            deckRule.raycastTarget = false;
+
             var heroObject = new GameObject("Animated menu hero", typeof(RectTransform));
             heroObject.transform.SetParent(root.transform, false);
             menuHeroTransform = heroObject.GetComponent<RectTransform>();
             menuHeroTransform.anchorMin = new Vector2(.5f, .5f);
             menuHeroTransform.anchorMax = new Vector2(.5f, .5f);
             menuHeroTransform.pivot = new Vector2(.5f, .5f);
-            menuHeroTransform.anchoredPosition = new Vector2(0f, 118f);
-            menuHeroTransform.sizeDelta = new Vector2(760f, 510f);
+            menuHeroTransform.anchoredPosition = new Vector2(0f, 148f);
+            menuHeroTransform.sizeDelta = new Vector2(800f, 470f);
 
-            menuBirdGlowImage = CreateImage(menuHeroTransform, "Menu bird bloom", Vector2.zero, new Vector2(390f, 390f), new Color(.20f, .84f, 1f, .07f));
-            menuBirdGlowImage.sprite = softCircleSprite;
-            menuBirdGlowImage.preserveAspect = true;
-            menuBirdGlowImage.raycastTarget = false;
-            menuBirdDepthImage = CreateImage(menuHeroTransform, "Menu bird dimensional bloom", new Vector2(-12f, -5f), new Vector2(300f, 300f), new Color(.20f, .84f, 1f, .035f));
-            menuBirdDepthImage.sprite = softCircleSprite;
-            menuBirdDepthImage.preserveAspect = true;
-            menuBirdDepthImage.raycastTarget = false;
-            menuPortalImage = CreateImage(menuHeroTransform, "Menu flight portal", Vector2.zero, new Vector2(470f, 470f), new Color(1f, 1f, 1f, .54f));
-            menuPortalImage.sprite = LoadSprite("SkyPulse/art/ui/menu-flight-portal-v1");
-            menuPortalImage.preserveAspect = true;
-            menuPortalImage.raycastTarget = false;
-            menuPortalImage.gameObject.SetActive(false);
-            menuBirdRiseImage = CreateImage(menuHeroTransform, "Menu bird wing rise", Vector2.zero, new Vector2(540f, 360f), new Color(1f, 1f, 1f, 0f));
+            // No diffuse circles or faux glass behind the bird. Its silhouette and
+            // animation carry the presentation, which stays crisp on phone screens.
+            menuBirdRiseImage = CreateImage(menuHeroTransform, "Menu bird wing rise", Vector2.zero, new Vector2(800f, 400f), new Color(1f, 1f, 1f, 0f));
             menuBirdRiseImage.preserveAspect = true;
             menuBirdRiseImage.raycastTarget = false;
-            menuBirdImage = CreateImage(menuHeroTransform, "Menu bird", Vector2.zero, new Vector2(540f, 360f), Color.white);
+            menuBirdImage = CreateImage(menuHeroTransform, "Menu bird", Vector2.zero, new Vector2(800f, 400f), Color.white);
             menuBirdImage.preserveAspect = true;
             menuBirdImage.raycastTarget = false;
             menuBirdTransform = menuBirdImage.rectTransform;
-            menuBirdFlapImage = CreateImage(menuHeroTransform, "Menu bird wing motion", Vector2.zero, new Vector2(540f, 360f), new Color(1f, 1f, 1f, 0f));
+            menuBirdFlapImage = CreateImage(menuHeroTransform, "Menu bird wing motion", Vector2.zero, new Vector2(800f, 400f), new Color(1f, 1f, 1f, 0f));
             menuBirdFlapImage.preserveAspect = true;
             menuBirdFlapImage.raycastTarget = false;
             menuBirdEyeGlintImage = CreateImage(menuHeroTransform, "Menu bird living eye glint", new Vector2(132f, 36f), new Vector2(24f, 24f), new Color(1f, 1f, 1f, .42f));
@@ -914,7 +911,7 @@ namespace SkyPulse.Mobile
         {
             var root = CreateScreen(parent, "Pause screen");
             CreateFullPanel(root.transform, "Pause dim", new Color(.015f, .008f, .06f, .72f));
-            var card = CreatePanel(root.transform, "Pause card", new Vector2(0f, 20f), new Vector2(760f, 430f), new Color(.055f, .025f, .16f, .96f));
+            var card = CreatePanel(root.transform, "Pause card", new Vector2(0f, 20f), new Vector2(760f, 430f), Hex("#11132a"));
             AddOutline(card.gameObject, Hex("#8f64ff"), 3f);
             CreateText(card, "PAUSED", new Vector2(0f, 116f), new Vector2(650f, 80f), 52, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             var resume = CreateNeonButton(card, "RESUME", new Vector2(0f, 5f), new Vector2(500f, 82f), Hex("#45eaff"));
@@ -927,8 +924,8 @@ namespace SkyPulse.Mobile
         private GameObject CreateGameOverScreen(Transform parent)
         {
             var root = CreateScreen(parent, "Game over screen");
-            CreateFullPanel(root.transform, "Frosted game over dim", new Color(.012f, .006f, .05f, .78f));
-            var card = CreatePanel(root.transform, "Game over card", new Vector2(0f, 25f), new Vector2(820f, 700f), new Color(.055f, .022f, .17f, .96f));
+            CreateFullPanel(root.transform, "Game over dim", new Color(.012f, .006f, .05f, .78f));
+            var card = CreatePanel(root.transform, "Game over card", new Vector2(0f, 25f), new Vector2(820f, 700f), Hex("#11132a"));
             AddOutline(card.gameObject, Hex("#8f64ff"), 3.5f);
             CreateText(card, "GAME OVER", new Vector2(0f, 235f), new Vector2(720f, 78f), 54, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             resultNewBestText = CreateText(card, "NEW BEST", new Vector2(0f, 164f), new Vector2(500f, 42f), 25, Hex("#ffc34d"), TextAnchor.MiddleCenter, FontStyle.Bold);
@@ -961,7 +958,7 @@ namespace SkyPulse.Mobile
                 tab.onClick.AddListener(() => SetCosmeticCategory(category));
             }
 
-            var viewport = CreatePanel(root.transform, "Collection viewport", new Vector2(0f, -172f), new Vector2(970f, 1380f), new Color(.015f, .01f, .08f, .34f));
+            var viewport = CreatePanel(root.transform, "Collection viewport", new Vector2(0f, -172f), new Vector2(970f, 1380f), Hex("#070a18"));
             var mask = viewport.gameObject.AddComponent<Mask>();
             mask.showMaskGraphic = false;
             var scroll = viewport.gameObject.AddComponent<ScrollRect>();
@@ -986,10 +983,10 @@ namespace SkyPulse.Mobile
         {
             var root = CreateScreen(parent, "Bird skin purchase confirmation");
             CreateFullPanel(root.transform, "Purchase dim", new Color(.008f, .004f, .04f, .86f));
-            var card = CreatePanel(root.transform, "Purchase card", new Vector2(0f, 18f), new Vector2(850f, 720f), new Color(.035f, .018f, .13f, .99f));
+            var card = CreatePanel(root.transform, "Purchase card", new Vector2(0f, 18f), new Vector2(850f, 720f), Hex("#11132a"));
             AddOutline(card.gameObject, Hex("#45eaff"), 4f);
-            purchaseHalo = CreateImage(card, "Purchase halo", new Vector2(0f, 128f), new Vector2(370f, 370f), new Color(.27f, .92f, 1f, .07f));
-            purchaseHalo.sprite = softCircleSprite;
+            purchaseHalo = CreateImage(card, "Purchase focus ring", new Vector2(0f, 128f), new Vector2(340f, 340f), new Color(.27f, .92f, 1f, .20f));
+            purchaseHalo.sprite = ringSprite;
             purchaseHalo.raycastTarget = false;
             purchasePreviewImage = CreateImage(card, "Bird skin preview", new Vector2(0f, 128f), new Vector2(355f, 220f), Color.white);
             purchasePreviewImage.preserveAspect = true;
@@ -1101,48 +1098,54 @@ namespace SkyPulse.Mobile
             if (state != FlightState.Menu || menuBirdImage == null || menuBirdTransform == null || equippedSkin == null) return;
             menuPresentationTime += deltaTime;
             menuWingTimer += deltaTime;
-            if (menuWingTimer > .72f) menuWingTimer = 0f;
+            if (menuWingTimer > 1.18f) menuWingTimer = 0f;
 
-            // The menu loops through a raised wing, downstroke and settle instead of
-            // bouncing between two drawings. The transition is continuous at 60 fps.
-            var wingPhase = menuWingTimer / .72f;
+            var wingPhase = menuWingTimer / 1.18f;
             var riseStrength = Mathf.SmoothStep(1f, 0f, Mathf.Clamp01(wingPhase * 3.1f));
             var flapStrength = Mathf.Sin(Mathf.Clamp01((wingPhase - .16f) / .62f) * Mathf.PI);
-            menuBirdImage.color = new Color(1f, 1f, 1f, 1f - Mathf.Max(riseStrength * .78f, flapStrength * .50f));
-            if (menuBirdRiseImage != null)
+            var premiumRig = UsesAetherwing();
+            if (premiumRig)
             {
-                var showRise = menuBirdRiseImage.sprite != null;
-                menuBirdRiseImage.color = new Color(1f, 1f, 1f, showRise ? riseStrength * .92f : 0f);
-                menuBirdRiseImage.rectTransform.anchoredPosition = new Vector2(-riseStrength * 6f, riseStrength * 10f);
-                menuBirdRiseImage.rectTransform.localRotation = Quaternion.Euler(0f, 0f, riseStrength * 4.4f);
-                menuBirdRiseImage.rectTransform.localScale = Vector3.one * (1f + riseStrength * .06f);
+                // Rendering only one complete pose prevents the double-body ghosting
+                // that made the previous flight loop look like a blurred sticker.
+                var pose = SelectAetherwingPose(riseStrength, flapStrength);
+                if (pose != null && menuBirdImage.sprite != pose) menuBirdImage.sprite = pose;
+                menuBirdImage.color = Color.white;
+                if (menuBirdRiseImage != null) menuBirdRiseImage.color = Color.clear;
+                if (menuBirdFlapImage != null) menuBirdFlapImage.color = Color.clear;
             }
-            if (menuBirdFlapImage != null)
+            else
             {
-                menuBirdFlapImage.color = new Color(1f, 1f, 1f, flapStrength * (1f - riseStrength * .84f) * .84f);
-                menuBirdFlapImage.rectTransform.anchoredPosition = new Vector2(flapStrength * 5f, flapStrength * 7f);
-                menuBirdFlapImage.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -flapStrength * 4.5f);
+                menuBirdImage.color = new Color(1f, 1f, 1f, 1f - Mathf.Max(riseStrength * .78f, flapStrength * .50f));
+                if (menuBirdRiseImage != null)
+                {
+                    var showRise = menuBirdRiseImage.sprite != null;
+                    menuBirdRiseImage.color = new Color(1f, 1f, 1f, showRise ? riseStrength * .92f : 0f);
+                    menuBirdRiseImage.rectTransform.anchoredPosition = new Vector2(-riseStrength * 6f, riseStrength * 10f);
+                    menuBirdRiseImage.rectTransform.localRotation = Quaternion.Euler(0f, 0f, riseStrength * 4.4f);
+                    menuBirdRiseImage.rectTransform.localScale = Vector3.one * (1f + riseStrength * .06f);
+                }
+                if (menuBirdFlapImage != null)
+                {
+                    menuBirdFlapImage.color = new Color(1f, 1f, 1f, flapStrength * (1f - riseStrength * .84f) * .84f);
+                    menuBirdFlapImage.rectTransform.anchoredPosition = new Vector2(flapStrength * 5f, flapStrength * 7f);
+                    menuBirdFlapImage.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -flapStrength * 4.5f);
+                }
             }
 
             var hover = Mathf.Sin(ambientTime * 1.7f);
-            var flightTilt = hover * 2.2f - flapStrength * 1.6f;
-            var glideLean = Mathf.Sin(ambientTime * 1.16f) * .65f;
+            var flightTilt = premiumRig ? hover * .75f - flapStrength * .85f : hover * 2.2f - flapStrength * 1.6f;
+            var glideLean = premiumRig ? Mathf.Sin(ambientTime * 1.16f) * .24f : Mathf.Sin(ambientTime * 1.16f) * .65f;
             var intro = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(menuPresentationTime / .48f));
             if (menuHeroTransform != null)
             {
-                menuHeroTransform.anchoredPosition = new Vector2(Mathf.Sin(ambientTime * .82f) * 8f, 118f + hover * 13f);
-                menuHeroTransform.localScale = Vector3.one * Mathf.Lerp(.92f, 1f + Mathf.Sin(ambientTime * 3.4f) * .018f, intro);
+                menuHeroTransform.anchoredPosition = new Vector2(Mathf.Sin(ambientTime * .82f) * (premiumRig ? 3f : 8f), 148f + hover * (premiumRig ? 5f : 13f));
+                menuHeroTransform.localScale = Vector3.one * Mathf.Lerp(.94f, 1f + Mathf.Sin(ambientTime * 3.4f) * (premiumRig ? .006f : .018f), intro);
             }
             menuBirdTransform.localRotation = Quaternion.Euler(0f, 0f, flightTilt + glideLean);
-            menuBirdTransform.localScale = new Vector3(1f + Mathf.Sin(ambientTime * 3.4f) * .018f + riseStrength * .035f, 1f - riseStrength * .018f, 1f);
-            if (menuBirdDepthImage != null)
-            {
-                var depth = equippedSkin.Accent;
-                depth.a = .025f + riseStrength * .045f + flapStrength * .020f;
-                menuBirdDepthImage.color = depth;
-                menuBirdDepthImage.rectTransform.anchoredPosition = new Vector2(-12f - riseStrength * 7f, -5f + hover * 1.5f);
-                menuBirdDepthImage.rectTransform.localScale = Vector3.one * (1f + riseStrength * .08f + flapStrength * .04f);
-            }
+            menuBirdTransform.localScale = premiumRig
+                ? new Vector3(1f + riseStrength * .012f, 1f - riseStrength * .008f, 1f)
+                : new Vector3(1f + Mathf.Sin(ambientTime * 3.4f) * .018f + riseStrength * .035f, 1f - riseStrength * .018f, 1f);
             if (menuBirdEyeGlintImage != null)
             {
                 // Aetherwing has a small, authored visor light. The old floating UI
@@ -1159,21 +1162,9 @@ namespace SkyPulse.Mobile
                     menuBirdEyeGlintImage.rectTransform.localScale = Vector3.one * (.92f + riseStrength * .18f);
                 }
             }
-            if (menuBirdGlowImage != null)
-            {
-                var glow = equippedSkin.Accent;
-                glow.a = .07f + Mathf.Sin(ambientTime * 3.1f) * .020f;
-                menuBirdGlowImage.color = glow;
-                menuBirdGlowImage.rectTransform.localScale = Vector3.one * (1f + Mathf.Sin(ambientTime * 2.2f) * .045f);
-            }
-            if (menuPortalImage != null)
-            {
-                menuPortalImage.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -ambientTime * 7.5f);
-                menuPortalImage.rectTransform.localScale = Vector3.one * (1f + Mathf.Sin(ambientTime * 1.6f) * .025f);
-            }
             if (menuTitleText != null)
             {
-                menuTitleText.rectTransform.localScale = Vector3.one * (1f + Mathf.Sin(ambientTime * 2.1f) * .012f);
+                menuTitleText.rectTransform.localScale = Vector3.one * (1f + Mathf.Sin(ambientTime * 2.1f) * .006f);
             }
         }
 
@@ -2166,7 +2157,7 @@ namespace SkyPulse.Mobile
         {
             var column = index % 2;
             var row = index / 2;
-            var card = CreatePanel(customizeContent, $"{title} card", new Vector2(column == 0 ? -235f : 235f, -12f - row * 250f), new Vector2(440f, 222f), new Color(.02f, .025f, .11f, .97f));
+            var card = CreatePanel(customizeContent, $"{title} card", new Vector2(column == 0 ? -235f : 235f, -12f - row * 250f), new Vector2(440f, 222f), Hex("#0b1022"));
             card.anchorMin = new Vector2(.5f, 1f);
             card.anchorMax = new Vector2(.5f, 1f);
             card.pivot = new Vector2(.5f, 1f);
@@ -2205,7 +2196,7 @@ namespace SkyPulse.Mobile
             var column = index % 2;
             var row = index / 2;
             var owned = HasUpgrade(upgrade.Id);
-            var card = CreatePanel(customizeContent, $"{upgrade.Name} upgrade", new Vector2(column == 0 ? -235f : 235f, -12f - row * 250f), new Vector2(440f, 222f), new Color(.02f, .025f, .11f, .97f));
+            var card = CreatePanel(customizeContent, $"{upgrade.Name} upgrade", new Vector2(column == 0 ? -235f : 235f, -12f - row * 250f), new Vector2(440f, 222f), Hex("#0b1022"));
             card.anchorMin = new Vector2(.5f, 1f);
             card.anchorMax = new Vector2(.5f, 1f);
             card.pivot = new Vector2(.5f, 1f);
@@ -2214,8 +2205,8 @@ namespace SkyPulse.Mobile
             button.targetGraphic = card.GetComponent<Image>();
             button.onClick.AddListener(() => SelectUpgrade(upgrade));
 
-            var halo = CreateImage(card, "Upgrade glow", new Vector2(-146f, 34f), new Vector2(112f, 112f), new Color(upgrade.Accent.r, upgrade.Accent.g, upgrade.Accent.b, .18f));
-            halo.sprite = softCircleSprite;
+            var halo = CreateImage(card, "Upgrade focus ring", new Vector2(-146f, 34f), new Vector2(102f, 102f), new Color(upgrade.Accent.r, upgrade.Accent.g, upgrade.Accent.b, .42f));
+            halo.sprite = ringSprite;
             halo.raycastTarget = false;
             var previewSprite = GetUpgradeArtwork(upgrade);
             var artwork = CreateImage(card, "Upgrade artwork", new Vector2(-146f, 34f), new Vector2(94f, 94f), previewSprite == null ? upgrade.Accent : Color.white);
@@ -2402,9 +2393,9 @@ namespace SkyPulse.Mobile
             lipColour.a = .78f;
             floorLip.color = lipColour;
             SetBirdArtwork();
-            if (menuBirdImage != null) menuBirdImage.sprite = LoadSprite(equippedSkin.ArtPath);
-            if (menuBirdFlapImage != null) menuBirdFlapImage.sprite = LoadSprite(equippedSkin.FlapPath);
-            if (menuBirdRiseImage != null) menuBirdRiseImage.sprite = string.IsNullOrEmpty(equippedSkin.RisePath) ? LoadSprite(equippedSkin.FlapPath) : LoadSprite(equippedSkin.RisePath);
+            if (menuBirdImage != null) menuBirdImage.sprite = idleBirdSprite;
+            if (menuBirdFlapImage != null) menuBirdFlapImage.sprite = flapBirdSprite;
+            if (menuBirdRiseImage != null) menuBirdRiseImage.sprite = riseBirdSprite;
             if (menuBirdEyeGlintImage != null) menuBirdEyeGlintImage.gameObject.SetActive(!UsesAetherwing());
             UpdateCrystalLabels();
             if (menuEquippedText != null) menuEquippedText.text = $"EQUIPPED  ·  {equippedSkin.Name}";
@@ -2441,40 +2432,58 @@ namespace SkyPulse.Mobile
         private void SetBirdArtwork()
         {
             if (birdRenderer == null || birdFlapRenderer == null || birdRiseRenderer == null) return;
-            var idle = LoadSprite(equippedSkin.ArtPath);
-            var flap = LoadSprite(equippedSkin.FlapPath);
-            var rise = string.IsNullOrEmpty(equippedSkin.RisePath) ? flap : LoadSprite(equippedSkin.RisePath);
-            if (idle != null)
+            idleBirdSprite = LoadSprite(equippedSkin.ArtPath);
+            flapBirdSprite = LoadSprite(equippedSkin.FlapPath);
+            riseBirdSprite = string.IsNullOrEmpty(equippedSkin.RisePath) ? flapBirdSprite : LoadSprite(equippedSkin.RisePath);
+            if (idleBirdSprite != null)
             {
-                birdRenderer.sprite = idle;
-                idleBirdBaseScale = ArtworkScale(idle, BirdDisplayWidth);
+                birdRenderer.sprite = idleBirdSprite;
+                idleBirdBaseScale = ArtworkScale(idleBirdSprite, BirdDisplayWidth);
                 birdArt.localScale = idleBirdBaseScale;
                 if (birdParallaxRenderer != null)
                 {
-                    birdParallaxRenderer.sprite = idle;
+                    birdParallaxRenderer.sprite = idleBirdSprite;
                     parallaxBirdBaseScale = idleBirdBaseScale;
                     birdParallaxRenderer.transform.localScale = parallaxBirdBaseScale;
                 }
             }
-            if (flap != null)
+            if (flapBirdSprite != null)
             {
-                birdFlapRenderer.sprite = flap;
-                flapBirdBaseScale = ArtworkScale(flap, BirdDisplayWidth);
+                birdFlapRenderer.sprite = flapBirdSprite;
+                flapBirdBaseScale = ArtworkScale(flapBirdSprite, BirdDisplayWidth);
                 birdFlapArt.localScale = flapBirdBaseScale;
             }
-            birdRiseRenderer.enabled = rise != null;
-            if (rise != null)
+            if (riseBirdSprite != null)
             {
-                birdRiseRenderer.sprite = rise;
-                riseBirdBaseScale = ArtworkScale(rise, BirdDisplayWidth);
+                birdRiseRenderer.sprite = riseBirdSprite;
+                riseBirdBaseScale = ArtworkScale(riseBirdSprite, BirdDisplayWidth);
                 birdRiseArt.localScale = riseBirdBaseScale;
             }
+            var premiumRig = UsesAetherwing();
+            birdFlapRenderer.enabled = !premiumRig && flapBirdSprite != null;
+            birdRiseRenderer.enabled = !premiumRig && riseBirdSprite != null;
+            if (birdParallaxRenderer != null) birdParallaxRenderer.enabled = !premiumRig && idleBirdSprite != null;
+            if (birdDepthRenderer != null) birdDepthRenderer.enabled = !premiumRig;
             if (birdEyeGlintRenderer != null) birdEyeGlintRenderer.enabled = !UsesAetherwing();
         }
 
         private bool UsesAetherwing()
         {
-            return equippedSkin != null && equippedSkin.ArtPath.StartsWith("SkyPulse/characters/premium/", StringComparison.Ordinal);
+            return equippedSkin != null && equippedSkin.ArtPath.StartsWith("SkyPulse/characters/aetherwing", StringComparison.Ordinal);
+        }
+
+        private Sprite SelectAetherwingPose(float riseWeight, float flapWeight)
+        {
+            if (riseWeight > .43f && riseBirdSprite != null) return riseBirdSprite;
+            if (flapWeight > .28f && flapBirdSprite != null) return flapBirdSprite;
+            return idleBirdSprite;
+        }
+
+        private Vector3 BaseScaleForBirdPose(Sprite pose)
+        {
+            if (pose == riseBirdSprite) return riseBirdBaseScale;
+            if (pose == flapBirdSprite) return flapBirdBaseScale;
+            return idleBirdBaseScale;
         }
 
         private static Vector3 ArtworkScale(Sprite sprite, float targetWidth)
@@ -2486,38 +2495,59 @@ namespace SkyPulse.Mobile
         private void UpdateBirdWingMotion()
         {
             if (birdRenderer == null || birdFlapRenderer == null) return;
-            // A tap travels through raised-wing recovery, downstroke and glide rather
-            // than swapping a pair of sprites. Physics stays instant; the rendering is
-            // a continuous, three-pose flight cycle.
             var flapProgress = Mathf.Clamp01(wingTimer / .36f);
             var flapKick = 1f - flapProgress * flapProgress * (3f - 2f * flapProgress);
             var riseWeight = Mathf.SmoothStep(1f, 0f, Mathf.Clamp01(flapProgress * 3.15f));
             var wingWave = Mathf.Sin(Mathf.Clamp01((flapProgress - .12f) / .72f) * Mathf.PI);
-            var flapColour = Color.white;
-            flapColour.a = (.10f + wingWave * .82f) * flapKick * (1f - riseWeight * .84f);
-            birdFlapRenderer.color = flapColour;
-            birdRenderer.color = new Color(1f, 1f, 1f, 1f - Mathf.Max(riseWeight * .78f, wingWave * .50f));
-            if (birdRiseRenderer != null)
+            var premiumRig = UsesAetherwing();
+            if (premiumRig)
             {
-                var showRise = birdRiseRenderer.enabled && birdRiseRenderer.sprite != null;
-                birdRiseRenderer.color = new Color(1f, 1f, 1f, showRise ? riseWeight * .94f : 0f);
-                birdRiseArt.localScale = Vector3.Scale(riseBirdBaseScale, new Vector3(1f + riseWeight * .065f, 1f - riseWeight * .025f, 1f));
-                birdRiseArt.localPosition = new Vector3(-riseWeight * .060f, riseWeight * .065f, 0f);
-                birdRiseArt.localRotation = Quaternion.Euler(0f, 0f, riseWeight * 4.7f);
+                // A proper full-body pose rig: exactly one sharp drawing is displayed
+                // while gentle transform interpolation supplies the connective motion.
+                // This deliberately avoids translucent full-body crossfades.
+                var pose = SelectAetherwingPose(riseWeight, wingWave);
+                if (pose != null && birdRenderer.sprite != pose) birdRenderer.sprite = pose;
+                birdRenderer.color = Color.white;
+                birdFlapRenderer.enabled = false;
+                if (birdRiseRenderer != null) birdRiseRenderer.enabled = false;
+                if (birdParallaxRenderer != null) birdParallaxRenderer.enabled = false;
+            }
+            else
+            {
+                var flapColour = Color.white;
+                flapColour.a = (.10f + wingWave * .82f) * flapKick * (1f - riseWeight * .84f);
+                birdFlapRenderer.enabled = flapBirdSprite != null;
+                birdFlapRenderer.color = flapColour;
+                birdRenderer.color = new Color(1f, 1f, 1f, 1f - Mathf.Max(riseWeight * .78f, wingWave * .50f));
+                if (birdRiseRenderer != null)
+                {
+                    var showRise = birdRiseRenderer.enabled && birdRiseRenderer.sprite != null;
+                    birdRiseRenderer.color = new Color(1f, 1f, 1f, showRise ? riseWeight * .94f : 0f);
+                    birdRiseArt.localScale = Vector3.Scale(riseBirdBaseScale, new Vector3(1f + riseWeight * .065f, 1f - riseWeight * .025f, 1f));
+                    birdRiseArt.localPosition = new Vector3(-riseWeight * .060f, riseWeight * .065f, 0f);
+                    birdRiseArt.localRotation = Quaternion.Euler(0f, 0f, riseWeight * 4.7f);
+                }
             }
             var breathing = 1f + Mathf.Sin(ambientTime * 5.2f) * .010f;
             var glide = Mathf.Clamp(birdVelocity / Mathf.Abs(ActiveMaxFallVelocity()), -1f, 1f);
-            var liftSquash = (flapKick - riseWeight * .34f) * .065f;
-            var diveStretch = Mathf.Clamp01(-glide) * .024f;
-            var bodyRoll = riseWeight * 3.2f - wingWave * 2.4f + glide * 1.8f;
-            var depthPulse = riseWeight * .075f + wingWave * .050f;
+            var liftSquash = (flapKick - riseWeight * .34f) * (premiumRig ? .018f : .065f);
+            var diveStretch = Mathf.Clamp01(-glide) * (premiumRig ? .010f : .024f);
+            var bodyRoll = premiumRig
+                ? riseWeight * 1.25f - wingWave * .85f + glide * .90f
+                : riseWeight * 3.2f - wingWave * 2.4f + glide * 1.8f;
+            var depthPulse = premiumRig ? riseWeight * .014f + wingWave * .008f : riseWeight * .075f + wingWave * .050f;
             bird.localScale = new Vector3(1f + depthPulse + diveStretch * .30f, 1f - depthPulse * .62f + diveStretch * .12f, 1f);
-            birdArt.localScale = Vector3.Scale(idleBirdBaseScale, new Vector3(breathing + liftSquash + diveStretch, breathing - liftSquash - diveStretch * .55f, 1f));
-            birdFlapArt.localScale = Vector3.Scale(flapBirdBaseScale, new Vector3(1f + wingWave * .075f, 1f - wingWave * .050f, 1f));
-            birdArt.localPosition = new Vector3(-flapKick * .052f - glide * .020f, Mathf.Sin(ambientTime * 7f) * .014f + riseWeight * .018f, 0f);
+            birdArt.localScale = Vector3.Scale(premiumRig ? BaseScaleForBirdPose(birdRenderer.sprite) : idleBirdBaseScale, new Vector3(breathing + liftSquash + diveStretch, breathing - liftSquash - diveStretch * .55f, 1f));
+            birdArt.localPosition = premiumRig
+                ? new Vector3(-flapKick * .014f - glide * .010f, Mathf.Sin(ambientTime * 7f) * .005f + riseWeight * .008f, 0f)
+                : new Vector3(-flapKick * .052f - glide * .020f, Mathf.Sin(ambientTime * 7f) * .014f + riseWeight * .018f, 0f);
             birdArt.localRotation = Quaternion.Euler(0f, 0f, bodyRoll);
-            birdFlapArt.localPosition = new Vector3(flapKick * .032f, .025f + wingWave * .052f, 0f);
-            birdFlapArt.localRotation = Quaternion.Euler(0f, 0f, -flapKick * 6.6f + wingWave * 4.4f + glide * 1.2f);
+            if (!premiumRig)
+            {
+                birdFlapArt.localScale = Vector3.Scale(flapBirdBaseScale, new Vector3(1f + wingWave * .075f, 1f - wingWave * .050f, 1f));
+                birdFlapArt.localPosition = new Vector3(flapKick * .032f, .025f + wingWave * .052f, 0f);
+                birdFlapArt.localRotation = Quaternion.Euler(0f, 0f, -flapKick * 6.6f + wingWave * 4.4f + glide * 1.2f);
+            }
             UpdateBirdLifeDepth(riseWeight, wingWave, glide);
             UpdateBirdPowerUpVisuals();
         }
@@ -2943,22 +2973,20 @@ namespace SkyPulse.Mobile
 
         private Text CreateChip(Transform parent, Vector2 position, string value, Color accent)
         {
-            var shell = CreatePanel(parent, "Crystal chip", position, new Vector2(200f, 68f), new Color(.018f, .025f, .09f, .88f));
+            var shell = CreatePanel(parent, "Crystal chip", position, new Vector2(200f, 68f), Hex("#0a0f20"));
             AddOutline(shell.gameObject, new Color(accent.r, accent.g, accent.b, .50f), 1f);
             return CreateText(shell, value, Vector2.zero, new Vector2(180f, 48f), 23, accent, TextAnchor.MiddleCenter, FontStyle.Bold);
         }
 
         private Button CreateNeonButton(Transform parent, string label, Vector2 position, Vector2 size, Color accent)
         {
-            var shell = CreatePanel(parent, "Button · " + label, position, size, new Color(.018f, .025f, .095f, .95f));
+            var shell = CreatePanel(parent, "Button · " + label, position, size, Hex("#090e1e"));
             var shellImage = shell.GetComponent<Image>();
             AddOutline(shell.gameObject, new Color(accent.r, accent.g, accent.b, .58f), 1f);
-            var fill = Color.Lerp(new Color(.018f, .025f, .085f, .96f), accent, label == "FLY" ? .10f : .055f);
-            fill.a = .94f;
+            var fill = Color.Lerp(Hex("#11172c"), accent, label == "FLY" ? .13f : .065f);
+            fill.a = 1f;
             var inner = CreatePanel(shell, "Button inner", Vector2.zero, size - new Vector2(8f, 8f), fill);
             inner.GetComponent<Image>().raycastTarget = false;
-            var sheen = CreatePanel(shell, "Button sheen", new Vector2(0f, size.y * .25f), new Vector2(size.x - 68f, 1f), new Color(1f, 1f, 1f, .13f));
-            sheen.GetComponent<Image>().raycastTarget = false;
             var energy = CreatePanel(shell, "Button energy line", new Vector2(0f, -size.y * .25f), new Vector2(label == "FLY" ? 128f : 88f, 1.5f), new Color(accent.r, accent.g, accent.b, .60f));
             energy.GetComponent<Image>().raycastTarget = false;
             var text = CreateText(shell, label, Vector2.zero, size - new Vector2(22f, 14f), label == "FLY" ? 34 : 22, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
