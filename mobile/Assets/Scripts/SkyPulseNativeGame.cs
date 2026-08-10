@@ -303,9 +303,12 @@ namespace SkyPulse.Mobile
         // Every theme uses the same authored three-pose Aetherwing silhouette. Themes
         // change the material tint, trail, gates and world—not the bird's anatomy or
         // visual quality—so a player never unlocks a lower-fidelity mascot.
-        private const string AetherwingGlidePath = "SkyPulse/characters/aetherwing_v2/aetherwing-glide-v3";
-        private const string AetherwingFlapPath = "SkyPulse/characters/aetherwing_v2/aetherwing-downstroke-v3";
-        private const string AetherwingRisePath = "SkyPulse/characters/aetherwing_v2/aetherwing-lift-v3";
+        // Version 4 is a matched Aetherwing pose set: tucked glide, raised upstroke
+        // and decisive downstroke. It is a much stronger temporary animation than
+        // the old mismatched sprites while the free skeletal rig is being prepared.
+        private const string AetherwingGlidePath = "SkyPulse/characters/aetherwing_v2/aetherwing-glide-v4";
+        private const string AetherwingFlapPath = "SkyPulse/characters/aetherwing_v2/aetherwing-downstroke-v4";
+        private const string AetherwingRisePath = "SkyPulse/characters/aetherwing_v2/aetherwing-lift-v4";
         private const string AetherwingHeroPath = "SkyPulse/characters/aetherwing_v2/aetherwing-hero-v4";
 
         // These profiles are deliberately conservative. A play-test should alter one
