@@ -282,6 +282,15 @@ namespace SkyPulse.Mobile
         private const float PickupRadius = .43f;
         private const float SimulationStep = 1f / 120f;
         private const float MaximumSimulationCatchup = 1f / 12f;
+        // The Aetherwing poses are deliberately stepped rather than cross-faded: a
+        // full-body fade reads as a blurry double bird on a phone. Smooth transform
+        // motion joins the three crisp poses instead.
+        private const float WingCycleSeconds = .42f;
+        private const float WingLiftPhase = .31f;
+        private const float WingDownstrokeDelay = .075f;
+        private const float WingDownstrokeSpan = .90f;
+        private const float WingLiftPoseThreshold = .32f;
+        private const float WingDownstrokePoseThreshold = .14f;
         // Every theme uses the same authored three-pose Aetherwing silhouette. Themes
         // change the material tint, trail, gates and world—not the bird's anatomy or
         // visual quality—so a player never unlocks a lower-fidelity mascot.
@@ -1158,8 +1167,7 @@ namespace SkyPulse.Mobile
             if (menuWingTimer > 1.18f) menuWingTimer = 0f;
 
             var wingPhase = menuWingTimer / 1.18f;
-            var riseStrength = Mathf.SmoothStep(1f, 0f, Mathf.Clamp01(wingPhase * 3.1f));
-            var flapStrength = Mathf.Sin(Mathf.Clamp01((wingPhase - .16f) / .62f) * Mathf.PI);
+            GetWingWeights(wingPhase, out var riseStrength, out var flapStrength);
             var premiumRig = UsesAetherwing();
             if (premiumRig)
             {
@@ -1265,7 +1273,7 @@ namespace SkyPulse.Mobile
             var collisionRadius = ActiveTuning().CollisionRadius;
             birdVelocity = Mathf.Max(ActiveMaxFallVelocity(), birdVelocity + ActiveGravity() * deltaTime);
             birdY += birdVelocity * deltaTime;
-            wingTimer += deltaTime;
+            wingTimer = Mathf.Min(WingCycleSeconds, wingTimer + deltaTime);
             bird.position = new Vector3(BirdX, birdY, 0f);
             var flapKick = Mathf.Exp(-wingTimer * 12f);
             var targetTilt = Mathf.Clamp(birdVelocity * 3.55f + flapKick * 5.5f, -37f, 28f);
@@ -2597,9 +2605,19 @@ namespace SkyPulse.Mobile
 
         private Sprite SelectAetherwingPose(float riseWeight, float flapWeight)
         {
-            if (riseWeight > .43f && riseBirdSprite != null) return riseBirdSprite;
-            if (flapWeight > .28f && flapBirdSprite != null) return flapBirdSprite;
+            // The thresholds intentionally overlap. Lift owns the start of the
+            // cycle, then downstroke owns the hand-off, so rapid taps never reveal a
+            // momentary idle pose between two wing strokes.
+            if (riseWeight > WingLiftPoseThreshold && riseBirdSprite != null) return riseBirdSprite;
+            if (flapWeight > WingDownstrokePoseThreshold && flapBirdSprite != null) return flapBirdSprite;
             return idleBirdSprite;
+        }
+
+        private static void GetWingWeights(float normalizedPhase, out float riseWeight, out float downstrokeWeight)
+        {
+            normalizedPhase = Mathf.Clamp01(normalizedPhase);
+            riseWeight = 1f - Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(normalizedPhase / WingLiftPhase));
+            downstrokeWeight = Mathf.Sin(Mathf.PI * Mathf.Clamp01((normalizedPhase - WingDownstrokeDelay) / WingDownstrokeSpan));
         }
 
         private Vector3 BaseScaleForBirdPose(Sprite pose)
@@ -2618,10 +2636,9 @@ namespace SkyPulse.Mobile
         private void UpdateBirdWingMotion()
         {
             if (birdRenderer == null || birdFlapRenderer == null) return;
-            var flapProgress = Mathf.Clamp01(wingTimer / .36f);
+            var flapProgress = Mathf.Clamp01(wingTimer / WingCycleSeconds);
             var flapKick = 1f - flapProgress * flapProgress * (3f - 2f * flapProgress);
-            var riseWeight = Mathf.SmoothStep(1f, 0f, Mathf.Clamp01(flapProgress * 3.15f));
-            var wingWave = Mathf.Sin(Mathf.Clamp01((flapProgress - .12f) / .72f) * Mathf.PI);
+            GetWingWeights(flapProgress, out var riseWeight, out var wingWave);
             var premiumRig = UsesAetherwing();
             if (premiumRig)
             {
@@ -2657,16 +2674,16 @@ namespace SkyPulse.Mobile
             }
             var breathing = 1f + Mathf.Sin(ambientTime * 5.2f) * .010f;
             var glide = Mathf.Clamp(birdVelocity / Mathf.Abs(ActiveMaxFallVelocity()), -1f, 1f);
-            var liftSquash = (flapKick - riseWeight * .34f) * (premiumRig ? .018f : .065f);
+            var liftSquash = (flapKick - riseWeight * .34f) * (premiumRig ? .022f : .065f);
             var diveStretch = Mathf.Clamp01(-glide) * (premiumRig ? .010f : .024f);
             var bodyRoll = premiumRig
                 ? riseWeight * 1.25f - wingWave * .85f + glide * .90f
                 : riseWeight * 3.2f - wingWave * 2.4f + glide * 1.8f;
-            var depthPulse = premiumRig ? riseWeight * .014f + wingWave * .008f : riseWeight * .075f + wingWave * .050f;
+            var depthPulse = premiumRig ? riseWeight * .018f + wingWave * .012f : riseWeight * .075f + wingWave * .050f;
             bird.localScale = new Vector3(1f + depthPulse + diveStretch * .30f, 1f - depthPulse * .62f + diveStretch * .12f, 1f);
             birdArt.localScale = Vector3.Scale(premiumRig ? BaseScaleForBirdPose(birdRenderer.sprite) : idleBirdBaseScale, new Vector3(breathing + liftSquash + diveStretch, breathing - liftSquash - diveStretch * .55f, 1f));
             birdArt.localPosition = premiumRig
-                ? new Vector3(-flapKick * .014f - glide * .010f, Mathf.Sin(ambientTime * 7f) * .005f + riseWeight * .008f, 0f)
+                ? new Vector3(-flapKick * .017f - wingWave * .006f - glide * .010f, Mathf.Sin(ambientTime * 7f) * .005f + riseWeight * .010f + wingWave * .004f, 0f)
                 : new Vector3(-flapKick * .052f - glide * .020f, Mathf.Sin(ambientTime * 7f) * .014f + riseWeight * .018f, 0f);
             birdArt.localRotation = Quaternion.Euler(0f, 0f, bodyRoll);
             if (!premiumRig)
