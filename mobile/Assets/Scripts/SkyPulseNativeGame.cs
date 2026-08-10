@@ -213,10 +213,14 @@ namespace SkyPulse.Mobile
 
         private sealed class PipeSurface
         {
+            // These are deliberately procedural rather than a stretched source image.
+            // A pipe gate must retain its engineered proportions at every gap height.
             public SpriteRenderer Artwork;
             public SpriteRenderer Outer;
             public SpriteRenderer Panel;
             public SpriteRenderer Shade;
+            public SpriteRenderer RailLeft;
+            public SpriteRenderer RailRight;
             public SpriteRenderer Highlight;
             public SpriteRenderer Energy;
             public SpriteRenderer Scan;
@@ -275,8 +279,11 @@ namespace SkyPulse.Mobile
         private const float BirdX = -2.45f;
         private const float BirdCollisionRadius = .27f;
         private const float BirdDisplayWidth = 2.26f;
-        private const float PipeWidth = .92f;
-        private const float PipeSpacing = 6.65f;
+        // The body is deliberately broad.  The collar is slightly wider, just like a
+        // real plumbing coupling, and this exact outer dimension drives collision.
+        private const float PipeWidth = 1.46f;
+        private const float PipeCollisionWidth = PipeWidth + .30f;
+        private const float PipeSpacing = 6.86f;
         private const int PipeCount = 4;
         private const int PowerUpCount = 3;
         private const float PickupRadius = .43f;
@@ -405,6 +412,7 @@ namespace SkyPulse.Mobile
         private readonly Vector3[] trailPoints = new Vector3[9];
         private readonly List<AmbientStar> ambientStars = new List<AmbientStar>();
         private readonly Dictionary<string, Sprite> spriteCache = new Dictionary<string, Sprite>();
+        private readonly Dictionary<string, Sprite> worldFallbackSprites = new Dictionary<string, Sprite>();
         private readonly HashSet<string> ownedSkinIds = new HashSet<string>();
         private readonly HashSet<string> ownedUpgradeIds = new HashSet<string>();
 
@@ -442,6 +450,7 @@ namespace SkyPulse.Mobile
         private SpriteRenderer effectAuraRenderer;
         private LineRenderer trailGlow;
         private LineRenderer trailCore;
+        private LineRenderer trailSafety;
         private AudioSource audioSource;
         private AudioClip flapSound;
         private AudioClip scoreSound;
@@ -630,7 +639,7 @@ namespace SkyPulse.Mobile
             ringSprite = CreateRadialSprite("Neon ring", 96, .31f, .5f);
             roundedPanelSprite = CreateRoundedRectSprite("Premium rounded panel", 128, 28);
 
-            backgroundRenderer = CreateRenderer("Cinematic world", LoadSprite("SkyPulse/backgrounds/neon-flightdeck-v1") ?? midnightSprite, Color.white, -40);
+            backgroundRenderer = CreateRenderer("Cinematic world", WorldBackdrop(equippedWorld), Color.white, -40);
             backgroundRenderer.transform.position = new Vector3(0f, .12f, 0f);
             FitBackgroundToCamera(backgroundRenderer, .5f);
 
@@ -795,6 +804,9 @@ namespace SkyPulse.Mobile
 
         private void CreateTrail()
         {
+            // The safety core is intentionally thin and restrained. It is the visual
+            // guarantee beneath every cosmetic trail, never a second noisy effect.
+            trailSafety = CreateTrailRenderer("Trail visibility core", 10, .048f, .010f);
             trailGlow = CreateTrailRenderer("Trail glow", 11, .19f, .035f);
             trailCore = CreateTrailRenderer("Trail core", 12, .082f, .012f);
         }
@@ -842,21 +854,25 @@ namespace SkyPulse.Mobile
 
         private PipeSurface CreatePipeSurface(Transform parent, string label)
         {
-            var top = label.StartsWith("Top", StringComparison.Ordinal);
+            // Do not stretch a painted gate from its cap to the end of the world. It
+            // turns the pipe into a thin stick with a huge top on tall gates. Build
+            // the same layered, cylindrical plumbing gate for every theme instead.
             return new PipeSurface
             {
-                Artwork = CreateRenderer($"{label} artwork", LoadSprite(top ? "SkyPulse/art/pipe-top-v2" : "SkyPulse/art/pipe-bottom-v2"), Color.white, 6, parent),
+                Artwork = CreateRenderer($"{label} cylindrical reflection", whiteSprite, new Color(1f, 1f, 1f, .25f), 5, parent),
                 Outer = CreateRenderer($"{label} outer", whiteSprite, Hex("#030613"), 2, parent),
                 Panel = CreateRenderer($"{label} panel", whiteSprite, Hex("#0b3076"), 3, parent),
                 Shade = CreateRenderer($"{label} shadow", whiteSprite, new Color(0f, 0f, 0f, .28f), 4, parent),
-                Highlight = CreateRenderer($"{label} edge highlight", whiteSprite, new Color(.8f, .95f, 1f, .18f), 4, parent),
-                Energy = CreateRenderer($"{label} energy core", whiteSprite, Hex("#45eaff"), 5, parent),
-                Scan = CreateRenderer($"{label} scan line", whiteSprite, new Color(.27f, .92f, 1f, 0f), 6, parent),
-                Beacon = CreateRenderer($"{label} gateway beacon", ringSprite, new Color(.27f, .92f, 1f, 0f), 10, parent),
-                CapOuter = CreateRenderer($"{label} cap shell", whiteSprite, Hex("#030613"), 6, parent),
-                CapAccent = CreateRenderer($"{label} cap accent", whiteSprite, Hex("#45eaff"), 7, parent),
-                CapPanel = CreateRenderer($"{label} cap panel", whiteSprite, Hex("#0b3076"), 8, parent),
-                CapEnergy = CreateRenderer($"{label} cap energy", whiteSprite, Hex("#45eaff"), 9, parent),
+                RailLeft = CreateRenderer($"{label} left neon rail", whiteSprite, new Color(.27f, .92f, 1f, .25f), 5, parent),
+                RailRight = CreateRenderer($"{label} right neon rail", whiteSprite, new Color(.27f, .92f, 1f, .25f), 5, parent),
+                Highlight = CreateRenderer($"{label} inner lip highlight", whiteSprite, new Color(.8f, .95f, 1f, .18f), 7, parent),
+                Energy = CreateRenderer($"{label} energy seam", whiteSprite, Hex("#45eaff"), 8, parent),
+                Scan = CreateRenderer($"{label} scan line", whiteSprite, new Color(.27f, .92f, 1f, 0f), 9, parent),
+                Beacon = CreateRenderer($"{label} gateway beacon", ringSprite, new Color(.27f, .92f, 1f, 0f), 11, parent),
+                CapOuter = CreateRenderer($"{label} plumbing collar shell", whiteSprite, Hex("#030613"), 6, parent),
+                CapAccent = CreateRenderer($"{label} plumbing collar accent", whiteSprite, Hex("#45eaff"), 7, parent),
+                CapPanel = CreateRenderer($"{label} plumbing collar panel", whiteSprite, Hex("#0b3076"), 8, parent),
+                CapEnergy = CreateRenderer($"{label} collar energy seam", whiteSprite, Hex("#45eaff"), 10, parent),
             };
         }
 
@@ -1438,7 +1454,7 @@ namespace SkyPulse.Mobile
                 AnimatePipePair(pair);
 
                 // The cap is part of the obstacle too: if the art is visible, it is dangerous.
-                var physicalWidth = PipeWidth + .25f;
+                var physicalWidth = PipeCollisionWidth;
                 var overlapsPipe = BirdX + collisionRadius > pair.X - physicalWidth * .5f && BirdX - collisionRadius < pair.X + physicalWidth * .5f;
                 var halfGap = ActiveGap() * .5f;
                 var hitsPipe = birdY + collisionRadius > pair.GapCenter + halfGap || birdY - collisionRadius < pair.GapCenter - halfGap;
@@ -1457,7 +1473,7 @@ namespace SkyPulse.Mobile
                     continue;
                 }
 
-                if (!pair.Passed && pair.X + PipeWidth * .5f < BirdX - collisionRadius)
+                if (!pair.Passed && pair.X + PipeCollisionWidth * .5f < BirdX - collisionRadius)
                 {
                     pair.Passed = true;
                     score += 1;
@@ -1828,6 +1844,7 @@ namespace SkyPulse.Mobile
             var trailScale = AllowsGameplayUpgrades() && HasUpgrade("comet_trail") ? 1.32f : 1f;
             if (skySurgeTimer > 0f) trailScale *= 1.18f;
             if (phaseShiftTimer > 0f) trailScale *= 1.10f;
+            if (trailSafety != null) trailSafety.startWidth = .048f * trailScale;
             trailGlow.startWidth = .19f * trailScale;
             trailCore.startWidth = .082f * trailScale;
             trailPoints[0] = bird.position + new Vector3(-.66f, .02f, .1f);
@@ -1836,8 +1853,10 @@ namespace SkyPulse.Mobile
                 var follow = 1f - Mathf.Exp(-deltaTime * Mathf.Lerp(19f, 8f, index / (float)(trailPoints.Length - 1)));
                 trailPoints[index] = Vector3.Lerp(trailPoints[index], trailPoints[index - 1], follow);
             }
+            if (trailSafety != null) trailSafety.positionCount = trailPoints.Length;
             trailGlow.positionCount = trailPoints.Length;
             trailCore.positionCount = trailPoints.Length;
+            if (trailSafety != null) trailSafety.SetPositions(trailPoints);
             trailGlow.SetPositions(trailPoints);
             trailCore.SetPositions(trailPoints);
         }
@@ -1894,7 +1913,7 @@ namespace SkyPulse.Mobile
             }
 
             var halfGap = ActiveGap() * .5f;
-            var physicalWidth = PipeWidth + .25f;
+            var physicalWidth = PipeCollisionWidth;
             foreach (var pair in pipePool)
             {
                 if (pair == null || pair.DebugTop == null || pair.DebugBottom == null) continue;
@@ -1960,6 +1979,7 @@ namespace SkyPulse.Mobile
             shieldCharges = AllowsGameplayUpgrades() && HasUpgrade("shield_cell") ? 1 : 0;
             rescueCharges = AllowsGameplayUpgrades() && HasUpgrade("rescue_feather") ? 1 : 0;
             gatesSinceStarheart = 0;
+            if (trailSafety != null) trailSafety.positionCount = 0;
             trailGlow.positionCount = 0;
             trailCore.positionCount = 0;
             var launchTrailPoint = new Vector3(BirdX, birdY, .1f);
@@ -2098,8 +2118,9 @@ namespace SkyPulse.Mobile
             var direction = topPipe ? 1f : -1f;
             // Keep the shared deep-metal shell legible, then let the selected gate
             // material breathe through a tiny controlled light pulse.
-            var shellColour = Color.Lerp(Color.white, equippedPipe.Accent, equippedPipe.Id == "ion" ? .04f : .34f);
-            surface.Artwork.color = Color.Lerp(shellColour, Color.white, pulse * .075f);
+            var reflectionColour = Color.Lerp(equippedPipe.Panel, equippedPipe.Accent, .22f + pulse * .10f);
+            reflectionColour.a = Mathf.Lerp(.30f, .54f, pulse);
+            surface.Artwork.color = reflectionColour;
             var seamColour = surface.Energy.color;
             seamColour.a = Mathf.Lerp(.38f, .88f, pulse);
             surface.Energy.color = seamColour;
@@ -2140,21 +2161,10 @@ namespace SkyPulse.Mobile
         private void LayoutPipeSurface(PipeSurface surface, float centreY, float height, float capY, bool topPipe)
         {
             var style = equippedPipe;
-            // Real pipe art replaces the placeholder collection of stretched blocks.
-            // It is scaled independently in each direction so its engineered rim lands
-            // precisely on the playable edge of the gap.
-            var art = surface.Artwork;
-            art.enabled = art.sprite != null;
-            art.transform.localPosition = new Vector3(0f, centreY, 0f);
-            if (art.sprite != null)
-            {
-                var artWidth = Mathf.Max(.01f, art.sprite.bounds.size.x);
-                var artHeight = Mathf.Max(.01f, art.sprite.bounds.size.y);
-                art.transform.localScale = new Vector3(PipeWidth / artWidth, (height + .12f) / artHeight, 1f);
-                // The other cosmetic pipe sets tint the shared premium base very gently,
-                // keeping metal readable rather than turning it into a coloured block.
-                art.color = Color.Lerp(Color.white, style.Accent, style.Id == "ion" ? 0f : .34f);
-            }
+            // A broad, layered shell is the gate itself. It never depends on a source
+            // image's canvas bounds, so every pipe theme keeps the same clean plumbing
+            // proportions whether the obstacle is short or reaches the top of screen.
+            LayoutPlumbingGate(surface, centreY, height, capY, topPipe, style);
 
             // A restrained illuminated seam gives every pipe theme a readable edge at
             // speed. It sits just inside the obstacle, so the opening remains clean.
@@ -2189,13 +2199,53 @@ namespace SkyPulse.Mobile
             surface.Beacon.transform.localPosition = new Vector3(0f, capY + insideOffset * 2f, 0f);
             surface.Beacon.transform.localScale = Vector3.one * .25f;
 
-            surface.Outer.enabled = false;
-            surface.Panel.enabled = false;
-            surface.Shade.enabled = false;
-            surface.CapOuter.enabled = false;
-            surface.CapAccent.enabled = false;
-            surface.CapPanel.enabled = false;
-            surface.CapEnergy.enabled = false;
+        }
+
+        private static void LayoutPlumbingGate(PipeSurface surface, float centreY, float height, float capY, bool topPipe, PipeStyle style)
+        {
+            surface.Outer.enabled = true;
+            surface.Panel.enabled = true;
+            surface.Shade.enabled = true;
+            surface.Artwork.enabled = true;
+            surface.RailLeft.enabled = true;
+            surface.RailRight.enabled = true;
+            surface.CapOuter.enabled = true;
+            surface.CapAccent.enabled = true;
+            surface.CapPanel.enabled = true;
+            surface.CapEnergy.enabled = true;
+
+            var direction = topPipe ? 1f : -1f;
+            var bodyHeight = Mathf.Max(.12f, height - .08f);
+            SetBlock(surface.Outer, Vector2.up * centreY, new Vector2(PipeWidth, height + .08f));
+            SetBlock(surface.Panel, Vector2.up * centreY, new Vector2(PipeWidth - .14f, bodyHeight));
+            SetBlock(surface.Shade, new Vector2(-PipeWidth * .32f, centreY), new Vector2(PipeWidth * .18f, Mathf.Max(.12f, height - .14f)));
+            SetBlock(surface.Artwork, new Vector2(PipeWidth * .07f, centreY), new Vector2(PipeWidth * .25f, Mathf.Max(.12f, height - .18f)));
+            SetBlock(surface.RailLeft, new Vector2(-PipeWidth * .36f, centreY), new Vector2(.028f, Mathf.Max(.12f, height - .18f)));
+            SetBlock(surface.RailRight, new Vector2(PipeWidth * .36f, centreY), new Vector2(.020f, Mathf.Max(.12f, height - .22f)));
+            surface.Panel.color = style.Panel;
+            surface.Outer.color = Darken(style.Panel, .38f);
+            surface.Shade.color = new Color(0f, 0f, 0f, .34f);
+            var reflection = Color.Lerp(style.Panel, style.Accent, .24f);
+            reflection.a = .38f;
+            surface.Artwork.color = reflection;
+            var leftRail = style.Energy;
+            leftRail.a = .44f;
+            surface.RailLeft.color = leftRail;
+            var rightRail = Color.Lerp(style.Energy, Color.white, .28f);
+            rightRail.a = .24f;
+            surface.RailRight.color = rightRail;
+
+            // The collar stays inside the obstacle. Its inner edge lands exactly on
+            // capY, so the bright metal edge and the collision opening agree.
+            var capCentre = capY + direction * .20f;
+            SetBlock(surface.CapOuter, Vector2.up * capCentre, new Vector2(PipeCollisionWidth, .42f));
+            SetBlock(surface.CapAccent, Vector2.up * capCentre, new Vector2(PipeWidth + .18f, .30f));
+            SetBlock(surface.CapPanel, Vector2.up * capCentre, new Vector2(PipeWidth + .04f, .19f));
+            SetBlock(surface.CapEnergy, Vector2.up * (capY + direction * .028f), new Vector2(PipeWidth * .72f, .028f));
+            surface.CapOuter.color = Darken(style.Panel, .30f);
+            surface.CapAccent.color = style.Accent;
+            surface.CapPanel.color = style.Panel;
+            surface.CapEnergy.color = style.Energy;
         }
 
         private float ActiveGap()
@@ -2625,7 +2675,7 @@ namespace SkyPulse.Mobile
             if (equippedTrail == null) equippedTrail = Trails[0];
             if (equippedPipe == null) equippedPipe = PipeStyles[0];
 
-            backgroundRenderer.sprite = LoadSprite(equippedWorld.BackgroundPath) ?? midnightSprite;
+            backgroundRenderer.sprite = WorldBackdrop(equippedWorld);
             FitBackgroundToCamera(backgroundRenderer, .5f);
             backgroundVeil.color = new Color(equippedWorld.Accent.r, equippedWorld.Accent.g, equippedWorld.Accent.b, .11f);
             var floorColour = equippedWorld.Floor;
@@ -2661,6 +2711,15 @@ namespace SkyPulse.Mobile
 
         private void ApplyTrailColors()
         {
+            var safety = Color.Lerp(Hex("#0d286a"), equippedTrail.Core, .42f);
+            safety.a = .92f;
+            if (trailSafety != null)
+            {
+                trailSafety.startColor = safety;
+                var safetyEnd = safety;
+                safetyEnd.a = 0f;
+                trailSafety.endColor = safetyEnd;
+            }
             var glowStart = equippedTrail.Glow;
             glowStart.a = .26f;
             var glowEnd = equippedTrail.Core;
@@ -2673,6 +2732,48 @@ namespace SkyPulse.Mobile
             coreEnd.a = 0f;
             trailCore.startColor = coreStart;
             trailCore.endColor = coreEnd;
+        }
+
+        private Sprite WorldBackdrop(WorldTheme world)
+        {
+            if (world == null) return midnightSprite;
+            var authored = LoadSprite(world.BackgroundPath);
+            if (authored != null) return authored;
+            if (worldFallbackSprites.TryGetValue(world.Id, out var fallback)) return fallback;
+
+            // A missing background must still look like an intentional world, not a
+            // black frame. This small atmospheric fallback is created only when an
+            // authored texture cannot be resolved and is cached for the session.
+            const int width = 192;
+            const int height = 384;
+            var texture = new Texture2D(width, height, TextureFormat.RGBA32, false)
+            {
+                name = world.Name + " atmospheric fallback",
+                filterMode = FilterMode.Bilinear,
+                wrapMode = TextureWrapMode.Clamp,
+            };
+            var pixels = new Color[width * height];
+            var deep = Darken(world.Floor, .48f);
+            var horizon = Darken(world.Accent, .28f);
+            for (var y = 0; y < height; y += 1)
+            {
+                var vertical = y / (float)(height - 1);
+                var glowBand = Mathf.Exp(-Mathf.Pow((vertical - .54f) / .18f, 2f));
+                for (var x = 0; x < width; x += 1)
+                {
+                    var horizontal = x / (float)(width - 1) - .5f;
+                    var centreFalloff = 1f - Mathf.Clamp01(Mathf.Abs(horizontal) * 1.55f);
+                    var ray = Mathf.Pow(Mathf.Clamp01(Mathf.Sin((horizontal + vertical * .16f) * 14f) * .5f + .5f), 12f) * .10f;
+                    var colour = Color.Lerp(deep, horizon, glowBand * (.28f + centreFalloff * .34f) + ray);
+                    colour.a = 1f;
+                    pixels[y * width + x] = colour;
+                }
+            }
+            texture.SetPixels(pixels);
+            texture.Apply(false, true);
+            fallback = CreateSprite(texture, 64f);
+            worldFallbackSprites[world.Id] = fallback;
+            return fallback;
         }
 
         private void SetBirdArtwork()

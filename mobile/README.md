@@ -17,7 +17,8 @@ The native flight loop is now tuned for a deliberate feel-and-performance pass:
 - Adventure world profiles ranging from Easy through Apex, while Classic and Daily keep world selection cosmetic for fair scores;
 - dimensional bird motion with three authored full-body poses, breathing, layered body depth, flight stretch, trails, auras, and impact/perfect-pass blooms;
 - the premium three-pose **Aetherwing** flight rig for the entire bird collection: tucked glide, raised lift, and power downstroke with authored visor detail instead of a generic mascot eye; each theme keeps its own restrained material tint and trail;
-- animated cobalt-neon pipe gateways and seven new dimensional, transparent power-up artworks with pulsing depth and orbital motion;
+- broad, layered neon plumbing gates for every pipe theme: deep metal body, recessed cylindrical reflection, side rails, a wide coupling collar, a readable energy seam, and collision bounds matched to that outer collar;
+- seven new dimensional, transparent power-up artworks with pulsing depth and orbital motion;
 - native crystal/unlock effects alongside Nova, Neon City, and the core sound bridge.
 
 On a device, high-value moments also get a single restrained haptic pulse: perfect passes, power-up pickups, shield/rescue saves, and impacts. Normal flaps remain haptic-free so the game never turns into continuous vibration.
@@ -32,7 +33,7 @@ The live `web/` game remains the friend beta while this native project reaches f
 
 For a quick visual-performance pass after importing new art, run **SkyPulse → Optimise Mobile Art** in the Unity menu. It sets transparent, clamp, non-mipmapped texture imports and ASTC 6×6 platform compression, with a 512 px budget for gameplay art, 1024 px for birds, and source-preserving 2048 px for cinematic backgrounds.
 
-The Unity editor installed here can run the Mac simulation. Its mobile export modules are not installed yet, so Android/iPhone packages are a separate toolchain step once the native loop is approved.
+This project already has the iOS module installed. Unity remains the only source of truth for gameplay, art and UI; Xcode is the Apple build/signing/profiling hand-off that Unity generates.
 
 ## Test on a physical phone
 
@@ -45,12 +46,24 @@ You do not install Unity on the phone. Unity runs on the Mac, creates an app bui
 3. In Unity, open **File → Build Profiles**, add/switch to **Android**, select the phone under **Run Device**, then use **Build And Run**.
 4. For performance work, tick **Development Build** and **Autoconnect Profiler** for one test build only; turn them off for normal play tests.
 
-### iPhone (requires iOS support and Xcode on this Mac)
+### iPhone: Unity → Xcode → device
 
-1. Install **Xcode** from the Mac App Store, open it once, and sign in with the Apple ID you use for testing.
-2. In Unity Hub, add **iOS Build Support** to Unity `6000.0.47f1`.
-3. In Unity, set a unique iOS Bundle Identifier under **Edit → Project Settings → Player → iOS**, connect and trust the iPhone, then choose **File → Build Profiles → iOS → Build And Run**.
-4. Unity creates an Xcode project; Xcode signs it with your team and installs it on the connected iPhone. A free Apple ID is sufficient for your own device testing; App Store/TestFlight distribution is a later Apple Developer Program step.
+Use both tools, but for different jobs:
+
+| Tool | Owns |
+| --- | --- |
+| **Unity** | the SkyPulse scene, C# gameplay, physics, art, UI, iOS settings and the generated Xcode project |
+| **Xcode** | Apple signing, installing to an iPhone, Instruments profiling, Archive and TestFlight upload |
+
+1. In **Unity Hub**, keep this project on Unity `6000.0.47f1` with **iOS Build Support** installed.
+2. In Unity, open **File → Build Profiles**, select the **iOS** profile and make it active. For on-device testing tick **Development Build**; use **Autoconnect Profiler** only for a profiling pass.
+3. In **Edit → Project Settings → Player → iOS → Other Settings**, set the unique Bundle Identifier (currently `com.mcauleemaddison.skypulse`), a release version such as `0.1.0`, and increment the build number for every distributable build.
+4. Choose **Build** and select a folder outside `Assets/`, for example `mobile/Builds/iOS/SkyPulse`. Unity writes `Unity-iPhone.xcodeproj` there. Do not edit Unity-generated C++ or project files as permanent game changes: rebuild them from Unity instead.
+5. Open `Unity-iPhone.xcodeproj` in Xcode. Select the **Unity-iPhone** target, then **Signing & Capabilities**. Select your Apple team and let Xcode manage signing.
+6. Connect, unlock and trust the iPhone; enable **Developer Mode** on the phone if iOS requests it. Select that iPhone in Xcode's destination menu, then press **Run** (▶). The first install can take several minutes because Unity's IL2CPP code is compiled by Xcode.
+7. For TestFlight, choose **Any iOS Device**, then **Product → Archive → Distribute App → App Store Connect → Upload**. This requires an active Apple Developer Program membership.
+
+If the iPhone runs a newer iOS beta than the Xcode/macOS combination supports, Xcode cannot deploy to it. You can still build the generated project from Unity, test in the editor and use the web beta; a Mac capable of the Xcode release matched to that iOS beta is required for direct device installation.
 
 Record each first device session: device model, OS version, average FPS, first-run score, accidental taps, unclear deaths, and any visual hitch. That is the evidence needed to make final release calls rather than guessing from the editor.
 
