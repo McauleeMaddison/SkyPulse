@@ -219,6 +219,8 @@ namespace SkyPulse.Mobile
             public SpriteRenderer Shade;
             public SpriteRenderer Highlight;
             public SpriteRenderer Energy;
+            public SpriteRenderer Scan;
+            public SpriteRenderer Beacon;
             public SpriteRenderer CapOuter;
             public SpriteRenderer CapAccent;
             public SpriteRenderer CapPanel;
@@ -321,7 +323,7 @@ namespace SkyPulse.Mobile
 
         private static readonly WorldTheme[] Worlds =
         {
-            new WorldTheme("neon_city", "NEON CITY", "SkyPulse/backgrounds/neon-flightsky-v4", "#45eaff", "#0a0522", "EASY", .88f, 5.10f, "ion", "pulse"),
+            new WorldTheme("neon_city", "NEON CITY", "SkyPulse/backgrounds/neon-flightdeck-v1", "#45eaff", "#0a0522", "EASY", .88f, 5.10f, "ion", "pulse"),
             new WorldTheme("aurora_rise", "AURORA RISE", "SkyPulse/backgrounds/themes/polar-glow", "#61f5b3", "#05251e", "EASY", .94f, 4.92f, "frost", "aurora"),
             new WorldTheme("solar_drift", "SOLAR DRIFT", "SkyPulse/backgrounds/themes/amber-skies", "#ffc34d", "#2b0d10", "CLASSIC", 1f, 4.46f, "solar", "solar"),
             new WorldTheme("midnight_tide", "MIDNIGHT TIDE", "SkyPulse/backgrounds/themes/cobalt-storm", "#45eaff", "#07113d", "CLASSIC", 1.04f, 4.30f, "cobalt", "seaglass"),
@@ -799,6 +801,8 @@ namespace SkyPulse.Mobile
                 Shade = CreateRenderer($"{label} shadow", whiteSprite, new Color(0f, 0f, 0f, .28f), 4, parent),
                 Highlight = CreateRenderer($"{label} edge highlight", whiteSprite, new Color(.8f, .95f, 1f, .18f), 4, parent),
                 Energy = CreateRenderer($"{label} energy core", whiteSprite, Hex("#45eaff"), 5, parent),
+                Scan = CreateRenderer($"{label} scan line", whiteSprite, new Color(.27f, .92f, 1f, 0f), 6, parent),
+                Beacon = CreateRenderer($"{label} gateway beacon", ringSprite, new Color(.27f, .92f, 1f, 0f), 10, parent),
                 CapOuter = CreateRenderer($"{label} cap shell", whiteSprite, Hex("#030613"), 6, parent),
                 CapAccent = CreateRenderer($"{label} cap accent", whiteSprite, Hex("#45eaff"), 7, parent),
                 CapPanel = CreateRenderer($"{label} cap panel", whiteSprite, Hex("#0b3076"), 8, parent),
@@ -868,7 +872,7 @@ namespace SkyPulse.Mobile
             // world. Keep the world visible, then give controls a solid place to sit.
             CreateFullPanel(root.transform, "Home contrast veil", new Color(.005f, .012f, .05f, .10f));
 
-            var difficulty = CreateNeonButton(root.transform, "CLASSIC", new Vector2(-365f, 790f), new Vector2(202f, 68f), Hex("#8f64ff"));
+            var difficulty = CreateNeonButton(root.transform, "CLASSIC", new Vector2(-365f, 790f), new Vector2(202f, 64f), Hex("#8f64ff"));
             difficultyText = difficulty.GetComponentInChildren<Text>();
             difficultyText.resizeTextForBestFit = true;
             difficultyText.resizeTextMinSize = 13;
@@ -876,16 +880,16 @@ namespace SkyPulse.Mobile
             difficulty.onClick.AddListener(CycleFlightMode);
             menuCrystalText = CreateChip(root.transform, new Vector2(355f, 790f), "✦  0", Hex("#45eaff"));
 
-            menuTitleText = CreateText(root.transform, "SKYPULSE", new Vector2(0f, 584f), new Vector2(900f, 112f), 76, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            menuTitleText = CreateText(root.transform, "SKYPULSE", new Vector2(0f, 622f), new Vector2(900f, 112f), 78, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             AddOutline(menuTitleText.gameObject, new Color(.22f, .86f, 1f, .62f), 1.25f);
-            CreateText(root.transform, "FLAP  ·  FLOW  ·  FLY", new Vector2(0f, 514f), new Vector2(700f, 36f), 21, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            var titleRule = CreateImage(root.transform, "Title energy rule", new Vector2(0f, 478f), new Vector2(160f, 2f), new Color(.25f, .91f, 1f, .62f));
+            CreateText(root.transform, "FLAP  ·  FLOW  ·  FLY", new Vector2(0f, 548f), new Vector2(700f, 36f), 20, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            var titleRule = CreateImage(root.transform, "Title energy rule", new Vector2(0f, 510f), new Vector2(180f, 2f), new Color(.25f, .91f, 1f, .62f));
             titleRule.sprite = softCircleSprite;
             titleRule.raycastTarget = false;
 
-            var flightDeck = CreatePanel(root.transform, "Flight deck", new Vector2(0f, -388f), new Vector2(790f, 604f), Hex("#080c1c"));
-            AddOutline(flightDeck.gameObject, new Color(.27f, .86f, 1f, .34f), 1f);
-            var deckRule = CreateImage(flightDeck, "Flight deck rule", new Vector2(0f, 252f), new Vector2(642f, 1.5f), new Color(.27f, .86f, 1f, .40f));
+            var flightDeck = CreatePanel(root.transform, "Flight deck", new Vector2(0f, -392f), new Vector2(770f, 508f), new Color(.018f, .030f, .078f, .94f));
+            AddOutline(flightDeck.gameObject, new Color(.27f, .86f, 1f, .28f), 1f);
+            var deckRule = CreateImage(flightDeck, "Flight deck rule", new Vector2(0f, 202f), new Vector2(618f, 1.5f), new Color(.27f, .86f, 1f, .36f));
             deckRule.sprite = whiteSprite;
             deckRule.raycastTarget = false;
 
@@ -895,52 +899,56 @@ namespace SkyPulse.Mobile
             menuHeroTransform.anchorMin = new Vector2(.5f, .5f);
             menuHeroTransform.anchorMax = new Vector2(.5f, .5f);
             menuHeroTransform.pivot = new Vector2(.5f, .5f);
-            menuHeroTransform.anchoredPosition = new Vector2(0f, 148f);
-            menuHeroTransform.sizeDelta = new Vector2(800f, 470f);
+            menuHeroTransform.anchoredPosition = new Vector2(0f, 164f);
+            menuHeroTransform.sizeDelta = new Vector2(850f, 480f);
 
             // No diffuse circles or faux glass behind the bird. Its silhouette and
             // animation carry the presentation, which stays crisp on phone screens.
-            menuBirdShadowImage = CreateImage(menuHeroTransform, "Menu bird depth extrusion", new Vector2(-16f, -14f), new Vector2(800f, 400f), new Color(.004f, .010f, .040f, .48f));
+            menuBirdShadowImage = CreateImage(menuHeroTransform, "Menu bird depth extrusion", new Vector2(-16f, -14f), new Vector2(850f, 420f), new Color(.004f, .010f, .040f, .48f));
             menuBirdShadowImage.preserveAspect = true;
             menuBirdShadowImage.raycastTarget = false;
-            menuBirdRiseImage = CreateImage(menuHeroTransform, "Menu bird wing rise", Vector2.zero, new Vector2(800f, 400f), new Color(1f, 1f, 1f, 0f));
+            menuBirdRiseImage = CreateImage(menuHeroTransform, "Menu bird wing rise", Vector2.zero, new Vector2(850f, 420f), new Color(1f, 1f, 1f, 0f));
             menuBirdRiseImage.preserveAspect = true;
             menuBirdRiseImage.raycastTarget = false;
-            menuBirdImage = CreateImage(menuHeroTransform, "Menu bird", Vector2.zero, new Vector2(800f, 400f), Color.white);
+            menuBirdImage = CreateImage(menuHeroTransform, "Menu bird", Vector2.zero, new Vector2(850f, 420f), Color.white);
             menuBirdImage.preserveAspect = true;
             menuBirdImage.raycastTarget = false;
             menuBirdTransform = menuBirdImage.rectTransform;
-            menuBirdFlapImage = CreateImage(menuHeroTransform, "Menu bird wing motion", Vector2.zero, new Vector2(800f, 400f), new Color(1f, 1f, 1f, 0f));
+            menuBirdFlapImage = CreateImage(menuHeroTransform, "Menu bird wing motion", Vector2.zero, new Vector2(850f, 420f), new Color(1f, 1f, 1f, 0f));
             menuBirdFlapImage.preserveAspect = true;
             menuBirdFlapImage.raycastTarget = false;
             menuBirdEyeGlintImage = CreateImage(menuHeroTransform, "Menu bird living eye glint", new Vector2(132f, 36f), new Vector2(24f, 24f), new Color(1f, 1f, 1f, .42f));
             menuBirdEyeGlintImage.sprite = softCircleSprite;
             menuBirdEyeGlintImage.raycastTarget = false;
 
-            menuBestText = CreateChip(root.transform, new Vector2(0f, -114f), "BEST · 0", Hex("#8fa7c4"));
-            menuModeDetailText = CreateText(root.transform, "FAIR FLIGHT · NO POWER UPS", new Vector2(0f, -166f), new Vector2(700f, 32f), 16, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            var fly = CreateNeonButton(root.transform, "FLY", new Vector2(0f, -248f), new Vector2(592f, 108f), Hex("#f05bc6"));
+            menuBestText = CreateChip(root.transform, new Vector2(0f, -160f), "BEST · 0", Hex("#8fa7c4"));
+            menuModeDetailText = CreateText(root.transform, "FAIR FLIGHT · NO POWER UPS", new Vector2(0f, -211f), new Vector2(700f, 32f), 16, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            var fly = CreateNeonButton(root.transform, "FLY", new Vector2(0f, -292f), new Vector2(592f, 108f), Hex("#f05bc6"));
             fly.onClick.AddListener(StartFlight);
-            CreateText(root.transform, "TAP ANYWHERE TO TAKE FLIGHT", new Vector2(0f, -326f), new Vector2(650f, 34f), 16, new Color(.91f, .92f, 1f, .68f), TextAnchor.MiddleCenter, FontStyle.Bold);
+            CreateText(root.transform, "TAP ANYWHERE TO TAKE FLIGHT", new Vector2(0f, -370f), new Vector2(650f, 34f), 15, new Color(.91f, .92f, 1f, .68f), TextAnchor.MiddleCenter, FontStyle.Bold);
 
-            var customize = CreateNeonButton(root.transform, "CUSTOMIZE", new Vector2(0f, -421f), new Vector2(592f, 82f), Hex("#45eaff"));
+            var customize = CreateNeonButton(root.transform, "CUSTOMIZE", new Vector2(0f, -456f), new Vector2(592f, 78f), Hex("#45eaff"));
             customize.onClick.AddListener(OpenCustomize);
-            menuDailyText = CreateText(root.transform, "DAILY ROUTE · SHARED & FAIR", new Vector2(0f, -518f), new Vector2(650f, 40f), 20, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            menuDailyText = CreateText(root.transform, "DAILY ROUTE · SHARED & FAIR", new Vector2(0f, -538f), new Vector2(650f, 40f), 19, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             menuDailyText.raycastTarget = true;
             var dailyButton = menuDailyText.gameObject.AddComponent<Button>();
             dailyButton.targetGraphic = menuDailyText;
             dailyButton.onClick.AddListener(StartDailyFlight);
-            menuEquippedText = CreateText(root.transform, "EQUIPPED  ·  NOVA", new Vector2(0f, -595f), new Vector2(650f, 36f), 17, Hex("#8f64ff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            menuEquippedText = CreateText(root.transform, "EQUIPPED  ·  NOVA", new Vector2(0f, -600f), new Vector2(650f, 36f), 16, Hex("#8f64ff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             return root;
         }
 
         private GameObject CreateHud(Transform parent)
         {
             var root = CreateScreen(parent, "Flight HUD");
+            var horizonRule = CreateImage(root.transform, "Flight HUD energy rail", new Vector2(0f, 756f), new Vector2(810f, 1.5f), new Color(.27f, .86f, 1f, .34f));
+            horizonRule.sprite = whiteSprite;
+            horizonRule.raycastTarget = false;
             var pause = CreateNeonButton(root.transform, "Ⅱ", new Vector2(-425f, 804f), new Vector2(82f, 70f), Hex("#8f64ff"));
             pause.onClick.AddListener(PauseFlight);
             hudCrystalText = CreateChip(root.transform, new Vector2(365f, 804f), "✦  0", Hex("#45eaff"));
             hudScoreText = CreateText(root.transform, "0", new Vector2(0f, 708f), new Vector2(260f, 120f), 76, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            AddOutline(hudScoreText.gameObject, new Color(.27f, .86f, 1f, .23f), 1f);
             hudModeText = CreateText(root.transform, "CLASSIC · FAIR FLIGHT", new Vector2(0f, 652f), new Vector2(600f, 30f), 16, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             scoreBurstText = CreateText(root.transform, "+1", new Vector2(0f, 612f), new Vector2(220f, 70f), 34, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             scoreBurstText.gameObject.SetActive(false);
@@ -1957,6 +1965,19 @@ namespace SkyPulse.Mobile
             surface.Highlight.color = highlightColour;
             surface.Highlight.transform.localPosition = new Vector3(0f, capY + direction * (.035f + Mathf.Cos(ambientTime * 7.2f + pipeX) * .010f), 0f);
             surface.Highlight.transform.localScale = new Vector3(PipeWidth * Mathf.Lerp(.53f, .72f, pulse), .008f + pulse * .011f, 1f);
+
+            var scanPhase = Mathf.Repeat(ambientTime * .82f + pipeX * .11f, 1f);
+            var scanColour = surface.Scan.color;
+            scanColour.a = Mathf.Lerp(.05f, .24f, pulse);
+            surface.Scan.color = scanColour;
+            surface.Scan.transform.localPosition = new Vector3(0f, capY + direction * (.17f + scanPhase * .72f), 0f);
+            surface.Scan.transform.localScale = new Vector3(PipeWidth * .68f, .010f, 1f);
+
+            var beaconColour = surface.Beacon.color;
+            beaconColour.a = Mathf.Lerp(.08f, .34f, pulse);
+            surface.Beacon.color = beaconColour;
+            surface.Beacon.transform.localPosition = new Vector3(0f, capY + direction * .115f, 0f);
+            surface.Beacon.transform.localScale = Vector3.one * Mathf.Lerp(.21f, .31f, pulse);
         }
 
         private void RetirePowerUpsForGate(PipePair gate)
@@ -2005,6 +2026,22 @@ namespace SkyPulse.Mobile
             surface.Highlight.color = new Color(1f, 1f, 1f, .16f);
             surface.Highlight.transform.localPosition = new Vector3(0f, capY + insideOffset * .45f, 0f);
             surface.Highlight.transform.localScale = new Vector3(PipeWidth * .62f, .011f, 1f);
+
+            surface.Scan.enabled = true;
+            surface.Scan.sortingOrder = 8;
+            var scanColor = style.Energy;
+            scanColor.a = .14f;
+            surface.Scan.color = scanColor;
+            surface.Scan.transform.localPosition = new Vector3(0f, capY + insideOffset * 2f, 0f);
+            surface.Scan.transform.localScale = new Vector3(PipeWidth * .68f, .010f, 1f);
+
+            surface.Beacon.enabled = true;
+            surface.Beacon.sortingOrder = 10;
+            var beaconColor = style.Energy;
+            beaconColor.a = .20f;
+            surface.Beacon.color = beaconColor;
+            surface.Beacon.transform.localPosition = new Vector3(0f, capY + insideOffset * 2f, 0f);
+            surface.Beacon.transform.localScale = Vector3.one * .25f;
 
             surface.Outer.enabled = false;
             surface.Panel.enabled = false;
