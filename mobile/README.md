@@ -25,6 +25,22 @@ On a device, high-value moments also get a single restrained haptic pulse: perfe
 
 The live `web/` game remains the friend beta while this native project reaches feature parity. Do not add new gameplay to both long-term: build and prove the native loop first, then move menus, cosmetics, progress, Daily Flight, and sharing across in deliberate passes.
 
+## Create a genuinely fluid bird
+
+Do not make another sequence of whole-bird PNG swaps. A liquid, convincing flap needs a **skeletal rig**: the body stays stable while the shoulder, elbow, wrist, feather fan and tail deform continuously.
+
+For a no-cost path, draw the layered artwork in **Krita** or **Photopea**, then rig it with Unity's **2D Animation** and **PSD Importer** packages. For the most specialised workflow, use **Spine 2D** to make the rig and animations, then import its Unity runtime; it is a later upgrade, not a requirement to continue SkyPulse.
+
+1. Create one 2048 px-wide side-view bird file with transparent background. Keep this source file outside `Resources/`; it is production art, not a runtime sprite.
+2. Put these parts on separate layers: `body`, `head`, `nearWing_upper`, `nearWing_lower`, `nearWing_primaryFeathers`, `farWing`, `tail`, `beak`, `eye`. Every wing layer must overlap the body at its shoulder so rotation never opens a gap.
+3. Export a layered `.psb` file, import it into Unity, set **Texture Type** to **Sprite (2D and UI)** and use the PSD Importer to create a prefab from the layers.
+4. Open **Sprite Editor → Skinning Editor**. Create bones: `root → body → nearShoulder → nearElbow → nearWrist → nearTip`; then a smaller far-wing chain and a two-bone tail chain. Bind the body mostly to `body`; give each wing soft blended weights across its nearest two bones.
+5. Create an `Animator` with `Glide`, `Flap` and `Recover` clips. A single flap should have at least eight posed beats: glide, preload, wing lift, high point, catch, powered downstroke, low point, recovery, glide. Unity interpolates between these poses at the device frame rate.
+6. Make one flap cycle about 0.38–0.46 seconds. The upstroke should be slower and softer; the powered downstroke should be faster. Add only tiny body pitch, tail counter-motion and feather lag.
+7. In code, trigger `Flap` on input, blend back to `Glide` after the recovery, and drive animation speed from vertical velocity. Do not restart or cross-fade the entire body sprite each tap.
+8. Build every cosmetic bird as a skin on the same bone hierarchy. That gives every theme the identical high-quality motion without creating a separate, fragile animation system per skin.
+9. Test the rig in Unity at 30/60/120 FPS and at the real phone display size. If the silhouette is unclear at that scale, simplify feather detail before adding more effects.
+
 ## Open and run on this Mac
 
 1. Open Unity Hub.

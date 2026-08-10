@@ -278,7 +278,9 @@ namespace SkyPulse.Mobile
         private const float GroundY = -6.82f;
         private const float BirdX = -2.45f;
         private const float BirdCollisionRadius = .27f;
-        private const float BirdDisplayWidth = 2.26f;
+        // The bird is the primary focal point, so it must remain readable against a
+        // busy world at a real phone scale—not shrink into a sparkle at the centre.
+        private const float BirdDisplayWidth = 2.82f;
         // The body is deliberately broad.  The collar is slightly wider, just like a
         // real plumbing coupling, and this exact outer dimension drives collision.
         private const float PipeWidth = 1.46f;
@@ -304,6 +306,7 @@ namespace SkyPulse.Mobile
         private const string AetherwingGlidePath = "SkyPulse/characters/aetherwing_v2/aetherwing-glide-v3";
         private const string AetherwingFlapPath = "SkyPulse/characters/aetherwing_v2/aetherwing-downstroke-v3";
         private const string AetherwingRisePath = "SkyPulse/characters/aetherwing_v2/aetherwing-lift-v3";
+        private const string AetherwingHeroPath = "SkyPulse/characters/aetherwing_v2/aetherwing-hero-v4";
 
         // These profiles are deliberately conservative. A play-test should alter one
         // value here at a time, never spread physics magic numbers through the loop.
@@ -424,6 +427,7 @@ namespace SkyPulse.Mobile
         private Sprite softCircleSprite;
         private Sprite ringSprite;
         private Sprite roundedPanelSprite;
+        private Sprite pipeBodySprite;
         private Sprite emergencyBirdSprite;
         private Sprite idleBirdSprite;
         private Sprite flapBirdSprite;
@@ -638,6 +642,7 @@ namespace SkyPulse.Mobile
             softCircleSprite = CreateRadialSprite("Soft neon orb", 96, 0f, .5f);
             ringSprite = CreateRadialSprite("Neon ring", 96, .31f, .5f);
             roundedPanelSprite = CreateRoundedRectSprite("Premium rounded panel", 128, 28);
+            pipeBodySprite = CreateCylindricalPipeSprite("Cylindrical pipe metal", 128, 128);
 
             backgroundRenderer = CreateRenderer("Cinematic world", WorldBackdrop(equippedWorld), Color.white, -40);
             backgroundRenderer.transform.position = new Vector3(0f, .12f, 0f);
@@ -722,7 +727,7 @@ namespace SkyPulse.Mobile
             // imported artwork. It gives every bird a readable body against bright
             // worlds and makes a missing/unsupported texture impossible to turn the
             // player avatar invisible on a phone.
-            if (emergencyBirdSprite == null) emergencyBirdSprite = CreateEmergencyBirdSprite();
+            if (emergencyBirdSprite == null) emergencyBirdSprite = LoadSprite(AetherwingHeroPath) ?? CreateEmergencyBirdSprite();
             var slowAura = CreateRenderer("Slow field aura", ringSprite, new Color(.45f, .3f, 1f, 0f), 12, bird);
             slowAura.transform.localScale = Vector3.one * 1.42f;
             slowAuraRenderer = slowAura;
@@ -751,8 +756,8 @@ namespace SkyPulse.Mobile
             safetyArt.SetParent(bird, false);
             birdSafetyRenderer = safetyArt.gameObject.AddComponent<SpriteRenderer>();
             birdSafetyRenderer.sprite = emergencyBirdSprite;
-            birdSafetyRenderer.sortingOrder = 13;
-            birdSafetyRenderer.color = Color.clear;
+            birdSafetyRenderer.sortingOrder = 16;
+            birdSafetyRenderer.color = Color.white;
             birdRiseArt = new GameObject("Bird rise artwork").transform;
             birdRiseArt.SetParent(bird, false);
             birdRiseRenderer = birdRiseArt.gameObject.AddComponent<SpriteRenderer>();
@@ -859,19 +864,19 @@ namespace SkyPulse.Mobile
             // the same layered, cylindrical plumbing gate for every theme instead.
             return new PipeSurface
             {
-                Artwork = CreateRenderer($"{label} cylindrical reflection", whiteSprite, new Color(1f, 1f, 1f, .25f), 5, parent),
-                Outer = CreateRenderer($"{label} outer", whiteSprite, Hex("#030613"), 2, parent),
-                Panel = CreateRenderer($"{label} panel", whiteSprite, Hex("#0b3076"), 3, parent),
-                Shade = CreateRenderer($"{label} shadow", whiteSprite, new Color(0f, 0f, 0f, .28f), 4, parent),
+                Artwork = CreateRenderer($"{label} cylindrical reflection", pipeBodySprite, new Color(1f, 1f, 1f, .25f), 5, parent),
+                Outer = CreateRenderer($"{label} outer", pipeBodySprite, Hex("#030613"), 2, parent),
+                Panel = CreateRenderer($"{label} metal body", pipeBodySprite, Hex("#0b3076"), 3, parent),
+                Shade = CreateRenderer($"{label} side shade", pipeBodySprite, new Color(0f, 0f, 0f, .28f), 4, parent),
                 RailLeft = CreateRenderer($"{label} left neon rail", whiteSprite, new Color(.27f, .92f, 1f, .25f), 5, parent),
                 RailRight = CreateRenderer($"{label} right neon rail", whiteSprite, new Color(.27f, .92f, 1f, .25f), 5, parent),
                 Highlight = CreateRenderer($"{label} inner lip highlight", whiteSprite, new Color(.8f, .95f, 1f, .18f), 7, parent),
                 Energy = CreateRenderer($"{label} energy seam", whiteSprite, Hex("#45eaff"), 8, parent),
                 Scan = CreateRenderer($"{label} scan line", whiteSprite, new Color(.27f, .92f, 1f, 0f), 9, parent),
                 Beacon = CreateRenderer($"{label} gateway beacon", ringSprite, new Color(.27f, .92f, 1f, 0f), 11, parent),
-                CapOuter = CreateRenderer($"{label} plumbing collar shell", whiteSprite, Hex("#030613"), 6, parent),
-                CapAccent = CreateRenderer($"{label} plumbing collar accent", whiteSprite, Hex("#45eaff"), 7, parent),
-                CapPanel = CreateRenderer($"{label} plumbing collar panel", whiteSprite, Hex("#0b3076"), 8, parent),
+                CapOuter = CreateRenderer($"{label} plumbing collar shell", roundedPanelSprite, Hex("#030613"), 6, parent),
+                CapAccent = CreateRenderer($"{label} plumbing collar accent", roundedPanelSprite, Hex("#45eaff"), 7, parent),
+                CapPanel = CreateRenderer($"{label} plumbing collar panel", roundedPanelSprite, Hex("#0b3076"), 8, parent),
                 CapEnergy = CreateRenderer($"{label} collar energy seam", whiteSprite, Hex("#45eaff"), 10, parent),
             };
         }
@@ -992,7 +997,7 @@ namespace SkyPulse.Mobile
 
             // No diffuse circles or faux glass behind the bird. Its silhouette and
             // animation carry the presentation, which stays crisp on phone screens.
-            menuBirdSafetyImage = CreateImage(menuHeroTransform, "Menu bird visibility silhouette", Vector2.zero, new Vector2(630f, 304f), Color.clear);
+            menuBirdSafetyImage = CreateImage(menuHeroTransform, "Menu bird guaranteed hero", Vector2.zero, new Vector2(880f, 440f), Color.white);
             menuBirdSafetyImage.sprite = emergencyBirdSprite;
             menuBirdSafetyImage.preserveAspect = true;
             menuBirdSafetyImage.raycastTarget = false;
@@ -1012,6 +1017,10 @@ namespace SkyPulse.Mobile
             menuBirdEyeGlintImage = CreateImage(menuHeroTransform, "Menu bird living eye glint", new Vector2(132f, 36f), new Vector2(24f, 24f), new Color(1f, 1f, 1f, .42f));
             menuBirdEyeGlintImage.sprite = softCircleSprite;
             menuBirdEyeGlintImage.raycastTarget = false;
+            // This is a complete, coloured bird—not a transparent safety tint. Make
+            // it the front-most hero layer so broken imported UI art cannot obscure
+            // the character on the menu.
+            menuBirdSafetyImage.transform.SetAsLastSibling();
 
             menuBestText = CreateChip(root.transform, new Vector2(0f, -160f), "BEST · 0", Hex("#8fa7c4"));
             menuModeDetailText = CreateText(root.transform, "FAIR FLIGHT · NO POWER UPS", new Vector2(0f, -211f), new Vector2(700f, 32f), 16, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
@@ -1360,11 +1369,11 @@ namespace SkyPulse.Mobile
             }
             if (menuBirdSafetyImage != null)
             {
-                // The readable core sits inside the authored art rather than around
-                // it, so it behaves as depth when the texture is present and as a
-                // complete, polished bird if an import ever fails.
+                // This is the reliable, full-colour hero drawing. It sits above the
+                // imported preview layers so an importer cannot leave the menu with
+                // an animated glint instead of a bird.
                 menuBirdSafetyImage.enabled = true;
-                menuBirdSafetyImage.color = BirdSafetyColour();
+                menuBirdSafetyImage.color = Color.white;
                 menuBirdSafetyImage.rectTransform.localRotation = menuBirdTransform.localRotation;
                 menuBirdSafetyImage.rectTransform.localScale = menuBirdTransform.localScale * (1f + riseStrength * .018f);
             }
@@ -2022,6 +2031,7 @@ namespace SkyPulse.Mobile
             birdTiltVelocity = 0f;
             bird.position = new Vector3(BirdX, birdY, 0f);
             bird.gameObject.SetActive(false);
+            if (trailSafety != null) trailSafety.positionCount = 0;
             trailGlow.positionCount = 0;
             trailCore.positionCount = 0;
             foreach (var pair in pipePool) pair.Root.SetActive(false);
@@ -2116,29 +2126,30 @@ namespace SkyPulse.Mobile
             var gateMotion = reduceMotionEnabled ? 0f : 1f;
             var pulse = reduceMotionEnabled ? .56f : .5f + .5f * Mathf.Sin(ambientTime * 6.4f + pipeX * 1.7f);
             var direction = topPipe ? 1f : -1f;
-            // Keep the shared deep-metal shell legible, then let the selected gate
-            // material breathe through a tiny controlled light pulse.
-            var reflectionColour = Color.Lerp(equippedPipe.Panel, equippedPipe.Accent, .22f + pulse * .10f);
-            reflectionColour.a = Mathf.Lerp(.30f, .54f, pulse);
+            // Theme identity belongs to the narrow energy parts. The cylindrical
+            // body stays graphite, with only a restrained metal reflection.
+            var metal = Color.Lerp(Hex("#0a1222"), equippedPipe.Panel, .15f);
+            var reflectionColour = Color.Lerp(metal, Color.white, .20f + pulse * .06f);
+            reflectionColour.a = Mathf.Lerp(.22f, .38f, pulse);
             surface.Artwork.color = reflectionColour;
             var seamColour = surface.Energy.color;
             seamColour.a = Mathf.Lerp(.38f, .88f, pulse);
             surface.Energy.color = seamColour;
             surface.Energy.transform.localPosition = new Vector3(0f, capY + direction * (.055f + Mathf.Sin(ambientTime * 8.8f + pipeX) * .012f * gateMotion), 0f);
-            surface.Energy.transform.localScale = new Vector3(PipeWidth * Mathf.Lerp(.62f, .82f, pulse), .026f + pulse * .020f, 1f);
+            surface.Energy.transform.localScale = new Vector3(PipeWidth * Mathf.Lerp(.54f, .66f, pulse), .014f + pulse * .010f, 1f);
 
             var highlightColour = surface.Highlight.color;
-            highlightColour.a = Mathf.Lerp(.05f, .28f, pulse);
+            highlightColour.a = Mathf.Lerp(.03f, .16f, pulse);
             surface.Highlight.color = highlightColour;
             surface.Highlight.transform.localPosition = new Vector3(0f, capY + direction * (.035f + Mathf.Cos(ambientTime * 7.2f + pipeX) * .010f * gateMotion), 0f);
-            surface.Highlight.transform.localScale = new Vector3(PipeWidth * Mathf.Lerp(.53f, .72f, pulse), .008f + pulse * .011f, 1f);
+            surface.Highlight.transform.localScale = new Vector3(PipeWidth * Mathf.Lerp(.48f, .58f, pulse), .005f + pulse * .006f, 1f);
 
             var scanPhase = reduceMotionEnabled ? .48f : Mathf.Repeat(ambientTime * .82f + pipeX * .11f, 1f);
             var scanColour = surface.Scan.color;
-            scanColour.a = Mathf.Lerp(.05f, .24f, pulse);
+            scanColour.a = Mathf.Lerp(.03f, .14f, pulse);
             surface.Scan.color = scanColour;
             surface.Scan.transform.localPosition = new Vector3(0f, capY + direction * (.17f + scanPhase * .72f), 0f);
-            surface.Scan.transform.localScale = new Vector3(PipeWidth * .68f, .010f, 1f);
+            surface.Scan.transform.localScale = new Vector3(PipeWidth * .56f, .006f, 1f);
 
             var beaconColour = surface.Beacon.color;
             beaconColour.a = Mathf.Lerp(.08f, .34f, pulse);
@@ -2175,13 +2186,13 @@ namespace SkyPulse.Mobile
             seamColor.a = .64f;
             surface.Energy.color = seamColor;
             surface.Energy.transform.localPosition = new Vector3(0f, capY + insideOffset, 0f);
-            surface.Energy.transform.localScale = new Vector3(PipeWidth * .70f, .035f, 1f);
+            surface.Energy.transform.localScale = new Vector3(PipeWidth * .62f, .020f, 1f);
 
             surface.Highlight.enabled = true;
             surface.Highlight.sortingOrder = 8;
-            surface.Highlight.color = new Color(1f, 1f, 1f, .16f);
+            surface.Highlight.color = new Color(1f, 1f, 1f, .10f);
             surface.Highlight.transform.localPosition = new Vector3(0f, capY + insideOffset * .45f, 0f);
-            surface.Highlight.transform.localScale = new Vector3(PipeWidth * .62f, .011f, 1f);
+            surface.Highlight.transform.localScale = new Vector3(PipeWidth * .54f, .007f, 1f);
 
             surface.Scan.enabled = true;
             surface.Scan.sortingOrder = 8;
@@ -2189,7 +2200,7 @@ namespace SkyPulse.Mobile
             scanColor.a = .14f;
             surface.Scan.color = scanColor;
             surface.Scan.transform.localPosition = new Vector3(0f, capY + insideOffset * 2f, 0f);
-            surface.Scan.transform.localScale = new Vector3(PipeWidth * .68f, .010f, 1f);
+            surface.Scan.transform.localScale = new Vector3(PipeWidth * .58f, .007f, 1f);
 
             surface.Beacon.enabled = true;
             surface.Beacon.sortingOrder = 10;
@@ -2216,36 +2227,44 @@ namespace SkyPulse.Mobile
 
             var direction = topPipe ? 1f : -1f;
             var bodyHeight = Mathf.Max(.12f, height - .08f);
+            // Themes colour the energy language, not the entire plumbing assembly.
+            // Keeping the metal graphite makes every gate feel physically built,
+            // including warm Solar and Rose variants.
+            var metal = Color.Lerp(Hex("#0a1222"), style.Panel, .15f);
+            var metalDark = Darken(metal, .58f);
+            var collarMetal = Color.Lerp(metal, style.Accent, .16f);
             SetBlock(surface.Outer, Vector2.up * centreY, new Vector2(PipeWidth, height + .08f));
-            SetBlock(surface.Panel, Vector2.up * centreY, new Vector2(PipeWidth - .14f, bodyHeight));
+            SetBlock(surface.Panel, Vector2.up * centreY, new Vector2(PipeWidth - .12f, bodyHeight));
             SetBlock(surface.Shade, new Vector2(-PipeWidth * .32f, centreY), new Vector2(PipeWidth * .18f, Mathf.Max(.12f, height - .14f)));
-            SetBlock(surface.Artwork, new Vector2(PipeWidth * .07f, centreY), new Vector2(PipeWidth * .25f, Mathf.Max(.12f, height - .18f)));
+            SetBlock(surface.Artwork, new Vector2(PipeWidth * .07f, centreY), new Vector2(PipeWidth * .19f, Mathf.Max(.12f, height - .18f)));
             SetBlock(surface.RailLeft, new Vector2(-PipeWidth * .36f, centreY), new Vector2(.028f, Mathf.Max(.12f, height - .18f)));
             SetBlock(surface.RailRight, new Vector2(PipeWidth * .36f, centreY), new Vector2(.020f, Mathf.Max(.12f, height - .22f)));
-            surface.Panel.color = style.Panel;
-            surface.Outer.color = Darken(style.Panel, .38f);
+            surface.Panel.color = metal;
+            surface.Outer.color = metalDark;
             surface.Shade.color = new Color(0f, 0f, 0f, .34f);
-            var reflection = Color.Lerp(style.Panel, style.Accent, .24f);
-            reflection.a = .38f;
+            var reflection = Color.Lerp(metal, Color.white, .23f);
+            reflection.a = .30f;
             surface.Artwork.color = reflection;
             var leftRail = style.Energy;
-            leftRail.a = .44f;
+            leftRail.a = .28f;
             surface.RailLeft.color = leftRail;
             var rightRail = Color.Lerp(style.Energy, Color.white, .28f);
-            rightRail.a = .24f;
+            rightRail.a = .15f;
             surface.RailRight.color = rightRail;
 
             // The collar stays inside the obstacle. Its inner edge lands exactly on
             // capY, so the bright metal edge and the collision opening agree.
             var capCentre = capY + direction * .20f;
             SetBlock(surface.CapOuter, Vector2.up * capCentre, new Vector2(PipeCollisionWidth, .42f));
-            SetBlock(surface.CapAccent, Vector2.up * capCentre, new Vector2(PipeWidth + .18f, .30f));
-            SetBlock(surface.CapPanel, Vector2.up * capCentre, new Vector2(PipeWidth + .04f, .19f));
-            SetBlock(surface.CapEnergy, Vector2.up * (capY + direction * .028f), new Vector2(PipeWidth * .72f, .028f));
-            surface.CapOuter.color = Darken(style.Panel, .30f);
-            surface.CapAccent.color = style.Accent;
-            surface.CapPanel.color = style.Panel;
-            surface.CapEnergy.color = style.Energy;
+            SetBlock(surface.CapAccent, Vector2.up * capCentre, new Vector2(PipeWidth + .14f, .30f));
+            SetBlock(surface.CapPanel, Vector2.up * capCentre, new Vector2(PipeWidth - .04f, .18f));
+            SetBlock(surface.CapEnergy, Vector2.up * (capY + direction * .028f), new Vector2(PipeWidth * .62f, .016f));
+            surface.CapOuter.color = Darken(metalDark, .18f);
+            surface.CapAccent.color = collarMetal;
+            surface.CapPanel.color = Darken(metal, .40f);
+            var capEnergy = style.Energy;
+            capEnergy.a = .82f;
+            surface.CapEnergy.color = capEnergy;
         }
 
         private float ActiveGap()
@@ -2819,10 +2838,13 @@ namespace SkyPulse.Mobile
             if (birdSafetyRenderer != null)
             {
                 birdSafetyRenderer.sprite = emergencyBirdSprite;
-                safetyBirdBaseScale = ArtworkScale(emergencyBirdSprite, BirdDisplayWidth * .72f);
+                // The durable full-colour Aetherwing body is above imported poses.
+                // It protects every skin from alpha/import failures and keeps the
+                // player readable on a real phone, not just technically present.
+                safetyBirdBaseScale = ArtworkScale(emergencyBirdSprite, BirdDisplayWidth * 1.08f);
                 birdSafetyRenderer.transform.localScale = safetyBirdBaseScale;
                 birdSafetyRenderer.transform.localPosition = new Vector3(-.005f, -.012f, 0f);
-                birdSafetyRenderer.color = BirdSafetyColour();
+                birdSafetyRenderer.color = Color.white;
                 birdSafetyRenderer.enabled = true;
             }
             if (birdDepthRenderer != null) birdDepthRenderer.enabled = !premiumRig;
@@ -2840,18 +2862,6 @@ namespace SkyPulse.Mobile
             var tint = Color.Lerp(Color.white, equippedSkin.Accent, .14f);
             tint.a = 1f;
             return tint;
-        }
-
-        private Color BirdSafetyColour()
-        {
-            // A rich cobalt inner body remains legible on every world, including
-            // bright fire and glacier themes. A small share of the selected accent
-            // keeps the safety layer feeling like the equipped bird, not a UI icon.
-            var cobalt = Hex("#102b70");
-            var accent = equippedSkin != null ? equippedSkin.Accent : Hex("#45eaff");
-            var colour = Color.Lerp(cobalt, accent, .24f);
-            colour.a = .86f;
-            return colour;
         }
 
         private Sprite SelectAetherwingPose(float riseWeight, float flapWeight)
@@ -3275,6 +3285,36 @@ namespace SkyPulse.Mobile
             texture.SetPixels(pixels);
             texture.Apply(false, true);
             return Sprite.Create(texture, new Rect(0f, 0f, size, size), new Vector2(.5f, .5f), size, 0, SpriteMeshType.FullRect, new Vector4(radius, radius, radius, radius));
+        }
+
+        private static Sprite CreateCylindricalPipeSprite(string name, int width, int height)
+        {
+            // A neutral greyscale cylinder: SpriteRenderer tint supplies the material
+            // colour while this texture supplies the curved metal light across it.
+            // It avoids the flat poster-board appearance of scaled white rectangles.
+            var texture = new Texture2D(width, height, TextureFormat.RGBA32, false)
+            {
+                name = name,
+                filterMode = FilterMode.Bilinear,
+                wrapMode = TextureWrapMode.Clamp,
+            };
+            var pixels = new Color[width * height];
+            for (var y = 0; y < height; y += 1)
+            {
+                var vertical = y / (float)(height - 1);
+                var endShade = .90f + Mathf.Sin(vertical * Mathf.PI) * .10f;
+                for (var x = 0; x < width; x += 1)
+                {
+                    var horizontal = Mathf.Abs((x + .5f) / width - .5f) * 2f;
+                    var edge = 1f - Mathf.SmoothStep(.86f, 1f, horizontal);
+                    var curvedLight = .38f + Mathf.Pow(Mathf.Clamp01(1f - horizontal), .48f) * .62f;
+                    var value = curvedLight * endShade;
+                    pixels[y * width + x] = new Color(value, value, value, edge);
+                }
+            }
+            texture.SetPixels(pixels);
+            texture.Apply(false, true);
+            return CreateSprite(texture, width);
         }
 
         private static Sprite CreateRadialSprite(string name, int size, float innerRadius, float outerRadius)
