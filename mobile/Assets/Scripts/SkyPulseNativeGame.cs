@@ -114,17 +114,24 @@ namespace SkyPulse.Mobile
             public string ArtPath;
             public string FlapPath;
             public string RisePath;
+            // These are distinct, per-bird poses. They must never point at a shared
+            // bird image: its plumage, metalwork and silhouette are part of the
+            // reward the player just earned.
+            public string HitPath;
+            public string UnlockPath;
             public Color Accent;
             public Color Trail;
             public int Price;
 
-            public Skin(string id, string name, string artPath, string flapPath, string accent, string trail, int price, string risePath = null)
+            public Skin(string id, string name, string artPath, string flapPath, string accent, string trail, int price, string risePath = null, string hitPath = null, string unlockPath = null)
             {
                 Id = id;
                 Name = name;
                 ArtPath = artPath;
                 FlapPath = flapPath;
                 RisePath = risePath;
+                HitPath = hitPath;
+                UnlockPath = unlockPath;
                 Accent = Hex(accent);
                 Trail = Hex(trail);
                 Price = price;
@@ -287,8 +294,15 @@ namespace SkyPulse.Mobile
         private const float PipeCollisionWidth = PipeWidth + .30f;
         private const float PipeSpacing = 6.86f;
         private const int PipeCount = 4;
-        private const int PowerUpCount = 3;
+        // Crystals are deliberate pickups, not a payment for simply surviving each
+        // gate. One visible pellet keeps a good run rewarding without making the
+        // collection economy collapse after a handful of flights.
+        private const int CrystalPickupCount = 1;
+        private const int PowerUpCount = 1;
         private const float PickupRadius = .43f;
+        private const float CrystalPickupRadius = .34f;
+        private const float CrystalPickupRespawnMinimum = 8.5f;
+        private const float CrystalPickupRespawnMaximum = 12.5f;
         private const float SimulationStep = 1f / 120f;
         private const float MaximumSimulationCatchup = 1f / 12f;
         // The Aetherwing poses are deliberately stepped rather than cross-faded: a
@@ -300,12 +314,10 @@ namespace SkyPulse.Mobile
         private const float WingDownstrokeSpan = .90f;
         private const float WingLiftPoseThreshold = .32f;
         private const float WingDownstrokePoseThreshold = .14f;
-        // Every theme uses the same authored three-pose Aetherwing silhouette. Themes
-        // change the material tint, trail, gates and world—not the bird's anatomy or
-        // visual quality—so a player never unlocks a lower-fidelity mascot.
-        // Version 4 is a matched Aetherwing pose set: tucked glide, raised upstroke
-        // and decisive downstroke. It is a much stronger temporary animation than
-        // the old mismatched sprites while the free skeletal rig is being prepared.
+        // Version 4 is a matched temporary flight set: tucked glide, raised upstroke
+        // and decisive downstroke. The buy reward is intentionally separate—each
+        // collectible bird has its own hit and open-wing unlock artwork rather than
+        // borrowing another bird's silhouette.
         private const string AetherwingGlidePath = "SkyPulse/characters/aetherwing_v2/aetherwing-glide-v4";
         private const string AetherwingFlapPath = "SkyPulse/characters/aetherwing_v2/aetherwing-downstroke-v4";
         private const string AetherwingRisePath = "SkyPulse/characters/aetherwing_v2/aetherwing-lift-v4";
@@ -326,27 +338,27 @@ namespace SkyPulse.Mobile
             startingGap: 4.46f, minimumGap: 3.42f, gapShrinkPerGate: .030f,
             startingScrollSpeed: 4.30f, scrollRampPerGate: .045f,
             collisionRadius: BirdCollisionRadius, perfectPassWindow: .32f, inputBufferSeconds: .095f, maximumGapCenterStep: .90f,
-            powerUpSlots: PowerUpCount, powerUpRespawnMinimum: 5.5f, powerUpRespawnMaximum: 8.5f,
+            powerUpSlots: 1, powerUpRespawnMinimum: 7.5f, powerUpRespawnMaximum: 10.5f,
             allowsUpgrades: true, allowsPowerUps: true);
 
         private static readonly Skin[] Skins =
         {
-            new Skin("nova", "NOVA", AetherwingGlidePath, AetherwingFlapPath, "#8f64ff", "#45eaff", 0, AetherwingRisePath),
-            new Skin("lumen", "LUMEN", AetherwingGlidePath, AetherwingFlapPath, "#45eaff", "#8f64ff", 24, AetherwingRisePath),
-            new Skin("ember", "EMBER", AetherwingGlidePath, AetherwingFlapPath, "#f05bc6", "#ffc34d", 32, AetherwingRisePath),
-            new Skin("sol", "SOL", AetherwingGlidePath, AetherwingFlapPath, "#ffc34d", "#45eaff", 40, AetherwingRisePath),
-            new Skin("aurora", "AURORA", AetherwingGlidePath, AetherwingFlapPath, "#61f5b3", "#45eaff", 48, AetherwingRisePath),
-            new Skin("orchid", "ORCHID", AetherwingGlidePath, AetherwingFlapPath, "#b17cff", "#f05bc6", 52, AetherwingRisePath),
-            new Skin("coral", "CORAL", AetherwingGlidePath, AetherwingFlapPath, "#f082af", "#ffc34d", 56, AetherwingRisePath),
-            new Skin("glacier", "GLACIER", AetherwingGlidePath, AetherwingFlapPath, "#edf7ff", "#45eaff", 60, AetherwingRisePath),
-            new Skin("prism", "PRISM", AetherwingGlidePath, AetherwingFlapPath, "#45eaff", "#edf7ff", 68, AetherwingRisePath),
-            new Skin("verdant", "VERDANT", AetherwingGlidePath, AetherwingFlapPath, "#61f5b3", "#45eaff", 72, AetherwingRisePath),
-            new Skin("cinder", "CINDER", AetherwingGlidePath, AetherwingFlapPath, "#f05bc6", "#ffc34d", 76, AetherwingRisePath),
-            new Skin("tide", "TIDE", AetherwingGlidePath, AetherwingFlapPath, "#45eaff", "#8f64ff", 80, AetherwingRisePath),
-            new Skin("wisp", "WISP", AetherwingGlidePath, AetherwingFlapPath, "#edf7ff", "#45eaff", 88, AetherwingRisePath),
-            new Skin("bloom", "BLOOM", AetherwingGlidePath, AetherwingFlapPath, "#f05bc6", "#b17cff", 92, AetherwingRisePath),
-            new Skin("emberwing", "EMBERWING", AetherwingGlidePath, AetherwingFlapPath, "#ffc34d", "#f05bc6", 100, AetherwingRisePath),
-            new Skin("steel", "STEEL", AetherwingGlidePath, AetherwingFlapPath, "#edf7ff", "#45eaff", 108, AetherwingRisePath),
+            new Skin("nova", "NOVA", "SkyPulse/characters/nova", "SkyPulse/characters/nova-flap", "#8f64ff", "#45eaff", 0, "SkyPulse/characters/animated/nova-rise-v1", "SkyPulse/characters/unlocks/nova-hit-v2", "SkyPulse/characters/unlocks/nova-unlock-v2"),
+            new Skin("lumen", "LUMEN", "SkyPulse/characters/lumen", "SkyPulse/characters/lumen-flap", "#45eaff", "#8f64ff", 24, "SkyPulse/characters/animated/lumen-rise-v1", "SkyPulse/characters/unlocks/lumen-hit-v2", "SkyPulse/characters/unlocks/lumen-unlock-v2"),
+            new Skin("ember", "EMBER", "SkyPulse/characters/ember", "SkyPulse/characters/ember-flap", "#f05bc6", "#ffc34d", 32, "SkyPulse/characters/animated/ember-rise-v1", "SkyPulse/characters/unlocks/ember-hit-v2", "SkyPulse/characters/unlocks/ember-unlock-v2"),
+            new Skin("sol", "SOL", "SkyPulse/characters/sol", "SkyPulse/characters/sol-flap", "#ffc34d", "#45eaff", 40, "SkyPulse/characters/animated/sol-rise-v1", "SkyPulse/characters/unlocks/sol-hit-v2", "SkyPulse/characters/unlocks/sol-unlock-v2"),
+            new Skin("aurora", "AURORA", "SkyPulse/characters/lumen", "SkyPulse/characters/lumen-flap", "#61f5b3", "#45eaff", 48, "SkyPulse/characters/animated/lumen-rise-v1", "SkyPulse/characters/unlocks/aurora-hit-v2", "SkyPulse/characters/unlocks/aurora-unlock-v2"),
+            new Skin("orchid", "ORCHID", "SkyPulse/characters/nova", "SkyPulse/characters/nova-flap", "#b17cff", "#f05bc6", 52, "SkyPulse/characters/animated/nova-rise-v1", "SkyPulse/characters/unlocks/orchid-hit-v2", "SkyPulse/characters/unlocks/orchid-unlock-v2"),
+            new Skin("coral", "CORAL", "SkyPulse/characters/ember", "SkyPulse/characters/ember-flap", "#f082af", "#ffc34d", 56, "SkyPulse/characters/animated/ember-rise-v1", "SkyPulse/characters/unlocks/coral-hit-v2", "SkyPulse/characters/unlocks/coral-unlock-v2"),
+            new Skin("glacier", "GLACIER", AetherwingGlidePath, AetherwingFlapPath, "#edf7ff", "#45eaff", 60, AetherwingRisePath, "SkyPulse/characters/unlocks/glacier-hit-v2", "SkyPulse/characters/unlocks/glacier-unlock-v2"),
+            new Skin("prism", "PRISM", "SkyPulse/characters/generated/prism", "SkyPulse/characters/generated/prism-flap", "#45eaff", "#edf7ff", 68, "SkyPulse/characters/animated/prism-rise-v1", "SkyPulse/characters/unlocks/prism-hit-v2", "SkyPulse/characters/unlocks/prism-unlock-v2"),
+            new Skin("verdant", "VERDANT", "SkyPulse/characters/generated/verdant", "SkyPulse/characters/generated/verdant-flap", "#61f5b3", "#45eaff", 72, "SkyPulse/characters/animated/verdant-rise-v1", "SkyPulse/characters/unlocks/verdant-hit-v2", "SkyPulse/characters/unlocks/verdant-unlock-v2"),
+            new Skin("cinder", "CINDER", "SkyPulse/characters/generated/cinder", "SkyPulse/characters/generated/cinder-flap", "#f05bc6", "#ffc34d", 76, "SkyPulse/characters/animated/cinder-rise-v1", "SkyPulse/characters/unlocks/cinder-hit-v2", "SkyPulse/characters/unlocks/cinder-unlock-v2"),
+            new Skin("tide", "TIDE", "SkyPulse/characters/generated/tide", "SkyPulse/characters/generated/tide-flap", "#45eaff", "#8f64ff", 80, "SkyPulse/characters/animated/tide-rise-v1", "SkyPulse/characters/unlocks/tide-hit-v2", "SkyPulse/characters/unlocks/tide-unlock-v2"),
+            new Skin("wisp", "WISP", "SkyPulse/characters/generated/wisp", "SkyPulse/characters/generated/wisp-flap", "#edf7ff", "#45eaff", 88, "SkyPulse/characters/animated/wisp-rise-v1", "SkyPulse/characters/unlocks/wisp-hit-v2", "SkyPulse/characters/unlocks/wisp-unlock-v2"),
+            new Skin("bloom", "BLOOM", "SkyPulse/characters/generated/bloom", "SkyPulse/characters/generated/bloom-flap", "#f05bc6", "#b17cff", 92, "SkyPulse/characters/animated/bloom-rise-v1", "SkyPulse/characters/unlocks/bloom-hit-v2", "SkyPulse/characters/unlocks/bloom-unlock-v2"),
+            new Skin("emberwing", "EMBERWING", "SkyPulse/characters/generated/emberwing", "SkyPulse/characters/generated/emberwing-flap", "#ffc34d", "#f05bc6", 100, "SkyPulse/characters/animated/cinder-rise-v1", "SkyPulse/characters/unlocks/emberwing-hit-v2", "SkyPulse/characters/unlocks/emberwing-unlock-v2"),
+            new Skin("steel", "STEEL", "SkyPulse/characters/generated/steel", "SkyPulse/characters/generated/steel-flap", "#edf7ff", "#45eaff", 108, "SkyPulse/characters/animated/prism-rise-v1", "SkyPulse/characters/unlocks/steel-hit-v2", "SkyPulse/characters/unlocks/steel-unlock-v2"),
         };
 
         private static readonly WorldTheme[] Worlds =
@@ -371,12 +383,15 @@ namespace SkyPulse.Mobile
             new Upgrade("rescue_feather", "RESCUE FEATHER", "One extra life each flight", 74, "#f05bc6"),
             new Upgrade("time_weaver", "TIME WEAVER", "Slow Field lasts +2 seconds", 58, "#b17cff"),
             new Upgrade("shield_cell", "SHIELD CELL", "Begin flights shielded", 82, "#61f5b3"),
-            new Upgrade("cache_cores", "CACHE CORES", "Crystal Cache grants +8", 66, "#ffc34d"),
+            new Upgrade("cache_cores", "CACHE CORES", "Crystal pickups grant +1", 66, "#ffc34d"),
             new Upgrade("magnet_array", "MAGNET ARRAY", "A stronger, wider pickup pull", 62, "#45eaff"),
             new Upgrade("phase_stabilizer", "PHASE STABILIZER", "Phase Shift lasts +1.5 seconds", 76, "#b17cff"),
-            new Upgrade("prism_resonator", "PRISM RESONATOR", "Score Prism grants extra crystals", 70, "#f05bc6"),
+            new Upgrade("prism_resonator", "PRISM RESONATOR", "Score Prism grants extra score", 70, "#f05bc6"),
             new Upgrade("comet_trail", "COMET TRAIL", "A broader living light trail", 46, "#edf7ff"),
-            new Upgrade("starheart", "STARHEART", "Bonus crystals every four gates", 86, "#ffc34d"),
+            new Upgrade("starheart", "STARHEART", "+2 score every four gates", 86, "#ffc34d"),
+            new Upgrade("pulse_reflex", "PULSE REFLEX", "+40% tap input buffer", 54, "#45eaff"),
+            new Upgrade("crystal_lure", "CRYSTAL LURE", "+25% crystal pickup radius", 68, "#ffc34d"),
+            new Upgrade("relay_booster", "RELAY BOOSTER", "Power-ups return sooner", 72, "#b17cff"),
         };
 
         private static readonly TrailStyle[] Trails =
@@ -414,6 +429,7 @@ namespace SkyPulse.Mobile
         };
 
         private readonly PipePair[] pipePool = new PipePair[PipeCount];
+        private readonly PowerUpPickup[] crystalPickupPool = new PowerUpPickup[CrystalPickupCount];
         private readonly PowerUpPickup[] powerUpPool = new PowerUpPickup[PowerUpCount];
         private readonly Vector3[] trailPoints = new Vector3[9];
         private readonly List<AmbientStar> ambientStars = new List<AmbientStar>();
@@ -476,6 +492,7 @@ namespace SkyPulse.Mobile
         private GameObject gameOverScreen;
         private GameObject customizeScreen;
         private GameObject purchaseModal;
+        private GameObject unlockRevealModal;
         private Text menuCrystalText;
         private Text menuBestText;
         private Text menuEquippedText;
@@ -513,8 +530,17 @@ namespace SkyPulse.Mobile
         private Image purchasePreviewImage;
         private Image purchaseHalo;
         private Button purchaseConfirmButton;
+        private RectTransform unlockRevealCard;
+        private RectTransform unlockRevealBirdTransform;
+        private Image unlockRevealBirdImage;
+        private Image unlockRevealHalo;
+        private Image unlockRevealFlash;
+        private Text unlockRevealTitle;
+        private Text unlockRevealDetail;
+        private Button unlockRevealContinueButton;
 
         private Skin equippedSkin;
+        private Skin activeUnlockSkin;
         private WorldTheme equippedWorld;
         private TrailStyle equippedTrail;
         private PipeStyle equippedPipe;
@@ -540,6 +566,7 @@ namespace SkyPulse.Mobile
         private float wingTimer;
         private float menuWingTimer;
         private float menuPresentationTime;
+        private float unlockRevealTimer;
         private float spawnX;
         private float scoreBurstTimer;
         private float ambientTime;
@@ -603,12 +630,33 @@ namespace SkyPulse.Mobile
             Time.maximumDeltaTime = MaximumSimulationCatchup;
 
             LoadProgress();
+            ValidateBirdRewardPoseContracts();
             CreateCamera();
             CreateVisuals();
             CreateInterface();
             ApplyEquippedVisuals();
             UpdateComfortCopy();
             ResetToMenu();
+        }
+
+        private static void ValidateBirdRewardPoseContracts()
+        {
+            var hitPaths = new HashSet<string>(StringComparer.Ordinal);
+            var unlockPaths = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var skin in Skins)
+            {
+                if (string.IsNullOrEmpty(skin.HitPath) || string.IsNullOrEmpty(skin.UnlockPath))
+                {
+                    Debug.LogError($"SkyPulse: {skin.Name} must define both a hit pose and an unlock pose.");
+                    continue;
+                }
+                if (!hitPaths.Add(skin.HitPath)) Debug.LogError($"SkyPulse: hit pose path is shared by more than one bird: {skin.HitPath}");
+                if (!unlockPaths.Add(skin.UnlockPath)) Debug.LogError($"SkyPulse: unlock pose path is shared by more than one bird: {skin.UnlockPath}");
+                if (string.Equals(skin.ArtPath, skin.UnlockPath, StringComparison.Ordinal))
+                {
+                    Debug.LogError($"SkyPulse: {skin.Name}'s unlock pose must be bespoke rather than its normal flight art.");
+                }
+            }
         }
 
         private void OnApplicationFocus(bool hasFocus)
@@ -661,6 +709,7 @@ namespace SkyPulse.Mobile
             CreateFlightFeedback();
             CreateTrail();
             for (var index = 0; index < pipePool.Length; index += 1) pipePool[index] = CreatePipePair(index);
+            for (var index = 0; index < crystalPickupPool.Length; index += 1) crystalPickupPool[index] = CreateCrystalPickup(index);
             for (var index = 0; index < powerUpPool.Length; index += 1) powerUpPool[index] = CreatePowerUp(index);
 
             audioSource = gameObject.AddComponent<AudioSource>();
@@ -789,14 +838,24 @@ namespace SkyPulse.Mobile
 
         private PowerUpPickup CreatePowerUp(int index)
         {
-            var root = new GameObject($"Power-up pickup {index + 1}");
+            return CreatePickup($"Power-up pickup {index + 1}");
+        }
+
+        private PowerUpPickup CreateCrystalPickup(int index)
+        {
+            return CreatePickup($"Crystal pellet {index + 1}");
+        }
+
+        private PowerUpPickup CreatePickup(string name)
+        {
+            var root = new GameObject(name);
             root.transform.SetParent(transform, false);
-            var glow = CreateRenderer("Power-up halo", softCircleSprite, Color.white, 10, root.transform);
+            var glow = CreateRenderer("Pickup halo", softCircleSprite, Color.white, 10, root.transform);
             glow.transform.localScale = Vector3.one * 1.12f;
-            var depth = CreateRenderer("Power-up dimensional bloom", softCircleSprite, Color.white, 12, root.transform);
+            var depth = CreateRenderer("Pickup dimensional bloom", softCircleSprite, Color.white, 12, root.transform);
             depth.transform.localScale = Vector3.one * 1.22f;
-            var artwork = CreateRenderer("Premium power-up artwork", whiteSprite, Color.white, 13, root.transform);
-            var spark = CreateRenderer("Power-up glint", softCircleSprite, Color.white, 14, root.transform);
+            var artwork = CreateRenderer("Pickup artwork", whiteSprite, Color.white, 13, root.transform);
+            var spark = CreateRenderer("Pickup glint", softCircleSprite, Color.white, 14, root.transform);
             spark.transform.localScale = Vector3.one * .075f;
             return new PowerUpPickup
             {
@@ -921,6 +980,8 @@ namespace SkyPulse.Mobile
             customizeScreen = CreateCustomizeScreen(safeAreaRoot);
             purchaseModal = CreatePurchaseModal(safeAreaRoot);
             purchaseModal.SetActive(false);
+            unlockRevealModal = CreateUnlockReveal(safeAreaRoot);
+            unlockRevealModal.SetActive(false);
 
 #if UNITY_EDITOR
             CreateEditorQualityHarness(safeAreaRoot);
@@ -1167,6 +1228,135 @@ namespace SkyPulse.Mobile
             return root;
         }
 
+        private GameObject CreateUnlockReveal(Transform parent)
+        {
+            var root = CreateScreen(parent, "Bird unlock reveal");
+            CreateFullPanel(root.transform, "Unlock reveal dim", new Color(.005f, .004f, .026f, .92f));
+            unlockRevealCard = CreatePanel(root.transform, "Unlock reveal card", new Vector2(0f, 22f), new Vector2(900f, 920f), Hex("#10142b"));
+            AddOutline(unlockRevealCard.gameObject, Hex("#45eaff"), 4f);
+
+            unlockRevealFlash = CreateImage(unlockRevealCard, "Unlock flare", new Vector2(0f, 150f), new Vector2(720f, 720f), Color.clear);
+            unlockRevealFlash.sprite = softCircleSprite;
+            unlockRevealFlash.raycastTarget = false;
+            unlockRevealHalo = CreateImage(unlockRevealCard, "Unlock halo", new Vector2(0f, 150f), new Vector2(560f, 560f), Color.clear);
+            unlockRevealHalo.sprite = ringSprite;
+            unlockRevealHalo.raycastTarget = false;
+            unlockRevealBirdImage = CreateImage(unlockRevealCard, "Unlocked bird hero", new Vector2(0f, 150f), new Vector2(660f, 420f), Color.white);
+            unlockRevealBirdImage.preserveAspect = true;
+            unlockRevealBirdImage.raycastTarget = false;
+            unlockRevealBirdTransform = unlockRevealBirdImage.rectTransform;
+
+            unlockRevealTitle = CreateText(unlockRevealCard, "BIRD UNLOCKED", new Vector2(0f, 392f), new Vector2(760f, 64f), 45, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            unlockRevealDetail = CreateText(unlockRevealCard, "EQUIPPED · READY TO FLY", new Vector2(0f, -145f), new Vector2(760f, 44f), 23, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            var continueButton = CreateNeonButton(unlockRevealCard, "CONTINUE", new Vector2(0f, -292f), new Vector2(510f, 84f), Hex("#45eaff"));
+            unlockRevealContinueButton = continueButton;
+            continueButton.onClick.AddListener(CloseUnlockReveal);
+            return root;
+        }
+
+        private void ShowUnlockReveal(Skin skin)
+        {
+            if (skin == null || unlockRevealModal == null || unlockRevealBirdImage == null) return;
+
+            // This lookup deliberately does not go through the emergency-bird
+            // fallback. A missing Nova unlock pose must never silently become an
+            // Aetherwing unlock pose (or vice versa).
+            var unlockPose = LoadOptionalSprite(skin.UnlockPath);
+            if (unlockPose == null)
+            {
+                Debug.LogWarning($"SkyPulse: {skin.Name} is missing its bespoke unlock frame at '{skin.UnlockPath}'. Showing its own current bird art until that frame is supplied.");
+                unlockPose = LoadSprite(skin.ArtPath);
+            }
+
+            unlockRevealBirdImage.sprite = unlockPose;
+            activeUnlockSkin = skin;
+            var usesPremiumTint = skin.ArtPath.StartsWith("SkyPulse/characters/aetherwing", StringComparison.Ordinal);
+            unlockRevealBirdImage.color = usesPremiumTint ? Color.Lerp(Color.white, skin.Accent, .14f) : Color.white;
+            unlockRevealTitle.text = $"{skin.Name} UNLOCKED";
+            unlockRevealDetail.text = "EQUIPPED  ·  NEW FLIGHT FORM ACQUIRED";
+            unlockRevealTitle.color = Hex("#f4fbff");
+            unlockRevealDetail.color = skin.Accent;
+            unlockRevealHalo.color = new Color(skin.Accent.r, skin.Accent.g, skin.Accent.b, 0f);
+            unlockRevealFlash.color = new Color(skin.Accent.r, skin.Accent.g, skin.Accent.b, 0f);
+            unlockRevealTimer = 0f;
+            unlockRevealCard.localScale = Vector3.one * .88f;
+            unlockRevealBirdTransform.anchoredPosition = new Vector2(0f, -72f);
+            unlockRevealBirdTransform.localScale = Vector3.one * .62f;
+            unlockRevealBirdTransform.localRotation = Quaternion.Euler(0f, 0f, reduceMotionEnabled ? 0f : UnlockMotionFor(skin).x);
+            unlockRevealHalo.rectTransform.localScale = Vector3.one * .48f;
+            unlockRevealHalo.rectTransform.localRotation = Quaternion.identity;
+            unlockRevealFlash.rectTransform.localScale = Vector3.one * .28f;
+            unlockRevealContinueButton.interactable = false;
+            unlockRevealModal.SetActive(true);
+        }
+
+        private void CloseUnlockReveal()
+        {
+            if (unlockRevealModal != null) unlockRevealModal.SetActive(false);
+            activeUnlockSkin = null;
+        }
+
+        private void UpdateUnlockReveal(float deltaTime)
+        {
+            if (unlockRevealModal == null || !unlockRevealModal.activeSelf || unlockRevealCard == null) return;
+
+            // Reduced Motion retains the celebratory confirmation while stripping
+            // the overshoot and continuous spinning from the reveal.
+            var duration = reduceMotionEnabled ? .34f : .92f;
+            unlockRevealTimer = Mathf.Min(duration, unlockRevealTimer + deltaTime);
+            var progress = Mathf.Clamp01(unlockRevealTimer / duration);
+            var arrival = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(progress / .58f));
+            var settle = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((progress - .28f) / .72f));
+            var bounce = reduceMotionEnabled ? 0f : Mathf.Sin(settle * Mathf.PI) * (1f - settle) * .11f;
+            var pulse = reduceMotionEnabled ? 1f : 1f + Mathf.Sin(progress * Mathf.PI * 3.2f) * .07f * (1f - progress);
+            var motion = UnlockMotionFor(activeUnlockSkin);
+
+            unlockRevealCard.localScale = Vector3.one * (Mathf.Lerp(.88f, 1f, arrival) + bounce);
+            unlockRevealBirdTransform.anchoredPosition = new Vector2(0f, Mathf.Lerp(-72f, 150f + motion.y, arrival));
+            unlockRevealBirdTransform.localScale = Vector3.one * (Mathf.Lerp(.62f, 1f, arrival) + bounce * .45f);
+            unlockRevealBirdTransform.localRotation = Quaternion.Euler(0f, 0f, reduceMotionEnabled ? 0f : Mathf.Lerp(motion.x, 0f, arrival) + Mathf.Sin(progress * Mathf.PI * 2f) * (1f - progress) * 2.5f);
+
+            var haloColor = unlockRevealHalo.color;
+            haloColor.a = .16f + (1f - progress) * .32f;
+            unlockRevealHalo.color = haloColor;
+            unlockRevealHalo.rectTransform.localScale = Vector3.one * (Mathf.Lerp(.48f, 1.16f, arrival) * pulse);
+            unlockRevealHalo.rectTransform.localRotation = Quaternion.Euler(0f, 0f, reduceMotionEnabled ? 0f : -progress * 92f * motion.z);
+
+            var flashColor = unlockRevealFlash.color;
+            flashColor.a = Mathf.Sin(Mathf.Clamp01(progress / .42f) * Mathf.PI) * .32f;
+            unlockRevealFlash.color = flashColor;
+            unlockRevealFlash.rectTransform.localScale = Vector3.one * Mathf.Lerp(.28f, 1.42f, Mathf.Clamp01(progress / .46f));
+            if (progress >= 1f) unlockRevealContinueButton.interactable = true;
+        }
+
+        // A dedicated frame for each bird deserves a matching entrance. These subtle
+        // per-skin values avoid turning the collection into sixteen copies of the same reveal.
+        // X = entry tilt, Y = settled lift in UI pixels, Z = halo sweep multiplier.
+        private static Vector3 UnlockMotionFor(Skin skin)
+        {
+            if (skin == null) return new Vector3(-10f, 0f, 1f);
+            switch (skin.Id)
+            {
+                case "nova": return new Vector3(-14f, 14f, 1.40f);
+                case "lumen": return new Vector3(-8f, 22f, .90f);
+                case "ember": return new Vector3(-18f, 8f, 1.25f);
+                case "sol": return new Vector3(-12f, 18f, 1.10f);
+                case "aurora": return new Vector3(-5f, 26f, .80f);
+                case "orchid": return new Vector3(-17f, 14f, 1.55f);
+                case "coral": return new Vector3(-10f, 11f, .65f);
+                case "glacier": return new Vector3(-7f, 20f, .50f);
+                case "prism": return new Vector3(-13f, 17f, 1.80f);
+                case "verdant": return new Vector3(-9f, 27f, .70f);
+                case "cinder": return new Vector3(-20f, 6f, 1.65f);
+                case "tide": return new Vector3(-15f, 23f, 1.30f);
+                case "wisp": return new Vector3(-4f, 32f, .35f);
+                case "bloom": return new Vector3(-12f, 18f, 1.45f);
+                case "emberwing": return new Vector3(-19f, 10f, 2f);
+                case "steel": return new Vector3(-8f, 15f, .60f);
+                default: return new Vector3(-10f, 0f, 1f);
+            }
+        }
+
         private void Update()
         {
             ApplySafeArea();
@@ -1174,6 +1364,7 @@ namespace SkyPulse.Mobile
             ambientTime += frameDelta;
             UpdateAmbientVisuals();
             UpdateMenuBird(frameDelta);
+            UpdateUnlockReveal(frameDelta);
             UpdateScoreBurst(frameDelta);
             UpdateFlightFeedback(frameDelta);
 
@@ -1261,13 +1452,16 @@ namespace SkyPulse.Mobile
             if (state != FlightState.Playing) return;
             UpdatePipes(deltaTime);
             if (state != FlightState.Playing) return;
+            UpdateCrystalPickups(deltaTime);
             UpdatePowerUps(deltaTime);
             UpdateTrail(deltaTime);
         }
 
         private void BufferFlapInput()
         {
-            bufferedFlapUntil = Time.unscaledTime + ActiveTuning().InputBufferSeconds;
+            var bufferSeconds = ActiveTuning().InputBufferSeconds;
+            if (AllowsGameplayUpgrades() && HasUpgrade("pulse_reflex")) bufferSeconds *= 1.40f;
+            bufferedFlapUntil = Time.unscaledTime + bufferSeconds;
         }
 
         private void ConsumeBufferedFlap()
@@ -1372,13 +1566,17 @@ namespace SkyPulse.Mobile
             }
             if (menuBirdSafetyImage != null)
             {
-                // This is the reliable, full-colour hero drawing. It sits above the
-                // imported preview layers so an importer cannot leave the menu with
-                // an animated glint instead of a bird.
-                menuBirdSafetyImage.enabled = true;
-                menuBirdSafetyImage.color = Color.white;
-                menuBirdSafetyImage.rectTransform.localRotation = menuBirdTransform.localRotation;
-                menuBirdSafetyImage.rectTransform.localScale = menuBirdTransform.localScale * (1f + riseStrength * .018f);
+                // This is a genuine fallback, not a permanent layer above the
+                // selected bird. Showing it over valid art made every cosmetic look
+                // like the same emergency Aetherwing silhouette.
+                var usesEmergencyFallback = menuBirdSafetyImage.sprite == emergencyBirdSprite;
+                menuBirdSafetyImage.enabled = usesEmergencyFallback;
+                if (usesEmergencyFallback)
+                {
+                    menuBirdSafetyImage.color = Color.white;
+                    menuBirdSafetyImage.rectTransform.localRotation = menuBirdTransform.localRotation;
+                    menuBirdSafetyImage.rectTransform.localScale = menuBirdTransform.localScale * (1f + riseStrength * .018f);
+                }
             }
             if (menuBirdEyeGlintImage != null)
             {
@@ -1488,32 +1686,29 @@ namespace SkyPulse.Mobile
                 if (!pair.Passed && pair.X + PipeCollisionWidth * .5f < BirdX - collisionRadius)
                 {
                     pair.Passed = true;
-                    score += 1;
-                    var crystalReward = 1;
+                    var scoreReward = 1;
                     var perfect = Mathf.Abs(birdY - pair.GapCenter) <= ActiveTuning().PerfectPassWindow;
                     if (perfect)
                     {
                         perfectPasses += 1;
-                        crystalReward += 1;
                     }
-                    if (scorePrismTimer > 0f) crystalReward += AllowsGameplayUpgrades() && HasUpgrade("prism_resonator") ? 2 : 1;
+                    if (scorePrismTimer > 0f) scoreReward += AllowsGameplayUpgrades() && HasUpgrade("prism_resonator") ? 2 : 1;
                     if (AllowsGameplayUpgrades() && HasUpgrade("starheart"))
                     {
                         gatesSinceStarheart += 1;
                         if (gatesSinceStarheart >= 4)
                         {
-                            crystalReward += 4;
+                            scoreReward += 2;
                             gatesSinceStarheart = 0;
                         }
                     }
-                    crystals += crystalReward;
+                    score += scoreReward;
                     hudScoreText.text = score.ToString();
                     AdvanceFlightCoach();
-                    ShowScoreBurst(crystalReward, perfect);
+                    ShowScoreBurst(scoreReward, perfect);
                     TriggerFlightFeedback(perfect ? equippedSkin.Accent : Hex("#45eaff"), perfect ? .26f : .13f);
                     if (perfect) PulseHaptic(.10f);
                     Play(scoreSound);
-                    UpdateCrystalLabels();
                 }
             }
         }
@@ -1633,6 +1828,150 @@ namespace SkyPulse.Mobile
             }
         }
 
+        // Currency appears as a rare, visible pellet in the safe gap. It is kept
+        // separate from Adventure power-ups so Classic and Daily players can still
+        // build their collection, while power-ups remain an Adventure reward.
+        private void UpdateCrystalPickups(float deltaTime)
+        {
+            foreach (var pickup in crystalPickupPool)
+            {
+                if (!pickup.Active)
+                {
+                    pickup.RespawnTimer -= deltaTime;
+                    if (pickup.RespawnTimer <= 0f)
+                    {
+                        var gate = FindAvailableCrystalGate(pickup);
+                        if (gate != null) ConfigureCrystalPickup(pickup, gate);
+                    }
+                    continue;
+                }
+
+                if (pickup.Gate == null || !pickup.Gate.Root.activeSelf || pickup.Gate.Passed)
+                {
+                    DeferCrystalPickup(pickup, RandomCrystalRange(2.1f, 3.4f));
+                    continue;
+                }
+
+                var targetX = pickup.Gate.X;
+                var targetY = pickup.Gate.GapCenter + pickup.GapOffset;
+                if (magnetHaloTimer > 0f)
+                {
+                    var pullSpeed = HasUpgrade("magnet_array") ? 8.8f : 6.2f;
+                    pickup.X = Mathf.MoveTowards(pickup.X, BirdX, pullSpeed * deltaTime);
+                    pickup.Y = Mathf.MoveTowards(pickup.Y, birdY, pullSpeed * .72f * deltaTime);
+                }
+                else
+                {
+                    pickup.X = targetX;
+                    pickup.Y = targetY;
+                }
+
+                var bob = Mathf.Sin(ambientTime * 3.8f + pickup.Phase) * .09f;
+                pickup.Transform.localPosition = new Vector3(pickup.X, pickup.Y + bob, 0f);
+                var pulse = 1f + Mathf.Sin(ambientTime * 4.8f + pickup.Phase) * .10f;
+                var spin = ambientTime * 2.8f + pickup.Phase;
+                pickup.Glow.transform.localScale = Vector3.one * (.72f * pulse);
+                pickup.Artwork.transform.localScale = pickup.ArtworkBaseScale * (1f + Mathf.Sin(spin) * .04f);
+                pickup.Artwork.transform.localRotation = Quaternion.Euler(0f, 0f, Mathf.Sin(spin) * 5.5f);
+                pickup.Depth.transform.localScale = pickup.ArtworkBaseScale * (1.12f + Mathf.Sin(spin) * .035f);
+                pickup.Spark.transform.localPosition = new Vector3(Mathf.Cos(ambientTime * 5.1f + pickup.Phase) * .26f, Mathf.Sin(ambientTime * 5.1f + pickup.Phase) * .26f, 0f);
+
+                var pickupRadius = CrystalPickupRadius;
+                if (AllowsGameplayUpgrades() && HasUpgrade("crystal_lure")) pickupRadius *= 1.25f;
+                if (Vector2.Distance(new Vector2(BirdX, birdY), new Vector2(pickup.X, pickup.Y + bob)) <= ActiveTuning().CollisionRadius + pickupRadius)
+                {
+                    CollectCrystalPickup(pickup);
+                }
+            }
+        }
+
+        private PipePair FindAvailableCrystalGate(PowerUpPickup ignoredPickup)
+        {
+            PipePair best = null;
+            foreach (var candidate in pipePool)
+            {
+                if (candidate == null || !candidate.Root.activeSelf || candidate.Passed || candidate.X <= BirdX + 1.05f) continue;
+                var claimed = false;
+                foreach (var pickup in powerUpPool)
+                {
+                    if (pickup.Active && pickup.Gate == candidate)
+                    {
+                        claimed = true;
+                        break;
+                    }
+                }
+                if (claimed) continue;
+                foreach (var pickup in crystalPickupPool)
+                {
+                    if (pickup != ignoredPickup && pickup.Active && pickup.Gate == candidate)
+                    {
+                        claimed = true;
+                        break;
+                    }
+                }
+                if (claimed) continue;
+                if (best == null || candidate.X > best.X) best = candidate;
+            }
+            return best;
+        }
+
+        private static void DeferCrystalPickup(PowerUpPickup pickup, float delay)
+        {
+            pickup.Active = false;
+            pickup.Gate = null;
+            pickup.RespawnTimer = delay;
+            pickup.Root.SetActive(false);
+        }
+
+        private void ConfigureCrystalPickup(PowerUpPickup pickup, PipePair gate)
+        {
+            if (gate == null)
+            {
+                DeferCrystalPickup(pickup, CrystalPickupRespawnMinimum);
+                return;
+            }
+
+            pickup.Root.SetActive(true);
+            pickup.Active = true;
+            pickup.RespawnTimer = 0f;
+            pickup.Gate = gate;
+            pickup.X = gate.X;
+            var safeGapOffset = Mathf.Max(.22f, ActiveGap() * .5f - .72f);
+            // Currency must feel found rather than scheduled, including in a Daily
+            // run: each flight gets fresh, safe placement and timing.
+            pickup.GapOffset = RandomCrystalRange(-safeGapOffset, safeGapOffset);
+            pickup.Y = gate.GapCenter + pickup.GapOffset;
+            pickup.Phase = RandomCrystalRange(0f, Mathf.PI * 2f);
+            var crystal = LoadSprite("SkyPulse/art/powerups/generated/crystal-pellet-v3");
+            var gold = Hex("#ffc34d");
+            var cyan = Hex("#45eaff");
+            pickup.Glow.color = new Color(gold.r, gold.g, gold.b, .24f);
+            pickup.Artwork.sprite = crystal ?? softCircleSprite;
+            pickup.Artwork.color = crystal == null ? gold : Color.white;
+            pickup.ArtworkBaseScale = ArtworkScale(pickup.Artwork.sprite, .62f);
+            pickup.Artwork.transform.localScale = pickup.ArtworkBaseScale;
+            pickup.Artwork.transform.localRotation = Quaternion.identity;
+            pickup.Artwork.transform.localPosition = Vector3.zero;
+            pickup.Depth.sprite = crystal ?? softCircleSprite;
+            pickup.Depth.transform.localPosition = Vector3.zero;
+            pickup.Depth.transform.localScale = pickup.ArtworkBaseScale * 1.12f;
+            pickup.Depth.color = new Color(gold.r, gold.g, gold.b, .14f);
+            pickup.Spark.color = new Color(cyan.r, cyan.g, cyan.b, .94f);
+            pickup.Transform.localPosition = new Vector3(pickup.X, pickup.Y, 0f);
+        }
+
+        private void CollectCrystalPickup(PowerUpPickup pickup)
+        {
+            DeferCrystalPickup(pickup, RandomCrystalRange(CrystalPickupRespawnMinimum, CrystalPickupRespawnMaximum));
+            var reward = AllowsGameplayUpgrades() && HasUpgrade("cache_cores") ? 2 : 1;
+            crystals += reward;
+            UpdateCrystalLabels();
+            ShowCrystalBurst(reward);
+            TriggerFlightFeedback(Hex("#ffc34d"), .18f);
+            PulseHaptic(.06f);
+            Play(crystalSound);
+        }
+
         private PipePair FindAvailablePowerUpGate(PowerUpPickup ignoredPickup)
         {
             if (!AllowsPowerUps()) return null;
@@ -1644,6 +1983,15 @@ namespace SkyPulse.Mobile
                 foreach (var pickup in powerUpPool)
                 {
                     if (pickup != ignoredPickup && pickup.Active && pickup.Gate == candidate)
+                    {
+                        claimed = true;
+                        break;
+                    }
+                }
+                if (claimed) continue;
+                foreach (var pickup in crystalPickupPool)
+                {
+                    if (pickup.Active && pickup.Gate == candidate)
                     {
                         claimed = true;
                         break;
@@ -1730,13 +2078,13 @@ namespace SkyPulse.Mobile
         {
             switch (kind)
             {
-                case PowerUpKind.PulseShield: return "SkyPulse/art/powerups/generated/pulse-shield-v2";
-                case PowerUpKind.CrystalCache: return "SkyPulse/art/powerups/generated/crystal-cache-v2";
-                case PowerUpKind.SkySurge: return "SkyPulse/art/powerups/generated/sky-surge-v2";
-                case PowerUpKind.ScorePrism: return "SkyPulse/art/powerups/generated/score-prism-v2";
-                case PowerUpKind.MagnetHalo: return "SkyPulse/art/powerups/generated/magnet-halo-v2";
-                case PowerUpKind.PhaseShift: return "SkyPulse/art/powerups/generated/phase-shift-v2";
-                default: return "SkyPulse/art/powerups/generated/slow-field-v2";
+                case PowerUpKind.PulseShield: return "SkyPulse/art/powerups/generated/pulse-shield-v3";
+                case PowerUpKind.CrystalCache: return "SkyPulse/art/powerups/generated/crystal-cache-v3";
+                case PowerUpKind.SkySurge: return "SkyPulse/art/powerups/generated/sky-surge-v3";
+                case PowerUpKind.ScorePrism: return "SkyPulse/art/powerups/generated/score-prism-v3";
+                case PowerUpKind.MagnetHalo: return "SkyPulse/art/powerups/generated/magnet-halo-v3";
+                case PowerUpKind.PhaseShift: return "SkyPulse/art/powerups/generated/phase-shift-v3";
+                default: return "SkyPulse/art/powerups/generated/slow-field-v3";
             }
         }
 
@@ -1745,7 +2093,9 @@ namespace SkyPulse.Mobile
             pickup.Active = false;
             pickup.Root.SetActive(false);
             var tuning = ActiveTuning();
-            pickup.RespawnTimer = RouteRange(tuning.PowerUpRespawnMinimum, tuning.PowerUpRespawnMaximum);
+            var respawn = RouteRange(tuning.PowerUpRespawnMinimum, tuning.PowerUpRespawnMaximum);
+            if (AllowsGameplayUpgrades() && HasUpgrade("relay_booster")) respawn *= .78f;
+            pickup.RespawnTimer = respawn;
             TriggerFlightFeedback(pickup.Glow.color, .22f);
             PulseHaptic(.08f);
             switch (pickup.Kind)
@@ -1776,8 +2126,9 @@ namespace SkyPulse.Mobile
                     Play(unlockSound);
                     break;
                 default:
-                    crystals += AllowsGameplayUpgrades() && HasUpgrade("cache_cores") ? 20 : 12;
+                    crystals += AllowsGameplayUpgrades() && HasUpgrade("cache_cores") ? 7 : 5;
                     UpdateCrystalLabels();
+                    ShowCrystalBurst(AllowsGameplayUpgrades() && HasUpgrade("cache_cores") ? 7 : 5, true);
                     Play(crystalSound);
                     break;
             }
@@ -1873,12 +2224,22 @@ namespace SkyPulse.Mobile
             trailCore.SetPositions(trailPoints);
         }
 
-        private void ShowScoreBurst(int crystalReward, bool perfect)
+        private void ShowScoreBurst(int scoreReward, bool perfect)
         {
             scoreBurstTimer = .36f;
             scoreBurstText.text = perfect
-                ? $"PERFECT  ·  +{crystalReward} ✦"
-                : crystalReward > 1 ? $"+1  ·  +{crystalReward} ✦" : "+1  ·  +1 ✦";
+                ? scoreReward > 1 ? $"PERFECT  ·  +{scoreReward} SCORE" : "PERFECT  ·  +1 SCORE"
+                : scoreReward > 1 ? $"+{scoreReward} SCORE" : "+1 SCORE";
+            scoreBurstText.rectTransform.anchoredPosition = new Vector2(0f, 612f);
+            scoreBurstText.gameObject.SetActive(true);
+        }
+
+        private void ShowCrystalBurst(int crystalReward, bool cache = false)
+        {
+            scoreBurstTimer = .36f;
+            scoreBurstText.text = cache
+                ? $"CRYSTAL CACHE  ·  +{crystalReward} ✦"
+                : $"CRYSTAL  ·  +{crystalReward} ✦";
             scoreBurstText.rectTransform.anchoredPosition = new Vector2(0f, 612f);
             scoreBurstText.gameObject.SetActive(true);
         }
@@ -2003,6 +2364,13 @@ namespace SkyPulse.Mobile
                 pickup.Gate = null;
                 pickup.Root.SetActive(false);
             }
+            foreach (var pickup in crystalPickupPool)
+            {
+                pickup.Active = false;
+                pickup.Gate = null;
+                pickup.RespawnTimer = RandomCrystalRange(5.5f, 7.5f);
+                pickup.Root.SetActive(false);
+            }
             for (var index = 0; index < pipePool.Length; index += 1) ConfigurePipe(pipePool[index], spawnX + index * PipeSpacing);
             for (var index = 0; index < ActiveTuning().PowerUpSlots && index < powerUpPool.Length; index += 1)
             {
@@ -2051,6 +2419,12 @@ namespace SkyPulse.Mobile
                 pickup.Active = false;
                 pickup.Root.SetActive(false);
             }
+            foreach (var pickup in crystalPickupPool)
+            {
+                pickup.Active = false;
+                pickup.Gate = null;
+                pickup.Root.SetActive(false);
+            }
             slowFieldTimer = 0f;
             shieldFlashTimer = 0f;
             skySurgeTimer = 0f;
@@ -2081,6 +2455,7 @@ namespace SkyPulse.Mobile
         private void ConfigurePipe(PipePair pair, float x)
         {
             RetirePowerUpsForGate(pair);
+            RetireCrystalPickupsForGate(pair);
             pair.Root.SetActive(true);
             pair.X = x;
             pair.Passed = false;
@@ -2168,6 +2543,17 @@ namespace SkyPulse.Mobile
                 if (pickup != null && pickup.Active && pickup.Gate == gate)
                 {
                     DeferPowerUp(pickup, RouteRange(.8f, 1.4f));
+                }
+            }
+        }
+
+        private void RetireCrystalPickupsForGate(PipePair gate)
+        {
+            foreach (var pickup in crystalPickupPool)
+            {
+                if (pickup != null && pickup.Active && pickup.Gate == gate)
+                {
+                    DeferCrystalPickup(pickup, RandomCrystalRange(CrystalPickupRespawnMinimum, CrystalPickupRespawnMaximum));
                 }
             }
         }
@@ -2289,6 +2675,11 @@ namespace SkyPulse.Mobile
         {
             if (dailyRouteRandom == null) return UnityEngine.Random.Range(minimum, maximum);
             return minimum + (float)dailyRouteRandom.NextDouble() * (maximum - minimum);
+        }
+
+        private static float RandomCrystalRange(float minimum, float maximum)
+        {
+            return UnityEngine.Random.Range(minimum, maximum);
         }
 
         private int RouteRange(int minimumInclusive, int maximumExclusive)
@@ -2561,7 +2952,14 @@ namespace SkyPulse.Mobile
                     kind = PowerUpKind.CrystalCache;
                     break;
                 case "magnet_array":
+                case "crystal_lure":
                     kind = PowerUpKind.MagnetHalo;
+                    break;
+                case "pulse_reflex":
+                    kind = PowerUpKind.PulseShield;
+                    break;
+                case "relay_booster":
+                    kind = PowerUpKind.SlowField;
                     break;
                 default:
                     kind = PowerUpKind.ScorePrism;
@@ -2644,6 +3042,7 @@ namespace SkyPulse.Mobile
             var price = pendingPurchase == PendingPurchase.Skin && pendingSkin != null ? pendingSkin.Price
                 : pendingPurchase == PendingPurchase.Upgrade && pendingUpgrade != null ? pendingUpgrade.Price : -1;
             if (price < 0 || crystals < price) return;
+            var unlockedSkin = pendingPurchase == PendingPurchase.Skin ? pendingSkin : null;
             crystals -= price;
             if (pendingPurchase == PendingPurchase.Skin)
             {
@@ -2659,6 +3058,11 @@ namespace SkyPulse.Mobile
             SaveProgress();
             Play(unlockSound);
             RebuildCustomizeGrid();
+            if (unlockedSkin != null)
+            {
+                PulseHaptic(.30f);
+                ShowUnlockReveal(unlockedSkin);
+            }
         }
 
         private void EquipWorld(WorldTheme world)
@@ -2714,6 +3118,12 @@ namespace SkyPulse.Mobile
             SetArtworkImage(menuBirdFlapImage, flapBirdSprite);
             SetArtworkImage(menuBirdRiseImage, riseBirdSprite);
             SetArtworkImage(menuBirdShadowImage, idleBirdSprite);
+            if (menuBirdSafetyImage != null)
+            {
+                var usesEmergencyFallback = idleBirdSprite == emergencyBirdSprite;
+                menuBirdSafetyImage.sprite = usesEmergencyFallback ? emergencyBirdSprite : null;
+                menuBirdSafetyImage.enabled = usesEmergencyFallback;
+            }
             if (menuBirdEyeGlintImage != null) menuBirdEyeGlintImage.gameObject.SetActive(!UsesAetherwing());
             UpdateCrystalLabels();
             if (menuEquippedText != null) menuEquippedText.text = $"EQUIPPED  ·  {equippedSkin.Name}";
@@ -2840,15 +3250,15 @@ namespace SkyPulse.Mobile
             if (birdParallaxRenderer != null) birdParallaxRenderer.enabled = idleBirdSprite != null;
             if (birdSafetyRenderer != null)
             {
+                var usesEmergencyFallback = idleBirdSprite == emergencyBirdSprite;
                 birdSafetyRenderer.sprite = emergencyBirdSprite;
-                // The durable full-colour Aetherwing body is above imported poses.
-                // It protects every skin from alpha/import failures and keeps the
-                // player readable on a real phone, not just technically present.
+                // Keep a missing import readable, but never cover a valid cosmetic
+                // with a different bird's silhouette.
                 safetyBirdBaseScale = ArtworkScale(emergencyBirdSprite, BirdDisplayWidth * 1.08f);
                 birdSafetyRenderer.transform.localScale = safetyBirdBaseScale;
                 birdSafetyRenderer.transform.localPosition = new Vector3(-.005f, -.012f, 0f);
                 birdSafetyRenderer.color = Color.white;
-                birdSafetyRenderer.enabled = true;
+                birdSafetyRenderer.enabled = usesEmergencyFallback;
             }
             if (birdDepthRenderer != null) birdDepthRenderer.enabled = !premiumRig;
             if (birdEyeGlintRenderer != null) birdEyeGlintRenderer.enabled = !UsesAetherwing();
@@ -3357,6 +3767,27 @@ namespace SkyPulse.Mobile
         private Sprite LoadSprite(string path)
         {
             if (string.IsNullOrEmpty(path)) return null;
+            var sprite = LoadOptionalSprite(path);
+            if (sprite != null) return sprite;
+            if (path.StartsWith("SkyPulse/characters/", StringComparison.Ordinal))
+            {
+                // A public build must never turn a missing cosmetic into an invisible
+                // player. This is only reached if an authored asset was omitted from
+                // the player; usual play uses the high-detail Aetherwing artwork.
+                if (emergencyBirdSprite == null) emergencyBirdSprite = CreateEmergencyBirdSprite();
+                spriteCache[path] = emergencyBirdSprite;
+                return emergencyBirdSprite;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Loads authored optional art without silently replacing it with the emergency
+        /// silhouette. Reward poses use this so each bird keeps its own identity.
+        /// </summary>
+        private Sprite LoadOptionalSprite(string path)
+        {
+            if (string.IsNullOrEmpty(path)) return null;
             if (spriteCache.TryGetValue(path, out var sprite)) return sprite;
             // Imported art can be authored as either a Sprite or a default texture.
             // Supporting both makes Resources loading robust across Unity reimports.
@@ -3378,15 +3809,6 @@ namespace SkyPulse.Mobile
                 texture = UnityEditor.AssetDatabase.LoadAssetAtPath<Texture2D>($"Assets/Resources/{path}.png");
             }
 #endif
-            if (texture == null && path.StartsWith("SkyPulse/characters/", StringComparison.Ordinal))
-            {
-                // A public build must never turn a missing cosmetic into an invisible
-                // player. This is only reached if an authored asset was omitted from
-                // the player; usual play uses the high-detail Aetherwing artwork.
-                if (emergencyBirdSprite == null) emergencyBirdSprite = CreateEmergencyBirdSprite();
-                spriteCache[path] = emergencyBirdSprite;
-                return emergencyBirdSprite;
-            }
             if (texture == null) return null;
             sprite = CreateSprite(texture);
             spriteCache[path] = sprite;

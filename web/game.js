@@ -542,7 +542,9 @@
     const max = ground - gap / 2 - height * .05;
     const gapY = min + nextRouteRandom() * Math.max(1, max - min);
     flight.pipes.push({ x: width + 35, gapY, gap, passed: false });
-    if (nextRouteRandom() < .61) flight.crests.push({ x: width + 78, y: gapY + (nextRouteRandom() - .5) * gap * .30, phase: nextRouteRandom() * Math.PI * 2 });
+    // Crests are a rare, random find in a safe gap—not a payment for every pipe.
+    // Their roll stays fresh on every run, even when Daily keeps its pipe route fixed.
+    if (Math.random() < .24) flight.crests.push({ x: width + 78, y: gapY + (Math.random() - .5) * gap * .30, phase: Math.random() * Math.PI * 2 });
   }
 
   function nextRouteRandom() {

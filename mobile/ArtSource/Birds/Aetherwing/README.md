@@ -4,17 +4,17 @@ This folder holds the editable production artwork for Aetherwing. It is delibera
 
 ## First deliverable
 
-Create and save this file here:
+The editable Krita master for this bird lives here:
 
 ```text
-aetherwing-rig-source.psd
+aetherwing-master.kra
 ```
 
 Use a transparent 2048 x 1536 px canvas. The bird faces right and sits centred on the canvas. Keep the same canvas dimensions for every future bird skin.
 
 ## Required Krita layer names
 
-Use these names exactly. Do not merge them before saving the PSD.
+Use these names exactly. Do not merge them before saving the Krita master.
 
 ```text
 farWing
@@ -41,13 +41,15 @@ The `body` must overlap every wing at its shoulder by at least 40 px. This preve
 
 ## Export for Unity
 
-When the source PSD is ready, export a flattened check image next to it:
+When the source art is ready, export a flattened check image next to it:
 
 ```text
 aetherwing-rig-preview.png
 ```
 
-The PSD is the rigging input. The PNG is only for checking the artwork in Finder/Krita; do not use it as the animated bird.
+The `.kra` file is the editable master. Before importing the layered artwork into
+Unity, export a copy as `aetherwing-rig-source.psd`; the PNG is only for checking
+the artwork in Finder/Krita and is not the animated bird.
 
 ## Rig contract
 
