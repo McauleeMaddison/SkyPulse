@@ -1,0 +1,21 @@
+{
+  "files.exclude": {
+    "**/.DS_Store": true,
+    "mobile/Library": true,
+    "mobile/Logs": true,
+    "mobile/Temp": true,
+    "mobile/Obj": true,
+    "mobile/Build": true,
+    "mobile/Builds": true,
+    "mobile/UserSettings": true
+  },
+  "search.exclude": {
+    "mobile/Library": true,
+    "mobile/Logs": true,
+    "mobile/Temp": true,
+    "mobile/Obj": true,
+    "mobile/Build": true,
+    "mobile/Builds": true,
+    "mobile/UserSettings": true
+  }
+}

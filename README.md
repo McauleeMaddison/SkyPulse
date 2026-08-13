@@ -1,99 +1,104 @@
 # SkyPulse
 
-SkyPulse is a touch-first neon flight game with three clearly separated surfaces:
+SkyPulse is a polished, touch-first **neon-noir flight game**. The native Unity game is the source of truth: it is the version we build, tune, test, and ship.
 
-- `mobile/`: the new **Unity 6 + C#** native, cross-platform mobile game;
-- `web/`: the live touch-first PWA friend beta, for immediate iPhone and Android testing;
-- the old Python/Kivy desktop game, frozen as a private visual and gameplay reference.
+## The technical decision
 
-## The whole project
+The game stays in **Unity 6 + C#**. That is the right language and engine for a fast mobile game with touch input, animation, particle effects, sound, Android/iPhone builds, and a single shared codebase.
+
+The old Python/Kivy desktop reference is intentionally removed. Python is excellent for tools, but it is not a better fit for this real-time mobile game. We are not moving the game to a different language and rebuilding a working C# game for no benefit.
+
+## Clean project map
 
 ```text
 SkyPulse/
-├── main.py           # The game: controls, screens, movement and drawing
-├── settings.py       # Easy values to change: speed, gravity, colours
-├── requirements.txt  # Kivy, the game's only dependency
-├── assets/
-│   ├── audio/                         # Original low-latency gameplay effects
-│   └── images/
-│       ├── backgrounds/neon-city.png  # Cinematic neon city sky
-│       ├── branding/                  # App icon and portrait launch artwork
-│       └── characters/                # Eight unlockable SkyPulse birds and colourways
-│           ├── nova.png
-│           ├── lumen.png
-│           ├── ember.png
-│           └── sol.png
-├── web/              # iPhone-friendly Safari/PWA test build
-│   ├── index.html
-│   ├── game.js
-│   └── styles.css
-├── mobile/            # Unity 6 + C# native mobile project
-│   ├── Assets/
-│   ├── Packages/
-│   └── ProjectSettings/
-└── README.md         # This guide
+├── README.md                         # This guide: setup, testing and art hand-off
+├── .vscode/                          # Small shared VS Code settings only
+├── assets/                           # Live browser-beta images and sound only
+├── web/                              # Browser friend beta; kept separate from Unity
+└── mobile/                           # Native game
+    ├── Assets/
+    │   ├── Scenes/SkyPulse.unity      # Open this scene to play
+    │   ├── Scripts/SkyPulseNativeGame.cs
+    │   ├── Editor/                    # Editor-only play-test tools
+    │   └── Resources/SkyPulse/        # Runtime birds, worlds, pipe and pickup art
+    ├── ArtSource/Birds/               # Editable source art, never shipped in a build
+    │   └── Aetherwing/aetherwing-master.kra
+    ├── Packages/
+    └── ProjectSettings/
 ```
 
-Nova, Lumen, Ember, Sol, their colourways, and the neon city are original game assets. The animated star layer, energy towers, crystals, flight trail, trail particles, runway scan, menus, sound effects, and glow effects are drawn in Python, keeping the project compact and easy to understand.
+`assets/` and `web/` remain because the live browser beta still uses them. They are not Unity clutter. Unity-generated folders (`Library`, `Logs`, `Temp`, build outputs, solution files, and per-machine VS Code state) are ignored and never committed.
 
-## Run on this Mac
+## What is in the native game now
 
-Open the SkyPulse folder in VS Code. Then open **Terminal → New Terminal** and run:
+- C# gameplay with touch-first input and a fixed, stable flight simulation.
+- Sixteen distinct bird skins. Every skin has its own transparent **hit** and **unlock** artwork, its own neon material/trail treatment, and its own reveal movement. There is no generic cartoon unlock bird.
+- Customisable world, background, trail and pipe looks. Their lighting is neon-noir: dark metal, vivid core lights and clear silhouettes.
+- Gates with properly matched body and cap collision bounds, animated pipe channels and fair upper/lower gap scaling.
+- Crystals appear randomly during a run; clearing every gate does **not** automatically give a crystal.
+- Adventure-only power-ups: Slow Field, Pulse Shield, Crystal Cache, Sky Surge, Score Prism, Magnet Halo and Phase Shift. Air Brakes are removed.
+- Fourteen persistent Flight Tech upgrades. Classic and Daily routes stay fair by keeping upgrades out of their competitive flight rules.
 
-```bash
-python3 -m venv .venv
-./.venv/bin/python -m pip install -r requirements.txt
-./.venv/bin/python main.py
-```
+## Open and play the Unity game
 
-## Controls
+1. Open **Unity Hub**.
+2. Choose **Add**, then select the `mobile` folder in this project.
+3. Open `Assets/Scenes/SkyPulse.unity`.
+4. Press the triangular **Play** button at the top of Unity.
+5. Tap/click to flap. `F1`, `F2` and `F3` switch the flight modes. `F4` shows the pink pipe-body and amber cap collision guides.
+6. For the quick formal check, use Unity’s menu: **SkyPulse → Playtest Checklist**.
 
-- Click or tap: fly upward
-- Space or Up Arrow: fly upward
-- P: pause or resume
+Play at least ten Classic runs and five Adventure runs before changing tuning. Record a death only when it feels visibly unfair, then use `F4` to check the collision shape before changing any numbers.
 
-## Crystal shop
+## Artwork: your simple job, step by step
 
-Collect crystals during a run. They are saved locally in `skypulse_progress.json` and can be spent in **Shop** to unlock birds, themes, trails, and pipe finishes. Use **Birds** to switch between the birds you own.
+This is the only artwork workflow to use. It keeps the game’s birds consistent and prevents the old cartoon-looking, mismatched work from returning.
 
-## Game-feel and progression
+### The look to keep
 
-- Original flap, score, crystal, crash, new-best, and unlock sounds
-- Optional sound, haptics, and reduced-motion controls in **Settings**
-- A non-blocking first-flight tutorial that teaches flapping, scoring, and crystals
-- A daily score challenge plus three daily missions
-- Daily missions directly unlock a **trail**, **pipe finish**, and **world theme**; the daily score target unlocks a bonus cosmetic
-- Achievement rewards, score bursts, impact flashes, new-best celebration, city parallax, and purely visual weather/comet events
+- Birds face **right**, use the established side view, and remain centred on a transparent canvas.
+- They are **futuristic neon-noir**: dark mechanical/crystal surfaces, controlled colour glow, sharp readable feathers or armour, and a subtle energy trail.
+- Each bird keeps its own colours, feather shapes, metal details and wing proportions. Do **not** turn every bird into the same mascot.
+- No white rectangle, black background, UI text, crystals, pipes, baked glow-card or drop shadow in the exported bird image.
 
-## Test on an iPhone now
+### Start here: Aetherwing in Krita
 
-Open the `web/` build in Safari on your iPhone. It has touch controls, flight physics, pause/retry, game-over blur, and the full bird, world, trail, and pipe customisation collection. In Safari, use **Share → Add to Home Screen** for an app-like full-screen icon.
+1. Open Krita.
+2. Choose **File → Open**.
+3. Open `mobile/ArtSource/Birds/Aetherwing/aetherwing-master.kra`.
+4. Do **not** paint over or delete the original master. Choose **File → Save As** and make a working copy first.
+5. Keep the canvas at **2048 × 1536 px**, transparent, with the bird facing right. Keep every new frame on this same camera/view so it does not jump in-game.
+6. Keep these layers separate while you paint: `farWing`, `tail`, `body`, `nearUpperWing`, `nearLowerWing`, `nearPrimaryFeathers`, `head`, `beak`, `eye`, `rimLight`.
+7. Paint the dark body shape first. Then paint the wings, head, beak and eye. Add the neon edge light last. If it looks good only because of a huge glow, simplify it.
+8. Zoom out until the bird is about 250 px wide. You should still instantly see the head, body, wings and tail. If you cannot, fix the silhouette before exporting.
 
-For a same-Wi-Fi test, serve only the `web/` folder and `assets/images/` from a small static host, then open its `/web/` address on the iPhone. This is a quick play-test route; the desktop and web builds save their progress separately on the device running them.
+### The exact drawings to make for one bird
 
-## Friend beta link
+Do one bird completely before starting the next. A fully hand-authored skin needs these five transparent poses:
 
-The friend beta is published from a dedicated GitHub Pages branch that contains only the mobile game and its game assets. In GitHub, open **SkyPulse → Settings → Pages**, choose **Deploy from a branch**, then select **`gh-pages`** and **`/(root)`** once. The secure beta link is:
+1. **Glide** — wings tucked/relaxed; the normal flying pose.
+2. **Downstroke** — wings low and powerful; the flap’s push.
+3. **Lift** — wings high and open; the flap’s recovery.
+4. **Hit** — compact wings, startled/impacted posture; brief only.
+5. **Unlock** — proud, open high-wing reveal; it must look like *that exact bird* has just been bought.
 
-`https://mcauleemaddison.github.io/SkyPulse/web/`
+For an unlock pose, keep the body, head, materials, colour and individual wing design of the actual bird. Change the pose and reveal energy only. Never substitute a universal bird or a front-facing cartoon character.
 
-This is an unlisted-style friend beta: it is not in the App Store, but anyone with the link can open it.
+The current collection is: `nova`, `lumen`, `ember`, `sol`, `aurora`, `orchid`, `coral`, `glacier`, `prism`, `verdant`, `cinder`, `tide`, `wisp`, `bloom`, `emberwing`, and `steel`. Each needs its own art; none should borrow another bird’s image.
 
-## Native mobile route
+### Export and hand back safely
 
-SkyPulse’s native mobile game lives in `mobile/` and uses Unity 6 + C#. This is the correct long-term route for one high-performance game that can export to both Android and iPhone.
+1. Save the editable work as a `.kra` source file in `mobile/ArtSource/Birds/<bird-id>/`.
+2. Export each finished pose as a **PNG with transparency**. Use the same canvas and placement for all five poses.
+3. Name the source exports clearly, for example `nova-glide.png`, `nova-downstroke.png`, `nova-lift.png`, `nova-hit.png`, `nova-unlock.png`.
+4. Do not manually place new files into Unity’s `Resources` folder and do not overwrite a live bird at random.
+5. Send the finished source/PNGs back here. I will check the silhouette, optimise the import settings, place the assets in the right runtime folder, wire that bird’s exact animation/reveal, and run the Unity check.
 
-The first native flight loop already has direct tap input, native physics, pooled pipes, a compact trail, Nova/Neon City art, and native sound hooks. The web beta remains live while the native project reaches feature parity.
+If you want to use your original eight-frame drawing plan, make the five poses above first. Keep the three extra wing-beat drawings in the source folder until we wire an eight-frame renderer; the live game currently uses the five pose roles above.
 
-This Mac has full Xcode 15.2 installed, but cannot directly deploy a native build to an iPhone running iOS 27 because that iOS version requires a much newer Xcode and macOS than this 2017 Mac supports. This is an Apple toolchain compatibility limit, not a problem with SkyPulse or the iPhone. The Unity install also needs its free Personal licence activated in Unity Hub, plus Android and iOS export modules, before it can make device packages.
+## Sensible next move
 
-The Safari/PWA build above remains the immediate route for mobile gameplay testing. For a later native/TestFlight or Android release, use a newer Xcode-compatible Mac for iPhone packaging and install the Unity Android export support. The release art is ready for the project:
+My next move, if this were my game, would be to **stop adding systems** and prove the flight loop on a real phone. Keep a short note of unfair deaths, missed crystal pickups, unclear pipe caps and frame-rate hitches. Fix only repeated evidence, not one unlucky run. Once that is solid, finish one truly hand-authored bird pose set using the workflow above, then repeat that quality bar for the remaining birds.
 
-- `assets/images/branding/skypulse-app-icon.png` — square source icon
-- `assets/images/branding/skypulse-launch-art.png` — portrait launch-screen artwork
-
-On a Mac with Xcode, add those files to an iOS asset catalog, test on at least one notched iPhone and one smaller iPhone, verify sound/haptics/settings, then archive through Xcode for TestFlight.
-
-## What this Mac can do now
-
-This Mac can run the frozen Kivy desktop reference and the live mobile web beta immediately. Once Unity Personal is activated, it can run the native SkyPulse simulator too. Device packaging still needs Unity’s respective export modules and, for your current iPhone, a newer Xcode-compatible Mac.
+That is how the game becomes sharp and release-ready rather than bloated: one native C# game, one visual direction, one art hand-off, and only the assets that are actually live.

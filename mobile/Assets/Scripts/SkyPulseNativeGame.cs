@@ -228,10 +228,13 @@ namespace SkyPulse.Mobile
             public SpriteRenderer Shade;
             public SpriteRenderer RailLeft;
             public SpriteRenderer RailRight;
+            public SpriteRenderer Core;
+            public SpriteRenderer CorePulse;
             public SpriteRenderer Highlight;
             public SpriteRenderer Energy;
             public SpriteRenderer Scan;
             public SpriteRenderer Beacon;
+            public SpriteRenderer CapGlow;
             public SpriteRenderer CapOuter;
             public SpriteRenderer CapAccent;
             public SpriteRenderer CapPanel;
@@ -245,10 +248,13 @@ namespace SkyPulse.Mobile
             public PipeSurface Bottom;
             public float X;
             public float GapCenter;
+            public float GapHeight;
             public bool Passed;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            public SpriteRenderer DebugTop;
-            public SpriteRenderer DebugBottom;
+            public SpriteRenderer DebugTopBody;
+            public SpriteRenderer DebugTopCap;
+            public SpriteRenderer DebugBottomBody;
+            public SpriteRenderer DebugBottomCap;
 #endif
         }
 
@@ -288,10 +294,16 @@ namespace SkyPulse.Mobile
         // The bird is the primary focal point, so it must remain readable against a
         // busy world at a real phone scale—not shrink into a sparkle at the centre.
         private const float BirdDisplayWidth = 2.82f;
-        // The body is deliberately broad.  The collar is slightly wider, just like a
+        // The body is deliberately broad. The collar is slightly wider, just like a
         // real plumbing coupling, and this exact outer dimension drives collision.
-        private const float PipeWidth = 1.46f;
+        private const float PipeWidth = 1.52f;
         private const float PipeCollisionWidth = PipeWidth + .30f;
+        private const float PipeCapHeight = .46f;
+        private const float PipeMinimumVisibleHeight = 1.56f;
+        // This corridor gives the route meaningful high and low gates without
+        // spawning a first obstacle against a screen edge or creating tiny pipes.
+        private const float GapCenterMinimum = -2.55f;
+        private const float GapCenterMaximum = 3.15f;
         private const float PipeSpacing = 6.86f;
         private const int PipeCount = 4;
         // Crystals are deliberate pickups, not a payment for simply surviving each
@@ -379,7 +391,6 @@ namespace SkyPulse.Mobile
         {
             new Upgrade("thrust_plumes", "THRUST PLUMES", "+10% flap lift", 38, "#45eaff"),
             new Upgrade("featherweight", "FEATHERWEIGHT", "-8% gravity", 44, "#61f5b3"),
-            new Upgrade("air_brakes", "AIR BRAKES", "Softer maximum fall speed", 48, "#edf7ff"),
             new Upgrade("rescue_feather", "RESCUE FEATHER", "One extra life each flight", 74, "#f05bc6"),
             new Upgrade("time_weaver", "TIME WEAVER", "Slow Field lasts +2 seconds", 58, "#b17cff"),
             new Upgrade("shield_cell", "SHIELD CELL", "Begin flights shielded", 82, "#61f5b3"),
@@ -911,10 +922,14 @@ namespace SkyPulse.Mobile
                 Bottom = CreatePipeSurface(root.transform, "Bottom pipe"),
             };
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            pair.DebugTop = CreateRenderer("Top collision guide", whiteSprite, new Color(1f, .26f, .55f, .13f), 29, root.transform);
-            pair.DebugBottom = CreateRenderer("Bottom collision guide", whiteSprite, new Color(1f, .26f, .55f, .13f), 29, root.transform);
-            pair.DebugTop.enabled = false;
-            pair.DebugBottom.enabled = false;
+            pair.DebugTopBody = CreateRenderer("Top collision body guide", whiteSprite, new Color(1f, .26f, .55f, .13f), 29, root.transform);
+            pair.DebugTopCap = CreateRenderer("Top collision cap guide", whiteSprite, new Color(1f, .74f, .25f, .30f), 30, root.transform);
+            pair.DebugBottomBody = CreateRenderer("Bottom collision body guide", whiteSprite, new Color(1f, .26f, .55f, .13f), 29, root.transform);
+            pair.DebugBottomCap = CreateRenderer("Bottom collision cap guide", whiteSprite, new Color(1f, .74f, .25f, .30f), 30, root.transform);
+            pair.DebugTopBody.enabled = false;
+            pair.DebugTopCap.enabled = false;
+            pair.DebugBottomBody.enabled = false;
+            pair.DebugBottomCap.enabled = false;
 #endif
             return pair;
         }
@@ -932,14 +947,17 @@ namespace SkyPulse.Mobile
                 Shade = CreateRenderer($"{label} side shade", pipeBodySprite, new Color(0f, 0f, 0f, .28f), 4, parent),
                 RailLeft = CreateRenderer($"{label} left neon rail", whiteSprite, new Color(.27f, .92f, 1f, .25f), 5, parent),
                 RailRight = CreateRenderer($"{label} right neon rail", whiteSprite, new Color(.27f, .92f, 1f, .25f), 5, parent),
-                Highlight = CreateRenderer($"{label} inner lip highlight", whiteSprite, new Color(.8f, .95f, 1f, .18f), 7, parent),
-                Energy = CreateRenderer($"{label} energy seam", whiteSprite, Hex("#45eaff"), 8, parent),
-                Scan = CreateRenderer($"{label} scan line", whiteSprite, new Color(.27f, .92f, 1f, 0f), 9, parent),
-                Beacon = CreateRenderer($"{label} gateway beacon", ringSprite, new Color(.27f, .92f, 1f, 0f), 11, parent),
-                CapOuter = CreateRenderer($"{label} plumbing collar shell", roundedPanelSprite, Hex("#030613"), 6, parent),
-                CapAccent = CreateRenderer($"{label} plumbing collar accent", roundedPanelSprite, Hex("#45eaff"), 7, parent),
-                CapPanel = CreateRenderer($"{label} plumbing collar panel", roundedPanelSprite, Hex("#0b3076"), 8, parent),
-                CapEnergy = CreateRenderer($"{label} collar energy seam", whiteSprite, Hex("#45eaff"), 10, parent),
+                Core = CreateRenderer($"{label} powered core channel", softCircleSprite, new Color(.27f, .92f, 1f, .18f), 6, parent),
+                CorePulse = CreateRenderer($"{label} travelling core pulse", softCircleSprite, new Color(.27f, .92f, 1f, 0f), 7, parent),
+                Highlight = CreateRenderer($"{label} inner lip highlight", whiteSprite, new Color(.8f, .95f, 1f, .18f), 8, parent),
+                Energy = CreateRenderer($"{label} energy seam", whiteSprite, Hex("#45eaff"), 9, parent),
+                Scan = CreateRenderer($"{label} scan line", whiteSprite, new Color(.27f, .92f, 1f, 0f), 10, parent),
+                Beacon = CreateRenderer($"{label} gateway beacon", ringSprite, new Color(.27f, .92f, 1f, 0f), 12, parent),
+                CapGlow = CreateRenderer($"{label} collar neon bloom", softCircleSprite, new Color(.27f, .92f, 1f, 0f), 8, parent),
+                CapOuter = CreateRenderer($"{label} plumbing collar shell", roundedPanelSprite, Hex("#030613"), 7, parent),
+                CapAccent = CreateRenderer($"{label} plumbing collar accent", roundedPanelSprite, Hex("#45eaff"), 8, parent),
+                CapPanel = CreateRenderer($"{label} plumbing collar panel", roundedPanelSprite, Hex("#0b3076"), 9, parent),
+                CapEnergy = CreateRenderer($"{label} collar energy seam", whiteSprite, Hex("#45eaff"), 11, parent),
             };
         }
 
@@ -1159,6 +1177,7 @@ namespace SkyPulse.Mobile
             resultBestText = CreateText(card, "BEST  0", new Vector2(0f, -7f), new Vector2(600f, 45f), 24, new Color(.93f, .95f, 1f, .78f), TextAnchor.MiddleCenter, FontStyle.Bold);
             var flyAgain = CreateNeonButton(card, "FLY AGAIN", new Vector2(0f, -105f), new Vector2(570f, 88f), Hex("#f05bc6"));
             flyAgain.onClick.AddListener(RestartFlight);
+            CreateText(card, "TAP ANYWHERE TO RETRY", new Vector2(0f, -166f), new Vector2(500f, 26f), 13, new Color(.85f, .91f, 1f, .58f), TextAnchor.MiddleCenter, FontStyle.Bold);
             var menu = CreateNeonButton(card, "MENU", new Vector2(0f, -215f), new Vector2(570f, 70f), Hex("#45eaff"));
             menu.onClick.AddListener(ResetToMenu);
             return root;
@@ -1663,12 +1682,7 @@ namespace SkyPulse.Mobile
                 furthestX = Mathf.Max(furthestX, pair.X);
                 AnimatePipePair(pair);
 
-                // The cap is part of the obstacle too: if the art is visible, it is dangerous.
-                var physicalWidth = PipeCollisionWidth;
-                var overlapsPipe = BirdX + collisionRadius > pair.X - physicalWidth * .5f && BirdX - collisionRadius < pair.X + physicalWidth * .5f;
-                var halfGap = ActiveGap() * .5f;
-                var hitsPipe = birdY + collisionRadius > pair.GapCenter + halfGap || birdY - collisionRadius < pair.GapCenter - halfGap;
-                if (phaseShiftTimer <= 0f && overlapsPipe && hitsPipe)
+                if (phaseShiftTimer <= 0f && BirdCollidesWithPipe(pair, collisionRadius))
                 {
                     if (!UseShield())
                     {
@@ -1677,7 +1691,7 @@ namespace SkyPulse.Mobile
                         return;
                     }
 
-                    pair.X = BirdX - physicalWidth - .22f;
+                    pair.X = BirdX - PipeCollisionWidth - .22f;
                     pair.Root.transform.localPosition = new Vector3(pair.X, 0f, 0f);
                     pair.Passed = true;
                     continue;
@@ -1713,6 +1727,37 @@ namespace SkyPulse.Mobile
             }
         }
 
+        private bool BirdCollidesWithPipe(PipePair pair, float collisionRadius)
+        {
+            var halfGap = pair.GapHeight * .5f;
+            var topEdge = pair.GapCenter + halfGap;
+            if (birdY + collisionRadius > topEdge)
+            {
+                // Only the visible collar occupies the wider cap collision width.
+                var topWidth = birdY - collisionRadius < topEdge + PipeCapHeight
+                    ? PipeCollisionWidth
+                    : PipeWidth;
+                if (BirdOverlapsPipeWidth(pair.X, topWidth, collisionRadius)) return true;
+            }
+
+            var bottomEdge = pair.GapCenter - halfGap;
+            if (birdY - collisionRadius < bottomEdge)
+            {
+                var bottomWidth = birdY + collisionRadius > bottomEdge - PipeCapHeight
+                    ? PipeCollisionWidth
+                    : PipeWidth;
+                if (BirdOverlapsPipeWidth(pair.X, bottomWidth, collisionRadius)) return true;
+            }
+
+            return false;
+        }
+
+        private static bool BirdOverlapsPipeWidth(float pipeX, float pipeWidth, float collisionRadius)
+        {
+            return BirdX + collisionRadius > pipeX - pipeWidth * .5f
+                && BirdX - collisionRadius < pipeX + pipeWidth * .5f;
+        }
+
         private float ActiveScrollSpeed()
         {
             var tuning = ActiveTuning();
@@ -1733,8 +1778,7 @@ namespace SkyPulse.Mobile
 
         private float ActiveMaxFallVelocity()
         {
-            var maximum = ActiveTuning().MaxFallVelocity;
-            return AllowsGameplayUpgrades() && HasUpgrade("air_brakes") ? maximum * .88f : maximum;
+            return ActiveTuning().MaxFallVelocity;
         }
 
         private float ActiveFlapVelocity()
@@ -1936,7 +1980,7 @@ namespace SkyPulse.Mobile
             pickup.RespawnTimer = 0f;
             pickup.Gate = gate;
             pickup.X = gate.X;
-            var safeGapOffset = Mathf.Max(.22f, ActiveGap() * .5f - .72f);
+            var safeGapOffset = Mathf.Max(.22f, gate.GapHeight * .5f - .72f);
             // Currency must feel found rather than scheduled, including in a Daily
             // run: each flight gets fresh, safe placement and timing.
             pickup.GapOffset = RandomCrystalRange(-safeGapOffset, safeGapOffset);
@@ -2023,7 +2067,7 @@ namespace SkyPulse.Mobile
             pickup.RespawnTimer = 0f;
             pickup.Gate = gate;
             pickup.X = gate.X;
-            var safeGapOffset = Mathf.Max(.28f, ActiveGap() * .5f - .92f);
+            var safeGapOffset = Mathf.Max(.28f, gate.GapHeight * .5f - .92f);
             pickup.GapOffset = RouteRange(-safeGapOffset, safeGapOffset);
             pickup.Y = gate.GapCenter + pickup.GapOffset;
             pickup.Phase = RouteRange(0f, Mathf.PI * 2f);
@@ -2285,25 +2329,33 @@ namespace SkyPulse.Mobile
                 collisionBirdDebug.transform.localScale = Vector3.one * (ActiveTuning().CollisionRadius * 2f);
             }
 
-            var halfGap = ActiveGap() * .5f;
             var physicalWidth = PipeCollisionWidth;
             foreach (var pair in pipePool)
             {
-                if (pair == null || pair.DebugTop == null || pair.DebugBottom == null) continue;
+                if (pair == null || pair.DebugTopBody == null || pair.DebugTopCap == null || pair.DebugBottomBody == null || pair.DebugBottomCap == null) continue;
                 var showPair = visible && pair.Root.activeSelf;
-                pair.DebugTop.enabled = showPair;
-                pair.DebugBottom.enabled = showPair;
+                pair.DebugTopBody.enabled = showPair;
+                pair.DebugTopCap.enabled = showPair;
+                pair.DebugBottomBody.enabled = showPair;
+                pair.DebugBottomCap.enabled = showPair;
                 if (!showPair) continue;
 
+                var halfGap = pair.GapHeight * .5f;
                 var topEdge = pair.GapCenter + halfGap;
                 var topHeight = Mathf.Max(0f, CameraHeight * .5f - topEdge);
-                pair.DebugTop.transform.localPosition = new Vector3(0f, topEdge + topHeight * .5f, 0f);
-                pair.DebugTop.transform.localScale = new Vector3(physicalWidth, topHeight, 1f);
+                var topBodyHeight = Mathf.Max(0f, topHeight - PipeCapHeight);
+                pair.DebugTopBody.transform.localPosition = new Vector3(0f, topEdge + PipeCapHeight + topBodyHeight * .5f, 0f);
+                pair.DebugTopBody.transform.localScale = new Vector3(PipeWidth, topBodyHeight, 1f);
+                pair.DebugTopCap.transform.localPosition = new Vector3(0f, topEdge + PipeCapHeight * .5f, 0f);
+                pair.DebugTopCap.transform.localScale = new Vector3(physicalWidth, PipeCapHeight, 1f);
 
                 var bottomEdge = pair.GapCenter - halfGap;
                 var bottomHeight = Mathf.Max(0f, bottomEdge - GroundY);
-                pair.DebugBottom.transform.localPosition = new Vector3(0f, GroundY + bottomHeight * .5f, 0f);
-                pair.DebugBottom.transform.localScale = new Vector3(physicalWidth, bottomHeight, 1f);
+                var bottomBodyHeight = Mathf.Max(0f, bottomHeight - PipeCapHeight);
+                pair.DebugBottomBody.transform.localPosition = new Vector3(0f, GroundY + bottomBodyHeight * .5f, 0f);
+                pair.DebugBottomBody.transform.localScale = new Vector3(PipeWidth, bottomBodyHeight, 1f);
+                pair.DebugBottomCap.transform.localPosition = new Vector3(0f, bottomEdge - PipeCapHeight * .5f, 0f);
+                pair.DebugBottomCap.transform.localScale = new Vector3(physicalWidth, PipeCapHeight, 1f);
             }
         }
 #endif
@@ -2410,8 +2462,10 @@ namespace SkyPulse.Mobile
             if (collisionBirdDebug != null) collisionBirdDebug.enabled = false;
             foreach (var pair in pipePool)
             {
-                if (pair.DebugTop != null) pair.DebugTop.enabled = false;
-                if (pair.DebugBottom != null) pair.DebugBottom.enabled = false;
+                if (pair.DebugTopBody != null) pair.DebugTopBody.enabled = false;
+                if (pair.DebugTopCap != null) pair.DebugTopCap.enabled = false;
+                if (pair.DebugBottomBody != null) pair.DebugBottomBody.enabled = false;
+                if (pair.DebugBottomCap != null) pair.DebugBottomCap.enabled = false;
             }
 #endif
             foreach (var pickup in powerUpPool)
@@ -2459,17 +2513,23 @@ namespace SkyPulse.Mobile
             pair.Root.SetActive(true);
             pair.X = x;
             pair.Passed = false;
-            var nextCentre = RouteRange(-1.72f, 1.92f);
+            pair.GapHeight = ActiveGap();
+            var halfGap = pair.GapHeight * .5f;
+            // Keep enough visible body above and below every opening. This makes a
+            // low gate read as a deliberate lower route, not a clipped top pipe.
+            var centreMinimum = Mathf.Max(GapCenterMinimum, GroundY + PipeMinimumVisibleHeight + halfGap);
+            var centreMaximum = Mathf.Min(GapCenterMaximum, CameraHeight * .5f - PipeMinimumVisibleHeight - halfGap);
+            var nextCentre = RouteRange(centreMinimum, centreMaximum);
             var precedingPair = FindPrecedingPipe(pair, x);
             if (precedingPair != null)
             {
                 var maximumStep = ActiveTuning().MaximumGapCenterStep;
                 nextCentre = Mathf.Clamp(nextCentre, precedingPair.GapCenter - maximumStep, precedingPair.GapCenter + maximumStep);
+                nextCentre = Mathf.Clamp(nextCentre, centreMinimum, centreMaximum);
             }
             pair.GapCenter = nextCentre;
             pair.Root.transform.localPosition = new Vector3(x, 0f, 0f);
 
-            var halfGap = ActiveGap() * .5f;
             var topLowerEdge = pair.GapCenter + halfGap;
             var topHeight = CameraHeight * .5f - topLowerEdge;
             LayoutPipeSurface(pair.Top, topLowerEdge + topHeight * .5f, topHeight, topLowerEdge, true);
@@ -2492,48 +2552,78 @@ namespace SkyPulse.Mobile
 
         private void AnimatePipePair(PipePair pair)
         {
-            var halfGap = ActiveGap() * .5f;
+            var halfGap = pair.GapHeight * .5f;
             AnimatePipeSurface(pair.Top, pair.GapCenter + halfGap, true, pair.X);
             AnimatePipeSurface(pair.Bottom, pair.GapCenter - halfGap, false, pair.X);
         }
 
         private void AnimatePipeSurface(PipeSurface surface, float capY, bool topPipe, float pipeX)
         {
-            // The movement stays in the pipe's own non-colliding light layers. This
-            // makes the gateway feel alive without ever changing the visible safe gap.
+            // Movement stays within the non-colliding light layers. The gateway feels
+            // alive, while the bright visual opening always remains the safe opening.
             var gateMotion = reduceMotionEnabled ? 0f : 1f;
             var pulse = reduceMotionEnabled ? .56f : .5f + .5f * Mathf.Sin(ambientTime * 6.4f + pipeX * 1.7f);
             var direction = topPipe ? 1f : -1f;
+            var capBodyInset = .23f;
             // Theme identity belongs to the narrow energy parts. The cylindrical
             // body stays graphite, with only a restrained metal reflection.
             var metal = Color.Lerp(Hex("#0a1222"), equippedPipe.Panel, .15f);
             var reflectionColour = Color.Lerp(metal, Color.white, .20f + pulse * .06f);
             reflectionColour.a = Mathf.Lerp(.22f, .38f, pulse);
             surface.Artwork.color = reflectionColour;
+
+            var coreColour = equippedPipe.Energy;
+            coreColour.a = Mathf.Lerp(.08f, .18f, pulse);
+            surface.Core.color = coreColour;
+            var corePulseColour = Color.Lerp(equippedPipe.Energy, Color.white, .42f);
+            corePulseColour.a = Mathf.Lerp(.12f, .42f, pulse);
+            surface.CorePulse.color = corePulseColour;
+            var corePhase = reduceMotionEnabled ? .48f : Mathf.Repeat(ambientTime * .68f + pipeX * .17f, 1f);
+            var bodyHeight = Mathf.Max(.12f, surface.Panel.transform.localScale.y);
+            var corePulseHeight = .44f + pulse * .10f;
+            var corePulseStart = .18f + corePulseHeight * .5f;
+            var corePulseTravel = Mathf.Max(0f, bodyHeight - .18f - corePulseHeight);
+            surface.CorePulse.transform.localPosition = new Vector3(
+                Mathf.Sin((ambientTime * 2.8f + pipeX) * gateMotion) * .018f,
+                capY + direction * (corePulseStart + corePhase * corePulseTravel), 0f);
+            surface.CorePulse.transform.localScale = new Vector3(.34f + pulse * .08f, corePulseHeight, 1f);
+
             var seamColour = surface.Energy.color;
-            seamColour.a = Mathf.Lerp(.38f, .88f, pulse);
+            seamColour.a = Mathf.Lerp(.48f, .92f, pulse);
             surface.Energy.color = seamColour;
             surface.Energy.transform.localPosition = new Vector3(0f, capY + direction * (.055f + Mathf.Sin(ambientTime * 8.8f + pipeX) * .012f * gateMotion), 0f);
-            surface.Energy.transform.localScale = new Vector3(PipeWidth * Mathf.Lerp(.54f, .66f, pulse), .014f + pulse * .010f, 1f);
+            surface.Energy.transform.localScale = new Vector3(PipeWidth * Mathf.Lerp(.58f, .69f, pulse), .016f + pulse * .012f, 1f);
 
             var highlightColour = surface.Highlight.color;
-            highlightColour.a = Mathf.Lerp(.03f, .16f, pulse);
+            highlightColour.a = Mathf.Lerp(.04f, .20f, pulse);
             surface.Highlight.color = highlightColour;
             surface.Highlight.transform.localPosition = new Vector3(0f, capY + direction * (.035f + Mathf.Cos(ambientTime * 7.2f + pipeX) * .010f * gateMotion), 0f);
-            surface.Highlight.transform.localScale = new Vector3(PipeWidth * Mathf.Lerp(.48f, .58f, pulse), .005f + pulse * .006f, 1f);
+            surface.Highlight.transform.localScale = new Vector3(PipeWidth * Mathf.Lerp(.52f, .62f, pulse), .006f + pulse * .007f, 1f);
 
             var scanPhase = reduceMotionEnabled ? .48f : Mathf.Repeat(ambientTime * .82f + pipeX * .11f, 1f);
             var scanColour = surface.Scan.color;
-            scanColour.a = Mathf.Lerp(.03f, .14f, pulse);
+            scanColour.a = Mathf.Lerp(.05f, .20f, pulse);
             surface.Scan.color = scanColour;
-            surface.Scan.transform.localPosition = new Vector3(0f, capY + direction * (.17f + scanPhase * .72f), 0f);
-            surface.Scan.transform.localScale = new Vector3(PipeWidth * .56f, .006f, 1f);
+            surface.Scan.transform.localPosition = new Vector3(0f, capY + direction * (capBodyInset + scanPhase * Mathf.Max(.08f, bodyHeight - .30f)), 0f);
+            surface.Scan.transform.localScale = new Vector3(PipeWidth * .70f, .008f, 1f);
 
             var beaconColour = surface.Beacon.color;
-            beaconColour.a = Mathf.Lerp(.08f, .34f, pulse);
+            beaconColour.a = Mathf.Lerp(.13f, .43f, pulse);
             surface.Beacon.color = beaconColour;
             surface.Beacon.transform.localPosition = new Vector3(0f, capY + direction * .115f, 0f);
-            surface.Beacon.transform.localScale = Vector3.one * Mathf.Lerp(.21f, .31f, pulse);
+            surface.Beacon.transform.localScale = Vector3.one * Mathf.Lerp(.23f, .34f, pulse);
+
+            var collarGlow = equippedPipe.Energy;
+            collarGlow.a = Mathf.Lerp(.08f, .30f, pulse);
+            surface.CapGlow.color = collarGlow;
+            surface.CapGlow.transform.localPosition = new Vector3(0f, capY + direction * .16f, 0f);
+            surface.CapGlow.transform.localScale = new Vector3(PipeWidth * (1.02f + pulse * .12f), .42f + pulse * .08f, 1f);
+
+            var capEnergyColour = surface.CapEnergy.color;
+            capEnergyColour.a = Mathf.Lerp(.62f, .98f, pulse);
+            surface.CapEnergy.color = capEnergyColour;
+            surface.CapEnergy.transform.localPosition = new Vector3(0f, capY + direction * (.030f + Mathf.Sin(ambientTime * 8.8f + pipeX) * .008f * gateMotion), 0f);
+            surface.CapEnergy.transform.localScale = new Vector3(PipeWidth * Mathf.Lerp(.60f, .69f, pulse), .016f + pulse * .008f, 1f);
         }
 
         private void RetirePowerUpsForGate(PipePair gate)
@@ -2566,39 +2656,60 @@ namespace SkyPulse.Mobile
             // proportions whether the obstacle is short or reaches the top of screen.
             LayoutPlumbingGate(surface, centreY, height, capY, topPipe, style);
 
-            // A restrained illuminated seam gives every pipe theme a readable edge at
-            // speed. It sits just inside the obstacle, so the opening remains clean.
-            var insideOffset = topPipe ? .055f : -.055f;
+            // The cap is a small engineered assembly: its shell, accent, recessed
+            // panel and energy slit all end at the collision edge. Only glow fades
+            // into the opening, never solid art, so the passable space is obvious.
+            var direction = topPipe ? 1f : -1f;
+            var insideOffset = direction * .048f;
+            surface.Core.enabled = true;
+            surface.CorePulse.enabled = true;
+            surface.CapGlow.enabled = true;
+            surface.Core.sortingOrder = 6;
+            surface.CorePulse.sortingOrder = 7;
+            surface.CapGlow.sortingOrder = 8;
+            var coreColor = style.Energy;
+            coreColor.a = .12f;
+            surface.Core.color = coreColor;
+            SetBlock(surface.Core, new Vector2(0f, centreY), new Vector2(PipeWidth * .29f, Mathf.Max(.16f, height - .44f)));
+            surface.CorePulse.color = new Color(coreColor.r, coreColor.g, coreColor.b, 0f);
+            surface.CorePulse.transform.localPosition = new Vector3(0f, capY + direction * .68f, 0f);
+            surface.CorePulse.transform.localScale = new Vector3(.38f, .82f, 1f);
+
             surface.Energy.enabled = true;
-            surface.Energy.sortingOrder = 7;
+            surface.Energy.sortingOrder = 9;
             var seamColor = style.Energy;
-            seamColor.a = .64f;
+            seamColor.a = .72f;
             surface.Energy.color = seamColor;
             surface.Energy.transform.localPosition = new Vector3(0f, capY + insideOffset, 0f);
-            surface.Energy.transform.localScale = new Vector3(PipeWidth * .62f, .020f, 1f);
+            surface.Energy.transform.localScale = new Vector3(PipeWidth * .64f, .022f, 1f);
 
             surface.Highlight.enabled = true;
-            surface.Highlight.sortingOrder = 8;
-            surface.Highlight.color = new Color(1f, 1f, 1f, .10f);
+            surface.Highlight.sortingOrder = 10;
+            surface.Highlight.color = new Color(1f, 1f, 1f, .13f);
             surface.Highlight.transform.localPosition = new Vector3(0f, capY + insideOffset * .45f, 0f);
-            surface.Highlight.transform.localScale = new Vector3(PipeWidth * .54f, .007f, 1f);
+            surface.Highlight.transform.localScale = new Vector3(PipeWidth * .57f, .008f, 1f);
 
             surface.Scan.enabled = true;
-            surface.Scan.sortingOrder = 8;
+            surface.Scan.sortingOrder = 10;
             var scanColor = style.Energy;
-            scanColor.a = .14f;
+            scanColor.a = .18f;
             surface.Scan.color = scanColor;
-            surface.Scan.transform.localPosition = new Vector3(0f, capY + insideOffset * 2f, 0f);
-            surface.Scan.transform.localScale = new Vector3(PipeWidth * .58f, .007f, 1f);
+            surface.Scan.transform.localPosition = new Vector3(0f, capY + direction * .36f, 0f);
+            surface.Scan.transform.localScale = new Vector3(PipeWidth * .70f, .008f, 1f);
 
             surface.Beacon.enabled = true;
-            surface.Beacon.sortingOrder = 10;
+            surface.Beacon.sortingOrder = 12;
             var beaconColor = style.Energy;
-            beaconColor.a = .20f;
+            beaconColor.a = .28f;
             surface.Beacon.color = beaconColor;
-            surface.Beacon.transform.localPosition = new Vector3(0f, capY + insideOffset * 2f, 0f);
-            surface.Beacon.transform.localScale = Vector3.one * .25f;
+            surface.Beacon.transform.localPosition = new Vector3(0f, capY + direction * .10f, 0f);
+            surface.Beacon.transform.localScale = Vector3.one * .28f;
 
+            var glowColor = style.Energy;
+            glowColor.a = .18f;
+            surface.CapGlow.color = glowColor;
+            surface.CapGlow.transform.localPosition = new Vector3(0f, capY + direction * .15f, 0f);
+            surface.CapGlow.transform.localScale = new Vector3(PipeWidth * 1.06f, .46f, 1f);
         }
 
         private static void LayoutPlumbingGate(PipeSurface surface, float centreY, float height, float capY, bool topPipe, PipeStyle style)
@@ -2609,6 +2720,9 @@ namespace SkyPulse.Mobile
             surface.Artwork.enabled = true;
             surface.RailLeft.enabled = true;
             surface.RailRight.enabled = true;
+            surface.Core.enabled = true;
+            surface.CorePulse.enabled = true;
+            surface.CapGlow.enabled = true;
             surface.CapOuter.enabled = true;
             surface.CapAccent.enabled = true;
             surface.CapPanel.enabled = true;
@@ -2622,7 +2736,7 @@ namespace SkyPulse.Mobile
             var metal = Color.Lerp(Hex("#0a1222"), style.Panel, .15f);
             var metalDark = Darken(metal, .58f);
             var collarMetal = Color.Lerp(metal, style.Accent, .16f);
-            SetBlock(surface.Outer, Vector2.up * centreY, new Vector2(PipeWidth, height + .08f));
+            SetBlock(surface.Outer, Vector2.up * centreY, new Vector2(PipeWidth, height));
             SetBlock(surface.Panel, Vector2.up * centreY, new Vector2(PipeWidth - .12f, bodyHeight));
             SetBlock(surface.Shade, new Vector2(-PipeWidth * .32f, centreY), new Vector2(PipeWidth * .18f, Mathf.Max(.12f, height - .14f)));
             SetBlock(surface.Artwork, new Vector2(PipeWidth * .07f, centreY), new Vector2(PipeWidth * .19f, Mathf.Max(.12f, height - .18f)));
@@ -2641,13 +2755,14 @@ namespace SkyPulse.Mobile
             rightRail.a = .15f;
             surface.RailRight.color = rightRail;
 
-            // The collar stays inside the obstacle. Its inner edge lands exactly on
-            // capY, so the bright metal edge and the collision opening agree.
-            var capCentre = capY + direction * .20f;
-            SetBlock(surface.CapOuter, Vector2.up * capCentre, new Vector2(PipeCollisionWidth, .42f));
-            SetBlock(surface.CapAccent, Vector2.up * capCentre, new Vector2(PipeWidth + .14f, .30f));
-            SetBlock(surface.CapPanel, Vector2.up * capCentre, new Vector2(PipeWidth - .04f, .18f));
-            SetBlock(surface.CapEnergy, Vector2.up * (capY + direction * .028f), new Vector2(PipeWidth * .62f, .016f));
+            // The cap's inner edge lands exactly on capY: every solid layer sits
+            // inside the obstacle. Its wider collar is also the collision width, so
+            // there is no hidden contact beyond the visual silhouette.
+            var capCentre = capY + direction * (PipeCapHeight * .5f);
+            SetBlock(surface.CapOuter, Vector2.up * capCentre, new Vector2(PipeCollisionWidth, PipeCapHeight));
+            SetBlock(surface.CapAccent, Vector2.up * capCentre, new Vector2(PipeWidth + .14f, .32f));
+            SetBlock(surface.CapPanel, Vector2.up * capCentre, new Vector2(PipeWidth - .04f, .20f));
+            SetBlock(surface.CapEnergy, Vector2.up * (capY + direction * .030f), new Vector2(PipeWidth * .64f, .018f));
             surface.CapOuter.color = Darken(metalDark, .18f);
             surface.CapAccent.color = collarMetal;
             surface.CapPanel.color = Darken(metal, .40f);
@@ -2940,7 +3055,6 @@ namespace SkyPulse.Mobile
                 case "time_weaver":
                     kind = PowerUpKind.SlowField;
                     break;
-                case "air_brakes":
                 case "phase_stabilizer":
                     kind = PowerUpKind.PhaseShift;
                     break;
@@ -3213,9 +3327,9 @@ namespace SkyPulse.Mobile
             if (birdRenderer == null || birdFlapRenderer == null || birdRiseRenderer == null) return;
             var aetherwing = UsesAetherwing();
             idleBirdSprite = LoadSprite(equippedSkin.ArtPath)
-                ?? (aetherwing ? LoadSprite("SkyPulse/characters/premium/aetherwing-glide-v2") : null);
+                ?? (aetherwing ? LoadSprite(AetherwingGlidePath) : null);
             flapBirdSprite = LoadSprite(equippedSkin.FlapPath)
-                ?? (aetherwing ? LoadSprite("SkyPulse/characters/premium/aetherwing-flap-v1") : idleBirdSprite);
+                ?? (aetherwing ? LoadSprite(AetherwingFlapPath) : idleBirdSprite);
             riseBirdSprite = string.IsNullOrEmpty(equippedSkin.RisePath)
                 ? flapBirdSprite
                 : LoadSprite(equippedSkin.RisePath) ?? flapBirdSprite;
@@ -3612,6 +3726,8 @@ namespace SkyPulse.Mobile
                     if (!string.IsNullOrEmpty(id)) ownedUpgradeIds.Add(id);
                 }
             }
+            // Retired because limiting descent made lower-gap approaches feel worse.
+            ownedUpgradeIds.Remove("air_brakes");
         }
 
         private void SaveProgress()

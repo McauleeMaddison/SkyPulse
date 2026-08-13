@@ -1,11 +1,5 @@
-.venv/
-__pycache__/
-*.pyc
 .DS_Store
 *.icloud
-skypulse_progress.json
-skypulse_progress.backup.json
-.tools/
 
 # Unity mobile project (generated locally by the editor)
 mobile/Library/
@@ -18,3 +12,7 @@ mobile/UserSettings/
 mobile/.vs/
 mobile/*.csproj
 mobile/*.sln
+
+# VS Code workspace state is machine-specific; the small shared settings folder is tracked.
+.vscode/workspaceStorage/
+.vscode/.ropeproject/
