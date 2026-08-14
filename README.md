@@ -93,8 +93,8 @@ Your one finished full outline is saved in `aetherwing-rig-master.kra`. It is th
 1. In Krita choose **File → Open** and open `aetherwing-rig-split.ora` from `mobile/ArtSource/Birds/Aetherwing/`.
 2. Immediately choose **File → Save As** and save your colouring copy as `aetherwing-rig-colour.kra` in the same folder.
 3. Leave `MASTER-OUTLINE` at the bottom. It is your safety reference and is never exported.
-4. Start with `BODY`. Keep its line work; add your dark mechanical base colour on a new layer *under* it named `BODY-COLOUR`.
-5. Do not colour every moving part at once. Finish and screenshot `BODY-COLOUR`, then colour the wing layers one at a time.
+4. Start with `BODY-COLOUR`, which is already directly under `BODY`. Keep `BODY` untouched; paint the dark mechanical base colour on `BODY-COLOUR`.
+5. Do not colour every moving part at once. Finish and screenshot `BODY-COLOUR`, then colour the wing layers one at a time using their matching `…-COLOUR` layers.
 
 The line work is a guide only, not a game-ready export. We do not put it in Unity until its metallic dark surfaces, individual crystals and controlled neon edge lights are painted.
 
