@@ -1383,7 +1383,7 @@ namespace SkyPulse.Mobile
 
             unlockRevealBirdImage.sprite = unlockPose;
             activeUnlockSkin = skin;
-            var usesPremiumTint = skin.ArtPath.StartsWith("SkyPulse/characters/aetherwing", StringComparison.Ordinal);
+            var usesPremiumTint = IsAetherwingSkin(skin);
             unlockRevealBirdImage.color = usesPremiumTint ? Color.Lerp(Color.white, skin.Accent, .14f) : Color.white;
             unlockRevealTitle.text = $"{skin.Name} UNLOCKED";
             unlockRevealDetail.text = "EQUIPPED  ·  NEW FLIGHT FORM ACQUIRED";
@@ -3574,7 +3574,15 @@ namespace SkyPulse.Mobile
 
         private bool UsesAetherwing()
         {
-            return equippedSkin != null && equippedSkin.ArtPath.StartsWith("SkyPulse/characters/aetherwing", StringComparison.Ordinal);
+            return IsAetherwingSkin(equippedSkin);
+        }
+
+        private static bool IsAetherwingSkin(Skin skin)
+        {
+            // Only the finished Glacier skin may use the future layered rig. The
+            // six-frame Aetherwing Test is deliberately kept on its own stepped
+            // animation path while its hand-drawn motion is being evaluated.
+            return skin != null && skin.Id == "glacier";
         }
 
         private Color PremiumBirdTint()

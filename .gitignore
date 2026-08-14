@@ -20,3 +20,4 @@ mobile/*.sln
 # Krita writes these crash-recovery copies beside the real editable source file.
 # Keep the real .kra artwork, but never commit a temporary autosave.
 *.kra-autosave.kra
+*.kra~

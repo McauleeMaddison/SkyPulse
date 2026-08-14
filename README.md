@@ -84,20 +84,19 @@ Create these layers, exactly named:
 
 Do one layer at a time. The body must be complete and coloured before starting a wing. Paint the dark mechanical/crystal base first; add the controlled neon edge light last. Keep the Aetherwing’s own crown, metal joints, crystal shapes and proportions—do not simplify it into a mascot.
 
-### Your first small drawing task
+### Current Aetherwing workboard: no retracing
 
-1. Press **⌘S**. This saves your current outline-test file. Do not delete it and do not keep drawing on it.
-2. In Krita choose **File → New**. Set the canvas to **2048 × 1536 px**. Leave the background transparent.
-3. Choose **File → Save As**. Save the new file as `aetherwing-rig-master.kra` in `mobile/ArtSource/Birds/Aetherwing/`.
-4. Drag the tucked-wing **glide** photo (the sixth flap photo) from your Desktop onto the canvas. In the Layers panel, rename that photo layer `GUIDE-GLIDE`.
-5. With `GUIDE-GLIDE` selected, set **Opacity** to **45%**, then click its padlock. It should look faded and you should not be able to draw on it.
-6. Click the **+** at the bottom of Layers. Rename the new empty layer `BODY`. Make sure it is **above** `GUIDE-GLIDE`, selected, and at **100%** opacity.
-7. Choose **Basic-5 Size Opacity**. Set the brush to **3 px**. Zoom to roughly **400–600%**; use the mouse wheel or trackpad to move around the bird rather than zooming to 1100%.
-8. Trace only these fixed pieces on `BODY`: head, beak, eye, crown crystals, neck, chest, metal torso, legs and the round shoulder hinge. Trace a short line, stop, then start the next short line. Press **⌘Z** immediately if a line goes wrong.
-9. Leave the wing feathers and tail completely blank. They will get their own layers later, so they can move without making the body wobble.
-10. Press **⌘S**, hide the eye beside `GUIDE-GLIDE`, and inspect your black outline on its own. If the silhouette looks clean at normal zoom, send a screenshot before starting `FAR-WING`.
+Your one finished full outline is saved in `aetherwing-rig-master.kra`. It is the master backup; do not paint over or delete it.
 
-The first time you work on a layer, only make the clean outline. Do not colour it, add glow, or trace a second flap photo yet. We will use the same one clean body and separate moving wing pieces to make the animation smooth.
+`aetherwing-rig-split.ora` is the working file prepared from that outline. It has separate transparent layers for `BODY`, `FAR-WING`, `UPPER-WING`, `LOWER-WING`, `FEATHER-FAN`, and `TAIL`, all on the same 2048 × 1536 canvas. It is a clean technical hand-off: **do not trace the bird again**.
+
+1. In Krita choose **File → Open** and open `aetherwing-rig-split.ora` from `mobile/ArtSource/Birds/Aetherwing/`.
+2. Immediately choose **File → Save As** and save your colouring copy as `aetherwing-rig-colour.kra` in the same folder.
+3. Leave `MASTER-OUTLINE` at the bottom. It is your safety reference and is never exported.
+4. Start with `BODY`. Keep its line work; add your dark mechanical base colour on a new layer *under* it named `BODY-COLOUR`.
+5. Do not colour every moving part at once. Finish and screenshot `BODY-COLOUR`, then colour the wing layers one at a time.
+
+The line work is a guide only, not a game-ready export. We do not put it in Unity until its metallic dark surfaces, individual crystals and controlled neon edge lights are painted.
 
 ### Finished rig exports
 
