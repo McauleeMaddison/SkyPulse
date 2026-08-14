@@ -114,6 +114,10 @@ namespace SkyPulse.Mobile
             public string ArtPath;
             public string FlapPath;
             public string RisePath;
+            // Optional sharp, hand-authored flight cells. These are intentionally
+            // kept separate from the standard three-pose overlay system so a test
+            // bird can prove a full flap sequence without changing other skins.
+            public string[] FlapFramePaths;
             // These are distinct, per-bird poses. They must never point at a shared
             // bird image: its plumage, metalwork and silhouette are part of the
             // reward the player just earned.
@@ -123,7 +127,7 @@ namespace SkyPulse.Mobile
             public Color Trail;
             public int Price;
 
-            public Skin(string id, string name, string artPath, string flapPath, string accent, string trail, int price, string risePath = null, string hitPath = null, string unlockPath = null)
+            public Skin(string id, string name, string artPath, string flapPath, string accent, string trail, int price, string risePath = null, string hitPath = null, string unlockPath = null, string[] flapFramePaths = null)
             {
                 Id = id;
                 Name = name;
@@ -132,6 +136,7 @@ namespace SkyPulse.Mobile
                 RisePath = risePath;
                 HitPath = hitPath;
                 UnlockPath = unlockPath;
+                FlapFramePaths = flapFramePaths;
                 Accent = Hex(accent);
                 Trail = Hex(trail);
                 Price = price;
@@ -317,9 +322,10 @@ namespace SkyPulse.Mobile
         private const float CrystalPickupRespawnMaximum = 12.5f;
         private const float SimulationStep = 1f / 120f;
         private const float MaximumSimulationCatchup = 1f / 12f;
-        // The Aetherwing poses are deliberately stepped rather than cross-faded: a
-        // full-body fade reads as a blurry double bird on a phone. Smooth transform
-        // motion joins the three crisp poses instead.
+        // Full-body Aetherwing drawings stay stepped while the layered wing rig is
+        // being authored. Once all six rig pieces are present, only the wings and
+        // tail move; the body remains a single sharp drawing at every point in the
+        // flap. This avoids the blurry double-bird effect on a phone.
         private const float WingCycleSeconds = .42f;
         private const float WingLiftPhase = .31f;
         private const float WingDownstrokeDelay = .075f;
@@ -334,6 +340,27 @@ namespace SkyPulse.Mobile
         private const string AetherwingFlapPath = "SkyPulse/characters/aetherwing_v2/aetherwing-downstroke-v4";
         private const string AetherwingRisePath = "SkyPulse/characters/aetherwing_v2/aetherwing-lift-v4";
         private const string AetherwingHeroPath = "SkyPulse/characters/aetherwing_v2/aetherwing-hero-v4";
+        // All six files use the same transparent 2048 x 1536 canvas and the same
+        // registration. Do not put a background in any of them. The rig switches on
+        // only when this complete authored set exists; until then the current, proven
+        // full-body Aetherwing animation is kept as the safe fallback.
+        private const string AetherwingRigBodyPath = "SkyPulse/characters/aetherwing_rig/aetherwing-body-v1";
+        private const string AetherwingRigFarWingPath = "SkyPulse/characters/aetherwing_rig/aetherwing-far-wing-v1";
+        private const string AetherwingRigUpperWingPath = "SkyPulse/characters/aetherwing_rig/aetherwing-upper-wing-v1";
+        private const string AetherwingRigLowerWingPath = "SkyPulse/characters/aetherwing_rig/aetherwing-lower-wing-v1";
+        private const string AetherwingRigFeatherFanPath = "SkyPulse/characters/aetherwing_rig/aetherwing-feather-fan-v1";
+        private const string AetherwingRigTailPath = "SkyPulse/characters/aetherwing_rig/aetherwing-tail-v1";
+        // The original mechanical line art is deliberately kept as a labelled test
+        // bird. It lets us inspect a six-cell flap in real game conditions before
+        // committing the final coloured, layered rig art.
+        private const string TestAetherwingFlap01Path = "SkyPulse/characters/aetherwing_test/aetherwing-test-flap-01-v1";
+        private const string TestAetherwingFlap02Path = "SkyPulse/characters/aetherwing_test/aetherwing-test-flap-02-v1";
+        private const string TestAetherwingFlap03Path = "SkyPulse/characters/aetherwing_test/aetherwing-test-flap-03-v1";
+        private const string TestAetherwingFlap04Path = "SkyPulse/characters/aetherwing_test/aetherwing-test-flap-04-v1";
+        private const string TestAetherwingFlap05Path = "SkyPulse/characters/aetherwing_test/aetherwing-test-flap-05-v1";
+        private const string TestAetherwingFlap06Path = "SkyPulse/characters/aetherwing_test/aetherwing-test-flap-06-v1";
+        private const string TestAetherwingHitPath = "SkyPulse/characters/aetherwing_test/aetherwing-test-hit-v1";
+        private const string TestAetherwingUnlockPath = "SkyPulse/characters/aetherwing_test/aetherwing-test-unlock-v1";
 
         // These profiles are deliberately conservative. A play-test should alter one
         // value here at a time, never spread physics magic numbers through the loop.
@@ -355,6 +382,11 @@ namespace SkyPulse.Mobile
 
         private static readonly Skin[] Skins =
         {
+            new Skin("aetherwing_test", "AETHERWING TEST", TestAetherwingFlap06Path, TestAetherwingFlap01Path, "#edf7ff", "#45eaff", 0, TestAetherwingFlap01Path, TestAetherwingHitPath, TestAetherwingUnlockPath, new []
+            {
+                TestAetherwingFlap01Path, TestAetherwingFlap02Path, TestAetherwingFlap03Path,
+                TestAetherwingFlap04Path, TestAetherwingFlap05Path, TestAetherwingFlap06Path,
+            }),
             new Skin("nova", "NOVA", "SkyPulse/characters/nova", "SkyPulse/characters/nova-flap", "#8f64ff", "#45eaff", 0, "SkyPulse/characters/animated/nova-rise-v1", "SkyPulse/characters/unlocks/nova-hit-v2", "SkyPulse/characters/unlocks/nova-unlock-v2"),
             new Skin("lumen", "LUMEN", "SkyPulse/characters/lumen", "SkyPulse/characters/lumen-flap", "#45eaff", "#8f64ff", 24, "SkyPulse/characters/animated/lumen-rise-v1", "SkyPulse/characters/unlocks/lumen-hit-v2", "SkyPulse/characters/unlocks/lumen-unlock-v2"),
             new Skin("ember", "EMBER", "SkyPulse/characters/ember", "SkyPulse/characters/ember-flap", "#f05bc6", "#ffc34d", 32, "SkyPulse/characters/animated/ember-rise-v1", "SkyPulse/characters/unlocks/ember-hit-v2", "SkyPulse/characters/unlocks/ember-unlock-v2"),
@@ -462,6 +494,8 @@ namespace SkyPulse.Mobile
         private Sprite idleBirdSprite;
         private Sprite flapBirdSprite;
         private Sprite riseBirdSprite;
+        private Sprite[] flapFrameBirdSprites;
+        private Vector3 flapFrameBaseScale = Vector3.one;
         private SpriteRenderer backgroundRenderer;
         private SpriteRenderer backgroundVeil;
         private SpriteRenderer floorBase;
@@ -472,6 +506,12 @@ namespace SkyPulse.Mobile
         private Transform birdArt;
         private Transform birdFlapArt;
         private Transform birdRiseArt;
+        private Transform aetherwingRig;
+        private Transform aetherwingFarWingJoint;
+        private Transform aetherwingUpperWingJoint;
+        private Transform aetherwingLowerWingJoint;
+        private Transform aetherwingFeatherFanJoint;
+        private Transform aetherwingTailJoint;
         private SpriteRenderer birdRenderer;
         private SpriteRenderer birdSafetyRenderer;
         private SpriteRenderer birdFlapRenderer;
@@ -479,6 +519,12 @@ namespace SkyPulse.Mobile
         private SpriteRenderer birdParallaxRenderer;
         private SpriteRenderer birdDepthRenderer;
         private SpriteRenderer birdEyeGlintRenderer;
+        private SpriteRenderer aetherwingBodyRenderer;
+        private SpriteRenderer aetherwingFarWingRenderer;
+        private SpriteRenderer aetherwingUpperWingRenderer;
+        private SpriteRenderer aetherwingLowerWingRenderer;
+        private SpriteRenderer aetherwingFeatherFanRenderer;
+        private SpriteRenderer aetherwingTailRenderer;
         private SpriteRenderer shieldAuraRenderer;
         private SpriteRenderer slowAuraRenderer;
         private SpriteRenderer effectAuraRenderer;
@@ -492,6 +538,8 @@ namespace SkyPulse.Mobile
         private AudioClip crystalSound;
         private AudioClip unlockSound;
         private Font uiFont;
+        private Vector3 aetherwingRigBaseScale = Vector3.one;
+        private bool aetherwingRigReady;
 
         private GameObject uiRoot;
         private RectTransform safeAreaRoot;
@@ -831,6 +879,7 @@ namespace SkyPulse.Mobile
             birdFlapRenderer = birdFlapArt.gameObject.AddComponent<SpriteRenderer>();
             birdFlapRenderer.sortingOrder = 15;
             birdFlapRenderer.color = new Color(1f, 1f, 1f, 0f);
+            CreateAetherwingRig();
             var eyeGlint = CreateRenderer("Bird living eye glint", softCircleSprite, new Color(1f, 1f, 1f, 0f), 16, bird);
             eyeGlint.transform.localScale = Vector3.one * .062f;
             birdEyeGlintRenderer = eyeGlint;
@@ -839,6 +888,51 @@ namespace SkyPulse.Mobile
             collisionBirdDebug = CreateRenderer("Bird collision guide", ringSprite, new Color(.35f, 1f, .72f, .78f), 31, bird);
             collisionBirdDebug.enabled = false;
 #endif
+        }
+
+        private void CreateAetherwingRig()
+        {
+            aetherwingRig = new GameObject("Aetherwing 2D wing rig").transform;
+            aetherwingRig.SetParent(bird, false);
+            aetherwingRig.gameObject.SetActive(false);
+
+            // The roots are deliberately kept in one small, readable place. After
+            // the first art export, a single play-test lets us nudge these values if
+            // the drawn shoulder or tail hinge needs a pixel-perfect adjustment.
+            aetherwingFarWingJoint = CreateAetherwingRigJoint("Far wing root", new Vector3(-.07f, .05f, 0f));
+            aetherwingUpperWingJoint = CreateAetherwingRigJoint("Upper wing root", new Vector3(-.05f, .04f, 0f));
+            aetherwingLowerWingJoint = CreateAetherwingRigJoint("Lower wing hinge", new Vector3(-.17f, .00f, 0f));
+            aetherwingFeatherFanJoint = CreateAetherwingRigJoint("Primary feather root", new Vector3(-.30f, -.08f, 0f));
+            aetherwingTailJoint = CreateAetherwingRigJoint("Tail root", new Vector3(-.43f, -.13f, 0f));
+
+            aetherwingFarWingRenderer = CreateAetherwingRigLayer("Aetherwing far wing", 13, aetherwingFarWingJoint);
+            aetherwingTailRenderer = CreateAetherwingRigLayer("Aetherwing tail", 13, aetherwingTailJoint);
+            aetherwingBodyRenderer = CreateAetherwingRigLayer("Aetherwing body", 14, aetherwingRig);
+            aetherwingLowerWingRenderer = CreateAetherwingRigLayer("Aetherwing lower wing", 15, aetherwingLowerWingJoint);
+            aetherwingUpperWingRenderer = CreateAetherwingRigLayer("Aetherwing upper wing", 16, aetherwingUpperWingJoint);
+            aetherwingFeatherFanRenderer = CreateAetherwingRigLayer("Aetherwing primary feather fan", 17, aetherwingFeatherFanJoint);
+        }
+
+        private Transform CreateAetherwingRigJoint(string name, Vector3 position)
+        {
+            var joint = new GameObject(name).transform;
+            joint.SetParent(aetherwingRig, false);
+            joint.localPosition = position;
+            return joint;
+        }
+
+        private SpriteRenderer CreateAetherwingRigLayer(string name, int sortingOrder, Transform parent)
+        {
+            var layer = new GameObject(name).transform;
+            layer.SetParent(parent, false);
+            // Each export remains registered to the body canvas. Moving the child by
+            // the inverse root makes its unanimated position line up exactly, while
+            // its parent gives us a clean, natural rotation hinge.
+            if (parent != aetherwingRig) layer.localPosition = -parent.localPosition;
+            var renderer = layer.gameObject.AddComponent<SpriteRenderer>();
+            renderer.sortingOrder = sortingOrder;
+            renderer.enabled = false;
+            return renderer;
         }
 
         private void CreateFlightFeedback()
@@ -1523,7 +1617,19 @@ namespace SkyPulse.Mobile
             var wingPhase = menuWingTimer / 1.18f;
             GetWingWeights(wingPhase, out var riseStrength, out var flapStrength);
             var premiumRig = UsesAetherwing();
-            if (premiumRig)
+            var usesFlapFrameSequence = UsesFlapFrameSequence();
+            if (usesFlapFrameSequence)
+            {
+                var pose = SelectFlapFrame(wingPhase);
+                if (pose != null && menuBirdImage.sprite != pose) menuBirdImage.sprite = pose;
+                if (pose != null) menuBirdImage.enabled = true;
+                if (pose != null && menuBirdShadowImage != null && menuBirdShadowImage.sprite != pose) menuBirdShadowImage.sprite = pose;
+                if (pose != null && menuBirdShadowImage != null) menuBirdShadowImage.enabled = true;
+                menuBirdImage.color = Color.white;
+                if (menuBirdRiseImage != null) menuBirdRiseImage.color = Color.clear;
+                if (menuBirdFlapImage != null) menuBirdFlapImage.color = Color.clear;
+            }
+            else if (premiumRig)
             {
                 // Rendering only one complete pose prevents the double-body ghosting
                 // that made the previous flight loop look like a blurred sticker.
@@ -1556,30 +1662,31 @@ namespace SkyPulse.Mobile
             }
 
             var hover = Mathf.Sin(ambientTime * 1.7f) * menuMotion;
-            var flightTilt = premiumRig ? hover * .75f - flapStrength * .85f : hover * 2.2f - flapStrength * 1.6f;
-            var glideLean = (premiumRig ? Mathf.Sin(ambientTime * 1.16f) * .24f : Mathf.Sin(ambientTime * 1.16f) * .65f) * menuMotion;
+            var authoredFlight = premiumRig || usesFlapFrameSequence;
+            var flightTilt = authoredFlight ? hover * .75f - flapStrength * .85f : hover * 2.2f - flapStrength * 1.6f;
+            var glideLean = (authoredFlight ? Mathf.Sin(ambientTime * 1.16f) * .24f : Mathf.Sin(ambientTime * 1.16f) * .65f) * menuMotion;
             var intro = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(menuPresentationTime / .48f));
             if (menuHeroTransform != null)
             {
-                menuHeroTransform.anchoredPosition = new Vector2(Mathf.Sin(ambientTime * .82f) * (premiumRig ? 3f : 8f) * menuMotion, 148f + hover * (premiumRig ? 5f : 13f));
-                menuHeroTransform.localScale = Vector3.one * Mathf.Lerp(.94f, 1f + Mathf.Sin(ambientTime * 3.4f) * (premiumRig ? .006f : .018f) * menuMotion, intro);
+                menuHeroTransform.anchoredPosition = new Vector2(Mathf.Sin(ambientTime * .82f) * (authoredFlight ? 3f : 8f) * menuMotion, 148f + hover * (authoredFlight ? 5f : 13f));
+                menuHeroTransform.localScale = Vector3.one * Mathf.Lerp(.94f, 1f + Mathf.Sin(ambientTime * 3.4f) * (authoredFlight ? .006f : .018f) * menuMotion, intro);
             }
             menuBirdTransform.localRotation = Quaternion.Euler(0f, 0f, flightTilt + glideLean);
-            menuBirdTransform.localScale = premiumRig
+            menuBirdTransform.localScale = authoredFlight
                 ? new Vector3(1f + riseStrength * .012f, 1f - riseStrength * .008f, 1f)
                 : new Vector3(1f + Mathf.Sin(ambientTime * 3.4f) * .018f + riseStrength * .035f, 1f - riseStrength * .018f, 1f);
             if (menuBirdShadowImage != null)
             {
                 // A crisp, offset silhouette gives the hero real spatial separation
                 // from the deck without a bloom, blur, or translucent glass effect.
-                var showPremiumDepth = premiumRig && menuBirdShadowImage.sprite != null;
+                var showPremiumDepth = authoredFlight && menuBirdShadowImage.sprite != null;
                 menuBirdShadowImage.enabled = showPremiumDepth;
                 menuBirdShadowImage.color = showPremiumDepth ? new Color(.004f, .010f, .040f, .48f) : Color.clear;
-                menuBirdShadowImage.rectTransform.anchoredPosition = premiumRig
+                menuBirdShadowImage.rectTransform.anchoredPosition = authoredFlight
                     ? new Vector2(-17f - riseStrength * 3f, -16f - flapStrength * 2f)
                     : Vector2.zero;
                 menuBirdShadowImage.rectTransform.localRotation = menuBirdTransform.localRotation;
-                menuBirdShadowImage.rectTransform.localScale = premiumRig
+                menuBirdShadowImage.rectTransform.localScale = authoredFlight
                     ? menuBirdTransform.localScale * 1.012f
                     : Vector3.one;
             }
@@ -1601,8 +1708,8 @@ namespace SkyPulse.Mobile
             {
                 // Aetherwing has a small, authored visor light. The old floating UI
                 // glint belongs only to the legacy round-eyed birds.
-                menuBirdEyeGlintImage.gameObject.SetActive(!UsesAetherwing());
-                if (!UsesAetherwing())
+                menuBirdEyeGlintImage.gameObject.SetActive(!UsesAetherwing() && !usesFlapFrameSequence);
+                if (!UsesAetherwing() && !usesFlapFrameSequence)
                 {
                     var blinkCycle = Mathf.Repeat(ambientTime * .27f + .18f, 1f);
                     var eyelid = blinkCycle < .045f ? Mathf.SmoothStep(.12f, 1f, blinkCycle / .045f) : 1f;
@@ -3326,13 +3433,25 @@ namespace SkyPulse.Mobile
         {
             if (birdRenderer == null || birdFlapRenderer == null || birdRiseRenderer == null) return;
             var aetherwing = UsesAetherwing();
-            idleBirdSprite = LoadSprite(equippedSkin.ArtPath)
-                ?? (aetherwing ? LoadSprite(AetherwingGlidePath) : null);
-            flapBirdSprite = LoadSprite(equippedSkin.FlapPath)
-                ?? (aetherwing ? LoadSprite(AetherwingFlapPath) : idleBirdSprite);
-            riseBirdSprite = string.IsNullOrEmpty(equippedSkin.RisePath)
-                ? flapBirdSprite
-                : LoadSprite(equippedSkin.RisePath) ?? flapBirdSprite;
+            var hasFlapFrameSequence = LoadFlapFrameSequence(equippedSkin);
+            if (hasFlapFrameSequence)
+            {
+                // The last supplied pose is the settled glide. The two named legacy
+                // fields still populate menus/fallbacks; live flight uses all six.
+                idleBirdSprite = flapFrameBirdSprites[flapFrameBirdSprites.Length - 1];
+                flapBirdSprite = flapFrameBirdSprites[Mathf.Min(3, flapFrameBirdSprites.Length - 1)];
+                riseBirdSprite = flapFrameBirdSprites[0];
+            }
+            else
+            {
+                idleBirdSprite = LoadSprite(equippedSkin.ArtPath)
+                    ?? (aetherwing ? LoadSprite(AetherwingGlidePath) : null);
+                flapBirdSprite = LoadSprite(equippedSkin.FlapPath)
+                    ?? (aetherwing ? LoadSprite(AetherwingFlapPath) : idleBirdSprite);
+                riseBirdSprite = string.IsNullOrEmpty(equippedSkin.RisePath)
+                    ? flapBirdSprite
+                    : LoadSprite(equippedSkin.RisePath) ?? flapBirdSprite;
+            }
             if (idleBirdSprite != null)
             {
                 birdRenderer.sprite = idleBirdSprite;
@@ -3357,11 +3476,12 @@ namespace SkyPulse.Mobile
                 riseBirdBaseScale = ArtworkScale(riseBirdSprite, BirdDisplayWidth);
                 birdRiseArt.localScale = riseBirdBaseScale;
             }
-            var premiumRig = UsesAetherwing();
-            birdRenderer.enabled = idleBirdSprite != null;
-            birdFlapRenderer.enabled = !premiumRig && flapBirdSprite != null;
-            birdRiseRenderer.enabled = !premiumRig && riseBirdSprite != null;
-            if (birdParallaxRenderer != null) birdParallaxRenderer.enabled = idleBirdSprite != null;
+            aetherwingRigReady = aetherwing && ConfigureAetherwingRig();
+            SetAetherwingRigVisible(aetherwingRigReady);
+            birdRenderer.enabled = idleBirdSprite != null && !aetherwingRigReady;
+            birdFlapRenderer.enabled = !aetherwing && !hasFlapFrameSequence && flapBirdSprite != null;
+            birdRiseRenderer.enabled = !aetherwing && !hasFlapFrameSequence && riseBirdSprite != null;
+            if (birdParallaxRenderer != null) birdParallaxRenderer.enabled = idleBirdSprite != null && !aetherwingRigReady && !hasFlapFrameSequence;
             if (birdSafetyRenderer != null)
             {
                 var usesEmergencyFallback = idleBirdSprite == emergencyBirdSprite;
@@ -3374,8 +3494,82 @@ namespace SkyPulse.Mobile
                 birdSafetyRenderer.color = Color.white;
                 birdSafetyRenderer.enabled = usesEmergencyFallback;
             }
-            if (birdDepthRenderer != null) birdDepthRenderer.enabled = !premiumRig;
-            if (birdEyeGlintRenderer != null) birdEyeGlintRenderer.enabled = !UsesAetherwing();
+            if (birdDepthRenderer != null) birdDepthRenderer.enabled = !aetherwing && !hasFlapFrameSequence;
+            if (birdEyeGlintRenderer != null) birdEyeGlintRenderer.enabled = !UsesAetherwing() && !hasFlapFrameSequence;
+        }
+
+        private bool LoadFlapFrameSequence(Skin skin)
+        {
+            flapFrameBirdSprites = null;
+            if (skin == null || skin.FlapFramePaths == null || skin.FlapFramePaths.Length < 2) return false;
+            var frames = new Sprite[skin.FlapFramePaths.Length];
+            for (var index = 0; index < frames.Length; index += 1)
+            {
+                frames[index] = LoadOptionalSprite(skin.FlapFramePaths[index]);
+                if (frames[index] == null) return false;
+            }
+
+            flapFrameBirdSprites = frames;
+            // All test frames are rendered on a fixed canvas. One shared scale stops
+            // a different source crop from making the bird pulse in size mid-flap.
+            flapFrameBaseScale = ArtworkScale(frames[frames.Length - 1], BirdDisplayWidth);
+            return true;
+        }
+
+        private bool UsesFlapFrameSequence()
+        {
+            return flapFrameBirdSprites != null && flapFrameBirdSprites.Length >= 2;
+        }
+
+        private Sprite SelectFlapFrame(float normalizedProgress)
+        {
+            if (!UsesFlapFrameSequence()) return idleBirdSprite;
+            var index = Mathf.Min(flapFrameBirdSprites.Length - 1, Mathf.FloorToInt(Mathf.Clamp01(normalizedProgress) * flapFrameBirdSprites.Length));
+            return flapFrameBirdSprites[index];
+        }
+
+        private bool ConfigureAetherwingRig()
+        {
+            if (aetherwingRig == null) return false;
+            var body = LoadOptionalSprite(AetherwingRigBodyPath);
+            var farWing = LoadOptionalSprite(AetherwingRigFarWingPath);
+            var upperWing = LoadOptionalSprite(AetherwingRigUpperWingPath);
+            var lowerWing = LoadOptionalSprite(AetherwingRigLowerWingPath);
+            var featherFan = LoadOptionalSprite(AetherwingRigFeatherFanPath);
+            var tail = LoadOptionalSprite(AetherwingRigTailPath);
+            var complete = body != null && farWing != null && upperWing != null && lowerWing != null && featherFan != null && tail != null;
+            if (!complete) return false;
+
+            aetherwingBodyRenderer.sprite = body;
+            aetherwingFarWingRenderer.sprite = farWing;
+            aetherwingUpperWingRenderer.sprite = upperWing;
+            aetherwingLowerWingRenderer.sprite = lowerWing;
+            aetherwingFeatherFanRenderer.sprite = featherFan;
+            aetherwingTailRenderer.sprite = tail;
+            aetherwingRigBaseScale = ArtworkScale(body, BirdDisplayWidth);
+            ResetAetherwingRigPose();
+            return true;
+        }
+
+        private void SetAetherwingRigVisible(bool visible)
+        {
+            if (aetherwingRig == null) return;
+            aetherwingRig.gameObject.SetActive(visible);
+            if (aetherwingBodyRenderer != null) aetherwingBodyRenderer.enabled = visible;
+            if (aetherwingFarWingRenderer != null) aetherwingFarWingRenderer.enabled = visible;
+            if (aetherwingUpperWingRenderer != null) aetherwingUpperWingRenderer.enabled = visible;
+            if (aetherwingLowerWingRenderer != null) aetherwingLowerWingRenderer.enabled = visible;
+            if (aetherwingFeatherFanRenderer != null) aetherwingFeatherFanRenderer.enabled = visible;
+            if (aetherwingTailRenderer != null) aetherwingTailRenderer.enabled = visible;
+        }
+
+        private void ResetAetherwingRigPose()
+        {
+            if (aetherwingFarWingJoint != null) aetherwingFarWingJoint.localRotation = Quaternion.identity;
+            if (aetherwingUpperWingJoint != null) aetherwingUpperWingJoint.localRotation = Quaternion.identity;
+            if (aetherwingLowerWingJoint != null) aetherwingLowerWingJoint.localRotation = Quaternion.identity;
+            if (aetherwingFeatherFanJoint != null) aetherwingFeatherFanJoint.localRotation = Quaternion.identity;
+            if (aetherwingTailJoint != null) aetherwingTailJoint.localRotation = Quaternion.identity;
         }
 
         private bool UsesAetherwing()
@@ -3415,6 +3609,34 @@ namespace SkyPulse.Mobile
             return idleBirdBaseScale;
         }
 
+        private void UpdateAetherwingRigMotion(float riseWeight, float downstrokeWeight)
+        {
+            if (!aetherwingRigReady) return;
+
+            // The small stagger between pieces is what makes the feathered armour
+            // feel connected rather than like one stiff card rotating as a whole.
+            // Values are intentionally modest; the six supplied templates remain
+            // the visual target, and these hinges can be tuned after the first
+            // in-game preview without redrawing any artwork.
+            if (aetherwingFarWingJoint != null)
+                aetherwingFarWingJoint.localRotation = Quaternion.Euler(0f, 0f, -20f * riseWeight + 13f * downstrokeWeight);
+            if (aetherwingUpperWingJoint != null)
+                aetherwingUpperWingJoint.localRotation = Quaternion.Euler(0f, 0f, -27f * riseWeight + 18f * downstrokeWeight);
+            if (aetherwingLowerWingJoint != null)
+                aetherwingLowerWingJoint.localRotation = Quaternion.Euler(0f, 0f, -15f * riseWeight + 12f * downstrokeWeight);
+            if (aetherwingFeatherFanJoint != null)
+                aetherwingFeatherFanJoint.localRotation = Quaternion.Euler(0f, 0f, -9f * riseWeight + 16f * downstrokeWeight);
+            if (aetherwingTailJoint != null)
+                aetherwingTailJoint.localRotation = Quaternion.Euler(0f, 0f, 4f * riseWeight - 3f * downstrokeWeight);
+
+            if (aetherwingBodyRenderer != null) aetherwingBodyRenderer.color = Color.white;
+            if (aetherwingFarWingRenderer != null) aetherwingFarWingRenderer.color = Color.white;
+            if (aetherwingUpperWingRenderer != null) aetherwingUpperWingRenderer.color = Color.white;
+            if (aetherwingLowerWingRenderer != null) aetherwingLowerWingRenderer.color = Color.white;
+            if (aetherwingFeatherFanRenderer != null) aetherwingFeatherFanRenderer.color = Color.white;
+            if (aetherwingTailRenderer != null) aetherwingTailRenderer.color = Color.white;
+        }
+
         private static Vector3 ArtworkScale(Sprite sprite, float targetWidth)
         {
             var sourceWidth = Mathf.Max(.01f, sprite.bounds.size.x);
@@ -3428,21 +3650,44 @@ namespace SkyPulse.Mobile
             var flapKick = 1f - flapProgress * flapProgress * (3f - 2f * flapProgress);
             GetWingWeights(flapProgress, out var riseWeight, out var wingWave);
             var premiumRig = UsesAetherwing();
-            if (premiumRig)
+            var usesFlapFrameSequence = UsesFlapFrameSequence();
+            var usesLayeredAetherwingRig = premiumRig && aetherwingRigReady;
+            if (usesFlapFrameSequence)
             {
-                // A proper full-body pose rig: exactly one sharp drawing is displayed
-                // while gentle transform interpolation supplies the connective motion.
-                // This deliberately avoids translucent full-body crossfades.
-                var pose = SelectAetherwingPose(riseWeight, wingWave);
+                // One authored drawing at a time: no crossfade means no ghosted
+                // double-body. The six supplied poses play in their intended order
+                // on every tap, while the transform below retains 60 fps flight feel.
+                var pose = SelectFlapFrame(flapProgress);
                 if (pose != null && birdRenderer.sprite != pose) birdRenderer.sprite = pose;
-                birdRenderer.color = PremiumBirdTint();
+                birdRenderer.enabled = pose != null;
+                birdRenderer.color = Color.white;
                 birdFlapRenderer.enabled = false;
                 if (birdRiseRenderer != null) birdRiseRenderer.enabled = false;
-                if (birdParallaxRenderer != null)
+                if (birdParallaxRenderer != null) birdParallaxRenderer.enabled = false;
+            }
+            else if (premiumRig)
+            {
+                if (usesLayeredAetherwingRig)
                 {
-                    birdParallaxRenderer.enabled = pose != null;
-                    if (pose != null && birdParallaxRenderer.sprite != pose) birdParallaxRenderer.sprite = pose;
+                    birdRenderer.enabled = false;
+                    if (birdParallaxRenderer != null) birdParallaxRenderer.enabled = false;
+                    UpdateAetherwingRigMotion(riseWeight, wingWave);
                 }
+                else
+                {
+                    // Until the complete rig art arrives, exactly one sharp drawing
+                    // is displayed. This is the safe, current fallback.
+                    var pose = SelectAetherwingPose(riseWeight, wingWave);
+                    if (pose != null && birdRenderer.sprite != pose) birdRenderer.sprite = pose;
+                    birdRenderer.color = PremiumBirdTint();
+                    if (birdParallaxRenderer != null)
+                    {
+                        birdParallaxRenderer.enabled = pose != null;
+                        if (pose != null && birdParallaxRenderer.sprite != pose) birdParallaxRenderer.sprite = pose;
+                    }
+                }
+                birdFlapRenderer.enabled = false;
+                if (birdRiseRenderer != null) birdRiseRenderer.enabled = false;
             }
             else
             {
@@ -3461,21 +3706,27 @@ namespace SkyPulse.Mobile
                 }
             }
             var lifeMotion = reduceMotionEnabled ? .38f : 1f;
+            var authoredFlight = premiumRig || usesFlapFrameSequence;
             var breathing = 1f + Mathf.Sin(ambientTime * 5.2f) * .010f * lifeMotion;
             var glide = Mathf.Clamp(birdVelocity / Mathf.Abs(ActiveMaxFallVelocity()), -1f, 1f);
-            var liftSquash = (flapKick - riseWeight * .34f) * (premiumRig ? .022f : .065f);
-            var diveStretch = Mathf.Clamp01(-glide) * (premiumRig ? .010f : .024f);
-            var bodyRoll = premiumRig
+            var liftSquash = (flapKick - riseWeight * .34f) * (authoredFlight ? .022f : .065f);
+            var diveStretch = Mathf.Clamp01(-glide) * (authoredFlight ? .010f : .024f);
+            var bodyRoll = authoredFlight
                 ? riseWeight * 1.25f - wingWave * .85f + glide * .90f
                 : riseWeight * 3.2f - wingWave * 2.4f + glide * 1.8f;
-            var depthPulse = premiumRig ? riseWeight * .018f + wingWave * .012f : riseWeight * .075f + wingWave * .050f;
+            var depthPulse = authoredFlight ? riseWeight * .018f + wingWave * .012f : riseWeight * .075f + wingWave * .050f;
             bird.localScale = new Vector3(1f + depthPulse + diveStretch * .30f, 1f - depthPulse * .62f + diveStretch * .12f, 1f);
-            birdArt.localScale = Vector3.Scale(premiumRig ? BaseScaleForBirdPose(birdRenderer.sprite) : idleBirdBaseScale, new Vector3(breathing + liftSquash + diveStretch, breathing - liftSquash - diveStretch * .55f, 1f));
-            birdArt.localPosition = premiumRig
+            var activeArtworkTransform = usesLayeredAetherwingRig ? aetherwingRig : birdArt;
+            var activeArtworkBaseScale = usesLayeredAetherwingRig
+                ? aetherwingRigBaseScale
+                : usesFlapFrameSequence ? flapFrameBaseScale
+                : premiumRig ? BaseScaleForBirdPose(birdRenderer.sprite) : idleBirdBaseScale;
+            activeArtworkTransform.localScale = Vector3.Scale(activeArtworkBaseScale, new Vector3(breathing + liftSquash + diveStretch, breathing - liftSquash - diveStretch * .55f, 1f));
+            activeArtworkTransform.localPosition = authoredFlight
                 ? new Vector3(-flapKick * .017f - wingWave * .006f - glide * .010f, Mathf.Sin(ambientTime * 7f) * .005f * lifeMotion + riseWeight * .010f + wingWave * .004f, 0f)
                 : new Vector3(-flapKick * .052f - glide * .020f, Mathf.Sin(ambientTime * 7f) * .014f + riseWeight * .018f, 0f);
-            birdArt.localRotation = Quaternion.Euler(0f, 0f, bodyRoll);
-            if (!premiumRig)
+            activeArtworkTransform.localRotation = Quaternion.Euler(0f, 0f, bodyRoll);
+            if (!premiumRig && !usesFlapFrameSequence)
             {
                 birdFlapArt.localScale = Vector3.Scale(flapBirdBaseScale, new Vector3(1f + wingWave * .075f, 1f - wingWave * .050f, 1f));
                 birdFlapArt.localPosition = new Vector3(flapKick * .032f, .025f + wingWave * .052f, 0f);
@@ -3498,7 +3749,11 @@ namespace SkyPulse.Mobile
             }
             if (birdParallaxRenderer != null)
             {
-                if (UsesAetherwing())
+                if (UsesFlapFrameSequence() || aetherwingRigReady)
+                {
+                    birdParallaxRenderer.enabled = false;
+                }
+                else if (UsesAetherwing())
                 {
                     var pose = birdRenderer != null ? birdRenderer.sprite : idleBirdSprite;
                     if (pose != null && birdParallaxRenderer.sprite != pose) birdParallaxRenderer.sprite = pose;
@@ -3699,7 +3954,7 @@ namespace SkyPulse.Mobile
             flightCoachStage = Mathf.Clamp(PlayerPrefs.GetInt("skypulse.native.flight-coach-stage", 0), 0, 2);
             reduceMotionEnabled = PlayerPrefs.GetInt("skypulse.native.reduce-motion", 0) == 1;
             hapticsEnabled = PlayerPrefs.GetInt("skypulse.native.haptics", 1) == 1;
-            equippedSkin = FindById(Skins, PlayerPrefs.GetString("skypulse.native.skin", "nova")) ?? Skins[0];
+            equippedSkin = FindById(Skins, PlayerPrefs.GetString("skypulse.native.skin", "aetherwing_test")) ?? Skins[0];
             equippedWorld = FindById(Worlds, PlayerPrefs.GetString("skypulse.native.world", "neon_city")) ?? Worlds[0];
             equippedTrail = FindById(Trails, PlayerPrefs.GetString("skypulse.native.trail", "pulse")) ?? Trails[0];
             equippedPipe = FindById(PipeStyles, PlayerPrefs.GetString("skypulse.native.pipe", "ion")) ?? PipeStyles[0];
@@ -3717,6 +3972,16 @@ namespace SkyPulse.Mobile
                 // collection gains unlock states; new players simply begin with Nova.
                 ownedSkinIds.Add(Skins[0].Id);
                 if (equippedSkin != null) ownedSkinIds.Add(equippedSkin.Id);
+            }
+            // This is a one-time playtest migration: the supplied six-frame
+            // Aetherwing is deliberately the first bird players see while its flight
+            // timing is evaluated. Players can immediately choose any owned bird
+            // afterwards, and we never force the selection again.
+            if (PlayerPrefs.GetInt("skypulse.native.aetherwing-test-default-v1", 0) == 0)
+            {
+                equippedSkin = Skins[0];
+                ownedSkinIds.Add(equippedSkin.Id);
+                PlayerPrefs.SetInt("skypulse.native.aetherwing-test-default-v1", 1);
             }
             var savedOwnedUpgrades = PlayerPrefs.GetString("skypulse.native.owned-upgrades", string.Empty);
             if (!string.IsNullOrEmpty(savedOwnedUpgrades))

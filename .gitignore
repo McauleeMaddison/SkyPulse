@@ -16,3 +16,7 @@ mobile/*.sln
 # VS Code workspace state is machine-specific; the small shared settings folder is tracked.
 .vscode/workspaceStorage/
 .vscode/.ropeproject/
+
+# Krita writes these crash-recovery copies beside the real editable source file.
+# Keep the real .kra artwork, but never commit a temporary autosave.
+*.kra-autosave.kra
