@@ -107,6 +107,39 @@ namespace SkyPulse.Mobile
             }
         }
 
+        private sealed class RigMotionProfile
+        {
+            public readonly float FarWingLift;
+            public readonly float FarWingDownstroke;
+            public readonly float UpperWingLift;
+            public readonly float UpperWingDownstroke;
+            public readonly float LowerWingLift;
+            public readonly float LowerWingDownstroke;
+            public readonly float FeatherFanLift;
+            public readonly float FeatherFanDownstroke;
+            public readonly float TailLift;
+            public readonly float TailDownstroke;
+
+            public RigMotionProfile(
+                float farWingLift, float farWingDownstroke,
+                float upperWingLift, float upperWingDownstroke,
+                float lowerWingLift, float lowerWingDownstroke,
+                float featherFanLift, float featherFanDownstroke,
+                float tailLift, float tailDownstroke)
+            {
+                FarWingLift = farWingLift;
+                FarWingDownstroke = farWingDownstroke;
+                UpperWingLift = upperWingLift;
+                UpperWingDownstroke = upperWingDownstroke;
+                LowerWingLift = lowerWingLift;
+                LowerWingDownstroke = lowerWingDownstroke;
+                FeatherFanLift = featherFanLift;
+                FeatherFanDownstroke = featherFanDownstroke;
+                TailLift = tailLift;
+                TailDownstroke = tailDownstroke;
+            }
+        }
+
         private sealed class Skin
         {
             public string Id;
@@ -123,11 +156,16 @@ namespace SkyPulse.Mobile
             // reward the player just earned.
             public string HitPath;
             public string UnlockPath;
+            // A rig is six small transparent PNG layers sharing a canvas and
+            // registration. Keeping its prefix on the skin lets every unlocked
+            // bird use the same lightweight mobile animation code.
+            public string RigResourcePrefix;
+            public RigMotionProfile RigMotion;
             public Color Accent;
             public Color Trail;
             public int Price;
 
-            public Skin(string id, string name, string artPath, string flapPath, string accent, string trail, int price, string risePath = null, string hitPath = null, string unlockPath = null, string[] flapFramePaths = null)
+            public Skin(string id, string name, string artPath, string flapPath, string accent, string trail, int price, string risePath = null, string hitPath = null, string unlockPath = null, string[] flapFramePaths = null, string rigResourcePrefix = null, RigMotionProfile rigMotion = null)
             {
                 Id = id;
                 Name = name;
@@ -137,6 +175,8 @@ namespace SkyPulse.Mobile
                 HitPath = hitPath;
                 UnlockPath = unlockPath;
                 FlapFramePaths = flapFramePaths;
+                RigResourcePrefix = rigResourcePrefix;
+                RigMotion = rigMotion;
                 Accent = Hex(accent);
                 Trail = Hex(trail);
                 Price = price;
@@ -301,9 +341,9 @@ namespace SkyPulse.Mobile
         private const float BirdDisplayWidth = 2.82f;
         // The body is deliberately broad. The collar is slightly wider, just like a
         // real plumbing coupling, and this exact outer dimension drives collision.
-        private const float PipeWidth = 1.52f;
-        private const float PipeCollisionWidth = PipeWidth + .30f;
-        private const float PipeCapHeight = .46f;
+        private const float PipeWidth = 1.72f;
+        private const float PipeCollisionWidth = PipeWidth + .34f;
+        private const float PipeCapHeight = .62f;
         private const float PipeMinimumVisibleHeight = 1.56f;
         // This corridor gives the route meaningful high and low gates without
         // spawning a first obstacle against a screen edge or creating tiny pipes.
@@ -344,12 +384,7 @@ namespace SkyPulse.Mobile
         // registration. Do not put a background in any of them. The rig switches on
         // only when this complete authored set exists; until then the current, proven
         // full-body Aetherwing animation is kept as the safe fallback.
-        private const string AetherwingRigBodyPath = "SkyPulse/characters/aetherwing_rig/aetherwing-body-v1";
-        private const string AetherwingRigFarWingPath = "SkyPulse/characters/aetherwing_rig/aetherwing-far-wing-v1";
-        private const string AetherwingRigUpperWingPath = "SkyPulse/characters/aetherwing_rig/aetherwing-upper-wing-v1";
-        private const string AetherwingRigLowerWingPath = "SkyPulse/characters/aetherwing_rig/aetherwing-lower-wing-v1";
-        private const string AetherwingRigFeatherFanPath = "SkyPulse/characters/aetherwing_rig/aetherwing-feather-fan-v1";
-        private const string AetherwingRigTailPath = "SkyPulse/characters/aetherwing_rig/aetherwing-tail-v1";
+        private const string AetherwingRigResourcePrefix = "SkyPulse/characters/aetherwing_rig/aetherwing";
         // The original mechanical line art is deliberately kept as a labelled test
         // bird. It lets us inspect a six-cell flap in real game conditions before
         // committing the final coloured, layered rig art.
@@ -361,6 +396,13 @@ namespace SkyPulse.Mobile
         private const string TestAetherwingFlap06Path = "SkyPulse/characters/aetherwing_test/aetherwing-test-flap-06-v1";
         private const string TestAetherwingHitPath = "SkyPulse/characters/aetherwing_test/aetherwing-test-hit-v1";
         private const string TestAetherwingUnlockPath = "SkyPulse/characters/aetherwing_test/aetherwing-test-unlock-v1";
+
+        private static readonly RigMotionProfile AetherwingRigMotion = new RigMotionProfile(
+            farWingLift: -20f, farWingDownstroke: 13f,
+            upperWingLift: -27f, upperWingDownstroke: 18f,
+            lowerWingLift: -15f, lowerWingDownstroke: 12f,
+            featherFanLift: -9f, featherFanDownstroke: 16f,
+            tailLift: 4f, tailDownstroke: -3f);
 
         // These profiles are deliberately conservative. A play-test should alter one
         // value here at a time, never spread physics magic numbers through the loop.
@@ -386,7 +428,7 @@ namespace SkyPulse.Mobile
             {
                 TestAetherwingFlap01Path, TestAetherwingFlap02Path, TestAetherwingFlap03Path,
                 TestAetherwingFlap04Path, TestAetherwingFlap05Path, TestAetherwingFlap06Path,
-            }),
+            }, AetherwingRigResourcePrefix, AetherwingRigMotion),
             new Skin("nova", "NOVA", "SkyPulse/characters/nova", "SkyPulse/characters/nova-flap", "#8f64ff", "#45eaff", 0, "SkyPulse/characters/animated/nova-rise-v1", "SkyPulse/characters/unlocks/nova-hit-v2", "SkyPulse/characters/unlocks/nova-unlock-v2"),
             new Skin("lumen", "LUMEN", "SkyPulse/characters/lumen", "SkyPulse/characters/lumen-flap", "#45eaff", "#8f64ff", 24, "SkyPulse/characters/animated/lumen-rise-v1", "SkyPulse/characters/unlocks/lumen-hit-v2", "SkyPulse/characters/unlocks/lumen-unlock-v2"),
             new Skin("ember", "EMBER", "SkyPulse/characters/ember", "SkyPulse/characters/ember-flap", "#f05bc6", "#ffc34d", 32, "SkyPulse/characters/animated/ember-rise-v1", "SkyPulse/characters/unlocks/ember-hit-v2", "SkyPulse/characters/unlocks/ember-unlock-v2"),
@@ -3530,13 +3572,18 @@ namespace SkyPulse.Mobile
 
         private bool ConfigureAetherwingRig()
         {
-            if (aetherwingRig == null) return false;
-            var body = LoadOptionalSprite(AetherwingRigBodyPath);
-            var farWing = LoadOptionalSprite(AetherwingRigFarWingPath);
-            var upperWing = LoadOptionalSprite(AetherwingRigUpperWingPath);
-            var lowerWing = LoadOptionalSprite(AetherwingRigLowerWingPath);
-            var featherFan = LoadOptionalSprite(AetherwingRigFeatherFanPath);
-            var tail = LoadOptionalSprite(AetherwingRigTailPath);
+            var rigResourcePrefix = equippedSkin?.RigResourcePrefix;
+            if (aetherwingRig == null || string.IsNullOrEmpty(rigResourcePrefix)) return false;
+
+            // Every skin supplies its own coloured pieces. The transparent pixels
+            // around those pieces merely let them move over the background; they do
+            // not mean a colourless, shared bird.
+            var body = LoadOptionalSprite(rigResourcePrefix + "-body-v1");
+            var farWing = LoadOptionalSprite(rigResourcePrefix + "-far-wing-v1");
+            var upperWing = LoadOptionalSprite(rigResourcePrefix + "-upper-wing-v1");
+            var lowerWing = LoadOptionalSprite(rigResourcePrefix + "-lower-wing-v1");
+            var featherFan = LoadOptionalSprite(rigResourcePrefix + "-feather-fan-v1");
+            var tail = LoadOptionalSprite(rigResourcePrefix + "-tail-v1");
             var complete = body != null && farWing != null && upperWing != null && lowerWing != null && featherFan != null && tail != null;
             if (!complete) return false;
 
@@ -3579,10 +3626,10 @@ namespace SkyPulse.Mobile
 
         private static bool IsAetherwingSkin(Skin skin)
         {
-            // Only the finished Glacier skin may use the future layered rig. The
-            // six-frame Aetherwing Test is deliberately kept on its own stepped
-            // animation path while its hand-drawn motion is being evaluated.
-            return skin != null && skin.Id == "glacier";
+            // A skin opts into continuous rig animation only when it has named its
+            // own authored layers. No bird ever borrows a different bird's colour,
+            // feathers, crystal parts, or silhouette.
+            return skin != null && !string.IsNullOrEmpty(skin.RigResourcePrefix);
         }
 
         private Color PremiumBirdTint()
@@ -3620,6 +3667,7 @@ namespace SkyPulse.Mobile
         private void UpdateAetherwingRigMotion(float riseWeight, float downstrokeWeight)
         {
             if (!aetherwingRigReady) return;
+            var motion = equippedSkin?.RigMotion ?? AetherwingRigMotion;
 
             // The small stagger between pieces is what makes the feathered armour
             // feel connected rather than like one stiff card rotating as a whole.
@@ -3627,15 +3675,15 @@ namespace SkyPulse.Mobile
             // the visual target, and these hinges can be tuned after the first
             // in-game preview without redrawing any artwork.
             if (aetherwingFarWingJoint != null)
-                aetherwingFarWingJoint.localRotation = Quaternion.Euler(0f, 0f, -20f * riseWeight + 13f * downstrokeWeight);
+                aetherwingFarWingJoint.localRotation = Quaternion.Euler(0f, 0f, motion.FarWingLift * riseWeight + motion.FarWingDownstroke * downstrokeWeight);
             if (aetherwingUpperWingJoint != null)
-                aetherwingUpperWingJoint.localRotation = Quaternion.Euler(0f, 0f, -27f * riseWeight + 18f * downstrokeWeight);
+                aetherwingUpperWingJoint.localRotation = Quaternion.Euler(0f, 0f, motion.UpperWingLift * riseWeight + motion.UpperWingDownstroke * downstrokeWeight);
             if (aetherwingLowerWingJoint != null)
-                aetherwingLowerWingJoint.localRotation = Quaternion.Euler(0f, 0f, -15f * riseWeight + 12f * downstrokeWeight);
+                aetherwingLowerWingJoint.localRotation = Quaternion.Euler(0f, 0f, motion.LowerWingLift * riseWeight + motion.LowerWingDownstroke * downstrokeWeight);
             if (aetherwingFeatherFanJoint != null)
-                aetherwingFeatherFanJoint.localRotation = Quaternion.Euler(0f, 0f, -9f * riseWeight + 16f * downstrokeWeight);
+                aetherwingFeatherFanJoint.localRotation = Quaternion.Euler(0f, 0f, motion.FeatherFanLift * riseWeight + motion.FeatherFanDownstroke * downstrokeWeight);
             if (aetherwingTailJoint != null)
-                aetherwingTailJoint.localRotation = Quaternion.Euler(0f, 0f, 4f * riseWeight - 3f * downstrokeWeight);
+                aetherwingTailJoint.localRotation = Quaternion.Euler(0f, 0f, motion.TailLift * riseWeight + motion.TailDownstroke * downstrokeWeight);
 
             if (aetherwingBodyRenderer != null) aetherwingBodyRenderer.color = Color.white;
             if (aetherwingFarWingRenderer != null) aetherwingFarWingRenderer.color = Color.white;
@@ -3660,7 +3708,7 @@ namespace SkyPulse.Mobile
             var premiumRig = UsesAetherwing();
             var usesFlapFrameSequence = UsesFlapFrameSequence();
             var usesLayeredAetherwingRig = premiumRig && aetherwingRigReady;
-            if (usesFlapFrameSequence)
+            if (usesFlapFrameSequence && !usesLayeredAetherwingRig)
             {
                 // One authored drawing at a time: no crossfade means no ghosted
                 // double-body. The six supplied poses play in their intended order
