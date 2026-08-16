@@ -2803,7 +2803,7 @@ namespace SkyPulse.Mobile
             var insideOffset = direction * .048f;
             surface.Core.enabled = true;
             surface.CorePulse.enabled = true;
-            surface.CapGlow.enabled = true;
+            surface.CapGlow.enabled = false;
             surface.Core.sortingOrder = 6;
             surface.CorePulse.sortingOrder = 7;
             surface.CapGlow.sortingOrder = 8;
@@ -2815,7 +2815,7 @@ namespace SkyPulse.Mobile
             surface.CorePulse.transform.localPosition = new Vector3(0f, capY + direction * .68f, 0f);
             surface.CorePulse.transform.localScale = new Vector3(.38f, .82f, 1f);
 
-            surface.Energy.enabled = true;
+            surface.Energy.enabled = false;
             surface.Energy.sortingOrder = 9;
             var seamColor = style.Energy;
             seamColor.a = .72f;
@@ -2823,13 +2823,13 @@ namespace SkyPulse.Mobile
             surface.Energy.transform.localPosition = new Vector3(0f, capY + insideOffset, 0f);
             surface.Energy.transform.localScale = new Vector3(PipeWidth * .64f, .022f, 1f);
 
-            surface.Highlight.enabled = true;
+            surface.Highlight.enabled = false;
             surface.Highlight.sortingOrder = 10;
             surface.Highlight.color = new Color(1f, 1f, 1f, .13f);
             surface.Highlight.transform.localPosition = new Vector3(0f, capY + insideOffset * .45f, 0f);
             surface.Highlight.transform.localScale = new Vector3(PipeWidth * .57f, .008f, 1f);
 
-            surface.Scan.enabled = true;
+            surface.Scan.enabled = false;
             surface.Scan.sortingOrder = 10;
             var scanColor = style.Energy;
             scanColor.a = .18f;
@@ -2862,7 +2862,7 @@ namespace SkyPulse.Mobile
             surface.RailRight.enabled = true;
             surface.Core.enabled = true;
             surface.CorePulse.enabled = true;
-            surface.CapGlow.enabled = true;
+            surface.CapGlow.enabled = false;
             surface.CapOuter.enabled = true;
             surface.CapAccent.enabled = true;
             surface.CapPanel.enabled = true;
