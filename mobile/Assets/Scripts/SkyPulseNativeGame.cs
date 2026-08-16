@@ -3349,6 +3349,7 @@ namespace SkyPulse.Mobile
         private void ApplyEquippedVisuals()
         {
             if (equippedSkin == null) equippedSkin = Skins[0];
+            if (equippedTrail == null) equippedTrail = GetTrailForSkin(equippedSkin);
             if (equippedWorld == null) equippedWorld = Worlds[0];
             if (equippedPipe == null) equippedPipe = PipeStyles[0];
 
