@@ -855,19 +855,19 @@ namespace SkyPulse.Mobile
             floorBase.transform.position = new Vector3(0f, GroundY - 1.1f, 0f);
             floorBase.transform.localScale = new Vector3(width, 2.24f, 1f);
 
-            floorSurface = CreateRenderer("Floor material", whiteSprite, new Color(.03f, .05f, .15f, .1f), -8);
+            floorSurface = CreateRenderer("Floor material", whiteSprite, new Color(.015f, .025f, .06f, .1f), -8);
             floorSurface.transform.position = new Vector3(0f, GroundY - 1.04f, 0f);
             floorSurface.transform.localScale = new Vector3(width, 1.90f, 1f);
 
-            floorLip = CreateRenderer("Floor solid edge", whiteSprite, new Color(.05f, .10f, .25f, .1f), -7);
+            floorLip = CreateRenderer("Floor solid edge", whiteSprite, new Color(.025f, .05f, .10f, .1f), -7);
             floorLip.transform.position = new Vector3(0f, GroundY - .08f, 0f);
             floorLip.transform.localScale = new Vector3(width, .12f, 1f);
 
-            floorGlow = CreateRenderer("Floor energy rail", whiteSprite, new Color(.27f, .86f, 1f, .38f), -6);
+            floorGlow = CreateRenderer("Floor energy rail", whiteSprite, new Color(.27f, .86f, 1f, .14f), -6);
             floorGlow.transform.position = new Vector3(0f, GroundY + .035f, 0f);
             floorGlow.transform.localScale = new Vector3(width, .026f, 1f);
 
-            var floorHighlight = CreateRenderer("Floor edge highlight", whiteSprite, new Color(.78f, .94f, 1f, .18f), -5);
+            var floorHighlight = CreateRenderer("Floor edge highlight", whiteSprite, new Color(.78f, .94f, 1f, .08f), -5);
             floorHighlight.transform.position = new Vector3(0f, GroundY + .105f, 0f);
             floorHighlight.transform.localScale = new Vector3(width, .010f, 1f);
         }
