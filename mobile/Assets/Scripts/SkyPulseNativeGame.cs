@@ -3087,14 +3087,6 @@ namespace SkyPulse.Mobile
                         CreateCosmeticCard(index, world.Name, status, world.Accent, LoadSprite(world.BackgroundPath), () => EquipWorld(world));
                     }
                     SetContentRows(Worlds.Length);
-                    break;
-                    for (var index = 0; index < Trails.Length; index += 1)
-                    {
-                        var trail = Trails[index];
-                        CreateCosmeticCard(index, trail.Name, equippedTrail.Id == trail.Id ? "EQUIPPED" : "TAP TO EQUIP", trail.Core, null, () => EquipTrail(trail), trail.Core, trail.Glow);
-                    }
-                    SetContentRows(Trails.Length);
-                    break;
                 case CosmeticCategory.Pipes:
                     customizeTitle.text = "PIPE COLLECTION";
                     for (var index = 0; index < PipeStyles.Length; index += 1)
@@ -3238,7 +3230,31 @@ namespace SkyPulse.Mobile
             SaveProgress();
             RebuildCustomizeGrid();
         }
+        private TrailStyle GetTrailForSkin(Skin skin)
+{
+    if (skin == null)
+        return Trails[0];
 
+    var bestMatch = Trails[0];
+    var bestDistance = float.MaxValue;
+
+    foreach (var trail in Trails)
+    {
+        var dr = trail.Core.r - skin.Trail.r;
+        var dg = trail.Core.g - skin.Trail.g;
+        var db = trail.Core.b - skin.Trail.b;
+
+        var distance = dr * dr + dg * dg + db * db;
+
+        if (distance < bestDistance)
+        {
+            bestDistance = distance;
+            bestMatch = trail;
+        }
+    }
+
+    return bestMatch;
+}
         private bool IsSkinOwned(Skin skin)
         {
             return skin.Price <= 0 || ownedSkinIds.Contains(skin.Id);
