@@ -2879,21 +2879,18 @@ namespace SkyPulse.Mobile
 
             var direction = topPipe ? 1f : -1f;
             var bodyHeight = Mathf.Max(.12f, height - .08f);
-            // Themes colour the energy language, not the entire plumbing assembly.
-            // Keeping the metal graphite makes every gate feel physically built,
-            // including warm Solar and Rose variants.
-            var metal = Color.Lerp(Hex("#0a1222"), style.Panel, .15f);
-            var metalDark = Darken(metal, .58f);
-            var collarMetal = Color.Lerp(metal, style.Accent, .16f);
+            var metal = Color.Lerp(Hex("#0a1222"), style.Panel, .08f);
+            var metalDark = Darken(metal, .72f);
+            var collarMetal = Color.Lerp(metal, style.Accent, .24f);
             SetBlock(surface.Outer, Vector2.up * centreY, new Vector2(PipeWidth, height));
             SetBlock(surface.Panel, Vector2.up * centreY, new Vector2(PipeWidth - .12f, bodyHeight));
             SetBlock(surface.Shade, new Vector2(-PipeWidth * .32f, centreY), new Vector2(PipeWidth * .18f, Mathf.Max(.12f, height - .14f)));
             SetBlock(surface.Artwork, new Vector2(PipeWidth * .07f, centreY), new Vector2(PipeWidth * .19f, Mathf.Max(.12f, height - .18f)));
             SetBlock(surface.RailLeft, new Vector2(-PipeWidth * .36f, centreY), new Vector2(.028f, Mathf.Max(.12f, height - .18f)));
             SetBlock(surface.RailRight, new Vector2(PipeWidth * .36f, centreY), new Vector2(.020f, Mathf.Max(.12f, height - .22f)));
-            surface.Panel.color = metal;
-            surface.Outer.color = metalDark;
-            surface.Shade.color = new Color(0f, 0f, 0f, .34f);
+           surface.Panel.color = new Color(metal.r, metal.g, metal.b, 1f);
+           surface.Outer.color = new Color(metalDark.r, metalDark.g, metalDark.b, 1f);
+           surface.Shade.color = new Color(0f, 0f, 0f, .18f);
             var reflection = Color.Lerp(metal, Color.white, .23f);
             reflection.a = .30f;
             surface.Artwork.color = reflection;
