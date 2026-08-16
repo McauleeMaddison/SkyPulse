@@ -3087,6 +3087,7 @@ namespace SkyPulse.Mobile
                         CreateCosmeticCard(index, world.Name, status, world.Accent, LoadSprite(world.BackgroundPath), () => EquipWorld(world));
                     }
                     SetContentRows(Worlds.Length);
+                    break;
                 case CosmeticCategory.Pipes:
                     customizeTitle.text = "PIPE COLLECTION";
                     for (var index = 0; index < PipeStyles.Length; index += 1)
