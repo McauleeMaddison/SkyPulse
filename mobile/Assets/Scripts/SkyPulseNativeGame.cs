@@ -2837,7 +2837,7 @@ namespace SkyPulse.Mobile
             surface.Scan.transform.localPosition = new Vector3(0f, capY + direction * .36f, 0f);
             surface.Scan.transform.localScale = new Vector3(PipeWidth * .70f, .008f, 1f);
 
-            surface.Beacon.enabled = true;
+            surface.Beacon.enabled = false;
             surface.Beacon.sortingOrder = 12;
             var beaconColor = style.Energy;
             beaconColor.a = .28f;
@@ -2857,16 +2857,16 @@ namespace SkyPulse.Mobile
             surface.Outer.enabled = true;
             surface.Panel.enabled = true;
             surface.Shade.enabled = true;
-            surface.Artwork.enabled = true;
+            surface.Artwork.enabled = false;
             surface.RailLeft.enabled = true;
             surface.RailRight.enabled = true;
             surface.Core.enabled = true;
             surface.CorePulse.enabled = true;
             surface.CapGlow.enabled = false;
             surface.CapOuter.enabled = true;
-            surface.CapAccent.enabled = true;
+            surface.CapAccent.enabled = false;
             surface.CapPanel.enabled = true;
-            surface.CapEnergy.enabled = true;
+            surface.CapEnergy.enabled = false;
 
             var direction = topPipe ? 1f : -1f;
             var bodyHeight = Mathf.Max(.12f, height - .08f);
