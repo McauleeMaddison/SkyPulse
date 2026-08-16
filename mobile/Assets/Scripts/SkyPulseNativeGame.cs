@@ -49,7 +49,7 @@ namespace SkyPulse.Mobile
         // keeps the expressive upgrades and power-ups that make collection rewarding.
         // Daily shares Classic's fixed rules, plus a seeded obstacle sequence.
         private enum FlightMode { Classic, Adventure, Daily }
-        private enum CosmeticCategory { Birds, Worlds, Trails, Pipes, Upgrades }
+        private enum CosmeticCategory { Birds, Worlds, Pipes, Upgrades }
         private enum PowerUpKind { SlowField, PulseShield, CrystalCache, SkySurge, ScorePrism, MagnetHalo, PhaseShift }
         private enum PendingPurchase { None, Skin, Upgrade }
 
@@ -1329,11 +1329,11 @@ namespace SkyPulse.Mobile
             customizeTitle = CreateText(root.transform, "CUSTOMIZE", new Vector2(0f, 690f), new Vector2(720f, 80f), 48, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             CreateText(root.transform, "CHOOSE YOUR FLIGHT STYLE", new Vector2(0f, 638f), new Vector2(720f, 38f), 18, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
 
-            var labels = new[] { "BIRDS", "WORLDS", "TRAILS", "PIPES", "TECH" };
-            var categories = new[] { CosmeticCategory.Birds, CosmeticCategory.Worlds, CosmeticCategory.Trails, CosmeticCategory.Pipes, CosmeticCategory.Upgrades };
+            var labels = new[] { "BIRDS", "WORLDS", "PIPES", "TECH" };
+            var categories = new[] { CosmeticCategory.Birds, CosmeticCategory.Worlds, CosmeticCategory.Pipes, CosmeticCategory.Upgrades };
             for (var index = 0; index < labels.Length; index += 1)
             {
-                var tab = CreateNeonButton(root.transform, labels[index], new Vector2(-360f + index * 180f, 560f), new Vector2(166f, 60f), index == 0 ? Hex("#45eaff") : Hex("#8f64ff"));
+                var tab = CreateNeonButton(root.transform, labels[index], new Vector2(-360 + index * 180f, 560f), new Vector2(166f, 60f), index == 0 ? Hex("#45eaff") : Hex("#8f64ff"));
                 var category = categories[index];
                 tab.onClick.AddListener(() => SetCosmeticCategory(category));
             }
@@ -3088,8 +3088,6 @@ namespace SkyPulse.Mobile
                     }
                     SetContentRows(Worlds.Length);
                     break;
-                case CosmeticCategory.Trails:
-                    customizeTitle.text = "TRAIL COLLECTION";
                     for (var index = 0; index < Trails.Length; index += 1)
                     {
                         var trail = Trails[index];
@@ -3234,6 +3232,8 @@ namespace SkyPulse.Mobile
         private void EquipSkin(Skin skin)
         {
             equippedSkin = skin;
+            equippedTrail = GetTrailForSkin(skin);
+
             ApplyEquippedVisuals();
             SaveProgress();
             RebuildCustomizeGrid();
@@ -3311,6 +3311,7 @@ namespace SkyPulse.Mobile
             {
                 ownedSkinIds.Add(pendingSkin.Id);
                 equippedSkin = pendingSkin;
+                equippedTrail = GetTrailForSkin(pendingSkin);
             }
             else
             {
@@ -3331,19 +3332,7 @@ namespace SkyPulse.Mobile
         private void EquipWorld(WorldTheme world)
         {
             equippedWorld = world;
-            // Worlds are the replacement for a difficulty selector: selecting one
-            // applies its authored backdrop, obstacle treatment and matching trail.
-            // Players can still override either cosmetic afterwards in its collection.
             equippedPipe = FindById(PipeStyles, world.PresetPipeId) ?? equippedPipe ?? PipeStyles[0];
-            equippedTrail = FindById(Trails, world.PresetTrailId) ?? equippedTrail ?? Trails[0];
-            ApplyEquippedVisuals();
-            SaveProgress();
-            RebuildCustomizeGrid();
-        }
-
-        private void EquipTrail(TrailStyle trail)
-        {
-            equippedTrail = trail;
             ApplyEquippedVisuals();
             SaveProgress();
             RebuildCustomizeGrid();
@@ -3361,7 +3350,6 @@ namespace SkyPulse.Mobile
         {
             if (equippedSkin == null) equippedSkin = Skins[0];
             if (equippedWorld == null) equippedWorld = Worlds[0];
-            if (equippedTrail == null) equippedTrail = Trails[0];
             if (equippedPipe == null) equippedPipe = PipeStyles[0];
 
             backgroundRenderer.sprite = WorldBackdrop(equippedWorld);
@@ -4012,7 +4000,7 @@ namespace SkyPulse.Mobile
             hapticsEnabled = PlayerPrefs.GetInt("skypulse.native.haptics", 1) == 1;
             equippedSkin = FindById(Skins, PlayerPrefs.GetString("skypulse.native.skin", "aetherwing_test")) ?? Skins[0];
             equippedWorld = FindById(Worlds, PlayerPrefs.GetString("skypulse.native.world", "neon_city")) ?? Worlds[0];
-            equippedTrail = FindById(Trails, PlayerPrefs.GetString("skypulse.native.trail", "pulse")) ?? Trails[0];
+            equippedTrail = GetTrailForSkin(equippedSkin);
             equippedPipe = FindById(PipeStyles, PlayerPrefs.GetString("skypulse.native.pipe", "ion")) ?? PipeStyles[0];
             var savedOwnedSkins = PlayerPrefs.GetString("skypulse.native.owned-skins", string.Empty);
             if (!string.IsNullOrEmpty(savedOwnedSkins))
@@ -4029,16 +4017,13 @@ namespace SkyPulse.Mobile
                 ownedSkinIds.Add(Skins[0].Id);
                 if (equippedSkin != null) ownedSkinIds.Add(equippedSkin.Id);
             }
-            // This is a one-time playtest migration: the supplied six-frame
-            // Aetherwing is deliberately the first bird players see while its flight
-            // timing is evaluated. Players can immediately choose any owned bird
-            // afterwards, and we never force the selection again.
-            if (PlayerPrefs.GetInt("skypulse.native.aetherwing-test-default-v1", 0) == 0)
-            {
-                equippedSkin = Skins[0];
-                ownedSkinIds.Add(equippedSkin.Id);
-                PlayerPrefs.SetInt("skypulse.native.aetherwing-test-default-v1", 1);
-            }
+           if (PlayerPrefs.GetInt("skypulse.native.aetherwing-test-default-v1", 0) == 0)
+{
+    equippedSkin = Skins[0];
+    equippedTrail = GetTrailForSkin(equippedSkin);
+    ownedSkinIds.Add(equippedSkin.Id);
+    PlayerPrefs.SetInt("skypulse.native.aetherwing-test-default-v1", 1);
+}
             var savedOwnedUpgrades = PlayerPrefs.GetString("skypulse.native.owned-upgrades", string.Empty);
             if (!string.IsNullOrEmpty(savedOwnedUpgrades))
             {
@@ -4064,7 +4049,6 @@ namespace SkyPulse.Mobile
             PlayerPrefs.SetInt("skypulse.native.haptics", hapticsEnabled ? 1 : 0);
             PlayerPrefs.SetString("skypulse.native.skin", equippedSkin.Id);
             PlayerPrefs.SetString("skypulse.native.world", equippedWorld.Id);
-            PlayerPrefs.SetString("skypulse.native.trail", equippedTrail.Id);
             PlayerPrefs.SetString("skypulse.native.pipe", equippedPipe.Id);
             PlayerPrefs.SetString("skypulse.native.owned-skins", string.Join(",", ownedSkinIds));
             PlayerPrefs.SetString("skypulse.native.owned-upgrades", string.Join(",", ownedUpgradeIds));
