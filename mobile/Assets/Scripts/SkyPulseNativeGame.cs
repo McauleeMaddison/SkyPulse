@@ -335,10 +335,10 @@ namespace SkyPulse.Mobile
         private const float CameraHeight = 18f;
         private const float GroundY = -6.82f;
         private const float BirdX = -2.45f;
-        private const float BirdCollisionRadius = .27f;
+        private const float BirdCollisionRadius = .24f;
         // The bird is the primary focal point, so it must remain readable against a
         // busy world at a real phone scale—not shrink into a sparkle at the centre.
-        private const float BirdDisplayWidth = 2.82f;
+        private const float BirdDisplayWidth = 2.54f;
         // The body is deliberately broad. The collar is slightly wider, just like a
         // real plumbing coupling, and this exact outer dimension drives collision.
         private const float PipeWidth = 1.72f;
@@ -349,7 +349,7 @@ namespace SkyPulse.Mobile
         // spawning a first obstacle against a screen edge or creating tiny pipes.
         private const float GapCenterMinimum = -2.55f;
         private const float GapCenterMaximum = 3.15f;
-        private const float PipeSpacing = 6.86f;
+        private const float PipeSpacing = 7.55f;
         private const int PipeCount = 4;
         // Crystals are deliberate pickups, not a payment for simply surviving each
         // gate. One visible pellet keeps a good run rewarding without making the
@@ -855,11 +855,11 @@ namespace SkyPulse.Mobile
             floorBase.transform.position = new Vector3(0f, GroundY - 1.1f, 0f);
             floorBase.transform.localScale = new Vector3(width, 2.24f, 1f);
 
-            floorSurface = CreateRenderer("Floor material", whiteSprite, new Color(.03f, .05f, .15f, .62f), -8);
+            floorSurface = CreateRenderer("Floor material", whiteSprite, new Color(.03f, .05f, .15f, .1f), -8);
             floorSurface.transform.position = new Vector3(0f, GroundY - 1.04f, 0f);
             floorSurface.transform.localScale = new Vector3(width, 1.90f, 1f);
 
-            floorLip = CreateRenderer("Floor solid edge", whiteSprite, new Color(.05f, .10f, .25f, .85f), -7);
+            floorLip = CreateRenderer("Floor solid edge", whiteSprite, new Color(.05f, .10f, .25f, .1f), -7);
             floorLip.transform.position = new Vector3(0f, GroundY - .08f, 0f);
             floorLip.transform.localScale = new Vector3(width, .12f, 1f);
 
@@ -2797,14 +2797,8 @@ namespace SkyPulse.Mobile
         private void LayoutPipeSurface(PipeSurface surface, float centreY, float height, float capY, bool topPipe)
         {
             var style = equippedPipe;
-            // A broad, layered shell is the gate itself. It never depends on a source
-            // image's canvas bounds, so every pipe theme keeps the same clean plumbing
-            // proportions whether the obstacle is short or reaches the top of screen.
             LayoutPlumbingGate(surface, centreY, height, capY, topPipe, style);
 
-            // The cap is a small engineered assembly: its shell, accent, recessed
-            // panel and energy slit all end at the collision edge. Only glow fades
-            // into the opening, never solid art, so the passable space is obvious.
             var direction = topPipe ? 1f : -1f;
             var insideOffset = direction * .048f;
             surface.Core.enabled = true;
@@ -2880,7 +2874,7 @@ namespace SkyPulse.Mobile
             var metalDark = Darken(metal, .72f);
             var collarMetal = Color.Lerp(metal, style.Accent, .24f);
             SetBlock(surface.Outer, Vector2.up * centreY, new Vector2(PipeWidth, height));
-            SetBlock(surface.Panel, Vector2.up * centreY, new Vector2(PipeWidth - .12f, bodyHeight));
+            SetBlock(surface.Panel, Vector2.up * centreY, new Vector2(PipeWidth - .06f, bodyHeight));
             SetBlock(surface.Shade, new Vector2(-PipeWidth * .32f, centreY), new Vector2(PipeWidth * .18f, Mathf.Max(.12f, height - .14f)));
             SetBlock(surface.Artwork, new Vector2(PipeWidth * .07f, centreY), new Vector2(PipeWidth * .19f, Mathf.Max(.12f, height - .18f)));
             SetBlock(surface.RailLeft, new Vector2(-PipeWidth * .36f, centreY), new Vector2(.028f, Mathf.Max(.12f, height - .18f)));
@@ -2899,12 +2893,11 @@ namespace SkyPulse.Mobile
             surface.RailRight.color = rightRail;
 
             // The cap's inner edge lands exactly on capY: every solid layer sits
-            // inside the obstacle. Its wider collar is also the collision width, so
-            // there is no hidden contact beyond the visual silhouette.
-            var capCentre = capY + direction * (PipeCapHeight * .5f);
-            SetBlock(surface.CapOuter, Vector2.up * capCentre, new Vector2(PipeCollisionWidth, PipeCapHeight));
-            SetBlock(surface.CapAccent, Vector2.up * capCentre, new Vector2(PipeWidth + .14f, .32f));
-            SetBlock(surface.CapPanel, Vector2.up * capCentre, new Vector2(PipeWidth - .04f, .20f));
+            var capCentre = capY + direction * .20f;
+
+            SetBlock(surface.CapOuter, Vector2.up * capCentre, new Vector2(PipeWidth + .18f, .42f));
+            SetBlock(surface.CapAccent, Vector2.up * capCentre, new Vector2(PipeWidth + .10f, .34f));
+            SetBlock(surface.CapPanel, Vector2.up * capCentre, new Vector2(PipeWidth - .08f, .28f));
             SetBlock(surface.CapEnergy, Vector2.up * (capY + direction * .030f), new Vector2(PipeWidth * .64f, .018f));
             surface.CapOuter.color = Darken(metalDark, .18f);
             surface.CapAccent.color = collarMetal;
@@ -2926,7 +2919,7 @@ namespace SkyPulse.Mobile
             }
 
             var minimumGap = Mathf.Min(startingGap, tuning.MinimumGap);
-            return Mathf.Max(minimumGap, startingGap - Mathf.Min(score, 24) * tuning.GapShrinkPerGate);
+            return Mathf.Max(minimumGap, startingGap - Mathf.Min(score, 24) * tuning.GapShrinkPerGate) * 1.12f;
         }
 
         private float RouteRange(float minimum, float maximum)
