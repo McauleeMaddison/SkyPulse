@@ -1072,14 +1072,11 @@ namespace SkyPulse.Mobile
 
         private PipeSurface CreatePipeSurface(Transform parent, string label)
         {
-            // Do not stretch a painted gate from its cap to the end of the world. It
-            // turns the pipe into a thin stick with a huge top on tall gates. Build
-            // the same layered, cylindrical plumbing gate for every theme instead.
             return new PipeSurface
             {
                 Artwork = CreateRenderer($"{label} cylindrical reflection", pipeBodySprite, new Color(1f, 1f, 1f, .25f), 5, parent),
-                Outer = CreateRenderer($"{label} outer", pipeBodySprite, Hex("#030613"), 2, parent),
-                Panel = CreateRenderer($"{label} metal body", pipeBodySprite, Hex("#0b3076"), 3, parent),
+                Outer = CreateRenderer($"{label} outer", roundedPanelSprite, Hex("#030613"), 2, parent),
+                Panel = CreateRenderer($"{label} metal body", roundedPanelSprite, Hex("#0b3076"), 3, parent),
                 Shade = CreateRenderer($"{label} side shade", pipeBodySprite, new Color(0f, 0f, 0f, .28f), 4, parent),
                 RailLeft = CreateRenderer($"{label} left neon rail", whiteSprite, new Color(.27f, .92f, 1f, .25f), 5, parent),
                 RailRight = CreateRenderer($"{label} right neon rail", whiteSprite, new Color(.27f, .92f, 1f, .25f), 5, parent),
