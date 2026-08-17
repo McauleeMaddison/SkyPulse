@@ -3266,30 +3266,30 @@ namespace SkyPulse.Mobile
             RebuildCustomizeGrid();
         }
         private TrailStyle GetTrailForSkin(Skin skin)
-{
-    if (skin == null)
-        return Trails[0];
-
-    var bestMatch = Trails[0];
-    var bestDistance = float.MaxValue;
-
-    foreach (var trail in Trails)
-    {
-        var dr = trail.Core.r - skin.Trail.r;
-        var dg = trail.Core.g - skin.Trail.g;
-        var db = trail.Core.b - skin.Trail.b;
-
-        var distance = dr * dr + dg * dg + db * db;
-
-        if (distance < bestDistance)
         {
-            bestDistance = distance;
-            bestMatch = trail;
-        }
-    }
+            if (skin == null)
+                return Trails[0];
 
-    return bestMatch;
-}
+            var bestMatch = Trails[0];
+            var bestDistance = float.MaxValue;
+
+            foreach (var trail in Trails)
+            {
+                var dr = trail.Core.r - skin.Trail.r;
+                var dg = trail.Core.g - skin.Trail.g;
+                var db = trail.Core.b - skin.Trail.b;
+
+                var distance = dr * dr + dg * dg + db * db;
+
+                if (distance < bestDistance)
+                {
+                    bestDistance = distance;
+                    bestMatch = trail;
+                }
+            }
+
+            return bestMatch;
+        }
         private bool IsSkinOwned(Skin skin)
         {
             return skin.Price <= 0 || ownedSkinIds.Contains(skin.Id);
@@ -4069,13 +4069,13 @@ namespace SkyPulse.Mobile
                 ownedSkinIds.Add(Skins[0].Id);
                 if (equippedSkin != null) ownedSkinIds.Add(equippedSkin.Id);
             }
-           if (PlayerPrefs.GetInt("skypulse.native.aetherwing-test-default-v1", 0) == 0)
-{
-    equippedSkin = Skins[0];
-    equippedTrail = GetTrailForSkin(equippedSkin);
-    ownedSkinIds.Add(equippedSkin.Id);
-    PlayerPrefs.SetInt("skypulse.native.aetherwing-test-default-v1", 1);
-}
+            if (PlayerPrefs.GetInt("skypulse.native.aetherwing-test-default-v1", 0) == 0)
+            {
+                equippedSkin = Skins[0];
+                equippedTrail = GetTrailForSkin(equippedSkin);
+                ownedSkinIds.Add(equippedSkin.Id);
+                PlayerPrefs.SetInt("skypulse.native.aetherwing-test-default-v1", 1);
+            }
             var savedOwnedUpgrades = PlayerPrefs.GetString("skypulse.native.owned-upgrades", string.Empty);
             if (!string.IsNullOrEmpty(savedOwnedUpgrades))
             {
