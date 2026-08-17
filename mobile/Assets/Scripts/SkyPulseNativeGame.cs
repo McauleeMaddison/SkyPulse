@@ -532,6 +532,10 @@ namespace SkyPulse.Mobile
         private Sprite ringSprite;
         private Sprite roundedPanelSprite;
         private Sprite pipeBodySprite;
+        private Sprite pipeCapSprite;
+        private Sprite pipeGlowSprite;
+        private bool hasAuthoredPipeBody;
+        private bool hasAuthoredPipeCap;
         private Sprite emergencyBirdSprite;
         private Sprite idleBirdSprite;
         private Sprite flapBirdSprite;
@@ -794,7 +798,12 @@ namespace SkyPulse.Mobile
             softCircleSprite = CreateRadialSprite("Soft neon orb", 96, 0f, .5f);
             ringSprite = CreateRadialSprite("Neon ring", 96, .31f, .5f);
             roundedPanelSprite = CreateRoundedRectSprite("Premium rounded panel", 128, 28);
-            pipeBodySprite = CreateCylindricalPipeSprite("Cylindrical pipe metal", 128, 128);
+            pipeBodySprite = LoadOptionalSprite("PipeBody");
+            hasAuthoredPipeBody = pipeBodySprite != null;
+            if (!hasAuthoredPipeBody) pipeBodySprite = CreateCylindricalPipeSprite("Cylindrical pipe metal", 128, 128);
+            pipeCapSprite = LoadOptionalSprite("PipeCap");
+            hasAuthoredPipeCap = pipeCapSprite != null;
+            pipeGlowSprite = LoadOptionalSprite("PipeGlow");
 
             backgroundRenderer = CreateRenderer("Cinematic world", WorldBackdrop(equippedWorld), Color.white, -40);
             backgroundRenderer.transform.position = new Vector3(0f, .12f, 0f);
@@ -1089,7 +1098,7 @@ namespace SkyPulse.Mobile
                 CapGlow = CreateRenderer($"{label} collar neon bloom", softCircleSprite, new Color(.27f, .92f, 1f, 0f), 8, parent),
                 CapOuter = CreateRenderer($"{label} plumbing collar shell", roundedPanelSprite, Hex("#030613"), 7, parent),
                 CapAccent = CreateRenderer($"{label} plumbing collar accent", roundedPanelSprite, Hex("#45eaff"), 8, parent),
-                CapPanel = CreateRenderer($"{label} plumbing collar panel", roundedPanelSprite, Hex("#0b3076"), 9, parent),
+                CapPanel = CreateRenderer($"{label} authored plumbing collar", pipeCapSprite ?? roundedPanelSprite, Color.white, 9, parent),
                 CapEnergy = CreateRenderer($"{label} collar energy seam", whiteSprite, Hex("#45eaff"), 11, parent),
             };
         }
@@ -2716,11 +2725,11 @@ namespace SkyPulse.Mobile
             var metal = Color.Lerp(Hex("#0a1222"), equippedPipe.Panel, .15f);
             var reflectionColour = Color.Lerp(metal, Color.white, .20f + pulse * .06f);
             reflectionColour.a = Mathf.Lerp(.22f, .38f, pulse);
-            surface.Artwork.color = reflectionColour;
+            if (!hasAuthoredPipeBody) surface.Artwork.color = reflectionColour;
 
             var coreColour = equippedPipe.Energy;
             coreColour.a = Mathf.Lerp(.08f, .18f, pulse);
-            surface.Core.color = coreColour;
+            if (!hasAuthoredPipeBody) surface.Core.color = coreColour;
             var corePulseColour = Color.Lerp(equippedPipe.Energy, Color.white, .42f);
             corePulseColour.a = Mathf.Lerp(.12f, .42f, pulse);
             surface.CorePulse.color = corePulseColour;
@@ -2852,59 +2861,97 @@ namespace SkyPulse.Mobile
             surface.CapGlow.transform.localScale = new Vector3(PipeWidth * 1.06f, .46f, 1f);
         }
 
-        private static void LayoutPlumbingGate(PipeSurface surface, float centreY, float height, float capY, bool topPipe, PipeStyle style)
+        private void LayoutPlumbingGate(PipeSurface surface, float centreY, float height, float capY, bool topPipe, PipeStyle style)
         {
-            surface.Outer.enabled = true;
-            surface.Panel.enabled = true;
-            surface.Shade.enabled = true;
-            surface.Artwork.enabled = false;
-            surface.RailLeft.enabled = true;
-            surface.RailRight.enabled = true;
-            surface.Core.enabled = true;
-            surface.CorePulse.enabled = true;
-            surface.CapGlow.enabled = false;
-            surface.CapOuter.enabled = true;
-            surface.CapAccent.enabled = false;
-            surface.CapPanel.enabled = true;
-            surface.CapEnergy.enabled = false;
-
             var direction = topPipe ? 1f : -1f;
             var bodyHeight = Mathf.Max(.12f, height - .08f);
             var metal = Color.Lerp(Hex("#0a1222"), style.Panel, .08f);
             var metalDark = Darken(metal, .72f);
             var collarMetal = Color.Lerp(metal, style.Accent, .24f);
-            SetBlock(surface.Outer, Vector2.up * centreY, new Vector2(PipeWidth, height));
-            SetBlock(surface.Panel, Vector2.up * centreY, new Vector2(PipeWidth - .06f, bodyHeight));
-            SetBlock(surface.Shade, new Vector2(-PipeWidth * .32f, centreY), new Vector2(PipeWidth * .18f, Mathf.Max(.12f, height - .14f)));
-            SetBlock(surface.Artwork, new Vector2(PipeWidth * .07f, centreY), new Vector2(PipeWidth * .19f, Mathf.Max(.12f, height - .18f)));
-            SetBlock(surface.RailLeft, new Vector2(-PipeWidth * .36f, centreY), new Vector2(.028f, Mathf.Max(.12f, height - .18f)));
-            SetBlock(surface.RailRight, new Vector2(PipeWidth * .36f, centreY), new Vector2(.020f, Mathf.Max(.12f, height - .22f)));
-           surface.Panel.color = new Color(metal.r, metal.g, metal.b, 1f);
-           surface.Outer.color = new Color(metalDark.r, metalDark.g, metalDark.b, 1f);
-           surface.Shade.color = new Color(0f, 0f, 0f, .18f);
-            var reflection = Color.Lerp(metal, Color.white, .23f);
-            reflection.a = .30f;
-            surface.Artwork.color = reflection;
-            var leftRail = style.Energy;
-            leftRail.a = .28f;
-            surface.RailLeft.color = leftRail;
-            var rightRail = Color.Lerp(style.Energy, Color.white, .28f);
-            rightRail.a = .15f;
-            surface.RailRight.color = rightRail;
 
-            // The cap's inner edge lands exactly on capY: every solid layer sits
-            var capCentre = capY + direction * .20f;
+            // Prefer the authored mechanical pipe supplied for SkyPulse. The
+            // procedural layers remain a safe fallback if an asset is omitted from
+            // a build, while collision continues to use PipeCollisionWidth.
+            surface.Artwork.enabled = hasAuthoredPipeBody;
+            surface.Outer.enabled = !hasAuthoredPipeBody;
+            surface.Panel.enabled = !hasAuthoredPipeBody;
+            surface.Shade.enabled = !hasAuthoredPipeBody;
+            surface.RailLeft.enabled = !hasAuthoredPipeBody;
+            surface.RailRight.enabled = !hasAuthoredPipeBody;
+            surface.Core.enabled = !hasAuthoredPipeBody;
+            surface.CorePulse.enabled = !hasAuthoredPipeBody;
 
-            SetBlock(surface.CapOuter, Vector2.up * capCentre, new Vector2(PipeWidth + .18f, .42f));
-            SetBlock(surface.CapAccent, Vector2.up * capCentre, new Vector2(PipeWidth + .10f, .34f));
-            SetBlock(surface.CapPanel, Vector2.up * capCentre, new Vector2(PipeWidth - .08f, .28f));
-            SetBlock(surface.CapEnergy, Vector2.up * (capY + direction * .030f), new Vector2(PipeWidth * .64f, .018f));
-            surface.CapOuter.color = Darken(metalDark, .18f);
-            surface.CapAccent.color = collarMetal;
-            surface.CapPanel.color = Darken(metal, .40f);
-            var capEnergy = style.Energy;
-            capEnergy.a = .82f;
-            surface.CapEnergy.color = capEnergy;
+            if (hasAuthoredPipeBody)
+            {
+                surface.Artwork.sprite = pipeBodySprite;
+                surface.Artwork.color = Color.white;
+                surface.Artwork.sortingOrder = 5;
+                SetSpriteBlock(surface.Artwork, new Vector2(0f, centreY), new Vector2(PipeWidth, height));
+                surface.Artwork.transform.localRotation = topPipe
+                    ? Quaternion.Euler(0f, 0f, 180f)
+                    : Quaternion.identity;
+            }
+            else
+            {
+                SetBlock(surface.Outer, Vector2.up * centreY, new Vector2(PipeWidth, height));
+                SetBlock(surface.Panel, Vector2.up * centreY, new Vector2(PipeWidth - .06f, bodyHeight));
+                SetBlock(surface.Shade, new Vector2(-PipeWidth * .32f, centreY), new Vector2(PipeWidth * .18f, Mathf.Max(.12f, height - .14f)));
+                SetBlock(surface.Artwork, new Vector2(PipeWidth * .07f, centreY), new Vector2(PipeWidth * .19f, Mathf.Max(.12f, height - .18f)));
+                SetBlock(surface.RailLeft, new Vector2(-PipeWidth * .36f, centreY), new Vector2(.028f, Mathf.Max(.12f, height - .18f)));
+                SetBlock(surface.RailRight, new Vector2(PipeWidth * .36f, centreY), new Vector2(.020f, Mathf.Max(.12f, height - .22f)));
+                surface.Panel.color = new Color(metal.r, metal.g, metal.b, 1f);
+                surface.Outer.color = new Color(metalDark.r, metalDark.g, metalDark.b, 1f);
+                surface.Shade.color = new Color(0f, 0f, 0f, .18f);
+                var reflection = Color.Lerp(metal, Color.white, .23f);
+                reflection.a = .30f;
+                surface.Artwork.color = reflection;
+                var leftRail = style.Energy;
+                leftRail.a = .28f;
+                surface.RailLeft.color = leftRail;
+                var rightRail = Color.Lerp(style.Energy, Color.white, .28f);
+                rightRail.a = .15f;
+                surface.RailRight.color = rightRail;
+            }
+
+            // The separate authored cap sits precisely at the playable gap edge.
+            var capCentre = capY + direction * (PipeCapHeight * .5f);
+            surface.CapOuter.enabled = !hasAuthoredPipeCap;
+            surface.CapAccent.enabled = false;
+            surface.CapPanel.enabled = true;
+            surface.CapEnergy.enabled = !hasAuthoredPipeCap;
+
+            if (hasAuthoredPipeCap)
+            {
+                surface.CapPanel.sprite = pipeCapSprite;
+                surface.CapPanel.color = Color.white;
+                surface.CapPanel.sortingOrder = 11;
+                SetSpriteBlock(surface.CapPanel, Vector2.up * capCentre, new Vector2(PipeCollisionWidth, PipeCapHeight));
+                surface.CapPanel.transform.localRotation = topPipe
+                    ? Quaternion.Euler(0f, 0f, 180f)
+                    : Quaternion.identity;
+
+                surface.CapGlow.enabled = true;
+                var authoredGlow = style.Energy;
+                authoredGlow.a = .16f;
+                surface.CapGlow.color = authoredGlow;
+                surface.CapGlow.sprite = softCircleSprite;
+                SetBlock(surface.CapGlow, Vector2.up * capCentre, new Vector2(PipeCollisionWidth * 1.05f, PipeCapHeight * .80f));
+                surface.CapGlow.transform.localRotation = Quaternion.identity;
+            }
+            else
+            {
+                surface.CapGlow.enabled = false;
+                SetBlock(surface.CapOuter, Vector2.up * capCentre, new Vector2(PipeWidth + .18f, .42f));
+                SetBlock(surface.CapAccent, Vector2.up * capCentre, new Vector2(PipeWidth + .10f, .34f));
+                SetBlock(surface.CapPanel, Vector2.up * capCentre, new Vector2(PipeWidth - .08f, .28f));
+                SetBlock(surface.CapEnergy, Vector2.up * (capY + direction * .030f), new Vector2(PipeWidth * .64f, .018f));
+                surface.CapOuter.color = Darken(metalDark, .18f);
+                surface.CapAccent.color = collarMetal;
+                surface.CapPanel.color = Darken(metal, .40f);
+                var capEnergy = style.Energy;
+                capEnergy.a = .82f;
+                surface.CapEnergy.color = capEnergy;
+            }
         }
 
         private float ActiveGap()
@@ -4355,6 +4402,16 @@ namespace SkyPulse.Mobile
         {
             renderer.transform.localPosition = new Vector3(position.x, position.y, 0f);
             renderer.transform.localScale = new Vector3(size.x, size.y, 1f);
+        }
+
+        private static void SetSpriteBlock(SpriteRenderer renderer, Vector2 position, Vector2 worldSize)
+        {
+            if (renderer == null || renderer.sprite == null) return;
+            renderer.transform.localPosition = new Vector3(position.x, position.y, 0f);
+            var bounds = renderer.sprite.bounds.size;
+            var width = Mathf.Max(.0001f, bounds.x);
+            var height = Mathf.Max(.0001f, bounds.y);
+            renderer.transform.localScale = new Vector3(worldSize.x / width, worldSize.y / height, 1f);
         }
 
         private float GetWorldWidth()
