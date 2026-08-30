@@ -3729,6 +3729,10 @@ new WorldTheme(
         {
             if (state != FlightState.Playing) return;
             state = FlightState.Impact;
+            if (birdThrustGlowRenderer != null)
+            birdThrustGlowRenderer.enabled = false;
+            if (birdThrustCoreRenderer != null)
+            birdThrustCoreRenderer.enabled = false;
             if (birdBodyCollider != null) birdBodyCollider.enabled = false;
             impactFrameTimer = ImpactFreezeSeconds;
             impactTumbleTimer = ImpactTumbleSeconds;
