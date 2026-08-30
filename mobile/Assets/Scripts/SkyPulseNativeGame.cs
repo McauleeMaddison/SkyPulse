@@ -360,7 +360,7 @@ namespace SkyPulse.Mobile
 
         private const float CameraHeight = 18f;
         private const float PortraitPlayfieldAspect = 9f / 16f;
-        private const float GroundY = -6.82f;
+        private const float GroundY = -8.45f;
         private const float BirdX = -2.45f;
         // This is the vertical half-axis of the shared inset collision ellipse.
         // Horizontal contact uses BirdCollisionHalfWidth below, so every bird is
@@ -1084,29 +1084,62 @@ namespace SkyPulse.Mobile
             }
         }
 
-        private void CreateFloor()
-        {
-            var width = GetViewportWidth() + 1f;
-            floorBase = CreateRenderer("Solid floor base", whiteSprite, Hex("#02030d"), -9);
-            floorBase.transform.position = new Vector3(0f, GroundY - 1.1f, 0f);
-            floorBase.transform.localScale = new Vector3(width, 2.24f, 1f);
+       private void CreateFloor()
+{
+    var width = GetWorldWidth() + 1f;
 
-            floorSurface = CreateRenderer("Floor material", whiteSprite, new Color(.015f, .025f, .06f, .1f), -8);
-            floorSurface.transform.position = new Vector3(0f, GroundY - 1.04f, 0f);
-            floorSurface.transform.localScale = new Vector3(width, 1.90f, 1f);
+    // Keep the old base object available for safety, but never render
+    // the huge black slab that used to cover the lower background.
+    floorBase = CreateRenderer(
+        "Solid floor base",
+        whiteSprite,
+        Color.clear,
+        -9
+    );
+    floorBase.transform.position = new Vector3(0f, GroundY - .20f, 0f);
+    floorBase.transform.localScale = new Vector3(width, .20f, 1f);
+    floorBase.enabled = false;
 
-            floorLip = CreateRenderer("Floor solid edge", whiteSprite, new Color(.025f, .05f, .10f, .1f), -7);
-            floorLip.transform.position = new Vector3(0f, GroundY - .08f, 0f);
-            floorLip.transform.localScale = new Vector3(width, .12f, 1f);
+    // Thin dark physical-looking floor directly underneath the collision line.
+    floorSurface = CreateRenderer(
+        "Floor material",
+        whiteSprite,
+        new Color(.015f, .025f, .06f, .82f),
+        -8
+    );
+    floorSurface.transform.position = new Vector3(0f, GroundY - .10f, 0f);
+    floorSurface.transform.localScale = new Vector3(width, .20f, 1f);
 
-            floorGlow = CreateRenderer("Floor energy rail", whiteSprite, new Color(.27f, .86f, 1f, .14f), -6);
-            floorGlow.transform.position = new Vector3(0f, GroundY + .035f, 0f);
-            floorGlow.transform.localScale = new Vector3(width, .026f, 1f);
+    // Dark upper edge of the floor.
+    floorLip = CreateRenderer(
+        "Floor solid edge",
+        whiteSprite,
+        new Color(.025f, .05f, .10f, .88f),
+        -7
+    );
+    floorLip.transform.position = new Vector3(0f, GroundY - .015f, 0f);
+    floorLip.transform.localScale = new Vector3(width, .09f, 1f);
 
-            floorHighlight = CreateRenderer("Floor edge highlight", whiteSprite, new Color(.78f, .94f, 1f, .08f), -5);
-            floorHighlight.transform.position = new Vector3(0f, GroundY + .105f, 0f);
-            floorHighlight.transform.localScale = new Vector3(width, .010f, 1f);
-        }
+    // Turquoise energy rail showing the player exactly where the floor begins.
+    floorGlow = CreateRenderer(
+        "Floor energy rail",
+        whiteSprite,
+        new Color(.27f, .86f, 1f, .72f),
+        -6
+    );
+    floorGlow.transform.position = new Vector3(0f, GroundY + .025f, 0f);
+    floorGlow.transform.localScale = new Vector3(width, .022f, 1f);
+
+    // Very thin highlight so the rail remains crisp on a phone screen.
+    var floorHighlight = CreateRenderer(
+        "Floor edge highlight",
+        whiteSprite,
+        new Color(.78f, .94f, 1f, .38f),
+        -5
+    );
+    floorHighlight.transform.position = new Vector3(0f, GroundY + .065f, 0f);
+    floorHighlight.transform.localScale = new Vector3(width, .006f, 1f);
+}
 
         private void CreateBird()
         {
