@@ -510,12 +510,125 @@ namespace SkyPulse.Mobile
             }),
         };
 
-        private static readonly WorldTheme[] Worlds =
-        {
-            new WorldTheme("neon_city", "NEON CITY", "SkyPulse/Old Backgrounds/neon-flightdeck-v1", "#45eaff", "#0a0522", "ROUTE 01", 1f, 5.38f, "ion", "pulse"),
-            new WorldTheme("acid_foundry", "ACID FOUNDRY", "SkyPulse/Old Backgrounds/solar-drift-v2", "#a7ff3d", "#172015", "ROUTE 02", 1f, 4.59f, "emberline", "cinder"),
-            new WorldTheme("orbital_bazaar", "ORBITAL BAZAAR", "SkyPulse/Old Backgrounds/crystal-night-v2", "#f4bf47", "#15102e", "ROUTE 03", 1f, 4.27f, "amethyst", "starlight"),
-        };
+       private static readonly WorldTheme[] Worlds =
+{
+    new WorldTheme(
+        "neon_city",
+        "NEON CITY",
+        "SkyPulse/backgrounds/neon-flightdeck-v1",
+        "#45eaff",
+        "#0a0522",
+        "ROUTE 01",
+        1f,
+        5.38f,
+        "ion",
+        "pulse"
+    ),
+
+    new WorldTheme(
+        "aurora_rise",
+        "AURORA RISE",
+        "SkyPulse/backgrounds/themes/aurora-rise-v2",
+        "#61f5b3",
+        "#05251e",
+        "ROUTE 02",
+        1f,
+        4.92f,
+        "frost",
+        "aurora"
+    ),
+
+    new WorldTheme(
+        "solar_drift",
+        "SOLAR DRIFT",
+        "SkyPulse/backgrounds/themes/solar-drift-v2",
+        "#ffc34d",
+        "#2b0d10",
+        "ROUTE 03",
+        1f,
+        4.46f,
+        "solar",
+        "solar"
+    ),
+
+    new WorldTheme(
+        "midnight_tide",
+        "MIDNIGHT TIDE",
+        "SkyPulse/backgrounds/themes/midnight-tide-v2",
+        "#45eaff",
+        "#07113d",
+        "ROUTE 04",
+        1f,
+        4.30f,
+        "cobalt",
+        "seaglass"
+    ),
+
+    new WorldTheme(
+        "velvet_dawn",
+        "VELVET DAWN",
+        "SkyPulse/backgrounds/themes/velvet-dawn-v3",
+        "#f05bc6",
+        "#26051f",
+        "ROUTE 05",
+        1f,
+        4.14f,
+        "rose",
+        "sakura"
+    ),
+
+    new WorldTheme(
+        "crystal_night",
+        "CRYSTAL NIGHT",
+        "SkyPulse/backgrounds/themes/crystal-night-v2",
+        "#edf7ff",
+        "#071239",
+        "ROUTE 06",
+        1f,
+        4.00f,
+        "prism",
+        "glacial"
+    ),
+
+    new WorldTheme(
+        "jade_horizon",
+        "JADE HORIZON",
+        "SkyPulse/backgrounds/themes/jade-horizon-v2",
+        "#61f5b3",
+        "#063523",
+        "ROUTE 07",
+        1f,
+        3.86f,
+        "jade",
+        "mintwave"
+    ),
+
+    new WorldTheme(
+        "violet_rain",
+        "VIOLET RAIN",
+        "SkyPulse/backgrounds/themes/violet-rain-v2",
+        "#b17cff",
+        "#210842",
+        "ROUTE 08",
+        1f,
+        3.72f,
+        "amethyst",
+        "nebula"
+    ),
+
+    new WorldTheme(
+        "eclipse",
+        "ECLIPSE",
+        "SkyPulse/backgrounds/themes/eclipse-v2",
+        "#b17cff",
+        "#10051f",
+        "ROUTE 09",
+        1f,
+        3.56f,
+        "obsidian",
+        "starlight"
+    ),
+};
 
         private static readonly Upgrade[] Upgrades =
         {
