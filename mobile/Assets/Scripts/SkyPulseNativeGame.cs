@@ -369,7 +369,7 @@ namespace SkyPulse.Mobile
         private const float BirdCollisionHalfWidth = 1.08f;
         // The bird is the primary focal point, so it must remain readable against a
         // busy world at a real phone scale—not shrink into a sparkle at the centre.
-        private const float BirdDisplayWidth = 2.54f;
+        private const float BirdDisplayWidth = 2.30f;
         // The body is deliberately broad. The collar is slightly wider, just like a
         // real plumbing coupling, and this exact outer dimension drives collision.
         private const float PipeWidth = 1.72f;
