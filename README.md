@@ -33,7 +33,7 @@ SkyPulse/
 ## What is in the native game now
 
 - C# gameplay with touch-first input and a fixed, stable flight simulation.
-- A free six-frame **Aetherwing Test** bird is the default playtest avatar. The sixteen distinct collectible skins remain intact; every collectible has its own transparent **hit** and **unlock** artwork, neon material/trail treatment, and reveal movement. There is no generic cartoon unlock bird.
+- A portrait-first launch collection of five distinct robotic-cartoon birds: **Volt** is the starter, with **Prism**, **Verdant**, **Cinder** and **Steel** earned with crystals. Every bird runs a six-step flap timeline and owns a separate **hit** frame and **unlock** frame—eight animation states per bird.
 - Customisable world, background, trail and pipe looks. Their lighting is neon-noir: dark metal, vivid core lights and clear silhouettes.
 - Gates with properly matched body and cap collision bounds, animated pipe channels and fair upper/lower gap scaling.
 - Crystals appear randomly during a run; clearing every gate does **not** automatically give a crystal.
@@ -62,11 +62,21 @@ This is the only artwork workflow to use. It keeps the game’s birds consistent
 - Each bird keeps its own colours, feather shapes, metal details and wing proportions. Do **not** turn every bird into the same mascot.
 - No white rectangle, black background, UI text, crystals, pipes, baked glow-card or drop shadow in the exported bird image.
 
-### Artwork: Aetherwing 2D wing rig (the current approach)
+### Bird animation contract
 
-The supplied mechanical Aetherwing drawings now run in-game as the **Aetherwing Test** bird: six sharp flap poses, then its own hit and unlock pose. This is the visible motion/timing test; it does not replace the completed neon skins.
+The launch collection is deliberately compact: one starter plus four meaningful unlocks. Every current or future bird must keep this exact eight-state contract:
 
-You do **not** need to trace six full flap drawings now. The game already uses all six supplied flap poses for the playtest. The saved `aetherwing-flap1.kra` is a useful outline test: keep it, but stop tracing that full frame.
+1. Six wing-flap positions, ordered from raised wing through downstroke. The runtime moves through all six on every tap with no translucent cross-fade.
+2. One bespoke hit pose, shown for a short impact beat before the result card.
+3. One bespoke unlock pose, used in the collection reveal.
+
+Add a future bird by putting its transparent artwork in `Assets/Resources/SkyPulse/characters/`, adding one `Skin` entry in `SkyPulseNativeGame.cs`, and providing all six `FlapFramePaths` plus unique hit and unlock paths. The game validates that there are six flight frames and that hit/unlock art is never shared between roster birds. Keep every frame right-facing and registered on the same canvas so it stays stable on a phone.
+
+### Artwork: Aetherwing 2D wing rig (legacy source reference)
+
+The saved Aetherwing files are retained as a legacy art reference only; they are not in the launch collection. The shipped roster uses the five dedicated robotic-cartoon eight-frame sets described above.
+
+You do **not** need to trace six full flap drawings now. The saved `aetherwing-flap1.kra` is a useful legacy outline reference; keep it, but do not use it for the production roster.
 
 Unity now has a safe rig foundation. It keeps the present full-body Aetherwing animation until all six pieces below exist, so unfinished art can never break the game. When the complete set arrives, Unity keeps the body crisp and rotates/moves only the wing and tail pieces smoothly at 60 FPS.
 

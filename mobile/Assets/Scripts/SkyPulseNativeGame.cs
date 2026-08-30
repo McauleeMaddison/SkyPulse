@@ -44,7 +44,7 @@ namespace SkyPulse.Mobile
     /// </summary>
     public sealed class SkyPulseNativeGame : MonoBehaviour
     {
-        private enum FlightState { Menu, Playing, Paused, GameOver, Customize }
+        private enum FlightState { Menu, Playing, Impact, Paused, GameOver, Customize }
         // Classic is the score-first, leaderboard-ready route. Adventure deliberately
         // keeps the expressive upgrades and power-ups that make collection rewarding.
         // Daily shares Classic's fixed rules, plus a seeded obstacle sequence.
@@ -147,9 +147,10 @@ namespace SkyPulse.Mobile
             public string ArtPath;
             public string FlapPath;
             public string RisePath;
-            // Optional sharp, hand-authored flight cells. These are intentionally
-            // kept separate from the standard three-pose overlay system so a test
-            // bird can prove a full flap sequence without changing other skins.
+            // Every launch bird supplies these six flight positions in sequence:
+            // raised, lift, high glide, neutral glide, low glide, downstroke.
+            // Keeping the list on the skin makes adding a future bird a data-and-art
+            // task, not a risky change to the flight loop.
             public string[] FlapFramePaths;
             // These are distinct, per-bird poses. They must never point at a shared
             // bird image: its plumage, metalwork and silhouette are part of the
@@ -372,6 +373,8 @@ namespace SkyPulse.Mobile
         private const float WingDownstrokeSpan = .90f;
         private const float WingLiftPoseThreshold = .32f;
         private const float WingDownstrokePoseThreshold = .14f;
+        private const float ImpactFrameSeconds = .26f;
+        private const int LaunchBirdCount = 5;
         // Version 4 is a matched temporary flight set: tucked glide, raised upstroke
         // and decisive downstroke. The buy reward is intentionally separate—each
         // collectible bird has its own hit and open-wing unlock artwork rather than
@@ -422,29 +425,36 @@ namespace SkyPulse.Mobile
             powerUpSlots: 1, powerUpRespawnMinimum: 7.5f, powerUpRespawnMaximum: 10.5f,
             allowsUpgrades: true, allowsPowerUps: true);
 
+        // Launch collection: five different robotic-cartoon silhouettes, one free
+        // starter and four crystal unlocks. Each bird has six flight cells and its
+        // own hit and unlock frame. Add future birds here with the same contract.
         private static readonly Skin[] Skins =
         {
-            new Skin("aetherwing_test", "AETHERWING TEST", TestAetherwingFlap06Path, TestAetherwingFlap01Path, "#edf7ff", "#45eaff", 0, TestAetherwingFlap01Path, TestAetherwingHitPath, TestAetherwingUnlockPath, new []
+            new Skin("volt", "VOLT", "SkyPulse/characters/roster/volt-frame-04-v1", "SkyPulse/characters/roster/volt-frame-06-v1", "#3197ff", "#45eaff", 0, "SkyPulse/characters/roster/volt-frame-01-v1", "SkyPulse/characters/roster/volt-frame-07-v1", "SkyPulse/characters/roster/volt-frame-08-v1", new []
             {
-                TestAetherwingFlap01Path, TestAetherwingFlap02Path, TestAetherwingFlap03Path,
-                TestAetherwingFlap04Path, TestAetherwingFlap05Path, TestAetherwingFlap06Path,
-            }, AetherwingRigResourcePrefix, AetherwingRigMotion),
-            new Skin("nova", "NOVA", "SkyPulse/characters/nova", "SkyPulse/characters/nova-flap", "#8f64ff", "#45eaff", 0, "SkyPulse/characters/animated/nova-rise-v1", "SkyPulse/characters/unlocks/nova-hit-v2", "SkyPulse/characters/unlocks/nova-unlock-v2"),
-            new Skin("lumen", "LUMEN", "SkyPulse/characters/lumen", "SkyPulse/characters/lumen-flap", "#45eaff", "#8f64ff", 24, "SkyPulse/characters/animated/lumen-rise-v1", "SkyPulse/characters/unlocks/lumen-hit-v2", "SkyPulse/characters/unlocks/lumen-unlock-v2"),
-            new Skin("ember", "EMBER", "SkyPulse/characters/ember", "SkyPulse/characters/ember-flap", "#f05bc6", "#ffc34d", 32, "SkyPulse/characters/animated/ember-rise-v1", "SkyPulse/characters/unlocks/ember-hit-v2", "SkyPulse/characters/unlocks/ember-unlock-v2"),
-            new Skin("sol", "SOL", "SkyPulse/characters/sol", "SkyPulse/characters/sol-flap", "#ffc34d", "#45eaff", 40, "SkyPulse/characters/animated/sol-rise-v1", "SkyPulse/characters/unlocks/sol-hit-v2", "SkyPulse/characters/unlocks/sol-unlock-v2"),
-            new Skin("aurora", "AURORA", "SkyPulse/characters/lumen", "SkyPulse/characters/lumen-flap", "#61f5b3", "#45eaff", 48, "SkyPulse/characters/animated/lumen-rise-v1", "SkyPulse/characters/unlocks/aurora-hit-v2", "SkyPulse/characters/unlocks/aurora-unlock-v2"),
-            new Skin("orchid", "ORCHID", "SkyPulse/characters/nova", "SkyPulse/characters/nova-flap", "#b17cff", "#f05bc6", 52, "SkyPulse/characters/animated/nova-rise-v1", "SkyPulse/characters/unlocks/orchid-hit-v2", "SkyPulse/characters/unlocks/orchid-unlock-v2"),
-            new Skin("coral", "CORAL", "SkyPulse/characters/ember", "SkyPulse/characters/ember-flap", "#f082af", "#ffc34d", 56, "SkyPulse/characters/animated/ember-rise-v1", "SkyPulse/characters/unlocks/coral-hit-v2", "SkyPulse/characters/unlocks/coral-unlock-v2"),
-            new Skin("glacier", "GLACIER", AetherwingGlidePath, AetherwingFlapPath, "#edf7ff", "#45eaff", 60, AetherwingRisePath, "SkyPulse/characters/unlocks/glacier-hit-v2", "SkyPulse/characters/unlocks/glacier-unlock-v2"),
-            new Skin("prism", "PRISM", "SkyPulse/characters/generated/prism", "SkyPulse/characters/generated/prism-flap", "#45eaff", "#edf7ff", 68, "SkyPulse/characters/animated/prism-rise-v1", "SkyPulse/characters/unlocks/prism-hit-v2", "SkyPulse/characters/unlocks/prism-unlock-v2"),
-            new Skin("verdant", "VERDANT", "SkyPulse/characters/generated/verdant", "SkyPulse/characters/generated/verdant-flap", "#61f5b3", "#45eaff", 72, "SkyPulse/characters/animated/verdant-rise-v1", "SkyPulse/characters/unlocks/verdant-hit-v2", "SkyPulse/characters/unlocks/verdant-unlock-v2"),
-            new Skin("cinder", "CINDER", "SkyPulse/characters/generated/cinder", "SkyPulse/characters/generated/cinder-flap", "#f05bc6", "#ffc34d", 76, "SkyPulse/characters/animated/cinder-rise-v1", "SkyPulse/characters/unlocks/cinder-hit-v2", "SkyPulse/characters/unlocks/cinder-unlock-v2"),
-            new Skin("tide", "TIDE", "SkyPulse/characters/generated/tide", "SkyPulse/characters/generated/tide-flap", "#45eaff", "#8f64ff", 80, "SkyPulse/characters/animated/tide-rise-v1", "SkyPulse/characters/unlocks/tide-hit-v2", "SkyPulse/characters/unlocks/tide-unlock-v2"),
-            new Skin("wisp", "WISP", "SkyPulse/characters/generated/wisp", "SkyPulse/characters/generated/wisp-flap", "#edf7ff", "#45eaff", 88, "SkyPulse/characters/animated/wisp-rise-v1", "SkyPulse/characters/unlocks/wisp-hit-v2", "SkyPulse/characters/unlocks/wisp-unlock-v2"),
-            new Skin("bloom", "BLOOM", "SkyPulse/characters/generated/bloom", "SkyPulse/characters/generated/bloom-flap", "#f05bc6", "#b17cff", 92, "SkyPulse/characters/animated/bloom-rise-v1", "SkyPulse/characters/unlocks/bloom-hit-v2", "SkyPulse/characters/unlocks/bloom-unlock-v2"),
-            new Skin("emberwing", "EMBERWING", "SkyPulse/characters/generated/emberwing", "SkyPulse/characters/generated/emberwing-flap", "#ffc34d", "#f05bc6", 100, "SkyPulse/characters/animated/cinder-rise-v1", "SkyPulse/characters/unlocks/emberwing-hit-v2", "SkyPulse/characters/unlocks/emberwing-unlock-v2"),
-            new Skin("steel", "STEEL", "SkyPulse/characters/generated/steel", "SkyPulse/characters/generated/steel-flap", "#edf7ff", "#45eaff", 108, "SkyPulse/characters/animated/prism-rise-v1", "SkyPulse/characters/unlocks/steel-hit-v2", "SkyPulse/characters/unlocks/steel-unlock-v2"),
+                "SkyPulse/characters/roster/volt-frame-01-v1", "SkyPulse/characters/roster/volt-frame-02-v1", "SkyPulse/characters/roster/volt-frame-03-v1",
+                "SkyPulse/characters/roster/volt-frame-04-v1", "SkyPulse/characters/roster/volt-frame-05-v1", "SkyPulse/characters/roster/volt-frame-06-v1",
+            }),
+            new Skin("prism", "PRISM", "SkyPulse/characters/roster/prism-frame-04-v1", "SkyPulse/characters/roster/prism-frame-06-v1", "#f4bf47", "#45eaff", 50, "SkyPulse/characters/roster/prism-frame-01-v1", "SkyPulse/characters/roster/prism-frame-07-v1", "SkyPulse/characters/roster/prism-frame-08-v1", new []
+            {
+                "SkyPulse/characters/roster/prism-frame-01-v1", "SkyPulse/characters/roster/prism-frame-02-v1", "SkyPulse/characters/roster/prism-frame-03-v1",
+                "SkyPulse/characters/roster/prism-frame-04-v1", "SkyPulse/characters/roster/prism-frame-05-v1", "SkyPulse/characters/roster/prism-frame-06-v1",
+            }),
+            new Skin("verdant", "VERDANT", "SkyPulse/characters/roster/verdant-frame-04-v1", "SkyPulse/characters/roster/verdant-frame-06-v1", "#7ee870", "#45eaff", 95, "SkyPulse/characters/roster/verdant-frame-01-v1", "SkyPulse/characters/roster/verdant-frame-07-v1", "SkyPulse/characters/roster/verdant-frame-08-v1", new []
+            {
+                "SkyPulse/characters/roster/verdant-frame-01-v1", "SkyPulse/characters/roster/verdant-frame-02-v1", "SkyPulse/characters/roster/verdant-frame-03-v1",
+                "SkyPulse/characters/roster/verdant-frame-04-v1", "SkyPulse/characters/roster/verdant-frame-05-v1", "SkyPulse/characters/roster/verdant-frame-06-v1",
+            }),
+            new Skin("cinder", "CINDER", "SkyPulse/characters/roster/cinder-frame-04-v1", "SkyPulse/characters/roster/cinder-frame-06-v1", "#f65b89", "#ffc34d", 140, "SkyPulse/characters/roster/cinder-frame-01-v1", "SkyPulse/characters/roster/cinder-frame-07-v1", "SkyPulse/characters/roster/cinder-frame-08-v1", new []
+            {
+                "SkyPulse/characters/roster/cinder-frame-01-v1", "SkyPulse/characters/roster/cinder-frame-02-v1", "SkyPulse/characters/roster/cinder-frame-03-v1",
+                "SkyPulse/characters/roster/cinder-frame-04-v1", "SkyPulse/characters/roster/cinder-frame-05-v1", "SkyPulse/characters/roster/cinder-frame-06-v1",
+            }),
+            new Skin("steel", "STEEL", "SkyPulse/characters/roster/steel-frame-04-v1", "SkyPulse/characters/roster/steel-frame-06-v1", "#b8d5e8", "#45eaff", 190, "SkyPulse/characters/roster/steel-frame-01-v1", "SkyPulse/characters/roster/steel-frame-07-v1", "SkyPulse/characters/roster/steel-frame-08-v1", new []
+            {
+                "SkyPulse/characters/roster/steel-frame-01-v1", "SkyPulse/characters/roster/steel-frame-02-v1", "SkyPulse/characters/roster/steel-frame-03-v1",
+                "SkyPulse/characters/roster/steel-frame-04-v1", "SkyPulse/characters/roster/steel-frame-05-v1", "SkyPulse/characters/roster/steel-frame-06-v1",
+            }),
         };
 
         private static readonly WorldTheme[] Worlds =
@@ -540,7 +550,9 @@ namespace SkyPulse.Mobile
         private Sprite idleBirdSprite;
         private Sprite flapBirdSprite;
         private Sprite riseBirdSprite;
+        private Sprite hitBirdSprite;
         private Sprite[] flapFrameBirdSprites;
+        private int activeFlapFrameIndex;
         private Vector3 flapFrameBaseScale = Vector3.one;
         private SpriteRenderer backgroundRenderer;
         private SpriteRenderer backgroundVeil;
@@ -669,6 +681,7 @@ namespace SkyPulse.Mobile
         private float birdTilt;
         private float birdTiltVelocity;
         private float wingTimer;
+        private float impactFrameTimer;
         private float menuWingTimer;
         private float menuPresentationTime;
         private float unlockRevealTimer;
@@ -746,10 +759,19 @@ namespace SkyPulse.Mobile
 
         private static void ValidateBirdRewardPoseContracts()
         {
+            if (Skins.Length != LaunchBirdCount)
+            {
+                Debug.LogError($"SkyPulse: launch collection must contain exactly {LaunchBirdCount} birds; it currently has {Skins.Length}.");
+            }
+
             var hitPaths = new HashSet<string>(StringComparer.Ordinal);
             var unlockPaths = new HashSet<string>(StringComparer.Ordinal);
             foreach (var skin in Skins)
             {
+                if (skin.FlapFramePaths == null || skin.FlapFramePaths.Length != 6)
+                {
+                    Debug.LogError($"SkyPulse: {skin.Name} must define exactly six flight frames.");
+                }
                 if (string.IsNullOrEmpty(skin.HitPath) || string.IsNullOrEmpty(skin.UnlockPath))
                 {
                     Debug.LogError($"SkyPulse: {skin.Name} must define both a hit pose and an unlock pose.");
@@ -1548,6 +1570,17 @@ namespace SkyPulse.Mobile
                 // A tap outside the result card has the same promise as the explicit
                 // FLY AGAIN button: retain the current route, including Daily.
                 if (WasTapped() && !PointerOverUi()) RestartFlight();
+                return;
+            }
+
+            if (state == FlightState.Impact)
+            {
+                impactFrameTimer -= frameDelta;
+                if (impactFrameTimer <= 0f)
+                {
+                    state = FlightState.GameOver;
+                    RefreshScreens();
+                }
                 return;
             }
 
@@ -2550,6 +2583,7 @@ namespace SkyPulse.Mobile
             birdTilt = 0f;
             birdTiltVelocity = 0f;
             wingTimer = 1f;
+            impactFrameTimer = 0f;
             slowFieldTimer = 0f;
             shieldFlashTimer = 0f;
             skySurgeTimer = 0f;
@@ -2589,6 +2623,7 @@ namespace SkyPulse.Mobile
             hudScoreText.text = "0";
             UpdateModeCopy();
             UpdatePowerUpHud();
+            SetBirdArtwork();
             bird.gameObject.SetActive(true);
             Flap();
         }
@@ -3011,11 +3046,13 @@ namespace SkyPulse.Mobile
         private void EndFlight()
         {
             if (state != FlightState.Playing) return;
-            state = FlightState.GameOver;
+            state = FlightState.Impact;
+            impactFrameTimer = ImpactFrameSeconds;
             var previousBest = BestFor(flightMode);
             newBest = score > previousBest && score > 0;
             SetBestFor(flightMode, Mathf.Max(previousBest, score));
             SaveProgress();
+            ShowHitFrame();
             TriggerFlightFeedback(Hex("#f05bc6"), .36f);
             PulseHaptic(.28f);
             Play(crashSound);
@@ -3034,7 +3071,28 @@ namespace SkyPulse.Mobile
                 resultModeText.color = ModeAccent(flightMode);
             }
             resultNewBestText.gameObject.SetActive(newBest);
-            RefreshScreens();
+        }
+
+        private void ShowHitFrame()
+        {
+            // The hit cell is visible for a short beat before the result card. It
+            // makes a collision legible without interrupting the immediate retry flow.
+            var hitPose = hitBirdSprite ?? LoadOptionalSprite(equippedSkin?.HitPath);
+            if (hitPose == null || birdRenderer == null) return;
+
+            SetAetherwingRigVisible(false);
+            birdRenderer.sprite = hitPose;
+            birdRenderer.color = Color.white;
+            birdRenderer.enabled = true;
+            birdArt.localScale = ArtworkScale(hitPose, BirdDisplayWidth);
+            birdArt.localPosition = new Vector3(-.025f, .012f, 0f);
+            birdArt.localRotation = Quaternion.Euler(0f, 0f, -8f);
+            if (birdFlapRenderer != null) birdFlapRenderer.enabled = false;
+            if (birdRiseRenderer != null) birdRiseRenderer.enabled = false;
+            if (birdParallaxRenderer != null) birdParallaxRenderer.enabled = false;
+            if (birdDepthRenderer != null) birdDepthRenderer.enabled = false;
+            if (birdEyeGlintRenderer != null) birdEyeGlintRenderer.enabled = false;
+            if (birdSafetyRenderer != null) birdSafetyRenderer.enabled = false;
         }
 
         private void CycleFlightMode()
@@ -3516,6 +3574,8 @@ namespace SkyPulse.Mobile
             if (birdRenderer == null || birdFlapRenderer == null || birdRiseRenderer == null) return;
             var aetherwing = UsesAetherwing();
             var hasFlapFrameSequence = LoadFlapFrameSequence(equippedSkin);
+            hitBirdSprite = LoadOptionalSprite(equippedSkin?.HitPath);
+            activeFlapFrameIndex = 0;
             if (hasFlapFrameSequence)
             {
                 // The last supplied pose is the settled glide. The two named legacy
@@ -3583,7 +3643,7 @@ namespace SkyPulse.Mobile
         private bool LoadFlapFrameSequence(Skin skin)
         {
             flapFrameBirdSprites = null;
-            if (skin == null || skin.FlapFramePaths == null || skin.FlapFramePaths.Length < 2) return false;
+            if (skin == null || skin.FlapFramePaths == null || skin.FlapFramePaths.Length != 6) return false;
             var frames = new Sprite[skin.FlapFramePaths.Length];
             for (var index = 0; index < frames.Length; index += 1)
             {
@@ -3606,8 +3666,13 @@ namespace SkyPulse.Mobile
         private Sprite SelectFlapFrame(float normalizedProgress)
         {
             if (!UsesFlapFrameSequence()) return idleBirdSprite;
-            var index = Mathf.Min(flapFrameBirdSprites.Length - 1, Mathf.FloorToInt(Mathf.Clamp01(normalizedProgress) * flapFrameBirdSprites.Length));
-            return flapFrameBirdSprites[index];
+            return flapFrameBirdSprites[SelectFlapFrameIndex(normalizedProgress)];
+        }
+
+        private int SelectFlapFrameIndex(float normalizedProgress)
+        {
+            if (!UsesFlapFrameSequence()) return 0;
+            return Mathf.Min(flapFrameBirdSprites.Length - 1, Mathf.FloorToInt(Mathf.Clamp01(normalizedProgress) * flapFrameBirdSprites.Length));
         }
 
         private bool ConfigureAetherwingRig()
@@ -3753,7 +3818,8 @@ namespace SkyPulse.Mobile
                 // One authored drawing at a time: no crossfade means no ghosted
                 // double-body. The six supplied poses play in their intended order
                 // on every tap, while the transform below retains 60 fps flight feel.
-                var pose = SelectFlapFrame(flapProgress);
+                activeFlapFrameIndex = SelectFlapFrameIndex(flapProgress);
+                var pose = flapFrameBirdSprites[activeFlapFrameIndex];
                 if (pose != null && birdRenderer.sprite != pose) birdRenderer.sprite = pose;
                 birdRenderer.enabled = pose != null;
                 birdRenderer.color = Color.white;
@@ -3815,7 +3881,7 @@ namespace SkyPulse.Mobile
             var activeArtworkTransform = usesLayeredAetherwingRig ? aetherwingRig : birdArt;
             var activeArtworkBaseScale = usesLayeredAetherwingRig
                 ? aetherwingRigBaseScale
-                : usesFlapFrameSequence ? flapFrameBaseScale
+                : usesFlapFrameSequence ? ArtworkScale(birdRenderer.sprite, BirdDisplayWidth)
                 : premiumRig ? BaseScaleForBirdPose(birdRenderer.sprite) : idleBirdBaseScale;
             activeArtworkTransform.localScale = Vector3.Scale(activeArtworkBaseScale, new Vector3(breathing + liftSquash + diveStretch, breathing - liftSquash - diveStretch * .55f, 1f));
             activeArtworkTransform.localPosition = authoredFlight
@@ -3992,7 +4058,7 @@ namespace SkyPulse.Mobile
         private void RefreshScreens()
         {
             homeScreen.SetActive(state == FlightState.Menu);
-            hudScreen.SetActive(state == FlightState.Playing);
+            hudScreen.SetActive(state == FlightState.Playing || state == FlightState.Impact);
             pauseScreen.SetActive(state == FlightState.Paused);
             gameOverScreen.SetActive(state == FlightState.GameOver);
             customizeScreen.SetActive(state == FlightState.Customize);
@@ -4050,7 +4116,7 @@ namespace SkyPulse.Mobile
             flightCoachStage = Mathf.Clamp(PlayerPrefs.GetInt("skypulse.native.flight-coach-stage", 0), 0, 2);
             reduceMotionEnabled = PlayerPrefs.GetInt("skypulse.native.reduce-motion", 0) == 1;
             hapticsEnabled = PlayerPrefs.GetInt("skypulse.native.haptics", 1) == 1;
-            equippedSkin = FindById(Skins, PlayerPrefs.GetString("skypulse.native.skin", "aetherwing_test")) ?? Skins[0];
+            equippedSkin = FindById(Skins, PlayerPrefs.GetString("skypulse.native.skin", "volt")) ?? Skins[0];
             equippedWorld = FindById(Worlds, PlayerPrefs.GetString("skypulse.native.world", "neon_city")) ?? Worlds[0];
             equippedTrail = GetTrailForSkin(equippedSkin);
             equippedPipe = FindById(PipeStyles, PlayerPrefs.GetString("skypulse.native.pipe", "ion")) ?? PipeStyles[0];
@@ -4069,12 +4135,12 @@ namespace SkyPulse.Mobile
                 ownedSkinIds.Add(Skins[0].Id);
                 if (equippedSkin != null) ownedSkinIds.Add(equippedSkin.Id);
             }
-            if (PlayerPrefs.GetInt("skypulse.native.aetherwing-test-default-v1", 0) == 0)
+            if (PlayerPrefs.GetInt("skypulse.native.robot-roster-v1", 0) == 0)
             {
-                equippedSkin = Skins[0];
-                equippedTrail = GetTrailForSkin(equippedSkin);
-                ownedSkinIds.Add(equippedSkin.Id);
-                PlayerPrefs.SetInt("skypulse.native.aetherwing-test-default-v1", 1);
+                // Existing save data keeps its selected bird when it is still in the
+                // launch roster; retired duplicated skins safely fall back to Volt.
+                ownedSkinIds.Add(Skins[0].Id);
+                PlayerPrefs.SetInt("skypulse.native.robot-roster-v1", 1);
             }
             var savedOwnedUpgrades = PlayerPrefs.GetString("skypulse.native.owned-upgrades", string.Empty);
             if (!string.IsNullOrEmpty(savedOwnedUpgrades))
