@@ -281,8 +281,8 @@ namespace SkyPulse.Mobile
 
         private sealed class PipeSurface
         {
-            // These are deliberately procedural rather than a stretched source image.
-            // A pipe gate must retain its engineered proportions at every gap height.
+            // Visual layers stay separate from the two simple collision shapes: body
+            // and cap. Glow, seams, and scan effects must never become obstacles.
             public SpriteRenderer Artwork;
             public SpriteRenderer Outer;
             public SpriteRenderer Panel;
@@ -300,6 +300,8 @@ namespace SkyPulse.Mobile
             public SpriteRenderer CapAccent;
             public SpriteRenderer CapPanel;
             public SpriteRenderer CapEnergy;
+            public BoxCollider2D BodyCollider;
+            public BoxCollider2D CapCollider;
         }
 
         private sealed class PipePair
@@ -362,25 +364,43 @@ namespace SkyPulse.Mobile
         private const float PortraitPlayfieldAspect = 9f / 16f;
         private const float GroundY = -8.45f;
         private const float BirdX = -2.45f;
-        // This is the vertical half-axis of the shared inset collision ellipse.
-        // Horizontal contact uses BirdCollisionHalfWidth below, so every bird is
-        // fair while still reading as a drawn creature rather than a tiny dot.
-        private const float BirdCollisionRadius = .81f;
-        private const float BirdCollisionHalfWidth = 1.08f;
+        // One body-only gameplay hitbox shared by all birds. Its capsule excludes
+        // wing tips, tail, beak, glow, thrust and the cosmetic trail.
+        private const float BirdHitboxWidth = .98f;
+        private const float BirdHitboxHeight = .76f;
+        private const float BirdHitboxOffsetX = .20f;
+        private const float BirdHitboxOffsetY = -.05f;
+        private const float BirdHitboxRadius = BirdHitboxHeight * .5f;
+        // Pickups remain deliberately generous around the illustrated bird; this is
+        // separate from the smaller physical collision capsule.
+        private const float BirdPickupRadius = .81f;
+        // Cosmetic propulsion is deliberately independent of the bird's body size.
+        private const float BirdThrustAnchorX = -.76f;
+        private const float BirdThrustAnchorY = -.01f;
+        private const float BirdThrustCoreLength = .46f;
+        private const float BirdThrustGlowLength = .76f;
+        private const float BirdThrustPulseLength = .16f;
+        private const float BirdThrustCoreHeight = .13f;
+        private const float BirdThrustGlowHeight = .24f;
         // The bird is the primary focal point, so it must remain readable against a
         // busy world at a real phone scale—not shrink into a sparkle at the centre.
         private const float BirdDisplayWidth = 2.30f;
-        // The body is deliberately broad. The collar is slightly wider, just like a
-        // real plumbing coupling, and this exact outer dimension drives collision.
+        // Pipe tuning is deliberately centralised: the body can stretch only along
+        // its length, while the cap keeps the authored aspect ratio at this width.
         private const float PipeWidth = 1.72f;
-        private const float PipeCollisionWidth = PipeWidth + .34f;
-        private const float PipeCapHeight = .62f;
+        private const float PipeCapWidth = PipeWidth + .34f;
+        private const float PipeCollisionWidth = PipeCapWidth;
+        private const float PipeFallbackCapHeight = .62f;
+        private const float TopPipeOverscan = .68f;
+        private const float BottomPipeFloorOverlap = .10f;
+        private const float PipeSpacingFraction = .52f;
+        private const int PipeBodyCropTopPixels = 145;
+        private const int PipeBodyCropBottomPixels = 145;
         private const float PipeMinimumVisibleHeight = 1.56f;
         // This corridor gives the route meaningful high and low gates without
         // spawning a first obstacle against a screen edge or creating tiny pipes.
         private const float GapCenterMinimum = -2.55f;
         private const float GapCenterMaximum = 3.15f;
-        private const float PipeSpacing = 7.55f;
         private const int PipeCount = 4;
         // Crystals are deliberate pickups, not a payment for simply surviving each
         // gate. One visible pellet keeps a good run rewarding without making the
@@ -462,7 +482,7 @@ namespace SkyPulse.Mobile
             gravity: -18.2f, flapVelocity: 6.25f, maxFallVelocity: -11.2f,
             startingGap: 4.46f, minimumGap: 3.42f, gapShrinkPerGate: .030f,
             startingScrollSpeed: 4.30f, scrollRampPerGate: .045f,
-            collisionRadius: BirdCollisionRadius, perfectPassWindow: .32f, inputBufferSeconds: .095f, maximumGapCenterStep: .90f,
+            collisionRadius: BirdPickupRadius, perfectPassWindow: .32f, inputBufferSeconds: .095f, maximumGapCenterStep: .90f,
             powerUpSlots: 1, powerUpRespawnMinimum: 7.5f, powerUpRespawnMaximum: 10.5f,
             allowsUpgrades: true, allowsPowerUps: true);
 
@@ -474,7 +494,7 @@ namespace SkyPulse.Mobile
             gravity: -34.8f, flapVelocity: 11.4f, maxFallVelocity: -15.05f,
             startingGap: 5.38f, minimumGap: 3.96f, gapShrinkPerGate: 0f,
             startingScrollSpeed: 3.24f, scrollRampPerGate: 0f,
-            collisionRadius: BirdCollisionRadius, perfectPassWindow: .34f, inputBufferSeconds: .07f, maximumGapCenterStep: 3.16f,
+            collisionRadius: BirdPickupRadius, perfectPassWindow: .34f, inputBufferSeconds: .07f, maximumGapCenterStep: 3.16f,
             powerUpSlots: 1, powerUpRespawnMinimum: 0f, powerUpRespawnMaximum: 0f,
             allowsUpgrades: false, allowsPowerUps: true);
 
@@ -706,6 +726,9 @@ new WorldTheme(
         private Sprite pipeGlowSprite;
         private bool hasAuthoredPipeBody;
         private bool hasAuthoredPipeCap;
+        private bool hasAuthoredPipeGlow;
+        private float pipeCapHeight = PipeFallbackCapHeight;
+        private float PipeCapHeight => pipeCapHeight;
         private Sprite emergencyBirdSprite;
         private Sprite idleBirdSprite;
         private Sprite flapBirdSprite;
@@ -722,6 +745,7 @@ new WorldTheme(
         private SpriteRenderer floorGlow;
         private SpriteRenderer floorHighlight;
         private Transform bird;
+        private Transform birdHitbox;
         private Transform birdArt;
         private Transform birdFlapArt;
         private Transform birdRiseArt;
@@ -738,6 +762,12 @@ new WorldTheme(
         private SpriteRenderer birdParallaxRenderer;
         private SpriteRenderer birdDepthRenderer;
         private SpriteRenderer birdEyeGlintRenderer;
+        private CapsuleCollider2D birdBodyCollider;
+        private Transform birdThrust;
+        private SpriteRenderer birdThrustGlowRenderer;
+        private SpriteRenderer birdThrustCoreRenderer;
+        private Color birdThrustGlowColour;
+        private Color birdThrustCoreColour;
         private SpriteRenderer aetherwingBodyRenderer;
         private SpriteRenderer aetherwingFarWingRenderer;
         private SpriteRenderer aetherwingUpperWingRenderer;
@@ -1023,12 +1053,19 @@ new WorldTheme(
             softCircleSprite = CreateRadialSprite("Soft neon orb", 96, 0f, .5f);
             ringSprite = CreateRadialSprite("Neon ring", 96, .31f, .5f);
             roundedPanelSprite = CreateRoundedRectSprite("Premium rounded panel", 128, 28);
-            pipeBodySprite = LoadOptionalSprite("PipeBody");
+            // Supplied pipe PNGs use a white presentation canvas. Turn their
+            // connected white background into alpha once at load time so the actual
+            // mechanical art can be used without white slabs or invisible geometry.
+            pipeBodySprite = LoadKeyedPipeSprite("PipeBody", PipeBodyCropTopPixels, PipeBodyCropBottomPixels);
             hasAuthoredPipeBody = pipeBodySprite != null;
             if (!hasAuthoredPipeBody) pipeBodySprite = CreateCylindricalPipeSprite("Cylindrical pipe metal", 128, 128);
-            pipeCapSprite = LoadOptionalSprite("PipeCap");
+            pipeCapSprite = LoadKeyedPipeSprite("PipeCap");
             hasAuthoredPipeCap = pipeCapSprite != null;
-            pipeGlowSprite = LoadOptionalSprite("PipeGlow");
+            pipeCapHeight = hasAuthoredPipeCap
+                ? PipeCapWidth / Mathf.Max(.01f, pipeCapSprite.bounds.size.x / pipeCapSprite.bounds.size.y)
+                : PipeFallbackCapHeight;
+            pipeGlowSprite = LoadKeyedPipeSprite("PipeGlow");
+            hasAuthoredPipeGlow = pipeGlowSprite != null;
 
             backgroundRenderer = CreateRenderer("Cinematic world", WorldBackdrop(equippedWorld), Color.white, -40);
             backgroundRenderer.transform.position = new Vector3(0f, .12f, 0f);
@@ -1151,7 +1188,7 @@ new WorldTheme(
             );
 
             // Fine highlight to keep the floor crisp on a phone display.
-            var floorHighlight = CreateRenderer(
+            floorHighlight = CreateRenderer(
                 "Floor edge highlight",
                 whiteSprite,
                 new Color(.78f, .94f, 1f, .48f),
@@ -1172,6 +1209,8 @@ new WorldTheme(
         {
             bird = new GameObject("Flight bird").transform;
             bird.SetParent(transform, false);
+            CreateBirdHitbox();
+            CreateBirdThrust();
             // This compact, opaque inner silhouette is deliberately independent of
             // imported artwork. It gives every bird a readable body against bright
             // worlds and makes a missing/unsupported texture impossible to turn the
@@ -1223,9 +1262,38 @@ new WorldTheme(
             birdEyeGlintRenderer = eyeGlint;
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            collisionBirdDebug = CreateRenderer("Bird collision guide", ringSprite, new Color(.35f, 1f, .72f, .78f), 31, bird);
+            collisionBirdDebug = CreateRenderer("Bird body collision guide", ringSprite, new Color(.35f, 1f, .72f, .78f), 31, birdHitbox);
             collisionBirdDebug.enabled = false;
 #endif
+        }
+
+        private void CreateBirdHitbox()
+        {
+            // The game uses its own deterministic flight loop. This one capsule is
+            // the authoritative queried shape; no Rigidbody2D is added to compete
+            // with that proven motion/rotation system.
+            birdHitbox = new GameObject("BirdHitbox").transform;
+            birdHitbox.SetParent(transform, false);
+            birdBodyCollider = birdHitbox.gameObject.AddComponent<CapsuleCollider2D>();
+            birdBodyCollider.direction = CapsuleDirection2D.Horizontal;
+            birdBodyCollider.size = new Vector2(BirdHitboxWidth, BirdHitboxHeight);
+            birdBodyCollider.offset = Vector2.zero;
+            birdBodyCollider.isTrigger = false;
+            birdBodyCollider.enabled = false;
+            SyncBirdHitbox();
+        }
+
+        private void CreateBirdThrust()
+        {
+            // The existing neon trail remains the long propulsion ribbon. These two
+            // small layers give it a living engine root without adding any collider.
+            birdThrust = new GameObject("Rear propulsion thrust").transform;
+            birdThrust.SetParent(bird, false);
+            birdThrust.localPosition = new Vector3(BirdThrustAnchorX, BirdThrustAnchorY, 0f);
+            birdThrustGlowRenderer = CreateRenderer("Rear thrust glow", softCircleSprite, Color.clear, 11, birdThrust);
+            birdThrustCoreRenderer = CreateRenderer("Rear thrust core", softCircleSprite, Color.clear, 13, birdThrust);
+            birdThrustGlowRenderer.enabled = false;
+            birdThrustCoreRenderer.enabled = false;
         }
 
         private void CreateAetherwingRig()
@@ -1368,7 +1436,7 @@ new WorldTheme(
 
         private PipeSurface CreatePipeSurface(Transform parent, string label)
         {
-            return new PipeSurface
+            var surface = new PipeSurface
             {
                 Artwork = CreateRenderer($"{label} cylindrical reflection", pipeBodySprite, new Color(1f, 1f, 1f, .25f), 5, parent),
                 Outer = CreateRenderer($"{label} outer", roundedPanelSprite, Hex("#030613"), 2, parent),
@@ -1388,6 +1456,19 @@ new WorldTheme(
                 CapPanel = CreateRenderer($"{label} authored plumbing collar", pipeCapSprite ?? roundedPanelSprite, Color.white, 9, parent),
                 CapEnergy = CreateRenderer($"{label} collar energy seam", whiteSprite, Hex("#45eaff"), 11, parent),
             };
+            surface.BodyCollider = CreatePipeCollider(parent, $"{label} body hitbox");
+            surface.CapCollider = CreatePipeCollider(parent, $"{label} cap hitbox");
+            return surface;
+        }
+
+        private static BoxCollider2D CreatePipeCollider(Transform parent, string name)
+        {
+            var hitbox = new GameObject(name);
+            hitbox.transform.SetParent(parent, false);
+            var collider = hitbox.AddComponent<BoxCollider2D>();
+            collider.isTrigger = false;
+            collider.offset = Vector2.zero;
+            return collider;
         }
 
         private void CreateInterface()
@@ -1832,6 +1913,7 @@ new WorldTheme(
             var frameDelta = Mathf.Min(Time.unscaledDeltaTime, MaximumSimulationCatchup);
             ambientTime += frameDelta;
             UpdateAmbientVisuals();
+            UpdateRearThrust(frameDelta);
             UpdateMenuBird(frameDelta);
             UpdateUnlockReveal(frameDelta);
             UpdateScoreBurst(frameDelta);
@@ -2147,7 +2229,6 @@ new WorldTheme(
 
         private void UpdateBird(float deltaTime)
         {
-            var collisionRadius = ActiveTuning().CollisionRadius;
             birdVelocity = Mathf.Max(ActiveMaxFallVelocity(), birdVelocity + ActiveGravity() * deltaTime);
             birdY += birdVelocity * deltaTime;
             wingTimer = Mathf.Min(WingCycleSeconds, wingTimer + deltaTime);
@@ -2172,17 +2253,19 @@ new WorldTheme(
             );
             bird.rotation = Quaternion.Euler(0f, 0f, birdTilt);
             UpdateBirdWingMotion();
+            var collisionRadius = BirdHitboxVerticalExtent();
+            var hitboxOffset = BirdHitboxWorldOffset();
 
             var ceiling = CameraHeight * .5f - collisionRadius;
-            if (birdY >= ceiling)
+            if (birdY + hitboxOffset.y >= ceiling)
             {
                 // The ceiling is a soft clamp, never an off-screen death.
-                birdY = ceiling;
+                birdY = ceiling - hitboxOffset.y;
                 if (birdVelocity > 0f) birdVelocity = 0f;
                 bird.position = new Vector3(BirdX, birdY, 0f);
             }
 
-            if (birdY - collisionRadius <= GroundY)
+            if (birdY + hitboxOffset.y - collisionRadius <= GroundY)
             {
                 // A recently shattered Aegis protects every collision surface for
                 // its full recovery beat, including the lower hazard. Re-centering
@@ -2194,16 +2277,53 @@ new WorldTheme(
                     return;
                 }
 
-                birdY = GroundY + collisionRadius + .14f;
+                birdY = GroundY + collisionRadius + .14f - hitboxOffset.y;
                 birdVelocity = 0f;
                 bird.position = new Vector3(BirdX, birdY, 0f);
             }
+
+            SyncBirdHitbox();
+        }
+
+        private void SyncBirdHitbox()
+        {
+            if (bird == null || birdHitbox == null) return;
+            birdHitbox.position = bird.position + BirdHitboxWorldOffset();
+            birdHitbox.rotation = bird.rotation;
+            birdHitbox.localScale = Vector3.one;
+        }
+
+        private Vector3 BirdHitboxWorldOffset()
+        {
+            return bird == null
+                ? new Vector3(BirdHitboxOffsetX, BirdHitboxOffsetY, 0f)
+                : bird.rotation * new Vector3(BirdHitboxOffsetX, BirdHitboxOffsetY, 0f);
+        }
+
+        private float BirdHitboxVerticalExtent()
+        {
+            // A horizontal capsule is a central line segment with two round ends.
+            // This is its exact upright extent after the bird's current rotation.
+            var halfRadius = BirdHitboxRadius;
+            var halfSegment = Mathf.Max(0f, BirdHitboxWidth - BirdHitboxHeight) * .5f;
+            return halfRadius + Mathf.Abs(Mathf.Sin(birdTilt * Mathf.Deg2Rad)) * halfSegment;
+        }
+
+        private float BirdHitboxHorizontalExtent()
+        {
+            var halfRadius = BirdHitboxRadius;
+            var halfSegment = Mathf.Max(0f, BirdHitboxWidth - BirdHitboxHeight) * .5f;
+            return halfRadius + Mathf.Abs(Mathf.Cos(birdTilt * Mathf.Deg2Rad)) * halfSegment;
+        }
+
+        private static bool CollidersOverlap(Collider2D first, Collider2D second)
+        {
+            return first != null && second != null && first.enabled && second.enabled && first.Distance(second).isOverlapped;
         }
 
         private void UpdatePipes(float deltaTime)
         {
             var speed = ActiveScrollSpeed();
-            var collisionRadius = ActiveTuning().CollisionRadius;
             var furthestX = float.MinValue;
             foreach (var pair in pipePool)
             {
@@ -2223,8 +2343,17 @@ new WorldTheme(
                 furthestX = Mathf.Max(furthestX, pair.X);
                 UpdateRouteGateMotion(pair, deltaTime);
                 AnimatePipePair(pair);
+            }
 
-                if (shieldImmunityTimer <= 0f && BirdCollidesWithPipe(pair, collisionRadius))
+            // Both the bird capsule and the pipe body/cap boxes are moved by the
+            // deterministic simulation. Sync once, then query those exact shapes—
+            // no wing, trail, glow, or invisible visual layer participates.
+            Physics2D.SyncTransforms();
+
+            foreach (var pair in pipePool)
+            {
+                if (pair == null || !pair.Root.activeSelf) continue;
+                if (shieldImmunityTimer <= 0f && BirdCollidesWithPipe(pair))
                 {
                     if (!UseShield())
                     {
@@ -2241,7 +2370,8 @@ new WorldTheme(
                     continue;
                 }
 
-                if (!pair.Passed && pair.X + PipeCollisionWidth * .5f < BirdX - collisionRadius)
+                var birdBodyX = birdHitbox == null ? BirdX : birdHitbox.position.x;
+                if (!pair.Passed && pair.X + PipeCollisionWidth * .5f < birdBodyX - BirdHitboxHorizontalExtent())
                 {
                     pair.Passed = true;
                     var perfect = Mathf.Abs(birdY - pair.GapCenter) <= ActiveTuning().PerfectPassWindow;
@@ -2266,47 +2396,13 @@ new WorldTheme(
             }
         }
 
-        private bool BirdCollidesWithPipe(PipePair pair, float collisionRadius)
+        private bool BirdCollidesWithPipe(PipePair pair)
         {
-            var halfGap = pair.GapHeight * .5f;
-            var topEdge = pair.GapCenter + halfGap;
-            if (birdY + collisionRadius > topEdge)
-            {
-                // Only the visible collar occupies the wider cap collision width.
-                var topWidth = birdY - collisionRadius < topEdge + PipeCapHeight
-                    ? PipeCollisionWidth
-                    : PipeWidth;
-                var horizontalRadius = birdY >= topEdge
-                    ? BirdCollisionHalfWidth
-                    : EllipseHalfWidthAt(topEdge - birdY, collisionRadius);
-                if (BirdOverlapsPipeWidth(pair.X, topWidth, horizontalRadius)) return true;
-            }
-
-            var bottomEdge = pair.GapCenter - halfGap;
-            if (birdY - collisionRadius < bottomEdge)
-            {
-                var bottomWidth = birdY + collisionRadius > bottomEdge - PipeCapHeight
-                    ? PipeCollisionWidth
-                    : PipeWidth;
-                var horizontalRadius = birdY <= bottomEdge
-                    ? BirdCollisionHalfWidth
-                    : EllipseHalfWidthAt(birdY - bottomEdge, collisionRadius);
-                if (BirdOverlapsPipeWidth(pair.X, bottomWidth, horizontalRadius)) return true;
-            }
-
-            return false;
-        }
-
-        private static float EllipseHalfWidthAt(float verticalDistance, float halfHeight)
-        {
-            var normalized = Mathf.Clamp01(Mathf.Abs(verticalDistance) / Mathf.Max(.001f, halfHeight));
-            return BirdCollisionHalfWidth * Mathf.Sqrt(Mathf.Max(0f, 1f - normalized * normalized));
-        }
-
-        private static bool BirdOverlapsPipeWidth(float pipeX, float pipeWidth, float horizontalRadius)
-        {
-            return BirdX + horizontalRadius > pipeX - pipeWidth * .5f
-                && BirdX - horizontalRadius < pipeX + pipeWidth * .5f;
+            if (pair == null || birdBodyCollider == null || !birdBodyCollider.enabled) return false;
+            return CollidersOverlap(birdBodyCollider, pair.Top.BodyCollider)
+                || CollidersOverlap(birdBodyCollider, pair.Top.CapCollider)
+                || CollidersOverlap(birdBodyCollider, pair.Bottom.BodyCollider)
+                || CollidersOverlap(birdBodyCollider, pair.Bottom.CapCollider);
         }
 
         private float ActiveScrollSpeed()
@@ -2326,7 +2422,7 @@ new WorldTheme(
 
         private float RoutePipeSpacing()
         {
-            return GetWorldWidth() * .52f;
+            return GetWorldWidth() * PipeSpacingFraction;
         }
 
         private float ActiveGravity()
@@ -2767,6 +2863,55 @@ new WorldTheme(
             return false;
         }
 
+        private void ConfigureRearThrust()
+        {
+            if (equippedSkin == null) return;
+            birdThrustGlowColour = equippedSkin.Trail;
+            birdThrustGlowColour.a = 1f;
+            birdThrustCoreColour = Color.Lerp(equippedSkin.Trail, Color.white, .46f);
+            birdThrustCoreColour.a = 1f;
+        }
+
+        private void UpdateRearThrust(float deltaTime)
+        {
+            if (birdThrust == null || birdThrustGlowRenderer == null || birdThrustCoreRenderer == null) return;
+            var alive = state == FlightState.Playing && bird != null && bird.gameObject.activeInHierarchy;
+            var impactFade = state == FlightState.Impact
+                ? Mathf.Clamp01(impactTumbleTimer / Mathf.Max(.01f, ImpactTumbleSeconds)) * .18f
+                : 0f;
+            var visibility = alive ? 1f : impactFade;
+            if (visibility <= .001f)
+            {
+                birdThrustGlowRenderer.enabled = false;
+                birdThrustCoreRenderer.enabled = false;
+                return;
+            }
+
+            var motion = reduceMotionEnabled ? .35f : 1f;
+            var flapStrength = alive ? 1f - Mathf.Clamp01(wingTimer / WingCycleSeconds) : 0f;
+            var pulse = .58f + flapStrength * .42f + Mathf.Sin(ambientTime * 19f) * .06f * motion;
+            var coreLength = BirdThrustCoreLength + BirdThrustPulseLength * pulse;
+            var glowLength = BirdThrustGlowLength + BirdThrustPulseLength * 1.6f * pulse;
+
+            birdThrust.localPosition = new Vector3(
+                BirdThrustAnchorX,
+                BirdThrustAnchorY + Mathf.Sin(ambientTime * 13f) * .008f * motion,
+                0f);
+            birdThrustGlowRenderer.transform.localPosition = new Vector3(-glowLength * .43f, 0f, 0f);
+            birdThrustGlowRenderer.transform.localScale = new Vector3(glowLength, BirdThrustGlowHeight * (1f + pulse * .14f), 1f);
+            birdThrustCoreRenderer.transform.localPosition = new Vector3(-coreLength * .42f, 0f, 0f);
+            birdThrustCoreRenderer.transform.localScale = new Vector3(coreLength, BirdThrustCoreHeight * (1f + pulse * .10f), 1f);
+
+            var glow = birdThrustGlowColour;
+            glow.a = visibility * (.16f + pulse * .16f);
+            birdThrustGlowRenderer.color = glow;
+            var core = birdThrustCoreColour;
+            core.a = visibility * (.44f + pulse * .34f);
+            birdThrustCoreRenderer.color = core;
+            birdThrustGlowRenderer.enabled = true;
+            birdThrustCoreRenderer.enabled = true;
+        }
+
         private void UpdateTrail(float deltaTime)
         {
             var trailScale = 1f;
@@ -2775,7 +2920,7 @@ new WorldTheme(
             if (trailSafety != null) trailSafety.startWidth = .048f * trailScale;
             trailGlow.startWidth = .19f * trailScale;
             trailCore.startWidth = .082f * trailScale;
-            trailPoints[0] = bird.position + new Vector3(-.66f, .02f, .1f);
+            trailPoints[0] = bird.TransformPoint(new Vector3(BirdThrustAnchorX, BirdThrustAnchorY, .1f));
             for (var index = 1; index < trailPoints.Length; index += 1)
             {
                 var follow = 1f - Mathf.Exp(-deltaTime * Mathf.Lerp(19f, 8f, index / (float)(trailPoints.Length - 1)));
@@ -2847,10 +2992,10 @@ new WorldTheme(
             if (collisionBirdDebug != null)
             {
                 collisionBirdDebug.enabled = visible;
-                collisionBirdDebug.transform.localScale = Vector3.one * (ActiveTuning().CollisionRadius * 2f);
+                collisionBirdDebug.transform.localScale = new Vector3(BirdHitboxWidth, BirdHitboxHeight, 1f);
             }
 
-            var physicalWidth = PipeCollisionWidth;
+            var physicalWidth = PipeCapWidth;
             foreach (var pair in pipePool)
             {
                 if (pair == null || pair.DebugTopBody == null || pair.DebugTopCap == null || pair.DebugBottomBody == null || pair.DebugBottomCap == null) continue;
@@ -2863,18 +3008,17 @@ new WorldTheme(
 
                 var halfGap = pair.GapHeight * .5f;
                 var topEdge = pair.GapCenter + halfGap;
-                var topHeight = Mathf.Max(0f, CameraHeight * .5f - topEdge);
-                var topBodyHeight = Mathf.Max(0f, topHeight - PipeCapHeight);
-                pair.DebugTopBody.transform.localPosition = new Vector3(0f, topEdge + PipeCapHeight + topBodyHeight * .5f, 0f);
-                pair.DebugTopBody.transform.localScale = new Vector3(PipeWidth, topBodyHeight, 1f);
+                var topHeight = Mathf.Max(0f, CameraHeight * .5f + TopPipeOverscan - topEdge);
+                pair.DebugTopBody.transform.localPosition = new Vector3(0f, topEdge + topHeight * .5f, 0f);
+                pair.DebugTopBody.transform.localScale = new Vector3(PipeWidth, topHeight, 1f);
                 pair.DebugTopCap.transform.localPosition = new Vector3(0f, topEdge + PipeCapHeight * .5f, 0f);
                 pair.DebugTopCap.transform.localScale = new Vector3(physicalWidth, PipeCapHeight, 1f);
 
                 var bottomEdge = pair.GapCenter - halfGap;
-                var bottomHeight = Mathf.Max(0f, bottomEdge - GroundY);
-                var bottomBodyHeight = Mathf.Max(0f, bottomHeight - PipeCapHeight);
-                pair.DebugBottomBody.transform.localPosition = new Vector3(0f, GroundY + bottomBodyHeight * .5f, 0f);
-                pair.DebugBottomBody.transform.localScale = new Vector3(PipeWidth, bottomBodyHeight, 1f);
+                var bottomBase = GroundY - BottomPipeFloorOverlap;
+                var bottomHeight = Mathf.Max(0f, bottomEdge - bottomBase);
+                pair.DebugBottomBody.transform.localPosition = new Vector3(0f, bottomBase + bottomHeight * .5f, 0f);
+                pair.DebugBottomBody.transform.localScale = new Vector3(PipeWidth, bottomHeight, 1f);
                 pair.DebugBottomCap.transform.localPosition = new Vector3(0f, bottomEdge - PipeCapHeight * .5f, 0f);
                 pair.DebugBottomCap.transform.localScale = new Vector3(physicalWidth, PipeCapHeight, 1f);
             }
@@ -2965,6 +3109,11 @@ new WorldTheme(
             UpdatePowerUpHud();
             SetBirdArtwork();
             bird.gameObject.SetActive(true);
+            if (birdBodyCollider != null)
+            {
+                birdBodyCollider.enabled = true;
+                SyncBirdHitbox();
+            }
             // The launch input is itself a flap, so start the 70 ms duplicate-touch
             // lockout here before any synthetic mouse/touch echo can arrive.
             lastFlapInputTime = Time.unscaledTime;
@@ -2990,6 +3139,7 @@ new WorldTheme(
             if (trailSafety != null) trailSafety.positionCount = 0;
             trailGlow.positionCount = 0;
             trailCore.positionCount = 0;
+            if (birdBodyCollider != null) birdBodyCollider.enabled = false;
             foreach (var pair in pipePool) pair.Root.SetActive(false);
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             if (collisionBirdDebug != null) collisionBirdDebug.enabled = false;
@@ -3090,12 +3240,15 @@ new WorldTheme(
         {
             var halfGap = pair.GapHeight * .5f;
             var topLowerEdge = pair.GapCenter + halfGap;
-            var topHeight = CameraHeight * .5f - topLowerEdge;
+            // Keep the non-playable pipe ends tucked outside the visible camera and
+            // floor, while the cap remains exactly flush with the readable gap edge.
+            var topHeight = CameraHeight * .5f + TopPipeOverscan - topLowerEdge;
             LayoutPipeSurface(pair.Top, topLowerEdge + topHeight * .5f, topHeight, topLowerEdge, true);
 
             var bottomUpperEdge = pair.GapCenter - halfGap;
-            var bottomHeight = bottomUpperEdge - GroundY;
-            LayoutPipeSurface(pair.Bottom, GroundY + bottomHeight * .5f, bottomHeight, bottomUpperEdge, false);
+            var bottomBase = GroundY - BottomPipeFloorOverlap;
+            var bottomHeight = bottomUpperEdge - bottomBase;
+            LayoutPipeSurface(pair.Bottom, bottomBase + bottomHeight * .5f, bottomHeight, bottomUpperEdge, false);
         }
 
         private void ConfigureRoutePowerUp(PipePair gate)
@@ -3298,11 +3451,17 @@ new WorldTheme(
             surface.Beacon.transform.localPosition = new Vector3(0f, capY + direction * .115f, 0f);
             surface.Beacon.transform.localScale = Vector3.one * Mathf.Lerp(.23f, .34f, pulse);
 
-            var collarGlow = equippedPipe.Energy;
-            collarGlow.a = Mathf.Lerp(.08f, .30f, pulse);
-            surface.CapGlow.color = collarGlow;
-            surface.CapGlow.transform.localPosition = new Vector3(0f, capY + direction * .16f, 0f);
-            surface.CapGlow.transform.localScale = new Vector3(PipeWidth * (1.02f + pulse * .12f), .42f + pulse * .08f, 1f);
+            if (hasAuthoredPipeCap && hasAuthoredPipeGlow && surface.CapGlow.enabled)
+            {
+                var collarGlow = equippedPipe.Energy;
+                collarGlow.a = Mathf.Lerp(.14f, .28f, pulse);
+                surface.CapGlow.color = collarGlow;
+                var capCentre = capY + direction * (PipeCapHeight * .5f);
+                SetSpriteBlock(surface.CapGlow, Vector2.up * capCentre, new Vector2(
+                    PipeCapWidth * (.80f + pulse * .04f),
+                    PipeCapHeight * (.27f + pulse * .02f)));
+                surface.CapGlow.transform.localRotation = Quaternion.identity;
+            }
 
             var capEnergyColour = surface.CapEnergy.color;
             capEnergyColour.a = Mathf.Lerp(.62f, .98f, pulse);
@@ -3339,10 +3498,13 @@ new WorldTheme(
             LayoutPlumbingGate(surface, centreY, height, capY, topPipe, style);
 
             var direction = topPipe ? 1f : -1f;
+            var capCentre = capY + direction * (PipeCapHeight * .5f);
+            SetPipeCollider(surface.BodyCollider, new Vector2(0f, centreY), new Vector2(PipeWidth, height));
+            SetPipeCollider(surface.CapCollider, new Vector2(0f, capCentre), new Vector2(PipeCollisionWidth, PipeCapHeight));
             var insideOffset = direction * .048f;
-            surface.Core.enabled = true;
-            surface.CorePulse.enabled = true;
-            surface.CapGlow.enabled = false;
+            var useProceduralBodyDetails = !hasAuthoredPipeBody;
+            surface.Core.enabled = useProceduralBodyDetails;
+            surface.CorePulse.enabled = useProceduralBodyDetails;
             surface.Core.sortingOrder = 6;
             surface.CorePulse.sortingOrder = 7;
             surface.CapGlow.sortingOrder = 8;
@@ -3384,11 +3546,16 @@ new WorldTheme(
             surface.Beacon.transform.localPosition = new Vector3(0f, capY + direction * .10f, 0f);
             surface.Beacon.transform.localScale = Vector3.one * .28f;
 
-            var glowColor = style.Energy;
-            glowColor.a = .18f;
-            surface.CapGlow.color = glowColor;
-            surface.CapGlow.transform.localPosition = new Vector3(0f, capY + direction * .15f, 0f);
-            surface.CapGlow.transform.localScale = new Vector3(PipeWidth * 1.06f, .46f, 1f);
+            surface.CapGlow.enabled = hasAuthoredPipeCap && hasAuthoredPipeGlow;
+            if (hasAuthoredPipeCap && hasAuthoredPipeGlow)
+            {
+                var glowColor = style.Energy;
+                glowColor.a = .20f;
+                surface.CapGlow.sprite = pipeGlowSprite;
+                surface.CapGlow.color = glowColor;
+                SetSpriteBlock(surface.CapGlow, Vector2.up * capCentre, new Vector2(PipeCapWidth * .82f, PipeCapHeight * .28f));
+                surface.CapGlow.transform.localRotation = Quaternion.identity;
+            }
         }
 
         private void LayoutPlumbingGate(PipeSurface surface, float centreY, float height, float capY, bool topPipe, PipeStyle style)
@@ -3460,13 +3627,16 @@ new WorldTheme(
                     ? Quaternion.Euler(0f, 0f, 180f)
                     : Quaternion.identity;
 
-                surface.CapGlow.enabled = true;
-                var authoredGlow = style.Energy;
-                authoredGlow.a = .16f;
-                surface.CapGlow.color = authoredGlow;
-                surface.CapGlow.sprite = softCircleSprite;
-                SetBlock(surface.CapGlow, Vector2.up * capCentre, new Vector2(PipeCollisionWidth * 1.05f, PipeCapHeight * .80f));
-                surface.CapGlow.transform.localRotation = Quaternion.identity;
+                surface.CapGlow.enabled = hasAuthoredPipeGlow;
+                if (hasAuthoredPipeGlow)
+                {
+                    var authoredGlow = style.Energy;
+                    authoredGlow.a = .20f;
+                    surface.CapGlow.color = authoredGlow;
+                    surface.CapGlow.sprite = pipeGlowSprite;
+                    SetSpriteBlock(surface.CapGlow, Vector2.up * capCentre, new Vector2(PipeCapWidth * .82f, PipeCapHeight * .28f));
+                    surface.CapGlow.transform.localRotation = Quaternion.identity;
+                }
             }
             else
             {
@@ -3536,6 +3706,7 @@ new WorldTheme(
         {
             if (state != FlightState.Playing) return;
             state = FlightState.Impact;
+            if (birdBodyCollider != null) birdBodyCollider.enabled = false;
             impactFrameTimer = ImpactFreezeSeconds;
             impactTumbleTimer = ImpactTumbleSeconds;
             newBest = score > best && score > 0;
@@ -3561,7 +3732,7 @@ new WorldTheme(
         {
             if (bird == null) return;
             birdVelocity = Mathf.Max(ActiveMaxFallVelocity(), birdVelocity + ActiveGravity() * deltaTime);
-            birdY = Mathf.Max(GroundY + BirdCollisionRadius, birdY + birdVelocity * deltaTime);
+            birdY = Mathf.Max(GroundY + BirdHitboxVerticalExtent(), birdY + birdVelocity * deltaTime);
             bird.position = new Vector3(BirdX, birdY, 0f);
             birdTilt += 520f * deltaTime;
             bird.rotation = Quaternion.Euler(0f, 0f, birdTilt);
@@ -4232,6 +4403,7 @@ new WorldTheme(
             }
             if (birdDepthRenderer != null) birdDepthRenderer.enabled = !aetherwing && !hasFlapFrameSequence;
             if (birdEyeGlintRenderer != null) birdEyeGlintRenderer.enabled = !UsesAetherwing() && !hasFlapFrameSequence;
+            ConfigureRearThrust();
         }
 
         private bool LoadFlapFrameSequence(Skin skin)
@@ -4969,6 +5141,122 @@ new WorldTheme(
             return sprite;
         }
 
+        private Sprite LoadKeyedPipeSprite(string path, int cropTopPixels = 0, int cropBottomPixels = 0)
+        {
+            var source = Resources.Load<Texture2D>(path);
+            if (source == null)
+            {
+                Debug.LogWarning($"SkyPulse: pipe artwork '{path}' was not found; using the mechanical fallback.");
+                return null;
+            }
+            if (!source.isReadable)
+            {
+                Debug.LogWarning($"SkyPulse: pipe artwork '{path}' must have Read/Write enabled to remove its white presentation canvas; using the mechanical fallback.");
+                return null;
+            }
+
+            try
+            {
+                var sourcePixels = source.GetPixels32();
+                var hasSourceAlpha = false;
+                for (var index = 0; index < sourcePixels.Length; index += 1)
+                {
+                    if (sourcePixels[index].a < 250)
+                    {
+                        hasSourceAlpha = true;
+                        break;
+                    }
+                }
+
+                var whiteBackground = new bool[sourcePixels.Length];
+                if (!hasSourceAlpha) MarkConnectedWhiteCanvas(sourcePixels, source.width, source.height, whiteBackground);
+
+                var cropBottom = Mathf.Clamp(cropBottomPixels, 0, source.height - 1);
+                var cropTop = Mathf.Clamp(cropTopPixels, 0, source.height - cropBottom - 1);
+                var outputHeight = source.height - cropBottom - cropTop;
+                var outputPixels = new Color32[source.width * outputHeight];
+                var minimumX = source.width;
+                var minimumY = outputHeight;
+                var maximumX = -1;
+                var maximumY = -1;
+                for (var y = 0; y < outputHeight; y += 1)
+                {
+                    for (var x = 0; x < source.width; x += 1)
+                    {
+                        var sourceIndex = (y + cropBottom) * source.width + x;
+                        var pixel = sourcePixels[sourceIndex];
+                        if (whiteBackground[sourceIndex]) pixel.a = 0;
+                        outputPixels[y * source.width + x] = pixel;
+                        if (pixel.a == 0) continue;
+                        minimumX = Mathf.Min(minimumX, x);
+                        minimumY = Mathf.Min(minimumY, y);
+                        maximumX = Mathf.Max(maximumX, x);
+                        maximumY = Mathf.Max(maximumY, y);
+                    }
+                }
+                if (maximumX < minimumX || maximumY < minimumY) return null;
+
+                var trimmedWidth = maximumX - minimumX + 1;
+                var trimmedHeight = maximumY - minimumY + 1;
+                var trimmedPixels = new Color32[trimmedWidth * trimmedHeight];
+                for (var y = 0; y < trimmedHeight; y += 1)
+                {
+                    Array.Copy(outputPixels, (minimumY + y) * source.width + minimumX, trimmedPixels, y * trimmedWidth, trimmedWidth);
+                }
+                var texture = new Texture2D(trimmedWidth, trimmedHeight, TextureFormat.RGBA32, false)
+                {
+                    name = source.name + " transparent gameplay cutout",
+                    filterMode = source.filterMode,
+                    wrapMode = TextureWrapMode.Clamp,
+                };
+                texture.SetPixels32(trimmedPixels);
+                texture.Apply(false, true);
+                return CreateSprite(texture);
+            }
+            catch (UnityException exception)
+            {
+                Debug.LogWarning($"SkyPulse: could not prepare pipe artwork '{path}' ({exception.Message}); using the mechanical fallback.");
+                return null;
+            }
+        }
+
+        private static void MarkConnectedWhiteCanvas(Color32[] pixels, int width, int height, bool[] whiteBackground)
+        {
+            var queue = new List<int>(width * 2 + height * 2);
+            for (var x = 0; x < width; x += 1)
+            {
+                QueueWhiteCanvasPixel(x, pixels, whiteBackground, queue);
+                QueueWhiteCanvasPixel((height - 1) * width + x, pixels, whiteBackground, queue);
+            }
+            for (var y = 1; y < height - 1; y += 1)
+            {
+                QueueWhiteCanvasPixel(y * width, pixels, whiteBackground, queue);
+                QueueWhiteCanvasPixel(y * width + width - 1, pixels, whiteBackground, queue);
+            }
+
+            for (var readIndex = 0; readIndex < queue.Count; readIndex += 1)
+            {
+                var pixelIndex = queue[readIndex];
+                var x = pixelIndex % width;
+                if (x > 0) QueueWhiteCanvasPixel(pixelIndex - 1, pixels, whiteBackground, queue);
+                if (x + 1 < width) QueueWhiteCanvasPixel(pixelIndex + 1, pixels, whiteBackground, queue);
+                if (pixelIndex >= width) QueueWhiteCanvasPixel(pixelIndex - width, pixels, whiteBackground, queue);
+                if (pixelIndex + width < pixels.Length) QueueWhiteCanvasPixel(pixelIndex + width, pixels, whiteBackground, queue);
+            }
+        }
+
+        private static void QueueWhiteCanvasPixel(int index, Color32[] pixels, bool[] whiteBackground, List<int> queue)
+        {
+            if (whiteBackground[index] || !IsWhiteCanvasPixel(pixels[index])) return;
+            whiteBackground[index] = true;
+            queue.Add(index);
+        }
+
+        private static bool IsWhiteCanvasPixel(Color32 pixel)
+        {
+            return pixel.r >= 240 && pixel.g >= 240 && pixel.b >= 240;
+        }
+
         private static Texture2D LoadTextureFromResourceFolder(string path)
         {
             var separator = path.LastIndexOf('/');
@@ -5083,6 +5371,15 @@ new WorldTheme(
         {
             renderer.transform.localPosition = new Vector3(position.x, position.y, 0f);
             renderer.transform.localScale = new Vector3(size.x, size.y, 1f);
+        }
+
+        private static void SetPipeCollider(BoxCollider2D collider, Vector2 position, Vector2 size)
+        {
+            if (collider == null) return;
+            collider.transform.localPosition = new Vector3(position.x, position.y, 0f);
+            collider.transform.localRotation = Quaternion.identity;
+            collider.transform.localScale = Vector3.one;
+            collider.size = new Vector2(Mathf.Max(.01f, size.x), Mathf.Max(.01f, size.y));
         }
 
         private static void SetSpriteBlock(SpriteRenderer renderer, Vector2 position, Vector2 worldSize)
