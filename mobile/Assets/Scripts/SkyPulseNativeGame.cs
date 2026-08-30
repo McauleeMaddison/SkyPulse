@@ -510,124 +510,124 @@ namespace SkyPulse.Mobile
             }),
         };
 
-       private static readonly WorldTheme[] Worlds =
-{
-    new WorldTheme(
-        "neon_city",
-        "NEON CITY",
-        "SkyPulse/backgrounds/neon-flightdeck-v1",
-        "#45eaff",
-        "#0a0522",
-        "ROUTE 01",
-        1f,
-        5.38f,
-        "ion",
-        "pulse"
-    ),
+        private static readonly WorldTheme[] Worlds =
+ {
+new WorldTheme(
+"neon_city",
+"NEON CITY",
+"SkyPulse/backgrounds/neon-flightdeck-v1",
+"#45eaff",
+"#0a0522",
+"ROUTE 01",
+1f,
+5.38f,
+"ion",
+"pulse"
+),
 
-    new WorldTheme(
-        "aurora_rise",
-        "AURORA RISE",
-        "SkyPulse/backgrounds/themes/aurora-rise-v2",
-        "#61f5b3",
-        "#05251e",
-        "ROUTE 02",
-        1f,
-        4.92f,
-        "frost",
-        "aurora"
-    ),
+new WorldTheme(
+"aurora_rise",
+"AURORA RISE",
+"SkyPulse/backgrounds/themes/aurora-rise-v2",
+"#61f5b3",
+"#05251e",
+"ROUTE 02",
+1f,
+4.92f,
+"frost",
+"aurora"
+),
 
-    new WorldTheme(
-        "solar_drift",
-        "SOLAR DRIFT",
-        "SkyPulse/backgrounds/themes/solar-drift-v2",
-        "#ffc34d",
-        "#2b0d10",
-        "ROUTE 03",
-        1f,
-        4.46f,
-        "solar",
-        "solar"
-    ),
+new WorldTheme(
+"solar_drift",
+"SOLAR DRIFT",
+"SkyPulse/backgrounds/themes/solar-drift-v2",
+"#ffc34d",
+"#2b0d10",
+"ROUTE 03",
+1f,
+4.46f,
+"solar",
+"solar"
+),
 
-    new WorldTheme(
-        "midnight_tide",
-        "MIDNIGHT TIDE",
-        "SkyPulse/backgrounds/themes/midnight-tide-v2",
-        "#45eaff",
-        "#07113d",
-        "ROUTE 04",
-        1f,
-        4.30f,
-        "cobalt",
-        "seaglass"
-    ),
+new WorldTheme(
+"midnight_tide",
+"MIDNIGHT TIDE",
+"SkyPulse/backgrounds/themes/midnight-tide-v2",
+"#45eaff",
+"#07113d",
+"ROUTE 04",
+1f,
+4.30f,
+"cobalt",
+"seaglass"
+),
 
-    new WorldTheme(
-        "velvet_dawn",
-        "VELVET DAWN",
-        "SkyPulse/backgrounds/themes/velvet-dawn-v3",
-        "#f05bc6",
-        "#26051f",
-        "ROUTE 05",
-        1f,
-        4.14f,
-        "rose",
-        "sakura"
-    ),
+new WorldTheme(
+"velvet_dawn",
+"VELVET DAWN",
+"SkyPulse/backgrounds/themes/velvet-dawn-v3",
+"#f05bc6",
+"#26051f",
+"ROUTE 05",
+1f,
+4.14f,
+"rose",
+"sakura"
+),
 
-    new WorldTheme(
-        "crystal_night",
-        "CRYSTAL NIGHT",
-        "SkyPulse/backgrounds/themes/crystal-night-v2",
-        "#edf7ff",
-        "#071239",
-        "ROUTE 06",
-        1f,
-        4.00f,
-        "prism",
-        "glacial"
-    ),
+new WorldTheme(
+"crystal_night",
+"CRYSTAL NIGHT",
+"SkyPulse/backgrounds/themes/crystal-night-v2",
+"#edf7ff",
+"#071239",
+"ROUTE 06",
+1f,
+4.00f,
+"prism",
+"glacial"
+),
 
-    new WorldTheme(
-        "jade_horizon",
-        "JADE HORIZON",
-        "SkyPulse/backgrounds/themes/jade-horizon-v2",
-        "#61f5b3",
-        "#063523",
-        "ROUTE 07",
-        1f,
-        3.86f,
-        "jade",
-        "mintwave"
-    ),
+new WorldTheme(
+"jade_horizon",
+"JADE HORIZON",
+"SkyPulse/backgrounds/themes/jade-horizon-v2",
+"#61f5b3",
+"#063523",
+"ROUTE 07",
+1f,
+3.86f,
+"jade",
+"mintwave"
+),
 
-    new WorldTheme(
-        "violet_rain",
-        "VIOLET RAIN",
-        "SkyPulse/backgrounds/themes/violet-rain-v2",
-        "#b17cff",
-        "#210842",
-        "ROUTE 08",
-        1f,
-        3.72f,
-        "amethyst",
-        "nebula"
-    ),
+new WorldTheme(
+"violet_rain",
+"VIOLET RAIN",
+"SkyPulse/backgrounds/themes/violet-rain-v2",
+"#b17cff",
+"#210842",
+"ROUTE 08",
+1f,
+3.72f,
+"amethyst",
+"nebula"
+),
 
-    new WorldTheme(
-        "eclipse",
-        "ECLIPSE",
-        "SkyPulse/backgrounds/themes/eclipse-v2",
-        "#b17cff",
-        "#10051f",
-        "ROUTE 09",
-        1f,
-        3.56f,
-        "obsidian",
-        "starlight"
-    ),
+new WorldTheme(
+"eclipse",
+"ECLIPSE",
+"SkyPulse/backgrounds/themes/eclipse-v2",
+"#b17cff",
+"#10051f",
+"ROUTE 09",
+1f,
+3.56f,
+"obsidian",
+"starlight"
+),
 };
 
         private static readonly Upgrade[] Upgrades =
@@ -1084,90 +1084,90 @@ namespace SkyPulse.Mobile
             }
         }
 
-     private void CreateFloor()
-{
-    var width = GetWorldWidth() + 1f;
+        private void CreateFloor()
+        {
+            var width = GetWorldWidth() + 1f;
 
-    // Legacy floor base.
-    // Keep the renderer because other code expects the reference,
-    // but never draw the old giant black slab.
-    floorBase = CreateRenderer(
-        "Solid floor base",
-        whiteSprite,
-        Color.clear,
-        -9
-    );
-    floorBase.transform.position = new Vector3(0f, GroundY, 0f);
-    floorBase.transform.localScale = new Vector3(width, .01f, 1f);
-    floorBase.enabled = false;
+            // Legacy floor base.
+            // Keep the renderer because other code expects the reference,
+            // but never draw the old giant black slab.
+            floorBase = CreateRenderer(
+                "Solid floor base",
+                whiteSprite,
+                Color.clear,
+                -9
+            );
+            floorBase.transform.position = new Vector3(0f, GroundY, 0f);
+            floorBase.transform.localScale = new Vector3(width, .01f, 1f);
+            floorBase.enabled = false;
 
-    // Legacy floor surface.
-    // Also kept for compatibility but completely hidden.
-    // This was the remaining dark slab covering the background.
-    floorSurface = CreateRenderer(
-        "Floor material",
-        whiteSprite,
-        Color.clear,
-        -8
-    );
-    floorSurface.transform.position = new Vector3(0f, GroundY, 0f);
-    floorSurface.transform.localScale = new Vector3(width, .01f, 1f);
-    floorSurface.enabled = false;
+            // Legacy floor surface.
+            // Also kept for compatibility but completely hidden.
+            // This was the remaining dark slab covering the background.
+            floorSurface = CreateRenderer(
+                "Floor material",
+                whiteSprite,
+                Color.clear,
+                -8
+            );
+            floorSurface.transform.position = new Vector3(0f, GroundY, 0f);
+            floorSurface.transform.localScale = new Vector3(width, .01f, 1f);
+            floorSurface.enabled = false;
 
-    // Thin dark physical edge directly underneath the collision boundary.
-    floorLip = CreateRenderer(
-        "Floor solid edge",
-        whiteSprite,
-        new Color(.015f, .035f, .065f, .92f),
-        -7
-    );
-    floorLip.transform.position = new Vector3(
-        0f,
-        GroundY - .035f,
-        0f
-    );
-    floorLip.transform.localScale = new Vector3(
-        width,
-        .070f,
-        1f
-    );
+            // Thin dark physical edge directly underneath the collision boundary.
+            floorLip = CreateRenderer(
+                "Floor solid edge",
+                whiteSprite,
+                new Color(.015f, .035f, .065f, .92f),
+                -7
+            );
+            floorLip.transform.position = new Vector3(
+                0f,
+                GroundY - .035f,
+                0f
+            );
+            floorLip.transform.localScale = new Vector3(
+                width,
+                .070f,
+                1f
+            );
 
-    // Main cyan collision rail.
-    floorGlow = CreateRenderer(
-        "Floor energy rail",
-        whiteSprite,
-        new Color(.27f, .86f, 1f, .82f),
-        -6
-    );
-    floorGlow.transform.position = new Vector3(
-        0f,
-        GroundY + .010f,
-        0f
-    );
-    floorGlow.transform.localScale = new Vector3(
-        width,
-        .024f,
-        1f
-    );
+            // Main cyan collision rail.
+            floorGlow = CreateRenderer(
+                "Floor energy rail",
+                whiteSprite,
+                new Color(.27f, .86f, 1f, .82f),
+                -6
+            );
+            floorGlow.transform.position = new Vector3(
+                0f,
+                GroundY + .010f,
+                0f
+            );
+            floorGlow.transform.localScale = new Vector3(
+                width,
+                .024f,
+                1f
+            );
 
-    // Fine highlight to keep the floor crisp on a phone display.
-    var floorHighlight = CreateRenderer(
-        "Floor edge highlight",
-        whiteSprite,
-        new Color(.78f, .94f, 1f, .48f),
-        -5
-    );
-    floorHighlight.transform.position = new Vector3(
-        0f,
-        GroundY + .038f,
-        0f
-    );
-    floorHighlight.transform.localScale = new Vector3(
-        width,
-        .006f,
-        1f
-    );
-}
+            // Fine highlight to keep the floor crisp on a phone display.
+            var floorHighlight = CreateRenderer(
+                "Floor edge highlight",
+                whiteSprite,
+                new Color(.78f, .94f, 1f, .48f),
+                -5
+            );
+            floorHighlight.transform.position = new Vector3(
+                0f,
+                GroundY + .038f,
+                0f
+            );
+            floorHighlight.transform.localScale = new Vector3(
+                width,
+                .006f,
+                1f
+            );
+        }
         private void CreateBird()
         {
             bird = new GameObject("Flight bird").transform;
@@ -2156,8 +2156,20 @@ namespace SkyPulse.Mobile
             // Rise is a compact -18° bank; a full terminal fall reaches +70°.
             // The sprite body is shared, so this remains visual personality rather
             // than a hidden per-bird handling difference.
-            var targetTilt = Mathf.Clamp(-birdVelocity * 4.15f - flapKick * 3.5f, -18f, 70f);
-            birdTilt = Mathf.SmoothDamp(birdTilt, targetTilt, ref birdTiltVelocity, .060f, 420f, deltaTime);
+            var targetTilt = Mathf.Clamp(
+     birdVelocity * 1.65f + flapKick * 3.0f,
+     -18f,
+     11f
+ );
+
+            birdTilt = Mathf.SmoothDamp(
+                birdTilt,
+                targetTilt,
+                ref birdTiltVelocity,
+                .10f,
+                180f,
+                deltaTime
+            );
             bird.rotation = Quaternion.Euler(0f, 0f, birdTilt);
             UpdateBirdWingMotion();
 
