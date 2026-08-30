@@ -1,130 +1,99 @@
 # SkyPulse
 
-SkyPulse is a polished, touch-first **neon-noir flight game**. The native Unity game is the source of truth: it is the version we build, tune, test, and ship.
+SkyPulse is a portrait-first Unity 6 one-tap cyberpunk flyer. It keeps the readable Flappy Bird rhythm—tap, judge momentum, clear a paired gate—but makes a successful run feel like a continuous flight through three transforming worlds.
 
-## The technical decision
+The Unity project in [`mobile/`](/Users/user/Desktop/SkyPulse/mobile) is the shipping source of truth. The older web experiment is kept separately and is not the native game's implementation target.
 
-The game stays in **Unity 6 + C#**. That is the right language and engine for a fast mobile game with touch input, animation, particle effects, sound, Android/iPhone builds, and a single shared codebase.
+## Game contract
 
-The old Python/Kivy desktop reference is intentionally removed. Python is excellent for tools, but it is not a better fit for this real-time mobile game. We are not moving the game to a different language and rebuilding a working C# game for no benefit.
+The game has one fair endless route. Birds are cosmetic and permanent upgrades affect crystal collection only: no bird, item, or purchase changes flap physics, gate score, or a player's scoring potential.
 
-## Clean project map
+- **Controls:** tap/click in the playfield, Space, or Up Arrow flaps. The first flap starts the run; inputs use a short duplicate-touch lockout. Escape, P, and the top-left pause control pause the run.
+- **Camera:** the playable world remains a fixed 9:16 portrait side view. On desktop, it is centred while the active world decorates the side margins; gameplay geometry is never widened for landscape.
+- **Flight:** shared gravity, flap impulse, terminal fall speed, collision ellipse, and bird dimensions. The top boundary clamps ascent; the lower hazard and gates are fatal unless Aegis is active.
+- **Score:** each fully passed gate is exactly one point. Crystals are separate, persistent currency and bank the moment they are collected—even on a failed run.
+- **Route:** Neon City runs from 0–14, Acid Foundry starts at score 15, and Orbital Bazaar at score 30. From score 45 onward the worlds rotate in harder remixes every 15 gates, capped at the intended speed and minimum opening.
 
-```text
-SkyPulse/
-├── README.md                         # This guide: setup, testing and art hand-off
-├── .vscode/                          # Small shared VS Code settings only
-├── assets/                           # Live browser-beta images and sound only
-├── web/                              # Browser friend beta; kept separate from Unity
-└── mobile/                           # Native game
-    ├── Assets/
-    │   ├── Scenes/SkyPulse.unity      # Open this scene to play
-    │   ├── Scripts/SkyPulseNativeGame.cs
-    │   ├── Editor/                    # Editor-only play-test tools
-    │   └── Resources/SkyPulse/        # Runtime birds, worlds, pipe and pickup art
-    ├── ArtSource/Birds/               # Editable source art, never shipped in a build
-    │   └── Aetherwing/                # Your saved Krita work and rig master live here
-    ├── Packages/
-    └── ProjectSettings/
-```
+## World pacing
 
-`assets/` and `web/` remain because the live browser beta still uses them. They are not Unity clutter. Unity-generated folders (`Library`, `Logs`, `Temp`, build outputs, solution files, and per-machine VS Code state) are ignored and never committed.
+| Score range | World | Gate behaviour | Opening / speed |
+| --- | --- | --- | --- |
+| 0–4 | Neon City tutorial | Three generous, static gates | 34% of height / 32% of width per second |
+| 5–14 | Neon City | Standard static neon towers | 31% / 36% |
+| 15–29 | Acid Foundry | 1.2 s chromatic tunnel, a recovery beat, then telegraphed vertical drift | 29% / 40% |
+| 30–44 | Orbital Bazaar | Alternating antenna pylons and container towers, high/low openings | 27% / 44% |
+| 45+ | Remix loop | Existing patterns combine; no new controls | minimum 25% / capped at 48% |
 
-## What is in the native game now
+Every new gap is bounded against the previous one and generated inside the fixed flight envelope. Decorative art can overhang a gate body, but it may never create invisible collision inside the opening.
 
-- C# gameplay with touch-first input and a fixed, stable flight simulation.
-- A portrait-first launch collection of five distinct robotic-cartoon birds: **Volt** is the starter, with **Prism**, **Verdant**, **Cinder** and **Steel** earned with crystals. Every bird runs a six-step flap timeline and owns a separate **hit** frame and **unlock** frame—eight animation states per bird.
-- Customisable world, background, trail and pipe looks. Their lighting is neon-noir: dark metal, vivid core lights and clear silhouettes.
-- Gates with properly matched body and cap collision bounds, animated pipe channels and fair upper/lower gap scaling.
-- Crystals appear randomly during a run; clearing every gate does **not** automatically give a crystal.
-- Adventure-only power-ups: Slow Field, Pulse Shield, Crystal Cache, Sky Surge, Score Prism, Magnet Halo and Phase Shift. Air Brakes are removed.
-- Fourteen persistent Flight Tech upgrades. Classic and Daily routes stay fair by keeping upgrades out of their competitive flight rules.
+## Progression
 
-## Open and play the Unity game
+### Hangar
 
-1. Open **Unity Hub**.
-2. Choose **Add**, then select the `mobile` folder in this project.
-3. Open `Assets/Scenes/SkyPulse.unity`.
-4. Press the triangular **Play** button at the top of Unity.
-5. Tap/click to flap. `F1`, `F2` and `F3` switch the flight modes. `F4` shows the pink pipe-body and amber cap collision guides.
-6. For the quick formal check, use Unity’s menu: **SkyPulse → Playtest Checklist**.
+All five birds use the same dimensions, hitbox, and physics. Their animation, trail colour, and flap accent differ only as presentation.
 
-Play at least ten Classic runs and five Adventure runs before changing tuning. Record a death only when it feels visibly unfair, then use `F4` to check the collision shape before changing any numbers.
+| Bird | Unlock |
+| --- | ---: |
+| Neon Finch | Available immediately |
+| Chrome Raven | 250 crystals |
+| Prism Hummingbird | 500 crystals |
+| Koiwing Glider | 800 crystals |
+| Verdant Kite | 1,200 crystals |
 
-## Artwork: your simple job, step by step
-
-This is the only artwork workflow to use. It keeps the game’s birds consistent and prevents the old cartoon-looking, mismatched work from returning.
-
-### The look to keep
-
-- Birds face **right**, use the established side view, and remain centred on a transparent canvas.
-- They are **futuristic neon-noir**: dark mechanical/crystal surfaces, controlled colour glow, sharp readable feathers or armour, and a subtle energy trail.
-- Each bird keeps its own colours, feather shapes, metal details and wing proportions. Do **not** turn every bird into the same mascot.
-- No white rectangle, black background, UI text, crystals, pipes, baked glow-card or drop shadow in the exported bird image.
-
-### Bird animation contract
-
-The launch collection is deliberately compact: one starter plus four meaningful unlocks. Every current or future bird must keep this exact eight-state contract:
-
-1. Six wing-flap positions, ordered from raised wing through downstroke. The runtime moves through all six on every tap with no translucent cross-fade.
-2. One bespoke hit pose, shown for a short impact beat before the result card.
-3. One bespoke unlock pose, used in the collection reveal.
-
-Add a future bird by putting its transparent artwork in `Assets/Resources/SkyPulse/characters/`, adding one `Skin` entry in `SkyPulseNativeGame.cs`, and providing all six `FlapFramePaths` plus unique hit and unlock paths. The game validates that there are six flight frames and that hit/unlock art is never shared between roster birds. Keep every frame right-facing and registered on the same canvas so it stays stable on a phone.
-
-### Artwork: Aetherwing 2D wing rig (legacy source reference)
-
-The saved Aetherwing files are retained as a legacy art reference only; they are not in the launch collection. The shipped roster uses the five dedicated robotic-cartoon eight-frame sets described above.
-
-You do **not** need to trace six full flap drawings now. The saved `aetherwing-flap1.kra` is a useful legacy outline reference; keep it, but do not use it for the production roster.
-
-Unity now has a safe rig foundation. It keeps the present full-body Aetherwing animation until all six pieces below exist, so unfinished art can never break the game. When the complete set arrives, Unity keeps the body crisp and rotates/moves only the wing and tail pieces smoothly at 60 FPS.
-
-Make one Krita source file called `aetherwing-rig-master.kra`. It stays at **2048 × 1536 px**, transparent, facing right. Every exported piece must remain on that exact same canvas, in that exact same position. Never crop a piece and never add a white/black background.
-
-Create these layers, exactly named:
-
-1. `GUIDE-GLIDE` — your faded, locked reference photo; it is never exported.
-2. `BODY` — head, beak, eye, chest, torso, legs and fixed shoulder mechanism. **No wing and no tail.**
-3. `FAR-WING` — the wing behind the body.
-4. `UPPER-WING` — shoulder to elbow armour/feathers.
-5. `LOWER-WING` — elbow to outer-wing armour/feathers.
-6. `FEATHER-FAN` — the long primary feather tips.
-7. `TAIL` — the crystal/metal tail only.
-
-Do one layer at a time. The body must be complete and coloured before starting a wing. Paint the dark mechanical/crystal base first; add the controlled neon edge light last. Keep the Aetherwing’s own crown, metal joints, crystal shapes and proportions—do not simplify it into a mascot.
-
-### Current Aetherwing workboard: no retracing
-
-Your one finished full outline is saved in `aetherwing-rig-master.kra`. It is the master backup; do not paint over or delete it.
-
-`aetherwing-rig-split.ora` is the working file prepared from that outline. It has separate transparent layers for `BODY`, `FAR-WING`, `UPPER-WING`, `LOWER-WING`, `FEATHER-FAN`, and `TAIL`, all on the same 2048 × 1536 canvas. It is a clean technical hand-off: **do not trace the bird again**.
-
-1. In Krita choose **File → Open** and open `aetherwing-rig-split.ora` from `mobile/ArtSource/Birds/Aetherwing/`.
-2. Immediately choose **File → Save As** and save your colouring copy as `aetherwing-rig-colour.kra` in the same folder.
-3. Leave `MASTER-OUTLINE` at the bottom. It is your safety reference and is never exported.
-4. Start with `BODY-COLOUR`, which is already directly under `BODY`. Keep `BODY` untouched; paint the dark mechanical base colour on `BODY-COLOUR`.
-5. Do not colour every moving part at once. Finish and screenshot `BODY-COLOUR`, then colour the wing layers one at a time using their matching `…-COLOUR` layers.
-
-The line work is a guide only, not a game-ready export. We do not put it in Unity until its metallic dark surfaces, individual crystals and controlled neon edge lights are painted.
-
-### Finished rig exports
-
-When all six drawing layers are finished, hide `GUIDE-GLIDE` and export each art layer separately as a transparent PNG. The precise names are:
+Each bird uses eight dedicated transparent frames: six flap positions, one impact pose, and one unlock pose. New birds should follow the same resource layout below, so a future addition stays data-driven.
 
 ```text
-aetherwing-body-v1.png
-aetherwing-far-wing-v1.png
-aetherwing-upper-wing-v1.png
-aetherwing-lower-wing-v1.png
-aetherwing-feather-fan-v1.png
-aetherwing-tail-v1.png
+Assets/Resources/SkyPulse/characters/roster/
+  <visual-id>-frame-01-v1.png              # raised wing
+  …
+  <visual-id>-frame-06-v1.png              # downstroke
+  <visual-id>-frame-07-v1.png              # impact
+  <visual-id>-frame-08-v1.png              # unlock
 ```
 
-Keep the hit and unlock drawings separate full-bird artwork. A later bird uses the same layer structure but its own colours, feathers, crystals and metalwork—never a universal bird image.
+The shipped visual IDs are `volt`, `steel`, `prism`, `cinder`, and `verdant`.
+Each new bird must add exactly the same eight-frame set and one new `Skin` entry;
+the validation hook rejects a roster that drifts from the six-flap/one-hit/one-unlock contract.
 
-## Sensible next move
+### Crystal-only upgrades
 
-My next move, if this were my game, would be to **stop adding systems** and prove the flight loop on a real phone. Keep a short note of unfair deaths, missed crystal pickups, unclear pipe caps and frame-rate hitches. Fix only repeated evidence, not one unlucky run. Once that is solid, finish one truly hand-authored bird pose set using the workflow above, then repeat that quality bar for the remaining birds.
+| Track | Levels | Effect |
+| --- | --- | --- |
+| Crystal Resonator | 150 / 400 / 900 | Attracts crystals within 6% / 10% / 14% of playfield width |
+| Salvage Codec | 200 / 500 / 1000 | Adds 10% / 20% / 30% of run crystals on the results screen |
 
-That is how the game becomes sharp and release-ready rather than bloated: one native C# game, one visual direction, one art hand-off, and only the assets that are actually live.
+The result screen separates the crystals picked up during the flight from the Salvage Codec bonus and shows the resulting persistent balance. Saved data includes balance, upgrade levels, unlocked/selected bird, best score, and farthest route reached.
+
+## Power-ups
+
+Power-ups are placed on reachable lines roughly every 8–12 gates, never in the first three gates or immediately before a world transition. Only one can be active at a time.
+
+- **Aegis:** absorbs one obstacle impact, visibly shatters, safely neutralises dangerous downward velocity, and grants a short immunity beat.
+- **Time Pulse:** runs the simulation at 70% for four seconds, preserving the same handling relationship between the bird and world.
+- **Crystal Magnet:** attracts crystals inside 25% of the playfield width for six seconds; it does not pull power-ups.
+
+## Visual direction
+
+SkyPulse is illustrated 2.5D cyberpunk aviation: five scrolling depth planes, clean emissive edges, and a dark, low-detail flight corridor. The high-contrast layer always belongs to the bird, gate opening, crystals, and power-ups.
+
+- **Neon City:** midnight navy, electric cyan, magenta, restrained amber signs.
+- **Acid Foundry:** charcoal, toxic lime, hot orange, cyan coolant.
+- **Orbital Bazaar:** deep violet, cobalt, holographic gold, white starlight.
+
+Avoid pixel art, chibi proportions, photorealism, muddy bloom, dense opaque foreground objects, and decorative text in the flight corridor. New art should be transparent PNG, right-facing, consistently registered on its canvas, and imported through **SkyPulse → Optimise Mobile Art** so Android and iPhone use the established compressed texture budget.
+
+## Open and play
+
+1. Open Unity Hub and add [`mobile/`](/Users/user/Desktop/SkyPulse/mobile).
+2. Open [`Assets/Scenes/SkyPulse.unity`](/Users/user/Desktop/SkyPulse/mobile/Assets/Scenes/SkyPulse.unity).
+3. Press Play. The project forces portrait orientation and targets 60 fps. The canvas uses
+   the device safe area and a fixed logical 9:16 playfield, so it fits iPhone 17 Pro Max
+   safely while preserving the same gate geometry on smaller, taller, or wider screens.
+4. Tap/click to start and flap. Use Escape/P or the pause control to pause.
+5. In the editor, use **SkyPulse → Playtest Checklist** for the milestone-focused test pass. `F4` displays collision guides in editor/development builds.
+
+## Suggested playtest pass
+
+Run enough sessions to reach score 5, 15, and 30 repeatedly. Record whether the first three gates teach the beat; whether the Foundry tunnel leaves a safe recovery window; whether moving and alternating patterns read before they become dangerous; and whether a crystal arc ever asks for an impossible line. Change a single tuning value only after observing the same problem across multiple runs.
+
+The most valuable next refinement after this pass is authored world audio stems. A restrained, cross-faded music layer for each world will make the score-15 and score-30 transitions land without adding visual clutter or changing the fair core loop.
