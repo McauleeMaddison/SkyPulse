@@ -762,8 +762,6 @@ new WorldTheme(
         private SpriteRenderer birdParallaxRenderer;
         private SpriteRenderer birdDepthRenderer;
         private SpriteRenderer birdEyeGlintRenderer;
-        private SpriteRenderer birdThrustGlowRenderer;
-        private SpriteRenderer birdThrustCoreRenderer;
         private CapsuleCollider2D birdBodyCollider;
         private Transform birdThrust;
         private SpriteRenderer birdThrustGlowRenderer;
@@ -883,7 +881,6 @@ new WorldTheme(
         private bool reduceMotionEnabled;
         private bool hapticsEnabled = true;
         private FlightMode selectedFlightMode = FlightMode.Classic;
-        private FlightMode flightMode = FlightMode.Classic;
         private System.Random dailyRouteRandom;
         private string activeDailyRouteKey = string.Empty;
         private float birdY;
@@ -901,10 +898,7 @@ new WorldTheme(
         private float ambientTime;
         private float slowFieldTimer;
         private float shieldFlashTimer;
-        private float skySurgeTimer;
-        private float scorePrismTimer;
         private float magnetHaloTimer;
-        private float phaseShiftTimer;
         private float shieldImmunityTimer;
         private float shieldHitStopTimer;
         private float worldTransitionTimer;
@@ -919,7 +913,6 @@ new WorldTheme(
         private float hapticCooldownUntil;
 #endif
         private int shieldCharges;
-        private int rescueCharges;
         private int gatesSinceStarheart;
         private int perfectPasses;
         private int displayedSlowTenths = -1;
@@ -1230,27 +1223,6 @@ new WorldTheme(
             var bodyDepth = CreateRenderer("Bird dimensional bloom", softCircleSprite, new Color(.35f, .85f, 1f, 0f), 12, bird);
             bodyDepth.transform.localScale = new Vector3(1.52f, .62f, 1f);
             birdDepthRenderer = bodyDepth;
-            // Short propulsion plume attached directly to the bird.
-            // It is visual-only and never participates in gameplay collision.
-            birdThrustGlowRenderer = CreateRenderer(
-                "Bird rear thrust glow",
-                softCircleSprite,
-                new Color(.27f, .92f, 1f, .22f),
-                12,
-                bird
-            );
-            birdThrustGlowRenderer.transform.localPosition = new Vector3(-.88f, .01f, 0f);
-            birdThrustGlowRenderer.transform.localScale = new Vector3(.62f, .25f, 1f);
-
-            birdThrustCoreRenderer = CreateRenderer(
-                "Bird rear thrust core",
-                softCircleSprite,
-                new Color(.75f, .98f, 1f, .72f),
-                13,
-                bird
-            );
-            birdThrustCoreRenderer.transform.localPosition = new Vector3(-.80f, .01f, 0f);
-            birdThrustCoreRenderer.transform.localScale = new Vector3(.40f, .105f, 1f);
             birdArt = new GameObject("Bird idle artwork").transform;
             birdArt.SetParent(bird, false);
             birdRenderer = birdArt.gameObject.AddComponent<SpriteRenderer>();
@@ -1936,7 +1908,7 @@ new WorldTheme(
             var frameDelta = Mathf.Min(Time.unscaledDeltaTime, MaximumSimulationCatchup);
             ambientTime += frameDelta;
             UpdateAmbientVisuals();
-            UpdateRearThrust(frameDelta);
+            UpdateRearThrust();
             UpdateMenuBird(frameDelta);
             UpdateUnlockReveal(frameDelta);
             UpdateScoreBurst(frameDelta);
@@ -2895,7 +2867,7 @@ new WorldTheme(
             birdThrustCoreColour.a = 1f;
         }
 
-        private void UpdateRearThrust(float deltaTime)
+        private void UpdateRearThrust()
         {
             if (birdThrust == null || birdThrustGlowRenderer == null || birdThrustCoreRenderer == null) return;
             var alive = state == FlightState.Playing && bird != null && bird.gameObject.activeInHierarchy;
@@ -4688,92 +4660,8 @@ new WorldTheme(
                 birdFlapArt.localRotation = Quaternion.Euler(0f, 0f, -flapKick * 6.6f + wingWave * 4.4f + glide * 1.2f);
             }
             UpdateBirdLifeDepth(riseWeight, wingWave, glide);
-            UpdateBirdRearThrust();
             UpdateBirdPowerUpVisuals();
         }
-        private void UpdateBirdRearThrust()
-{
-    if (birdThrustGlowRenderer == null ||
-        birdThrustCoreRenderer == null ||
-        equippedSkin == null)
-    {
-        return;
-    }
-
-    var active = state == FlightState.Playing;
-
-    birdThrustGlowRenderer.enabled = active;
-    birdThrustCoreRenderer.enabled = active;
-
-    if (!active) return;
-
-    // Reduced Motion keeps the engine alive without aggressive pulsing.
-    var motion = reduceMotionEnabled ? .25f : 1f;
-
-    // Fast natural engine flicker.
-    var pulse = .5f + .5f * Mathf.Sin(ambientTime * 18f);
-
-    // A flap gives the engine a brief extra burst.
-    var flapBoost = Mathf.Exp(-wingTimer * 10f);
-
-    var glowLength =
-        .54f +
-        pulse * .10f * motion +
-        flapBoost * .18f * motion;
-
-    var coreLength =
-        .34f +
-        pulse * .065f * motion +
-        flapBoost * .12f * motion;
-
-    // Match each bird's own colour scheme.
-    var glowColour = equippedSkin.Trail;
-    glowColour.a = .18f + pulse * .10f;
-
-    var coreColour = Color.Lerp(
-        equippedSkin.Trail,
-        Color.white,
-        .58f
-    );
-    coreColour.a = .66f + pulse * .18f;
-
-    birdThrustGlowRenderer.color = glowColour;
-    birdThrustCoreRenderer.color = coreColour;
-
-    // Tiny vertical movement stops the plume looking like a static oval.
-    var flutter =
-        Mathf.Sin(ambientTime * 22f) *
-        .018f *
-        motion;
-
-    birdThrustGlowRenderer.transform.localPosition =
-        new Vector3(
-            -.84f - glowLength * .18f,
-            .01f + flutter,
-            0f
-        );
-
-    birdThrustGlowRenderer.transform.localScale =
-        new Vector3(
-            glowLength,
-            .22f + pulse * .045f * motion,
-            1f
-        );
-
-    birdThrustCoreRenderer.transform.localPosition =
-        new Vector3(
-            -.78f - coreLength * .16f,
-            .01f + flutter * .55f,
-            0f
-        );
-
-    birdThrustCoreRenderer.transform.localScale =
-        new Vector3(
-            coreLength,
-            .09f + pulse * .022f * motion,
-            1f
-        );
-}
         private void UpdateBirdLifeDepth(float riseWeight, float wingWave, float glide)
         {
             if (equippedSkin == null) return;
