@@ -2212,23 +2212,69 @@ new WorldTheme(
             }
         }
 
-        private void UpdateScoreBurst(float deltaTime)
-        {
-            if (scoreBurstTimer <= 0f || scoreBurstText == null) return;
-            scoreBurstTimer -= deltaTime;
-            if (scoreBurstTimer <= 0f)
-            {
-                scoreBurstText.gameObject.SetActive(false);
-                return;
-            }
+      private void UpdateScoreBurst(float deltaTime)
+{
+    if (scoreBurstTimer <= 0f || scoreBurstText == null)
+        return;
 
-            var t = 1f - scoreBurstTimer / .36f;
-            scoreBurstText.rectTransform.anchoredPosition = new Vector2(0f, 612f + t * 44f);
-            var color = equippedSkin.Accent;
-            color.a = Mathf.Clamp01(scoreBurstTimer / .13f);
-            scoreBurstText.color = color;
-        }
+    scoreBurstTimer -= deltaTime;
 
+    if (scoreBurstTimer <= 0f)
+    {
+        scoreBurstText.gameObject.SetActive(false);
+        scoreBurstText.rectTransform.localScale = Vector3.one;
+        return;
+    }
+
+    var duration = Mathf.Max(.01f, scoreBurstDuration);
+
+    var t =
+        1f -
+        Mathf.Clamp01(
+            scoreBurstTimer / duration
+        );
+
+    var riseDistance =
+        scoreBurstIsCrystal
+            ? 58f
+            : 44f;
+
+    scoreBurstText.rectTransform.anchoredPosition =
+        new Vector2(
+            0f,
+            612f + t * riseDistance
+        );
+
+    var color =
+        scoreBurstIsCrystal
+            ? Hex("#ffc34d")
+            : equippedSkin != null
+                ? equippedSkin.Accent
+                : Color.white;
+
+    color.a =
+        Mathf.Clamp01(
+            scoreBurstTimer / .13f
+        );
+
+    scoreBurstText.color = color;
+
+    var popStrength =
+        scoreBurstIsCrystal
+            ? .16f
+            : .08f;
+
+    var popPhase =
+        Mathf.Clamp01(t / .55f);
+
+    var pop =
+        Mathf.Sin(
+            Mathf.PI * popPhase
+        ) * popStrength;
+
+    scoreBurstText.rectTransform.localScale =
+        Vector3.one * (1f + pop);
+}
         private void UpdateBird(float deltaTime)
         {
             birdVelocity = Mathf.Max(ActiveMaxFallVelocity(), birdVelocity + ActiveGravity() * deltaTime);
@@ -2670,8 +2716,8 @@ new WorldTheme(
             // Currency is banked on contact—even a failed run keeps the find.
             BankCollectedCrystals(1);
             ShowCrystalBurst(1);
-            TriggerFlightFeedback(Hex("#ffc34d"), .18f);
-            PulseHaptic(.06f);
+            TriggerFlightFeedback(Hex("#ffc34d"), .26f);
+            PulseHaptic(.08f);
             Play(crystalSound);
         }
 
