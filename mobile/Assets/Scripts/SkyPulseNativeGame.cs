@@ -375,13 +375,13 @@ namespace SkyPulse.Mobile
         // separate from the smaller physical collision capsule.
         private const float BirdPickupRadius = .81f;
         // Cosmetic propulsion is deliberately independent of the bird's body size.
-        private const float BirdThrustAnchorX = -.76f;
-        private const float BirdThrustAnchorY = -.01f;
-        private const float BirdThrustCoreLength = .46f;
-        private const float BirdThrustGlowLength = .76f;
-        private const float BirdThrustPulseLength = .16f;
-        private const float BirdThrustCoreHeight = .13f;
-        private const float BirdThrustGlowHeight = .24f;
+        private const float BirdThrustAnchorX = -.55f;
+        private const float BirdThrustAnchorY = -.24f;
+        private const float BirdThrustCoreLength = .42f;
+        private const float BirdThrustGlowLength = .78f;
+        private const float BirdThrustPulseLength = .22f;
+        private const float BirdThrustCoreHeight = .095f;
+        private const float BirdThrustGlowHeight = .28f;
         // The bird is the primary focal point, so it must remain readable against a
         // busy world at a real phone scale—not shrink into a sparkle at the centre.
         private const float BirdDisplayWidth = 2.30f;
