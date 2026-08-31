@@ -896,6 +896,8 @@ new WorldTheme(
         private float unlockRevealTimer;
         private float spawnX;
         private float scoreBurstTimer;
+        private float scoreBurstDuration = .36;
+        private bool scoreBurstIsCrystal;
         private float ambientTime;
         private float slowFieldTimer;
         private float shieldFlashTimer;
@@ -3082,26 +3084,57 @@ new WorldTheme(
             trailCore.SetPositions(trailPoints);
         }
 
-        private void ShowScoreBurst(int scoreReward, bool perfect)
-        {
-            scoreBurstTimer = .36f;
-            scoreBurstText.text = perfect
-                ? scoreReward > 1 ? $"PERFECT  ·  +{scoreReward} SCORE" : "PERFECT  ·  +1 SCORE"
-                : scoreReward > 1 ? $"+{scoreReward} SCORE" : "+1 SCORE";
-            scoreBurstText.rectTransform.anchoredPosition = new Vector2(0f, 612f);
-            scoreBurstText.gameObject.SetActive(true);
-        }
+       private void ShowScoreBurst(int scoreReward, bool perfect)
+{
+    if (scoreBurstText == null) return;
 
-        private void ShowCrystalBurst(int crystalReward, bool cache = false)
-        {
-            scoreBurstTimer = .36f;
-            scoreBurstText.text = cache
-                ? $"CRYSTAL CACHE  ·  +{crystalReward} ✦"
-                : $"CRYSTAL  ·  +{crystalReward} ✦";
-            scoreBurstText.rectTransform.anchoredPosition = new Vector2(0f, 612f);
-            scoreBurstText.gameObject.SetActive(true);
-        }
+    scoreBurstDuration = .36f;
+    scoreBurstTimer = scoreBurstDuration;
+    scoreBurstIsCrystal = false;
 
+    scoreBurstText.text = perfect
+        ? scoreReward > 1
+            ? $"PERFECT  ·  +{scoreReward} SCORE"
+            : "PERFECT  ·  +1 SCORE"
+        : scoreReward > 1
+            ? $"+{scoreReward} SCORE"
+            : "+1 SCORE";
+
+    scoreBurstText.color =
+        equippedSkin != null
+            ? equippedSkin.Accent
+            : Color.white;
+
+    scoreBurstText.rectTransform.anchoredPosition =
+        new Vector2(0f, 612f);
+
+    scoreBurstText.rectTransform.localScale =
+        Vector3.one;
+
+    scoreBurstText.gameObject.SetActive(true);
+}
+      private void ShowCrystalBurst(int crystalReward, bool cache = false)
+{
+    if (scoreBurstText == null) return;
+
+    scoreBurstDuration = .48f;
+    scoreBurstTimer = scoreBurstDuration;
+    scoreBurstIsCrystal = true;
+
+    scoreBurstText.text = cache
+        ? $"CRYSTAL CACHE  ·  +{crystalReward} ✦"
+        : $"CRYSTAL  ·  +{crystalReward} ✦";
+
+    scoreBurstText.color = Hex("#ffc34d");
+
+    scoreBurstText.rectTransform.anchoredPosition =
+        new Vector2(0f, 612f);
+
+    scoreBurstText.rectTransform.localScale =
+        Vector3.one * 1.06f;
+
+    scoreBurstText.gameObject.SetActive(true);
+}
         private void TriggerFlightFeedback(Color colour, float duration)
         {
             if (flightFeedbackRenderer == null || bird == null) return;
