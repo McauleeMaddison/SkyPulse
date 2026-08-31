@@ -21,3 +21,4 @@ mobile/*.sln
 # Keep the real .kra artwork, but never commit a temporary autosave.
 *.kra-autosave.kra
 *.kra~
+*.ora~
