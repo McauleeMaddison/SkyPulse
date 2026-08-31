@@ -2632,24 +2632,57 @@ new WorldTheme(
             pickup.Root.SetActive(false);
         }
 
-        private void ConfigureGateCrystals(PipePair gate)
-        {
-            if (gate == null || gate.IsStatic && gate.RouteScore < 0) return;
-            // Sixty percent of gates carry a concise, safe three-dimensional-looking
-            // arc. A power-up owns its gate instead, keeping the flight corridor
-            // legible at a phone scale.
-            if (GateHasPowerUp(gate) || RouteRange(0f, 1f) > .60f) return;
-            var count = RouteRange(1, 4);
-            var safeOffset = Mathf.Max(.30f, gate.GapHeight * .5f - 1.05f);
-            var baseOffset = RouteRange(-safeOffset * .58f, safeOffset * .58f);
-            for (var index = 0; index < count; index += 1)
-            {
-                var pickup = FindInactiveCrystalPickup();
-                if (pickup == null) return;
-                ConfigureCrystalPickup(pickup, gate, index, count, baseOffset, safeOffset);
-            }
-        }
+       private void ConfigureGateCrystals(PipePair gate)
+{
+    if (gate == null || gate.IsStatic && gate.RouteScore < 0)
+        return;
 
+    // Crystal gates should feel like intentional mini-routes,
+    // not random loose currency.
+    //
+    // Old system:
+    // 60% chance x average 2 crystals = 1.2 crystals per gate.
+    //
+    // New system:
+    // 40% chance x 3 crystals = 1.2 crystals per gate.
+    //
+    // The economy therefore stays essentially unchanged.
+    if (GateHasPowerUp(gate) || RouteRange(0f, 1f) > .40f)
+        return;
+
+    const int count = 3;
+
+    var safeOffset =
+        Mathf.Max(
+            .30f,
+            gate.GapHeight * .5f - 1.05f
+        );
+
+    // Keep the crystal arc closer to the safe centre
+    // of the playable gap.
+    var baseOffset =
+        RouteRange(
+            -safeOffset * .35f,
+            safeOffset * .35f
+        );
+
+    for (var index = 0; index < count; index += 1)
+    {
+        var pickup = FindInactiveCrystalPickup();
+
+        if (pickup == null)
+            return;
+
+        ConfigureCrystalPickup(
+            pickup,
+            gate,
+            index,
+            count,
+            baseOffset,
+            safeOffset
+        );
+    }
+}
         private PowerUpPickup FindInactiveCrystalPickup()
         {
             foreach (var pickup in crystalPickupPool)
