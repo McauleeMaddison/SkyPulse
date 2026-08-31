@@ -2868,7 +2868,7 @@ new WorldTheme(
             if (equippedSkin == null) return;
             birdThrustGlowColour = equippedSkin.Trail;
             birdThrustGlowColour.a = 1f;
-            birdThrustCoreColour = Color.Lerp(equippedSkin.Trail, Color.white, .46f);
+            birdThrustCoreColour = Color.Lerp(equippedSkin.Trail, Color.white, .72f);
             birdThrustCoreColour.a = 1f;
         }
 
