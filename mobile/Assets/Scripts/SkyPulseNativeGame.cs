@@ -4586,13 +4586,32 @@ new WorldTheme(
             if (!UsesFlapFrameSequence()) return idleBirdSprite;
             return flapFrameBirdSprites[SelectFlapFrameIndex(normalizedProgress)];
         }
-
         private int SelectFlapFrameIndex(float normalizedProgress)
-        {
-            if (!UsesFlapFrameSequence()) return 0;
-            return Mathf.Min(flapFrameBirdSprites.Length - 1, Mathf.FloorToInt(Mathf.Clamp01(normalizedProgress) * flapFrameBirdSprites.Length));
-        }
+{
+    if (!UsesFlapFrameSequence()) return 0;
 
+    var progress = Mathf.Clamp01(normalizedProgress);
+    var frameCount = flapFrameBirdSprites.Length;
+
+    // Custom timing for the six authored flight poses.
+    // Lift happens quickly, while the later downstroke/recovery
+    // frames remain visible slightly longer for smoother follow-through.
+    if (frameCount == 6)
+    {
+        if (progress < .12f) return 0;
+        if (progress < .25f) return 1;
+        if (progress < .40f) return 2;
+        if (progress < .57f) return 3;
+        if (progress < .77f) return 4;
+        return 5;
+    }
+
+    // Safe fallback for any future bird using a different frame count.
+    return Mathf.Min(
+        frameCount - 1,
+        Mathf.FloorToInt(progress * frameCount)
+    );
+}
         private bool ConfigureAetherwingRig()
         {
             var rigResourcePrefix = equippedSkin?.RigResourcePrefix;
