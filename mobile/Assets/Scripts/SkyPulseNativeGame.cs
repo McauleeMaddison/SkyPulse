@@ -881,6 +881,7 @@ new WorldTheme(
         private bool reduceMotionEnabled;
         private bool hapticsEnabled = true;
         private FlightMode selectedFlightMode = FlightMode.Classic;
+        private FlightMode flightMode = FlightMode.Classic;
         private System.Random dailyRouteRandom;
         private string activeDailyRouteKey = string.Empty;
         private float birdY;
@@ -898,7 +899,10 @@ new WorldTheme(
         private float ambientTime;
         private float slowFieldTimer;
         private float shieldFlashTimer;
+        private float skySurgeTimer;
+        private float scorePrismTimer;
         private float magnetHaloTimer;
+        private float phaseShiftTimer;
         private float shieldImmunityTimer;
         private float shieldHitStopTimer;
         private float worldTransitionTimer;
@@ -913,6 +917,7 @@ new WorldTheme(
         private float hapticCooldownUntil;
 #endif
         private int shieldCharges;
+        private int rescueCharges;
         private int gatesSinceStarheart;
         private int perfectPasses;
         private int displayedSlowTenths = -1;
