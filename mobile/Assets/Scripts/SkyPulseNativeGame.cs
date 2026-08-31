@@ -3864,6 +3864,15 @@ new WorldTheme(
             newBest = score > best && score > 0;
             best = Mathf.Max(best, score);
             ShowHitFrame();
+            // Give every collision a clear downward reaction before the tumble.
+            birdVelocity = Mathf.Min(birdVelocity, -2.4f);
+            birdTiltVelocity = 0f;
+
+           // Kill the long flight ribbon immediately so it does not freeze
+          // awkwardly in mid-air during the crash animation.
+          if (trailSafety != null) trailSafety.positionCount = 0;
+          if (trailGlow != null) trailGlow.positionCount = 0;
+          if (trailCore != null) trailCore.positionCount = 0;
             TriggerFlightFeedback(Hex("#f05bc6"), .36f);
             PulseHaptic(.28f);
             Play(crashSound);
@@ -3886,7 +3895,12 @@ new WorldTheme(
             birdVelocity = Mathf.Max(ActiveMaxFallVelocity(), birdVelocity + ActiveGravity() * deltaTime);
             birdY = Mathf.Max(GroundY + BirdHitboxVerticalExtent(), birdY + birdVelocity * deltaTime);
             bird.position = new Vector3(BirdX, birdY, 0f);
-            birdTilt += 520f * deltaTime;
+            var fallStrength = Mathf.Clamp01(
+           -birdVelocity / Mathf.Abs(ActiveMaxFallVelocity()));
+
+           var tumbleSpeed = Mathf.Lerp(220f,360f,fallStrength);
+
+            birdTilt += tumbleSpeed * deltaTime;
             bird.rotation = Quaternion.Euler(0f, 0f, birdTilt);
         }
 
