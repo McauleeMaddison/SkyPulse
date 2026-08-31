@@ -2872,46 +2872,194 @@ new WorldTheme(
             birdThrustCoreColour.a = 1f;
         }
 
-        private void UpdateRearThrust()
-        {
-            if (birdThrust == null || birdThrustGlowRenderer == null || birdThrustCoreRenderer == null) return;
-            var alive = state == FlightState.Playing && bird != null && bird.gameObject.activeInHierarchy;
-            var impactFade = state == FlightState.Impact
-                ? Mathf.Clamp01(impactTumbleTimer / Mathf.Max(.01f, ImpactTumbleSeconds)) * .18f
-                : 0f;
-            var visibility = alive ? 1f : impactFade;
-            if (visibility <= .001f)
-            {
-                birdThrustGlowRenderer.enabled = false;
-                birdThrustCoreRenderer.enabled = false;
-                return;
-            }
+       private void UpdateRearThrust()
+{
+    if (birdThrust == null ||
+        birdThrustGlowRenderer == null ||
+        birdThrustCoreRenderer == null)
+    {
+        return;
+    }
 
-            var motion = reduceMotionEnabled ? .35f : 1f;
-            var flapStrength = alive ? 1f - Mathf.Clamp01(wingTimer / WingCycleSeconds) : 0f;
-            var pulse = .58f + flapStrength * .42f + Mathf.Sin(ambientTime * 19f) * .06f * motion;
-            var coreLength = BirdThrustCoreLength + BirdThrustPulseLength * pulse;
-            var glowLength = BirdThrustGlowLength + BirdThrustPulseLength * 1.6f * pulse;
+    var alive =
+        state == FlightState.Playing &&
+        bird != null &&
+        bird.gameObject.activeInHierarchy;
 
-            birdThrust.localPosition = new Vector3(
-                BirdThrustAnchorX,
-                BirdThrustAnchorY + Mathf.Sin(ambientTime * 13f) * .008f * motion,
-                0f);
-            birdThrustGlowRenderer.transform.localPosition = new Vector3(-glowLength * .43f, 0f, 0f);
-            birdThrustGlowRenderer.transform.localScale = new Vector3(glowLength, BirdThrustGlowHeight * (1f + pulse * .14f), 1f);
-            birdThrustCoreRenderer.transform.localPosition = new Vector3(-coreLength * .42f, 0f, 0f);
-            birdThrustCoreRenderer.transform.localScale = new Vector3(coreLength, BirdThrustCoreHeight * (1f + pulse * .10f), 1f);
+    var impactFade =
+        state == FlightState.Impact
+            ? Mathf.Clamp01(
+                impactTumbleTimer /
+                Mathf.Max(.01f, ImpactTumbleSeconds)
+              ) * .18f
+            : 0f;
 
-            var glow = birdThrustGlowColour;
-            glow.a = visibility * (.16f + pulse * .16f);
-            birdThrustGlowRenderer.color = glow;
-            var core = birdThrustCoreColour;
-            core.a = visibility * (.44f + pulse * .34f);
-            birdThrustCoreRenderer.color = core;
-            birdThrustGlowRenderer.enabled = true;
-            birdThrustCoreRenderer.enabled = true;
-        }
+    var visibility = alive ? 1f : impactFade;
 
+    if (visibility <= .001f)
+    {
+        birdThrustGlowRenderer.enabled = false;
+        birdThrustCoreRenderer.enabled = false;
+        return;
+    }
+
+    var motion = reduceMotionEnabled ? .30f : 1f;
+
+    // Strongest immediately after a flap.
+    var flapStrength =
+        alive
+            ? 1f - Mathf.Clamp01(
+                wingTimer / WingCycleSeconds
+              )
+            : 0f;
+
+    // Climbing gives the engine more energy.
+    var riseBoost =
+        alive
+            ? Mathf.Clamp01(
+                Mathf.Max(0f, birdVelocity) / 6.5f
+              )
+            : 0f;
+
+    // Falling softens the engine slightly.
+    var fallAmount =
+        alive
+            ? Mathf.Clamp01(
+                Mathf.Max(0f, -birdVelocity) / 7f
+              )
+            : 0f;
+
+    var fallDamp =
+        Mathf.Lerp(1f, .76f, fallAmount);
+
+    // Two frequencies stop the flame looking like
+    // a perfectly repeating sine-wave animation.
+    var fastFlicker =
+        .5f +
+        .5f * Mathf.Sin(
+            ambientTime * 23f
+        );
+
+    var fineFlicker =
+        .5f +
+        .5f * Mathf.Sin(
+            ambientTime * 37f + 1.4f
+        );
+
+    var energy =
+        (
+            .50f +
+            flapStrength * .38f +
+            riseBoost * .25f +
+            fastFlicker * .08f +
+            fineFlicker * .05f
+        ) * fallDamp;
+
+    var coreLength =
+        BirdThrustCoreLength +
+        BirdThrustPulseLength *
+        energy;
+
+    var glowLength =
+        BirdThrustGlowLength +
+        BirdThrustPulseLength *
+        1.65f *
+        energy;
+
+    // Slight irregular movement keeps the flame alive.
+    var flutterY =
+        (
+            Mathf.Sin(ambientTime * 17f) * .012f +
+            Mathf.Sin(ambientTime * 31f) * .005f
+        ) * motion;
+
+    birdThrust.localPosition =
+        new Vector3(
+            BirdThrustAnchorX,
+            BirdThrustAnchorY + flutterY,
+            0f
+        );
+
+    birdThrust.localRotation =
+        Quaternion.Euler(
+            0f,
+            0f,
+            Mathf.Sin(ambientTime * 15f) *
+            1.5f *
+            motion
+        );
+
+    // Large soft plasma envelope.
+    birdThrustGlowRenderer.transform.localPosition =
+        new Vector3(
+            -glowLength * .46f,
+            0f,
+            0f
+        );
+
+    birdThrustGlowRenderer.transform.localScale =
+        new Vector3(
+            glowLength,
+            BirdThrustGlowHeight *
+            (
+                1f +
+                fastFlicker *
+                .20f *
+                motion
+            ),
+            1f
+        );
+
+    // Smaller, brighter hot core.
+    birdThrustCoreRenderer.transform.localPosition =
+        new Vector3(
+            -coreLength * .43f,
+            0f,
+            0f
+        );
+
+    birdThrustCoreRenderer.transform.localScale =
+        new Vector3(
+            coreLength,
+            BirdThrustCoreHeight *
+            (
+                1f +
+                fineFlicker *
+                .14f *
+                motion
+            ),
+            1f
+        );
+
+    var glow = birdThrustGlowColour;
+
+    glow.a =
+        visibility *
+        (
+            .18f +
+            energy * .19f
+        );
+
+    birdThrustGlowRenderer.color = glow;
+
+    var core = Color.Lerp(
+        birdThrustCoreColour,
+        Color.white,
+        .38f
+    );
+
+    core.a =
+        visibility *
+        (
+            .62f +
+            energy * .28f
+        );
+
+    birdThrustCoreRenderer.color = core;
+
+    birdThrustGlowRenderer.enabled = true;
+    birdThrustCoreRenderer.enabled = true;
+}
         private void UpdateTrail(float deltaTime)
         {
             var trailScale = 1f;
