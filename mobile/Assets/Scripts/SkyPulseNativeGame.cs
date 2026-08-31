@@ -896,7 +896,7 @@ new WorldTheme(
         private float unlockRevealTimer;
         private float spawnX;
         private float scoreBurstTimer;
-        private float scoreBurstDuration = .36;
+        private float scoreBurstDuration = .36f;
         private bool scoreBurstIsCrystal;
         private float ambientTime;
         private float slowFieldTimer;
