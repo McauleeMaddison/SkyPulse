@@ -2861,8 +2861,8 @@ new WorldTheme(
             pickup.Gate = null;
             pickup.Root.SetActive(false);
             pickup.RespawnTimer = 0f;
-            TriggerFlightFeedback(pickup.Glow.color, .22f);
-            PulseHaptic(.08f);
+            TriggerFlightFeedback(pickup.Glow.color, .34f);
+            PulseHaptic(.12f);
             switch (pickup.Kind)
             {
                 case PowerUpKind.Aegis:
