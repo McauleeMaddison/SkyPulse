@@ -4164,7 +4164,7 @@ new WorldTheme(
                 var branch = branches[branchIndex];
                 var branchColour = branchColours[branchIndex];
                 CreateTechBranchHeader(branch, cursorY, branchColour);
-                cursorY -= 62f;
+                cursorY -= 66f;
 
                 var branchNodeIndex = 0;
                 foreach (var upgrade in Upgrades)
@@ -4173,17 +4173,17 @@ new WorldTheme(
                     if (branchNodeIndex > 0)
                     {
                         var connectorUnlocked = IsUpgradePrerequisiteMet(upgrade);
-                        CreateTechConnector(cursorY + 13f, branchColour, connectorUnlocked);
-                        cursorY -= 30f;
+                        CreateTechConnector(cursorY + 15f, branchColour, connectorUnlocked);
+                        cursorY -= 34f;
                     }
                     CreateTechTreeCard(upgrade, cursorY, branchColour);
-                    cursorY -= 174f;
+                    cursorY -= 190f;
                     branchNodeIndex += 1;
                 }
-                cursorY -= 42f;
+                cursorY -= 48f;
             }
 
-            customizeContent.sizeDelta = new Vector2(0f, Mathf.Max(2220f, -cursorY + 36f));
+            customizeContent.sizeDelta = new Vector2(0f, Mathf.Max(2380f, -cursorY + 36f));
             customizeContent.anchoredPosition = Vector2.zero;
         }
 
@@ -4243,23 +4243,25 @@ new WorldTheme(
             var panelColour = unlocked
                 ? Color.Lerp(Hex("#090d1c"), branchColour, .055f)
                 : Hex("#070a13");
-            var card = CreatePanel(customizeContent, $"{upgrade.Name} tech node", new Vector2(0f, y), new Vector2(812f, 150f), panelColour);
+            var card = CreatePanel(customizeContent, $"{upgrade.Name} tech node", new Vector2(0f, y), new Vector2(812f, 166f), panelColour);
             card.anchorMin = new Vector2(.5f, 1f);
             card.anchorMax = new Vector2(.5f, 1f);
             card.pivot = new Vector2(.5f, 1f);
 
-            var outlineColour = unlocked ? upgrade.Accent : new Color(upgrade.Accent.r, upgrade.Accent.g, upgrade.Accent.b, .22f);
+            var outlineColour = unlocked ? upgrade.Accent : new Color(upgrade.Accent.r, upgrade.Accent.g, upgrade.Accent.b, .30f);
             AddOutline(card.gameObject, outlineColour, maxed ? 3f : unlocked ? 1.6f : 1f);
             var button = card.gameObject.AddComponent<Button>();
             button.targetGraphic = card.GetComponent<Image>();
             button.interactable = unlocked && !maxed;
             button.onClick.AddListener(() => SelectUpgrade(upgrade));
 
-            var accentRail = CreateImage(card, "Tech branch accent rail", new Vector2(-398f, 0f), new Vector2(6f, 124f), new Color(branchColour.r, branchColour.g, branchColour.b, unlocked ? .82f : .20f));
+            // The colour rail and icon occupy a fixed left column. Text begins to the
+            // right of that column, so long names never drift outside the card.
+            var accentRail = CreateImage(card, "Tech branch accent rail", new Vector2(-398f, 0f), new Vector2(6f, 138f), new Color(branchColour.r, branchColour.g, branchColour.b, unlocked ? .86f : .30f));
             accentRail.raycastTarget = false;
 
-            var haloAlpha = maxed ? .62f : unlocked ? .30f : .08f;
-            var halo = CreateImage(card, "Tech node halo", new Vector2(-326f, 0f), new Vector2(94f, 94f), new Color(upgrade.Accent.r, upgrade.Accent.g, upgrade.Accent.b, haloAlpha));
+            var haloAlpha = maxed ? .62f : unlocked ? .34f : .13f;
+            var halo = CreateImage(card, "Tech node halo", new Vector2(-326f, 0f), new Vector2(96f, 96f), new Color(upgrade.Accent.r, upgrade.Accent.g, upgrade.Accent.b, haloAlpha));
             halo.sprite = ringSprite;
             halo.raycastTarget = false;
             var previewSprite = GetUpgradeArtwork(upgrade);
@@ -4268,9 +4270,26 @@ new WorldTheme(
             artwork.preserveAspect = true;
             artwork.raycastTarget = false;
 
+            // A subtle title plate makes every bird-sized phone screenshot readable,
+            // including locked nodes. The title never shares space with the icon.
+            var titlePlate = CreatePanel(card, "Tech title plate", new Vector2(-45f, 29f), new Vector2(438f, 38f),
+                new Color(branchColour.r, branchColour.g, branchColour.b, unlocked ? .075f : .035f));
+            titlePlate.GetComponent<Image>().raycastTarget = false;
+
             var tierText = $"TIER {upgrade.Tier}  ·  {upgrade.Branch}";
-            CreateText(card, tierText, new Vector2(-250f, 49f), new Vector2(430f, 22f), 11, new Color(branchColour.r, branchColour.g, branchColour.b, unlocked ? .86f : .34f), TextAnchor.MiddleLeft, FontStyle.Bold).raycastTarget = false;
-            CreateText(card, upgrade.Name, new Vector2(-250f, 24f), new Vector2(430f, 30f), 19, unlocked ? Hex("#f4fbff") : new Color(.78f, .82f, .90f, .42f), TextAnchor.MiddleLeft, FontStyle.Bold).raycastTarget = false;
+            CreateText(card, tierText, new Vector2(-55f, 61f), new Vector2(418f, 20f), 11,
+                new Color(branchColour.r, branchColour.g, branchColour.b, unlocked ? .92f : .58f),
+                TextAnchor.MiddleLeft, FontStyle.Bold).raycastTarget = false;
+
+            var nameText = CreateText(card, upgrade.Name, new Vector2(-55f, 29f), new Vector2(418f, 32f), 20,
+                unlocked ? Hex("#f4fbff") : new Color(.86f, .89f, .96f, .76f),
+                TextAnchor.MiddleLeft, FontStyle.Bold);
+            nameText.resizeTextForBestFit = true;
+            nameText.resizeTextMinSize = 15;
+            nameText.resizeTextMaxSize = 20;
+            nameText.horizontalOverflow = HorizontalWrapMode.Wrap;
+            nameText.verticalOverflow = VerticalWrapMode.Truncate;
+            nameText.raycastTarget = false;
 
             var detail = string.Empty;
             if (!unlocked)
@@ -4291,15 +4310,22 @@ new WorldTheme(
             {
                 detail = $"ACTIVE  {upgrade.EffectAtLevel(level - 1)}\nNEXT  {upgrade.EffectAtLevel(level)}";
             }
-            CreateText(card, detail, new Vector2(-250f, -18f), new Vector2(472f, 58f), 12, unlocked ? new Color(.86f, .91f, 1f, .72f) : new Color(.68f, .72f, .82f, .38f), TextAnchor.MiddleLeft, FontStyle.Normal).raycastTarget = false;
+            var detailText = CreateText(card, detail, new Vector2(-55f, -17f), new Vector2(418f, 54f), 12,
+                unlocked ? new Color(.90f, .94f, 1f, .80f) : new Color(.74f, .78f, .88f, .58f),
+                TextAnchor.MiddleLeft, FontStyle.Normal);
+            detailText.horizontalOverflow = HorizontalWrapMode.Wrap;
+            detailText.verticalOverflow = VerticalWrapMode.Truncate;
+            detailText.raycastTarget = false;
 
+            // Level pips live in their own right-hand column and never collide with
+            // the title or detail copy.
             for (var pipIndex = 0; pipIndex < upgrade.MaxLevel; pipIndex += 1)
             {
                 var filled = pipIndex < level;
                 var pipColour = filled
-                    ? new Color(upgrade.Accent.r, upgrade.Accent.g, upgrade.Accent.b, .96f)
-                    : new Color(upgrade.Accent.r, upgrade.Accent.g, upgrade.Accent.b, unlocked ? .18f : .08f);
-                var pip = CreateImage(card, $"Tech level pip {pipIndex + 1}", new Vector2(232f + pipIndex * 36f, 43f), new Vector2(24f, 10f), pipColour);
+                    ? new Color(upgrade.Accent.r, upgrade.Accent.g, upgrade.Accent.b, .98f)
+                    : new Color(upgrade.Accent.r, upgrade.Accent.g, upgrade.Accent.b, unlocked ? .25f : .12f);
+                var pip = CreateImage(card, $"Tech level pip {pipIndex + 1}", new Vector2(246f + pipIndex * 38f, 53f), new Vector2(26f, 10f), pipColour);
                 pip.raycastTarget = false;
             }
 
@@ -4310,11 +4336,12 @@ new WorldTheme(
                     : level <= 0
                         ? $"INSTALL  {upgrade.PriceAtLevel(level)} ✦"
                         : $"LV {level}/3  ·  {upgrade.PriceAtLevel(level)} ✦";
-            var statusColour = maxed ? upgrade.Accent : unlocked ? branchColour : new Color(.60f, .64f, .73f, .44f);
-            var statusPanel = CreatePanel(card, "Tech status badge", new Vector2(286f, -37f), new Vector2(214f, 38f), new Color(statusColour.r * .12f, statusColour.g * .12f, statusColour.b * .12f, unlocked ? .96f : .72f));
+            var statusColour = maxed ? upgrade.Accent : unlocked ? branchColour : new Color(.70f, .74f, .82f, .66f);
+            var statusPanel = CreatePanel(card, "Tech status badge", new Vector2(286f, -47f), new Vector2(206f, 38f),
+                new Color(statusColour.r * .12f, statusColour.g * .12f, statusColour.b * .12f, unlocked ? .96f : .82f));
             statusPanel.GetComponent<Image>().raycastTarget = false;
-            AddOutline(statusPanel.gameObject, new Color(statusColour.r, statusColour.g, statusColour.b, unlocked || maxed ? .72f : .24f), 1.2f);
-            CreateText(statusPanel, statusText, Vector2.zero, new Vector2(202f, 34f), 12, statusColour, TextAnchor.MiddleCenter, FontStyle.Bold).raycastTarget = false;
+            AddOutline(statusPanel.gameObject, new Color(statusColour.r, statusColour.g, statusColour.b, unlocked || maxed ? .76f : .34f), 1.2f);
+            CreateText(statusPanel, statusText, Vector2.zero, new Vector2(194f, 34f), 12, statusColour, TextAnchor.MiddleCenter, FontStyle.Bold).raycastTarget = false;
         }
 
         private void SetContentRows(int count, float rowStride = 255f)
