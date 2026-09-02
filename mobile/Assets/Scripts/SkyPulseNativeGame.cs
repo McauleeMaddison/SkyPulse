@@ -407,7 +407,9 @@ namespace SkyPulse.Mobile
         private const float WingDownstrokeDelay = .075f;
         private const float WingDownstrokeSpan = .90f;
         private const float ImpactFrameSeconds = .26f;
-        private const int LaunchBirdCount = 5;
+        private const int LaunchBirdCount = 15;
+        private const float CosmeticCardHeight = 260f;
+        private const float CosmeticCardRowStride = 286f;
 
         // These profiles are deliberately conservative. A play-test should alter one
         // value here at a time, never spread physics magic numbers through the loop.
@@ -439,9 +441,9 @@ namespace SkyPulse.Mobile
             powerUpSlots: 1, powerUpRespawnMinimum: 0f, powerUpRespawnMaximum: 0f,
             allowsUpgrades: false, allowsPowerUps: true);
 
-        // The launch hangar has one free cyber-bird and four crystal unlocks. Their
-        // art and accent vary, but their shared collision and flight tuning preserve
-        // a single fair score route. Future birds belong here as data-only additions.
+        // The data-driven hangar has one free cyber-bird and fourteen crystal unlocks.
+        // Their art and accent vary, but their shared collision and flight tuning
+        // preserve a single fair score route. Future birds belong here as data-only additions.
         private static readonly Skin[] Skins =
         {
             new Skin("neon_finch", "NEON FINCH", "SkyPulse/characters/roster/volt-frame-04-v1", "SkyPulse/characters/roster/volt-frame-06-v1", "#3197ff", "#45eaff", 0, "SkyPulse/characters/roster/volt-frame-01-v1", "SkyPulse/characters/roster/volt-frame-07-v1", "SkyPulse/characters/roster/volt-frame-08-v1", new []
@@ -468,6 +470,56 @@ namespace SkyPulse.Mobile
             {
                 "SkyPulse/characters/roster/verdant-frame-01-v1", "SkyPulse/characters/roster/verdant-frame-02-v1", "SkyPulse/characters/roster/verdant-frame-03-v1",
                 "SkyPulse/characters/roster/verdant-frame-04-v1", "SkyPulse/characters/roster/verdant-frame-05-v1", "SkyPulse/characters/roster/verdant-frame-06-v1",
+            }),
+            new Skin("newbird01", "NEW BIRD 01", "SkyPulse/characters/roster/newbird01-frame-04", "SkyPulse/characters/roster/newbird01-frame-06", "#ff6f61", "#ffc34d", 1500, "SkyPulse/characters/roster/newbird01-frame-01", "SkyPulse/characters/roster/newbird01-frame-07", "SkyPulse/characters/roster/newbird01-frame-08", new []
+            {
+                "SkyPulse/characters/roster/newbird01-frame-01", "SkyPulse/characters/roster/newbird01-frame-02", "SkyPulse/characters/roster/newbird01-frame-03",
+                "SkyPulse/characters/roster/newbird01-frame-04", "SkyPulse/characters/roster/newbird01-frame-05", "SkyPulse/characters/roster/newbird01-frame-06",
+            }),
+            new Skin("newbird02", "NEW BIRD 02", "SkyPulse/characters/roster/newbird02-frame-04", "SkyPulse/characters/roster/newbird02-frame-06", "#3197ff", "#45eaff", 1800, "SkyPulse/characters/roster/newbird02-frame-01", "SkyPulse/characters/roster/newbird02-frame-07", "SkyPulse/characters/roster/newbird02-frame-08", new []
+            {
+                "SkyPulse/characters/roster/newbird02-frame-01", "SkyPulse/characters/roster/newbird02-frame-02", "SkyPulse/characters/roster/newbird02-frame-03",
+                "SkyPulse/characters/roster/newbird02-frame-04", "SkyPulse/characters/roster/newbird02-frame-05", "SkyPulse/characters/roster/newbird02-frame-06",
+            }),
+            new Skin("newbird03", "NEW BIRD 03", "SkyPulse/characters/roster/newbird03-frame-04", "SkyPulse/characters/roster/newbird03-frame-06", "#45eaff", "#ea6aff", 2200, "SkyPulse/characters/roster/newbird03-frame-01", "SkyPulse/characters/roster/newbird03-frame-07", "SkyPulse/characters/roster/newbird03-frame-08", new []
+            {
+                "SkyPulse/characters/roster/newbird03-frame-01", "SkyPulse/characters/roster/newbird03-frame-02", "SkyPulse/characters/roster/newbird03-frame-03",
+                "SkyPulse/characters/roster/newbird03-frame-04", "SkyPulse/characters/roster/newbird03-frame-05", "SkyPulse/characters/roster/newbird03-frame-06",
+            }),
+            new Skin("newbird04", "NEW BIRD 04", "SkyPulse/characters/roster/newbird04-frame-04", "SkyPulse/characters/roster/newbird04-frame-06", "#e558cf", "#ffc34d", 2600, "SkyPulse/characters/roster/newbird04-frame-01", "SkyPulse/characters/roster/newbird04-frame-07", "SkyPulse/characters/roster/newbird04-frame-08", new []
+            {
+                "SkyPulse/characters/roster/newbird04-frame-01", "SkyPulse/characters/roster/newbird04-frame-02", "SkyPulse/characters/roster/newbird04-frame-03",
+                "SkyPulse/characters/roster/newbird04-frame-04", "SkyPulse/characters/roster/newbird04-frame-05", "SkyPulse/characters/roster/newbird04-frame-06",
+            }),
+            new Skin("newbird05", "NEW BIRD 05", "SkyPulse/characters/roster/newbird05-frame-04", "SkyPulse/characters/roster/newbird05-frame-06", "#f65b89", "#ffc34d", 3100, "SkyPulse/characters/roster/newbird05-frame-01", "SkyPulse/characters/roster/newbird05-frame-07", "SkyPulse/characters/roster/newbird05-frame-08", new []
+            {
+                "SkyPulse/characters/roster/newbird05-frame-01", "SkyPulse/characters/roster/newbird05-frame-02", "SkyPulse/characters/roster/newbird05-frame-03",
+                "SkyPulse/characters/roster/newbird05-frame-04", "SkyPulse/characters/roster/newbird05-frame-05", "SkyPulse/characters/roster/newbird05-frame-06",
+            }),
+            new Skin("newbird06", "NEW BIRD 06", "SkyPulse/characters/roster/newbird06-frame-04", "SkyPulse/characters/roster/newbird06-frame-06", "#a875ff", "#ea6aff", 3700, "SkyPulse/characters/roster/newbird06-frame-01", "SkyPulse/characters/roster/newbird06-frame-07", "SkyPulse/characters/roster/newbird06-frame-08", new []
+            {
+                "SkyPulse/characters/roster/newbird06-frame-01", "SkyPulse/characters/roster/newbird06-frame-02", "SkyPulse/characters/roster/newbird06-frame-03",
+                "SkyPulse/characters/roster/newbird06-frame-04", "SkyPulse/characters/roster/newbird06-frame-05", "SkyPulse/characters/roster/newbird06-frame-06",
+            }),
+            new Skin("newbird07", "NEW BIRD 07", "SkyPulse/characters/roster/newbird07-frame-04", "SkyPulse/characters/roster/newbird07-frame-06", "#7ee870", "#d8ff84", 4400, "SkyPulse/characters/roster/newbird07-frame-01", "SkyPulse/characters/roster/newbird07-frame-07", "SkyPulse/characters/roster/newbird07-frame-08", new []
+            {
+                "SkyPulse/characters/roster/newbird07-frame-01", "SkyPulse/characters/roster/newbird07-frame-02", "SkyPulse/characters/roster/newbird07-frame-03",
+                "SkyPulse/characters/roster/newbird07-frame-04", "SkyPulse/characters/roster/newbird07-frame-05", "SkyPulse/characters/roster/newbird07-frame-06",
+            }),
+            new Skin("newbird08", "NEW BIRD 08", "SkyPulse/characters/roster/newbird08-frame-04", "SkyPulse/characters/roster/newbird08-frame-06", "#3197ff", "#45eaff", 5200, "SkyPulse/characters/roster/newbird08-frame-01", "SkyPulse/characters/roster/newbird08-frame-07", "SkyPulse/characters/roster/newbird08-frame-08", new []
+            {
+                "SkyPulse/characters/roster/newbird08-frame-01", "SkyPulse/characters/roster/newbird08-frame-02", "SkyPulse/characters/roster/newbird08-frame-03",
+                "SkyPulse/characters/roster/newbird08-frame-04", "SkyPulse/characters/roster/newbird08-frame-05", "SkyPulse/characters/roster/newbird08-frame-06",
+            }),
+            new Skin("newbird09", "NEW BIRD 09", "SkyPulse/characters/roster/newbird09-frame-04", "SkyPulse/characters/roster/newbird09-frame-06", "#7ee870", "#d8ff84", 6100, "SkyPulse/characters/roster/newbird09-frame-01", "SkyPulse/characters/roster/newbird09-frame-07", "SkyPulse/characters/roster/newbird09-frame-08", new []
+            {
+                "SkyPulse/characters/roster/newbird09-frame-01", "SkyPulse/characters/roster/newbird09-frame-02", "SkyPulse/characters/roster/newbird09-frame-03",
+                "SkyPulse/characters/roster/newbird09-frame-04", "SkyPulse/characters/roster/newbird09-frame-05", "SkyPulse/characters/roster/newbird09-frame-06",
+            }),
+            new Skin("newbird10", "NEW BIRD 10", "SkyPulse/characters/roster/newbird10-frame-04", "SkyPulse/characters/roster/newbird10-frame-06", "#b8d5e8", "#c28cff", 7100, "SkyPulse/characters/roster/newbird10-frame-01", "SkyPulse/characters/roster/newbird10-frame-07", "SkyPulse/characters/roster/newbird10-frame-08", new []
+            {
+                "SkyPulse/characters/roster/newbird10-frame-01", "SkyPulse/characters/roster/newbird10-frame-02", "SkyPulse/characters/roster/newbird10-frame-03",
+                "SkyPulse/characters/roster/newbird10-frame-04", "SkyPulse/characters/roster/newbird10-frame-05", "SkyPulse/characters/roster/newbird10-frame-06",
             }),
         };
 
@@ -1589,12 +1641,10 @@ new WorldTheme(
             fly.onClick.AddListener(StartFlight);
             CreateText(root.transform, "TAP ANYWHERE TO FLAP", new Vector2(0f, -370f), new Vector2(650f, 34f), 15, new Color(.91f, .92f, 1f, .68f), TextAnchor.MiddleCenter, FontStyle.Bold);
 
-            var birds = CreateNeonButton(root.transform, "BIRDS", new Vector2(-300f, -456f), new Vector2(250f, 78f), Hex("#45eaff"));
-            birds.onClick.AddListener(OpenHangar);
-            var worlds = CreateNeonButton(root.transform, "WORLDS", new Vector2(0f, -456f), new Vector2(250f, 78f), Hex("#61f5b3"));
-            worlds.onClick.AddListener(OpenWorldCollection);
-            var tech = CreateNeonButton(root.transform, "TECH", new Vector2(300f, -456f), new Vector2(250f, 78f), Hex("#ffc34d"));
-            tech.onClick.AddListener(OpenUpgrades);
+            var hangar = CreateNeonButton(root.transform, "BIRD HANGAR", new Vector2(-154f, -456f), new Vector2(284f, 78f), Hex("#45eaff"));
+            hangar.onClick.AddListener(OpenHangar);
+            var upgrades = CreateNeonButton(root.transform, "UPGRADES", new Vector2(154f, -456f), new Vector2(284f, 78f), Hex("#ffc34d"));
+            upgrades.onClick.AddListener(OpenUpgrades);
             menuDailyText = CreateText(root.transform, "NEON CITY  →  ACID FOUNDRY  →  ORBITAL BAZAAR", new Vector2(0f, -538f), new Vector2(760f, 40f), 17, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             menuEquippedText = CreateText(root.transform, "SELECTED  ·  NEON FINCH", new Vector2(0f, -600f), new Vector2(650f, 36f), 16, Hex("#8f64ff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             return root;
@@ -1657,17 +1707,15 @@ new WorldTheme(
             resultScoreText = CreateText(card, "SCORE  0", new Vector2(0f, 190f), new Vector2(600f, 54f), 31, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             resultBestText = CreateText(card, "BEST  0", new Vector2(0f, 143f), new Vector2(600f, 42f), 22, new Color(.93f, .95f, 1f, .78f), TextAnchor.MiddleCenter, FontStyle.Bold);
             resultCrystalsText = CreateText(card, "CRYSTALS PICKED UP  ·  0", new Vector2(0f, 88f), new Vector2(660f, 36f), 19, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            resultBonusText = CreateText(card, "TECH REWARD BONUS  ·  +0", new Vector2(0f, 48f), new Vector2(660f, 36f), 18, Hex("#ffc34d"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            resultBonusText = CreateText(card, "SALVAGE CODEC BONUS  ·  +0", new Vector2(0f, 48f), new Vector2(660f, 36f), 18, Hex("#ffc34d"), TextAnchor.MiddleCenter, FontStyle.Bold);
             resultBalanceText = CreateText(card, "TOTAL BALANCE  ·  0 ✦", new Vector2(0f, 8f), new Vector2(660f, 36f), 19, new Color(.93f, .95f, 1f, .78f), TextAnchor.MiddleCenter, FontStyle.Bold);
             resultWorldText = CreateText(card, "ROUTE REACHED  ·  NEON CITY", new Vector2(0f, -34f), new Vector2(660f, 36f), 18, Hex("#b17cff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             var flyAgain = CreateNeonButton(card, "RETRY", new Vector2(0f, -136f), new Vector2(570f, 88f), Hex("#f05bc6"));
             flyAgain.onClick.AddListener(RestartFlight);
-            var birds = CreateNeonButton(card, "BIRDS", new Vector2(-245f, -246f), new Vector2(205f, 70f), Hex("#45eaff"));
-            birds.onClick.AddListener(OpenHangar);
-            var worlds = CreateNeonButton(card, "WORLDS", new Vector2(0f, -246f), new Vector2(205f, 70f), Hex("#61f5b3"));
-            worlds.onClick.AddListener(OpenWorldCollection);
-            var tech = CreateNeonButton(card, "TECH", new Vector2(245f, -246f), new Vector2(205f, 70f), Hex("#ffc34d"));
-            tech.onClick.AddListener(OpenUpgrades);
+            var hangar = CreateNeonButton(card, "HANGAR", new Vector2(-193f, -246f), new Vector2(260f, 70f), Hex("#45eaff"));
+            hangar.onClick.AddListener(OpenHangar);
+            var upgrades = CreateNeonButton(card, "TECH", new Vector2(96f, -246f), new Vector2(288f, 70f), Hex("#ffc34d"));
+            upgrades.onClick.AddListener(OpenUpgrades);
             var share = CreateNeonButton(card, "SHARE", new Vector2(0f, -336f), new Vector2(570f, 64f), Hex("#8f64ff"));
             resultShareText = share.GetComponentInChildren<Text>();
             share.onClick.AddListener(CopyRunSummaryToClipboard);
@@ -1681,27 +1729,27 @@ new WorldTheme(
             var back = CreateNeonButton(root.transform, "‹  MENU", new Vector2(-390f, 802f), new Vector2(220f, 68f), Hex("#8f64ff"));
             back.onClick.AddListener(ResetToMenu);
             customizeCrystalText = CreateChip(root.transform, new Vector2(365f, 802f), "✦  0", Hex("#45eaff"));
-            customizeTitle = CreateText(root.transform, "BIRDS", new Vector2(0f, 690f), new Vector2(720f, 80f), 48, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            CreateText(root.transform, "BIRDS · WORLDS · TECH", new Vector2(0f, 638f), new Vector2(800f, 38f), 18, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            customizeTitle = CreateText(root.transform, "BIRD HANGAR", new Vector2(0f, 690f), new Vector2(720f, 80f), 48, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            CreateText(root.transform, "CHOOSE YOUR CYBER-BIRD OR CRYSTAL TECH", new Vector2(0f, 638f), new Vector2(800f, 38f), 18, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
 
-            var labels = new[] { "BIRDS", "WORLDS", "TECH" };
-            var categories = new[] { CosmeticCategory.Birds, CosmeticCategory.Worlds, CosmeticCategory.Upgrades };
-            var tabColours = new[] { Hex("#45eaff"), Hex("#61f5b3"), Hex("#ffc34d") };
+            var labels = new[] { "HANGAR", "TECH" };
+            var categories = new[] { CosmeticCategory.Birds, CosmeticCategory.Upgrades };
             for (var index = 0; index < labels.Length; index += 1)
             {
-                var tab = CreateNeonButton(root.transform, labels[index], new Vector2(-300f + index * 300f, 560f), new Vector2(250f, 60f), tabColours[index]);
+                var tab = CreateNeonButton(root.transform, labels[index], new Vector2(-150 + index * 300f, 560f), new Vector2(276f, 60f), index == 0 ? Hex("#45eaff") : Hex("#ffc34d"));
                 var category = categories[index];
                 tab.onClick.AddListener(() => SetCosmeticCategory(category));
             }
 
             var viewport = CreatePanel(root.transform, "Collection viewport", new Vector2(0f, -172f), new Vector2(970f, 1380f), Hex("#070a18"));
-            var mask = viewport.gameObject.AddComponent<Mask>();
-            mask.showMaskGraphic = false;
+            viewport.gameObject.AddComponent<RectMask2D>();
             var scroll = viewport.gameObject.AddComponent<ScrollRect>();
             scroll.horizontal = false;
             scroll.vertical = true;
             scroll.movementType = ScrollRect.MovementType.Elastic;
-            scroll.scrollSensitivity = 26f;
+            scroll.inertia = true;
+            scroll.decelerationRate = .12f;
+            scroll.scrollSensitivity = 80f;
             scroll.viewport = viewport;
 
             var contentObject = new GameObject("Collection content", typeof(RectTransform));
@@ -1712,6 +1760,23 @@ new WorldTheme(
             customizeContent.pivot = new Vector2(.5f, 1f);
             customizeContent.anchoredPosition = Vector2.zero;
             scroll.content = customizeContent;
+
+            // The collection already supports a scroll range; make that affordance
+            // visible and draggable so a longer bird roster is discoverable on touch
+            // screens and with a desktop mouse.
+            var scrollTrack = CreatePanel(viewport, "Collection scroll track", new Vector2(464f, 0f), new Vector2(14f, 1240f), new Color(.035f, .07f, .16f, .92f));
+            scrollTrack.GetComponent<Image>().raycastTarget = true;
+            AddOutline(scrollTrack.gameObject, new Color(.27f, .86f, 1f, .42f), 1f);
+            var scrollbar = scrollTrack.gameObject.AddComponent<Scrollbar>();
+            scrollbar.direction = Scrollbar.Direction.BottomToTop;
+            var scrollHandle = CreatePanel(scrollTrack, "Collection scroll handle", Vector2.zero, new Vector2(14f, 112f), Hex("#45eaff"));
+            var handleImage = scrollHandle.GetComponent<Image>();
+            handleImage.raycastTarget = true;
+            scrollbar.handleRect = scrollHandle;
+            scrollbar.targetGraphic = handleImage;
+            scroll.verticalScrollbar = scrollbar;
+            scroll.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.AutoHide;
+            scroll.verticalNormalizedPosition = 1f;
             return root;
         }
 
@@ -4055,7 +4120,7 @@ new WorldTheme(
                             : IsSkinOwned(skin) ? "TAP TO EQUIP" : $"UNLOCK · {skin.Price} ✦";
                         CreateCosmeticCard(index, skin.Name, status, skin.Accent, LoadSprite(skin.ArtPath), () => SelectSkin(skin));
                     }
-                    SetContentRows(Skins.Length);
+                    SetContentRows(Skins.Length, CosmeticCardRowStride);
                     break;
                 case CosmeticCategory.Worlds:
                     customizeTitle.text = "WORLD COLLECTION";
@@ -4067,7 +4132,7 @@ new WorldTheme(
                         var status = equippedWorld.Id == world.Id ? $"EQUIPPED · {pipeName}" : $"{world.DifficultyLabel} · {pipeName}";
                         CreateCosmeticCard(index, world.Name, status, world.Accent, LoadSprite(world.BackgroundPath), () => EquipWorld(world));
                     }
-                    SetContentRows(Worlds.Length);
+                    SetContentRows(Worlds.Length, CosmeticCardRowStride);
                     break;
                 case CosmeticCategory.Pipes:
                     customizeTitle.text = "PIPE COLLECTION";
@@ -4076,58 +4141,13 @@ new WorldTheme(
                         var style = PipeStyles[index];
                         CreateCosmeticCard(index, style.Name, equippedPipe.Id == style.Id ? "EQUIPPED" : "TAP TO EQUIP", style.Accent, null, () => EquipPipe(style), style.Panel, style.Energy, true);
                     }
-                    SetContentRows(PipeStyles.Length);
+                    SetContentRows(PipeStyles.Length, CosmeticCardRowStride);
                     break;
                 default:
-                    customizeTitle.text = "TECH";
+                    customizeTitle.text = "TECH TREE";
                     BuildTechTree();
                     break;
             }
-        }
-
-        private void SetContentRows(int count)
-        {
-            var rows = Mathf.CeilToInt(count / 2f);
-            customizeContent.sizeDelta = new Vector2(0f, Mathf.Max(1360f, rows * 255f + 22f));
-            customizeContent.anchoredPosition = Vector2.zero;
-        }
-
-        private void CreateCosmeticCard(int index, string title, string status, Color accent, Sprite preview, Action select, Color secondary = default, Color tertiary = default, bool pipePreview = false)
-        {
-            var column = index % 2;
-            var row = index / 2;
-            var card = CreatePanel(customizeContent, $"{title} card", new Vector2(column == 0 ? -235f : 235f, -12f - row * 250f), new Vector2(440f, 222f), Hex("#0b1022"));
-            card.anchorMin = new Vector2(.5f, 1f);
-            card.anchorMax = new Vector2(.5f, 1f);
-            card.pivot = new Vector2(.5f, 1f);
-            AddOutline(card.gameObject, accent, status == "EQUIPPED" ? 3f : 1.5f);
-            var button = card.gameObject.AddComponent<Button>();
-            button.targetGraphic = card.GetComponent<Image>();
-            button.onClick.AddListener(() => select());
-
-            if (preview != null)
-            {
-                var image = CreateImage(card, "Preview", new Vector2(0f, 33f), new Vector2(384f, 134f), Color.white);
-                image.sprite = preview;
-                image.preserveAspect = true;
-                image.raycastTarget = false;
-            }
-            else if (pipePreview)
-            {
-                var outer = CreateImage(card, "Pipe preview shell", new Vector2(0f, 37f), new Vector2(206f, 80f), Hex("#030613"));
-                var panel = CreateImage(card, "Pipe preview panel", new Vector2(0f, 37f), new Vector2(182f, 62f), secondary);
-                var core = CreateImage(card, "Pipe preview core", new Vector2(0f, 37f), new Vector2(8f, 62f), tertiary);
-                outer.raycastTarget = panel.raycastTarget = core.raycastTarget = false;
-            }
-            else
-            {
-                var glow = CreateImage(card, "Trail glow", new Vector2(0f, 38f), new Vector2(236f, 25f), secondary);
-                var core = CreateImage(card, "Trail core", new Vector2(0f, 38f), new Vector2(204f, 8f), accent);
-                glow.raycastTarget = core.raycastTarget = false;
-            }
-
-            CreateText(card, title, new Vector2(-185f, -68f), new Vector2(340f, 34f), 20, Hex("#f4fbff"), TextAnchor.MiddleLeft, FontStyle.Bold).raycastTarget = false;
-            CreateText(card, status, new Vector2(-185f, -99f), new Vector2(330f, 28f), 15, status == "EQUIPPED" ? accent : new Color(.85f, .9f, 1f, .68f), TextAnchor.MiddleLeft, FontStyle.Bold).raycastTarget = false;
         }
 
         private void BuildTechTree()
@@ -4257,6 +4277,93 @@ new WorldTheme(
             CreateText(card, status, new Vector2(-224f, -72f), new Vector2(620f, 30f), 15, maxed ? upgrade.Accent : unlocked ? branchColour : new Color(.65f, .68f, .76f, .42f), TextAnchor.MiddleLeft, FontStyle.Bold);
         }
 
+        private void SetContentRows(int count, float rowStride = 255f)
+        {
+            var rows = Mathf.CeilToInt(count / 2f);
+            customizeContent.sizeDelta = new Vector2(0f, Mathf.Max(1360f, rows * rowStride + 22f));
+            customizeContent.anchoredPosition = Vector2.zero;
+        }
+
+        private void CreateCosmeticCard(int index, string title, string status, Color accent, Sprite preview, Action select, Color secondary = default, Color tertiary = default, bool pipePreview = false)
+        {
+            var column = index % 2;
+            var row = index / 2;
+            var card = CreatePanel(customizeContent, $"{title} card", new Vector2(column == 0 ? -235f : 235f, -14f - row * CosmeticCardRowStride), new Vector2(440f, CosmeticCardHeight), Hex("#0b1022"));
+            card.anchorMin = new Vector2(.5f, 1f);
+            card.anchorMax = new Vector2(.5f, 1f);
+            card.pivot = new Vector2(.5f, 1f);
+            AddOutline(card.gameObject, accent, status == "EQUIPPED" ? 3f : 1.5f);
+            var button = card.gameObject.AddComponent<Button>();
+            button.targetGraphic = card.GetComponent<Image>();
+            button.onClick.AddListener(() => select());
+
+            if (preview != null)
+            {
+                var image = CreateImage(card, "Preview", new Vector2(0f, 43f), new Vector2(392f, 142f), Color.white);
+                image.sprite = preview;
+                image.preserveAspect = true;
+                image.raycastTarget = false;
+            }
+            else if (pipePreview)
+            {
+                var outer = CreateImage(card, "Pipe preview shell", new Vector2(0f, 45f), new Vector2(206f, 80f), Hex("#030613"));
+                var panel = CreateImage(card, "Pipe preview panel", new Vector2(0f, 45f), new Vector2(182f, 62f), secondary);
+                var core = CreateImage(card, "Pipe preview core", new Vector2(0f, 45f), new Vector2(8f, 62f), tertiary);
+                outer.raycastTarget = panel.raycastTarget = core.raycastTarget = false;
+            }
+            else
+            {
+                var glow = CreateImage(card, "Trail glow", new Vector2(0f, 46f), new Vector2(236f, 25f), secondary);
+                var core = CreateImage(card, "Trail core", new Vector2(0f, 46f), new Vector2(204f, 8f), accent);
+                glow.raycastTarget = core.raycastTarget = false;
+            }
+
+            var nameText = CreateText(card, title, new Vector2(0f, -64f), new Vector2(400f, 38f), 28, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            nameText.resizeTextForBestFit = true;
+            nameText.resizeTextMinSize = 18;
+            nameText.resizeTextMaxSize = 28;
+            nameText.raycastTarget = false;
+
+            var statusPanel = CreatePanel(card, "Selection status", new Vector2(0f, -108f), new Vector2(398f, 30f), new Color(.018f, .035f, .10f, .92f));
+            statusPanel.GetComponent<Image>().raycastTarget = false;
+            AddOutline(statusPanel.gameObject, new Color(accent.r, accent.g, accent.b, .42f), .8f);
+            var statusText = CreateText(statusPanel, status, Vector2.zero, new Vector2(378f, 28f), 20, status == "EQUIPPED" ? accent : new Color(.90f, .94f, 1f, .86f), TextAnchor.MiddleCenter, FontStyle.Bold);
+            statusText.resizeTextForBestFit = true;
+            statusText.resizeTextMinSize = 13;
+            statusText.resizeTextMaxSize = 20;
+            statusText.raycastTarget = false;
+        }
+
+        private void CreateUpgradeCard(int index, Upgrade upgrade)
+        {
+            var column = index % 2;
+            var row = index / 2;
+            var level = GetUpgradeLevel(upgrade.Id);
+            var maxed = level >= upgrade.MaxLevel;
+            var card = CreatePanel(customizeContent, $"{upgrade.Name} upgrade", new Vector2(column == 0 ? -235f : 235f, -12f - row * 250f), new Vector2(440f, 222f), Hex("#0b1022"));
+            card.anchorMin = new Vector2(.5f, 1f);
+            card.anchorMax = new Vector2(.5f, 1f);
+            card.pivot = new Vector2(.5f, 1f);
+            AddOutline(card.gameObject, upgrade.Accent, maxed ? 3f : 1.5f);
+            var button = card.gameObject.AddComponent<Button>();
+            button.targetGraphic = card.GetComponent<Image>();
+            button.onClick.AddListener(() => SelectUpgrade(upgrade));
+
+            var halo = CreateImage(card, "Upgrade focus ring", new Vector2(-146f, 34f), new Vector2(102f, 102f), new Color(upgrade.Accent.r, upgrade.Accent.g, upgrade.Accent.b, .42f));
+            halo.sprite = ringSprite;
+            halo.raycastTarget = false;
+            var previewSprite = GetUpgradeArtwork(upgrade);
+            var artwork = CreateImage(card, "Upgrade artwork", new Vector2(-146f, 34f), new Vector2(94f, 94f), previewSprite == null ? upgrade.Accent : Color.white);
+            artwork.sprite = previewSprite ?? softCircleSprite;
+            artwork.preserveAspect = true;
+            artwork.raycastTarget = false;
+            CreateText(card, upgrade.Name, new Vector2(-70f, 53f), new Vector2(250f, 34f), 18, Hex("#f4fbff"), TextAnchor.MiddleLeft, FontStyle.Bold).raycastTarget = false;
+            var nextEffect = maxed ? "MAXED · ALL CRYSTAL BENEFITS ACTIVE" : upgrade.EffectAtLevel(level);
+            CreateText(card, nextEffect, new Vector2(-70f, 12f), new Vector2(278f, 68f), 14, new Color(.86f, .91f, 1f, .73f), TextAnchor.MiddleLeft, FontStyle.Normal).raycastTarget = false;
+            var status = maxed ? "LEVEL 3 / 3 · MAXED" : $"LEVEL {level} / {upgrade.MaxLevel} · BUY {upgrade.PriceAtLevel(level)} ✦";
+            CreateText(card, status, new Vector2(-185f, -85f), new Vector2(380f, 28f), 15, maxed ? upgrade.Accent : new Color(.85f, .9f, 1f, .68f), TextAnchor.MiddleLeft, FontStyle.Bold).raycastTarget = false;
+        }
+
         private Sprite GetUpgradeArtwork(Upgrade upgrade)
         {
             PowerUpKind kind;
@@ -4305,12 +4412,6 @@ new WorldTheme(
             return skin.Price <= 0 || ownedSkinIds.Contains(skin.Id);
         }
 
-        private bool IsUpgradePrerequisiteMet(Upgrade upgrade)
-        {
-            if (upgrade == null || !upgrade.HasPrerequisite) return true;
-            return GetUpgradeLevel(upgrade.PrerequisiteId) >= upgrade.PrerequisiteLevel;
-        }
-
         private bool HasUpgrade(string id)
         {
             var requiredLevel = UpgradeAliasLevel(id, "crystal_resonator_");
@@ -4334,9 +4435,15 @@ new WorldTheme(
             return int.TryParse(id.Substring(prefix.Length), out var level) ? level : 0;
         }
 
-        // Permanent Tech only changes crystal collection and crystal rewards. No
-        // helper below is allowed to alter the bird, gates, score, route speed, or
-        // power-up timing; keeping those boundaries here protects the fair route.
+        private bool IsUpgradePrerequisiteMet(Upgrade upgrade)
+        {
+            if (upgrade == null || !upgrade.HasPrerequisite) return true;
+            return GetUpgradeLevel(upgrade.PrerequisiteId) >= upgrade.PrerequisiteLevel;
+        }
+
+        // Permanent Tech helpers are deliberately isolated here. They affect crystal
+        // collection and rewards only, never the bird, score, gates, route difficulty,
+        // scroll speed, collision, or power-up timing.
         private float CrystalResonatorRadiusFraction()
         {
             switch (GetUpgradeLevel("crystal_resonator"))
@@ -4344,6 +4451,17 @@ new WorldTheme(
                 case 3: return .14f;
                 case 2: return .10f;
                 case 1: return .06f;
+                default: return 0f;
+            }
+        }
+
+        private float SalvageCodecBonusFraction()
+        {
+            switch (GetUpgradeLevel("salvage_codec"))
+            {
+                case 3: return .30f;
+                case 2: return .20f;
+                case 1: return .10f;
                 default: return 0f;
             }
         }
@@ -4366,17 +4484,6 @@ new WorldTheme(
                 case 3: return .06f;
                 case 2: return .04f;
                 case 1: return .02f;
-                default: return 0f;
-            }
-        }
-
-        private float SalvageCodecBonusFraction()
-        {
-            switch (GetUpgradeLevel("salvage_codec"))
-            {
-                case 3: return .30f;
-                case 2: return .20f;
-                case 1: return .10f;
                 default: return 0f;
             }
         }
@@ -5218,7 +5325,7 @@ new WorldTheme(
             if (PlayerPrefs.GetInt("skypulse.native.cyber-roster-v2", 0) == 0)
             {
                 // Keep legacy hangar ownership where it maps to a current bird. New
-                // pilots start with Neon Finch only; the four unlocks stay earned.
+                // pilots start with Neon Finch only; existing owned birds stay earned.
                 ownedSkinIds.Add(Skins[0].Id);
                 PlayerPrefs.SetInt("skypulse.native.cyber-roster-v2", 1);
             }
