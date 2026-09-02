@@ -390,6 +390,8 @@ namespace SkyPulse.Mobile
         private const float WingDownstrokeSpan = .90f;
         private const float ImpactFrameSeconds = .26f;
         private const int LaunchBirdCount = 15;
+        private const float CosmeticCardHeight = 260f;
+        private const float CosmeticCardRowStride = 286f;
 
         // These profiles are deliberately conservative. A play-test should alter one
         // value here at a time, never spread physics magic numbers through the loop.
@@ -1653,13 +1655,14 @@ new WorldTheme(
             }
 
             var viewport = CreatePanel(root.transform, "Collection viewport", new Vector2(0f, -172f), new Vector2(970f, 1380f), Hex("#070a18"));
-            var mask = viewport.gameObject.AddComponent<Mask>();
-            mask.showMaskGraphic = false;
+            viewport.gameObject.AddComponent<RectMask2D>();
             var scroll = viewport.gameObject.AddComponent<ScrollRect>();
             scroll.horizontal = false;
             scroll.vertical = true;
             scroll.movementType = ScrollRect.MovementType.Elastic;
-            scroll.scrollSensitivity = 26f;
+            scroll.inertia = true;
+            scroll.decelerationRate = .12f;
+            scroll.scrollSensitivity = 80f;
             scroll.viewport = viewport;
 
             var contentObject = new GameObject("Collection content", typeof(RectTransform));
@@ -1670,6 +1673,23 @@ new WorldTheme(
             customizeContent.pivot = new Vector2(.5f, 1f);
             customizeContent.anchoredPosition = Vector2.zero;
             scroll.content = customizeContent;
+
+            // The collection already supports a scroll range; make that affordance
+            // visible and draggable so a longer bird roster is discoverable on touch
+            // screens and with a desktop mouse.
+            var scrollTrack = CreatePanel(viewport, "Collection scroll track", new Vector2(464f, 0f), new Vector2(14f, 1240f), new Color(.035f, .07f, .16f, .92f));
+            scrollTrack.GetComponent<Image>().raycastTarget = true;
+            AddOutline(scrollTrack.gameObject, new Color(.27f, .86f, 1f, .42f), 1f);
+            var scrollbar = scrollTrack.gameObject.AddComponent<Scrollbar>();
+            scrollbar.direction = Scrollbar.Direction.BottomToTop;
+            var scrollHandle = CreatePanel(scrollTrack, "Collection scroll handle", Vector2.zero, new Vector2(14f, 112f), Hex("#45eaff"));
+            var handleImage = scrollHandle.GetComponent<Image>();
+            handleImage.raycastTarget = true;
+            scrollbar.handleRect = scrollHandle;
+            scrollbar.targetGraphic = handleImage;
+            scroll.verticalScrollbar = scrollbar;
+            scroll.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.AutoHide;
+            scroll.verticalNormalizedPosition = 1f;
             return root;
         }
 
@@ -4005,7 +4025,7 @@ new WorldTheme(
                             : IsSkinOwned(skin) ? "TAP TO EQUIP" : $"UNLOCK · {skin.Price} ✦";
                         CreateCosmeticCard(index, skin.Name, status, skin.Accent, LoadSprite(skin.ArtPath), () => SelectSkin(skin));
                     }
-                    SetContentRows(Skins.Length);
+                    SetContentRows(Skins.Length, CosmeticCardRowStride);
                     break;
                 case CosmeticCategory.Worlds:
                     customizeTitle.text = "WORLD COLLECTION";
@@ -4017,7 +4037,7 @@ new WorldTheme(
                         var status = equippedWorld.Id == world.Id ? $"EQUIPPED · {pipeName}" : $"{world.DifficultyLabel} · {pipeName}";
                         CreateCosmeticCard(index, world.Name, status, world.Accent, LoadSprite(world.BackgroundPath), () => EquipWorld(world));
                     }
-                    SetContentRows(Worlds.Length);
+                    SetContentRows(Worlds.Length, CosmeticCardRowStride);
                     break;
                 case CosmeticCategory.Pipes:
                     customizeTitle.text = "PIPE COLLECTION";
@@ -4026,7 +4046,7 @@ new WorldTheme(
                         var style = PipeStyles[index];
                         CreateCosmeticCard(index, style.Name, equippedPipe.Id == style.Id ? "EQUIPPED" : "TAP TO EQUIP", style.Accent, null, () => EquipPipe(style), style.Panel, style.Energy, true);
                     }
-                    SetContentRows(PipeStyles.Length);
+                    SetContentRows(PipeStyles.Length, CosmeticCardRowStride);
                     break;
                 default:
                     customizeTitle.text = "CRYSTAL UPGRADES";
@@ -4040,10 +4060,10 @@ new WorldTheme(
             }
         }
 
-        private void SetContentRows(int count)
+        private void SetContentRows(int count, float rowStride = 255f)
         {
             var rows = Mathf.CeilToInt(count / 2f);
-            customizeContent.sizeDelta = new Vector2(0f, Mathf.Max(1360f, rows * 255f + 22f));
+            customizeContent.sizeDelta = new Vector2(0f, Mathf.Max(1360f, rows * rowStride + 22f));
             customizeContent.anchoredPosition = Vector2.zero;
         }
 
@@ -4051,7 +4071,7 @@ new WorldTheme(
         {
             var column = index % 2;
             var row = index / 2;
-            var card = CreatePanel(customizeContent, $"{title} card", new Vector2(column == 0 ? -235f : 235f, -12f - row * 250f), new Vector2(440f, 222f), Hex("#0b1022"));
+            var card = CreatePanel(customizeContent, $"{title} card", new Vector2(column == 0 ? -235f : 235f, -14f - row * CosmeticCardRowStride), new Vector2(440f, CosmeticCardHeight), Hex("#0b1022"));
             card.anchorMin = new Vector2(.5f, 1f);
             card.anchorMax = new Vector2(.5f, 1f);
             card.pivot = new Vector2(.5f, 1f);
@@ -4062,27 +4082,39 @@ new WorldTheme(
 
             if (preview != null)
             {
-                var image = CreateImage(card, "Preview", new Vector2(0f, 33f), new Vector2(384f, 134f), Color.white);
+                var image = CreateImage(card, "Preview", new Vector2(0f, 43f), new Vector2(392f, 142f), Color.white);
                 image.sprite = preview;
                 image.preserveAspect = true;
                 image.raycastTarget = false;
             }
             else if (pipePreview)
             {
-                var outer = CreateImage(card, "Pipe preview shell", new Vector2(0f, 37f), new Vector2(206f, 80f), Hex("#030613"));
-                var panel = CreateImage(card, "Pipe preview panel", new Vector2(0f, 37f), new Vector2(182f, 62f), secondary);
-                var core = CreateImage(card, "Pipe preview core", new Vector2(0f, 37f), new Vector2(8f, 62f), tertiary);
+                var outer = CreateImage(card, "Pipe preview shell", new Vector2(0f, 45f), new Vector2(206f, 80f), Hex("#030613"));
+                var panel = CreateImage(card, "Pipe preview panel", new Vector2(0f, 45f), new Vector2(182f, 62f), secondary);
+                var core = CreateImage(card, "Pipe preview core", new Vector2(0f, 45f), new Vector2(8f, 62f), tertiary);
                 outer.raycastTarget = panel.raycastTarget = core.raycastTarget = false;
             }
             else
             {
-                var glow = CreateImage(card, "Trail glow", new Vector2(0f, 38f), new Vector2(236f, 25f), secondary);
-                var core = CreateImage(card, "Trail core", new Vector2(0f, 38f), new Vector2(204f, 8f), accent);
+                var glow = CreateImage(card, "Trail glow", new Vector2(0f, 46f), new Vector2(236f, 25f), secondary);
+                var core = CreateImage(card, "Trail core", new Vector2(0f, 46f), new Vector2(204f, 8f), accent);
                 glow.raycastTarget = core.raycastTarget = false;
             }
 
-            CreateText(card, title, new Vector2(-185f, -68f), new Vector2(340f, 34f), 20, Hex("#f4fbff"), TextAnchor.MiddleLeft, FontStyle.Bold).raycastTarget = false;
-            CreateText(card, status, new Vector2(-185f, -99f), new Vector2(330f, 28f), 15, status == "EQUIPPED" ? accent : new Color(.85f, .9f, 1f, .68f), TextAnchor.MiddleLeft, FontStyle.Bold).raycastTarget = false;
+            var nameText = CreateText(card, title, new Vector2(0f, -64f), new Vector2(400f, 38f), 28, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            nameText.resizeTextForBestFit = true;
+            nameText.resizeTextMinSize = 18;
+            nameText.resizeTextMaxSize = 28;
+            nameText.raycastTarget = false;
+
+            var statusPanel = CreatePanel(card, "Selection status", new Vector2(0f, -108f), new Vector2(398f, 30f), new Color(.018f, .035f, .10f, .92f));
+            statusPanel.GetComponent<Image>().raycastTarget = false;
+            AddOutline(statusPanel.gameObject, new Color(accent.r, accent.g, accent.b, .42f), .8f);
+            var statusText = CreateText(statusPanel, status, Vector2.zero, new Vector2(378f, 28f), 20, status == "EQUIPPED" ? accent : new Color(.90f, .94f, 1f, .86f), TextAnchor.MiddleCenter, FontStyle.Bold);
+            statusText.resizeTextForBestFit = true;
+            statusText.resizeTextMinSize = 13;
+            statusText.resizeTextMaxSize = 20;
+            statusText.raycastTarget = false;
         }
 
         private void CreateUpgradeCard(int index, Upgrade upgrade)
