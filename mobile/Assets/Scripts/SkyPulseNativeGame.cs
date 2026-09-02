@@ -471,52 +471,52 @@ namespace SkyPulse.Mobile
                 "SkyPulse/characters/roster/verdant-frame-01-v1", "SkyPulse/characters/roster/verdant-frame-02-v1", "SkyPulse/characters/roster/verdant-frame-03-v1",
                 "SkyPulse/characters/roster/verdant-frame-04-v1", "SkyPulse/characters/roster/verdant-frame-05-v1", "SkyPulse/characters/roster/verdant-frame-06-v1",
             }),
-            new Skin("newbird01", "NEW BIRD 01", "SkyPulse/characters/roster/newbird01-frame-04", "SkyPulse/characters/roster/newbird01-frame-06", "#ff6f61", "#ffc34d", 1500, "SkyPulse/characters/roster/newbird01-frame-01", "SkyPulse/characters/roster/newbird01-frame-07", "SkyPulse/characters/roster/newbird01-frame-08", new []
+            new Skin("newbird01", "SOLARA", "SkyPulse/characters/roster/newbird01-frame-04", "SkyPulse/characters/roster/newbird01-frame-06", "#ff6f61", "#ffc34d", 1500, "SkyPulse/characters/roster/newbird01-frame-01", "SkyPulse/characters/roster/newbird01-frame-07", "SkyPulse/characters/roster/newbird01-frame-08", new []
             {
                 "SkyPulse/characters/roster/newbird01-frame-01", "SkyPulse/characters/roster/newbird01-frame-02", "SkyPulse/characters/roster/newbird01-frame-03",
                 "SkyPulse/characters/roster/newbird01-frame-04", "SkyPulse/characters/roster/newbird01-frame-05", "SkyPulse/characters/roster/newbird01-frame-06",
             }),
-            new Skin("newbird02", "NEW BIRD 02", "SkyPulse/characters/roster/newbird02-frame-04", "SkyPulse/characters/roster/newbird02-frame-06", "#3197ff", "#45eaff", 1800, "SkyPulse/characters/roster/newbird02-frame-01", "SkyPulse/characters/roster/newbird02-frame-07", "SkyPulse/characters/roster/newbird02-frame-08", new []
+            new Skin("newbird02", "ASTRA", "SkyPulse/characters/roster/newbird02-frame-04", "SkyPulse/characters/roster/newbird02-frame-06", "#3197ff", "#45eaff", 1800, "SkyPulse/characters/roster/newbird02-frame-01", "SkyPulse/characters/roster/newbird02-frame-07", "SkyPulse/characters/roster/newbird02-frame-08", new []
             {
                 "SkyPulse/characters/roster/newbird02-frame-01", "SkyPulse/characters/roster/newbird02-frame-02", "SkyPulse/characters/roster/newbird02-frame-03",
                 "SkyPulse/characters/roster/newbird02-frame-04", "SkyPulse/characters/roster/newbird02-frame-05", "SkyPulse/characters/roster/newbird02-frame-06",
             }),
-            new Skin("newbird03", "NEW BIRD 03", "SkyPulse/characters/roster/newbird03-frame-04", "SkyPulse/characters/roster/newbird03-frame-06", "#45eaff", "#ea6aff", 2200, "SkyPulse/characters/roster/newbird03-frame-01", "SkyPulse/characters/roster/newbird03-frame-07", "SkyPulse/characters/roster/newbird03-frame-08", new []
+            new Skin("newbird03", "VOLTCREST", "SkyPulse/characters/roster/newbird03-frame-04", "SkyPulse/characters/roster/newbird03-frame-06", "#45eaff", "#ea6aff", 2200, "SkyPulse/characters/roster/newbird03-frame-01", "SkyPulse/characters/roster/newbird03-frame-07", "SkyPulse/characters/roster/newbird03-frame-08", new []
             {
                 "SkyPulse/characters/roster/newbird03-frame-01", "SkyPulse/characters/roster/newbird03-frame-02", "SkyPulse/characters/roster/newbird03-frame-03",
                 "SkyPulse/characters/roster/newbird03-frame-04", "SkyPulse/characters/roster/newbird03-frame-05", "SkyPulse/characters/roster/newbird03-frame-06",
             }),
-            new Skin("newbird04", "NEW BIRD 04", "SkyPulse/characters/roster/newbird04-frame-04", "SkyPulse/characters/roster/newbird04-frame-06", "#e558cf", "#ffc34d", 2600, "SkyPulse/characters/roster/newbird04-frame-01", "SkyPulse/characters/roster/newbird04-frame-07", "SkyPulse/characters/roster/newbird04-frame-08", new []
+            new Skin("newbird04", "CHROMAFLUX", "SkyPulse/characters/roster/newbird04-frame-04", "SkyPulse/characters/roster/newbird04-frame-06", "#e558cf", "#ffc34d", 2600, "SkyPulse/characters/roster/newbird04-frame-01", "SkyPulse/characters/roster/newbird04-frame-07", "SkyPulse/characters/roster/newbird04-frame-08", new []
             {
                 "SkyPulse/characters/roster/newbird04-frame-01", "SkyPulse/characters/roster/newbird04-frame-02", "SkyPulse/characters/roster/newbird04-frame-03",
                 "SkyPulse/characters/roster/newbird04-frame-04", "SkyPulse/characters/roster/newbird04-frame-05", "SkyPulse/characters/roster/newbird04-frame-06",
             }),
-            new Skin("newbird05", "NEW BIRD 05", "SkyPulse/characters/roster/newbird05-frame-04", "SkyPulse/characters/roster/newbird05-frame-06", "#f65b89", "#ffc34d", 3100, "SkyPulse/characters/roster/newbird05-frame-01", "SkyPulse/characters/roster/newbird05-frame-07", "SkyPulse/characters/roster/newbird05-frame-08", new []
+            new Skin("newbird05", "VIREX", "SkyPulse/characters/roster/newbird05-frame-04", "SkyPulse/characters/roster/newbird05-frame-06", "#f65b89", "#ffc34d", 3100, "SkyPulse/characters/roster/newbird05-frame-01", "SkyPulse/characters/roster/newbird05-frame-07", "SkyPulse/characters/roster/newbird05-frame-08", new []
             {
                 "SkyPulse/characters/roster/newbird05-frame-01", "SkyPulse/characters/roster/newbird05-frame-02", "SkyPulse/characters/roster/newbird05-frame-03",
                 "SkyPulse/characters/roster/newbird05-frame-04", "SkyPulse/characters/roster/newbird05-frame-05", "SkyPulse/characters/roster/newbird05-frame-06",
             }),
-            new Skin("newbird06", "NEW BIRD 06", "SkyPulse/characters/roster/newbird06-frame-04", "SkyPulse/characters/roster/newbird06-frame-06", "#a875ff", "#ea6aff", 3700, "SkyPulse/characters/roster/newbird06-frame-01", "SkyPulse/characters/roster/newbird06-frame-07", "SkyPulse/characters/roster/newbird06-frame-08", new []
+            new Skin("newbird06", "BOREALIS", "SkyPulse/characters/roster/newbird06-frame-04", "SkyPulse/characters/roster/newbird06-frame-06", "#a875ff", "#ea6aff", 3700, "SkyPulse/characters/roster/newbird06-frame-01", "SkyPulse/characters/roster/newbird06-frame-07", "SkyPulse/characters/roster/newbird06-frame-08", new []
             {
                 "SkyPulse/characters/roster/newbird06-frame-01", "SkyPulse/characters/roster/newbird06-frame-02", "SkyPulse/characters/roster/newbird06-frame-03",
                 "SkyPulse/characters/roster/newbird06-frame-04", "SkyPulse/characters/roster/newbird06-frame-05", "SkyPulse/characters/roster/newbird06-frame-06",
             }),
-            new Skin("newbird07", "NEW BIRD 07", "SkyPulse/characters/roster/newbird07-frame-04", "SkyPulse/characters/roster/newbird07-frame-06", "#7ee870", "#d8ff84", 4400, "SkyPulse/characters/roster/newbird07-frame-01", "SkyPulse/characters/roster/newbird07-frame-07", "SkyPulse/characters/roster/newbird07-frame-08", new []
+            new Skin("newbird07", "ROSELIGHT", "SkyPulse/characters/roster/newbird07-frame-04", "SkyPulse/characters/roster/newbird07-frame-06", "#7ee870", "#d8ff84", 4400, "SkyPulse/characters/roster/newbird07-frame-01", "SkyPulse/characters/roster/newbird07-frame-07", "SkyPulse/characters/roster/newbird07-frame-08", new []
             {
                 "SkyPulse/characters/roster/newbird07-frame-01", "SkyPulse/characters/roster/newbird07-frame-02", "SkyPulse/characters/roster/newbird07-frame-03",
                 "SkyPulse/characters/roster/newbird07-frame-04", "SkyPulse/characters/roster/newbird07-frame-05", "SkyPulse/characters/roster/newbird07-frame-06",
             }),
-            new Skin("newbird08", "NEW BIRD 08", "SkyPulse/characters/roster/newbird08-frame-04", "SkyPulse/characters/roster/newbird08-frame-06", "#3197ff", "#45eaff", 5200, "SkyPulse/characters/roster/newbird08-frame-01", "SkyPulse/characters/roster/newbird08-frame-07", "SkyPulse/characters/roster/newbird08-frame-08", new []
+            new Skin("newbird08", "PYRESTORM", "SkyPulse/characters/roster/newbird08-frame-04", "SkyPulse/characters/roster/newbird08-frame-06", "#3197ff", "#45eaff", 5200, "SkyPulse/characters/roster/newbird08-frame-01", "SkyPulse/characters/roster/newbird08-frame-07", "SkyPulse/characters/roster/newbird08-frame-08", new []
             {
                 "SkyPulse/characters/roster/newbird08-frame-01", "SkyPulse/characters/roster/newbird08-frame-02", "SkyPulse/characters/roster/newbird08-frame-03",
                 "SkyPulse/characters/roster/newbird08-frame-04", "SkyPulse/characters/roster/newbird08-frame-05", "SkyPulse/characters/roster/newbird08-frame-06",
             }),
-            new Skin("newbird09", "NEW BIRD 09", "SkyPulse/characters/roster/newbird09-frame-04", "SkyPulse/characters/roster/newbird09-frame-06", "#7ee870", "#d8ff84", 6100, "SkyPulse/characters/roster/newbird09-frame-01", "SkyPulse/characters/roster/newbird09-frame-07", "SkyPulse/characters/roster/newbird09-frame-08", new []
+            new Skin("newbird09", "NIGHTVEIL", "SkyPulse/characters/roster/newbird09-frame-04", "SkyPulse/characters/roster/newbird09-frame-06", "#7ee870", "#d8ff84", 6100, "SkyPulse/characters/roster/newbird09-frame-01", "SkyPulse/characters/roster/newbird09-frame-07", "SkyPulse/characters/roster/newbird09-frame-08", new []
             {
                 "SkyPulse/characters/roster/newbird09-frame-01", "SkyPulse/characters/roster/newbird09-frame-02", "SkyPulse/characters/roster/newbird09-frame-03",
                 "SkyPulse/characters/roster/newbird09-frame-04", "SkyPulse/characters/roster/newbird09-frame-05", "SkyPulse/characters/roster/newbird09-frame-06",
             }),
-            new Skin("newbird10", "NEW BIRD 10", "SkyPulse/characters/roster/newbird10-frame-04", "SkyPulse/characters/roster/newbird10-frame-06", "#b8d5e8", "#c28cff", 7100, "SkyPulse/characters/roster/newbird10-frame-01", "SkyPulse/characters/roster/newbird10-frame-07", "SkyPulse/characters/roster/newbird10-frame-08", new []
+            new Skin("newbird10", "IONWING", "SkyPulse/characters/roster/newbird10-frame-04", "SkyPulse/characters/roster/newbird10-frame-06", "#b8d5e8", "#c28cff", 7100, "SkyPulse/characters/roster/newbird10-frame-01", "SkyPulse/characters/roster/newbird10-frame-07", "SkyPulse/characters/roster/newbird10-frame-08", new []
             {
                 "SkyPulse/characters/roster/newbird10-frame-01", "SkyPulse/characters/roster/newbird10-frame-02", "SkyPulse/characters/roster/newbird10-frame-03",
                 "SkyPulse/characters/roster/newbird10-frame-04", "SkyPulse/characters/roster/newbird10-frame-05", "SkyPulse/characters/roster/newbird10-frame-06",
