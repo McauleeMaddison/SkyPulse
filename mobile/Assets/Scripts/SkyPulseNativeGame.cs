@@ -5089,7 +5089,87 @@ new WorldTheme(
             var sourceWidth = Mathf.Max(.01f, sprite.bounds.size.x);
             return Vector3.one * (targetWidth / sourceWidth);
         }
+        private static void GetAuthoredFrameBlend(
+    float normalizedProgress,
+    out int currentIndex,
+    out int nextIndex,
+    out float blend)
+        {
+            var progress = Mathf.Clamp01(normalizedProgress);
 
+            float segmentStart;
+            float segmentEnd;
+
+            // Match the existing six-frame authored timing exactly.
+            if (progress < .12f)
+            {
+                currentIndex = 0;
+                nextIndex = 1;
+                segmentStart = 0f;
+                segmentEnd = .12f;
+            }
+            else if (progress < .25f)
+            {
+                currentIndex = 1;
+                nextIndex = 2;
+                segmentStart = .12f;
+                segmentEnd = .25f;
+            }
+            else if (progress < .40f)
+            {
+                currentIndex = 2;
+                nextIndex = 3;
+                segmentStart = .25f;
+                segmentEnd = .40f;
+            }
+            else if (progress < .57f)
+            {
+                currentIndex = 3;
+                nextIndex = 4;
+                segmentStart = .40f;
+                segmentEnd = .57f;
+            }
+            else if (progress < .77f)
+            {
+                currentIndex = 4;
+                nextIndex = 5;
+                segmentStart = .57f;
+                segmentEnd = .77f;
+            }
+            else
+            {
+                // Final pose settles cleanly instead of trying to blend
+                // back around to frame 1.
+                currentIndex = 5;
+                nextIndex = 5;
+                blend = 0f;
+                return;
+            }
+
+            var localProgress =
+                Mathf.InverseLerp(
+                    segmentStart,
+                    segmentEnd,
+                    progress
+                );
+
+            // Hold each authored drawing briefly, then smoothly blend
+            // into the following drawing. This removes the visible
+            // hard cut while keeping the artwork crisp.
+            var blendProgress =
+                Mathf.InverseLerp(
+                    .40f,
+                    1f,
+                    localProgress
+                );
+
+            blend =
+                Mathf.SmoothStep(
+                    0f,
+                    1f,
+                    blendProgress
+                );
+        }
         private void UpdateBirdWingMotion()
         {
             if (birdRenderer == null || birdFlapRenderer == null) return;
