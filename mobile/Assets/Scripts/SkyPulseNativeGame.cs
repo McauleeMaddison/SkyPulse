@@ -403,11 +403,8 @@ namespace SkyPulse.Mobile
         // Six authored flight poses over .30 s display at 20 fps, inside the
         // requested 18–24 fps animation range while transforms stay smooth at render rate.
         private const float WingCycleSeconds = .30f;
-        // One shared wingbeat drives every bird. A skin only swaps in its own art
-        // at the current universal pose index; it never gets bespoke timing.
+        // Visual wing cycle is independent of tap physics and loops continuously.
         private const float WingAnimationCycleSeconds = .42f;
-        private const int UniversalWingFrameCount = 6;
-        private static readonly int[] UniversalWingFrameOrder = { 0, 1, 2, 3, 4, 5, 4, 3, 2, 1 };
         private const float WingLiftPhase = .31f;
         private const float WingDownstrokeDelay = .075f;
         private const float WingDownstrokeSpan = .90f;
@@ -5067,22 +5064,13 @@ new WorldTheme(
             var frameCount = flapFrameBirdSprites.Length;
             if (frameCount <= 1) return 0;
 
-            // All current birds provide six artwork poses. This one shared order is
-            // the universal flap loop for every skin: the timer and rhythm remain
-            // identical while each bird supplies the drawing for its own index.
             var progress = Mathf.Clamp01(normalizedProgress);
-            if (frameCount == UniversalWingFrameCount)
-            {
-                var step = Mathf.Min(
-                    UniversalWingFrameOrder.Length - 1,
-                    Mathf.FloorToInt(progress * UniversalWingFrameOrder.Length)
-                );
-                return UniversalWingFrameOrder[step];
-            }
+            var cycleStepCount = (frameCount * 2) - 2;
+            var step = Mathf.FloorToInt(progress * cycleStepCount);
+            step = Mathf.Clamp(step, 0, cycleStepCount - 1);
 
-            // Preserve a harmless generic loop if an experimental future skin has
-            // a different frame count; launch birds are validated to use six.
-            return Mathf.Min(frameCount - 1, Mathf.FloorToInt(progress * frameCount));
+            // Full flap: 0,1,2,3,4,5,4,3,2,1 then loop.
+            return step < frameCount ? step : cycleStepCount - step;
         }
         private static void GetWingWeights(float normalizedPhase, out float riseWeight, out float downstrokeWeight)
         {
@@ -5108,7 +5096,8 @@ new WorldTheme(
             if (usesFlapFrameSequence)
             {
                 // One authored drawing at a time: no crossfade means no ghosted
-                // double-body. Every bird follows the same universal wingbeat.
+                // double-body. The six supplied poses play in their intended order
+                // on every tap, while the transform below retains 60 fps flight feel.
                 activeFlapFrameIndex = SelectFlapFrameIndex(flapProgress);
                 var pose = flapFrameBirdSprites[activeFlapFrameIndex];
                 if (pose != null && birdRenderer.sprite != pose) birdRenderer.sprite = pose;
