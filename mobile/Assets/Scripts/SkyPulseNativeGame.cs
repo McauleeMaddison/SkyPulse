@@ -914,6 +914,7 @@ new WorldTheme(
         private float birdTilt;
         private float birdTiltVelocity;
         private float wingTimer;
+        private float wingFrameTimer;
         private float impactFrameTimer;
         private float impactTumbleTimer;
         private float menuWingTimer;
@@ -953,6 +954,7 @@ new WorldTheme(
         private Vector3 parallaxBirdBaseScale = Vector3.one;
         private Vector3 flapBirdBaseScale = Vector3.one;
         private Vector3 riseBirdBaseScale = Vector3.one;
+        private Vector3 authoredBirdBaseScale = Vector3.one;
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         private bool collisionDebugEnabled;
@@ -2208,69 +2210,69 @@ new WorldTheme(
             }
         }
 
-      private void UpdateScoreBurst(float deltaTime)
-{
-    if (scoreBurstTimer <= 0f || scoreBurstText == null)
-        return;
+        private void UpdateScoreBurst(float deltaTime)
+        {
+            if (scoreBurstTimer <= 0f || scoreBurstText == null)
+                return;
 
-    scoreBurstTimer -= deltaTime;
+            scoreBurstTimer -= deltaTime;
 
-    if (scoreBurstTimer <= 0f)
-    {
-        scoreBurstText.gameObject.SetActive(false);
-        scoreBurstText.rectTransform.localScale = Vector3.one;
-        return;
-    }
+            if (scoreBurstTimer <= 0f)
+            {
+                scoreBurstText.gameObject.SetActive(false);
+                scoreBurstText.rectTransform.localScale = Vector3.one;
+                return;
+            }
 
-    var duration = Mathf.Max(.01f, scoreBurstDuration);
+            var duration = Mathf.Max(.01f, scoreBurstDuration);
 
-    var t =
-        1f -
-        Mathf.Clamp01(
-            scoreBurstTimer / duration
-        );
+            var t =
+                1f -
+                Mathf.Clamp01(
+                    scoreBurstTimer / duration
+                );
 
-    var riseDistance =
-        scoreBurstIsCrystal
-            ? 58f
-            : 44f;
+            var riseDistance =
+                scoreBurstIsCrystal
+                    ? 58f
+                    : 44f;
 
-    scoreBurstText.rectTransform.anchoredPosition =
-        new Vector2(
-            0f,
-            612f + t * riseDistance
-        );
+            scoreBurstText.rectTransform.anchoredPosition =
+                new Vector2(
+                    0f,
+                    612f + t * riseDistance
+                );
 
-    var color =
-        scoreBurstIsCrystal
-            ? Hex("#ffc34d")
-            : equippedSkin != null
-                ? equippedSkin.Accent
-                : Color.white;
+            var color =
+                scoreBurstIsCrystal
+                    ? Hex("#ffc34d")
+                    : equippedSkin != null
+                        ? equippedSkin.Accent
+                        : Color.white;
 
-    color.a =
-        Mathf.Clamp01(
-            scoreBurstTimer / .13f
-        );
+            color.a =
+                Mathf.Clamp01(
+                    scoreBurstTimer / .13f
+                );
 
-    scoreBurstText.color = color;
+            scoreBurstText.color = color;
 
-    var popStrength =
-        scoreBurstIsCrystal
-            ? .16f
-            : .08f;
+            var popStrength =
+                scoreBurstIsCrystal
+                    ? .16f
+                    : .08f;
 
-    var popPhase =
-        Mathf.Clamp01(t / .55f);
+            var popPhase =
+                Mathf.Clamp01(t / .55f);
 
-    var pop =
-        Mathf.Sin(
-            Mathf.PI * popPhase
-        ) * popStrength;
+            var pop =
+                Mathf.Sin(
+                    Mathf.PI * popPhase
+                ) * popStrength;
 
-    scoreBurstText.rectTransform.localScale =
-        Vector3.one * (1f + pop);
-}
+            scoreBurstText.rectTransform.localScale =
+                Vector3.one * (1f + pop);
+        }
         private void UpdateBird(float deltaTime)
         {
             birdVelocity = Mathf.Max(ActiveMaxFallVelocity(), birdVelocity + ActiveGravity() * deltaTime);
@@ -2633,57 +2635,57 @@ new WorldTheme(
             pickup.Root.SetActive(false);
         }
 
-       private void ConfigureGateCrystals(PipePair gate)
-{
-    if (gate == null || gate.IsStatic && gate.RouteScore < 0)
-        return;
+        private void ConfigureGateCrystals(PipePair gate)
+        {
+            if (gate == null || gate.IsStatic && gate.RouteScore < 0)
+                return;
 
-    // Crystal gates should feel like intentional mini-routes,
-    // not random loose currency.
-    //
-    // Old system:
-    // 60% chance x average 2 crystals = 1.2 crystals per gate.
-    //
-    // New system:
-    // 40% chance x 3 crystals = 1.2 crystals per gate.
-    //
-    // The economy therefore stays essentially unchanged.
-    if (GateHasPowerUp(gate) || RouteRange(0f, 1f) > .40f)
-        return;
+            // Crystal gates should feel like intentional mini-routes,
+            // not random loose currency.
+            //
+            // Old system:
+            // 60% chance x average 2 crystals = 1.2 crystals per gate.
+            //
+            // New system:
+            // 40% chance x 3 crystals = 1.2 crystals per gate.
+            //
+            // The economy therefore stays essentially unchanged.
+            if (GateHasPowerUp(gate) || RouteRange(0f, 1f) > .40f)
+                return;
 
-    const int count = 3;
+            const int count = 3;
 
-    var safeOffset =
-        Mathf.Max(
-            .30f,
-            gate.GapHeight * .5f - 1.05f
-        );
+            var safeOffset =
+                Mathf.Max(
+                    .30f,
+                    gate.GapHeight * .5f - 1.05f
+                );
 
-    // Keep the crystal arc closer to the safe centre
-    // of the playable gap.
-    var baseOffset =
-        RouteRange(
-            -safeOffset * .35f,
-            safeOffset * .35f
-        );
+            // Keep the crystal arc closer to the safe centre
+            // of the playable gap.
+            var baseOffset =
+                RouteRange(
+                    -safeOffset * .35f,
+                    safeOffset * .35f
+                );
 
-    for (var index = 0; index < count; index += 1)
-    {
-        var pickup = FindInactiveCrystalPickup();
+            for (var index = 0; index < count; index += 1)
+            {
+                var pickup = FindInactiveCrystalPickup();
 
-        if (pickup == null)
-            return;
+                if (pickup == null)
+                    return;
 
-        ConfigureCrystalPickup(
-            pickup,
-            gate,
-            index,
-            count,
-            baseOffset,
-            safeOffset
-        );
-    }
-}
+                ConfigureCrystalPickup(
+                    pickup,
+                    gate,
+                    index,
+                    count,
+                    baseOffset,
+                    safeOffset
+                );
+            }
+        }
         private PowerUpPickup FindInactiveCrystalPickup()
         {
             foreach (var pickup in crystalPickupPool)
@@ -3167,57 +3169,57 @@ new WorldTheme(
             trailCore.SetPositions(trailPoints);
         }
 
-       private void ShowScoreBurst(int scoreReward, bool perfect)
-{
-    if (scoreBurstText == null) return;
+        private void ShowScoreBurst(int scoreReward, bool perfect)
+        {
+            if (scoreBurstText == null) return;
 
-    scoreBurstDuration = .36f;
-    scoreBurstTimer = scoreBurstDuration;
-    scoreBurstIsCrystal = false;
+            scoreBurstDuration = .36f;
+            scoreBurstTimer = scoreBurstDuration;
+            scoreBurstIsCrystal = false;
 
-    scoreBurstText.text = perfect
-        ? scoreReward > 1
-            ? $"PERFECT  ·  +{scoreReward} SCORE"
-            : "PERFECT  ·  +1 SCORE"
-        : scoreReward > 1
-            ? $"+{scoreReward} SCORE"
-            : "+1 SCORE";
+            scoreBurstText.text = perfect
+                ? scoreReward > 1
+                    ? $"PERFECT  ·  +{scoreReward} SCORE"
+                    : "PERFECT  ·  +1 SCORE"
+                : scoreReward > 1
+                    ? $"+{scoreReward} SCORE"
+                    : "+1 SCORE";
 
-    scoreBurstText.color =
-        equippedSkin != null
-            ? equippedSkin.Accent
-            : Color.white;
+            scoreBurstText.color =
+                equippedSkin != null
+                    ? equippedSkin.Accent
+                    : Color.white;
 
-    scoreBurstText.rectTransform.anchoredPosition =
-        new Vector2(0f, 612f);
+            scoreBurstText.rectTransform.anchoredPosition =
+                new Vector2(0f, 612f);
 
-    scoreBurstText.rectTransform.localScale =
-        Vector3.one;
+            scoreBurstText.rectTransform.localScale =
+                Vector3.one;
 
-    scoreBurstText.gameObject.SetActive(true);
-}
-      private void ShowCrystalBurst(int crystalReward, bool cache = false)
-{
-    if (scoreBurstText == null) return;
+            scoreBurstText.gameObject.SetActive(true);
+        }
+        private void ShowCrystalBurst(int crystalReward, bool cache = false)
+        {
+            if (scoreBurstText == null) return;
 
-    scoreBurstDuration = .48f;
-    scoreBurstTimer = scoreBurstDuration;
-    scoreBurstIsCrystal = true;
+            scoreBurstDuration = .48f;
+            scoreBurstTimer = scoreBurstDuration;
+            scoreBurstIsCrystal = true;
 
-    scoreBurstText.text = cache
-        ? $"CRYSTAL CACHE  ·  +{crystalReward} ✦"
-        : $"CRYSTAL  ·  +{crystalReward} ✦";
+            scoreBurstText.text = cache
+                ? $"CRYSTAL CACHE  ·  +{crystalReward} ✦"
+                : $"CRYSTAL  ·  +{crystalReward} ✦";
 
-    scoreBurstText.color = Hex("#ffc34d");
+            scoreBurstText.color = Hex("#ffc34d");
 
-    scoreBurstText.rectTransform.anchoredPosition =
-        new Vector2(0f, 612f);
+            scoreBurstText.rectTransform.anchoredPosition =
+                new Vector2(0f, 612f);
 
-    scoreBurstText.rectTransform.localScale =
-        Vector3.one * 1.06f;
+            scoreBurstText.rectTransform.localScale =
+                Vector3.one * 1.06f;
 
-    scoreBurstText.gameObject.SetActive(true);
-}
+            scoreBurstText.gameObject.SetActive(true);
+        }
         private void TriggerFlightFeedback(Color colour, float duration)
         {
             if (flightFeedbackRenderer == null || bird == null) return;
@@ -3978,11 +3980,11 @@ new WorldTheme(
             birdVelocity = Mathf.Min(birdVelocity, -2.4f);
             birdTiltVelocity = 0f;
 
-           // Kill the long flight ribbon immediately so it does not freeze
-          // awkwardly in mid-air during the crash animation.
-          if (trailSafety != null) trailSafety.positionCount = 0;
-          if (trailGlow != null) trailGlow.positionCount = 0;
-          if (trailCore != null) trailCore.positionCount = 0;
+            // Kill the long flight ribbon immediately so it does not freeze
+            // awkwardly in mid-air during the crash animation.
+            if (trailSafety != null) trailSafety.positionCount = 0;
+            if (trailGlow != null) trailGlow.positionCount = 0;
+            if (trailCore != null) trailCore.positionCount = 0;
             TriggerFlightFeedback(Hex("#f05bc6"), .36f);
             PulseHaptic(.28f);
             Play(crashSound);
@@ -4008,7 +4010,7 @@ new WorldTheme(
             var fallStrength = Mathf.Clamp01(
            -birdVelocity / Mathf.Abs(ActiveMaxFallVelocity()));
 
-           var tumbleSpeed = Mathf.Lerp(220f,360f,fallStrength);
+            var tumbleSpeed = Mathf.Lerp(220f, 360f, fallStrength);
 
             birdTilt += tumbleSpeed * deltaTime;
             bird.rotation = Quaternion.Euler(0f, 0f, birdTilt);
@@ -4982,7 +4984,11 @@ new WorldTheme(
             if (idleBirdSprite != null)
             {
                 birdRenderer.sprite = idleBirdSprite;
+
+                // Use one fixed scale for the complete six-frame bird animation.
                 idleBirdBaseScale = ArtworkScale(idleBirdSprite, BirdDisplayWidth);
+                authoredBirdBaseScale = idleBirdBaseScale;
+
                 birdArt.localScale = idleBirdBaseScale;
                 if (birdParallaxRenderer != null)
                 {
