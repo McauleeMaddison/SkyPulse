@@ -182,17 +182,35 @@ namespace SkyPulse.Mobile
             public string[] LevelEffects;
             public int[] LevelPrices;
             public Color Accent;
+            public string Branch;
+            public string PrerequisiteId;
+            public int PrerequisiteLevel;
+            public int Tier;
 
-            public Upgrade(string id, string name, string[] levelEffects, int[] levelPrices, string accent)
+            public Upgrade(
+                string id,
+                string name,
+                string[] levelEffects,
+                int[] levelPrices,
+                string accent,
+                string branch = "COLLECTION",
+                string prerequisiteId = null,
+                int prerequisiteLevel = 0,
+                int tier = 1)
             {
                 Id = id;
                 Name = name;
                 LevelEffects = levelEffects;
                 LevelPrices = levelPrices;
                 Accent = Hex(accent);
+                Branch = branch;
+                PrerequisiteId = prerequisiteId;
+                PrerequisiteLevel = prerequisiteLevel;
+                Tier = Mathf.Max(1, tier);
             }
 
             public int MaxLevel => Mathf.Min(LevelEffects == null ? 0 : LevelEffects.Length, LevelPrices == null ? 0 : LevelPrices.Length);
+            public bool HasPrerequisite => !string.IsNullOrEmpty(PrerequisiteId) && PrerequisiteLevel > 0;
 
             public int PriceAtLevel(int currentLevel)
             {
@@ -389,9 +407,7 @@ namespace SkyPulse.Mobile
         private const float WingDownstrokeDelay = .075f;
         private const float WingDownstrokeSpan = .90f;
         private const float ImpactFrameSeconds = .26f;
-        private const int LaunchBirdCount = 15;
-        private const float CosmeticCardHeight = 260f;
-        private const float CosmeticCardRowStride = 286f;
+        private const int LaunchBirdCount = 5;
 
         // These profiles are deliberately conservative. A play-test should alter one
         // value here at a time, never spread physics magic numbers through the loop.
@@ -423,9 +439,9 @@ namespace SkyPulse.Mobile
             powerUpSlots: 1, powerUpRespawnMinimum: 0f, powerUpRespawnMaximum: 0f,
             allowsUpgrades: false, allowsPowerUps: true);
 
-        // The data-driven hangar has one free cyber-bird and fourteen crystal unlocks.
-        // Their art and accent vary, but their shared collision and flight tuning
-        // preserve a single fair score route. Future birds belong here as data-only additions.
+        // The launch hangar has one free cyber-bird and four crystal unlocks. Their
+        // art and accent vary, but their shared collision and flight tuning preserve
+        // a single fair score route. Future birds belong here as data-only additions.
         private static readonly Skin[] Skins =
         {
             new Skin("neon_finch", "NEON FINCH", "SkyPulse/characters/roster/volt-frame-04-v1", "SkyPulse/characters/roster/volt-frame-06-v1", "#3197ff", "#45eaff", 0, "SkyPulse/characters/roster/volt-frame-01-v1", "SkyPulse/characters/roster/volt-frame-07-v1", "SkyPulse/characters/roster/volt-frame-08-v1", new []
@@ -452,56 +468,6 @@ namespace SkyPulse.Mobile
             {
                 "SkyPulse/characters/roster/verdant-frame-01-v1", "SkyPulse/characters/roster/verdant-frame-02-v1", "SkyPulse/characters/roster/verdant-frame-03-v1",
                 "SkyPulse/characters/roster/verdant-frame-04-v1", "SkyPulse/characters/roster/verdant-frame-05-v1", "SkyPulse/characters/roster/verdant-frame-06-v1",
-            }),
-            new Skin("newbird01", "NEW BIRD 01", "SkyPulse/characters/roster/newbird01-frame-04", "SkyPulse/characters/roster/newbird01-frame-06", "#ff6f61", "#ffc34d", 1500, "SkyPulse/characters/roster/newbird01-frame-01", "SkyPulse/characters/roster/newbird01-frame-07", "SkyPulse/characters/roster/newbird01-frame-08", new []
-            {
-                "SkyPulse/characters/roster/newbird01-frame-01", "SkyPulse/characters/roster/newbird01-frame-02", "SkyPulse/characters/roster/newbird01-frame-03",
-                "SkyPulse/characters/roster/newbird01-frame-04", "SkyPulse/characters/roster/newbird01-frame-05", "SkyPulse/characters/roster/newbird01-frame-06",
-            }),
-            new Skin("newbird02", "NEW BIRD 02", "SkyPulse/characters/roster/newbird02-frame-04", "SkyPulse/characters/roster/newbird02-frame-06", "#3197ff", "#45eaff", 1800, "SkyPulse/characters/roster/newbird02-frame-01", "SkyPulse/characters/roster/newbird02-frame-07", "SkyPulse/characters/roster/newbird02-frame-08", new []
-            {
-                "SkyPulse/characters/roster/newbird02-frame-01", "SkyPulse/characters/roster/newbird02-frame-02", "SkyPulse/characters/roster/newbird02-frame-03",
-                "SkyPulse/characters/roster/newbird02-frame-04", "SkyPulse/characters/roster/newbird02-frame-05", "SkyPulse/characters/roster/newbird02-frame-06",
-            }),
-            new Skin("newbird03", "NEW BIRD 03", "SkyPulse/characters/roster/newbird03-frame-04", "SkyPulse/characters/roster/newbird03-frame-06", "#45eaff", "#ea6aff", 2200, "SkyPulse/characters/roster/newbird03-frame-01", "SkyPulse/characters/roster/newbird03-frame-07", "SkyPulse/characters/roster/newbird03-frame-08", new []
-            {
-                "SkyPulse/characters/roster/newbird03-frame-01", "SkyPulse/characters/roster/newbird03-frame-02", "SkyPulse/characters/roster/newbird03-frame-03",
-                "SkyPulse/characters/roster/newbird03-frame-04", "SkyPulse/characters/roster/newbird03-frame-05", "SkyPulse/characters/roster/newbird03-frame-06",
-            }),
-            new Skin("newbird04", "NEW BIRD 04", "SkyPulse/characters/roster/newbird04-frame-04", "SkyPulse/characters/roster/newbird04-frame-06", "#e558cf", "#ffc34d", 2600, "SkyPulse/characters/roster/newbird04-frame-01", "SkyPulse/characters/roster/newbird04-frame-07", "SkyPulse/characters/roster/newbird04-frame-08", new []
-            {
-                "SkyPulse/characters/roster/newbird04-frame-01", "SkyPulse/characters/roster/newbird04-frame-02", "SkyPulse/characters/roster/newbird04-frame-03",
-                "SkyPulse/characters/roster/newbird04-frame-04", "SkyPulse/characters/roster/newbird04-frame-05", "SkyPulse/characters/roster/newbird04-frame-06",
-            }),
-            new Skin("newbird05", "NEW BIRD 05", "SkyPulse/characters/roster/newbird05-frame-04", "SkyPulse/characters/roster/newbird05-frame-06", "#f65b89", "#ffc34d", 3100, "SkyPulse/characters/roster/newbird05-frame-01", "SkyPulse/characters/roster/newbird05-frame-07", "SkyPulse/characters/roster/newbird05-frame-08", new []
-            {
-                "SkyPulse/characters/roster/newbird05-frame-01", "SkyPulse/characters/roster/newbird05-frame-02", "SkyPulse/characters/roster/newbird05-frame-03",
-                "SkyPulse/characters/roster/newbird05-frame-04", "SkyPulse/characters/roster/newbird05-frame-05", "SkyPulse/characters/roster/newbird05-frame-06",
-            }),
-            new Skin("newbird06", "NEW BIRD 06", "SkyPulse/characters/roster/newbird06-frame-04", "SkyPulse/characters/roster/newbird06-frame-06", "#a875ff", "#ea6aff", 3700, "SkyPulse/characters/roster/newbird06-frame-01", "SkyPulse/characters/roster/newbird06-frame-07", "SkyPulse/characters/roster/newbird06-frame-08", new []
-            {
-                "SkyPulse/characters/roster/newbird06-frame-01", "SkyPulse/characters/roster/newbird06-frame-02", "SkyPulse/characters/roster/newbird06-frame-03",
-                "SkyPulse/characters/roster/newbird06-frame-04", "SkyPulse/characters/roster/newbird06-frame-05", "SkyPulse/characters/roster/newbird06-frame-06",
-            }),
-            new Skin("newbird07", "NEW BIRD 07", "SkyPulse/characters/roster/newbird07-frame-04", "SkyPulse/characters/roster/newbird07-frame-06", "#7ee870", "#d8ff84", 4400, "SkyPulse/characters/roster/newbird07-frame-01", "SkyPulse/characters/roster/newbird07-frame-07", "SkyPulse/characters/roster/newbird07-frame-08", new []
-            {
-                "SkyPulse/characters/roster/newbird07-frame-01", "SkyPulse/characters/roster/newbird07-frame-02", "SkyPulse/characters/roster/newbird07-frame-03",
-                "SkyPulse/characters/roster/newbird07-frame-04", "SkyPulse/characters/roster/newbird07-frame-05", "SkyPulse/characters/roster/newbird07-frame-06",
-            }),
-            new Skin("newbird08", "NEW BIRD 08", "SkyPulse/characters/roster/newbird08-frame-04", "SkyPulse/characters/roster/newbird08-frame-06", "#3197ff", "#45eaff", 5200, "SkyPulse/characters/roster/newbird08-frame-01", "SkyPulse/characters/roster/newbird08-frame-07", "SkyPulse/characters/roster/newbird08-frame-08", new []
-            {
-                "SkyPulse/characters/roster/newbird08-frame-01", "SkyPulse/characters/roster/newbird08-frame-02", "SkyPulse/characters/roster/newbird08-frame-03",
-                "SkyPulse/characters/roster/newbird08-frame-04", "SkyPulse/characters/roster/newbird08-frame-05", "SkyPulse/characters/roster/newbird08-frame-06",
-            }),
-            new Skin("newbird09", "NEW BIRD 09", "SkyPulse/characters/roster/newbird09-frame-04", "SkyPulse/characters/roster/newbird09-frame-06", "#7ee870", "#d8ff84", 6100, "SkyPulse/characters/roster/newbird09-frame-01", "SkyPulse/characters/roster/newbird09-frame-07", "SkyPulse/characters/roster/newbird09-frame-08", new []
-            {
-                "SkyPulse/characters/roster/newbird09-frame-01", "SkyPulse/characters/roster/newbird09-frame-02", "SkyPulse/characters/roster/newbird09-frame-03",
-                "SkyPulse/characters/roster/newbird09-frame-04", "SkyPulse/characters/roster/newbird09-frame-05", "SkyPulse/characters/roster/newbird09-frame-06",
-            }),
-            new Skin("newbird10", "NEW BIRD 10", "SkyPulse/characters/roster/newbird10-frame-04", "SkyPulse/characters/roster/newbird10-frame-06", "#b8d5e8", "#c28cff", 7100, "SkyPulse/characters/roster/newbird10-frame-01", "SkyPulse/characters/roster/newbird10-frame-07", "SkyPulse/characters/roster/newbird10-frame-08", new []
-            {
-                "SkyPulse/characters/roster/newbird10-frame-01", "SkyPulse/characters/roster/newbird10-frame-02", "SkyPulse/characters/roster/newbird10-frame-03",
-                "SkyPulse/characters/roster/newbird10-frame-04", "SkyPulse/characters/roster/newbird10-frame-05", "SkyPulse/characters/roster/newbird10-frame-06",
             }),
         };
 
@@ -627,18 +593,65 @@ new WorldTheme(
 
         private static readonly Upgrade[] Upgrades =
         {
+            // COLLECTION · stronger pickup reach and crystal value, never easier flight.
             new Upgrade("crystal_resonator", "CRYSTAL RESONATOR", new []
             {
                 "LEVEL 1 · ATTRACT CRYSTALS WITHIN 6% OF SCREEN WIDTH",
                 "LEVEL 2 · ATTRACT CRYSTALS WITHIN 10% OF SCREEN WIDTH",
                 "LEVEL 3 · ATTRACT CRYSTALS WITHIN 14% OF SCREEN WIDTH",
-            }, new [] { 150, 400, 900 }, "#45eaff"),
+            }, new [] { 150, 400, 900 }, "#45eaff", "COLLECTION", null, 0, 1),
+            new Upgrade("prism_conduit", "PRISM CONDUIT", new []
+            {
+                "LEVEL 1 · COLLECTED CRYSTALS GAIN +5% VALUE",
+                "LEVEL 2 · COLLECTED CRYSTALS GAIN +10% VALUE",
+                "LEVEL 3 · COLLECTED CRYSTALS GAIN +15% VALUE",
+            }, new [] { 350, 700, 1350 }, "#3197ff", "COLLECTION", "crystal_resonator", 2, 2),
+            new Upgrade("gravity_well", "GRAVITY WELL", new []
+            {
+                "LEVEL 1 · ADD +2% CRYSTAL ATTRACTION RADIUS",
+                "LEVEL 2 · ADD +4% CRYSTAL ATTRACTION RADIUS",
+                "LEVEL 3 · ADD +6% CRYSTAL ATTRACTION RADIUS",
+            }, new [] { 650, 1300, 2400 }, "#8f64ff", "COLLECTION", "prism_conduit", 2, 3),
+
+            // RECOVERY · post-run economy rewards only.
             new Upgrade("salvage_codec", "SALVAGE CODEC", new []
             {
                 "LEVEL 1 · RESULTS AWARD +10% CRYSTALS",
                 "LEVEL 2 · RESULTS AWARD +20% CRYSTALS",
                 "LEVEL 3 · RESULTS AWARD +30% CRYSTALS",
-            }, new [] { 200, 500, 1000 }, "#ffc34d"),
+            }, new [] { 200, 500, 1000 }, "#ffc34d", "RECOVERY", null, 0, 1),
+            new Upgrade("recovery_cache", "RECOVERY CACHE", new []
+            {
+                "LEVEL 1 · END EACH RUN WITH +5 CRYSTALS",
+                "LEVEL 2 · END EACH RUN WITH +10 CRYSTALS",
+                "LEVEL 3 · END EACH RUN WITH +15 CRYSTALS",
+            }, new [] { 400, 800, 1450 }, "#ff9f43", "RECOVERY", "salvage_codec", 2, 2),
+            new Upgrade("archive_engine", "ARCHIVE ENGINE", new []
+            {
+                "LEVEL 1 · NEW BEST AWARDS +10 CRYSTALS",
+                "LEVEL 2 · NEW BEST AWARDS +20 CRYSTALS",
+                "LEVEL 3 · NEW BEST AWARDS +30 CRYSTALS",
+            }, new [] { 700, 1400, 2500 }, "#ffd166", "RECOVERY", "recovery_cache", 2, 3),
+
+            // MASTERY · skill milestones reward currency without changing score rules.
+            new Upgrade("precision_harvester", "PRECISION HARVESTER", new []
+            {
+                "LEVEL 1 · +1 CRYSTAL EVERY 5 PERFECT PASSES",
+                "LEVEL 2 · +1 CRYSTAL EVERY 3 PERFECT PASSES",
+                "LEVEL 3 · +1 CRYSTAL EVERY 2 PERFECT PASSES",
+            }, new [] { 250, 550, 950 }, "#f05bc6", "MASTERY", null, 0, 1),
+            new Upgrade("streak_capacitor", "STREAK CAPACITOR", new []
+            {
+                "LEVEL 1 · +2 CRYSTALS EVERY 15 GATES",
+                "LEVEL 2 · +3 CRYSTALS EVERY 15 GATES",
+                "LEVEL 3 · +4 CRYSTALS EVERY 15 GATES",
+            }, new [] { 450, 850, 1500 }, "#d65cff", "MASTERY", "precision_harvester", 2, 2),
+            new Upgrade("apex_matrix", "APEX MATRIX", new []
+            {
+                "LEVEL 1 · 10+ GATES ADDS +5% RESULT CRYSTALS",
+                "LEVEL 2 · 10+ GATES ADDS +10% RESULT CRYSTALS",
+                "LEVEL 3 · 10+ GATES ADDS +15% RESULT CRYSTALS",
+            }, new [] { 800, 1600, 2500 }, "#b17cff", "MASTERY", "streak_capacitor", 2, 3),
         };
 
         private static readonly TrailStyle[] Trails =
@@ -830,6 +843,7 @@ new WorldTheme(
         private int crystals;
         private int runCrystalsCollected;
         private int runCrystalBonus;
+        private float prismConduitCarry;
         private int farthestWorldIndex;
         private int runFarthestWorldIndex;
         private int routeWorldIndex;
@@ -921,6 +935,7 @@ new WorldTheme(
 
             LoadProgress();
             ValidateBirdRewardPoseContracts();
+            ValidateTechTreeContracts();
             CreateCamera();
             CreateVisuals();
             CreateInterface();
@@ -972,6 +987,26 @@ new WorldTheme(
                 if (string.Equals(skin.ArtPath, skin.UnlockPath, StringComparison.Ordinal))
                 {
                     Debug.LogError($"SkyPulse: {skin.Name}'s unlock pose must be bespoke rather than its normal flight art.");
+                }
+            }
+        }
+
+        private static void ValidateTechTreeContracts()
+        {
+            if (Upgrades.Length != 9)
+            {
+                Debug.LogError($"SkyPulse: Tech Tree must contain exactly 9 nodes; it currently has {Upgrades.Length}.");
+            }
+
+            var ids = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var upgrade in Upgrades)
+            {
+                if (upgrade == null) continue;
+                if (!ids.Add(upgrade.Id)) Debug.LogError($"SkyPulse: duplicate Tech id: {upgrade.Id}");
+                if (upgrade.MaxLevel != 3) Debug.LogError($"SkyPulse: {upgrade.Name} must define exactly three levels.");
+                if (upgrade.HasPrerequisite && FindById(Upgrades, upgrade.PrerequisiteId) == null)
+                {
+                    Debug.LogError($"SkyPulse: {upgrade.Name} requires missing Tech id {upgrade.PrerequisiteId}.");
                 }
             }
         }
@@ -1554,10 +1589,12 @@ new WorldTheme(
             fly.onClick.AddListener(StartFlight);
             CreateText(root.transform, "TAP ANYWHERE TO FLAP", new Vector2(0f, -370f), new Vector2(650f, 34f), 15, new Color(.91f, .92f, 1f, .68f), TextAnchor.MiddleCenter, FontStyle.Bold);
 
-            var hangar = CreateNeonButton(root.transform, "BIRD HANGAR", new Vector2(-154f, -456f), new Vector2(284f, 78f), Hex("#45eaff"));
-            hangar.onClick.AddListener(OpenHangar);
-            var upgrades = CreateNeonButton(root.transform, "UPGRADES", new Vector2(154f, -456f), new Vector2(284f, 78f), Hex("#ffc34d"));
-            upgrades.onClick.AddListener(OpenUpgrades);
+            var birds = CreateNeonButton(root.transform, "BIRDS", new Vector2(-300f, -456f), new Vector2(250f, 78f), Hex("#45eaff"));
+            birds.onClick.AddListener(OpenHangar);
+            var worlds = CreateNeonButton(root.transform, "WORLDS", new Vector2(0f, -456f), new Vector2(250f, 78f), Hex("#61f5b3"));
+            worlds.onClick.AddListener(OpenWorldCollection);
+            var tech = CreateNeonButton(root.transform, "TECH", new Vector2(300f, -456f), new Vector2(250f, 78f), Hex("#ffc34d"));
+            tech.onClick.AddListener(OpenUpgrades);
             menuDailyText = CreateText(root.transform, "NEON CITY  →  ACID FOUNDRY  →  ORBITAL BAZAAR", new Vector2(0f, -538f), new Vector2(760f, 40f), 17, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             menuEquippedText = CreateText(root.transform, "SELECTED  ·  NEON FINCH", new Vector2(0f, -600f), new Vector2(650f, 36f), 16, Hex("#8f64ff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             return root;
@@ -1620,15 +1657,17 @@ new WorldTheme(
             resultScoreText = CreateText(card, "SCORE  0", new Vector2(0f, 190f), new Vector2(600f, 54f), 31, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             resultBestText = CreateText(card, "BEST  0", new Vector2(0f, 143f), new Vector2(600f, 42f), 22, new Color(.93f, .95f, 1f, .78f), TextAnchor.MiddleCenter, FontStyle.Bold);
             resultCrystalsText = CreateText(card, "CRYSTALS PICKED UP  ·  0", new Vector2(0f, 88f), new Vector2(660f, 36f), 19, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            resultBonusText = CreateText(card, "SALVAGE CODEC BONUS  ·  +0", new Vector2(0f, 48f), new Vector2(660f, 36f), 18, Hex("#ffc34d"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            resultBonusText = CreateText(card, "TECH REWARD BONUS  ·  +0", new Vector2(0f, 48f), new Vector2(660f, 36f), 18, Hex("#ffc34d"), TextAnchor.MiddleCenter, FontStyle.Bold);
             resultBalanceText = CreateText(card, "TOTAL BALANCE  ·  0 ✦", new Vector2(0f, 8f), new Vector2(660f, 36f), 19, new Color(.93f, .95f, 1f, .78f), TextAnchor.MiddleCenter, FontStyle.Bold);
             resultWorldText = CreateText(card, "ROUTE REACHED  ·  NEON CITY", new Vector2(0f, -34f), new Vector2(660f, 36f), 18, Hex("#b17cff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             var flyAgain = CreateNeonButton(card, "RETRY", new Vector2(0f, -136f), new Vector2(570f, 88f), Hex("#f05bc6"));
             flyAgain.onClick.AddListener(RestartFlight);
-            var hangar = CreateNeonButton(card, "HANGAR", new Vector2(-193f, -246f), new Vector2(260f, 70f), Hex("#45eaff"));
-            hangar.onClick.AddListener(OpenHangar);
-            var upgrades = CreateNeonButton(card, "UPGRADES", new Vector2(96f, -246f), new Vector2(288f, 70f), Hex("#ffc34d"));
-            upgrades.onClick.AddListener(OpenUpgrades);
+            var birds = CreateNeonButton(card, "BIRDS", new Vector2(-245f, -246f), new Vector2(205f, 70f), Hex("#45eaff"));
+            birds.onClick.AddListener(OpenHangar);
+            var worlds = CreateNeonButton(card, "WORLDS", new Vector2(0f, -246f), new Vector2(205f, 70f), Hex("#61f5b3"));
+            worlds.onClick.AddListener(OpenWorldCollection);
+            var tech = CreateNeonButton(card, "TECH", new Vector2(245f, -246f), new Vector2(205f, 70f), Hex("#ffc34d"));
+            tech.onClick.AddListener(OpenUpgrades);
             var share = CreateNeonButton(card, "SHARE", new Vector2(0f, -336f), new Vector2(570f, 64f), Hex("#8f64ff"));
             resultShareText = share.GetComponentInChildren<Text>();
             share.onClick.AddListener(CopyRunSummaryToClipboard);
@@ -1642,27 +1681,27 @@ new WorldTheme(
             var back = CreateNeonButton(root.transform, "‹  MENU", new Vector2(-390f, 802f), new Vector2(220f, 68f), Hex("#8f64ff"));
             back.onClick.AddListener(ResetToMenu);
             customizeCrystalText = CreateChip(root.transform, new Vector2(365f, 802f), "✦  0", Hex("#45eaff"));
-            customizeTitle = CreateText(root.transform, "BIRD HANGAR", new Vector2(0f, 690f), new Vector2(720f, 80f), 48, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            CreateText(root.transform, "CHOOSE YOUR CYBER-BIRD OR CRYSTAL TECH", new Vector2(0f, 638f), new Vector2(800f, 38f), 18, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            customizeTitle = CreateText(root.transform, "BIRDS", new Vector2(0f, 690f), new Vector2(720f, 80f), 48, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            CreateText(root.transform, "BIRDS · WORLDS · TECH", new Vector2(0f, 638f), new Vector2(800f, 38f), 18, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
 
-            var labels = new[] { "HANGAR", "UPGRADES" };
-            var categories = new[] { CosmeticCategory.Birds, CosmeticCategory.Upgrades };
+            var labels = new[] { "BIRDS", "WORLDS", "TECH" };
+            var categories = new[] { CosmeticCategory.Birds, CosmeticCategory.Worlds, CosmeticCategory.Upgrades };
+            var tabColours = new[] { Hex("#45eaff"), Hex("#61f5b3"), Hex("#ffc34d") };
             for (var index = 0; index < labels.Length; index += 1)
             {
-                var tab = CreateNeonButton(root.transform, labels[index], new Vector2(-150 + index * 300f, 560f), new Vector2(276f, 60f), index == 0 ? Hex("#45eaff") : Hex("#ffc34d"));
+                var tab = CreateNeonButton(root.transform, labels[index], new Vector2(-300f + index * 300f, 560f), new Vector2(250f, 60f), tabColours[index]);
                 var category = categories[index];
                 tab.onClick.AddListener(() => SetCosmeticCategory(category));
             }
 
             var viewport = CreatePanel(root.transform, "Collection viewport", new Vector2(0f, -172f), new Vector2(970f, 1380f), Hex("#070a18"));
-            viewport.gameObject.AddComponent<RectMask2D>();
+            var mask = viewport.gameObject.AddComponent<Mask>();
+            mask.showMaskGraphic = false;
             var scroll = viewport.gameObject.AddComponent<ScrollRect>();
             scroll.horizontal = false;
             scroll.vertical = true;
             scroll.movementType = ScrollRect.MovementType.Elastic;
-            scroll.inertia = true;
-            scroll.decelerationRate = .12f;
-            scroll.scrollSensitivity = 80f;
+            scroll.scrollSensitivity = 26f;
             scroll.viewport = viewport;
 
             var contentObject = new GameObject("Collection content", typeof(RectTransform));
@@ -1673,23 +1712,6 @@ new WorldTheme(
             customizeContent.pivot = new Vector2(.5f, 1f);
             customizeContent.anchoredPosition = Vector2.zero;
             scroll.content = customizeContent;
-
-            // The collection already supports a scroll range; make that affordance
-            // visible and draggable so a longer bird roster is discoverable on touch
-            // screens and with a desktop mouse.
-            var scrollTrack = CreatePanel(viewport, "Collection scroll track", new Vector2(464f, 0f), new Vector2(14f, 1240f), new Color(.035f, .07f, .16f, .92f));
-            scrollTrack.GetComponent<Image>().raycastTarget = true;
-            AddOutline(scrollTrack.gameObject, new Color(.27f, .86f, 1f, .42f), 1f);
-            var scrollbar = scrollTrack.gameObject.AddComponent<Scrollbar>();
-            scrollbar.direction = Scrollbar.Direction.BottomToTop;
-            var scrollHandle = CreatePanel(scrollTrack, "Collection scroll handle", Vector2.zero, new Vector2(14f, 112f), Hex("#45eaff"));
-            var handleImage = scrollHandle.GetComponent<Image>();
-            handleImage.raycastTarget = true;
-            scrollbar.handleRect = scrollHandle;
-            scrollbar.targetGraphic = handleImage;
-            scroll.verticalScrollbar = scrollbar;
-            scroll.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.AutoHide;
-            scroll.verticalNormalizedPosition = 1f;
             return root;
         }
 
@@ -2332,10 +2354,15 @@ new WorldTheme(
                 {
                     pair.Passed = true;
                     var perfect = Mathf.Abs(birdY - pair.GapCenter) <= ActiveTuning().PerfectPassWindow;
-                    if (perfect) perfectPasses += 1;
+                    if (perfect)
+                    {
+                        perfectPasses += 1;
+                        ApplyPrecisionHarvesterReward();
+                    }
                     // One physical gate is always exactly one score. Crystals,
                     // birds and permanent economy never leak into this number.
                     score += 1;
+                    ApplyStreakCapacitorReward();
                     hudScoreText.text = score.ToString();
                     AdvanceFlightCoach();
                     ShowScoreBurst(1, perfect);
@@ -2473,7 +2500,7 @@ new WorldTheme(
                 var distance = Vector2.Distance(new Vector2(BirdX, birdY), new Vector2(pickup.X, pickup.Y));
                 var attractionRadius = Mathf.Max(
                     magnetHaloTimer > 0f ? GetWorldWidth() * .25f : 0f,
-                    GetWorldWidth() * CrystalResonatorRadiusFraction());
+                    GetWorldWidth() * TotalCrystalAttractionRadiusFraction());
                 if (attractionRadius > 0f && distance <= attractionRadius)
                 {
                     var pullSpeed = magnetHaloTimer > 0f ? 9.2f : 5.4f;
@@ -2656,8 +2683,11 @@ new WorldTheme(
         {
             DeferCrystalPickup(pickup, 0f);
             // Currency is banked on contact—even a failed run keeps the find.
-            BankCollectedCrystals(1);
-            ShowCrystalBurst(1);
+            // Prism Conduit adds value through a fractional carry so +5/+10/+15%
+            // remains mathematically fair even though the wallet stores whole crystals.
+            var crystalValue = CrystalPickupValue(1);
+            BankCollectedCrystals(crystalValue);
+            ShowCrystalBurst(crystalValue);
             TriggerFlightFeedback(Hex("#ffc34d"), .26f);
             PulseHaptic(.08f);
             Play(crystalSound);
@@ -4025,7 +4055,7 @@ new WorldTheme(
                             : IsSkinOwned(skin) ? "TAP TO EQUIP" : $"UNLOCK · {skin.Price} ✦";
                         CreateCosmeticCard(index, skin.Name, status, skin.Accent, LoadSprite(skin.ArtPath), () => SelectSkin(skin));
                     }
-                    SetContentRows(Skins.Length, CosmeticCardRowStride);
+                    SetContentRows(Skins.Length);
                     break;
                 case CosmeticCategory.Worlds:
                     customizeTitle.text = "WORLD COLLECTION";
@@ -4037,7 +4067,7 @@ new WorldTheme(
                         var status = equippedWorld.Id == world.Id ? $"EQUIPPED · {pipeName}" : $"{world.DifficultyLabel} · {pipeName}";
                         CreateCosmeticCard(index, world.Name, status, world.Accent, LoadSprite(world.BackgroundPath), () => EquipWorld(world));
                     }
-                    SetContentRows(Worlds.Length, CosmeticCardRowStride);
+                    SetContentRows(Worlds.Length);
                     break;
                 case CosmeticCategory.Pipes:
                     customizeTitle.text = "PIPE COLLECTION";
@@ -4046,24 +4076,19 @@ new WorldTheme(
                         var style = PipeStyles[index];
                         CreateCosmeticCard(index, style.Name, equippedPipe.Id == style.Id ? "EQUIPPED" : "TAP TO EQUIP", style.Accent, null, () => EquipPipe(style), style.Panel, style.Energy, true);
                     }
-                    SetContentRows(PipeStyles.Length, CosmeticCardRowStride);
+                    SetContentRows(PipeStyles.Length);
                     break;
                 default:
-                    customizeTitle.text = "CRYSTAL UPGRADES";
-                    for (var index = 0; index < Upgrades.Length; index += 1)
-                    {
-                        var upgrade = Upgrades[index];
-                        CreateUpgradeCard(index, upgrade);
-                    }
-                    SetContentRows(Upgrades.Length);
+                    customizeTitle.text = "TECH";
+                    BuildTechTree();
                     break;
             }
         }
 
-        private void SetContentRows(int count, float rowStride = 255f)
+        private void SetContentRows(int count)
         {
             var rows = Mathf.CeilToInt(count / 2f);
-            customizeContent.sizeDelta = new Vector2(0f, Mathf.Max(1360f, rows * rowStride + 22f));
+            customizeContent.sizeDelta = new Vector2(0f, Mathf.Max(1360f, rows * 255f + 22f));
             customizeContent.anchoredPosition = Vector2.zero;
         }
 
@@ -4071,7 +4096,7 @@ new WorldTheme(
         {
             var column = index % 2;
             var row = index / 2;
-            var card = CreatePanel(customizeContent, $"{title} card", new Vector2(column == 0 ? -235f : 235f, -14f - row * CosmeticCardRowStride), new Vector2(440f, CosmeticCardHeight), Hex("#0b1022"));
+            var card = CreatePanel(customizeContent, $"{title} card", new Vector2(column == 0 ? -235f : 235f, -12f - row * 250f), new Vector2(440f, 222f), Hex("#0b1022"));
             card.anchorMin = new Vector2(.5f, 1f);
             card.anchorMax = new Vector2(.5f, 1f);
             card.pivot = new Vector2(.5f, 1f);
@@ -4082,74 +4107,162 @@ new WorldTheme(
 
             if (preview != null)
             {
-                var image = CreateImage(card, "Preview", new Vector2(0f, 43f), new Vector2(392f, 142f), Color.white);
+                var image = CreateImage(card, "Preview", new Vector2(0f, 33f), new Vector2(384f, 134f), Color.white);
                 image.sprite = preview;
                 image.preserveAspect = true;
                 image.raycastTarget = false;
             }
             else if (pipePreview)
             {
-                var outer = CreateImage(card, "Pipe preview shell", new Vector2(0f, 45f), new Vector2(206f, 80f), Hex("#030613"));
-                var panel = CreateImage(card, "Pipe preview panel", new Vector2(0f, 45f), new Vector2(182f, 62f), secondary);
-                var core = CreateImage(card, "Pipe preview core", new Vector2(0f, 45f), new Vector2(8f, 62f), tertiary);
+                var outer = CreateImage(card, "Pipe preview shell", new Vector2(0f, 37f), new Vector2(206f, 80f), Hex("#030613"));
+                var panel = CreateImage(card, "Pipe preview panel", new Vector2(0f, 37f), new Vector2(182f, 62f), secondary);
+                var core = CreateImage(card, "Pipe preview core", new Vector2(0f, 37f), new Vector2(8f, 62f), tertiary);
                 outer.raycastTarget = panel.raycastTarget = core.raycastTarget = false;
             }
             else
             {
-                var glow = CreateImage(card, "Trail glow", new Vector2(0f, 46f), new Vector2(236f, 25f), secondary);
-                var core = CreateImage(card, "Trail core", new Vector2(0f, 46f), new Vector2(204f, 8f), accent);
+                var glow = CreateImage(card, "Trail glow", new Vector2(0f, 38f), new Vector2(236f, 25f), secondary);
+                var core = CreateImage(card, "Trail core", new Vector2(0f, 38f), new Vector2(204f, 8f), accent);
                 glow.raycastTarget = core.raycastTarget = false;
             }
 
-            var nameText = CreateText(card, title, new Vector2(0f, -64f), new Vector2(400f, 38f), 28, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            nameText.resizeTextForBestFit = true;
-            nameText.resizeTextMinSize = 18;
-            nameText.resizeTextMaxSize = 28;
-            nameText.raycastTarget = false;
-
-            var statusPanel = CreatePanel(card, "Selection status", new Vector2(0f, -108f), new Vector2(398f, 30f), new Color(.018f, .035f, .10f, .92f));
-            statusPanel.GetComponent<Image>().raycastTarget = false;
-            AddOutline(statusPanel.gameObject, new Color(accent.r, accent.g, accent.b, .42f), .8f);
-            var statusText = CreateText(statusPanel, status, Vector2.zero, new Vector2(378f, 28f), 20, status == "EQUIPPED" ? accent : new Color(.90f, .94f, 1f, .86f), TextAnchor.MiddleCenter, FontStyle.Bold);
-            statusText.resizeTextForBestFit = true;
-            statusText.resizeTextMinSize = 13;
-            statusText.resizeTextMaxSize = 20;
-            statusText.raycastTarget = false;
+            CreateText(card, title, new Vector2(-185f, -68f), new Vector2(340f, 34f), 20, Hex("#f4fbff"), TextAnchor.MiddleLeft, FontStyle.Bold).raycastTarget = false;
+            CreateText(card, status, new Vector2(-185f, -99f), new Vector2(330f, 28f), 15, status == "EQUIPPED" ? accent : new Color(.85f, .9f, 1f, .68f), TextAnchor.MiddleLeft, FontStyle.Bold).raycastTarget = false;
         }
 
-        private void CreateUpgradeCard(int index, Upgrade upgrade)
+        private void BuildTechTree()
         {
-            var column = index % 2;
-            var row = index / 2;
+            CreateTopAnchoredText("UPGRADE YOUR CRYSTAL NETWORK", -20f, 24, Hex("#f4fbff"), FontStyle.Bold);
+            CreateTopAnchoredText("PERMANENT TECH IMPROVES CRYSTAL REWARDS · NEVER FLIGHT DIFFICULTY", -58f, 14, new Color(.86f, .91f, 1f, .60f), FontStyle.Bold);
+
+            var branches = new[] { "COLLECTION", "RECOVERY", "MASTERY" };
+            var branchColours = new[] { Hex("#45eaff"), Hex("#ffc34d"), Hex("#b17cff") };
+            var cursorY = -118f;
+
+            for (var branchIndex = 0; branchIndex < branches.Length; branchIndex += 1)
+            {
+                var branch = branches[branchIndex];
+                var branchColour = branchColours[branchIndex];
+                CreateTechBranchHeader(branch, cursorY, branchColour);
+                cursorY -= 92f;
+
+                var branchNodeIndex = 0;
+                foreach (var upgrade in Upgrades)
+                {
+                    if (!string.Equals(upgrade.Branch, branch, StringComparison.Ordinal)) continue;
+                    if (branchNodeIndex > 0)
+                    {
+                        var connectorUnlocked = IsUpgradePrerequisiteMet(upgrade);
+                        CreateTechConnector(cursorY + 22f, branchColour, connectorUnlocked);
+                        cursorY -= 42f;
+                    }
+                    CreateTechTreeCard(upgrade, cursorY, branchColour);
+                    cursorY -= 222f;
+                    branchNodeIndex += 1;
+                }
+                cursorY -= 52f;
+            }
+
+            customizeContent.sizeDelta = new Vector2(0f, Mathf.Max(2460f, -cursorY + 40f));
+            customizeContent.anchoredPosition = Vector2.zero;
+        }
+
+        private Text CreateTopAnchoredText(string value, float y, int fontSize, Color colour, FontStyle style)
+        {
+            var text = CreateText(customizeContent, value, new Vector2(0f, y), new Vector2(850f, 40f), fontSize, colour, TextAnchor.MiddleCenter, style);
+            var rect = text.rectTransform;
+            rect.anchorMin = new Vector2(.5f, 1f);
+            rect.anchorMax = new Vector2(.5f, 1f);
+            rect.pivot = new Vector2(.5f, 1f);
+            return text;
+        }
+
+        private void CreateTechBranchHeader(string branch, float y, Color colour)
+        {
+            var rule = CreateImage(customizeContent, $"{branch} branch rail", new Vector2(0f, y - 22f), new Vector2(760f, 2f), new Color(colour.r, colour.g, colour.b, .34f));
+            rule.rectTransform.anchorMin = new Vector2(.5f, 1f);
+            rule.rectTransform.anchorMax = new Vector2(.5f, 1f);
+            rule.rectTransform.pivot = new Vector2(.5f, 1f);
+            rule.raycastTarget = false;
+            CreateTopAnchoredText(branch, y, 23, colour, FontStyle.Bold);
+        }
+
+        private void CreateTechConnector(float y, Color colour, bool active)
+        {
+            var connector = CreateImage(customizeContent, "Tech prerequisite connector", new Vector2(0f, y), new Vector2(8f, 54f), new Color(colour.r, colour.g, colour.b, active ? .72f : .15f));
+            connector.rectTransform.anchorMin = new Vector2(.5f, 1f);
+            connector.rectTransform.anchorMax = new Vector2(.5f, 1f);
+            connector.rectTransform.pivot = new Vector2(.5f, 1f);
+            connector.raycastTarget = false;
+        }
+
+        private void CreateTechTreeCard(Upgrade upgrade, float y, Color branchColour)
+        {
             var level = GetUpgradeLevel(upgrade.Id);
             var maxed = level >= upgrade.MaxLevel;
-            var card = CreatePanel(customizeContent, $"{upgrade.Name} upgrade", new Vector2(column == 0 ? -235f : 235f, -12f - row * 250f), new Vector2(440f, 222f), Hex("#0b1022"));
+            var unlocked = IsUpgradePrerequisiteMet(upgrade);
+            var panelColour = unlocked ? Hex("#0b1022") : Hex("#080b16");
+            var card = CreatePanel(customizeContent, $"{upgrade.Name} tech node", new Vector2(0f, y), new Vector2(820f, 196f), panelColour);
             card.anchorMin = new Vector2(.5f, 1f);
             card.anchorMax = new Vector2(.5f, 1f);
             card.pivot = new Vector2(.5f, 1f);
-            AddOutline(card.gameObject, upgrade.Accent, maxed ? 3f : 1.5f);
+
+            var outlineColour = unlocked ? upgrade.Accent : new Color(upgrade.Accent.r, upgrade.Accent.g, upgrade.Accent.b, .24f);
+            AddOutline(card.gameObject, outlineColour, maxed ? 3f : unlocked ? 1.8f : 1f);
             var button = card.gameObject.AddComponent<Button>();
             button.targetGraphic = card.GetComponent<Image>();
+            button.interactable = unlocked && !maxed;
             button.onClick.AddListener(() => SelectUpgrade(upgrade));
 
-            var halo = CreateImage(card, "Upgrade focus ring", new Vector2(-146f, 34f), new Vector2(102f, 102f), new Color(upgrade.Accent.r, upgrade.Accent.g, upgrade.Accent.b, .42f));
+            var haloAlpha = maxed ? .58f : unlocked ? .34f : .10f;
+            var halo = CreateImage(card, "Tech node halo", new Vector2(-318f, 8f), new Vector2(116f, 116f), new Color(upgrade.Accent.r, upgrade.Accent.g, upgrade.Accent.b, haloAlpha));
             halo.sprite = ringSprite;
             halo.raycastTarget = false;
             var previewSprite = GetUpgradeArtwork(upgrade);
-            var artwork = CreateImage(card, "Upgrade artwork", new Vector2(-146f, 34f), new Vector2(94f, 94f), previewSprite == null ? upgrade.Accent : Color.white);
+            var artwork = CreateImage(card, "Tech node artwork", new Vector2(-318f, 8f), new Vector2(102f, 102f), previewSprite == null ? outlineColour : Color.white);
             artwork.sprite = previewSprite ?? softCircleSprite;
             artwork.preserveAspect = true;
             artwork.raycastTarget = false;
-            CreateText(card, upgrade.Name, new Vector2(-70f, 53f), new Vector2(250f, 34f), 18, Hex("#f4fbff"), TextAnchor.MiddleLeft, FontStyle.Bold).raycastTarget = false;
-            var nextEffect = maxed ? "MAXED · ALL CRYSTAL BENEFITS ACTIVE" : upgrade.EffectAtLevel(level);
-            CreateText(card, nextEffect, new Vector2(-70f, 12f), new Vector2(278f, 68f), 14, new Color(.86f, .91f, 1f, .73f), TextAnchor.MiddleLeft, FontStyle.Normal).raycastTarget = false;
-            var status = maxed ? "LEVEL 3 / 3 · MAXED" : $"LEVEL {level} / {upgrade.MaxLevel} · BUY {upgrade.PriceAtLevel(level)} ✦";
-            CreateText(card, status, new Vector2(-185f, -85f), new Vector2(380f, 28f), 15, maxed ? upgrade.Accent : new Color(.85f, .9f, 1f, .68f), TextAnchor.MiddleLeft, FontStyle.Bold).raycastTarget = false;
+
+            var tierText = $"{upgrade.Branch} · TIER {upgrade.Tier}";
+            CreateText(card, tierText, new Vector2(-224f, 64f), new Vector2(500f, 28f), 13, new Color(branchColour.r, branchColour.g, branchColour.b, unlocked ? .90f : .38f), TextAnchor.MiddleLeft, FontStyle.Bold);
+            CreateText(card, upgrade.Name, new Vector2(-224f, 34f), new Vector2(500f, 34f), 21, unlocked ? Hex("#f4fbff") : new Color(.78f, .82f, .90f, .46f), TextAnchor.MiddleLeft, FontStyle.Bold);
+
+            var detail = string.Empty;
+            if (!unlocked)
+            {
+                var prerequisite = FindById(Upgrades, upgrade.PrerequisiteId);
+                var requirementName = prerequisite == null ? upgrade.PrerequisiteId : prerequisite.Name;
+                detail = $"LOCKED · REQUIRES {requirementName} LV.{upgrade.PrerequisiteLevel}";
+            }
+            else if (maxed)
+            {
+                detail = $"ACTIVE · {upgrade.EffectAtLevel(upgrade.MaxLevel - 1)}";
+            }
+            else if (level <= 0)
+            {
+                detail = $"NEXT · {upgrade.EffectAtLevel(0)}";
+            }
+            else
+            {
+                detail = $"ACTIVE · {upgrade.EffectAtLevel(level - 1)}\nNEXT · {upgrade.EffectAtLevel(level)}";
+            }
+            CreateText(card, detail, new Vector2(-224f, -14f), new Vector2(620f, 72f), 13, unlocked ? new Color(.86f, .91f, 1f, .72f) : new Color(.68f, .72f, .82f, .40f), TextAnchor.MiddleLeft, FontStyle.Normal);
+
+            var status = maxed
+                ? "MAX LEVEL"
+                : !unlocked
+                    ? "LOCKED"
+                    : $"LV. {level} / {upgrade.MaxLevel}  ·  INSTALL {upgrade.PriceAtLevel(level)} ✦";
+            CreateText(card, status, new Vector2(-224f, -72f), new Vector2(620f, 30f), 15, maxed ? upgrade.Accent : unlocked ? branchColour : new Color(.65f, .68f, .76f, .42f), TextAnchor.MiddleLeft, FontStyle.Bold);
         }
 
         private Sprite GetUpgradeArtwork(Upgrade upgrade)
         {
-            var kind = upgrade.Id == "crystal_resonator" ? PowerUpKind.CrystalMagnet : PowerUpKind.Aegis;
+            PowerUpKind kind;
+            if (string.Equals(upgrade.Branch, "COLLECTION", StringComparison.Ordinal)) kind = PowerUpKind.CrystalMagnet;
+            else if (string.Equals(upgrade.Branch, "RECOVERY", StringComparison.Ordinal)) kind = PowerUpKind.Aegis;
+            else kind = PowerUpKind.TimePulse;
             return LoadSprite(PowerUpArtworkPath(kind));
         }
 
@@ -4192,6 +4305,12 @@ new WorldTheme(
             return skin.Price <= 0 || ownedSkinIds.Contains(skin.Id);
         }
 
+        private bool IsUpgradePrerequisiteMet(Upgrade upgrade)
+        {
+            if (upgrade == null || !upgrade.HasPrerequisite) return true;
+            return GetUpgradeLevel(upgrade.PrerequisiteId) >= upgrade.PrerequisiteLevel;
+        }
+
         private bool HasUpgrade(string id)
         {
             var requiredLevel = UpgradeAliasLevel(id, "crystal_resonator_");
@@ -4215,9 +4334,9 @@ new WorldTheme(
             return int.TryParse(id.Substring(prefix.Length), out var level) ? level : 0;
         }
 
-        // These two helpers are intentionally the only permanent modifiers exposed
-        // to the route. They affect crystal collection, never the bird, score, gates,
-        // or power-up timing.
+        // Permanent Tech only changes crystal collection and crystal rewards. No
+        // helper below is allowed to alter the bird, gates, score, route speed, or
+        // power-up timing; keeping those boundaries here protects the fair route.
         private float CrystalResonatorRadiusFraction()
         {
             switch (GetUpgradeLevel("crystal_resonator"))
@@ -4225,6 +4344,28 @@ new WorldTheme(
                 case 3: return .14f;
                 case 2: return .10f;
                 case 1: return .06f;
+                default: return 0f;
+            }
+        }
+
+        private float PrismConduitBonusFraction()
+        {
+            switch (GetUpgradeLevel("prism_conduit"))
+            {
+                case 3: return .15f;
+                case 2: return .10f;
+                case 1: return .05f;
+                default: return 0f;
+            }
+        }
+
+        private float GravityWellRadiusFraction()
+        {
+            switch (GetUpgradeLevel("gravity_well"))
+            {
+                case 3: return .06f;
+                case 2: return .04f;
+                case 1: return .02f;
                 default: return 0f;
             }
         }
@@ -4240,10 +4381,96 @@ new WorldTheme(
             }
         }
 
+        private int RecoveryCacheBonus()
+        {
+            switch (GetUpgradeLevel("recovery_cache"))
+            {
+                case 3: return 15;
+                case 2: return 10;
+                case 1: return 5;
+                default: return 0;
+            }
+        }
+
+        private int ArchiveEngineBestBonus()
+        {
+            switch (GetUpgradeLevel("archive_engine"))
+            {
+                case 3: return 30;
+                case 2: return 20;
+                case 1: return 10;
+                default: return 0;
+            }
+        }
+
+        private int PrecisionHarvesterPassInterval()
+        {
+            switch (GetUpgradeLevel("precision_harvester"))
+            {
+                case 3: return 2;
+                case 2: return 3;
+                case 1: return 5;
+                default: return 0;
+            }
+        }
+
+        private int StreakCapacitorGateReward()
+        {
+            switch (GetUpgradeLevel("streak_capacitor"))
+            {
+                case 3: return 4;
+                case 2: return 3;
+                case 1: return 2;
+                default: return 0;
+            }
+        }
+
+        private float ApexMatrixBonusFraction()
+        {
+            switch (GetUpgradeLevel("apex_matrix"))
+            {
+                case 3: return .15f;
+                case 2: return .10f;
+                case 1: return .05f;
+                default: return 0f;
+            }
+        }
+
+        private float TotalCrystalAttractionRadiusFraction()
+        {
+            return CrystalResonatorRadiusFraction() + GravityWellRadiusFraction();
+        }
+
+        private int CrystalPickupValue(int baseAmount)
+        {
+            if (baseAmount <= 0) return 0;
+            prismConduitCarry += baseAmount * PrismConduitBonusFraction();
+            var bonus = Mathf.FloorToInt(prismConduitCarry + .0001f);
+            if (bonus > 0) prismConduitCarry -= bonus;
+            return baseAmount + bonus;
+        }
+
+        private void ApplyPrecisionHarvesterReward()
+        {
+            var interval = PrecisionHarvesterPassInterval();
+            if (interval <= 0 || perfectPasses <= 0 || perfectPasses % interval != 0) return;
+            BankCollectedCrystals(1);
+            ShowCrystalBurst(1);
+        }
+
+        private void ApplyStreakCapacitorReward()
+        {
+            var reward = StreakCapacitorGateReward();
+            if (reward <= 0 || score <= 0 || score % 15 != 0) return;
+            BankCollectedCrystals(reward);
+            ShowCrystalBurst(reward);
+        }
+
         private void BeginProgressionRun()
         {
             runCrystalsCollected = 0;
             runCrystalBonus = 0;
+            prismConduitCarry = 0f;
             runFarthestWorldIndex = 0;
             resultCrystalBonusApplied = false;
         }
@@ -4257,11 +4484,22 @@ new WorldTheme(
             SaveProgress();
         }
 
-        private int ApplySalvageCodecResultBonus()
+        private int ApplyResultTechBonuses()
         {
             if (resultCrystalBonusApplied) return runCrystalBonus;
             resultCrystalBonusApplied = true;
-            runCrystalBonus = Mathf.FloorToInt(runCrystalsCollected * SalvageCodecBonusFraction() + .0001f);
+
+            // Percentage bonuses share the same pre-result reward base, so stacking
+            // never compounds a bonus on top of another bonus by accident.
+            var rewardBase = runCrystalsCollected;
+            var salvageBonus = Mathf.FloorToInt(rewardBase * SalvageCodecBonusFraction() + .0001f);
+            var apexBonus = score >= 10
+                ? Mathf.FloorToInt(rewardBase * ApexMatrixBonusFraction() + .0001f)
+                : 0;
+            var recoveryBonus = RecoveryCacheBonus();
+            var archiveBonus = newBest ? ArchiveEngineBestBonus() : 0;
+            runCrystalBonus = salvageBonus + apexBonus + recoveryBonus + archiveBonus;
+
             if (runCrystalBonus > 0)
             {
                 crystals += runCrystalBonus;
@@ -4290,9 +4528,9 @@ new WorldTheme(
 
         private void RefreshProgressionResultLabels()
         {
-            var bonus = ApplySalvageCodecResultBonus();
-            if (resultCrystalsText != null) resultCrystalsText.text = $"CRYSTALS PICKED UP  ·  {runCrystalsCollected}";
-            if (resultBonusText != null) resultBonusText.text = $"SALVAGE CODEC BONUS  ·  +{bonus}";
+            var bonus = ApplyResultTechBonuses();
+            if (resultCrystalsText != null) resultCrystalsText.text = $"RUN CRYSTALS  ·  {runCrystalsCollected}";
+            if (resultBonusText != null) resultBonusText.text = $"TECH REWARD BONUS  ·  +{bonus}";
             if (resultBalanceText != null) resultBalanceText.text = $"TOTAL BALANCE  ·  {crystals} ✦";
             if (resultWorldText != null) resultWorldText.text = $"ROUTE REACHED  ·  {RouteWorldName(runFarthestWorldIndex)}";
             if (resultShareText != null) resultShareText.text = "SHARE";
@@ -4316,12 +4554,13 @@ new WorldTheme(
 
         private void SelectUpgrade(Upgrade upgrade)
         {
+            if (upgrade == null || !IsUpgradePrerequisiteMet(upgrade)) return;
             var level = GetUpgradeLevel(upgrade.Id);
             if (level >= upgrade.MaxLevel) return;
             pendingUpgrade = upgrade;
             pendingSkin = null;
             pendingPurchase = PendingPurchase.Upgrade;
-            OpenPurchaseModal($"{upgrade.Name}  ·  L{level + 1}", upgrade.EffectAtLevel(level), upgrade.PriceAtLevel(level), upgrade.Accent, softCircleSprite);
+            OpenPurchaseModal($"{upgrade.Name}  ·  L{level + 1}", upgrade.EffectAtLevel(level), upgrade.PriceAtLevel(level), upgrade.Accent, GetUpgradeArtwork(upgrade) ?? softCircleSprite);
         }
 
         private void OpenPurchaseModal(Skin skin)
@@ -4358,16 +4597,32 @@ new WorldTheme(
 
         private void ConfirmPurchase()
         {
-            if (pendingPurchase == PendingPurchase.Upgrade && (pendingUpgrade == null || GetUpgradeLevel(pendingUpgrade.Id) >= pendingUpgrade.MaxLevel))
+            if (pendingPurchase == PendingPurchase.Upgrade &&
+                (pendingUpgrade == null || !IsUpgradePrerequisiteMet(pendingUpgrade) || GetUpgradeLevel(pendingUpgrade.Id) >= pendingUpgrade.MaxLevel))
             {
                 ClosePurchaseModal();
                 return;
             }
+            if (purchaseConfirmButton != null) purchaseConfirmButton.interactable = false;
             var price = pendingPurchase == PendingPurchase.Skin && pendingSkin != null ? pendingSkin.Price
                 : pendingPurchase == PendingPurchase.Upgrade && pendingUpgrade != null
                     ? pendingUpgrade.PriceAtLevel(GetUpgradeLevel(pendingUpgrade.Id)) : -1;
-            if (price < 0 || crystals < price) return;
+            if (price < 0 || crystals < price)
+            {
+                if (purchaseConfirmButton != null) purchaseConfirmButton.interactable = crystals >= Mathf.Max(0, price);
+                return;
+            }
             var unlockedSkin = pendingPurchase == PendingPurchase.Skin ? pendingSkin : null;
+            if (pendingPurchase == PendingPurchase.Upgrade)
+            {
+                var level = GetUpgradeLevel(pendingUpgrade.Id);
+                if (level >= pendingUpgrade.MaxLevel || !IsUpgradePrerequisiteMet(pendingUpgrade))
+                {
+                    ClosePurchaseModal();
+                    return;
+                }
+            }
+
             crystals -= price;
             if (pendingPurchase == PendingPurchase.Skin)
             {
@@ -4378,7 +4633,6 @@ new WorldTheme(
             else
             {
                 var level = GetUpgradeLevel(pendingUpgrade.Id);
-                if (level >= pendingUpgrade.MaxLevel) return;
                 upgradeLevels[pendingUpgrade.Id] = level + 1;
                 ownedUpgradeIds.Add(pendingUpgrade.Id);
             }
@@ -4964,7 +5218,7 @@ new WorldTheme(
             if (PlayerPrefs.GetInt("skypulse.native.cyber-roster-v2", 0) == 0)
             {
                 // Keep legacy hangar ownership where it maps to a current bird. New
-                // pilots start with Neon Finch only; existing owned birds stay earned.
+                // pilots start with Neon Finch only; the four unlocks stay earned.
                 ownedSkinIds.Add(Skins[0].Id);
                 PlayerPrefs.SetInt("skypulse.native.cyber-roster-v2", 1);
             }
@@ -4977,6 +5231,24 @@ new WorldTheme(
                     {
                         ownedUpgradeIds.Add(id);
                         upgradeLevels[id] = Mathf.Max(GetUpgradeLevel(id), 1);
+                        continue;
+                    }
+
+                    // Older builds stored separate level IDs such as
+                    // crystal_resonator_2. Collapse those aliases into the current
+                    // levelled node without touching any other save data.
+                    var resonanceLevel = UpgradeAliasLevel(id, "crystal_resonator_");
+                    if (resonanceLevel > 0)
+                    {
+                        ownedUpgradeIds.Add("crystal_resonator");
+                        upgradeLevels["crystal_resonator"] = Mathf.Max(GetUpgradeLevel("crystal_resonator"), resonanceLevel);
+                        continue;
+                    }
+                    var salvageLevel = UpgradeAliasLevel(id, "salvage_codec_");
+                    if (salvageLevel > 0)
+                    {
+                        ownedUpgradeIds.Add("salvage_codec");
+                        upgradeLevels["salvage_codec"] = Mathf.Max(GetUpgradeLevel("salvage_codec"), salvageLevel);
                     }
                 }
             }
