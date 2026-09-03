@@ -45,6 +45,9 @@ namespace SkyPulse.Mobile
     public sealed class SkyPulseNativeGame : MonoBehaviour
     {
         private enum FlightState { Menu, Playing, Impact, Paused, GameOver, Customize }
+        // Authored gameplay art has a single, input-driven stroke. Keeping this
+        // explicit prevents a resting bird from advancing frames on its own.
+        private enum GameplayWingState { Settled, Upstroke, Downstroke }
         // Classic is the score-first, leaderboard-ready route. Adventure deliberately
         // keeps the expressive upgrades and power-ups that make collection rewarding.
         // Daily shares Classic's fixed rules, plus a seeded obstacle sequence.
@@ -403,10 +406,12 @@ namespace SkyPulse.Mobile
         // Physics response after a tap. This does not control the authored wing artwork.
         private const float WingCycleSeconds = .30f;
 
-        // One shared authored wing rhythm.
-        // The menu loops it; gameplay advances it only after player input.
+        // Presentation-only menu rhythm. Gameplay must not inherit this duration.
         private const float SharedWingAnimationSeconds = 1.18f;
-        private const float SharedWingFrameSeconds = SharedWingAnimationSeconds / 10f;
+        // One complete input-triggered 5 -> 0 -> 5 gameplay stroke. There are
+        // ten authored frame transitions for the six-frame sequence.
+        private const float GameplayWingAnimationSeconds = .36f;
+        private const float GameplayWingFrameSeconds = GameplayWingAnimationSeconds / 10f;
         private const float WingLiftPhase = .31f;
         private const float WingDownstrokeDelay = .075f;
         private const float WingDownstrokeSpan = .90f;
@@ -922,8 +927,7 @@ new WorldTheme(
 
         // Shared gameplay wing controller for every authored bird.
         private int gameplayWingFrameIndex = 5;
-        private bool gameplayWingActive;
-        private bool gameplayWingReturning;
+        private GameplayWingState gameplayWingState = GameplayWingState.Settled;
         private float impactFrameTimer;
         private float impactTumbleTimer;
         private float menuWingTimer;
@@ -2288,57 +2292,11 @@ new WorldTheme(
         {
             birdVelocity = Mathf.Max(ActiveMaxFallVelocity(), birdVelocity + ActiveGravity() * deltaTime);
             birdY += birdVelocity * deltaTime;
+            // This transient timer drives only the flight impulse, banking and
+            // thrust feedback. Authored wing frames advance solely through the
+            // input-driven state controller below.
             wingTimer = Mathf.Min(WingCycleSeconds, wingTimer + deltaTime);
-            // Authored gameplay wings only advance after the player has flapped.
-            if (UsesFlapFrameSequence() && gameplayWingActive)
-            {
-                var wingMotion =
-                    reduceMotionEnabled ? .35f : 1f;
-
-                wingFrameTimer +=
-                    deltaTime * wingMotion;
-
-                while (
-                    wingFrameTimer >= SharedWingFrameSeconds &&
-                    gameplayWingActive)
-                {
-                    wingFrameTimer -=
-                        SharedWingFrameSeconds;
-
-                    var settledFrame =
-                        flapFrameBirdSprites.Length - 1;
-
-                    if (!gameplayWingReturning)
-                    {
-                        // Upstroke: 5 -> 4 -> 3 -> 2 -> 1 -> 0
-                        gameplayWingFrameIndex =
-                            Mathf.Max(
-                                0,
-                                gameplayWingFrameIndex - 1);
-
-                        if (gameplayWingFrameIndex <= 0)
-                            gameplayWingReturning = true;
-                    }
-                    else
-                    {
-                        // Downstroke: 0 -> 1 -> 2 -> 3 -> 4 -> 5
-                        gameplayWingFrameIndex =
-                            Mathf.Min(
-                                settledFrame,
-                                gameplayWingFrameIndex + 1);
-
-                        if (gameplayWingFrameIndex >= settledFrame)
-                        {
-                            gameplayWingFrameIndex =
-                                settledFrame;
-
-                            gameplayWingActive = false;
-                            gameplayWingReturning = false;
-                            wingFrameTimer = 0f;
-                        }
-                    }
-                }
-            }
+            UpdateGameplayWingState(deltaTime);
             bird.position = new Vector3(BirdX, birdY, 0f);
             var flapKick = Mathf.Exp(-wingTimer * 12f);
             // Rise is a compact -18° bank; a full terminal fall reaches +70°.
@@ -2390,6 +2348,50 @@ new WorldTheme(
             }
 
             SyncBirdHitbox();
+        }
+
+        private void UpdateGameplayWingState(float deltaTime)
+        {
+            if (!UsesFlapFrameSequence() || gameplayWingState == GameplayWingState.Settled)
+                return;
+
+            // Do not slow this timer for Reduced Motion: a slower full-body
+            // sequence would make one tap look like an unwanted animation loop.
+            wingFrameTimer += deltaTime;
+
+            while (
+                wingFrameTimer >= GameplayWingFrameSeconds &&
+                gameplayWingState != GameplayWingState.Settled)
+            {
+                wingFrameTimer -= GameplayWingFrameSeconds;
+                var settledFrame = flapFrameBirdSprites.Length - 1;
+
+                switch (gameplayWingState)
+                {
+                    case GameplayWingState.Upstroke:
+                        // Raised wing extreme: 5 -> 4 -> 3 -> 2 -> 1 -> 0.
+                        gameplayWingFrameIndex = Mathf.Max(0, gameplayWingFrameIndex - 1);
+                        if (gameplayWingFrameIndex == 0)
+                            gameplayWingState = GameplayWingState.Downstroke;
+                        break;
+
+                    case GameplayWingState.Downstroke:
+                        // Return through the authored poses: 0 -> 1 -> 2 -> 3 -> 4 -> 5.
+                        gameplayWingFrameIndex = Mathf.Min(settledFrame, gameplayWingFrameIndex + 1);
+                        if (gameplayWingFrameIndex == settledFrame)
+                        {
+                            gameplayWingState = GameplayWingState.Settled;
+                            wingFrameTimer = 0f;
+                        }
+                        break;
+
+                    default:
+                        gameplayWingFrameIndex = settledFrame;
+                        gameplayWingState = GameplayWingState.Settled;
+                        wingFrameTimer = 0f;
+                        break;
+                }
+            }
         }
 
         private void SyncBirdHitbox()
@@ -3403,8 +3405,7 @@ new WorldTheme(
             gameplayWingFrameIndex =
             UsesFlapFrameSequence()
             ? flapFrameBirdSprites.Length - 1 : 0;
-            gameplayWingActive = false;
-            gameplayWingReturning = false;
+            gameplayWingState = GameplayWingState.Settled;
             impactFrameTimer = 0f;
             impactTumbleTimer = 0f;
             slowFieldTimer = 0f;
@@ -3445,10 +3446,8 @@ new WorldTheme(
                 birdBodyCollider.enabled = true;
                 SyncBirdHitbox();
             }
-            // The launch input is itself a flap, so start the 70 ms duplicate-touch
-            // lockout here before any synthetic mouse/touch echo can arrive.
-            lastFlapInputTime = Time.unscaledTime;
-            Flap();
+            // PLAY and RETRY only begin a run. The bird remains settled until an
+            // actual gameplay tap requests its first flap.
         }
 
         private void ResetToMenu()
@@ -4037,23 +4036,22 @@ new WorldTheme(
                 var settledFrame =
                     flapFrameBirdSprites.Length - 1;
 
-                if (!gameplayWingActive)
+                if (gameplayWingState == GameplayWingState.Settled)
                 {
                     // Start one natural flap from the settled pose.
                     gameplayWingFrameIndex =
                         settledFrame;
 
                     wingFrameTimer = 0f;
-                    gameplayWingActive = true;
-                    gameplayWingReturning = false;
+                    gameplayWingState = GameplayWingState.Upstroke;
                 }
-                else if (gameplayWingReturning)
+                else if (gameplayWingState == GameplayWingState.Downstroke)
                 {
                     // Another tap during the downstroke reverses the
                     // wings naturally from their CURRENT position.
-                    // Never snap back to the first frame.
-                    gameplayWingReturning = false;
-                    wingFrameTimer = 0f;
+                    // Keep the fractional frame time so the reversal does not
+                    // add a visible dwell or snap back to an unrelated pose.
+                    gameplayWingState = GameplayWingState.Upstroke;
                 }
 
                 // If the wings are already moving upward, keep that
@@ -4066,8 +4064,7 @@ new WorldTheme(
         {
             if (state != FlightState.Playing) return;
             state = FlightState.Impact;
-            gameplayWingActive = false;
-            gameplayWingReturning = false;
+            gameplayWingState = GameplayWingState.Settled;
             wingFrameTimer = 0f;
             if (birdThrustGlowRenderer != null)
                 birdThrustGlowRenderer.enabled = false;
@@ -5196,9 +5193,8 @@ new WorldTheme(
                 var settledFrame =
                     flapFrameBirdSprites.Length - 1;
 
-                // No active flap means the bird stays on its
-                // final authored settled/glide frame.
-                if (!gameplayWingActive)
+                // The settled state always holds the final authored glide frame.
+                if (gameplayWingState == GameplayWingState.Settled)
                     gameplayWingFrameIndex = settledFrame;
 
                 activeFlapFrameIndex =
