@@ -413,7 +413,7 @@ namespace SkyPulse.Mobile
 
         // Presentation-only menu rhythm. Gameplay must not inherit this duration.
         private const float SharedWingAnimationSeconds = 1.18f;
-        // Gameplay uses the same authored phase selector as the home bird, but
+        // Gameplay uses the same authored ordering as the home bird, but
         // traverses one short input-triggered stroke instead of the menu loop.
         private const float GameplayWingAnimationSeconds = .40f;
         private const float GameplayWingSettledPhase = .5f;
@@ -941,11 +941,11 @@ new WorldTheme(
         private float birdTiltVelocity;
         private float wingTimer;
 
-        // Shared gameplay wing controller for every authored bird.
+        // Shared gameplay wing controller for every authored bird.  The active
+        // pose is discrete so a rendered frame can never skip across artwork.
         private GameplayWingState gameplayWingState = GameplayWingState.Settled;
-        // This is the same 0 -> 1 phase used by SelectFlapFrame. Gameplay uses
-        // its 0 -> .5 half so .5 is always the authored settled/glide pose.
-        private float gameplayWingPhase = GameplayWingSettledPhase;
+        private int gameplayWingFrameIndex;
+        private float gameplayWingFrameTimer;
         private float impactFrameTimer;
         private float impactTumbleTimer;
         private float menuWingTimer;
@@ -2045,6 +2045,16 @@ new WorldTheme(
                 SimulateFlight(SimulationStep);
                 simulationAccumulator -= SimulationStep;
             }
+
+            // Physics can run more than once before Unity presents the next
+            // image. Advance the authored artwork once per rendered frame so
+            // the player sees every adjacent wing pose rather than a skip.
+            if (state == FlightState.Playing)
+            {
+                UpdateGameplayWingState(frameDelta);
+                UpdateBirdWingMotion();
+            }
+
             UpdateFlightCoach();
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -2329,7 +2339,6 @@ new WorldTheme(
             // thrust feedback. Authored wing frames advance solely through the
             // input-driven state controller below.
             wingTimer = Mathf.Min(WingCycleSeconds, wingTimer + deltaTime);
-            UpdateGameplayWingState(deltaTime);
             bird.position = new Vector3(BirdX, birdY, 0f);
             var flapKick = Mathf.Exp(-wingTimer * 12f);
             // Rise is a compact -18° bank; a full terminal fall reaches +70°.
@@ -2350,7 +2359,6 @@ new WorldTheme(
                 deltaTime
             );
             bird.rotation = Quaternion.Euler(0f, 0f, birdTilt);
-            UpdateBirdWingMotion();
             var collisionRadius = BirdHitboxVerticalExtent();
             var hitboxOffset = BirdHitboxWorldOffset();
 
@@ -2385,40 +2393,85 @@ new WorldTheme(
 
         private void UpdateGameplayWingState(float deltaTime)
         {
-            if (!UsesFlapFrameSequence() || gameplayWingState == GameplayWingState.Settled)
+            if (!UsesFlapFrameSequence())
+            {
+                ResetGameplayWingState();
+                return;
+            }
+
+            var settledFrame = flapFrameBirdSprites.Length - 1;
+            if (gameplayWingState == GameplayWingState.Settled)
+            {
+                gameplayWingFrameIndex = settledFrame;
+                gameplayWingFrameTimer = 0f;
+                return;
+            }
+
+            gameplayWingFrameIndex =
+                Mathf.Clamp(gameplayWingFrameIndex, 0, settledFrame);
+
+            // Five adjacent moves lift a six-frame bird and five return it to
+            // glide. Do not use a while loop here: a slow render must extend
+            // the stroke, never make a complete drawing disappear between
+            // presented frames.
+            var frameStepCount = (flapFrameBirdSprites.Length * 2) - 2;
+            var frameSeconds = GameplayWingAnimationSeconds / frameStepCount;
+            gameplayWingFrameTimer += Mathf.Max(0f, deltaTime);
+            if (gameplayWingFrameTimer < frameSeconds)
                 return;
 
-            // SelectFlapFrame is also the menu bird's motion path. Moving this
-            // phase instead of hand-advancing an index gives every bird the same
-            // authored ordering and timing relationship as the home presentation.
-            // Do not slow it for Reduced Motion: a slow full-body stroke would
-            // make one tap look like an unwanted gameplay loop.
-            var phaseDelta = deltaTime * 2f / GameplayWingAnimationSeconds;
+            gameplayWingFrameTimer -= frameSeconds;
 
             switch (gameplayWingState)
             {
                 case GameplayWingState.Upstroke:
-                    // Settled -> raised: .5 -> 0, using the menu selector in reverse.
-                    gameplayWingPhase = Mathf.Max(0f, gameplayWingPhase - phaseDelta);
-                    if (gameplayWingPhase <= 0f)
+                    // Settled -> raised: 5 -> 4 -> 3 -> 2 -> 1 -> 0.
+                    gameplayWingFrameIndex =
+                        Mathf.Max(0, gameplayWingFrameIndex - 1);
+                    if (gameplayWingFrameIndex == 0)
                         gameplayWingState = GameplayWingState.Downstroke;
                     break;
 
                 case GameplayWingState.Downstroke:
-                    // Raised -> settled: 0 -> .5, using the same menu selector forward.
-                    gameplayWingPhase = Mathf.Min(GameplayWingSettledPhase, gameplayWingPhase + phaseDelta);
-                    if (gameplayWingPhase >= GameplayWingSettledPhase)
+                    // Raised -> settled: 0 -> 1 -> 2 -> 3 -> 4 -> 5.
+                    gameplayWingFrameIndex =
+                        Mathf.Min(settledFrame, gameplayWingFrameIndex + 1);
+                    if (gameplayWingFrameIndex == settledFrame)
                     {
-                        gameplayWingPhase = GameplayWingSettledPhase;
                         gameplayWingState = GameplayWingState.Settled;
+                        gameplayWingFrameTimer = 0f;
                     }
                     break;
 
                 default:
-                    gameplayWingPhase = GameplayWingSettledPhase;
-                    gameplayWingState = GameplayWingState.Settled;
+                    ResetGameplayWingState();
                     break;
             }
+        }
+
+        private void ResetGameplayWingState()
+        {
+            gameplayWingState = GameplayWingState.Settled;
+            gameplayWingFrameTimer = 0f;
+            gameplayWingFrameIndex =
+                UsesFlapFrameSequence()
+                    ? flapFrameBirdSprites.Length - 1
+                    : 0;
+        }
+
+        private float GameplayWingFramePhase()
+        {
+            if (!UsesFlapFrameSequence() || gameplayWingState == GameplayWingState.Settled)
+                return GameplayWingSettledPhase;
+
+            var frameStepCount = (flapFrameBirdSprites.Length * 2) - 2;
+            var frameIndex =
+                Mathf.Clamp(gameplayWingFrameIndex, 0, flapFrameBirdSprites.Length - 1);
+
+            // Sample the middle of the menu selector's matching frame band.
+            // This retains its authored ordering while keeping the chosen pose
+            // stable until this controller explicitly advances it.
+            return (frameIndex + .5f) / frameStepCount;
         }
 
         private void SyncBirdHitbox()
@@ -3428,8 +3481,7 @@ new WorldTheme(
             birdTilt = 0f;
             birdTiltVelocity = 0f;
             wingTimer = WingCycleSeconds;
-            gameplayWingState = GameplayWingState.Settled;
-            gameplayWingPhase = GameplayWingSettledPhase;
+            ResetGameplayWingState();
             impactFrameTimer = 0f;
             impactTumbleTimer = 0f;
             slowFieldTimer = 0f;
@@ -4059,15 +4111,17 @@ new WorldTheme(
             {
                 if (gameplayWingState == GameplayWingState.Settled)
                 {
-                    // Start from the exact same settled phase the menu uses.
-                    gameplayWingPhase = GameplayWingSettledPhase;
+                    // Start at the authored glide pose. The first visible move
+                    // will be its adjacent upstroke frame, never a frame-one snap.
+                    gameplayWingFrameIndex = flapFrameBirdSprites.Length - 1;
+                    gameplayWingFrameTimer = 0f;
                     gameplayWingState = GameplayWingState.Upstroke;
                 }
                 else if (gameplayWingState == GameplayWingState.Downstroke)
                 {
                     // Another tap during the downstroke reverses the
                     // wings naturally from their CURRENT position.
-                    // Keeping this phase avoids a dwell or snap to another pose.
+                    // Keeping this frame and its timer avoids a snap.
                     gameplayWingState = GameplayWingState.Upstroke;
                 }
 
@@ -4081,8 +4135,7 @@ new WorldTheme(
         {
             if (state != FlightState.Playing) return;
             state = FlightState.Impact;
-            gameplayWingState = GameplayWingState.Settled;
-            gameplayWingPhase = GameplayWingSettledPhase;
+            ResetGameplayWingState();
             if (birdThrustGlowRenderer != null)
                 birdThrustGlowRenderer.enabled = false;
             if (birdThrustCoreRenderer != null)
@@ -5078,7 +5131,11 @@ new WorldTheme(
             if (birdRenderer == null || birdFlapRenderer == null || birdRiseRenderer == null) return;
             var hasFlapFrameSequence = LoadFlapFrameSequence(equippedSkin);
             hitBirdSprite = LoadOptionalSprite(equippedSkin?.HitPath);
-            activeFlapFrameIndex = 0;
+            ResetGameplayWingState();
+            activeFlapFrameIndex =
+                hasFlapFrameSequence
+                    ? flapFrameBirdSprites.Length - 1
+                    : 0;
             if (hasFlapFrameSequence)
             {
                 // The final authored pose is the settled glide. The named fields
@@ -5237,15 +5294,17 @@ new WorldTheme(
 
             if (usesFlapFrameSequence)
             {
-                // Gameplay selects artwork through the exact same phase-to-frame
-                // mapping as UpdateMenuBird. Settled is the authored frame at .5.
+                // Gameplay moves a discrete authored index, then uses the same
+                // selector as UpdateMenuBird to resolve that exact pose.
                 if (gameplayWingState == GameplayWingState.Settled)
-                    gameplayWingPhase = GameplayWingSettledPhase;
+                    gameplayWingFrameIndex = flapFrameBirdSprites.Length - 1;
+
+                var wingPhase = GameplayWingFramePhase();
 
                 activeFlapFrameIndex =
-                    SelectFlapFrameIndex(gameplayWingPhase);
+                    SelectFlapFrameIndex(wingPhase);
 
-                var pose = SelectFlapFrame(gameplayWingPhase);
+                var pose = SelectFlapFrame(wingPhase);
 
                 if (
                     pose != null &&
