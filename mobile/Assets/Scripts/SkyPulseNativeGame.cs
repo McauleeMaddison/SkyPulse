@@ -403,8 +403,8 @@ namespace SkyPulse.Mobile
         // Six authored flight poses over .30 s display at 20 fps, inside the
         // requested 18–24 fps animation range while transforms stay smooth at render rate.
         private const float WingCycleSeconds = .30f;
-        // Menu and gameplay authored wingbeats share the same calm visual duration.
-        private const float SharedWingAnimationSeconds = 1.18f;
+        // Visual wing cycle is independent of tap physics and loops continuously.
+        private const float WingAnimationCycleSeconds = .42f;
         private const float WingLiftPhase = .31f;
         private const float WingDownstrokeDelay = .075f;
         private const float WingDownstrokeSpan = .90f;
@@ -917,7 +917,6 @@ new WorldTheme(
         private float birdTiltVelocity;
         private float wingTimer;
         private float wingFrameTimer;
-        private bool wingFrameActive;
         private float impactFrameTimer;
         private float impactTumbleTimer;
         private float menuWingTimer;
@@ -2116,9 +2115,9 @@ new WorldTheme(
             menuPresentationTime += deltaTime;
             var menuMotion = reduceMotionEnabled ? .35f : 1f;
             menuWingTimer += deltaTime * menuMotion;
-            if (menuWingTimer > SharedWingAnimationSeconds) menuWingTimer = 0f;
+            if (menuWingTimer > 1.18f) menuWingTimer = 0f;
 
-            var wingPhase = menuWingTimer / SharedWingAnimationSeconds;
+            var wingPhase = menuWingTimer / 1.18f;
             GetWingWeights(wingPhase, out var riseStrength, out var flapStrength);
             var usesFlapFrameSequence = UsesFlapFrameSequence();
             if (usesFlapFrameSequence)
@@ -2281,20 +2280,7 @@ new WorldTheme(
             birdVelocity = Mathf.Max(ActiveMaxFallVelocity(), birdVelocity + ActiveGravity() * deltaTime);
             birdY += birdVelocity * deltaTime;
             wingTimer = Mathf.Min(WingCycleSeconds, wingTimer + deltaTime);
-            // Gameplay wing artwork moves only during a tap-triggered authored wingbeat.
-            // Extra taps still affect physics immediately, but never restart or accelerate
-            // a visual beat already in progress.
-            if (wingFrameActive)
-            {
-                var wingMotion = reduceMotionEnabled ? .35f : 1f;
-                wingFrameTimer += deltaTime * wingMotion;
-
-                if (wingFrameTimer >= SharedWingAnimationSeconds)
-                {
-                    wingFrameTimer = 0f;
-                    wingFrameActive = false;
-                }
-            }
+            wingFrameTimer = Mathf.Repeat(wingFrameTimer + deltaTime, WingAnimationCycleSeconds);
             bird.position = new Vector3(BirdX, birdY, 0f);
             var flapKick = Mathf.Exp(-wingTimer * 12f);
             // Rise is a compact -18° bank; a full terminal fall reaches +70°.
@@ -3356,7 +3342,6 @@ new WorldTheme(
             birdTiltVelocity = 0f;
             wingTimer = WingCycleSeconds;
             wingFrameTimer = 0f;
-            wingFrameActive = false;
             impactFrameTimer = 0f;
             impactTumbleTimer = 0f;
             slowFieldTimer = 0f;
@@ -3409,8 +3394,6 @@ new WorldTheme(
             state = FlightState.Menu;
             menuPresentationTime = 0f;
             menuWingTimer = 0f;
-            wingFrameTimer = 0f;
-            wingFrameActive = false;
             simulationAccumulator = 0f;
             bufferedFlapUntil = -1f;
             flightFeedbackTimer = 0f;
@@ -3980,16 +3963,7 @@ new WorldTheme(
         {
             birdVelocity = Mathf.Max(ActiveFlapVelocity(), birdVelocity * .18f);
             wingTimer = 0f;
-
-            // One shared authored wing controller serves all 15 launch birds.
-            // A tap starts one calm beat only when the previous beat has finished,
-            // so rapid input never snaps the artwork back to its first pose.
-            if (UsesFlapFrameSequence() && !wingFrameActive)
-            {
-                wingFrameTimer = 0f;
-                wingFrameActive = true;
-            }
-
+            // Visual wing motion runs continuously; taps never restart or freeze it.
             Play(flapSound);
         }
 
@@ -5114,200 +5088,86 @@ new WorldTheme(
         private void UpdateBirdWingMotion()
         {
             if (birdRenderer == null || birdFlapRenderer == null) return;
-
+            var flapProgress = Mathf.Repeat(wingFrameTimer, WingAnimationCycleSeconds) / WingAnimationCycleSeconds;
+            var impulseProgress = Mathf.Clamp01(wingTimer / WingCycleSeconds);
+            var flapKick = 1f - impulseProgress * impulseProgress * (3f - 2f * impulseProgress);
+            GetWingWeights(flapProgress, out var riseWeight, out var wingWave);
             var usesFlapFrameSequence = UsesFlapFrameSequence();
-
             if (usesFlapFrameSequence)
             {
-                // Menu and gameplay share the exact same selector and duration.
-                // Gameplay starts from the settled pose, performs one complete beat
-                // after a tap, then returns to the same settled pose.
-                var wingPhase = wingFrameActive
-                    ? Mathf.Repeat(
-                        .5f + (wingFrameTimer / SharedWingAnimationSeconds),
-                        1f)
-                    : .5f;
-
-                activeFlapFrameIndex = SelectFlapFrameIndex(wingPhase);
+                // One authored drawing at a time: no crossfade means no ghosted
+                // double-body. The six supplied poses play in their intended order
+                // on every tap, while the transform below retains 60 fps flight feel.
+                activeFlapFrameIndex = SelectFlapFrameIndex(flapProgress);
                 var pose = flapFrameBirdSprites[activeFlapFrameIndex];
-
-                if (pose != null && birdRenderer.sprite != pose)
-                    birdRenderer.sprite = pose;
-
+                if (pose != null && birdRenderer.sprite != pose) birdRenderer.sprite = pose;
                 birdRenderer.enabled = pose != null;
                 birdRenderer.color = Color.white;
                 birdFlapRenderer.enabled = false;
-
-                if (birdRiseRenderer != null)
-                    birdRiseRenderer.enabled = false;
-
-                if (birdParallaxRenderer != null)
-                    birdParallaxRenderer.enabled = false;
-
-                // Each authored frame is already a complete bird. Keep the local
-                // artwork transform fixed so sprite changes cannot make the whole
-                // body pulse, jump or wobble. UpdateBird still supplies smooth
-                // position and banking through the bird root.
-                bird.localScale = Vector3.one;
-                birdArt.localScale = authoredBirdBaseScale;
-                birdArt.localPosition = Vector3.zero;
-                birdArt.localRotation = Quaternion.identity;
-
-                var glide = Mathf.Clamp(
-                    birdVelocity / Mathf.Abs(ActiveMaxFallVelocity()),
-                    -1f,
-                    1f);
-
-                UpdateBirdLifeDepth(0f, 0f, glide);
-                UpdateBirdPowerUpVisuals();
-                return;
+                if (birdRiseRenderer != null) birdRiseRenderer.enabled = false;
+                if (birdParallaxRenderer != null) birdParallaxRenderer.enabled = false;
             }
-
-            // Preserve the existing fallback animation for any future skin that
-            // does not provide the six authored full-body flight frames.
-            var flapProgress = Mathf.Clamp01(wingTimer / WingCycleSeconds);
-            var flapKick =
-                1f - flapProgress * flapProgress * (3f - 2f * flapProgress);
-
-            GetWingWeights(
-                flapProgress,
-                out var riseWeight,
-                out var wingWave);
-
-            var flapColour = Color.white;
-            flapColour.a =
-                (.10f + wingWave * .82f) *
-                flapKick *
-                (1f - riseWeight * .84f);
-
-            birdFlapRenderer.enabled = flapBirdSprite != null;
-            birdFlapRenderer.color = flapColour;
-
-            birdRenderer.color =
-                new Color(
-                    1f,
-                    1f,
-                    1f,
-                    1f - Mathf.Max(
-                        riseWeight * .78f,
-                        wingWave * .50f));
-
-            if (birdRiseRenderer != null)
+            else
             {
-                var showRise =
-                    birdRiseRenderer.enabled &&
-                    birdRiseRenderer.sprite != null;
-
-                birdRiseRenderer.color =
-                    new Color(
-                        1f,
-                        1f,
-                        1f,
-                        showRise ? riseWeight * .94f : 0f);
-
-                birdRiseArt.localScale =
-                    Vector3.Scale(
-                        riseBirdBaseScale,
-                        new Vector3(
-                            1f + riseWeight * .065f,
-                            1f - riseWeight * .025f,
-                            1f));
-
-                birdRiseArt.localPosition =
-                    new Vector3(
-                        -riseWeight * .060f,
-                        riseWeight * .065f,
-                        0f);
-
-                birdRiseArt.localRotation =
-                    Quaternion.Euler(
-                        0f,
-                        0f,
-                        riseWeight * 4.7f);
+                var flapColour = Color.white;
+                flapColour.a = (.10f + wingWave * .82f) * flapKick * (1f - riseWeight * .84f);
+                birdFlapRenderer.enabled = flapBirdSprite != null;
+                birdFlapRenderer.color = flapColour;
+                birdRenderer.color = new Color(1f, 1f, 1f, 1f - Mathf.Max(riseWeight * .78f, wingWave * .50f));
+                if (birdRiseRenderer != null)
+                {
+                    var showRise = birdRiseRenderer.enabled && birdRiseRenderer.sprite != null;
+                    birdRiseRenderer.color = new Color(1f, 1f, 1f, showRise ? riseWeight * .94f : 0f);
+                    birdRiseArt.localScale = Vector3.Scale(riseBirdBaseScale, new Vector3(1f + riseWeight * .065f, 1f - riseWeight * .025f, 1f));
+                    birdRiseArt.localPosition = new Vector3(-riseWeight * .060f, riseWeight * .065f, 0f);
+                    birdRiseArt.localRotation = Quaternion.Euler(0f, 0f, riseWeight * 4.7f);
+                }
             }
-
             var lifeMotion = reduceMotionEnabled ? .38f : 1f;
-            var breathing =
-                1f +
-                Mathf.Sin(ambientTime * 5.2f) *
-                .010f *
-                lifeMotion;
+            var authoredFlight = usesFlapFrameSequence;
+            var breathing = 1f + Mathf.Sin(ambientTime * 5.2f) * .010f * lifeMotion;
+            var glide = Mathf.Clamp(birdVelocity / Mathf.Abs(ActiveMaxFallVelocity()), -1f, 1f);
+            var liftSquash = (flapKick - riseWeight * .34f) * (authoredFlight ? .035f : .065f);
+            var diveStretch = Mathf.Clamp01(-glide) * (authoredFlight ? .016f : .024f);
 
-            var glideFallback =
-                Mathf.Clamp(
-                    birdVelocity / Mathf.Abs(ActiveMaxFallVelocity()),
-                    -1f,
-                    1f);
+            var bodyRoll = authoredFlight
+                ? riseWeight * 2.20f
+                    - wingWave * 1.40f
+                    + glide * 1.25f
+                : riseWeight * 3.2f
+                    - wingWave * 2.4f
+                    + glide * 1.8f;
 
-            var liftSquash =
-                (flapKick - riseWeight * .34f) * .065f;
-
-            var diveStretch =
-                Mathf.Clamp01(-glideFallback) * .024f;
-
-            var bodyRoll =
-                riseWeight * 3.2f -
-                wingWave * 2.4f +
-                glideFallback * 1.8f;
-
-            var depthPulse =
-                riseWeight * .075f +
-                wingWave * .050f;
-
-            bird.localScale =
-                new Vector3(
-                    1f + depthPulse + diveStretch * .30f,
-                    1f - depthPulse * .62f + diveStretch * .12f,
-                    1f);
-
-            birdArt.localScale =
-                Vector3.Scale(
-                    idleBirdBaseScale,
-                    new Vector3(
-                        breathing + liftSquash + diveStretch,
-                        breathing - liftSquash - diveStretch * .55f,
-                        1f));
-
-            birdArt.localPosition =
-                new Vector3(
-                    -flapKick * .052f - glideFallback * .020f,
-                    Mathf.Sin(ambientTime * 7f) * .014f +
-                        riseWeight * .018f,
+            var depthPulse = authoredFlight
+                ? riseWeight * .025f
+                    + wingWave * .018f
+                : riseWeight * .075f
+                    + wingWave * .050f;
+            bird.localScale = new Vector3(1f + depthPulse + diveStretch * .30f, 1f - depthPulse * .62f + diveStretch * .12f, 1f);
+            var activeArtworkBaseScale = usesFlapFrameSequence
+                ? authoredBirdBaseScale
+                : idleBirdBaseScale;
+            birdArt.localScale = Vector3.Scale(activeArtworkBaseScale, new Vector3(breathing + liftSquash + diveStretch, breathing - liftSquash - diveStretch * .55f, 1f));
+            birdArt.localPosition = authoredFlight
+                ? new Vector3(
+                    -flapKick * .035f - wingWave * .012f - glide * .012f,
+                    Mathf.Sin(ambientTime * 7f) * .006f * lifeMotion
+                        + flapKick * .018f
+                        + riseWeight * .025f
+                        + wingWave * .008f,
+                    0f)
+                : new Vector3(
+                    -flapKick * .052f - glide * .020f,
+                    Mathf.Sin(ambientTime * 7f) * .014f + riseWeight * .018f,
                     0f);
-
-            birdArt.localRotation =
-                Quaternion.Euler(
-                    0f,
-                    0f,
-                    bodyRoll);
-
-            birdFlapArt.localScale =
-                Vector3.Scale(
-                    flapBirdBaseScale,
-                    new Vector3(
-                        1f + wingWave * .075f,
-                        1f - wingWave * .050f,
-                        1f));
-
-            birdFlapArt.localPosition =
-                new Vector3(
-                    flapKick * .032f,
-                    .025f + wingWave * .052f,
-                    0f);
-
-            birdFlapArt.localRotation =
-                Quaternion.Euler(
-                    0f,
-                    0f,
-                    -flapKick * 6.6f +
-                    wingWave * 4.4f +
-                    glideFallback * 1.2f);
-
-            UpdateBirdLifeDepth(
-                riseWeight,
-                wingWave,
-                glideFallback);
-
+            birdArt.localRotation = Quaternion.Euler(0f, 0f, bodyRoll);
+            if (!usesFlapFrameSequence)
+            {
+                birdFlapArt.localScale = Vector3.Scale(flapBirdBaseScale, new Vector3(1f + wingWave * .075f, 1f - wingWave * .050f, 1f));
+                birdFlapArt.localPosition = new Vector3(flapKick * .032f, .025f + wingWave * .052f, 0f);
+                birdFlapArt.localRotation = Quaternion.Euler(0f, 0f, -flapKick * 6.6f + wingWave * 4.4f + glide * 1.2f);
+            }
+            UpdateBirdLifeDepth(riseWeight, wingWave, glide);
             UpdateBirdPowerUpVisuals();
         }
         private void UpdateBirdLifeDepth(float riseWeight, float wingWave, float glide)
