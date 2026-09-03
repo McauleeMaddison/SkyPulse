@@ -125,6 +125,10 @@ namespace SkyPulse.Mobile
             // Keeping the list on the skin makes adding a future bird a data-and-art
             // task, not a risky change to the flight loop.
             public string[] FlapFramePaths;
+            // Optional, authored-frame registration pivots. They correct source
+            // canvas placement once when sprites are loaded; gameplay never moves
+            // the bird artwork transform from frame to frame.
+            public Vector2[] FlapFramePivots;
             // These are distinct, per-bird poses. They must never point at a shared
             // bird image: its plumage, metalwork and silhouette are part of the
             // reward the player just earned.
@@ -134,7 +138,7 @@ namespace SkyPulse.Mobile
             public Color Trail;
             public int Price;
 
-            public Skin(string id, string name, string artPath, string flapPath, string accent, string trail, int price, string risePath = null, string hitPath = null, string unlockPath = null, string[] flapFramePaths = null)
+            public Skin(string id, string name, string artPath, string flapPath, string accent, string trail, int price, string risePath = null, string hitPath = null, string unlockPath = null, string[] flapFramePaths = null, Vector2[] flapFramePivots = null)
             {
                 Id = id;
                 Name = name;
@@ -144,6 +148,7 @@ namespace SkyPulse.Mobile
                 HitPath = hitPath;
                 UnlockPath = unlockPath;
                 FlapFramePaths = flapFramePaths;
+                FlapFramePivots = flapFramePivots;
                 Accent = Hex(accent);
                 Trail = Hex(trail);
                 Price = price;
@@ -464,6 +469,17 @@ namespace SkyPulse.Mobile
             {
                 "SkyPulse/characters/roster/steel-frame-01-v1", "SkyPulse/characters/roster/steel-frame-02-v1", "SkyPulse/characters/roster/steel-frame-03-v1",
                 "SkyPulse/characters/roster/steel-frame-04-v1", "SkyPulse/characters/roster/steel-frame-05-v1", "SkyPulse/characters/roster/steel-frame-06-v1",
+            }, new []
+            {
+                // These artboards were composed at different canvas origins.
+                // Static pivots align the raven's body/eye to frame 06 while
+                // leaving the parent bird transform unchanged during flight.
+                new Vector2(.5811f, .0154f),
+                new Vector2(.4615f, .0208f),
+                new Vector2(.5832f, .1518f),
+                new Vector2(.4941f, .1669f),
+                new Vector2(.5635f, .4794f),
+                new Vector2(.5000f, .5000f),
             }),
             new Skin("prism_hummingbird", "PRISM HUMMINGBIRD", "SkyPulse/characters/roster/prism-frame-04-v1", "SkyPulse/characters/roster/prism-frame-06-v1", "#f4bf47", "#45eaff", 500, "SkyPulse/characters/roster/prism-frame-01-v1", "SkyPulse/characters/roster/prism-frame-07-v1", "SkyPulse/characters/roster/prism-frame-08-v1", new []
             {
@@ -755,6 +771,7 @@ new WorldTheme(
         private readonly Vector3[] trailPoints = new Vector3[9];
         private readonly List<AmbientStar> ambientStars = new List<AmbientStar>();
         private readonly Dictionary<string, Sprite> spriteCache = new Dictionary<string, Sprite>();
+        private readonly Dictionary<string, Sprite> registeredFlapSpriteCache = new Dictionary<string, Sprite>();
         private readonly Dictionary<string, Sprite> worldFallbackSprites = new Dictionary<string, Sprite>();
         private readonly HashSet<string> ownedSkinIds = new HashSet<string>();
         private readonly HashSet<string> ownedUpgradeIds = new HashSet<string>();
@@ -1027,6 +1044,21 @@ new WorldTheme(
                 {
                     Debug.LogError($"SkyPulse: {skin.Name} must define exactly six flight frames.");
                     continue;
+                }
+                if (skin.FlapFramePivots != null)
+                {
+                    if (skin.FlapFramePivots.Length != skin.FlapFramePaths.Length)
+                    {
+                        Debug.LogError($"SkyPulse: {skin.Name}'s frame registration must contain one pivot per flight frame.");
+                    }
+                    else
+                    {
+                        foreach (var pivot in skin.FlapFramePivots)
+                        {
+                            if (pivot.x < 0f || pivot.x > 1f || pivot.y < 0f || pivot.y > 1f)
+                                Debug.LogError($"SkyPulse: {skin.Name}'s frame registration pivot must be normalized.");
+                        }
+                    }
                 }
                 if (string.IsNullOrEmpty(skin.HitPath) || string.IsNullOrEmpty(skin.UnlockPath))
                 {
@@ -5116,15 +5148,45 @@ new WorldTheme(
         {
             flapFrameBirdSprites = null;
             if (skin == null || skin.FlapFramePaths == null || skin.FlapFramePaths.Length != 6) return false;
+            if (skin.FlapFramePivots != null && skin.FlapFramePivots.Length != skin.FlapFramePaths.Length) return false;
             var frames = new Sprite[skin.FlapFramePaths.Length];
             for (var index = 0; index < frames.Length; index += 1)
             {
-                frames[index] = LoadOptionalSprite(skin.FlapFramePaths[index]);
+                var pivot =
+                    skin.FlapFramePivots == null
+                        ? new Vector2(.5f, .5f)
+                        : skin.FlapFramePivots[index];
+
+                frames[index] = LoadRegisteredFlapFrame(skin.FlapFramePaths[index], pivot);
                 if (frames[index] == null) return false;
             }
 
             flapFrameBirdSprites = frames;
             return true;
+        }
+
+        private Sprite LoadRegisteredFlapFrame(string path, Vector2 pivot)
+        {
+            var source = LoadOptionalSprite(path);
+            if (source == null) return null;
+
+            // Centered art requires no additional sprite. Registration is only
+            // used for an authored sequence whose source canvases were offset.
+            if (Mathf.Approximately(pivot.x, .5f) && Mathf.Approximately(pivot.y, .5f))
+                return source;
+
+            if (registeredFlapSpriteCache.TryGetValue(path, out var registered))
+                return registered;
+
+            if (source.texture == null) return source;
+            registered = Sprite.Create(
+                source.texture,
+                source.rect,
+                new Vector2(Mathf.Clamp01(pivot.x), Mathf.Clamp01(pivot.y)),
+                source.pixelsPerUnit);
+            registered.name = source.name + " registered";
+            registeredFlapSpriteCache[path] = registered;
+            return registered;
         }
 
         private bool UsesFlapFrameSequence()
