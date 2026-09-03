@@ -400,11 +400,13 @@ namespace SkyPulse.Mobile
         private const float ImpactTumbleSeconds = .70f;
         private const float SimulationStep = 1f / 120f;
         private const float MaximumSimulationCatchup = 1f / 12f;
-        // Six authored flight poses over .30 s display at 20 fps, inside the
-        // requested 18–24 fps animation range while transforms stay smooth at render rate.
+        // Physics response after a tap. This does not control the authored wing artwork.
         private const float WingCycleSeconds = .30f;
-        // Visual wing cycle is independent of tap physics and loops continuously.
-        private const float WingAnimationCycleSeconds = .42f;
+
+        // One shared authored wing rhythm.
+        // The menu loops it; gameplay advances it only after player input.
+        private const float SharedWingAnimationSeconds = 1.18f;
+        private const float SharedWingFrameSeconds = SharedWingAnimationSeconds / 10f;
         private const float WingLiftPhase = .31f;
         private const float WingDownstrokeDelay = .075f;
         private const float WingDownstrokeSpan = .90f;
@@ -917,6 +919,11 @@ new WorldTheme(
         private float birdTiltVelocity;
         private float wingTimer;
         private float wingFrameTimer;
+
+        // Shared gameplay wing controller for every authored bird.
+        private int gameplayWingFrameIndex = 5;
+        private bool gameplayWingActive;
+        private bool gameplayWingReturning;
         private float impactFrameTimer;
         private float impactTumbleTimer;
         private float menuWingTimer;
@@ -2115,9 +2122,11 @@ new WorldTheme(
             menuPresentationTime += deltaTime;
             var menuMotion = reduceMotionEnabled ? .35f : 1f;
             menuWingTimer += deltaTime * menuMotion;
-            if (menuWingTimer > 1.18f) menuWingTimer = 0f;
+            if (menuWingTimer > SharedWingAnimationSeconds)
+                menuWingTimer = 0f;
 
-            var wingPhase = menuWingTimer / 1.18f;
+            var wingPhase =
+                menuWingTimer / SharedWingAnimationSeconds;
             GetWingWeights(wingPhase, out var riseStrength, out var flapStrength);
             var usesFlapFrameSequence = UsesFlapFrameSequence();
             if (usesFlapFrameSequence)
@@ -2212,75 +2221,124 @@ new WorldTheme(
             }
         }
 
-      private void UpdateScoreBurst(float deltaTime)
-{
-    if (scoreBurstTimer <= 0f || scoreBurstText == null)
-        return;
+        private void UpdateScoreBurst(float deltaTime)
+        {
+            if (scoreBurstTimer <= 0f || scoreBurstText == null)
+                return;
 
-    scoreBurstTimer -= deltaTime;
+            scoreBurstTimer -= deltaTime;
 
-    if (scoreBurstTimer <= 0f)
-    {
-        scoreBurstText.gameObject.SetActive(false);
-        scoreBurstText.rectTransform.localScale = Vector3.one;
-        return;
-    }
+            if (scoreBurstTimer <= 0f)
+            {
+                scoreBurstText.gameObject.SetActive(false);
+                scoreBurstText.rectTransform.localScale = Vector3.one;
+                return;
+            }
 
-    var duration = Mathf.Max(.01f, scoreBurstDuration);
+            var duration = Mathf.Max(.01f, scoreBurstDuration);
 
-    var t =
-        1f -
-        Mathf.Clamp01(
-            scoreBurstTimer / duration
-        );
+            var t =
+                1f -
+                Mathf.Clamp01(
+                    scoreBurstTimer / duration
+                );
 
-    var riseDistance =
-        scoreBurstIsCrystal
-            ? 58f
-            : 44f;
+            var riseDistance =
+                scoreBurstIsCrystal
+                    ? 58f
+                    : 44f;
 
-    scoreBurstText.rectTransform.anchoredPosition =
-        new Vector2(
-            0f,
-            612f + t * riseDistance
-        );
+            scoreBurstText.rectTransform.anchoredPosition =
+                new Vector2(
+                    0f,
+                    612f + t * riseDistance
+                );
 
-    var color =
-        scoreBurstIsCrystal
-            ? Hex("#ffc34d")
-            : equippedSkin != null
-                ? equippedSkin.Accent
-                : Color.white;
+            var color =
+                scoreBurstIsCrystal
+                    ? Hex("#ffc34d")
+                    : equippedSkin != null
+                        ? equippedSkin.Accent
+                        : Color.white;
 
-    color.a =
-        Mathf.Clamp01(
-            scoreBurstTimer / .13f
-        );
+            color.a =
+                Mathf.Clamp01(
+                    scoreBurstTimer / .13f
+                );
 
-    scoreBurstText.color = color;
+            scoreBurstText.color = color;
 
-    var popStrength =
-        scoreBurstIsCrystal
-            ? .16f
-            : .08f;
+            var popStrength =
+                scoreBurstIsCrystal
+                    ? .16f
+                    : .08f;
 
-    var popPhase =
-        Mathf.Clamp01(t / .55f);
+            var popPhase =
+                Mathf.Clamp01(t / .55f);
 
-    var pop =
-        Mathf.Sin(
-            Mathf.PI * popPhase
-        ) * popStrength;
+            var pop =
+                Mathf.Sin(
+                    Mathf.PI * popPhase
+                ) * popStrength;
 
-    scoreBurstText.rectTransform.localScale =
-        Vector3.one * (1f + pop);
-}
+            scoreBurstText.rectTransform.localScale =
+                Vector3.one * (1f + pop);
+        }
         private void UpdateBird(float deltaTime)
         {
             birdVelocity = Mathf.Max(ActiveMaxFallVelocity(), birdVelocity + ActiveGravity() * deltaTime);
             birdY += birdVelocity * deltaTime;
             wingTimer = Mathf.Min(WingCycleSeconds, wingTimer + deltaTime);
-            wingFrameTimer = Mathf.Repeat(wingFrameTimer + deltaTime, WingAnimationCycleSeconds);
+            // Authored gameplay wings only advance after the player has flapped.
+            if (UsesFlapFrameSequence() && gameplayWingActive)
+            {
+                var wingMotion =
+                    reduceMotionEnabled ? .35f : 1f;
+
+                wingFrameTimer +=
+                    deltaTime * wingMotion;
+
+                while (
+                    wingFrameTimer >= SharedWingFrameSeconds &&
+                    gameplayWingActive)
+                {
+                    wingFrameTimer -=
+                        SharedWingFrameSeconds;
+
+                    var settledFrame =
+                        flapFrameBirdSprites.Length - 1;
+
+                    if (!gameplayWingReturning)
+                    {
+                        // Upstroke: 5 -> 4 -> 3 -> 2 -> 1 -> 0
+                        gameplayWingFrameIndex =
+                            Mathf.Max(
+                                0,
+                                gameplayWingFrameIndex - 1);
+
+                        if (gameplayWingFrameIndex <= 0)
+                            gameplayWingReturning = true;
+                    }
+                    else
+                    {
+                        // Downstroke: 0 -> 1 -> 2 -> 3 -> 4 -> 5
+                        gameplayWingFrameIndex =
+                            Mathf.Min(
+                                settledFrame,
+                                gameplayWingFrameIndex + 1);
+
+                        if (gameplayWingFrameIndex >= settledFrame)
+                        {
+                            gameplayWingFrameIndex =
+                                settledFrame;
+
+                            gameplayWingActive = false;
+                            gameplayWingReturning = false;
+                            wingFrameTimer = 0f;
+                        }
+                    }
+                }
+            }
             bird.position = new Vector3(BirdX, birdY, 0f);
             var flapKick = Mathf.Exp(-wingTimer * 12f);
             // Rise is a compact -18° bank; a full terminal fall reaches +70°.
@@ -2638,57 +2696,57 @@ new WorldTheme(
             pickup.Root.SetActive(false);
         }
 
-       private void ConfigureGateCrystals(PipePair gate)
-{
-    if (gate == null || gate.IsStatic && gate.RouteScore < 0)
-        return;
+        private void ConfigureGateCrystals(PipePair gate)
+        {
+            if (gate == null || gate.IsStatic && gate.RouteScore < 0)
+                return;
 
-    // Crystal gates should feel like intentional mini-routes,
-    // not random loose currency.
-    //
-    // Old system:
-    // 60% chance x average 2 crystals = 1.2 crystals per gate.
-    //
-    // New system:
-    // 40% chance x 3 crystals = 1.2 crystals per gate.
-    //
-    // The economy therefore stays essentially unchanged.
-    if (GateHasPowerUp(gate) || RouteRange(0f, 1f) > .40f)
-        return;
+            // Crystal gates should feel like intentional mini-routes,
+            // not random loose currency.
+            //
+            // Old system:
+            // 60% chance x average 2 crystals = 1.2 crystals per gate.
+            //
+            // New system:
+            // 40% chance x 3 crystals = 1.2 crystals per gate.
+            //
+            // The economy therefore stays essentially unchanged.
+            if (GateHasPowerUp(gate) || RouteRange(0f, 1f) > .40f)
+                return;
 
-    const int count = 3;
+            const int count = 3;
 
-    var safeOffset =
-        Mathf.Max(
-            .30f,
-            gate.GapHeight * .5f - 1.05f
-        );
+            var safeOffset =
+                Mathf.Max(
+                    .30f,
+                    gate.GapHeight * .5f - 1.05f
+                );
 
-    // Keep the crystal arc closer to the safe centre
-    // of the playable gap.
-    var baseOffset =
-        RouteRange(
-            -safeOffset * .35f,
-            safeOffset * .35f
-        );
+            // Keep the crystal arc closer to the safe centre
+            // of the playable gap.
+            var baseOffset =
+                RouteRange(
+                    -safeOffset * .35f,
+                    safeOffset * .35f
+                );
 
-    for (var index = 0; index < count; index += 1)
-    {
-        var pickup = FindInactiveCrystalPickup();
+            for (var index = 0; index < count; index += 1)
+            {
+                var pickup = FindInactiveCrystalPickup();
 
-        if (pickup == null)
-            return;
+                if (pickup == null)
+                    return;
 
-        ConfigureCrystalPickup(
-            pickup,
-            gate,
-            index,
-            count,
-            baseOffset,
-            safeOffset
-        );
-    }
-}
+                ConfigureCrystalPickup(
+                    pickup,
+                    gate,
+                    index,
+                    count,
+                    baseOffset,
+                    safeOffset
+                );
+            }
+        }
         private PowerUpPickup FindInactiveCrystalPickup()
         {
             foreach (var pickup in crystalPickupPool)
@@ -3172,57 +3230,57 @@ new WorldTheme(
             trailCore.SetPositions(trailPoints);
         }
 
-       private void ShowScoreBurst(int scoreReward, bool perfect)
-{
-    if (scoreBurstText == null) return;
+        private void ShowScoreBurst(int scoreReward, bool perfect)
+        {
+            if (scoreBurstText == null) return;
 
-    scoreBurstDuration = .36f;
-    scoreBurstTimer = scoreBurstDuration;
-    scoreBurstIsCrystal = false;
+            scoreBurstDuration = .36f;
+            scoreBurstTimer = scoreBurstDuration;
+            scoreBurstIsCrystal = false;
 
-    scoreBurstText.text = perfect
-        ? scoreReward > 1
-            ? $"PERFECT  ·  +{scoreReward} SCORE"
-            : "PERFECT  ·  +1 SCORE"
-        : scoreReward > 1
-            ? $"+{scoreReward} SCORE"
-            : "+1 SCORE";
+            scoreBurstText.text = perfect
+                ? scoreReward > 1
+                    ? $"PERFECT  ·  +{scoreReward} SCORE"
+                    : "PERFECT  ·  +1 SCORE"
+                : scoreReward > 1
+                    ? $"+{scoreReward} SCORE"
+                    : "+1 SCORE";
 
-    scoreBurstText.color =
-        equippedSkin != null
-            ? equippedSkin.Accent
-            : Color.white;
+            scoreBurstText.color =
+                equippedSkin != null
+                    ? equippedSkin.Accent
+                    : Color.white;
 
-    scoreBurstText.rectTransform.anchoredPosition =
-        new Vector2(0f, 612f);
+            scoreBurstText.rectTransform.anchoredPosition =
+                new Vector2(0f, 612f);
 
-    scoreBurstText.rectTransform.localScale =
-        Vector3.one;
+            scoreBurstText.rectTransform.localScale =
+                Vector3.one;
 
-    scoreBurstText.gameObject.SetActive(true);
-}
-      private void ShowCrystalBurst(int crystalReward, bool cache = false)
-{
-    if (scoreBurstText == null) return;
+            scoreBurstText.gameObject.SetActive(true);
+        }
+        private void ShowCrystalBurst(int crystalReward, bool cache = false)
+        {
+            if (scoreBurstText == null) return;
 
-    scoreBurstDuration = .48f;
-    scoreBurstTimer = scoreBurstDuration;
-    scoreBurstIsCrystal = true;
+            scoreBurstDuration = .48f;
+            scoreBurstTimer = scoreBurstDuration;
+            scoreBurstIsCrystal = true;
 
-    scoreBurstText.text = cache
-        ? $"CRYSTAL CACHE  ·  +{crystalReward} ✦"
-        : $"CRYSTAL  ·  +{crystalReward} ✦";
+            scoreBurstText.text = cache
+                ? $"CRYSTAL CACHE  ·  +{crystalReward} ✦"
+                : $"CRYSTAL  ·  +{crystalReward} ✦";
 
-    scoreBurstText.color = Hex("#ffc34d");
+            scoreBurstText.color = Hex("#ffc34d");
 
-    scoreBurstText.rectTransform.anchoredPosition =
-        new Vector2(0f, 612f);
+            scoreBurstText.rectTransform.anchoredPosition =
+                new Vector2(0f, 612f);
 
-    scoreBurstText.rectTransform.localScale =
-        Vector3.one * 1.06f;
+            scoreBurstText.rectTransform.localScale =
+                Vector3.one * 1.06f;
 
-    scoreBurstText.gameObject.SetActive(true);
-}
+            scoreBurstText.gameObject.SetActive(true);
+        }
         private void TriggerFlightFeedback(Color colour, float duration)
         {
             if (flightFeedbackRenderer == null || bird == null) return;
@@ -3342,6 +3400,11 @@ new WorldTheme(
             birdTiltVelocity = 0f;
             wingTimer = WingCycleSeconds;
             wingFrameTimer = 0f;
+            gameplayWingFrameIndex =
+            UsesFlapFrameSequence()
+            ? flapFrameBirdSprites.Length - 1 : 0;
+            gameplayWingActive = false;
+            gameplayWingReturning = false;
             impactFrameTimer = 0f;
             impactTumbleTimer = 0f;
             slowFieldTimer = 0f;
@@ -3961,16 +4024,51 @@ new WorldTheme(
 
         private void Flap()
         {
-            birdVelocity = Mathf.Max(ActiveFlapVelocity(), birdVelocity * .18f);
+            // Every accepted tap immediately affects flight physics.
+            birdVelocity =
+                Mathf.Max(
+                    ActiveFlapVelocity(),
+                    birdVelocity * .18f);
+
             wingTimer = 0f;
-            // Visual wing motion runs continuously; taps never restart or freeze it.
+
+            if (UsesFlapFrameSequence())
+            {
+                var settledFrame =
+                    flapFrameBirdSprites.Length - 1;
+
+                if (!gameplayWingActive)
+                {
+                    // Start one natural flap from the settled pose.
+                    gameplayWingFrameIndex =
+                        settledFrame;
+
+                    wingFrameTimer = 0f;
+                    gameplayWingActive = true;
+                    gameplayWingReturning = false;
+                }
+                else if (gameplayWingReturning)
+                {
+                    // Another tap during the downstroke reverses the
+                    // wings naturally from their CURRENT position.
+                    // Never snap back to the first frame.
+                    gameplayWingReturning = false;
+                    wingFrameTimer = 0f;
+                }
+
+                // If the wings are already moving upward, keep that
+                // smooth upstroke going. The bird still receives lift.
+            }
+
             Play(flapSound);
         }
-
         private void EndFlight()
         {
             if (state != FlightState.Playing) return;
             state = FlightState.Impact;
+            gameplayWingActive = false;
+            gameplayWingReturning = false;
+            wingFrameTimer = 0f;
             if (birdThrustGlowRenderer != null)
                 birdThrustGlowRenderer.enabled = false;
             if (birdThrustCoreRenderer != null)
@@ -3985,11 +4083,11 @@ new WorldTheme(
             birdVelocity = Mathf.Min(birdVelocity, -2.4f);
             birdTiltVelocity = 0f;
 
-           // Kill the long flight ribbon immediately so it does not freeze
-          // awkwardly in mid-air during the crash animation.
-          if (trailSafety != null) trailSafety.positionCount = 0;
-          if (trailGlow != null) trailGlow.positionCount = 0;
-          if (trailCore != null) trailCore.positionCount = 0;
+            // Kill the long flight ribbon immediately so it does not freeze
+            // awkwardly in mid-air during the crash animation.
+            if (trailSafety != null) trailSafety.positionCount = 0;
+            if (trailGlow != null) trailGlow.positionCount = 0;
+            if (trailCore != null) trailCore.positionCount = 0;
             TriggerFlightFeedback(Hex("#f05bc6"), .36f);
             PulseHaptic(.28f);
             Play(crashSound);
@@ -4015,7 +4113,7 @@ new WorldTheme(
             var fallStrength = Mathf.Clamp01(
            -birdVelocity / Mathf.Abs(ActiveMaxFallVelocity()));
 
-           var tumbleSpeed = Mathf.Lerp(220f,360f,fallStrength);
+            var tumbleSpeed = Mathf.Lerp(220f, 360f, fallStrength);
 
             birdTilt += tumbleSpeed * deltaTime;
             bird.rotation = Quaternion.Euler(0f, 0f, birdTilt);
@@ -5087,41 +5185,167 @@ new WorldTheme(
 
         private void UpdateBirdWingMotion()
         {
-            if (birdRenderer == null || birdFlapRenderer == null) return;
-            var flapProgress = Mathf.Repeat(wingFrameTimer, WingAnimationCycleSeconds) / WingAnimationCycleSeconds;
-            var impulseProgress = Mathf.Clamp01(wingTimer / WingCycleSeconds);
-            var flapKick = 1f - impulseProgress * impulseProgress * (3f - 2f * impulseProgress);
-            GetWingWeights(flapProgress, out var riseWeight, out var wingWave);
-            var usesFlapFrameSequence = UsesFlapFrameSequence();
+            if (birdRenderer == null || birdFlapRenderer == null)
+                return;
+
+            var usesFlapFrameSequence =
+                UsesFlapFrameSequence();
+
             if (usesFlapFrameSequence)
             {
-                // One authored drawing at a time: no crossfade means no ghosted
-                // double-body. The six supplied poses play in their intended order
-                // on every tap, while the transform below retains 60 fps flight feel.
-                activeFlapFrameIndex = SelectFlapFrameIndex(flapProgress);
-                var pose = flapFrameBirdSprites[activeFlapFrameIndex];
-                if (pose != null && birdRenderer.sprite != pose) birdRenderer.sprite = pose;
-                birdRenderer.enabled = pose != null;
-                birdRenderer.color = Color.white;
-                birdFlapRenderer.enabled = false;
-                if (birdRiseRenderer != null) birdRiseRenderer.enabled = false;
-                if (birdParallaxRenderer != null) birdParallaxRenderer.enabled = false;
-            }
-            else
-            {
-                var flapColour = Color.white;
-                flapColour.a = (.10f + wingWave * .82f) * flapKick * (1f - riseWeight * .84f);
-                birdFlapRenderer.enabled = flapBirdSprite != null;
-                birdFlapRenderer.color = flapColour;
-                birdRenderer.color = new Color(1f, 1f, 1f, 1f - Mathf.Max(riseWeight * .78f, wingWave * .50f));
-                if (birdRiseRenderer != null)
+                var settledFrame =
+                    flapFrameBirdSprites.Length - 1;
+
+                // No active flap means the bird stays on its
+                // final authored settled/glide frame.
+                if (!gameplayWingActive)
+                    gameplayWingFrameIndex = settledFrame;
+
+                activeFlapFrameIndex =
+                    Mathf.Clamp(
+                        gameplayWingFrameIndex,
+                        0,
+                        settledFrame);
+
+                var pose =
+                    flapFrameBirdSprites[
+                        activeFlapFrameIndex];
+
+                if (
+                    pose != null &&
+                    birdRenderer.sprite != pose)
                 {
-                    var showRise = birdRiseRenderer.enabled && birdRiseRenderer.sprite != null;
-                    birdRiseRenderer.color = new Color(1f, 1f, 1f, showRise ? riseWeight * .94f : 0f);
-                    birdRiseArt.localScale = Vector3.Scale(riseBirdBaseScale, new Vector3(1f + riseWeight * .065f, 1f - riseWeight * .025f, 1f));
-                    birdRiseArt.localPosition = new Vector3(-riseWeight * .060f, riseWeight * .065f, 0f);
-                    birdRiseArt.localRotation = Quaternion.Euler(0f, 0f, riseWeight * 4.7f);
+                    birdRenderer.sprite = pose;
                 }
+
+                birdRenderer.enabled =
+                    pose != null;
+
+                birdRenderer.color =
+                    Color.white;
+
+                // Each authored PNG already contains the complete bird.
+                // Never display two complete bird drawings together.
+                birdFlapRenderer.enabled = false;
+
+                if (birdRiseRenderer != null)
+                    birdRiseRenderer.enabled = false;
+
+                if (birdParallaxRenderer != null)
+                    birdParallaxRenderer.enabled = false;
+
+                // Keep every authored wing frame on one stable artwork
+                // transform. The parent bird object still handles the
+                // smooth rise, fall and banking during gameplay.
+                bird.localScale =
+                    Vector3.one;
+
+                birdArt.localScale =
+                    authoredBirdBaseScale;
+
+                birdArt.localPosition =
+                    Vector3.zero;
+
+                birdArt.localRotation =
+                    Quaternion.identity;
+
+                var authoredGlide =
+                    Mathf.Clamp(
+                        birdVelocity /
+                        Mathf.Abs(
+                            ActiveMaxFallVelocity()),
+                        -1f,
+                        1f);
+
+                UpdateBirdLifeDepth(
+                    0f,
+                    0f,
+                    authoredGlide);
+
+                UpdateBirdPowerUpVisuals();
+
+                return;
+            }
+
+            // Fallback behaviour for any future bird that does
+            // not provide the six authored flight frames.
+            var flapProgress =
+                Mathf.Clamp01(
+                    wingTimer / WingCycleSeconds);
+
+            var impulseProgress =
+                Mathf.Clamp01(
+                    wingTimer / WingCycleSeconds);
+
+            var flapKick =
+                1f -
+                impulseProgress *
+                impulseProgress *
+                (3f - 2f * impulseProgress);
+
+            GetWingWeights(
+                flapProgress,
+                out var riseWeight,
+                out var wingWave);
+
+            var flapColour =
+                Color.white;
+
+            flapColour.a =
+                (.10f + wingWave * .82f) *
+                flapKick *
+                (1f - riseWeight * .84f);
+
+            birdFlapRenderer.enabled =
+                flapBirdSprite != null;
+
+            birdFlapRenderer.color =
+                flapColour;
+
+            birdRenderer.color =
+                new Color(
+                    1f,
+                    1f,
+                    1f,
+                    1f -
+                    Mathf.Max(
+                        riseWeight * .78f,
+                        wingWave * .50f));
+
+            if (birdRiseRenderer != null)
+            {
+                var showRise =
+                    birdRiseRenderer.enabled &&
+                    birdRiseRenderer.sprite != null;
+
+                birdRiseRenderer.color =
+                    new Color(
+                        1f,
+                        1f,
+                        1f,
+                        showRise
+                            ? riseWeight * .94f
+                            : 0f);
+
+                birdRiseArt.localScale =
+                    Vector3.Scale(
+                        riseBirdBaseScale,
+                        new Vector3(
+                            1f + riseWeight * .065f,
+                            1f - riseWeight * .025f,
+                            1f));
+
+                birdRiseArt.localPosition =
+                    new Vector3(
+                        -riseWeight * .060f,
+                        riseWeight * .065f,
+                        0f);
+
+                birdRiseArt.localRotation =
+                    Quaternion.Euler(
+                        0f,
+                        0f,
+                        riseWeight * 4.7f);
             }
             var lifeMotion = reduceMotionEnabled ? .38f : 1f;
             var authoredFlight = usesFlapFrameSequence;
