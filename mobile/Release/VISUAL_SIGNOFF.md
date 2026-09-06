@@ -1,6 +1,6 @@
 # Visual verification scope — 6 September 2026
 
-Candidate: 1.0.0 (2), gameplay/icon hashes in BETA_VERIFICATION.json. The latest source is installed in the Xcode iOS Simulator. This is evidence of the listed checks, not a guarantee of universal player satisfaction.
+Candidate: 1.0.0 (3), gameplay/icon hashes in BETA_VERIFICATION.json. The latest source is installed in the Xcode iOS Simulator. This is evidence of the listed checks, not a guarantee of universal player satisfaction.
 
 | Area | Evidence / result |
 | --- | --- |

@@ -10,8 +10,8 @@ Status: final candidate installed for tonight's Simulator visual testing. Both f
 - Final opaque 1024×1024 icon has two dimensional wings over a blue-violet cosmic sky. Inspected 256/180/120/60px previews and verified the installed Simulator Home Screen icon.
 - Replaced missing font glyphs with crystal artwork in menu, HUD and hangar balances; all three verified in the final iOS Simulator build.
 - Final automated regression PASS: 1,300 generated gates, milestone transitions, pause/resume, rewards/persistence, purchase guards and synthetic touch-scroll routing. All 90 registered flight frames verified. Earlier visual coverage includes 216 effects renders and 48 menu/unlock renders.
-- Final iPhone Release compile PASS (unsigned): `Builds/iOS-device-final-2/Unity-iPhone.xcodeproj`.
-- Final Simulator Release compile PASS and installed: `Builds/iOS-simulator-final-2/Unity-iPhone.xcodeproj`.
+- Final iPhone Release compile PASS (unsigned): `Builds/iOS-device-pacing-3/Unity-iPhone.xcodeproj`.
+- Final Simulator Release compile PASS and installed: `Builds/iOS-simulator-pacing-3/Unity-iPhone.xcodeproj`.
 - Live Simulator checks include home, privacy, hangar, insufficient-balance modal, flight/HUD, result, retry, pause and Reduced Motion toggle. Existing progress was preserved when replacing the installed app.
 - Source-plist layout fixed permanently in the export postprocessor. macOS protections and Unity compiler signature remained unchanged. Earlier usage-limit build rejection has cleared; the final builds now pass.
 
@@ -26,3 +26,5 @@ Status: final candidate installed for tonight's Simulator visual testing. Both f
 Follow `TOMORROW_PLAN.md`. Machine-readable evidence and source/icon hashes: `BETA_VERIFICATION.json`. Test instructions: `../Tools/VISUAL_SMOKE.md` and `../Tools/EFFECTS_QA.md`. Local logs/images: `../../artifacts/effects-qa/`.
 
 Export using SkyPulse > Release > Export Xcode Project for devices, or Export Xcode Simulator Project for Simulator. Each export requires an empty folder. The output is an Xcode source project, not an installable App Store package.
+
+Build 3 tuning update: vertical openings are one percentage point of camera height narrower after the first three learning gates (about 3–4% relative narrowing). Gate speed rises from .44 to .45 at score 40, settles at .46 by 44, rises to .47 at 60 and settles at the existing .48 ceiling by 64. Horizontal spacing and bird handling are unchanged. The updated 1,300-gate regression passed; the new Simulator app was installed and its main menu inspected on iPhone 17.

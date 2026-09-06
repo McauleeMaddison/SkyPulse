@@ -1,16 +1,15 @@
 {
   "date": "2026-09-06",
-  "sourceCommit": "421a4b0",
   "version": "1.0.0",
-  "build": "2",
+  "build": "3",
   "unity": "6000.6.0f1",
   "xcode": "26.6",
   "iosSdk": "26.5",
-  "gameplaySourceSha256": "bb9e570fba14c41796e7e915058e8bd8b67639141a7b567f1ca223cc076b5605",
+  "gameplaySourceSha256": "ccd2cbd077d3670edab0d1aad82d895effa5862d196844be85b89e45efd77aca",
   "iconSha256": "6cbc6acd07a0f1de1b07ff757e010abdf9c1b5d1befe8a61e3c6d4b6d22b0887",
   "iphoneReleaseCompilation": "PASS (unsigned)",
   "simulatorReleaseCompilation": "PASS",
-  "simulatorInstallation": "PASS",
+  "simulatorInstallation": "PASS \u2014 iPhone 17 Simulator, build 3",
   "finalIconHomeScreen": "PASS",
   "crystalCountersMenuHudHangar": "PASS",
   "regressionSmoke": "PASS",
@@ -18,9 +17,16 @@
   "registeredBirdFlightFrames": 90,
   "earlierEffectsRenders": 216,
   "earlierMenuUnlockRenders": 48,
-  "nativeDragGesture": "PASS \u2014 user reports mouse scrolling works in Bird Hangar and Tech Tree in iOS Simulator",
+  "nativeDragGesture": "User confirmed in build 2; build 3 does not change input routing",
   "physicalDevicePerformance": "Not tested; user selected Simulator",
   "signedArchive": "Not produced",
   "appStoreConnectUpload": "Not performed",
-  "userPlaytest": "User reports latest gameplay, behaviour and features are good"
+  "userPlaytest": "Build 2 user feedback positive; build 3 narrower gaps and score 40/60 speed increases ready for feedback",
+  "sourceIdentity": "Tested gameplay and icon are identified by the SHA-256 values below",
+  "pacingMilestones": {
+    "40": "speed .45 rising to .46 at 44",
+    "60": "speed .47 rising to .48 at 64",
+    "gapFloor": 0.24,
+    "learningGateGap": 0.34
+  }
 }

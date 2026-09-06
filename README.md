@@ -19,13 +19,15 @@ The game has one fair endless route. Birds are cosmetic and permanent upgrades a
 | Score range | World | Gate behaviour | Opening / speed |
 | --- | --- | --- | --- |
 | 0–2 | Neon City tutorial | Three generous gates near the centre | 34% of height / 32% of width per second |
-| 3–8 | Neon City | Static gates with gradually larger height changes | 33.5% → 31.2% / 33% → 36.5% |
-| 9–14 | Neon City | Tighter openings and a modest pace increase each gate | 30.8% → 29.2% / 37.2% → 39.5% |
-| 15–24 | Acid Foundry | Static arrival, then drift grows over four gates | 29% / 40% |
-| 25–29 | Acid Foundry | Established drift; gradual approach to the next world | 28.7% → 27.5% / 40.8% → 42.4% |
-| 30–39 | Orbital Bazaar | Bounded high/low openings; speed settles over five gates | 27% / 43% → 44% |
-| 40–44 | Orbital Bazaar | Smooth approach to remix openings | 26.7% → 25.5% / 44% |
-| 45+ | Remix loop | Existing patterns combine; no new controls | minimum 25% / capped at 48% |
+| 3–8 | Neon City | Static gates with gradually larger height changes | 32.5% → 30.2% / 33% → 36.5% |
+| 9–14 | Neon City | Tighter openings and a modest pace increase each gate | 29.8% → 28.2% / 37.2% → 39.5% |
+| 15–24 | Acid Foundry | Static arrival, then drift grows over four gates | 28% / 40% |
+| 25–29 | Acid Foundry | Established drift; gradual approach to the next world | 27.7% → 26.5% / 40.8% → 42.4% |
+| 30–39 | Orbital Bazaar | Bounded high/low openings; speed settles over five gates | 26% / 43% → 44% |
+| 40–44 | Orbital Bazaar | Smooth approach to remix openings | 25.7% → 24.5% / 45% → 46% |
+| 45–59 | Remix loop | Existing patterns combine; pace holds | 24% / 46% |
+| 60–64 | Remix loop | A second modest speed increase settles over five gates | 24% / 47% → 48% |
+| 65+ | Remix loop | Bounded difficulty ceiling | 24% / 48% |
 
 Gap sizes follow each gate’s route index, including gates spawned ahead of the current score. Speed follows the current score. Gravity, flap impulse, hitbox, and gate spacing stay constant.
 

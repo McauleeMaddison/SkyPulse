@@ -2665,9 +2665,12 @@ new WorldTheme(
             if (routeScore < 25) return .40f;
             if (routeScore < 30) return Mathf.Lerp(.408f, .424f, (routeScore - 25) / 4f);
             if (routeScore < 35) return Mathf.Lerp(.43f, .44f, (routeScore - 30) / 4f);
-            if (routeScore < 45) return .44f;
-            var remixStep = 1 + Mathf.FloorToInt((routeScore - 45) / 15f);
-            return Mathf.Min(.48f, .44f + remixStep * .01f);
+            if (routeScore < 40) return .44f;
+            // Modest increases at 40 and 60, settling over four more gates.
+            if (routeScore < 45) return Mathf.Lerp(.45f, .46f, (routeScore - 40) / 4f);
+            if (routeScore < 60) return .46f;
+            if (routeScore < 65) return Mathf.Lerp(.47f, .48f, (routeScore - 60) / 4f);
+            return .48f;
         }
 
         private float RoutePipeSpacing()
@@ -4203,14 +4206,15 @@ if (surface.RailRight != null && surface.RailRight.enabled)
 }
         private static float RouteGapFraction(int routeScore)
         {
+            // Preserve the three learning gates; require more precision thereafter.
             if (routeScore < 3) return .34f;
-            if (routeScore < 9) return Mathf.Lerp(.335f, .312f, (routeScore - 3) / 5f);
-            if (routeScore < 15) return Mathf.Lerp(.308f, .292f, (routeScore - 9) / 5f);
-            if (routeScore < 25) return .29f;
-            if (routeScore < 30) return Mathf.Lerp(.287f, .275f, (routeScore - 25) / 4f);
-            if (routeScore < 40) return .27f;
-            if (routeScore < 45) return Mathf.Lerp(.267f, .255f, (routeScore - 40) / 4f);
-            return .25f;
+            if (routeScore < 9) return Mathf.Lerp(.325f, .302f, (routeScore - 3) / 5f);
+            if (routeScore < 15) return Mathf.Lerp(.298f, .282f, (routeScore - 9) / 5f);
+            if (routeScore < 25) return .28f;
+            if (routeScore < 30) return Mathf.Lerp(.277f, .265f, (routeScore - 25) / 4f);
+            if (routeScore < 40) return .26f;
+            if (routeScore < 45) return Mathf.Lerp(.257f, .245f, (routeScore - 40) / 4f);
+            return .24f;
         }
 
         private static float RouteMaximumCenterStep(int routeScore)

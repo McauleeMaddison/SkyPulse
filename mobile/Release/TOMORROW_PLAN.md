@@ -4,7 +4,7 @@ Target: a signed beta uploaded to App Store Connect and available to the chosen 
 
 ## Tonight: record visual feedback on the installed build
 
-Use SkyPulse 1.0.0 (2) in the open Xcode iOS Simulator. The final icon has two wings and a blue-violet cosmic background. Existing scores and crystals were preserved during installation.
+Use SkyPulse 1.0.0 (3) in the open Xcode iOS Simulator. The final icon has two wings and a blue-violet cosmic background. Existing scores and crystals were preserved during installation.
 
 - Swipe the Bird Hangar and Tech lists up/down, reach the final entries, and confirm dragging never opens a card or starts a run. Automated Unity event checks pass, and the user has now confirmed manual Simulator mouse scrolling in both collections.
 - Check home, privacy, purchase/cancel, pause, result and retry. Look for clipping, tiny text, misplaced controls and background flashes.
@@ -20,7 +20,7 @@ Use SkyPulse 1.0.0 (2) in the open Xcode iOS Simulator. The final icon has two w
 
 3. **Publish support and privacy information.** Supply the public support email and approved website/domain. Finish `PRIVACY_POLICY_DRAFT.md`, host the support/privacy pages, and add the public policy link to the in-game privacy screen. Verify both URLs. Answer App Privacy from the native implementation and included SDKs; review the generated privacy report. Apple requires accessible policy links in-app and in metadata, and contact information through support. [App Review guidelines](https://developer.apple.com/app-store/review/guidelines/).
 
-4. **Prepare the signed iPhone build.** Use `Builds/iOS-device-final-2/Unity-iPhone.xcodeproj` only if source/icon hashes still match `BETA_VERIFICATION.json`; otherwise export to a new empty folder. Choose the correct signing team and a generic iOS device destination, archive in Release, and validate in Xcode Organizer. A Simulator app cannot be uploaded. Increase the build number if App Store Connect has already received build 2. Check the final icon, bundle ID, portrait orientation, encryption declaration and privacy manifests. Preserve symbols for crash reports.
+4. **Prepare the signed iPhone build.** Use `Builds/iOS-device-pacing-3/Unity-iPhone.xcodeproj` only if source/icon hashes still match `BETA_VERIFICATION.json`; otherwise export to a new empty folder. Choose the correct signing team and a generic iOS device destination, archive in Release, and validate in Xcode Organizer. A Simulator app cannot be uploaded. Increase the build number if App Store Connect has already received build 3. Check the final icon, bundle ID, portrait orientation, encryption declaration and privacy manifests. Preserve symbols for crash reports.
 
 5. **Upload and configure TestFlight.** Upload the validated archive. After processing, complete export compliance and beta information: description, feedback email, review contact and what to test (adapt `BETA_TEST_NOTES.md`). Add the chosen tester group. Internal testers require App Store Connect access; an external beta can require Beta App Review. Apple controls processing/review times, so availability tomorrow cannot be guaranteed. [TestFlight overview](https://developer.apple.com/help/app-store-connect/test-a-beta-version/testflight-overview), [external testing](https://developer.apple.com/help/app-store-connect/test-a-beta-version/invite-external-testers).
 
@@ -34,6 +34,6 @@ After beta feedback is resolved, finish the public product page (use APP_STORE_C
 
 Both final unsigned iPhone Release and Simulator Release builds compiled. The Simulator installation, final icon, three crystal counters, launch, retry, pause and Reduced Motion control were visually checked. The final automated regression passed, including 1,300 generated gates and 90 registered flight frames. See `BETA_VERIFICATION.json` for precise scope. No signed archive, App Store Connect upload, public support/privacy publication or physical-device performance certification has been completed.
 
-Xcode is now open on the final Simulator export with Mac's 17 Pro Max selected. The older Desktop/SkyPulse_iOS_Simulator project is stale and must not be used to reinstall the candidate.
+For build 3, open mobile/Builds/iOS-simulator-pacing-3/Unity-iPhone.xcodeproj and select iPhone 17 (the currently tested Simulator). Do not run an older export, which would reinstall earlier tuning. The older Desktop/SkyPulse_iOS_Simulator project is stale and must not be used to reinstall the candidate.
 
 Latest user feedback: gameplay, behaviour and features tested well; manual mouse scrolling in Bird Hangar and Tech Tree works. The earlier native-scroll question is closed for this Simulator pass.
