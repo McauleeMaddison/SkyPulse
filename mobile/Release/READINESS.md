@@ -17,7 +17,7 @@ Status: final candidate installed for tonight's Simulator visual testing. Both f
 
 ## Still needed before distribution
 
-- Manual native swipe verification: the automation's drag arrives as a tap. Synthetic Unity drag tests pass; this does not prove native dragging works. Include this in tonight's visual testing.
+- User playtest confirmed Bird Hangar and Tech Tree mouse scrolling in iOS Simulator works and reported the latest gameplay, behaviour and features as good. Automated gesture delivery remains a tool limitation, not an outstanding reported game defect.
 - Resolve tonight's visual/gameplay feedback and any confirmed defects, then freeze a candidate. Neither automation nor screenshots guarantee perfect balance or player appeal.
 - Confirm Apple membership/team, App Store Connect record and signing. Produce and validate a signed archive, upload and configure TestFlight.
 - Supply public support contact and host the native privacy/support pages; add the public policy link in-app. Complete required beta metadata, compliance and review contact.

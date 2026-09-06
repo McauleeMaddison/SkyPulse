@@ -6,7 +6,7 @@ Target: a signed beta uploaded to App Store Connect and available to the chosen 
 
 Use SkyPulse 1.0.0 (2) in the open Xcode iOS Simulator. The final icon has two wings and a blue-violet cosmic background. Existing scores and crystals were preserved during installation.
 
-- Swipe the Bird Hangar and Tech lists up/down, reach the final entries, and confirm dragging never opens a card or starts a run. Automated Unity event checks pass, but Simulator drag injection behaves like a tap; manual verification is still needed.
+- Swipe the Bird Hangar and Tech lists up/down, reach the final entries, and confirm dragging never opens a card or starts a run. Automated Unity event checks pass, and the user has now confirmed manual Simulator mouse scrolling in both collections.
 - Check home, privacy, purchase/cancel, pause, result and retry. Look for clipping, tiny text, misplaced controls and background flashes.
 - Play through gates 1–15 and into later worlds. Note the score and action for any unfair gate, sudden jump in difficulty, missed flap, visible trail or square effect.
 - Watch crystal/perfect-pass feedback and all three power-ups, including expiry. Test Reduced Motion as well.
@@ -14,7 +14,7 @@ Use SkyPulse 1.0.0 (2) in the open Xcode iOS Simulator. The final icon has two w
 
 ## Tomorrow, in order
 
-1. **Fix tonight's confirmed issues and freeze the candidate.** Reproduce each report; resolve the native swipe question first. Repeat only the affected checks plus a short launch/flight/pause/retry regression. Include a small iPhone Simulator viewport. Keep controls consistent while adjusting course difficulty only where testing justifies it.
+1. **Fix tonight's confirmed issues and freeze the candidate.** Reproduce each report; retain the now-confirmed scrolling behaviour. Repeat only the affected checks plus a short launch/flight/pause/retry regression. Include a small iPhone Simulator viewport. Keep controls consistent while adjusting course difficulty only where testing justifies it.
 
 2. **Complete owner/account details.** Confirm paid Apple Developer membership, the correct team and App Store Connect access. Create or verify the SkyPulse record for `com.mcauleemaddison.skypulse`. You must personally complete login/2FA, paid enrollment or any binding agreements if required. Confirm the beta audience (internal team or external testers). [Apple distribution requirements](https://developer.apple.com/documentation/xcode/distributing-your-app-for-beta-testing-and-releases).
 
@@ -28,8 +28,12 @@ Use SkyPulse 1.0.0 (2) in the open Xcode iOS Simulator. The final icon has two w
 
 ## Public App Store release, if that is also wanted
 
-After beta feedback is resolved, finish the public product page (description, subtitle, categories, age rating, pricing/availability, copyright, support/privacy URLs and accurate screenshots from the final game), supply review details, select the approved candidate and submit for App Review. Uploading to TestFlight alone does not publish the public listing. Release timing depends on Apple's review and your release choice.
+After beta feedback is resolved, finish the public product page (use APP_STORE_COPY.md for the drafted description, subtitle and review notes; confirm categories, age rating, pricing/availability, copyright, support/privacy URLs and accurate screenshots from the final game), supply review details, select the approved candidate and submit for App Review. Uploading to TestFlight alone does not publish the public listing. Release timing depends on Apple's review and your release choice.
 
 ## Current handoff
 
 Both final unsigned iPhone Release and Simulator Release builds compiled. The Simulator installation, final icon, three crystal counters, launch, retry, pause and Reduced Motion control were visually checked. The final automated regression passed, including 1,300 generated gates and 90 registered flight frames. See `BETA_VERIFICATION.json` for precise scope. No signed archive, App Store Connect upload, public support/privacy publication or physical-device performance certification has been completed.
+
+Xcode is now open on the final Simulator export with Mac's 17 Pro Max selected. The older Desktop/SkyPulse_iOS_Simulator project is stale and must not be used to reinstall the candidate.
+
+Latest user feedback: gameplay, behaviour and features tested well; manual mouse scrolling in Bird Hangar and Tech Tree works. The earlier native-scroll question is closed for this Simulator pass.

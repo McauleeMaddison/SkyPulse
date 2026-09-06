@@ -59,3 +59,5 @@ The earlier iPhone and Simulator native builds passed after correcting the sourc
 See ../Release/READINESS.md and SECURITY_REVIEW.md in that directory.
 
 Final pass: the final source passed SKYPULSE_BETA_CHECKS_PASS and SKYPULSE_VISUAL_SMOKE_PASS in an isolated QA project. Both final native Release builds compiled and the final Simulator build was installed. Native manual dragging remains to be confirmed because computer-use drag injection behaved as a tap. See ../Release/BETA_VERIFICATION.json for precise scope.
+
+Subsequent user verification: mouse scrolling works in both Bird Hangar and Tech Tree in the iOS Simulator; latest gameplay, behaviour and features were reported as good.

@@ -18,8 +18,9 @@
   "registeredBirdFlightFrames": 90,
   "earlierEffectsRenders": 216,
   "earlierMenuUnlockRenders": 48,
-  "nativeDragGesture": "Needs manual verification; automation arrives as tap",
+  "nativeDragGesture": "PASS \u2014 user reports mouse scrolling works in Bird Hangar and Tech Tree in iOS Simulator",
   "physicalDevicePerformance": "Not tested; user selected Simulator",
   "signedArchive": "Not produced",
-  "appStoreConnectUpload": "Not performed"
+  "appStoreConnectUpload": "Not performed",
+  "userPlaytest": "User reports latest gameplay, behaviour and features are good"
 }
