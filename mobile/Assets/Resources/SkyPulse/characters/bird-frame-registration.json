@@ -1,0 +1,814 @@
+{
+  "frames": [
+    {
+      "path": "SkyPulse/characters/roster/volt-frame-01-v1",
+      "pivotX": 0.526484,
+      "pivotY": 0.364062,
+      "scale": 0.92,
+      "sourceWidth": 512,
+      "sourceHeight": 384,
+      "sourceSha256": "1f3d4ce98929e3b7e0570141c63b83d30007a921e7a40ad6ccbdbc264185afca"
+    },
+    {
+      "path": "SkyPulse/characters/roster/volt-frame-02-v1",
+      "pivotX": 0.461523,
+      "pivotY": 0.377279,
+      "scale": 0.975,
+      "sourceWidth": 512,
+      "sourceHeight": 384,
+      "sourceSha256": "f95a5e1ca25280161a7728189670d0d78e63331662db3f7877e458b57c83c232"
+    },
+    {
+      "path": "SkyPulse/characters/roster/volt-frame-03-v1",
+      "pivotX": 0.524727,
+      "pivotY": 0.531706,
+      "scale": 0.995,
+      "sourceWidth": 512,
+      "sourceHeight": 384,
+      "sourceSha256": "50fc40a913b5449cbcc8c60640f2d891268f7ee427b2801e36edf7bf18c7f54f"
+    },
+    {
+      "path": "SkyPulse/characters/roster/volt-frame-04-v1",
+      "pivotX": 0.5,
+      "pivotY": 0.5,
+      "scale": 1.0,
+      "sourceWidth": 512,
+      "sourceHeight": 384,
+      "sourceSha256": "7ec34f0b427554f628250a54ea53de7c72a1583dbff29e2ca546eab2840c9daf"
+    },
+    {
+      "path": "SkyPulse/characters/roster/volt-frame-05-v1",
+      "pivotX": 0.526641,
+      "pivotY": 0.616406,
+      "scale": 0.98,
+      "sourceWidth": 512,
+      "sourceHeight": 384,
+      "sourceSha256": "a2a090ff515fc7c260f264dd478990c29ef1836e8ec37d818a07eedf862013db"
+    },
+    {
+      "path": "SkyPulse/characters/roster/volt-frame-06-v1",
+      "pivotX": 0.517461,
+      "pivotY": 0.631706,
+      "scale": 0.955,
+      "sourceWidth": 512,
+      "sourceHeight": 384,
+      "sourceSha256": "0fd4fe10f62452a00b350b501910c67b3def85078570aef4ba89fe82329d2d93"
+    },
+    {
+      "path": "SkyPulse/characters/roster/steel-frame-01-v1",
+      "pivotX": 0.592695,
+      "pivotY": 0.347708,
+      "scale": 0.98,
+      "sourceWidth": 512,
+      "sourceHeight": 384,
+      "sourceSha256": "1fab3d7a25f0231499d0ee7b14bfbfa88be08c306fdfa0134b12760e351dadf4"
+    },
+    {
+      "path": "SkyPulse/characters/roster/steel-frame-02-v1",
+      "pivotX": 0.478359,
+      "pivotY": 0.354271,
+      "scale": 0.96,
+      "sourceWidth": 512,
+      "sourceHeight": 384,
+      "sourceSha256": "0d80630c26ac68b5a4e36beaa863e4f947f6832156a4338492a1160774fbe6cb"
+    },
+    {
+      "path": "SkyPulse/characters/roster/steel-frame-03-v1",
+      "pivotX": 0.585488,
+      "pivotY": 0.483698,
+      "scale": 1.01,
+      "sourceWidth": 512,
+      "sourceHeight": 384,
+      "sourceSha256": "9a73e2bf7974bf0df25d381498bac1402fff26639effa7c81a58b8bbdc616cc6"
+    },
+    {
+      "path": "SkyPulse/characters/roster/steel-frame-04-v1",
+      "pivotX": 0.5,
+      "pivotY": 0.5,
+      "scale": 1.0,
+      "sourceWidth": 512,
+      "sourceHeight": 384,
+      "sourceSha256": "d5cce46857916f5fcbb5067491a0b27337b68b92d1e4d552d1880628f5484d28"
+    },
+    {
+      "path": "SkyPulse/characters/roster/steel-frame-05-v1",
+      "pivotX": 0.581875,
+      "pivotY": 0.812604,
+      "scale": 0.96,
+      "sourceWidth": 512,
+      "sourceHeight": 384,
+      "sourceSha256": "7ca65c0c4ca9ddbc7eb5d8edc49462ba65796689b8f5861e38a5068b0909908b"
+    },
+    {
+      "path": "SkyPulse/characters/roster/steel-frame-06-v1",
+      "pivotX": 0.511865,
+      "pivotY": 0.835026,
+      "scale": 0.975,
+      "sourceWidth": 512,
+      "sourceHeight": 384,
+      "sourceSha256": "1363d2abd5cf95c2213667b4a9f6e1f1a981e78314f160ebcbf251ebe4782ef1"
+    },
+    {
+      "path": "SkyPulse/characters/roster/prism-frame-01-v1",
+      "pivotX": 0.503418,
+      "pivotY": 0.331445,
+      "scale": 0.995,
+      "sourceWidth": 512,
+      "sourceHeight": 384,
+      "sourceSha256": "1f678cfd6be03e526d389816bb1d0d57d9789a4c443b20529a9c1f3177515762"
+    },
+    {
+      "path": "SkyPulse/characters/roster/prism-frame-02-v1",
+      "pivotX": 0.492188,
+      "pivotY": 0.33125,
+      "scale": 0.96,
+      "sourceWidth": 512,
+      "sourceHeight": 384,
+      "sourceSha256": "d493903cbf1c325b999a26788928968a2984ae4cacce2508a13b5cda52ed1532"
+    },
+    {
+      "path": "SkyPulse/characters/roster/prism-frame-03-v1",
+      "pivotX": 0.491211,
+      "pivotY": 0.469922,
+      "scale": 1.01,
+      "sourceWidth": 512,
+      "sourceHeight": 384,
+      "sourceSha256": "a9719a2bf01c5c96db146585242a4b7ec31d44a9987690b389e508d3eb331087"
+    },
+    {
+      "path": "SkyPulse/characters/roster/prism-frame-04-v1",
+      "pivotX": 0.5,
+      "pivotY": 0.5,
+      "scale": 1.0,
+      "sourceWidth": 512,
+      "sourceHeight": 384,
+      "sourceSha256": "4f0135985aa1622443a0b5550164d15133b45d830f3c1ab98642063f8265a901"
+    },
+    {
+      "path": "SkyPulse/characters/roster/prism-frame-05-v1",
+      "pivotX": 0.473633,
+      "pivotY": 0.719401,
+      "scale": 1.05,
+      "sourceWidth": 512,
+      "sourceHeight": 384,
+      "sourceSha256": "54ec7e77dd4cdeb5b24911a781283bd091e8588a8d0197b2f0d1eefbc24dc52f"
+    },
+    {
+      "path": "SkyPulse/characters/roster/prism-frame-06-v1",
+      "pivotX": 0.499512,
+      "pivotY": 0.784831,
+      "scale": 0.975,
+      "sourceWidth": 512,
+      "sourceHeight": 384,
+      "sourceSha256": "89272d174c012476caa8773e1a4d21a4a8982c1fa2a17011b93fe03cf7e1dfbe"
+    },
+    {
+      "path": "SkyPulse/characters/roster/cinder-frame-01-v1",
+      "pivotX": 0.495547,
+      "pivotY": 0.457214,
+      "scale": 1.01,
+      "sourceWidth": 512,
+      "sourceHeight": 384,
+      "sourceSha256": "0f8f2625406f0682b0ad93bbdbdfae1a13d696821859b5ff7dfef54df7487937"
+    },
+    {
+      "path": "SkyPulse/characters/roster/cinder-frame-02-v1",
+      "pivotX": 0.484766,
+      "pivotY": 0.45332,
+      "scale": 0.975,
+      "sourceWidth": 512,
+      "sourceHeight": 384,
+      "sourceSha256": "244cca4a04f17cfa5e3f0427a4f9f75fff286c6a7a232c5d949b202637d82731"
+    },
+    {
+      "path": "SkyPulse/characters/roster/cinder-frame-03-v1",
+      "pivotX": 0.535547,
+      "pivotY": 0.580924,
+      "scale": 0.975,
+      "sourceWidth": 512,
+      "sourceHeight": 384,
+      "sourceSha256": "7b89fe90ed797ae014490c7c7139722746a8939d7f84db2fd271f31c1cb46d2c"
+    },
+    {
+      "path": "SkyPulse/characters/roster/cinder-frame-04-v1",
+      "pivotX": 0.5,
+      "pivotY": 0.5,
+      "scale": 1.0,
+      "sourceWidth": 512,
+      "sourceHeight": 384,
+      "sourceSha256": "cc5dd44de865f64124427219744c5220b655004894a82f45ab21c3fcf3371ce7"
+    },
+    {
+      "path": "SkyPulse/characters/roster/cinder-frame-05-v1",
+      "pivotX": 0.524844,
+      "pivotY": 0.761901,
+      "scale": 1.01,
+      "sourceWidth": 512,
+      "sourceHeight": 384,
+      "sourceSha256": "9e06a4b70f257c9ebe9e5616cba13854cd811108142a15767f4573e8730424be"
+    },
+    {
+      "path": "SkyPulse/characters/roster/cinder-frame-06-v1",
+      "pivotX": 0.532344,
+      "pivotY": 0.616823,
+      "scale": 0.98,
+      "sourceWidth": 512,
+      "sourceHeight": 384,
+      "sourceSha256": "87137b0c18cc7f7a30db382bb64cc6cb6e3b27cb5e55604a7e4e787794e0cb90"
+    },
+    {
+      "path": "SkyPulse/characters/roster/verdant-frame-01-v1",
+      "pivotX": 0.60249,
+      "pivotY": 0.382865,
+      "scale": 0.995,
+      "sourceWidth": 512,
+      "sourceHeight": 384,
+      "sourceSha256": "bfa185f31c14c37541f3b9bd06f533444819445aec7c281bef32318ab5bf9edd"
+    },
+    {
+      "path": "SkyPulse/characters/roster/verdant-frame-02-v1",
+      "pivotX": 0.44624,
+      "pivotY": 0.382865,
+      "scale": 0.995,
+      "sourceWidth": 512,
+      "sourceHeight": 384,
+      "sourceSha256": "f06ae7c29042963d677aa008b8e8d4c2ef5a63a6ab7fd15cac7ba1fc0d068339"
+    },
+    {
+      "path": "SkyPulse/characters/roster/verdant-frame-03-v1",
+      "pivotX": 0.61792,
+      "pivotY": 0.502865,
+      "scale": 0.975,
+      "sourceWidth": 512,
+      "sourceHeight": 384,
+      "sourceSha256": "eae390ea9cef0137569e5c752403cb9fe2a9272f9a831b84b5e5a5e434f05b44"
+    },
+    {
+      "path": "SkyPulse/characters/roster/verdant-frame-04-v1",
+      "pivotX": 0.5,
+      "pivotY": 0.5,
+      "scale": 1.0,
+      "sourceWidth": 512,
+      "sourceHeight": 384,
+      "sourceSha256": "1228d8b459799613bd3b5886e2397a917b09d2bec10caa27bff8bb5f855eced4"
+    },
+    {
+      "path": "SkyPulse/characters/roster/verdant-frame-05-v1",
+      "pivotX": 0.589941,
+      "pivotY": 0.679583,
+      "scale": 1.01,
+      "sourceWidth": 512,
+      "sourceHeight": 384,
+      "sourceSha256": "66089357a258fb934205405c7f638d313b6069936dadfe071fdcb69d9d7d3f88"
+    },
+    {
+      "path": "SkyPulse/characters/roster/verdant-frame-06-v1",
+      "pivotX": 0.518115,
+      "pivotY": 0.677552,
+      "scale": 0.955,
+      "sourceWidth": 512,
+      "sourceHeight": 384,
+      "sourceSha256": "a993fc1d700cf33cfc13f4d8e6c50de1cbd607b0e96a61b8ec08f0b8231e4b6b"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird01-frame-01",
+      "pivotX": 0.526534,
+      "pivotY": 0.506296,
+      "scale": 1.01,
+      "sourceWidth": 476,
+      "sourceHeight": 548,
+      "sourceSha256": "c350232a1e2ea9e6ea50375dbdfc0c8639c07148ee2de8eb5d065d1061e1e495"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird01-frame-02",
+      "pivotX": 0.514475,
+      "pivotY": 0.507938,
+      "scale": 1.03,
+      "sourceWidth": 476,
+      "sourceHeight": 548,
+      "sourceSha256": "4db960f871cc3565ec14e7be04f55d96bf4fb5431c58d3ab08f9b4916597f3a0"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird01-frame-03",
+      "pivotX": 0.51813,
+      "pivotY": 0.509945,
+      "scale": 1.01,
+      "sourceWidth": 476,
+      "sourceHeight": 548,
+      "sourceSha256": "82f54d53c946833b1d11472ea6bc9cd447a1e33e6ca771f455f652f48c093072"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird01-frame-04",
+      "pivotX": 0.5,
+      "pivotY": 0.5,
+      "scale": 1.0,
+      "sourceWidth": 476,
+      "sourceHeight": 548,
+      "sourceSha256": "763250724cd7e8af48ad84b1485d83cd82c377528d7cec75b6f4e575d6b6846f"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird01-frame-05",
+      "pivotX": 0.499223,
+      "pivotY": 0.504471,
+      "scale": 1.01,
+      "sourceWidth": 476,
+      "sourceHeight": 548,
+      "sourceSha256": "9bc4faa81bcae558e666dbefe39f67b65b508b38a5fabdad052fdc158d990248"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird01-frame-06",
+      "pivotX": 0.520231,
+      "pivotY": 0.509945,
+      "scale": 1.01,
+      "sourceWidth": 476,
+      "sourceHeight": 548,
+      "sourceSha256": "87e4c1ef6cb7175aef61e19a20357b2948389ba7f75f5c729bf0b6cedf0b491f"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird02-frame-01",
+      "pivotX": 0.527332,
+      "pivotY": 0.507685,
+      "scale": 1.01,
+      "sourceWidth": 476,
+      "sourceHeight": 596,
+      "sourceSha256": "011707e3a33d8b1e203a46a3d906650d32b68639727c7540207bae5aad09c1db"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird02-frame-02",
+      "pivotX": 0.527332,
+      "pivotY": 0.506007,
+      "scale": 1.01,
+      "sourceWidth": 476,
+      "sourceHeight": 596,
+      "sourceSha256": "07d75cc48b23de8fecd1cc38f53665e38be9276e5ed611f9dde022caf5b1e183"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird02-frame-03",
+      "pivotX": 0.498004,
+      "pivotY": 0.50151,
+      "scale": 1.05,
+      "sourceWidth": 476,
+      "sourceHeight": 596,
+      "sourceSha256": "ef6599d9bee3313c5feabee4767d7eec8bb97aa5e3f559f0364bb703fd960fdf"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird02-frame-04",
+      "pivotX": 0.5,
+      "pivotY": 0.5,
+      "scale": 1.0,
+      "sourceWidth": 476,
+      "sourceHeight": 596,
+      "sourceSha256": "a6c951cc281e336f4342f6684a77f76a193c1e83fdeea472b619e6d9466a131a"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird02-frame-05",
+      "pivotX": 0.493803,
+      "pivotY": 0.50151,
+      "scale": 1.05,
+      "sourceWidth": 476,
+      "sourceHeight": 596,
+      "sourceSha256": "d84cee1e3a178ddd13b469d1ee35805ed53c02148e6abd713e98287a7f922645"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird02-frame-06",
+      "pivotX": 0.510672,
+      "pivotY": 0.50443,
+      "scale": 1.08,
+      "sourceWidth": 476,
+      "sourceHeight": 596,
+      "sourceSha256": "3004d76228a03116fb84ef71cda1a3a385a19205db5d85b76c97479a27fc159f"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird03-frame-01",
+      "pivotX": 0.525562,
+      "pivotY": 0.506626,
+      "scale": 1.03,
+      "sourceWidth": 480,
+      "sourceHeight": 572,
+      "sourceSha256": "8df7bdf56bb122ae1e7fd0270f6f5e8780b1d291fc48257ec478edd22b2dbf8a"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird03-frame-02",
+      "pivotX": 0.515708,
+      "pivotY": 0.508007,
+      "scale": 1.06,
+      "sourceWidth": 480,
+      "sourceHeight": 572,
+      "sourceSha256": "ee51743246588a081ddb2f22faac63ce2e5d5850eed8189a63c87dc2b2ffc492"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird03-frame-03",
+      "pivotX": 0.499417,
+      "pivotY": 0.506014,
+      "scale": 1.08,
+      "sourceWidth": 480,
+      "sourceHeight": 572,
+      "sourceSha256": "7e342c1fd151de15957b3db005ec7da6df1efc48a6a2dc4de5ca316ccf7dff7d"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird03-frame-04",
+      "pivotX": 0.5,
+      "pivotY": 0.5,
+      "scale": 1.0,
+      "sourceWidth": 480,
+      "sourceHeight": 572,
+      "sourceSha256": "b9b42ad6eb83f00dd6b31f573677b635cb8175d83a9c51d009a534994d8188c2"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird03-frame-05",
+      "pivotX": 0.468729,
+      "pivotY": 0.503899,
+      "scale": 1.11,
+      "sourceWidth": 480,
+      "sourceHeight": 572,
+      "sourceSha256": "7606680833297134d41f732e0cd9f8bf1caea498c152f1d9cb7788bc2ea894cf"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird03-frame-06",
+      "pivotX": 0.513625,
+      "pivotY": 0.506259,
+      "scale": 1.06,
+      "sourceWidth": 480,
+      "sourceHeight": 572,
+      "sourceSha256": "2c6e2eb85c1a8e6bad02e6a8a46cdc66fefe9b887d9fb58d5122b437a222df88"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird04-frame-01",
+      "pivotX": 0.509443,
+      "pivotY": 0.502221,
+      "scale": 1.045,
+      "sourceWidth": 512,
+      "sourceHeight": 556,
+      "sourceSha256": "4638b7242fde7dc9eb91f2edee4fbf0a816ddb183a614f693dee18d8c56d00ab"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird04-frame-02",
+      "pivotX": 0.536094,
+      "pivotY": 0.501223,
+      "scale": 0.96,
+      "sourceWidth": 512,
+      "sourceHeight": 556,
+      "sourceSha256": "d1e125f87c519ce70e21103082007d02f65516eb35ff39421b4015e5e7ccfbcb"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird04-frame-03",
+      "pivotX": 0.520977,
+      "pivotY": 0.500612,
+      "scale": 0.98,
+      "sourceWidth": 512,
+      "sourceHeight": 556,
+      "sourceSha256": "06f67451510b73983a4d493b3d65a9d151aff399ca3e1fbef97d9dd19b0ac66d"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird04-frame-04",
+      "pivotX": 0.5,
+      "pivotY": 0.5,
+      "scale": 1.0,
+      "sourceWidth": 512,
+      "sourceHeight": 556,
+      "sourceSha256": "07ca3dc759a9b3c1744417fc39001a15d1f29532acd335ecda1fb33c58c04ec6"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird04-frame-05",
+      "pivotX": 0.497324,
+      "pivotY": 0.501493,
+      "scale": 1.01,
+      "sourceWidth": 512,
+      "sourceHeight": 556,
+      "sourceSha256": "8bf273ff79b1c22dcb9b5904cd99e831452553830fceaf2f4f1f2004728367e5"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird04-frame-06",
+      "pivotX": 0.524775,
+      "pivotY": 0.50375,
+      "scale": 0.995,
+      "sourceWidth": 512,
+      "sourceHeight": 556,
+      "sourceSha256": "5044c7d460d49cc59fbe4dd111c791abfcdb67fe5cdf9f132dd73d0c760be45b"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird05-frame-01",
+      "pivotX": 0.512017,
+      "pivotY": 0.511867,
+      "scale": 1.065,
+      "sourceWidth": 476,
+      "sourceHeight": 592,
+      "sourceSha256": "47d357521a3d8c17ec9bcba5182a5d323cd6b030cd689c6f1ea73e2b7f84bf92"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird05-frame-02",
+      "pivotX": 0.501008,
+      "pivotY": 0.509671,
+      "scale": 1.085,
+      "sourceWidth": 476,
+      "sourceHeight": 592,
+      "sourceSha256": "3b8bf268e2fbcef6a660e29c68377de902e7141c59b792209a092548581594be"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird05-frame-03",
+      "pivotX": 0.487899,
+      "pivotY": 0.505785,
+      "scale": 1.105,
+      "sourceWidth": 476,
+      "sourceHeight": 592,
+      "sourceSha256": "41b630933516c07fe9d777e59cec3f4ad50f411f6abeacf2afd5ee8601f922db"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird05-frame-04",
+      "pivotX": 0.5,
+      "pivotY": 0.5,
+      "scale": 1.0,
+      "sourceWidth": 476,
+      "sourceHeight": 592,
+      "sourceSha256": "905cd5da32196e84e7969b4fe05b8cb100811f048516af7dfa9901702d04fcab"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird05-frame-05",
+      "pivotX": 0.497143,
+      "pivotY": 0.505997,
+      "scale": 1.03,
+      "sourceWidth": 476,
+      "sourceHeight": 592,
+      "sourceSha256": "ea5edd00d8c7c714514d303047cfbf3e1f5b2511eed764ef960b77649d559df3"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird05-frame-06",
+      "pivotX": 0.501008,
+      "pivotY": 0.506292,
+      "scale": 1.085,
+      "sourceWidth": 476,
+      "sourceHeight": 592,
+      "sourceSha256": "4028b7db2f2280a146e66852f7ea930fa6a882d9626ff5d1e6ca2d8b6b334f12"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird06-frame-01",
+      "pivotX": 0.498589,
+      "pivotY": 0.500996,
+      "scale": 1.05,
+      "sourceWidth": 496,
+      "sourceHeight": 552,
+      "sourceSha256": "8824f4ad261cefd0af3eb34f13ac1c724a30f50eeb022aca8fe6bec879c08f82"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird06-frame-02",
+      "pivotX": 0.532964,
+      "pivotY": 0.499502,
+      "scale": 0.975,
+      "sourceWidth": 496,
+      "sourceHeight": 552,
+      "sourceSha256": "113d9466c2d1c691a66a83b614155fd0444b7b0ab57170e47a4a332648ba42d1"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird06-frame-03",
+      "pivotX": 0.513427,
+      "pivotY": 0.499475,
+      "scale": 1.01,
+      "sourceWidth": 496,
+      "sourceHeight": 552,
+      "sourceSha256": "6daab4eba93f926e7a34cc6c0614e52a0ee24007d6545731e4aa962e533be3e1"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird06-frame-04",
+      "pivotX": 0.5,
+      "pivotY": 0.5,
+      "scale": 1.0,
+      "sourceWidth": 496,
+      "sourceHeight": 552,
+      "sourceSha256": "a45faf2bf9f304183917b069364cef61d9b64fc52a3e73eb7e3c052c353d334f"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird06-frame-05",
+      "pivotX": 0.518871,
+      "pivotY": 0.496667,
+      "scale": 0.96,
+      "sourceWidth": 496,
+      "sourceHeight": 552,
+      "sourceSha256": "28b5594fc4abc22eec34f01236955f420a37eef4a787d320dfeb74c7f25763cf"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird06-frame-06",
+      "pivotX": 0.500605,
+      "pivotY": 0.502808,
+      "scale": 1.05,
+      "sourceWidth": 496,
+      "sourceHeight": 552,
+      "sourceSha256": "60e07538066ef4ffe3261409cb26ba885cfb116a5348701c929432dea7cc6647"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird07-frame-01",
+      "pivotX": 0.513484,
+      "pivotY": 0.502482,
+      "scale": 1.025,
+      "sourceWidth": 508,
+      "sourceHeight": 544,
+      "sourceSha256": "04c75ebbe4e22510f55389d7ac46264205b1a6fd1f86e47e987f61665515781f"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird07-frame-02",
+      "pivotX": 0.522087,
+      "pivotY": 0.500404,
+      "scale": 1.03,
+      "sourceWidth": 508,
+      "sourceHeight": 544,
+      "sourceSha256": "4d735ec3561587c96c15e7ddd748def681720614ee46b2b66b63b5374e47be0d"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird07-frame-03",
+      "pivotX": 0.513268,
+      "pivotY": 0.497684,
+      "scale": 1.01,
+      "sourceWidth": 508,
+      "sourceHeight": 544,
+      "sourceSha256": "e0fb52fb2212fbcba460b399416ce38cae9e4b82840279ebe77f5ce9cfd73914"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird07-frame-04",
+      "pivotX": 0.5,
+      "pivotY": 0.5,
+      "scale": 1.0,
+      "sourceWidth": 508,
+      "sourceHeight": 544,
+      "sourceSha256": "e323abf2470e3d4563d43ea7e03b728c41e38e923d17d32a5420a0b112f9e682"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird07-frame-05",
+      "pivotX": 0.505394,
+      "pivotY": 0.497684,
+      "scale": 1.01,
+      "sourceWidth": 508,
+      "sourceHeight": 544,
+      "sourceSha256": "62e519cf01d2db59d6cb42d69fe0638c26c702b417ac2ce1e02b197530c8bbcd"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird07-frame-06",
+      "pivotX": 0.509252,
+      "pivotY": 0.49761,
+      "scale": 1.05,
+      "sourceWidth": 508,
+      "sourceHeight": 544,
+      "sourceSha256": "2270711809c460a4abf66df8d3103699ef4d3aedf85dd9e639d46f65f1b2fcaf"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird08-frame-01",
+      "pivotX": 0.515123,
+      "pivotY": 0.508646,
+      "scale": 1.06,
+      "sourceWidth": 488,
+      "sourceHeight": 576,
+      "sourceSha256": "9824f822a208f4548035ebfd097e873fbdfa121f2067e6f71f910a224ae81793"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird08-frame-02",
+      "pivotX": 0.518832,
+      "pivotY": 0.513003,
+      "scale": 1.03,
+      "sourceWidth": 488,
+      "sourceHeight": 576,
+      "sourceSha256": "0b62ebd89d4a6bbf296585dbbdd84e887006fafe757b7a6327bb85f3b3a91195"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird08-frame-03",
+      "pivotX": 0.490174,
+      "pivotY": 0.506172,
+      "scale": 1.085,
+      "sourceWidth": 488,
+      "sourceHeight": 576,
+      "sourceSha256": "91c97062db1eb5b97d824d88f087a6e291c597069a52fcc30f5ce3803cc952b8"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird08-frame-04",
+      "pivotX": 0.5,
+      "pivotY": 0.5,
+      "scale": 1.0,
+      "sourceWidth": 488,
+      "sourceHeight": 576,
+      "sourceSha256": "4442b032364673c3344a08aa14ec3fd566822b02d43c6728f3dc3869c309938f"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird08-frame-05",
+      "pivotX": 0.477131,
+      "pivotY": 0.502847,
+      "scale": 1.08,
+      "sourceWidth": 488,
+      "sourceHeight": 576,
+      "sourceSha256": "23e74128176e11f62e960664fd5d1af13375f47c48313317ae2f4b00651329b5"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird08-frame-06",
+      "pivotX": 0.515676,
+      "pivotY": 0.512413,
+      "scale": 1.05,
+      "sourceWidth": 488,
+      "sourceHeight": 576,
+      "sourceSha256": "493280e4db5ce336f530960d785e03197e1b6893a8c860a8bec5d62cd6a7690a"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird09-frame-01",
+      "pivotX": 0.47998,
+      "pivotY": 0.503185,
+      "scale": 1.125,
+      "sourceWidth": 512,
+      "sourceHeight": 628,
+      "sourceSha256": "265b20eacdbd4681a88aea8c306e4ab3f5ea62ee06f5319420f0491cad5afd6e"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird09-frame-02",
+      "pivotX": 0.494668,
+      "pivotY": 0.500955,
+      "scale": 1.085,
+      "sourceWidth": 512,
+      "sourceHeight": 628,
+      "sourceSha256": "4257a771a86b7797ffcf19876dd41f4ad01b14ff4755058c213ca1a299899195"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird09-frame-03",
+      "pivotX": 0.501074,
+      "pivotY": 0.506369,
+      "scale": 1.025,
+      "sourceWidth": 512,
+      "sourceHeight": 628,
+      "sourceSha256": "956170d9792681401b91f163ecdb48a6517f2e5a71d1d49fb14b654dc5be7ee9"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird09-frame-04",
+      "pivotX": 0.5,
+      "pivotY": 0.5,
+      "scale": 1.0,
+      "sourceWidth": 512,
+      "sourceHeight": 628,
+      "sourceSha256": "01183124eac3d94b38915608a4bdc3c7cc67236e783bda062886dc6491c44c6a"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird09-frame-05",
+      "pivotX": 0.48834,
+      "pivotY": 0.503822,
+      "scale": 1.065,
+      "sourceWidth": 512,
+      "sourceHeight": 628,
+      "sourceSha256": "bb19916ee32c8ca6aef518e32a9c396c3145305d6d6c00de3a681214123002fa"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird09-frame-06",
+      "pivotX": 0.515352,
+      "pivotY": 0.506051,
+      "scale": 1.03,
+      "sourceWidth": 512,
+      "sourceHeight": 628,
+      "sourceSha256": "226080020599327238d23934d8887ca718b08b0be084048a6cc3509d8faf4419"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird10-frame-01",
+      "pivotX": 0.504545,
+      "pivotY": 0.507405,
+      "scale": 1.08,
+      "sourceWidth": 440,
+      "sourceHeight": 632,
+      "sourceSha256": "97f867903ab705c64a78104a6f48c011e3a4c7f20f51660802036e0068b697f7"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird10-frame-02",
+      "pivotX": 0.518182,
+      "pivotY": 0.506266,
+      "scale": 1.01,
+      "sourceWidth": 440,
+      "sourceHeight": 632,
+      "sourceSha256": "31a0d48d946af26d9ddad81b1536bbaa57e31f827f5db3e2ebd8f558381670fe"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird10-frame-03",
+      "pivotX": 0.493182,
+      "pivotY": 0.505949,
+      "scale": 1.06,
+      "sourceWidth": 440,
+      "sourceHeight": 632,
+      "sourceSha256": "ca7c9bf6d48fc4d3e7386564c65698a580f78747556db21af3e360de5f971d48"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird10-frame-04",
+      "pivotX": 0.5,
+      "pivotY": 0.5,
+      "scale": 1.0,
+      "sourceWidth": 440,
+      "sourceHeight": 632,
+      "sourceSha256": "6c7380ead2a5129be78fa8ea40d048beb64b8e41b829ede1467bb2ce5416a84a"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird10-frame-05",
+      "pivotX": 0.493182,
+      "pivotY": 0.501392,
+      "scale": 1.03,
+      "sourceWidth": 440,
+      "sourceHeight": 632,
+      "sourceSha256": "f08b9922a51b55e98528c8a23aa0a68e5748d349789044a5346c3f2dbce8c4f5"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird10-frame-06",
+      "pivotX": 0.507955,
+      "pivotY": 0.506044,
+      "scale": 1.045,
+      "sourceWidth": 440,
+      "sourceHeight": 632,
+      "sourceSha256": "209fca31f35c8b6465f3610e67590d041a7963f6e1cb9ebe2360ac4406f036d3"
+    }
+  ]
+}

@@ -26,6 +26,7 @@ namespace SkyPulse.Mobile.Editor
                 if (importer == null) continue;
 
                 var maxSize = MaximumSizeFor(path);
+                var isCharacter = path.Contains("/characters/");
                 // SkyPulse turns its source textures into purpose-sized sprites at
                 // runtime, so preserve Texture2D import compatibility here.
                 var changed = importer.textureType != TextureImporterType.Default
@@ -35,6 +36,7 @@ namespace SkyPulse.Mobile.Editor
                     || importer.maxTextureSize != maxSize
                     || importer.wrapMode != TextureWrapMode.Clamp
                     || importer.filterMode != FilterMode.Bilinear
+                    || (isCharacter && importer.npotScale != TextureImporterNPOTScale.None)
                     || importer.textureCompression != TextureImporterCompression.Compressed;
 
                 importer.textureType = TextureImporterType.Default;
@@ -44,6 +46,9 @@ namespace SkyPulse.Mobile.Editor
                 importer.maxTextureSize = maxSize;
                 importer.wrapMode = TextureWrapMode.Clamp;
                 importer.filterMode = FilterMode.Bilinear;
+                // Frame registration uses the authored canvas aspect ratio.
+                // Power-of-two resizing stretches 512x384 birds into squares.
+                if (isCharacter) importer.npotScale = TextureImporterNPOTScale.None;
                 importer.textureCompression = TextureImporterCompression.Compressed;
 
                 changed |= ApplyPlatformCompression(importer, "Android", maxSize);

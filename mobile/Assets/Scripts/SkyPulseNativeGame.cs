@@ -6,6 +6,20 @@ using UnityEngine.UI;
 
 namespace SkyPulse.Mobile
 {
+    /// <summary>Background clicks start a run; child controls retain their own clicks.</summary>
+    public sealed class SkyPulseRoundStartSurface : MonoBehaviour, IPointerClickHandler
+    {
+        public Action StartRound;
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            if (eventData.button != PointerEventData.InputButton.Left || eventData.dragging) return;
+            var threshold = EventSystem.current == null ? 10f : EventSystem.current.pixelDragThreshold;
+            if ((eventData.position - eventData.pressPosition).sqrMagnitude > threshold * threshold) return;
+            StartRound?.Invoke();
+        }
+    }
+
     /// <summary>Small, allocation-free press response for touch-first controls.</summary>
     public sealed class SkyPulseButtonFeedback : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler
     {
@@ -153,6 +167,21 @@ namespace SkyPulse.Mobile
                 Trail = Hex(trail);
                 Price = price;
             }
+        }
+
+        [Serializable]
+        private sealed class BirdFrameRegistration
+        {
+            public string path;
+            public float pivotX;
+            public float pivotY;
+            public float scale = 1f;
+        }
+
+        [Serializable]
+        private sealed class BirdFrameRegistrationFile
+        {
+            public BirdFrameRegistration[] frames;
         }
 
         private sealed class WorldTheme
@@ -378,7 +407,7 @@ namespace SkyPulse.Mobile
         private const float PipeCollisionWidth = PipeCapWidth;
         private const float PipeFallbackCapHeight = .62f;
         private const float TopPipeOverscan = .68f;
-        private const float BottomPipeFloorOverlap = .10f;
+        private const float BottomPipeFloorOverlap = .62f;
         private const float PipeSpacingFraction = .52f;
         private const int PipeBodyCropTopPixels = 145;
         private const int PipeBodyCropBottomPixels = 145;
@@ -400,7 +429,7 @@ namespace SkyPulse.Mobile
         private const float CrystalPickupRespawnMinimum = 8.5f;
         private const float CrystalPickupRespawnMaximum = 12.5f;
         private const float InputLockoutSeconds = .07f;
-        private const float WorldTransitionSeconds = 1.2f;
+        private const float WorldTransitionSeconds = 1.8f;
         private const float WorldRecoverySeconds = .9f;
         private const float AegisImmunitySeconds = .6f;
         private const float AegisHitStopSeconds = .07f;
@@ -768,10 +797,21 @@ new WorldTheme(
         private readonly PipePair[] pipePool = new PipePair[PipeCount];
         private readonly PowerUpPickup[] crystalPickupPool = new PowerUpPickup[CrystalPickupCount];
         private readonly PowerUpPickup[] powerUpPool = new PowerUpPickup[PowerUpCount];
-        private readonly Vector3[] trailPoints = new Vector3[9];
+        private readonly Vector3[] trailPoints = new Vector3[64];
+        private readonly SpriteRenderer[] trailSparks = new SpriteRenderer[12];
+        private int trailPointCount;
+        private float trailFlowTime;
+        private SpriteRenderer incomingBackground;
+        private Color transitionVeilStart, transitionFloorStart, transitionRailStart, transitionLipStart;
+        private SpriteRenderer[] transitionRenderers;
+        private Color[] transitionColours;
+        private bool departingObjectsVisible;
         private readonly List<AmbientStar> ambientStars = new List<AmbientStar>();
         private readonly Dictionary<string, Sprite> spriteCache = new Dictionary<string, Sprite>();
         private readonly Dictionary<string, Sprite> registeredFlapSpriteCache = new Dictionary<string, Sprite>();
+        private readonly Dictionary<string, BirdFrameRegistration> birdFrameRegistration = new Dictionary<string, BirdFrameRegistration>();
+        private bool birdFrameRegistrationLoaded;
+        private Sprite birdRegistrationReference;
         private readonly Dictionary<string, Sprite> worldFallbackSprites = new Dictionary<string, Sprite>();
         private readonly HashSet<string> ownedSkinIds = new HashSet<string>();
         private readonly HashSet<string> ownedUpgradeIds = new HashSet<string>();
@@ -851,6 +891,7 @@ new WorldTheme(
         private GameObject pauseScreen;
         private GameObject gameOverScreen;
         private GameObject customizeScreen;
+        private ScrollRect customizeScroll;
         private GameObject purchaseModal;
         private GameObject unlockRevealModal;
         private Text menuCrystalText;
@@ -1163,7 +1204,13 @@ new WorldTheme(
             backgroundRenderer.transform.position = new Vector3(0f, .12f, 0f);
             FitBackgroundToCamera(backgroundRenderer, .5f);
 
-            backgroundVeil = CreateRenderer("World colour veil", whiteSprite, new Color(.015f, .01f, .08f, .20f), -39);
+            incomingBackground = CreateRenderer("Incoming world dissolve", backgroundRenderer.sprite, Color.clear, -39);
+            incomingBackground.enabled = false;
+            FitBackgroundToCamera(incomingBackground, .5f);
+            // Warm the route backdrops before play, avoiding first-use Resources
+            // loading at gate 15 or 30. The sprite cache retains them for remixes.
+            for (var worldIndex = 0; worldIndex < 3; worldIndex += 1) WorldBackdrop(Worlds[worldIndex]);
+            backgroundVeil = CreateRenderer("World colour veil", whiteSprite, new Color(.015f, .01f, .08f, .20f), -38);
             backgroundVeil.transform.position = new Vector3(0f, .1f, 0f);
             backgroundVeil.transform.localScale = new Vector3(GetViewportWidth() + 1f, CameraHeight + .5f, 1f);
 
@@ -1175,6 +1222,13 @@ new WorldTheme(
             for (var index = 0; index < pipePool.Length; index += 1) pipePool[index] = CreatePipePair(index);
             for (var index = 0; index < crystalPickupPool.Length; index += 1) crystalPickupPool[index] = CreateCrystalPickup(index);
             for (var index = 0; index < powerUpPool.Length; index += 1) powerUpPool[index] = CreatePowerUp(index);
+
+            var departureRenderers = new List<SpriteRenderer>();
+            foreach (var pair in pipePool) departureRenderers.AddRange(pair.Root.GetComponentsInChildren<SpriteRenderer>(true));
+            foreach (var pickup in crystalPickupPool) departureRenderers.AddRange(pickup.Root.GetComponentsInChildren<SpriteRenderer>(true));
+            foreach (var pickup in powerUpPool) departureRenderers.AddRange(pickup.Root.GetComponentsInChildren<SpriteRenderer>(true));
+            transitionRenderers = departureRenderers.ToArray();
+            transitionColours = new Color[transitionRenderers.Length];
 
             audioSource = gameObject.AddComponent<AudioSource>();
             audioSource.playOnAwake = false;
@@ -1191,13 +1245,13 @@ new WorldTheme(
             var random = new System.Random(742);
             // The backdrop already carries the detail. These are only a whisper of
             // parallax depth, never the large square particles of the old treatment.
-            for (var index = 0; index < 8; index += 1)
+            for (var index = 0; index < 12; index += 1)
             {
-                var star = CreateRenderer($"Ambient light {index + 1}", softCircleSprite, new Color(.60f, .84f, 1f, .14f), -33);
+                var star = CreateRenderer($"Ambient light {index + 1}", softCircleSprite, new Color(.60f, .84f, 1f, .11f), -33);
                 var viewportFraction = Mathf.Lerp(-.48f, .48f, (float)random.NextDouble());
                 var x = GetViewportWidth() * viewportFraction;
                 var y = Mathf.Lerp(-5.8f, 8.3f, (float)random.NextDouble());
-                var size = Mathf.Lerp(.016f, .034f, (float)random.NextDouble());
+                var size = Mathf.Lerp(.020f, .048f, (float)random.NextDouble());
                 star.transform.position = new Vector3(x, y, 0f);
                 star.transform.localScale = Vector3.one * size;
                 ambientStars.Add(new AmbientStar
@@ -1428,11 +1482,35 @@ new WorldTheme(
 
         private void CreateTrail()
         {
-            // The safety core is intentionally thin and restrained. It is the visual
-            // guarantee beneath every cosmetic trail, never a second noisy effect.
-            trailSafety = CreateTrailRenderer("Trail visibility core", 10, .048f, .010f);
-            trailGlow = CreateTrailRenderer("Trail glow", 11, .19f, .035f);
-            trailCore = CreateTrailRenderer("Trail core", 12, .082f, .012f);
+            trailSafety = CreateTrailRenderer("Trail soft halo", 10, .34f, 0f);
+            trailGlow = CreateTrailRenderer("Trail colour ribbon", 11, .13f, 0f);
+            trailCore = CreateTrailRenderer("Trail incandescent filament", 12, .035f, 0f);
+            var taper = new AnimationCurve(new Keyframe(0f, .65f), new Keyframe(.10f, 1f),
+                new Keyframe(.42f, .65f), new Keyframe(.78f, .22f), new Keyframe(1f, 0f));
+            var texture = new Texture2D(8, 64, TextureFormat.RGBA32, false);
+            texture.name = "Trail feathered cross section";
+            texture.wrapMode = TextureWrapMode.Clamp;
+            texture.filterMode = FilterMode.Bilinear;
+            var pixels = new Color[8 * 64];
+            for (var y = 0; y < 64; y += 1)
+            {
+                var distance = Mathf.Abs((y + .5f) / 32f - 1f);
+                var alpha = Mathf.Pow(Mathf.Clamp01(1f - distance * distance), 3f);
+                for (var x = 0; x < 8; x += 1) pixels[y * 8 + x] = new Color(1f, 1f, 1f, alpha);
+            }
+            texture.SetPixels(pixels);
+            texture.Apply(false, true);
+            foreach (var ribbon in new[] { trailSafety, trailGlow, trailCore })
+            {
+                ribbon.widthCurve = taper;
+                ribbon.material.mainTexture = texture;
+                ribbon.textureMode = LineTextureMode.Stretch;
+            }
+            for (var index = 0; index < trailSparks.Length; index += 1)
+            {
+                trailSparks[index] = CreateRenderer($"Trail ember {index + 1}", softCircleSprite, Color.clear, 13);
+                trailSparks[index].enabled = false;
+            }
         }
 
         private LineRenderer CreateTrailRenderer(string name, int sortingOrder, float startWidth, float endWidth)
@@ -1607,6 +1685,7 @@ new WorldTheme(
             // non-gameplay art fitted when a phone changes size, an editor Game view
             // is resized, or a wide desktop preview exposes decorative side margins.
             if (backgroundRenderer != null) FitBackgroundToCamera(backgroundRenderer, .5f);
+            if (incomingBackground != null) FitBackgroundToCamera(incomingBackground, .5f);
             if (backgroundVeil != null) backgroundVeil.transform.localScale = new Vector3(viewportWidth + 1f, CameraHeight + .5f, 1f);
 
             var floorWidth = viewportWidth + 1f;
@@ -1615,6 +1694,8 @@ new WorldTheme(
             if (floorLip != null) floorLip.transform.localScale = new Vector3(floorWidth, .12f, 1f);
             if (floorGlow != null) floorGlow.transform.localScale = new Vector3(floorWidth, .026f, 1f);
             if (floorHighlight != null) floorHighlight.transform.localScale = new Vector3(floorWidth, .010f, 1f);
+            if (incomingBackground != null && incomingBackground.enabled)
+                incomingBackground.transform.position = backgroundRenderer.transform.position;
             foreach (var star in ambientStars)
             {
                 star.X = viewportWidth * star.ViewportFraction;
@@ -1773,12 +1854,15 @@ new WorldTheme(
         private GameObject CreateCustomizeScreen(Transform parent)
         {
             var root = CreateScreen(parent, "Customize screen");
-            CreateFullPanel(root.transform, "Customize veil", new Color(.01f, .006f, .05f, .48f));
+            var startSurface = root.AddComponent<SkyPulseRoundStartSurface>();
+            startSurface.StartRound = StartRoundFromCustomize;
+            var veil = CreateFullPanel(root.transform, "Customize veil", new Color(.01f, .006f, .05f, .48f));
+            veil.GetComponent<Image>().raycastTarget = true;
             var back = CreateNeonButton(root.transform, "‹  MENU", new Vector2(-390f, 802f), new Vector2(220f, 68f), Hex("#8f64ff"));
             back.onClick.AddListener(ResetToMenu);
             customizeCrystalText = CreateChip(root.transform, new Vector2(365f, 802f), "✦  0", Hex("#45eaff"));
             customizeTitle = CreateText(root.transform, "BIRD HANGAR", new Vector2(0f, 690f), new Vector2(720f, 80f), 48, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            CreateText(root.transform, "CHOOSE YOUR CYBER-BIRD OR CRYSTAL TECH", new Vector2(0f, 638f), new Vector2(800f, 38f), 18, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            CreateText(root.transform, "TAP THE BACKGROUND TO FLY  ·  SWIPE TO BROWSE", new Vector2(0f, 638f), new Vector2(800f, 38f), 18, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
 
             var labels = new[] { "HANGAR", "TECH" };
             var categories = new[] { CosmeticCategory.Birds, CosmeticCategory.Upgrades };
@@ -1792,6 +1876,8 @@ new WorldTheme(
             var viewport = CreatePanel(root.transform, "Collection viewport", new Vector2(0f, -172f), new Vector2(970f, 1380f), Hex("#070a18"));
             viewport.gameObject.AddComponent<RectMask2D>();
             var scroll = viewport.gameObject.AddComponent<ScrollRect>();
+            customizeScroll = scroll;
+            viewport.GetComponent<Image>().raycastTarget = true;
             scroll.horizontal = false;
             scroll.vertical = true;
             scroll.movementType = ScrollRect.MovementType.Elastic;
@@ -2007,6 +2093,13 @@ new WorldTheme(
                 return;
             }
 
+            if (state == FlightState.Customize)
+            {
+                if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.UpArrow))
+                    StartRoundFromCustomize();
+                return;
+            }
+
             if (state == FlightState.GameOver)
             {
                 // A tap outside the result card has the same promise as the explicit
@@ -2121,8 +2214,11 @@ new WorldTheme(
             }
             UpdatePipes(simulationDelta);
             if (state != FlightState.Playing) return;
-            UpdateCrystalPickups(simulationDelta);
-            UpdatePowerUps(simulationDelta);
+            if (worldTransitionTimer <= 0f)
+            {
+                UpdateCrystalPickups(simulationDelta);
+                UpdatePowerUps(simulationDelta);
+            }
             UpdateTrail(simulationDelta);
         }
 
@@ -2154,6 +2250,8 @@ new WorldTheme(
             {
                 backgroundRenderer.transform.position = new Vector3(Mathf.Sin(ambientTime * .08f) * .012f * ambientMotion, .12f + Mathf.Sin(ambientTime * .11f) * .008f * ambientMotion, 0f);
             }
+            if (incomingBackground != null && incomingBackground.enabled)
+                incomingBackground.transform.position = backgroundRenderer.transform.position;
             foreach (var star in ambientStars)
             {
                 var y = star.Y + Mathf.Sin(ambientTime * star.Speed + star.Phase) * .025f * ambientMotion;
@@ -2169,8 +2267,7 @@ new WorldTheme(
             menuPresentationTime += deltaTime;
             var menuMotion = reduceMotionEnabled ? .35f : 1f;
             menuWingTimer += deltaTime * menuMotion;
-            if (menuWingTimer > SharedWingAnimationSeconds)
-                menuWingTimer = 0f;
+            menuWingTimer = Mathf.Repeat(menuWingTimer, SharedWingAnimationSeconds);
 
             var wingPhase =
                 menuWingTimer / SharedWingAnimationSeconds;
@@ -2183,6 +2280,8 @@ new WorldTheme(
                 if (pose != null) menuBirdImage.enabled = true;
                 if (pose != null && menuBirdShadowImage != null && menuBirdShadowImage.sprite != pose) menuBirdShadowImage.sprite = pose;
                 if (pose != null && menuBirdShadowImage != null) menuBirdShadowImage.enabled = true;
+                LayoutRegisteredMenuFrame(menuBirdImage, pose);
+                LayoutRegisteredMenuFrame(menuBirdShadowImage, pose);
                 menuBirdImage.color = Color.white;
                 if (menuBirdRiseImage != null) menuBirdRiseImage.color = Color.clear;
                 if (menuBirdFlapImage != null) menuBirdFlapImage.color = Color.clear;
@@ -2420,7 +2519,9 @@ new WorldTheme(
             if (gameplayWingFrameTimer < frameSeconds)
                 return;
 
-            gameplayWingFrameTimer -= frameSeconds;
+            // Keep the fractional cadence, but discard whole overdue steps after
+            // a hitch so the next frames do not rush through a timing backlog.
+            gameplayWingFrameTimer %= frameSeconds;
 
             switch (gameplayWingState)
             {
@@ -3292,24 +3393,55 @@ new WorldTheme(
         }
         private void UpdateTrail(float deltaTime)
         {
-            var trailScale = 1f;
-            if (slowFieldTimer > 0f) trailScale *= .88f;
-            if (magnetHaloTimer > 0f) trailScale *= 1.12f;
-            if (trailSafety != null) trailSafety.startWidth = .048f * trailScale;
-            trailGlow.startWidth = .19f * trailScale;
-            trailCore.startWidth = .082f * trailScale;
-            trailPoints[0] = bird.TransformPoint(new Vector3(BirdThrustAnchorX, BirdThrustAnchorY, .1f));
-            for (var index = 1; index < trailPoints.Length; index += 1)
-            {
-                var follow = 1f - Mathf.Exp(-deltaTime * Mathf.Lerp(19f, 8f, index / (float)(trailPoints.Length - 1)));
-                trailPoints[index] = Vector3.Lerp(trailPoints[index], trailPoints[index - 1], follow);
-            }
-            if (trailSafety != null) trailSafety.positionCount = trailPoints.Length;
-            trailGlow.positionCount = trailPoints.Length;
-            trailCore.positionCount = trailPoints.Length;
-            if (trailSafety != null) trailSafety.SetPositions(trailPoints);
+            if (deltaTime <= 0f) return;
+            trailFlowTime += deltaTime;
+            var anchor = bird.TransformPoint(new Vector3(BirdThrustAnchorX, BirdThrustAnchorY, .1f));
+            var travel = ActiveScrollSpeed() * deltaTime;
+            // Record the flight path and carry it backwards with the world.
+            // Following the previous point collapses a trail when the bird glides.
+            trailPointCount = Mathf.Min(trailPointCount + 1, trailPoints.Length);
+            for (var index = trailPointCount - 1; index > 0; index -= 1)
+                trailPoints[index] = trailPoints[index - 1] + Vector3.left * travel;
+            trailPoints[0] = anchor;
+            var powerScale = (slowFieldTimer > 0f ? .88f : 1f) * (magnetHaloTimer > 0f ? 1.12f : 1f);
+            var breath = reduceMotionEnabled ? 1f : 1f + .06f * Mathf.Sin(trailFlowTime * 5f);
+            trailSafety.widthMultiplier = .34f * powerScale * breath;
+            trailGlow.widthMultiplier = .13f * powerScale;
+            trailCore.widthMultiplier = .035f * powerScale;
+            trailSafety.positionCount = trailPointCount;
+            trailGlow.positionCount = trailPointCount;
+            trailCore.positionCount = trailPointCount;
+            // Fixed buffers avoid per-frame allocations; unused positions are
+            // ignored by LineRenderer when positionCount is smaller than the array.
+            trailSafety.SetPositions(trailPoints);
             trailGlow.SetPositions(trailPoints);
             trailCore.SetPositions(trailPoints);
+            for (var index = 0; index < trailSparks.Length; index += 1)
+            {
+                var spark = trailSparks[index];
+                var phase = Mathf.Repeat(trailFlowTime * .64f + index * .618034f, 1f);
+                var samplePosition = Mathf.Lerp(6f, trailPoints.Length - 2f, phase);
+                var sample = Mathf.FloorToInt(samplePosition);
+                spark.enabled = !reduceMotionEnabled && sample + 1 < trailPointCount;
+                if (!spark.enabled) continue;
+                var envelope = Mathf.Sin(phase * Mathf.PI);
+                var offset = Mathf.Sin(index * 2.4f + phase * 5f) * .14f * phase;
+                spark.transform.position = Vector3.Lerp(trailPoints[sample], trailPoints[sample + 1], samplePosition - sample) + Vector3.up * offset;
+                spark.transform.localScale = Vector3.one * (.018f + .032f * envelope);
+                var colour = Color.Lerp(equippedTrail.Glow, Color.white, .65f);
+                colour.a = envelope * .60f;
+                spark.color = colour;
+            }
+        }
+
+        private void ClearTrail()
+        {
+            trailPointCount = 0;
+            trailFlowTime = 0f;
+            if (trailSafety != null) trailSafety.positionCount = 0;
+            if (trailGlow != null) trailGlow.positionCount = 0;
+            if (trailCore != null) trailCore.positionCount = 0;
+            foreach (var spark in trailSparks) if (spark != null) spark.enabled = false;
         }
 
         private void ShowScoreBurst(int scoreReward, bool perfect)
@@ -3490,9 +3622,7 @@ new WorldTheme(
             shieldImmunityTimer = 0f;
             shieldHitStopTimer = 0f;
             shieldCharges = 0;
-            if (trailSafety != null) trailSafety.positionCount = 0;
-            trailGlow.positionCount = 0;
-            trailCore.positionCount = 0;
+            ClearTrail();
             var launchTrailPoint = new Vector3(BirdX, birdY, .1f);
             for (var index = 0; index < trailPoints.Length; index += 1) trailPoints[index] = launchTrailPoint;
             ApplyRouteWorldVisuals();
@@ -3528,6 +3658,7 @@ new WorldTheme(
 
         private void ResetToMenu()
         {
+            ResetWorldTransition();
             ClosePurchaseModal();
             state = FlightState.Menu;
             menuPresentationTime = 0f;
@@ -3542,9 +3673,7 @@ new WorldTheme(
             birdTiltVelocity = 0f;
             bird.position = new Vector3(BirdX, birdY, 0f);
             bird.gameObject.SetActive(false);
-            if (trailSafety != null) trailSafety.positionCount = 0;
-            trailGlow.positionCount = 0;
-            trailCore.positionCount = 0;
+            ClearTrail();
             if (birdBodyCollider != null) birdBodyCollider.enabled = false;
             foreach (var pair in pipePool) pair.Root.SetActive(false);
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -3683,7 +3812,15 @@ new WorldTheme(
         private void BeginWorldTransition(int nextWorldIndex)
         {
             nextWorldIndex = Mathf.Clamp(nextWorldIndex, 0, Worlds.Length - 1);
-            if (nextWorldIndex == routeWorldIndex) return;
+            if (nextWorldIndex == routeWorldIndex || worldTransitionTimer > 0f) return;
+
+            transitionVeilStart = backgroundVeil.color;
+            transitionFloorStart = floorSurface.color;
+            transitionRailStart = floorGlow.color;
+            transitionLipStart = floorLip.color;
+            for (var index = 0; index < transitionRenderers.Length; index += 1)
+                transitionColours[index] = transitionRenderers[index].color;
+            departingObjectsVisible = true;
 
             routeWorldIndex = nextWorldIndex;
             routeWorld = Worlds[routeWorldIndex];
@@ -3691,17 +3828,21 @@ new WorldTheme(
             worldTransitionTimer = WorldTransitionSeconds;
             worldRecoveryTimer = 0f;
             firstGateAfterTransition = true;
-            foreach (var pair in pipePool) if (pair != null) pair.Root.SetActive(false);
-            // Queued gates are intentionally discarded for the tunnel. Rebase their
-            // route labels to the score the player actually reached so power-up
-            // placement and post-45 remix rules never start a few gates early.
             nextGateRouteScore = score;
-            foreach (var pickup in powerUpPool) if (pickup != null) DeferPowerUp(pickup, 0f);
-            foreach (var pickup in crystalPickupPool) if (pickup != null) DeferCrystalPickup(pickup, 0f);
-            ApplyRouteWorldVisuals();
+            // Keep the old backdrop opaque beneath the incoming one. Fading both
+            // layers creates a dark dip halfway through an otherwise smooth blend.
+            incomingBackground.sprite = WorldBackdrop(routeWorld);
+            incomingBackground.color = Color.clear;
+            incomingBackground.transform.position = backgroundRenderer.transform.position;
+            FitBackgroundToCamera(incomingBackground, .5f);
+            incomingBackground.enabled = true;
+            equippedWorld = routeWorld;
+            equippedPipe = FindById(PipeStyles, routeWorld.PresetPipeId) ?? PipeStyles[0];
             if (scoreBurstText != null)
             {
-                scoreBurstTimer = .80f;
+                scoreBurstDuration = .80f;
+                scoreBurstTimer = scoreBurstDuration;
+                scoreBurstIsCrystal = false;
                 scoreBurstText.text = routeWorld.Name;
                 scoreBurstText.color = routeWorld.Accent;
                 scoreBurstText.rectTransform.anchoredPosition = new Vector2(0f, 612f);
@@ -3714,29 +3855,94 @@ new WorldTheme(
             if (worldTransitionTimer > 0f)
             {
                 worldTransitionTimer = Mathf.Max(0f, worldTransitionTimer - deltaTime);
-                if (backgroundVeil != null)
+                var progress = 1f - worldTransitionTimer / WorldTransitionSeconds;
+                var blend = Mathf.SmoothStep(0f, 1f, progress);
+                incomingBackground.color = new Color(1f, 1f, 1f, blend);
+                var veilTarget = routeWorld.Accent;
+                veilTarget.a = .11f;
+                backgroundVeil.color = Color.Lerp(transitionVeilStart, veilTarget, blend);
+                var floorTarget = routeWorld.Floor;
+                floorTarget.a = .54f;
+                floorSurface.color = Color.Lerp(transitionFloorStart, floorTarget, blend);
+                var railTarget = routeWorld.Accent;
+                railTarget.a = .38f;
+                floorGlow.color = Color.Lerp(transitionRailStart, railTarget, blend);
+                var lipTarget = Darken(routeWorld.Floor, .65f);
+                lipTarget.a = .78f;
+                floorLip.color = Color.Lerp(transitionLipStart, lipTarget, blend);
+                if (hudModeText != null)
                 {
-                    var flare = Mathf.Sin(Mathf.Clamp01(1f - worldTransitionTimer / WorldTransitionSeconds) * Mathf.PI);
-                    backgroundVeil.color = new Color(routeWorld.Accent.r, routeWorld.Accent.g, routeWorld.Accent.b, .12f + flare * .36f);
+                    // Change the label at zero opacity, not in the middle of a
+                    // fully visible word. World artwork remains an uninterrupted blend.
+                    if (progress >= .5f) hudModeText.text = routeWorld.Name;
+                    var label = Color.Lerp(transitionRailStart, routeWorld.Accent, blend);
+                    label.a = Mathf.Abs(2f * blend - 1f);
+                    hudModeText.color = label;
                 }
+                FadeDepartingWorld(deltaTime, progress);
                 if (worldTransitionTimer > 0f) return;
 
-                // Gates reappear only after the tunnel finishes, and the first is
-                // static. The following recovery beat keeps the re-entry readable.
+                // Commit exactly the image already shown at full opacity.
+                backgroundRenderer.sprite = incomingBackground.sprite;
+                FitBackgroundToCamera(backgroundRenderer, .5f);
+                incomingBackground.enabled = false;
                 spawnX = GetWorldWidth() * .5f + 2.4f;
-                for (var index = 0; index < pipePool.Length; index += 1) ConfigurePipe(pipePool[index], spawnX + index * RoutePipeSpacing());
+                for (var index = 0; index < pipePool.Length; index += 1)
+                    ConfigurePipe(pipePool[index], spawnX + index * RoutePipeSpacing());
                 worldRecoveryTimer = WorldRecoverySeconds;
+                return;
             }
-
             if (worldRecoveryTimer > 0f)
-            {
                 worldRecoveryTimer = Mathf.Max(0f, worldRecoveryTimer - deltaTime);
-                if (backgroundVeil != null) backgroundVeil.color = new Color(routeWorld.Accent.r, routeWorld.Accent.g, routeWorld.Accent.b, .11f);
+        }
+
+        private void FadeDepartingWorld(float deltaTime, float progress)
+        {
+            if (!departingObjectsVisible) return;
+            var fade = 1f - Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(progress / .25f));
+            for (var index = 0; index < transitionRenderers.Length; index += 1)
+            {
+                var colour = transitionColours[index];
+                colour.a *= fade;
+                transitionRenderers[index].color = colour;
             }
+            var movement = Vector3.left * (ActiveScrollSpeed() * deltaTime);
+            foreach (var pair in pipePool)
+            {
+                if (!pair.Root.activeSelf) continue;
+                pair.X += movement.x;
+                pair.Root.transform.localPosition += movement;
+            }
+            foreach (var pickup in powerUpPool)
+                if (pickup.Root.activeSelf) pickup.Root.transform.position += movement;
+            foreach (var pickup in crystalPickupPool)
+                if (pickup.Root.activeSelf) pickup.Root.transform.position += movement;
+            if (progress < .25f) return;
+            foreach (var pair in pipePool) pair.Root.SetActive(false);
+            foreach (var pickup in powerUpPool) DeferPowerUp(pickup, 0f);
+            foreach (var pickup in crystalPickupPool) DeferCrystalPickup(pickup, 0f);
+            RestoreDepartingColours();
+        }
+
+        private void RestoreDepartingColours()
+        {
+            if (!departingObjectsVisible) return;
+            for (var index = 0; index < transitionRenderers.Length; index += 1)
+                transitionRenderers[index].color = transitionColours[index];
+            departingObjectsVisible = false;
+        }
+
+        private void ResetWorldTransition()
+        {
+            RestoreDepartingColours();
+            worldTransitionTimer = 0f;
+            worldRecoveryTimer = 0f;
+            if (incomingBackground != null) incomingBackground.enabled = false;
         }
 
         private void ApplyRouteWorldVisuals()
         {
+            ResetWorldTransition();
             if (routeWorld == null) routeWorld = Worlds[Mathf.Clamp(routeWorldIndex, 0, Worlds.Length - 1)];
             equippedWorld = routeWorld;
             equippedPipe = FindById(PipeStyles, routeWorld.PresetPipeId) ?? PipeStyles[0];
@@ -3757,6 +3963,12 @@ new WorldTheme(
                 var railColour = routeWorld.Accent;
                 railColour.a = .38f;
                 floorGlow.color = railColour;
+            }
+            if (floorLip != null)
+            {
+                var lipColour = Darken(routeWorld.Floor, .65f);
+                lipColour.a = .78f;
+                floorLip.color = lipColour;
             }
             if (hudModeText != null)
             {
@@ -3807,52 +4019,92 @@ new WorldTheme(
             var capBodyInset = .23f;
             // Theme identity belongs to the narrow energy parts. The cylindrical
             // body stays graphite, with only a restrained metal reflection.
-            var metal = Color.Lerp(Hex("#0a1222"), equippedPipe.Panel, .15f);
-            var reflectionColour = Color.Lerp(metal, Color.white, .20f + pulse * .06f);
-            reflectionColour.a = Mathf.Lerp(.22f, .38f, pulse);
-            if (!hasAuthoredPipeBody) surface.Artwork.color = reflectionColour;
+           var metal = Color.Lerp(Hex("#0a1222"), equippedPipe.Panel, .15f);
+var reflectionColour = Color.Lerp(metal, Color.white, .22f + pulse * .10f);
+reflectionColour.a = Mathf.Lerp(.24f, .44f, pulse);
+
+if (hasAuthoredPipeBody)
+{
+    var authoredTint = Color.Lerp(
+        Color.white,
+        equippedPipe.Panel,
+        .035f + pulse * .030f);
+
+    authoredTint = Color.Lerp(
+        authoredTint,
+        equippedPipe.Energy,
+        .015f + pulse * .015f);
+
+    authoredTint.a = 1f;
+    surface.Artwork.color = authoredTint;
+
+    if (surface.Shade != null)
+    {
+        var authoredShade = surface.Shade.color;
+        authoredShade.a = Mathf.Lerp(.10f, .18f, pulse);
+        surface.Shade.color = authoredShade;
+    }
+}
+else
+{
+    surface.Artwork.color = reflectionColour;
+}
 
             var coreColour = equippedPipe.Energy;
             coreColour.a = Mathf.Lerp(.08f, .18f, pulse);
             if (!hasAuthoredPipeBody) surface.Core.color = coreColour;
             var corePulseColour = Color.Lerp(equippedPipe.Energy, Color.white, .42f);
-            corePulseColour.a = Mathf.Lerp(.12f, .42f, pulse);
+            corePulseColour.a = Mathf.Lerp(.18f, .56f, pulse);
             surface.CorePulse.color = corePulseColour;
             var corePhase = reduceMotionEnabled ? .48f : Mathf.Repeat(ambientTime * .68f + pipeX * .17f, 1f);
-            var bodyHeight = Mathf.Max(.12f, surface.Panel.transform.localScale.y);
+            var bodyHeight = hasAuthoredPipeBody &&
+            surface.Artwork != null &&
+            surface.Artwork.sprite != null ? Mathf.Max(.12f,
+            surface.Artwork.sprite.bounds.size.y *Mathf.Abs(surface.Artwork.transform.localScale.y)): Mathf.Max(.12f,
+            surface.Panel.transform.localScale.y);
+            if (surface.RailLeft != null && surface.RailLeft.enabled)
+{
+    var railLeft = equippedPipe.Energy;
+    railLeft.a = Mathf.Lerp(.10f, .22f, pulse);
+    surface.RailLeft.color = railLeft;
+}
+
+if (surface.RailRight != null && surface.RailRight.enabled)
+{
+    var railRight = Color.Lerp(equippedPipe.Energy, Color.white, .35f);
+    railRight.a = Mathf.Lerp(.06f, .14f, pulse);
+    surface.RailRight.color = railRight;
+}
             var corePulseHeight = .44f + pulse * .10f;
             var corePulseStart = .18f + corePulseHeight * .5f;
             var corePulseTravel = Mathf.Max(0f, bodyHeight - .18f - corePulseHeight);
-            surface.CorePulse.transform.localPosition = new Vector3(
-                Mathf.Sin((ambientTime * 2.8f + pipeX) * gateMotion) * .018f,
-                capY + direction * (corePulseStart + corePhase * corePulseTravel), 0f);
+           surface.CorePulse.transform.localPosition = new Vector3(
+    Mathf.Sin((ambientTime * 3.2f + pipeX) * gateMotion) * .024f,
+    capY + direction * (corePulseStart + corePhase * corePulseTravel), 0f);
             surface.CorePulse.transform.localScale = new Vector3(.34f + pulse * .08f, corePulseHeight, 1f);
 
             var seamColour = surface.Energy.color;
-            seamColour.a = Mathf.Lerp(.48f, .92f, pulse);
+            seamColour.a = Mathf.Lerp(.62f, .98f, pulse);
             surface.Energy.color = seamColour;
             surface.Energy.transform.localPosition = new Vector3(0f, capY + direction * (.055f + Mathf.Sin(ambientTime * 8.8f + pipeX) * .012f * gateMotion), 0f);
-            surface.Energy.transform.localScale = new Vector3(PipeWidth * Mathf.Lerp(.58f, .69f, pulse), .016f + pulse * .012f, 1f);
+            surface.Energy.transform.localScale = new Vector3(PipeWidth * Mathf.Lerp(.60f, 72f, pulse), .018f + pulse * .014f, 1f);
 
             var highlightColour = surface.Highlight.color;
-            highlightColour.a = Mathf.Lerp(.04f, .20f, pulse);
+            highlightColour.a = Mathf.Lerp(.08f, .28f, pulse);
             surface.Highlight.color = highlightColour;
             surface.Highlight.transform.localPosition = new Vector3(0f, capY + direction * (.035f + Mathf.Cos(ambientTime * 7.2f + pipeX) * .010f * gateMotion), 0f);
-            surface.Highlight.transform.localScale = new Vector3(PipeWidth * Mathf.Lerp(.52f, .62f, pulse), .006f + pulse * .007f, 1f);
-
+            surface.Highlight.transform.localScale = new Vector3(PipeWidth * Mathf.Lerp(.56f, .68f, pulse), .008f + pulse * .009f, 1f);
             var scanPhase = reduceMotionEnabled ? .48f : Mathf.Repeat(ambientTime * .82f + pipeX * .11f, 1f);
             var scanColour = surface.Scan.color;
-            scanColour.a = Mathf.Lerp(.05f, .20f, pulse);
+            scanColour.a = Mathf.Lerp(.08f, .26f, pulse);
             surface.Scan.color = scanColour;
             surface.Scan.transform.localPosition = new Vector3(0f, capY + direction * (capBodyInset + scanPhase * Mathf.Max(.08f, bodyHeight - .30f)), 0f);
-            surface.Scan.transform.localScale = new Vector3(PipeWidth * .70f, .008f, 1f);
-
+            surface.Scan.transform.localScale = new Vector3(PipeWidth * .72f, .010f, 1f);
             var beaconColour = surface.Beacon.color;
-            beaconColour.a = Mathf.Lerp(.13f, .43f, pulse);
+            beaconColour.a = Mathf.Lerp(.18f, .52f, pulse);
             surface.Beacon.color = beaconColour;
             surface.Beacon.transform.localPosition = new Vector3(0f, capY + direction * .115f, 0f);
-            surface.Beacon.transform.localScale = Vector3.one * Mathf.Lerp(.23f, .34f, pulse);
-
+            surface.Beacon.transform.localScale = Vector3.one * Mathf.Lerp(.26f, .38f, pulse);
             if (hasAuthoredPipeCap && hasAuthoredPipeGlow && surface.CapGlow.enabled)
             {
                 var collarGlow = equippedPipe.Energy;
@@ -3866,10 +4118,10 @@ new WorldTheme(
             }
 
             var capEnergyColour = surface.CapEnergy.color;
-            capEnergyColour.a = Mathf.Lerp(.62f, .98f, pulse);
+            capEnergyColour.a = Mathf.Lerp(.72f, 1f, pulse);
             surface.CapEnergy.color = capEnergyColour;
             surface.CapEnergy.transform.localPosition = new Vector3(0f, capY + direction * (.030f + Mathf.Sin(ambientTime * 8.8f + pipeX) * .008f * gateMotion), 0f);
-            surface.CapEnergy.transform.localScale = new Vector3(PipeWidth * Mathf.Lerp(.60f, .69f, pulse), .016f + pulse * .008f, 1f);
+            surface.CapEnergy.transform.localScale = new Vector3(PipeWidth * Mathf.Lerp(.62f, .72f, pulse), .018f + pulse * .010f, 1f);
         }
 
         private void RetirePowerUpsForGate(PipePair gate)
@@ -3916,7 +4168,7 @@ new WorldTheme(
             SetBlock(surface.Core, new Vector2(0f, centreY), new Vector2(PipeWidth * .29f, Mathf.Max(.16f, height - .44f)));
             surface.CorePulse.color = new Color(coreColor.r, coreColor.g, coreColor.b, 0f);
             surface.CorePulse.transform.localPosition = new Vector3(0f, capY + direction * .68f, 0f);
-            surface.CorePulse.transform.localScale = new Vector3(.38f, .82f, 1f);
+            surface.CorePulse.transform.localScale = new Vector3(.38f, .10f, 1f);
 
             surface.Energy.enabled = false;
             surface.Energy.sortingOrder = 9;
@@ -3949,113 +4201,282 @@ new WorldTheme(
             surface.Beacon.transform.localScale = Vector3.one * .28f;
 
             surface.CapGlow.enabled = hasAuthoredPipeCap && hasAuthoredPipeGlow;
-            if (hasAuthoredPipeCap && hasAuthoredPipeGlow)
+            if (surface.CapGlow.enabled)
             {
-                var glowColor = style.Energy;
-                glowColor.a = .20f;
-                surface.CapGlow.sprite = pipeGlowSprite;
-                surface.CapGlow.color = glowColor;
-                SetSpriteBlock(surface.CapGlow, Vector2.up * capCentre, new Vector2(PipeCapWidth * .82f, PipeCapHeight * .28f));
+                // Initialise the glow here; AnimatePipeSurface supplies its live pulse.
+                const float initialPulse = .56f;
+                var collarGlow = style.Energy;
+                collarGlow.a = Mathf.Lerp(.18f, .34f, initialPulse);
+                surface.CapGlow.color = collarGlow;
+                SetSpriteBlock(surface.CapGlow, Vector2.up * capCentre, new Vector2(
+                    PipeCapWidth * (.82f + initialPulse * .06f),
+                    PipeCapHeight * (.29f + initialPulse * .03f)));
                 surface.CapGlow.transform.localRotation = Quaternion.identity;
             }
         }
 
-        private void LayoutPlumbingGate(PipeSurface surface, float centreY, float height, float capY, bool topPipe, PipeStyle style)
+       private void LayoutPlumbingGate(
+    PipeSurface surface,
+    float centreY,
+    float height,
+    float capY,
+    bool topPipe,
+    PipeStyle style)
+{
+    var direction = topPipe ? 1f : -1f;
+    var bodyHeight = Mathf.Max(.12f, height - .08f);
+    var metal = Color.Lerp(Hex("#0a1222"), style.Panel, .08f);
+    var metalDark = Darken(metal, .72f);
+    var collarMetal = Color.Lerp(metal, style.Accent, .24f);
+
+    // Prefer the authored mechanical pipe supplied for SkyPulse.
+    // Keep subtle visual depth and energy around authored artwork.
+    surface.Artwork.enabled = hasAuthoredPipeBody;
+    surface.Outer.enabled = !hasAuthoredPipeBody;
+    surface.Panel.enabled = !hasAuthoredPipeBody;
+
+    surface.Shade.enabled = true;
+    surface.RailLeft.enabled = true;
+    surface.RailRight.enabled = true;
+
+    surface.Core.enabled = !hasAuthoredPipeBody;
+    surface.CorePulse.enabled = true;
+
+    if (hasAuthoredPipeBody)
+    {
+        surface.Artwork.sprite = pipeBodySprite;
+
+        var authoredTint = Color.Lerp(
+            Color.white,
+            style.Accent,
+            .06f);
+
+        authoredTint.a = 1f;
+
+        surface.Artwork.color = authoredTint;
+        surface.Artwork.sortingOrder = 5;
+
+        SetSpriteBlock(
+            surface.Artwork,
+            new Vector2(0f, centreY),
+            new Vector2(PipeWidth, height));
+
+        surface.Artwork.transform.localRotation =
+            topPipe
+                ? Quaternion.Euler(0f, 0f, 180f)
+                : Quaternion.identity;
+
+        // Soft depth copy behind the authored pipe.
+        surface.Shade.sprite = pipeBodySprite;
+        surface.Shade.sortingOrder = 4;
+        surface.Shade.color = new Color(0f, 0f, 0f, .14f);
+
+        SetSpriteBlock(
+            surface.Shade,
+            new Vector2(-.045f, centreY - .030f),
+            new Vector2(
+                PipeWidth * 1.01f,
+                height));
+
+        surface.Shade.transform.localRotation =
+            surface.Artwork.transform.localRotation;
+
+        // Restrained illuminated edges.
+        var leftRail = style.Energy;
+        leftRail.a = .13f;
+
+        surface.RailLeft.color = leftRail;
+        surface.RailLeft.sortingOrder = 6;
+
+        SetBlock(
+            surface.RailLeft,
+            new Vector2(
+                -PipeWidth * .38f,
+                centreY),
+            new Vector2(
+                .018f,
+                Mathf.Max(.12f, height - .18f)));
+
+        var rightRail = Color.Lerp(
+            style.Energy,
+            Color.white,
+            .28f);
+
+        rightRail.a = .08f;
+
+        surface.RailRight.color = rightRail;
+        surface.RailRight.sortingOrder = 6;
+
+        SetBlock(
+            surface.RailRight,
+            new Vector2(
+                PipeWidth * .38f,
+                centreY),
+            new Vector2(
+                .014f,
+                Mathf.Max(.12f, height - .22f)));
+    }
+    else
+    {
+        SetBlock(
+            surface.Outer,
+            Vector2.up * centreY,
+            new Vector2(PipeWidth, height));
+
+        SetBlock(
+            surface.Panel,
+            Vector2.up * centreY,
+            new Vector2(PipeWidth - .06f, bodyHeight));
+
+        SetBlock(
+            surface.Shade,
+            new Vector2(-PipeWidth * .32f, centreY),
+            new Vector2(
+                PipeWidth * .18f,
+                Mathf.Max(.12f, height - .14f)));
+
+        SetBlock(
+            surface.Artwork,
+            new Vector2(PipeWidth * .07f, centreY),
+            new Vector2(
+                PipeWidth * .19f,
+                Mathf.Max(.12f, height - .18f)));
+
+        SetBlock(
+            surface.RailLeft,
+            new Vector2(-PipeWidth * .36f, centreY),
+            new Vector2(
+                .028f,
+                Mathf.Max(.12f, height - .18f)));
+
+        SetBlock(
+            surface.RailRight,
+            new Vector2(PipeWidth * .36f, centreY),
+            new Vector2(
+                .020f,
+                Mathf.Max(.12f, height - .22f)));
+
+        surface.Panel.color =
+            new Color(metal.r, metal.g, metal.b, 1f);
+
+        surface.Outer.color =
+            new Color(metalDark.r, metalDark.g, metalDark.b, 1f);
+
+        surface.Shade.color =
+            new Color(0f, 0f, 0f, .18f);
+
+        var reflection =
+            Color.Lerp(metal, Color.white, .23f);
+
+        reflection.a = .30f;
+        surface.Artwork.color = reflection;
+
+        var leftRail = style.Energy;
+        leftRail.a = .28f;
+        surface.RailLeft.color = leftRail;
+
+        var rightRail =
+            Color.Lerp(style.Energy, Color.white, .28f);
+
+        rightRail.a = .15f;
+        surface.RailRight.color = rightRail;
+    }
+
+    // The separate authored cap sits precisely at the playable gap edge.
+    var capCentre =
+        capY + direction * (PipeCapHeight * .5f);
+
+    surface.CapOuter.enabled = !hasAuthoredPipeCap;
+    surface.CapAccent.enabled = false;
+    surface.CapPanel.enabled = true;
+    surface.CapEnergy.enabled = !hasAuthoredPipeCap;
+
+    if (hasAuthoredPipeCap)
+    {
+        surface.CapPanel.sprite = pipeCapSprite;
+        surface.CapPanel.color = Color.white;
+        surface.CapPanel.sortingOrder = 11;
+
+        SetSpriteBlock(
+            surface.CapPanel,
+            Vector2.up * capCentre,
+            new Vector2(
+                PipeCollisionWidth,
+                PipeCapHeight));
+
+        surface.CapPanel.transform.localRotation =
+            topPipe
+                ? Quaternion.Euler(0f, 0f, 180f)
+                : Quaternion.identity;
+
+        surface.CapGlow.enabled = hasAuthoredPipeGlow;
+
+        if (hasAuthoredPipeGlow)
         {
-            var direction = topPipe ? 1f : -1f;
-            var bodyHeight = Mathf.Max(.12f, height - .08f);
-            var metal = Color.Lerp(Hex("#0a1222"), style.Panel, .08f);
-            var metalDark = Darken(metal, .72f);
-            var collarMetal = Color.Lerp(metal, style.Accent, .24f);
+            var authoredGlow = style.Energy;
+            authoredGlow.a = .20f;
 
-            // Prefer the authored mechanical pipe supplied for SkyPulse. The
-            // procedural layers remain a safe fallback if an asset is omitted from
-            // a build, while collision continues to use PipeCollisionWidth.
-            surface.Artwork.enabled = hasAuthoredPipeBody;
-            surface.Outer.enabled = !hasAuthoredPipeBody;
-            surface.Panel.enabled = !hasAuthoredPipeBody;
-            surface.Shade.enabled = !hasAuthoredPipeBody;
-            surface.RailLeft.enabled = !hasAuthoredPipeBody;
-            surface.RailRight.enabled = !hasAuthoredPipeBody;
-            surface.Core.enabled = !hasAuthoredPipeBody;
-            surface.CorePulse.enabled = !hasAuthoredPipeBody;
+            surface.CapGlow.color = authoredGlow;
+            surface.CapGlow.sprite = pipeGlowSprite;
 
-            if (hasAuthoredPipeBody)
-            {
-                surface.Artwork.sprite = pipeBodySprite;
-                surface.Artwork.color = Color.white;
-                surface.Artwork.sortingOrder = 5;
-                SetSpriteBlock(surface.Artwork, new Vector2(0f, centreY), new Vector2(PipeWidth, height));
-                surface.Artwork.transform.localRotation = topPipe
-                    ? Quaternion.Euler(0f, 0f, 180f)
-                    : Quaternion.identity;
-            }
-            else
-            {
-                SetBlock(surface.Outer, Vector2.up * centreY, new Vector2(PipeWidth, height));
-                SetBlock(surface.Panel, Vector2.up * centreY, new Vector2(PipeWidth - .06f, bodyHeight));
-                SetBlock(surface.Shade, new Vector2(-PipeWidth * .32f, centreY), new Vector2(PipeWidth * .18f, Mathf.Max(.12f, height - .14f)));
-                SetBlock(surface.Artwork, new Vector2(PipeWidth * .07f, centreY), new Vector2(PipeWidth * .19f, Mathf.Max(.12f, height - .18f)));
-                SetBlock(surface.RailLeft, new Vector2(-PipeWidth * .36f, centreY), new Vector2(.028f, Mathf.Max(.12f, height - .18f)));
-                SetBlock(surface.RailRight, new Vector2(PipeWidth * .36f, centreY), new Vector2(.020f, Mathf.Max(.12f, height - .22f)));
-                surface.Panel.color = new Color(metal.r, metal.g, metal.b, 1f);
-                surface.Outer.color = new Color(metalDark.r, metalDark.g, metalDark.b, 1f);
-                surface.Shade.color = new Color(0f, 0f, 0f, .18f);
-                var reflection = Color.Lerp(metal, Color.white, .23f);
-                reflection.a = .30f;
-                surface.Artwork.color = reflection;
-                var leftRail = style.Energy;
-                leftRail.a = .28f;
-                surface.RailLeft.color = leftRail;
-                var rightRail = Color.Lerp(style.Energy, Color.white, .28f);
-                rightRail.a = .15f;
-                surface.RailRight.color = rightRail;
-            }
+            SetSpriteBlock(
+                surface.CapGlow,
+                Vector2.up * capCentre,
+                new Vector2(
+                    PipeCapWidth * .82f,
+                    PipeCapHeight * .28f));
 
-            // The separate authored cap sits precisely at the playable gap edge.
-            var capCentre = capY + direction * (PipeCapHeight * .5f);
-            surface.CapOuter.enabled = !hasAuthoredPipeCap;
-            surface.CapAccent.enabled = false;
-            surface.CapPanel.enabled = true;
-            surface.CapEnergy.enabled = !hasAuthoredPipeCap;
-
-            if (hasAuthoredPipeCap)
-            {
-                surface.CapPanel.sprite = pipeCapSprite;
-                surface.CapPanel.color = Color.white;
-                surface.CapPanel.sortingOrder = 11;
-                SetSpriteBlock(surface.CapPanel, Vector2.up * capCentre, new Vector2(PipeCollisionWidth, PipeCapHeight));
-                surface.CapPanel.transform.localRotation = topPipe
-                    ? Quaternion.Euler(0f, 0f, 180f)
-                    : Quaternion.identity;
-
-                surface.CapGlow.enabled = hasAuthoredPipeGlow;
-                if (hasAuthoredPipeGlow)
-                {
-                    var authoredGlow = style.Energy;
-                    authoredGlow.a = .20f;
-                    surface.CapGlow.color = authoredGlow;
-                    surface.CapGlow.sprite = pipeGlowSprite;
-                    SetSpriteBlock(surface.CapGlow, Vector2.up * capCentre, new Vector2(PipeCapWidth * .82f, PipeCapHeight * .28f));
-                    surface.CapGlow.transform.localRotation = Quaternion.identity;
-                }
-            }
-            else
-            {
-                surface.CapGlow.enabled = false;
-                SetBlock(surface.CapOuter, Vector2.up * capCentre, new Vector2(PipeWidth + .18f, .42f));
-                SetBlock(surface.CapAccent, Vector2.up * capCentre, new Vector2(PipeWidth + .10f, .34f));
-                SetBlock(surface.CapPanel, Vector2.up * capCentre, new Vector2(PipeWidth - .08f, .28f));
-                SetBlock(surface.CapEnergy, Vector2.up * (capY + direction * .030f), new Vector2(PipeWidth * .64f, .018f));
-                surface.CapOuter.color = Darken(metalDark, .18f);
-                surface.CapAccent.color = collarMetal;
-                surface.CapPanel.color = Darken(metal, .40f);
-                var capEnergy = style.Energy;
-                capEnergy.a = .82f;
-                surface.CapEnergy.color = capEnergy;
-            }
+            surface.CapGlow.transform.localRotation =
+                Quaternion.identity;
         }
+    }
+    else
+    {
+        surface.CapGlow.enabled = false;
 
+        SetBlock(
+            surface.CapOuter,
+            Vector2.up * capCentre,
+            new Vector2(
+                PipeWidth + .18f,
+                .42f));
+
+        SetBlock(
+            surface.CapAccent,
+            Vector2.up * capCentre,
+            new Vector2(
+                PipeWidth + .10f,
+                .34f));
+
+        SetBlock(
+            surface.CapPanel,
+            Vector2.up * capCentre,
+            new Vector2(
+                PipeWidth - .08f,
+                .28f));
+
+        SetBlock(
+            surface.CapEnergy,
+            Vector2.up *
+                (capY + direction * .030f),
+            new Vector2(
+                PipeWidth * .64f,
+                .018f));
+
+        surface.CapOuter.color =
+            Darken(metalDark, .18f);
+
+        surface.CapAccent.color =
+            collarMetal;
+
+        surface.CapPanel.color =
+            Darken(metal, .40f);
+
+        var capEnergy = style.Energy;
+        capEnergy.a = .82f;
+        surface.CapEnergy.color = capEnergy;
+    }
+}
         private float ActiveGap()
         {
             if (score < 5) return CameraHeight * .34f;
@@ -4152,9 +4573,7 @@ new WorldTheme(
 
             // Kill the long flight ribbon immediately so it does not freeze
             // awkwardly in mid-air during the crash animation.
-            if (trailSafety != null) trailSafety.positionCount = 0;
-            if (trailGlow != null) trailGlow.positionCount = 0;
-            if (trailCore != null) trailCore.positionCount = 0;
+            ClearTrail();
             TriggerFlightFeedback(Hex("#f05bc6"), .36f);
             PulseHaptic(.28f);
             Play(crashSound);
@@ -4237,6 +4656,14 @@ new WorldTheme(
             return mode == FlightMode.Adventure ? Hex("#f05bc6") : mode == FlightMode.Daily ? Hex("#ffc34d") : Hex("#45eaff");
         }
 
+        private void StartRoundFromCustomize()
+        {
+            if (state != FlightState.Customize) return;
+            if (purchaseModal != null && purchaseModal.activeSelf) return;
+            if (unlockRevealModal != null && unlockRevealModal.activeSelf) return;
+            StartFlight();
+        }
+
         private void OpenCustomize()
         {
             state = FlightState.Customize;
@@ -4278,6 +4705,8 @@ new WorldTheme(
         private void RebuildCustomizeGrid()
         {
             if (customizeContent == null) return;
+            // A fling in the previous tab must not move the newly opened list.
+            if (customizeScroll != null) customizeScroll.StopMovement();
             for (var index = customizeContent.childCount - 1; index >= 0; index -= 1) Destroy(customizeContent.GetChild(index).gameObject);
 
             switch (cosmeticCategory)
@@ -5013,6 +5442,7 @@ new WorldTheme(
 
         private void ApplyEquippedVisuals()
         {
+            ResetWorldTransition();
             if (equippedSkin == null) equippedSkin = Skins[0];
             if (equippedTrail == null) equippedTrail = GetTrailForSkin(equippedSkin);
             if (equippedWorld == null) equippedWorld = Worlds[0];
@@ -5061,27 +5491,19 @@ new WorldTheme(
 
         private void ApplyTrailColors()
         {
-            var safety = Color.Lerp(Hex("#0d286a"), equippedTrail.Core, .42f);
-            safety.a = .92f;
-            if (trailSafety != null)
-            {
-                trailSafety.startColor = safety;
-                var safetyEnd = safety;
-                safetyEnd.a = 0f;
-                trailSafety.endColor = safetyEnd;
-            }
-            var glowStart = equippedTrail.Glow;
-            glowStart.a = .26f;
-            var glowEnd = equippedTrail.Core;
-            glowEnd.a = 0f;
-            trailGlow.startColor = glowStart;
-            trailGlow.endColor = glowEnd;
-            var coreStart = equippedTrail.Core;
-            coreStart.a = .94f;
-            var coreEnd = equippedTrail.Glow;
-            coreEnd.a = 0f;
-            trailCore.startColor = coreStart;
-            trailCore.endColor = coreEnd;
+            trailSafety.colorGradient = TrailGradient(equippedTrail.Glow, equippedTrail.Core, .22f);
+            trailGlow.colorGradient = TrailGradient(Color.Lerp(equippedTrail.Core, Color.white, .25f), equippedTrail.Glow, .80f);
+            trailCore.colorGradient = TrailGradient(Color.Lerp(equippedTrail.Core, Color.white, .88f), equippedTrail.Core, .95f);
+        }
+
+        private static Gradient TrailGradient(Color head, Color tail, float opacity)
+        {
+            var gradient = new Gradient();
+            gradient.SetKeys(new[] { new GradientColorKey(head, 0f),
+                new GradientColorKey(Color.Lerp(head, tail, .65f), .38f), new GradientColorKey(tail, 1f) },
+                new[] { new GradientAlphaKey(opacity * .75f, 0f), new GradientAlphaKey(opacity, .12f),
+                    new GradientAlphaKey(opacity * .40f, .62f), new GradientAlphaKey(0f, 1f) });
+            return gradient;
         }
 
         private Sprite WorldBackdrop(WorldTheme world)
@@ -5158,7 +5580,7 @@ new WorldTheme(
             if (idleBirdSprite != null)
             {
                 birdRenderer.sprite = idleBirdSprite;
-                idleBirdBaseScale = ArtworkScale(idleBirdSprite, BirdDisplayWidth);
+                idleBirdBaseScale = ArtworkScale(birdRegistrationReference ?? idleBirdSprite, BirdDisplayWidth);
                 authoredBirdBaseScale = idleBirdBaseScale;
                 birdArt.localScale = idleBirdBaseScale;
                 if (birdParallaxRenderer != null)
@@ -5196,7 +5618,7 @@ new WorldTheme(
                 birdSafetyRenderer.color = Color.white;
                 birdSafetyRenderer.enabled = usesEmergencyFallback;
             }
-            if (birdDepthRenderer != null) birdDepthRenderer.enabled = !hasFlapFrameSequence;
+            if (birdDepthRenderer != null) birdDepthRenderer.enabled = idleBirdSprite != null;
             if (birdEyeGlintRenderer != null) birdEyeGlintRenderer.enabled = !hasFlapFrameSequence;
             ConfigureRearThrust();
         }
@@ -5204,6 +5626,7 @@ new WorldTheme(
         private bool LoadFlapFrameSequence(Skin skin)
         {
             flapFrameBirdSprites = null;
+            birdRegistrationReference = null;
             if (skin == null || skin.FlapFramePaths == null || skin.FlapFramePaths.Length != 6) return false;
             if (skin.FlapFramePivots != null && skin.FlapFramePivots.Length != skin.FlapFramePaths.Length) return false;
             var frames = new Sprite[skin.FlapFramePaths.Length];
@@ -5218,6 +5641,12 @@ new WorldTheme(
                 if (frames[index] == null) return false;
             }
 
+            // The newer sheets end with another raised pose, not a downstroke.
+            // Place that pose beside the other raised wings before ping-pong playback.
+            if (skin.Id.StartsWith("newbird", StringComparison.Ordinal))
+                frames = new[] { frames[0], frames[5], frames[1], frames[2], frames[3], frames[4] };
+
+            birdRegistrationReference = LoadOptionalSprite(skin.ArtPath);
             flapFrameBirdSprites = frames;
             return true;
         }
@@ -5227,9 +5656,26 @@ new WorldTheme(
             var source = LoadOptionalSprite(path);
             if (source == null) return null;
 
+            if (!birdFrameRegistrationLoaded)
+            {
+                birdFrameRegistrationLoaded = true;
+                var data = Resources.Load<TextAsset>("SkyPulse/characters/bird-frame-registration");
+                var file = data == null ? null : JsonUtility.FromJson<BirdFrameRegistrationFile>(data.text);
+                if (file?.frames != null)
+                    foreach (var frame in file.frames)
+                        if (!string.IsNullOrEmpty(frame.path) && frame.scale > 0f)
+                            birdFrameRegistration[frame.path] = frame;
+            }
+            var scale = 1f;
+            if (birdFrameRegistration.TryGetValue(path, out var registration))
+            {
+                pivot = new Vector2(registration.pivotX, registration.pivotY);
+                scale = registration.scale;
+            }
+
             // Centered art requires no additional sprite. Registration is only
             // used for an authored sequence whose source canvases were offset.
-            if (Mathf.Approximately(pivot.x, .5f) && Mathf.Approximately(pivot.y, .5f))
+            if (Mathf.Approximately(pivot.x, .5f) && Mathf.Approximately(pivot.y, .5f) && Mathf.Approximately(scale, 1f))
                 return source;
 
             if (registeredFlapSpriteCache.TryGetValue(path, out var registered))
@@ -5240,10 +5686,21 @@ new WorldTheme(
                 source.texture,
                 source.rect,
                 new Vector2(Mathf.Clamp01(pivot.x), Mathf.Clamp01(pivot.y)),
-                source.pixelsPerUnit);
+                source.pixelsPerUnit * scale);
             registered.name = source.name + " registered";
             registeredFlapSpriteCache[path] = registered;
             return registered;
+        }
+
+        private void LayoutRegisteredMenuFrame(Image target, Sprite pose)
+        {
+            if (target == null || pose == null || birdRegistrationReference == null) return;
+            // UI Images ignore Sprite pivots and PPU when fitting a fixed rect.
+            // Reproduce the gameplay registration explicitly for the hangar too.
+            var referenceSize = birdRegistrationReference.rect.size / birdRegistrationReference.pixelsPerUnit;
+            var units = Mathf.Min(850f / referenceSize.x, 420f / referenceSize.y);
+            target.rectTransform.pivot = pose.pivot / pose.rect.size;
+            target.rectTransform.sizeDelta = pose.rect.size / pose.pixelsPerUnit * units;
         }
 
         private bool UsesFlapFrameSequence()
