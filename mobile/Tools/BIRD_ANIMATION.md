@@ -28,3 +28,13 @@ For visual verification in Unity, inspect each bird in the menu and during singl
 and repeated taps; watch the face/body rather than wing tips. Check both the
 raised-to-lowered sequence and its return at 30 and 60 fps. This does not change
 flight physics or collision geometry.
+
+Hit and unlock presentation bounds
+----------------------------------
+
+`bird-pose-bounds.json` records the nontransparent extents of all 30 dedicated
+hit/unlock sprites, including faint effects and a two-pixel margin. Runtime Sprite
+rectangles use those measurements so empty source-canvas padding does not shrink
+or offset the artwork. Original PNGs remain unchanged. Regenerate the metadata
+with `measure_pose_bounds.py` (Pillow) when any pose image changes. Alpha-bounds
+fitting does not reconstruct feather tips already clipped in the source drawing.

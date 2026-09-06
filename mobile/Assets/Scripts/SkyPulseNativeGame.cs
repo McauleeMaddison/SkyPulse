@@ -170,6 +170,20 @@ namespace SkyPulse.Mobile
         }
 
         [Serializable]
+        private sealed class BirdPoseBounds
+        {
+            public string path;
+            public int x, y, width, height;
+        }
+        [Serializable]
+        private sealed class BirdPoseBoundsFile
+        {
+            public BirdPoseBounds[] frames;
+        }
+        private readonly Dictionary<string, BirdPoseBounds> poseBounds = new Dictionary<string, BirdPoseBounds>();
+        private bool poseBoundsLoaded;
+
+        [Serializable]
         private sealed class BirdFrameRegistration
         {
             public string path;
@@ -882,6 +896,7 @@ new WorldTheme(
         private Font uiFont;
 
         private GameObject uiRoot;
+        private GameObject privacyScreen;
         private RectTransform safeAreaRoot;
         private Rect appliedSafeArea;
         private Vector2Int appliedScreenSize;
@@ -1603,10 +1618,9 @@ new WorldTheme(
             var scaler = uiRoot.GetComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1080f, 1920f);
-            scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
-            // This is a portrait game. Matching height keeps the whole menu visible
-            // in Unity's Free Aspect preview as well as on a phone.
-            scaler.matchWidthOrHeight = 1f;
+            // Fit the complete authored interface on tall phones and wide editor
+            // previews. Height-only scaling clipped edge controls on notched iPhones.
+            scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.Expand;
 
             var safeRoot = new GameObject("Safe area", typeof(RectTransform));
             safeRoot.transform.SetParent(uiRoot.transform, false);
@@ -1628,6 +1642,8 @@ new WorldTheme(
             purchaseModal.SetActive(false);
             unlockRevealModal = CreateUnlockReveal(safeAreaRoot);
             unlockRevealModal.SetActive(false);
+            privacyScreen = CreatePrivacyScreen(safeAreaRoot);
+            privacyScreen.SetActive(false);
         }
 
         private void ApplySafeArea()
@@ -1754,7 +1770,27 @@ new WorldTheme(
             var upgrades = CreateNeonButton(root.transform, "UPGRADES", new Vector2(154f, -456f), new Vector2(284f, 78f), Hex("#ffc34d"));
             upgrades.onClick.AddListener(OpenUpgrades);
             menuDailyText = CreateText(root.transform, "NEON CITY  →  ACID FOUNDRY  →  ORBITAL BAZAAR", new Vector2(0f, -538f), new Vector2(760f, 40f), 17, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            menuEquippedText = CreateText(root.transform, "SELECTED  ·  NEON FINCH", new Vector2(0f, -600f), new Vector2(650f, 36f), 16, Hex("#8f64ff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            menuEquippedText = CreateText(root.transform, "SELECTED  ·  NEON FINCH", new Vector2(0f, -600f), new Vector2(650f, 36f), 20, Hex("#b8a6f5"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            var privacy = CreateNeonButton(root.transform, "PRIVACY", new Vector2(0f, -726f), new Vector2(240f, 68f), Hex("#8fa7c4"));
+            privacy.onClick.AddListener(() => privacyScreen.SetActive(true));
+            return root;
+        }
+
+        private GameObject CreatePrivacyScreen(Transform parent)
+        {
+            var root = CreateScreen(parent, "Privacy screen");
+            CreateFullPanel(root.transform, "Privacy backdrop", new Color(.004f, .008f, .025f, .97f));
+            var card = CreatePanel(root.transform, "Privacy card", Vector2.zero, new Vector2(880f, 1100f), Hex("#10182c"));
+            AddOutline(card.gameObject, Hex("#45eaff"), 1.5f);
+            CreateText(card, "YOUR GAME. YOUR DATA.", new Vector2(0f, 442f), new Vector2(800f, 64f), 36, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            const string notice = "SkyPulse plays offline. No account is required.\n\n" +
+                "Your high score, crystals, unlocked birds, upgrades and preferences are saved on this device. Deleting the app may remove that progress.\n\n" +
+                "This version includes no advertising, tracking, analytics or real-money purchases. Crystals are earned by playing.\n\n" +
+                "Sharing a score copies text to your clipboard only when you choose Share. You decide where to paste it.\n\n" +
+                "Apple may separately process App Store, device backup and diagnostic information under your Apple settings and its privacy policy.";
+            CreateText(card, notice, new Vector2(0f, 30f), new Vector2(758f, 690f), 27, Hex("#d2def0"), TextAnchor.UpperLeft, FontStyle.Normal);
+            var close = CreateNeonButton(card, "BACK TO MENU", new Vector2(0f, -435f), new Vector2(470f, 88f), Hex("#45eaff"));
+            close.onClick.AddListener(() => root.SetActive(false));
             return root;
         }
 
@@ -1906,9 +1942,11 @@ new WorldTheme(
             purchasePreviewImage.preserveAspect = true;
             purchasePreviewImage.raycastTarget = false;
             purchaseTitleText = CreateText(card, "UNLOCK BIRD?", new Vector2(0f, 278f), new Vector2(710f, 52f), 35, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            purchaseDetailText = CreateText(card, "", new Vector2(0f, -38f), new Vector2(700f, 52f), 24, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            purchaseBalanceText = CreateText(card, "", new Vector2(0f, -84f), new Vector2(700f, 36f), 19, new Color(.9f, .94f, 1f, .72f), TextAnchor.MiddleCenter, FontStyle.Bold);
-            CreateText(card, "CONFIRM YOUR PURCHASE", new Vector2(0f, -142f), new Vector2(720f, 32f), 15, new Color(.9f, .94f, 1f, .57f), TextAnchor.MiddleCenter, FontStyle.Bold);
+            purchaseTitleText.resizeTextForBestFit = true;
+            purchaseTitleText.resizeTextMinSize = 24;
+            purchaseTitleText.resizeTextMaxSize = 35;
+            purchaseDetailText = CreateText(card, "", new Vector2(0f, -38f), new Vector2(740f, 100f), 24, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            purchaseBalanceText = CreateText(card, "", new Vector2(0f, -120f), new Vector2(760f, 52f), 19, new Color(.9f, .94f, 1f, .72f), TextAnchor.MiddleCenter, FontStyle.Bold);
             var cancel = CreateNeonButton(card, "CANCEL", new Vector2(-190f, -250f), new Vector2(330f, 78f), Hex("#8f64ff"));
             cancel.onClick.AddListener(ClosePurchaseModal);
             purchaseConfirmButton = CreateNeonButton(card, "UNLOCK", new Vector2(190f, -250f), new Vector2(330f, 78f), Hex("#45eaff"));
@@ -1935,7 +1973,12 @@ new WorldTheme(
             unlockRevealBirdImage.raycastTarget = false;
             unlockRevealBirdTransform = unlockRevealBirdImage.rectTransform;
 
-            unlockRevealTitle = CreateText(unlockRevealCard, "BIRD UNLOCKED", new Vector2(0f, 392f), new Vector2(760f, 64f), 45, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            CreateText(unlockRevealCard, "NEW BIRD UNLOCKED", new Vector2(0f, 398f), new Vector2(760f, 36f), 24, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            unlockRevealTitle = CreateText(unlockRevealCard, "NEW FLIGHT FORM", new Vector2(0f, 338f), new Vector2(780f, 68f), 44, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            unlockRevealTitle.resizeTextForBestFit = true;
+            unlockRevealTitle.resizeTextMinSize = 28;
+            unlockRevealTitle.resizeTextMaxSize = 44;
+            unlockRevealTitle.verticalOverflow = VerticalWrapMode.Truncate;
             unlockRevealDetail = CreateText(unlockRevealCard, "EQUIPPED · READY TO FLY", new Vector2(0f, -145f), new Vector2(760f, 44f), 23, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             var continueButton = CreateNeonButton(unlockRevealCard, "CONTINUE", new Vector2(0f, -292f), new Vector2(510f, 84f), Hex("#45eaff"));
             unlockRevealContinueButton = continueButton;
@@ -1950,7 +1993,7 @@ new WorldTheme(
             // This lookup deliberately does not go through the emergency-bird
             // fallback. A missing unlock frame must never become a different
             // bird's silhouette.
-            var unlockPose = LoadOptionalSprite(skin.UnlockPath);
+            var unlockPose = LoadPresentationPose(skin.UnlockPath);
             if (unlockPose == null)
             {
                 Debug.LogWarning($"SkyPulse: {skin.Name} is missing its bespoke unlock frame at '{skin.UnlockPath}'. Showing its own current bird art until that frame is supplied.");
@@ -1958,18 +2001,27 @@ new WorldTheme(
             }
 
             unlockRevealBirdImage.sprite = unlockPose;
+            // Fit both portrait and landscape poses inside the same protected
+            // art area, with room for the entrance rotation and feather tips.
+            if (unlockPose != null)
+            {
+                var size = unlockPose.rect.size;
+                var fit = Mathf.Min(600f / Mathf.Max(1f, size.x), 360f / Mathf.Max(1f, size.y));
+                unlockRevealBirdTransform.sizeDelta = size * fit;
+            }
+            unlockRevealBirdTransform.pivot = new Vector2(.5f, .5f);
             activeUnlockSkin = skin;
             unlockRevealBirdImage.color = Color.white;
-            unlockRevealTitle.text = $"{skin.Name} UNLOCKED";
+            unlockRevealTitle.text = skin.Name;
             unlockRevealDetail.text = "EQUIPPED  ·  NEW FLIGHT FORM ACQUIRED";
             unlockRevealTitle.color = Hex("#f4fbff");
             unlockRevealDetail.color = skin.Accent;
             unlockRevealHalo.color = new Color(skin.Accent.r, skin.Accent.g, skin.Accent.b, 0f);
             unlockRevealFlash.color = new Color(skin.Accent.r, skin.Accent.g, skin.Accent.b, 0f);
             unlockRevealTimer = 0f;
-            unlockRevealCard.localScale = Vector3.one * .88f;
-            unlockRevealBirdTransform.anchoredPosition = new Vector2(0f, -72f);
-            unlockRevealBirdTransform.localScale = Vector3.one * .62f;
+            unlockRevealCard.localScale = Vector3.one * .96f;
+            unlockRevealBirdTransform.anchoredPosition = new Vector2(0f, 44f);
+            unlockRevealBirdTransform.localScale = Vector3.one * .92f;
             unlockRevealBirdTransform.localRotation = Quaternion.Euler(0f, 0f, reduceMotionEnabled ? 0f : UnlockMotionFor(skin).x);
             unlockRevealHalo.rectTransform.localScale = Vector3.one * .48f;
             unlockRevealHalo.rectTransform.localRotation = Quaternion.identity;
@@ -1990,28 +2042,26 @@ new WorldTheme(
 
             // Reduced Motion retains the celebratory confirmation while stripping
             // the overshoot and continuous spinning from the reveal.
-            var duration = reduceMotionEnabled ? .34f : .92f;
+            var duration = reduceMotionEnabled ? .24f : .72f;
             unlockRevealTimer = Mathf.Min(duration, unlockRevealTimer + deltaTime);
             var progress = Mathf.Clamp01(unlockRevealTimer / duration);
             var arrival = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(progress / .58f));
-            var settle = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((progress - .28f) / .72f));
-            var bounce = reduceMotionEnabled ? 0f : Mathf.Sin(settle * Mathf.PI) * (1f - settle) * .11f;
-            var pulse = reduceMotionEnabled ? 1f : 1f + Mathf.Sin(progress * Mathf.PI * 3.2f) * .07f * (1f - progress);
+            var pulse = 1f;
             var motion = UnlockMotionFor(activeUnlockSkin);
 
-            unlockRevealCard.localScale = Vector3.one * (Mathf.Lerp(.88f, 1f, arrival) + bounce);
-            unlockRevealBirdTransform.anchoredPosition = new Vector2(0f, Mathf.Lerp(-72f, 150f + motion.y, arrival));
-            unlockRevealBirdTransform.localScale = Vector3.one * (Mathf.Lerp(.62f, 1f, arrival) + bounce * .45f);
-            unlockRevealBirdTransform.localRotation = Quaternion.Euler(0f, 0f, reduceMotionEnabled ? 0f : Mathf.Lerp(motion.x, 0f, arrival) + Mathf.Sin(progress * Mathf.PI * 2f) * (1f - progress) * 2.5f);
+            unlockRevealCard.localScale = Vector3.one * Mathf.Lerp(.96f, 1f, arrival);
+            unlockRevealBirdTransform.anchoredPosition = new Vector2(0f, Mathf.Lerp(44f, 80f, arrival));
+            unlockRevealBirdTransform.localScale = Vector3.one * Mathf.Lerp(.92f, 1f, arrival);
+            unlockRevealBirdTransform.localRotation = Quaternion.Euler(0f, 0f, reduceMotionEnabled ? 0f : Mathf.Lerp(motion.x, 0f, arrival));
 
             var haloColor = unlockRevealHalo.color;
-            haloColor.a = .16f + (1f - progress) * .32f;
+            haloColor.a = .14f + (1f - progress) * .12f;
             unlockRevealHalo.color = haloColor;
             unlockRevealHalo.rectTransform.localScale = Vector3.one * (Mathf.Lerp(.48f, 1.16f, arrival) * pulse);
             unlockRevealHalo.rectTransform.localRotation = Quaternion.Euler(0f, 0f, reduceMotionEnabled ? 0f : -progress * 92f * motion.z);
 
             var flashColor = unlockRevealFlash.color;
-            flashColor.a = Mathf.Sin(Mathf.Clamp01(progress / .42f) * Mathf.PI) * .32f;
+            flashColor.a = Mathf.Sin(Mathf.Clamp01(progress / .42f) * Mathf.PI) * .16f;
             unlockRevealFlash.color = flashColor;
             unlockRevealFlash.rectTransform.localScale = Vector3.one * Mathf.Lerp(.28f, 1.42f, Mathf.Clamp01(progress / .46f));
             if (progress >= 1f) unlockRevealContinueButton.interactable = true;
@@ -4565,15 +4615,17 @@ if (surface.RailRight != null && surface.RailRight.enabled)
         {
             // The hit cell is visible for a short beat before the result card. It
             // makes a collision legible without interrupting the immediate retry flow.
-            var hitPose = hitBirdSprite ?? LoadOptionalSprite(equippedSkin?.HitPath);
+            var hitPose = hitBirdSprite ?? LoadPresentationPose(equippedSkin?.HitPath);
             if (hitPose == null || birdRenderer == null) return;
 
             birdRenderer.sprite = hitPose;
             birdRenderer.color = Color.white;
             birdRenderer.enabled = true;
             birdArt.localScale = ArtworkScale(hitPose, BirdDisplayWidth);
-            birdArt.localPosition = new Vector3(-.025f, .012f, 0f);
-            birdArt.localRotation = Quaternion.Euler(0f, 0f, -8f);
+            // The parent preserves the impact position and banking. Do not add
+            // a second translation or rotation as the authored hit pose arrives.
+            birdArt.localPosition = Vector3.zero;
+            birdArt.localRotation = Quaternion.identity;
             if (birdFlapRenderer != null) birdFlapRenderer.enabled = false;
             if (birdRiseRenderer != null) birdRiseRenderer.enabled = false;
             if (birdParallaxRenderer != null) birdParallaxRenderer.enabled = false;
@@ -4712,38 +4764,117 @@ if (surface.RailRight != null && surface.RailRight.enabled)
             CreateTopAnchoredText("BUILD YOUR FLIGHT LEGACY", -16f, 30, Hex("#f4fbff"), FontStyle.Bold);
             var installed = 0;
             foreach (var upgrade in Upgrades) installed += GetUpgradeLevel(upgrade.Id);
-            CreateTopAnchoredText($"{installed} / 27 LEVELS INSTALLED  ·  BENEFITS APPLY TO EVERY BIRD", -62f, 20, Hex("#cad8ee"), FontStyle.Bold);
-
+            CreateTopAnchoredText($"{installed} / 27 LEVELS  ·  TAP A NODE TO EXPLORE", -62f, 21, Hex("#cad8ee"), FontStyle.Bold);
             var branches = new[] { "COLLECTION", "RECOVERY", "MASTERY" };
-            var branchColours = new[] { Hex("#45eaff"), Hex("#ffc34d"), Hex("#b17cff") };
-            var cursorY = -126f;
+            var colours = new[] { Hex("#45eaff"), Hex("#ffc34d"), Hex("#b17cff") };
 
-            for (var branchIndex = 0; branchIndex < branches.Length; branchIndex += 1)
+            // Draw the circuit first so nodes sit above their connections.
+            for (var branchIndex = 0; branchIndex < branches.Length; branchIndex++)
             {
-                var branch = branches[branchIndex];
-                var branchColour = branchColours[branchIndex];
-                CreateTechBranchHeader(branch, cursorY, branchColour);
-                cursorY -= 66f;
-
-                var branchNodeIndex = 0;
+                var x = (branchIndex - 1) * 292f;
+                var colour = colours[branchIndex];
+                CreateTechPath(new Vector2(0f, -230f), new Vector2(x, -308f), colour, true);
+                CreateTechPath(new Vector2(x, -308f), new Vector2(x, -390f), colour, true);
                 foreach (var upgrade in Upgrades)
                 {
-                    if (!string.Equals(upgrade.Branch, branch, StringComparison.Ordinal)) continue;
-                    if (branchNodeIndex > 0)
-                    {
-                        var connectorUnlocked = IsUpgradePrerequisiteMet(upgrade);
-                        CreateTechConnector(cursorY + 15f, branchColour, connectorUnlocked);
-                        cursorY -= 34f;
-                    }
-                    CreateTechTreeCard(upgrade, cursorY, branchColour);
-                    cursorY -= 310f;
-                    branchNodeIndex += 1;
+                    if (upgrade.Branch != branches[branchIndex]) continue;
+                    var y = -500f - (upgrade.Tier - 1) * 350f;
+                    if (upgrade.Tier > 1)
+                        CreateTechPath(new Vector2(x, y + 240f), new Vector2(x, y + 110f), colour, IsUpgradePrerequisiteMet(upgrade));
                 }
-                cursorY -= 48f;
             }
+            var core = CreatePanel(customizeContent, "Tech network core", new Vector2(0f, -190f), new Vector2(300f, 100f), Hex("#12263c"));
+            core.anchorMin = core.anchorMax = new Vector2(.5f, 1f);
+            core.GetComponent<Image>().raycastTarget = false;
+            AddOutline(core.gameObject, Hex("#45eaff"), 2f);
+            CreateText(core, "SKYPULSE CORE", new Vector2(0f, 14f), new Vector2(280f, 40f), 27, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            CreateText(core, "THREE PATHS · ONE FLOCK", new Vector2(0f, -24f), new Vector2(280f, 28f), 17, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
 
-            customizeContent.sizeDelta = new Vector2(0f, Mathf.Max(2380f, -cursorY + 36f));
+            for (var branchIndex = 0; branchIndex < branches.Length; branchIndex++)
+            {
+                var x = (branchIndex - 1) * 292f;
+                var colour = colours[branchIndex];
+                var progress = 0;
+                foreach (var upgrade in Upgrades)
+                    if (upgrade.Branch == branches[branchIndex]) progress += GetUpgradeLevel(upgrade.Id);
+                var label = CreateText(customizeContent, $"{branches[branchIndex]}  {progress}/9", new Vector2(x, -345f), new Vector2(274f, 40f), 22, colour, TextAnchor.MiddleCenter, FontStyle.Bold);
+                label.rectTransform.anchorMin = label.rectTransform.anchorMax = new Vector2(.5f, 1f);
+                foreach (var upgrade in Upgrades)
+                    if (upgrade.Branch == branches[branchIndex])
+                        CreateTechMapNode(upgrade, new Vector2(x, -500f - (upgrade.Tier - 1) * 350f), colour);
+            }
+            CreateTopAnchoredText("REACH LEVEL 2 TO POWER THE NEXT NODE", -1400f, 22, Hex("#cad8ee"), FontStyle.Bold);
+            customizeContent.sizeDelta = new Vector2(0f, 1490f);
             customizeContent.anchoredPosition = Vector2.zero;
+        }
+
+        private void CreateTechPath(Vector2 from, Vector2 to, Color colour, bool powered)
+        {
+            var delta = to - from;
+            for (var layer = 0; layer < 2; layer++)
+            {
+                var line = CreateImage(customizeContent, powered ? "Powered tech path" : "Dormant tech path", (from + to) * .5f,
+                    new Vector2(delta.magnitude, layer == 0 ? 13f : 3f),
+                    new Color(colour.r, colour.g, colour.b, layer == 0 ? (powered ? .13f : .035f) : (powered ? .85f : .24f)));
+                line.rectTransform.anchorMin = line.rectTransform.anchorMax = new Vector2(.5f, 1f);
+                line.rectTransform.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg);
+                line.raycastTarget = false;
+            }
+        }
+
+        private void CreateTechMapNode(Upgrade upgrade, Vector2 position, Color colour)
+        {
+            var level = GetUpgradeLevel(upgrade.Id);
+            var maxed = level >= upgrade.MaxLevel;
+            var unlocked = IsUpgradePrerequisiteMet(upgrade);
+            var affordable = unlocked && !maxed && crystals >= upgrade.PriceAtLevel(level);
+            var node = CreatePanel(customizeContent, $"{upgrade.Name} tech node", position, new Vector2(260f, 220f),
+                Color.Lerp(Hex("#0a1124"), colour, level > 0 ? .15f : .045f));
+            node.anchorMin = node.anchorMax = new Vector2(.5f, 1f);
+            AddOutline(node.gameObject, new Color(colour.r, colour.g, colour.b, unlocked ? .8f : .28f), maxed ? 2.5f : 1.5f);
+            var button = node.gameObject.AddComponent<Button>();
+            button.targetGraphic = node.GetComponent<Image>();
+            button.onClick.AddListener(() => InspectTechNode(upgrade));
+            var buttonColours = button.colors;
+            buttonColours.pressedColor = new Color(.60f, .72f, .86f);
+            button.colors = buttonColours;
+            var icon = CreateImage(node, "Tech emblem", new Vector2(0f, 65f), new Vector2(54f, 54f), Color.white);
+            icon.sprite = GetUpgradeArtwork(upgrade) ?? softCircleSprite;
+            icon.preserveAspect = true;
+            icon.raycastTarget = false;
+            CreateText(node, upgrade.Name.Replace(" ", "\n"), new Vector2(0f, 6f), new Vector2(244f, 62f), 24, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            for (var i = 0; i < upgrade.MaxLevel; i++)
+            {
+                var pip = CreateImage(node, $"Tech level pip {i + 1}", new Vector2((i - 1) * 54f, -42f), new Vector2(40f, 7f), i < level ? colour : Hex("#34415c"));
+                pip.raycastTarget = false;
+            }
+            var status = maxed ? "MAX LEVEL" : !unlocked ? $"NEEDS T{upgrade.Tier - 1} · LV 2" : affordable ? $"UPGRADE · {upgrade.PriceAtLevel(level)} ✦" : $"{upgrade.PriceAtLevel(level)} ✦";
+            CreateText(node, status, new Vector2(0f, -79f), new Vector2(246f, 40f), 20, unlocked ? colour : Hex("#adbdd3"), TextAnchor.MiddleCenter, FontStyle.Bold);
+        }
+
+        private void InspectTechNode(Upgrade upgrade)
+        {
+            var level = GetUpgradeLevel(upgrade.Id);
+            var maxed = level >= upgrade.MaxLevel;
+            var unlocked = IsUpgradePrerequisiteMet(upgrade);
+            if (unlocked && !maxed)
+            {
+                SelectUpgrade(upgrade);
+            }
+            else
+            {
+                pendingPurchase = PendingPurchase.None;
+                pendingUpgrade = null;
+                pendingSkin = null;
+                OpenPurchaseModal(upgrade.Name, "", 0, upgrade.Accent, GetUpgradeArtwork(upgrade) ?? softCircleSprite);
+                purchaseTitleText.text = upgrade.Name;
+                purchaseConfirmButton.interactable = false;
+                purchaseConfirmText.text = maxed ? "FULLY UPGRADED" : "LOCKED";
+                var prerequisite = FindById(Upgrades, upgrade.PrerequisiteId);
+                purchaseBalanceText.text = maxed ? "ALL THREE LEVELS ACTIVE" : $"Requires {prerequisite?.Name} · level {upgrade.PrerequisiteLevel}";
+            }
+            var active = level > 0 ? upgrade.EffectAtLevel(level - 1) : "Not installed";
+            purchaseDetailText.text = maxed ? $"ACTIVE · {active}" : $"ACTIVE · {active}\nNEXT · {upgrade.EffectAtLevel(level)}";
         }
 
         private Text CreateTopAnchoredText(string value, float y, int fontSize, Color colour, FontStyle style)
@@ -4754,103 +4885,6 @@ if (surface.RailRight != null && surface.RailRight.enabled)
             rect.anchorMax = new Vector2(.5f, 1f);
             rect.pivot = new Vector2(.5f, 1f);
             return text;
-        }
-
-        private void CreateTechBranchHeader(string branch, float y, Color colour)
-        {
-            var leftRule = CreateImage(customizeContent, $"{branch} left rail", new Vector2(-280f, y - 18f), new Vector2(250f, 2f), new Color(colour.r, colour.g, colour.b, .34f));
-            leftRule.rectTransform.anchorMin = new Vector2(.5f, 1f);
-            leftRule.rectTransform.anchorMax = new Vector2(.5f, 1f);
-            leftRule.rectTransform.pivot = new Vector2(.5f, 1f);
-            leftRule.raycastTarget = false;
-
-            var rightRule = CreateImage(customizeContent, $"{branch} right rail", new Vector2(280f, y - 18f), new Vector2(250f, 2f), new Color(colour.r, colour.g, colour.b, .34f));
-            rightRule.rectTransform.anchorMin = new Vector2(.5f, 1f);
-            rightRule.rectTransform.anchorMax = new Vector2(.5f, 1f);
-            rightRule.rectTransform.pivot = new Vector2(.5f, 1f);
-            rightRule.raycastTarget = false;
-
-            var badge = CreatePanel(customizeContent, $"{branch} branch badge", new Vector2(0f, y), new Vector2(360f, 42f), new Color(colour.r * .12f, colour.g * .12f, colour.b * .12f, .96f));
-            badge.anchorMin = new Vector2(.5f, 1f);
-            badge.anchorMax = new Vector2(.5f, 1f);
-            badge.pivot = new Vector2(.5f, 1f);
-            badge.GetComponent<Image>().raycastTarget = false;
-            AddOutline(badge.gameObject, new Color(colour.r, colour.g, colour.b, .72f), 1.5f);
-            var installed = 0;
-            foreach (var upgrade in Upgrades)
-                if (upgrade.Branch == branch) installed += GetUpgradeLevel(upgrade.Id);
-            CreateText(badge, $"{branch}   {installed}/9", Vector2.zero, new Vector2(344f, 38f), 23, colour, TextAnchor.MiddleCenter, FontStyle.Bold).raycastTarget = false;
-        }
-
-        private void CreateTechConnector(float y, Color colour, bool active)
-        {
-            var glow = CreateImage(customizeContent, "Tech connector glow", new Vector2(0f, y), new Vector2(14f, 38f), new Color(colour.r, colour.g, colour.b, active ? .16f : .035f));
-            glow.rectTransform.anchorMin = new Vector2(.5f, 1f);
-            glow.rectTransform.anchorMax = new Vector2(.5f, 1f);
-            glow.rectTransform.pivot = new Vector2(.5f, 1f);
-            glow.raycastTarget = false;
-
-            var connector = CreateImage(customizeContent, "Tech prerequisite connector", new Vector2(0f, y), new Vector2(4f, 38f), new Color(colour.r, colour.g, colour.b, active ? .82f : .16f));
-            connector.rectTransform.anchorMin = new Vector2(.5f, 1f);
-            connector.rectTransform.anchorMax = new Vector2(.5f, 1f);
-            connector.rectTransform.pivot = new Vector2(.5f, 1f);
-            connector.raycastTarget = false;
-        }
-
-        private void CreateTechTreeCard(Upgrade upgrade, float y, Color branchColour)
-        {
-            var level = GetUpgradeLevel(upgrade.Id);
-            var maxed = level >= upgrade.MaxLevel;
-            var unlocked = IsUpgradePrerequisiteMet(upgrade);
-            var price = maxed ? 0 : upgrade.PriceAtLevel(level);
-            var affordable = unlocked && !maxed && crystals >= price;
-            var card = CreatePanel(customizeContent, $"{upgrade.Name} tech node", new Vector2(0f, y), new Vector2(812f, 286f),
-                Color.Lerp(Hex("#090f21"), branchColour, level > 0 ? .10f : .025f));
-            card.anchorMin = card.anchorMax = new Vector2(.5f, 1f);
-            card.pivot = new Vector2(.5f, 1f);
-            AddOutline(card.gameObject, new Color(branchColour.r, branchColour.g, branchColour.b, affordable || maxed ? .8f : .3f), 1.5f);
-            var button = card.gameObject.AddComponent<Button>();
-            button.targetGraphic = card.GetComponent<Image>();
-            button.interactable = unlocked && !maxed;
-            button.onClick.AddListener(() => SelectUpgrade(upgrade));
-            var colours = button.colors;
-            colours.highlightedColor = new Color(.88f, .96f, 1f);
-            colours.pressedColor = new Color(.65f, .78f, .92f);
-            colours.disabledColor = Color.white;
-            button.colors = colours;
-
-            var halo = CreateImage(card, "Tech core halo", new Vector2(-332f, 78f), new Vector2(90f, 90f), new Color(branchColour.r, branchColour.g, branchColour.b, .4f));
-            halo.sprite = ringSprite;
-            halo.raycastTarget = false;
-            var artwork = CreateImage(card, "Tech core", new Vector2(-332f, 78f), new Vector2(64f, 64f), Color.white);
-            artwork.sprite = GetUpgradeArtwork(upgrade) ?? softCircleSprite;
-            artwork.preserveAspect = true;
-            artwork.raycastTarget = false;
-            CreateText(card, $"TIER {upgrade.Tier}  /  {upgrade.Branch}", new Vector2(36f, 112f), new Vector2(590f, 28f), 18, branchColour, TextAnchor.MiddleLeft, FontStyle.Bold);
-            var title = CreateText(card, upgrade.Name, new Vector2(36f, 72f), new Vector2(590f, 48f), 30, Hex("#f4fbff"), TextAnchor.MiddleLeft, FontStyle.Bold);
-            title.resizeTextForBestFit = true;
-            title.resizeTextMinSize = 24;
-            title.resizeTextMaxSize = 30;
-
-            var current = level > 0 ? upgrade.EffectAtLevel(level - 1) : "Not installed";
-            CreateText(card, "ACTIVE", new Vector2(-318f, 16f), new Vector2(116f, 32f), 18, branchColour, TextAnchor.MiddleLeft, FontStyle.Bold);
-            CreateText(card, current, new Vector2(56f, 16f), new Vector2(626f, 38f), 22, Hex("#f4fbff"), TextAnchor.MiddleLeft, FontStyle.Normal);
-            var next = maxed ? "Fully upgraded — all benefits active" : upgrade.EffectAtLevel(level);
-            CreateText(card, maxed ? "COMPLETE" : "NEXT", new Vector2(-318f, -32f), new Vector2(116f, 32f), 18, branchColour, TextAnchor.MiddleLeft, FontStyle.Bold);
-            CreateText(card, next, new Vector2(56f, -32f), new Vector2(626f, 46f), 22, Hex("#cad8ee"), TextAnchor.MiddleLeft, FontStyle.Normal);
-
-            for (var pipIndex = 0; pipIndex < upgrade.MaxLevel; pipIndex++)
-            {
-                var pip = CreateImage(card, $"Tech level pip {pipIndex + 1}", new Vector2(-350f + pipIndex * 58f, -98f), new Vector2(46f, 8f), pipIndex < level ? branchColour : Hex("#30415b"));
-                pip.raycastTarget = false;
-            }
-            CreateText(card, $"{level} / {upgrade.MaxLevel}", new Vector2(-144f, -98f), new Vector2(88f, 36f), 21, Hex("#cad8ee"), TextAnchor.MiddleLeft, FontStyle.Bold);
-            var status = maxed ? "MAX LEVEL" : !unlocked ? $"Requires tier {upgrade.Tier - 1} · level {upgrade.PrerequisiteLevel}"
-                : affordable ? $"{(level == 0 ? "INSTALL" : "UPGRADE")}  {price} ✦" : $"{price} ✦  ·  Need {price - crystals} more";
-            var badge = CreatePanel(card, "Tech action", new Vector2(142f, -98f), new Vector2(466f, 52f), affordable ? Color.Lerp(Hex("#102039"), branchColour, .22f) : Hex("#101b30"));
-            badge.GetComponent<Image>().raycastTarget = false;
-            AddOutline(badge.gameObject, new Color(branchColour.r, branchColour.g, branchColour.b, .45f), 1f);
-            CreateText(badge, status, Vector2.zero, new Vector2(450f, 44f), 21, affordable || maxed ? branchColour : Hex("#cad8ee"), TextAnchor.MiddleCenter, FontStyle.Bold);
         }
 
         private void SetContentRows(int count, float rowStride = 255f)
@@ -5467,7 +5501,7 @@ if (surface.RailRight != null && surface.RailRight.enabled)
         {
             if (birdRenderer == null || birdFlapRenderer == null || birdRiseRenderer == null) return;
             var hasFlapFrameSequence = LoadFlapFrameSequence(equippedSkin);
-            hitBirdSprite = LoadOptionalSprite(equippedSkin?.HitPath);
+            hitBirdSprite = LoadPresentationPose(equippedSkin?.HitPath);
             ResetGameplayWingState();
             activeFlapFrameIndex =
                 hasFlapFrameSequence
@@ -5564,6 +5598,30 @@ if (surface.RailRight != null && surface.RailRight.enabled)
             birdRegistrationReference = LoadOptionalSprite(skin.ArtPath);
             flapFrameBirdSprites = frames;
             return true;
+        }
+
+        private Sprite LoadPresentationPose(string path)
+        {
+            var source = LoadOptionalSprite(path);
+            if (source == null) return null;
+            var key = "pose:" + path;
+            if (registeredFlapSpriteCache.TryGetValue(key, out var cached)) return cached;
+            if (!poseBoundsLoaded)
+            {
+                poseBoundsLoaded = true;
+                var data = Resources.Load<TextAsset>("SkyPulse/characters/bird-pose-bounds");
+                var file = data == null ? null : JsonUtility.FromJson<BirdPoseBoundsFile>(data.text);
+                if (file?.frames != null)
+                    foreach (var frame in file.frames) poseBounds[frame.path] = frame;
+            }
+            if (!poseBounds.TryGetValue(path, out var bounds)) return source;
+            var rect = new Rect(bounds.x, bounds.y, bounds.width, bounds.height);
+            if (rect.width <= 0f || rect.height <= 0f || rect.xMin < 0f || rect.yMin < 0f
+                || rect.xMax > source.texture.width || rect.yMax > source.texture.height) return source;
+            var pose = Sprite.Create(source.texture, rect, new Vector2(.5f, .5f), source.pixelsPerUnit);
+            pose.name = source.name + " presentation";
+            registeredFlapSpriteCache[key] = pose;
+            return pose;
         }
 
         private Sprite LoadRegisteredFlapFrame(string path, Vector2 pivot)

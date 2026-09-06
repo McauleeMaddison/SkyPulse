@@ -1,0 +1,304 @@
+{
+  "frames": [
+    {
+      "path": "SkyPulse/characters/roster/cinder-frame-07-v1",
+      "x": 31,
+      "y": 0,
+      "width": 481,
+      "height": 384,
+      "sourceWidth": 512,
+      "sourceHeight": 384,
+      "sourceSha256": "86e7c755eda616ca16a3294be782d7b0112afdcab106cb6de842190284471cf4"
+    },
+    {
+      "path": "SkyPulse/characters/roster/cinder-frame-08-v1",
+      "x": 0,
+      "y": 0,
+      "width": 511,
+      "height": 384,
+      "sourceWidth": 512,
+      "sourceHeight": 384,
+      "sourceSha256": "541c26d9b560ac539e16e3cddc34ac2965741d9051dc52b60364d88c96e479b9"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird01-frame-07",
+      "x": 63,
+      "y": 150,
+      "width": 375,
+      "height": 354,
+      "sourceWidth": 476,
+      "sourceHeight": 548,
+      "sourceSha256": "a109a957494bfa8a837bc6d79856420ad154d39318c99b318d1fddf5b8512fc2"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird01-frame-08",
+      "x": 13,
+      "y": 62,
+      "width": 439,
+      "height": 458,
+      "sourceWidth": 476,
+      "sourceHeight": 548,
+      "sourceSha256": "7c8ec15ae5692b17d6b68cd63e2fb63b487ac3807adedbd8f890a6b09a2ba695"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird02-frame-07",
+      "x": 87,
+      "y": 138,
+      "width": 351,
+      "height": 335,
+      "sourceWidth": 476,
+      "sourceHeight": 596,
+      "sourceSha256": "3cf7ed0d54db527cd18a4341d5bbd2e4fcf0bca4cd71e76af1fff6d57fc9ec15"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird02-frame-08",
+      "x": 20,
+      "y": 70,
+      "width": 402,
+      "height": 479,
+      "sourceWidth": 476,
+      "sourceHeight": 596,
+      "sourceSha256": "1f7e8fe70c19129b3d3b47c3abe10a14807cd19e2e882182e9d2c728da064e8e"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird03-frame-07",
+      "x": 97,
+      "y": 120,
+      "width": 356,
+      "height": 339,
+      "sourceWidth": 480,
+      "sourceHeight": 572,
+      "sourceSha256": "9f313166658d5e646c17fae0b86132f0f1b2c0e8bf577acadcb2c2bb6606ff1e"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird03-frame-08",
+      "x": 23,
+      "y": 60,
+      "width": 381,
+      "height": 465,
+      "sourceWidth": 480,
+      "sourceHeight": 572,
+      "sourceSha256": "37404116c5003777b3c96f2c20c932de0c36b5cac73d0102e7fabdda96ae9657"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird04-frame-07",
+      "x": 93,
+      "y": 106,
+      "width": 394,
+      "height": 360,
+      "sourceWidth": 512,
+      "sourceHeight": 556,
+      "sourceSha256": "daf0bb202e4585aa2fb800d8da3438f2919660dc5a07bb1fd17394ab4ab2789a"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird04-frame-08",
+      "x": 19,
+      "y": 49,
+      "width": 452,
+      "height": 491,
+      "sourceWidth": 512,
+      "sourceHeight": 556,
+      "sourceSha256": "b1caba2a95b22a2cfba12a5f62dbe95fb25009647e61fc5fb94dac27b2caf084"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird05-frame-07",
+      "x": 91,
+      "y": 131,
+      "width": 343,
+      "height": 328,
+      "sourceWidth": 476,
+      "sourceHeight": 592,
+      "sourceSha256": "639a3cbbe512940143a2e78c77efead719e5727400d56c72b157062143ba9e63"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird05-frame-08",
+      "x": 11,
+      "y": 39,
+      "width": 419,
+      "height": 495,
+      "sourceWidth": 476,
+      "sourceHeight": 592,
+      "sourceSha256": "2e6cee27863ba8cf08cc9e70c18f26f3d6565062f4b5c8e7af85446b1ed24d8b"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird06-frame-07",
+      "x": 63,
+      "y": 108,
+      "width": 401,
+      "height": 313,
+      "sourceWidth": 496,
+      "sourceHeight": 552,
+      "sourceSha256": "1bd574b87772c8c172f1d550d514e082025a18b74a658c701b6aac1cd5f19356"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird06-frame-08",
+      "x": 30,
+      "y": 43,
+      "width": 437,
+      "height": 489,
+      "sourceWidth": 496,
+      "sourceHeight": 552,
+      "sourceSha256": "90bbe56c2d587a973aa7749f1129626fe8812a060446941ca5785349e1336019"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird07-frame-07",
+      "x": 67,
+      "y": 101,
+      "width": 402,
+      "height": 364,
+      "sourceWidth": 508,
+      "sourceHeight": 544,
+      "sourceSha256": "1065a90e8d858291bf938d9070989425b19e1e87052b9e5116aa610439e296e7"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird07-frame-08",
+      "x": 12,
+      "y": 74,
+      "width": 440,
+      "height": 455,
+      "sourceWidth": 508,
+      "sourceHeight": 544,
+      "sourceSha256": "8c32204981d9b46cc22ab645a18562826d155441bddf586018c5020f80cf103b"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird08-frame-07",
+      "x": 76,
+      "y": 119,
+      "width": 383,
+      "height": 355,
+      "sourceWidth": 488,
+      "sourceHeight": 576,
+      "sourceSha256": "b8aeb87cd1eff147dd0ee86a52cefe3da69507759c1063c78558b20ade8ea1be"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird08-frame-08",
+      "x": 23,
+      "y": 78,
+      "width": 426,
+      "height": 449,
+      "sourceWidth": 488,
+      "sourceHeight": 576,
+      "sourceSha256": "cbc6092ae870abdcad3705044c406eac3abdf79bda3fa59b4b798c65c20fdb49"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird09-frame-07",
+      "x": 143,
+      "y": 162,
+      "width": 326,
+      "height": 323,
+      "sourceWidth": 512,
+      "sourceHeight": 628,
+      "sourceSha256": "3619b4aa616a4e750092bb7661ef6fd5db927f72e72d989df1a66348666241e9"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird09-frame-08",
+      "x": 68,
+      "y": 64,
+      "width": 405,
+      "height": 517,
+      "sourceWidth": 512,
+      "sourceHeight": 628,
+      "sourceSha256": "0c514e69c4ce68e1f5f9b201ad81ae0517fde1017b1a1c32fed70ed803d6419c"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird10-frame-07",
+      "x": 69,
+      "y": 126,
+      "width": 324,
+      "height": 342,
+      "sourceWidth": 440,
+      "sourceHeight": 632,
+      "sourceSha256": "f4e5cc2fa82196d480e5371a68c946f039ebc246272cb545d4f3c4d92051a6a5"
+    },
+    {
+      "path": "SkyPulse/characters/roster/newbird10-frame-08",
+      "x": 10,
+      "y": 90,
+      "width": 382,
+      "height": 473,
+      "sourceWidth": 440,
+      "sourceHeight": 632,
+      "sourceSha256": "a5c39a2ec92b71e21c8dedc4d26feedbdfa760d1ee45b04fc82aad8afb267410"
+    },
+    {
+      "path": "SkyPulse/characters/roster/prism-frame-07-v1",
+      "x": 0,
+      "y": 0,
+      "width": 512,
+      "height": 384,
+      "sourceWidth": 512,
+      "sourceHeight": 384,
+      "sourceSha256": "09c013415bada0bdf2374599c9ddfcee0d5694f9e670e2280b9b11adbd331904"
+    },
+    {
+      "path": "SkyPulse/characters/roster/prism-frame-08-v1",
+      "x": 0,
+      "y": 0,
+      "width": 500,
+      "height": 384,
+      "sourceWidth": 512,
+      "sourceHeight": 384,
+      "sourceSha256": "e72e45ede86f2d20b1dcb00140b6b53ffa8a1518ac8705f9f45f50db7749b93c"
+    },
+    {
+      "path": "SkyPulse/characters/roster/steel-frame-07-v1",
+      "x": 0,
+      "y": 0,
+      "width": 512,
+      "height": 384,
+      "sourceWidth": 512,
+      "sourceHeight": 384,
+      "sourceSha256": "da1af966db6299d1b515cc6cfc33ff34d3f2608ad7d14895261511596c9209a8"
+    },
+    {
+      "path": "SkyPulse/characters/roster/steel-frame-08-v1",
+      "x": 0,
+      "y": 0,
+      "width": 500,
+      "height": 384,
+      "sourceWidth": 512,
+      "sourceHeight": 384,
+      "sourceSha256": "340792c41d679ff948be8cc354e0f1c1de603513a4fade04754bfcc868abd068"
+    },
+    {
+      "path": "SkyPulse/characters/roster/verdant-frame-07-v1",
+      "x": 0,
+      "y": 0,
+      "width": 512,
+      "height": 384,
+      "sourceWidth": 512,
+      "sourceHeight": 384,
+      "sourceSha256": "d29131a8e407625e6771333699fab385f578963b9a8abfa602344a5b257174c7"
+    },
+    {
+      "path": "SkyPulse/characters/roster/verdant-frame-08-v1",
+      "x": 0,
+      "y": 0,
+      "width": 496,
+      "height": 384,
+      "sourceWidth": 512,
+      "sourceHeight": 384,
+      "sourceSha256": "8e0008744595dc7f4a8dc00775ea6143416a688986ae23b63e4703de0de42a47"
+    },
+    {
+      "path": "SkyPulse/characters/roster/volt-frame-07-v1",
+      "x": 45,
+      "y": 30,
+      "width": 467,
+      "height": 354,
+      "sourceWidth": 512,
+      "sourceHeight": 384,
+      "sourceSha256": "7a7fa36b7f592aa079dc4b6d0dc5c915bc24ef6783798f143ac0d9d15d2506fe"
+    },
+    {
+      "path": "SkyPulse/characters/roster/volt-frame-08-v1",
+      "x": 9,
+      "y": 0,
+      "width": 501,
+      "height": 384,
+      "sourceWidth": 512,
+      "sourceHeight": 384,
+      "sourceSha256": "013c903b23d86a768ce3998be49b9ae1655777ed45025e4877eddfd94415f610"
+    }
+  ]
+}
