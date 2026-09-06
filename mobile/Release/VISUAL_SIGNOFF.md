@@ -18,3 +18,5 @@ Candidate: 1.0.0 (3), gameplay/icon hashes in BETA_VERIFICATION.json. The latest
 Tonight: report any overlap, clipped artwork, square/white flash, unclear pickup, missed input, unwanted action while dragging or unfair difficulty change with its score and screenshot. Resolve confirmed defects before signing the release candidate. See TOMORROW_PLAN.md for the remaining launch work.
 
 User playtest feedback: latest gameplay, behaviour and features reported as good. Keep the beta feature set stable; only change confirmed defects or clear readability problems before submission.
+
+Build 4 background review: actual Unity sequences cover all three worlds, with 90 frames per normal-motion sequence plus one Reduced Motion render per world. Compared opening/final frames for artwork coverage and clear bird silhouette; automated checks cover movement, stillness under Reduced Motion and dissolve alignment. Native Simulator check is recorded separately in BETA_VERIFICATION.json.

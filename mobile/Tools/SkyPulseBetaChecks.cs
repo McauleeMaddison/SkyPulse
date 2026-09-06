@@ -26,7 +26,7 @@ public static class SkyPulseBetaChecks
         {
             float s=(float)Static("RouteSpeedFraction",score), g=(float)Static("RouteGapFraction",score);
             Check(s>=speed && s<=.48001f && g<=gap && g>=.23999f,"Non-monotonic or uncapped route at "+score);
-            if(score>2 && score<=15) Check(s>speed && g<gap,"Early route has a plateau at "+score);
+            if(score>0 && score<=15) Check(s>speed && g<gap,"Early route has a plateau at "+score);
             if(score==15 || score==30 || score==40 || score==45 || score==60) Check(s-speed<.011f && gap-g<.006f,"World transition difficulty cliff");
             speed=s;gap=g;
         }
@@ -48,7 +48,6 @@ public static class SkyPulseBetaChecks
                 Check(Mathf.Abs((float)Get(pair,"GapHeight")-18f*(float)Static("RouteGapFraction",index))<.001f,"Spawn-ahead gate uses current score");
                 var y=(float)Get(pair,"GapCenter");
                 Check(y>=-2.551f && y<=3.151f,"Gate exceeds flight corridor");
-                if(index<3) Check(Mathf.Abs(y)<=(index==0?.651f:1.301f),"Opening gate is not welcoming");
                 if(index>0) Check(Mathf.Abs(y-(float)Get(pipes[(index-1)%pipes.Count],"GapCenter"))<=(float)Static("RouteMaximumCenterStep",index)+.001f,"Unbounded gate step");
                 for(int phase=0;phase<8;phase++)
                 {

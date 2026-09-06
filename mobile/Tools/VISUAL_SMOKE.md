@@ -61,3 +61,8 @@ See ../Release/READINESS.md and SECURITY_REVIEW.md in that directory.
 Final pass: the final source passed SKYPULSE_BETA_CHECKS_PASS and SKYPULSE_VISUAL_SMOKE_PASS in an isolated QA project. Both final native Release builds compiled and the final Simulator build was installed. Native manual dragging remains to be confirmed because computer-use drag injection behaved as a tap. See ../Release/BETA_VERIFICATION.json for precise scope.
 
 Subsequent user verification: mouse scrolling works in both Bird Hangar and Tech Tree in the iOS Simulator; latest gameplay, behaviour and features were reported as good.
+
+Background pass (build 4)
+========================
+
+`SkyPulseBackgroundCapture.cs` runs in the isolated QA project with graphics enabled, through its `Run` entry point and `SKYPULSE_QA_OUTPUT` set to an output directory. It renders 90 frames over six seconds in each of three worlds, checks visible parallax travel and viewport coverage, verifies Reduced Motion stays still and checks incoming/outgoing backdrop alignment. 273 actual Unity renders and `SKYPULSE_BACKGROUND_PASS` were observed. Contact sheet and animated previews: `artifacts/effects-qa/background-build-4/`.

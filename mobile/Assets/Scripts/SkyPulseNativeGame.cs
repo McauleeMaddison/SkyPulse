@@ -1191,11 +1191,11 @@ new WorldTheme(
 
             backgroundRenderer = CreateRenderer("Cinematic world", WorldBackdrop(equippedWorld), Color.white, -40);
             backgroundRenderer.transform.position = new Vector3(0f, .12f, 0f);
-            FitBackgroundToCamera(backgroundRenderer, .5f);
+            FitBackgroundToCamera(backgroundRenderer, 1.1f);
 
             incomingBackground = CreateRenderer("Incoming world dissolve", backgroundRenderer.sprite, Color.clear, -39);
             incomingBackground.enabled = false;
-            FitBackgroundToCamera(incomingBackground, .5f);
+            FitBackgroundToCamera(incomingBackground, 1.1f);
             // Warm the route backdrops before play, avoiding first-use Resources
             // loading at gate 15 or 30. The sprite cache retains them for remixes.
             for (var worldIndex = 0; worldIndex < 3; worldIndex += 1) WorldBackdrop(Worlds[worldIndex]);
@@ -1232,15 +1232,15 @@ new WorldTheme(
         private void CreateAmbientStars()
         {
             var random = new System.Random(742);
-            // The backdrop already carries the detail. These are only a whisper of
-            // parallax depth, never the large square particles of the old treatment.
-            for (var index = 0; index < 12; index += 1)
+            // Three depths of soft lights cross the scene behind all gameplay objects.
+            // Reuse these renderers for the whole session; wrapping is off-screen.
+            for (var index = 0; index < 30; index += 1)
             {
-                var star = CreateRenderer($"Ambient light {index + 1}", softCircleSprite, new Color(.60f, .84f, 1f, .11f), -33);
+                var star = CreateRenderer($"Ambient light {index + 1}", softCircleSprite, new Color(.60f, .84f, 1f, .20f + (index % 3) * .055f), -35 + index % 3);
                 var viewportFraction = Mathf.Lerp(-.48f, .48f, (float)random.NextDouble());
                 var x = GetViewportWidth() * viewportFraction;
                 var y = Mathf.Lerp(-5.8f, 8.3f, (float)random.NextDouble());
-                var size = Mathf.Lerp(.020f, .048f, (float)random.NextDouble());
+                var size = Mathf.Lerp(.045f, .085f, (float)random.NextDouble()) * (1f + (index % 3) * .3f);
                 star.transform.position = new Vector3(x, y, 0f);
                 star.transform.localScale = Vector3.one * size;
                 ambientStars.Add(new AmbientStar
@@ -1250,7 +1250,7 @@ new WorldTheme(
                     ViewportFraction = viewportFraction,
                     Y = y,
                     Phase = (float)random.NextDouble() * Mathf.PI * 2f,
-                    Speed = Mathf.Lerp(.16f, .32f, (float)random.NextDouble()),
+                    Speed = .18f + (index % 3) * .23f + (float)random.NextDouble() * .08f,
                     BaseSize = size,
                 });
             }
@@ -1618,8 +1618,8 @@ new WorldTheme(
             // Safe-area layout handles HUD controls. This complementary pass keeps
             // non-gameplay art fitted when a phone changes size, an editor Game view
             // is resized, or a wide desktop preview exposes decorative side margins.
-            if (backgroundRenderer != null) FitBackgroundToCamera(backgroundRenderer, .5f);
-            if (incomingBackground != null) FitBackgroundToCamera(incomingBackground, .5f);
+            if (backgroundRenderer != null) FitBackgroundToCamera(backgroundRenderer, 1.1f);
+            if (incomingBackground != null) FitBackgroundToCamera(incomingBackground, 1.1f);
             if (backgroundVeil != null) backgroundVeil.transform.localScale = new Vector3(viewportWidth + 1f, CameraHeight + .5f, 1f);
 
             var floorWidth = viewportWidth + 1f;
@@ -2200,17 +2200,19 @@ new WorldTheme(
 
         private void UpdateAmbientVisuals()
         {
-            var ambientMotion = reduceMotionEnabled ? .28f : 1f;
+            var ambientMotion = reduceMotionEnabled ? 0f : 1f;
             if (backgroundRenderer != null)
             {
-                backgroundRenderer.transform.position = new Vector3(Mathf.Sin(ambientTime * .08f) * .012f * ambientMotion, .12f + Mathf.Sin(ambientTime * .11f) * .008f * ambientMotion, 0f);
+                backgroundRenderer.transform.position = new Vector3(Mathf.Sin(ambientTime * .18f) * .22f * ambientMotion, .12f + Mathf.Sin(ambientTime * .23f) * .14f * ambientMotion, 0f);
             }
             if (incomingBackground != null && incomingBackground.enabled)
                 incomingBackground.transform.position = backgroundRenderer.transform.position;
             foreach (var star in ambientStars)
             {
-                var y = star.Y + Mathf.Sin(ambientTime * star.Speed + star.Phase) * .025f * ambientMotion;
-                star.Transform.position = new Vector3(star.X, y, 0f);
+                var span = GetViewportWidth() + 1f;
+                var x = Mathf.Repeat(star.X + span * .5f - ambientTime * star.Speed * ambientMotion, span) - span * .5f;
+                var y = star.Y + Mathf.Sin(ambientTime * .35f + star.Phase) * .18f * ambientMotion;
+                star.Transform.position = new Vector3(x, y, 0f);
                 var scale = .96f + Mathf.Sin(ambientTime * star.Speed * 1.6f + star.Phase) * .04f * ambientMotion;
                 star.Transform.localScale = Vector3.one * Mathf.Max(.012f, star.BaseSize * scale);
             }
@@ -2658,10 +2660,8 @@ new WorldTheme(
 
         private static float RouteSpeedFraction(int routeScore)
         {
-            // Three learning gates, then a measured ramp into Foundry's .40 pace.
-            if (routeScore < 3) return .32f;
-            if (routeScore < 9) return Mathf.Lerp(.33f, .365f, (routeScore - 3) / 5f);
-            if (routeScore < 15) return Mathf.Lerp(.372f, .395f, (routeScore - 9) / 5f);
+            // Continuous course progression from the first gate.
+            if (routeScore < 15) return Mathf.Lerp(.345f, .395f, routeScore / 14f);
             if (routeScore < 25) return .40f;
             if (routeScore < 30) return Mathf.Lerp(.408f, .424f, (routeScore - 25) / 4f);
             if (routeScore < 35) return Mathf.Lerp(.43f, .44f, (routeScore - 30) / 4f);
@@ -3448,7 +3448,7 @@ new WorldTheme(
             pair.RouteScore = nextGateRouteScore++;
             pair.Sequence = nextGateSequence++;
             pair.RouteWorldIndex = routeWorldIndex;
-            pair.IsStatic = pair.RouteScore < 3 || firstGateAfterTransition;
+            pair.IsStatic = firstGateAfterTransition;
             if (firstGateAfterTransition) firstGateAfterTransition = false;
             // Tune the gate being built, not the score while it is still off-screen.
             pair.GapHeight = CameraHeight * RouteGapFraction(pair.RouteScore);
@@ -3457,13 +3457,6 @@ new WorldTheme(
             // low gate read as a deliberate lower route, not a clipped top pipe.
             var centreMinimum = Mathf.Max(GapCenterMinimum, GroundY + PipeMinimumVisibleHeight + halfGap);
             var centreMaximum = Mathf.Min(GapCenterMaximum, CameraHeight * .5f - PipeMinimumVisibleHeight - halfGap);
-            // The opening lesson stays near centre; later gates use the full corridor.
-            if (pair.RouteScore < 3)
-            {
-                var openingRange = pair.RouteScore == 0 ? .65f : 1.3f;
-                centreMinimum = Mathf.Max(centreMinimum, -openingRange);
-                centreMaximum = Mathf.Min(centreMaximum, openingRange);
-            }
             var nextCentre = RouteRange(centreMinimum, centreMaximum);
             var precedingPair = FindPrecedingPipe(pair, x);
             if (precedingPair != null)
@@ -3561,7 +3554,7 @@ new WorldTheme(
             incomingBackground.sprite = WorldBackdrop(routeWorld);
             incomingBackground.color = Color.clear;
             incomingBackground.transform.position = backgroundRenderer.transform.position;
-            FitBackgroundToCamera(incomingBackground, .5f);
+            FitBackgroundToCamera(incomingBackground, 1.1f);
             incomingBackground.enabled = true;
             equippedWorld = routeWorld;
             equippedPipe = FindById(PipeStyles, routeWorld.PresetPipeId) ?? PipeStyles[0];
@@ -3611,7 +3604,7 @@ new WorldTheme(
 
                 // Commit exactly the image already shown at full opacity.
                 backgroundRenderer.sprite = incomingBackground.sprite;
-                FitBackgroundToCamera(backgroundRenderer, .5f);
+                FitBackgroundToCamera(backgroundRenderer, 1.1f);
                 incomingBackground.enabled = false;
                 spawnX = GetWorldWidth() * .5f + 2.4f;
                 for (var index = 0; index < pipePool.Length; index += 1)
@@ -3676,7 +3669,7 @@ new WorldTheme(
             if (backgroundRenderer != null)
             {
                 backgroundRenderer.sprite = WorldBackdrop(routeWorld);
-                FitBackgroundToCamera(backgroundRenderer, .5f);
+                FitBackgroundToCamera(backgroundRenderer, 1.1f);
             }
             if (backgroundVeil != null) backgroundVeil.color = new Color(routeWorld.Accent.r, routeWorld.Accent.g, routeWorld.Accent.b, .11f);
             if (floorSurface != null)
@@ -4206,10 +4199,8 @@ if (surface.RailRight != null && surface.RailRight.enabled)
 }
         private static float RouteGapFraction(int routeScore)
         {
-            // Preserve the three learning gates; require more precision thereafter.
-            if (routeScore < 3) return .34f;
-            if (routeScore < 9) return Mathf.Lerp(.325f, .302f, (routeScore - 3) / 5f);
-            if (routeScore < 15) return Mathf.Lerp(.298f, .282f, (routeScore - 9) / 5f);
+            // Every opening belongs to the same steadily tightening course.
+            if (routeScore < 15) return Mathf.Lerp(.32f, .282f, routeScore / 14f);
             if (routeScore < 25) return .28f;
             if (routeScore < 30) return Mathf.Lerp(.277f, .265f, (routeScore - 25) / 4f);
             if (routeScore < 40) return .26f;
@@ -4219,8 +4210,7 @@ if (surface.RailRight != null && surface.RailRight.enabled)
 
         private static float RouteMaximumCenterStep(int routeScore)
         {
-            if (routeScore < 3) return 1.2f;
-            if (routeScore < 15) return Mathf.Lerp(1.4f, CameraHeight * .20f, (routeScore - 3) / 11f);
+            if (routeScore < 15) return Mathf.Lerp(2.2f, CameraHeight * .20f, routeScore / 14f);
             return CameraHeight * .20f;
         }
 
@@ -5132,7 +5122,7 @@ if (surface.RailRight != null && surface.RailRight.enabled)
             if (equippedPipe == null) equippedPipe = PipeStyles[0];
 
             backgroundRenderer.sprite = WorldBackdrop(equippedWorld);
-            FitBackgroundToCamera(backgroundRenderer, .5f);
+            FitBackgroundToCamera(backgroundRenderer, 1.1f);
             backgroundVeil.color = new Color(equippedWorld.Accent.r, equippedWorld.Accent.g, equippedWorld.Accent.b, .11f);
             var floorColour = equippedWorld.Floor;
             floorColour.a = .54f;

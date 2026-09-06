@@ -18,9 +18,7 @@ The game has one fair endless route. Birds are cosmetic and permanent upgrades a
 
 | Score range | World | Gate behaviour | Opening / speed |
 | --- | --- | --- | --- |
-| 0–2 | Neon City tutorial | Three generous gates near the centre | 34% of height / 32% of width per second |
-| 3–8 | Neon City | Static gates with gradually larger height changes | 32.5% → 30.2% / 33% → 36.5% |
-| 9–14 | Neon City | Tighter openings and a modest pace increase each gate | 29.8% → 28.2% / 37.2% → 39.5% |
+| 0–14 | Neon City | Varied opening heights from the first gate, with continuous tightening and acceleration | 32% → 28.2% / 34.5% → 39.5% |
 | 15–24 | Acid Foundry | Static arrival, then drift grows over four gates | 28% / 40% |
 | 25–29 | Acid Foundry | Established drift; gradual approach to the next world | 27.7% → 26.5% / 40.8% → 42.4% |
 | 30–39 | Orbital Bazaar | Bounded high/low openings; speed settles over five gates | 26% / 43% → 44% |
@@ -101,6 +99,6 @@ Avoid pixel art, chibi proportions, photorealism, muddy bloom, dense opaque fore
 
 ## Suggested playtest pass
 
-Run enough sessions to reach score 5, 15, and 30 repeatedly. Record whether the first three gates teach the beat; whether the Foundry tunnel leaves a safe recovery window; whether moving and alternating patterns read before they become dangerous; and whether a crystal arc ever asks for an impossible line. Change a single tuning value only after observing the same problem across multiple runs.
+Run enough sessions to reach score 5, 15, and 30 repeatedly. Record whether the opening course feels fair and engaging; whether the Foundry tunnel leaves a safe recovery window; whether moving and alternating patterns read before they become dangerous; and whether a crystal arc ever asks for an impossible line. Change a single tuning value only after observing the same problem across multiple runs.
 
 The most valuable next refinement after this pass is authored world audio stems. A restrained, cross-faded music layer for each world will make the score-15 and score-30 transitions land without adding visual clutter or changing the fair core loop.
