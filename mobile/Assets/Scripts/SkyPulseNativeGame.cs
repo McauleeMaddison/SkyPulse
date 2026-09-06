@@ -335,7 +335,7 @@ namespace SkyPulse.Mobile
             public int Sequence;
             public bool IsStatic;
             public bool Passed;
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#if UNITY_EDITOR || UNITY_ENABLE_CHECKS
             public SpriteRenderer DebugTopBody;
             public SpriteRenderer DebugTopCap;
             public SpriteRenderer DebugBottomBody;
@@ -1028,7 +1028,7 @@ new WorldTheme(
         private Vector3 riseBirdBaseScale = Vector3.one;
         private Vector3 authoredBirdBaseScale = Vector3.one;
 
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#if UNITY_EDITOR || UNITY_ENABLE_CHECKS
         private bool collisionDebugEnabled;
         private SpriteRenderer collisionBirdDebug;
 
@@ -1406,7 +1406,7 @@ new WorldTheme(
             eyeGlint.transform.localScale = Vector3.one * .062f;
             birdEyeGlintRenderer = eyeGlint;
 
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#if UNITY_EDITOR || UNITY_ENABLE_CHECKS
             collisionBirdDebug = CreateRenderer("Bird body collision guide", ringSprite, new Color(.35f, 1f, .72f, .78f), 31, birdHitbox);
             collisionBirdDebug.enabled = false;
 #endif
@@ -1545,7 +1545,7 @@ new WorldTheme(
                 Top = CreatePipeSurface(root.transform, "Top pipe"),
                 Bottom = CreatePipeSurface(root.transform, "Bottom pipe"),
             };
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#if UNITY_EDITOR || UNITY_ENABLE_CHECKS
             pair.DebugTopBody = CreateRenderer("Top collision body guide", whiteSprite, new Color(1f, .26f, .55f, .13f), 29, root.transform);
             pair.DebugTopCap = CreateRenderer("Top collision cap guide", whiteSprite, new Color(1f, .74f, .25f, .30f), 30, root.transform);
             pair.DebugBottomBody = CreateRenderer("Bottom collision body guide", whiteSprite, new Color(1f, .26f, .55f, .13f), 29, root.transform);
@@ -2068,7 +2068,7 @@ new WorldTheme(
             UpdateScoreBurst(frameDelta);
             UpdateFlightFeedback(frameDelta);
 
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#if UNITY_EDITOR || UNITY_ENABLE_CHECKS
             UpdateDevelopmentQualityControls();
 #endif
 
@@ -2150,12 +2150,12 @@ new WorldTheme(
 
             UpdateFlightCoach();
 
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#if UNITY_EDITOR || UNITY_ENABLE_CHECKS
             UpdateCollisionDebug();
 #endif
         }
 
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#if UNITY_EDITOR || UNITY_ENABLE_CHECKS
         private void UpdateDevelopmentQualityControls()
         {
             if (Input.GetKeyDown(KeyCode.F1)) SetDevelopmentFrameRateCap(30);
@@ -3521,7 +3521,7 @@ new WorldTheme(
             flightFeedbackRenderer.transform.localScale = Vector3.one * Mathf.Lerp(.48f, 2.15f, progress);
         }
 
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#if UNITY_EDITOR || UNITY_ENABLE_CHECKS
         /// <summary>
         /// Press F4 in an Editor or Development build to expose the exact collision
         /// space. It is compiled out of release builds, so it can never distract a
@@ -3676,7 +3676,7 @@ new WorldTheme(
             ClearTrail();
             if (birdBodyCollider != null) birdBodyCollider.enabled = false;
             foreach (var pair in pipePool) pair.Root.SetActive(false);
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#if UNITY_EDITOR || UNITY_ENABLE_CHECKS
             if (collisionBirdDebug != null) collisionBirdDebug.enabled = false;
             foreach (var pair in pipePool)
             {

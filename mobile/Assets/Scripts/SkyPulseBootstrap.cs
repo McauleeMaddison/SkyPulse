@@ -7,7 +7,7 @@ namespace SkyPulse.Mobile
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void StartSkyPulse()
         {
-            if (Object.FindFirstObjectByType<SkyPulseNativeGame>() != null) return;
+            if (Object.FindAnyObjectByType<SkyPulseNativeGame>() != null) return;
 
             var root = new GameObject("SkyPulse Native");
             Object.DontDestroyOnLoad(root);
