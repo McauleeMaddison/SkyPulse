@@ -702,61 +702,61 @@ new WorldTheme(
             // COLLECTION · stronger pickup reach and crystal value, never easier flight.
             new Upgrade("crystal_resonator", "CRYSTAL RESONATOR", new []
             {
-                "LEVEL 1 · ATTRACT CRYSTALS WITHIN 6% OF SCREEN WIDTH",
-                "LEVEL 2 · ATTRACT CRYSTALS WITHIN 10% OF SCREEN WIDTH",
-                "LEVEL 3 · ATTRACT CRYSTALS WITHIN 14% OF SCREEN WIDTH",
+                "Attract crystals within 8% of screen width",
+                "Attract crystals within 13% of screen width",
+                "Attract crystals within 18% of screen width",
             }, new [] { 150, 400, 900 }, "#45eaff", "COLLECTION", null, 0, 1),
             new Upgrade("prism_conduit", "PRISM CONDUIT", new []
             {
-                "LEVEL 1 · COLLECTED CRYSTALS GAIN +5% VALUE",
-                "LEVEL 2 · COLLECTED CRYSTALS GAIN +10% VALUE",
-                "LEVEL 3 · COLLECTED CRYSTALS GAIN +15% VALUE",
+                "Collected crystals gain +15% value",
+                "Collected crystals gain +30% value",
+                "Collected crystals gain +50% value",
             }, new [] { 350, 700, 1350 }, "#3197ff", "COLLECTION", "crystal_resonator", 2, 2),
             new Upgrade("gravity_well", "GRAVITY WELL", new []
             {
-                "LEVEL 1 · ADD +2% CRYSTAL ATTRACTION RADIUS",
-                "LEVEL 2 · ADD +4% CRYSTAL ATTRACTION RADIUS",
-                "LEVEL 3 · ADD +6% CRYSTAL ATTRACTION RADIUS",
+                "Add 3% screen width to pickup reach",
+                "Add 6% screen width to pickup reach",
+                "Add 10% screen width to pickup reach",
             }, new [] { 650, 1300, 2400 }, "#8f64ff", "COLLECTION", "prism_conduit", 2, 3),
 
             // RECOVERY · post-run economy rewards only.
             new Upgrade("salvage_codec", "SALVAGE CODEC", new []
             {
-                "LEVEL 1 · RESULTS AWARD +10% CRYSTALS",
-                "LEVEL 2 · RESULTS AWARD +20% CRYSTALS",
-                "LEVEL 3 · RESULTS AWARD +30% CRYSTALS",
+                "Earn +20% crystals at run end",
+                "Earn +35% crystals at run end",
+                "Earn +50% crystals at run end",
             }, new [] { 200, 500, 1000 }, "#ffc34d", "RECOVERY", null, 0, 1),
             new Upgrade("recovery_cache", "RECOVERY CACHE", new []
             {
-                "LEVEL 1 · END EACH RUN WITH +5 CRYSTALS",
-                "LEVEL 2 · END EACH RUN WITH +10 CRYSTALS",
-                "LEVEL 3 · END EACH RUN WITH +15 CRYSTALS",
+                "Finish a run for +8 crystals",
+                "Finish a run for +16 crystals",
+                "Finish a run for +25 crystals",
             }, new [] { 400, 800, 1450 }, "#ff9f43", "RECOVERY", "salvage_codec", 2, 2),
             new Upgrade("archive_engine", "ARCHIVE ENGINE", new []
             {
-                "LEVEL 1 · NEW BEST AWARDS +10 CRYSTALS",
-                "LEVEL 2 · NEW BEST AWARDS +20 CRYSTALS",
-                "LEVEL 3 · NEW BEST AWARDS +30 CRYSTALS",
+                "Set a new high score for +25 crystals",
+                "Set a new high score for +50 crystals",
+                "Set a new high score for +100 crystals",
             }, new [] { 700, 1400, 2500 }, "#ffd166", "RECOVERY", "recovery_cache", 2, 3),
 
             // MASTERY · skill milestones reward currency without changing score rules.
             new Upgrade("precision_harvester", "PRECISION HARVESTER", new []
             {
-                "LEVEL 1 · +1 CRYSTAL EVERY 5 PERFECT PASSES",
-                "LEVEL 2 · +1 CRYSTAL EVERY 3 PERFECT PASSES",
-                "LEVEL 3 · +1 CRYSTAL EVERY 2 PERFECT PASSES",
+                "+1 crystal every 3 perfect passes",
+                "+1 crystal every 2 perfect passes",
+                "+1 crystal on every perfect pass",
             }, new [] { 250, 550, 950 }, "#f05bc6", "MASTERY", null, 0, 1),
             new Upgrade("streak_capacitor", "STREAK CAPACITOR", new []
             {
-                "LEVEL 1 · +2 CRYSTALS EVERY 15 GATES",
-                "LEVEL 2 · +3 CRYSTALS EVERY 15 GATES",
-                "LEVEL 3 · +4 CRYSTALS EVERY 15 GATES",
+                "+5 crystals every 15 gates",
+                "+10 crystals every 15 gates",
+                "+15 crystals every 15 gates",
             }, new [] { 450, 850, 1500 }, "#d65cff", "MASTERY", "precision_harvester", 2, 2),
             new Upgrade("apex_matrix", "APEX MATRIX", new []
             {
-                "LEVEL 1 · 10+ GATES ADDS +5% RESULT CRYSTALS",
-                "LEVEL 2 · 10+ GATES ADDS +10% RESULT CRYSTALS",
-                "LEVEL 3 · 10+ GATES ADDS +15% RESULT CRYSTALS",
+                "Reach 10 gates for +15% result crystals",
+                "Reach 10 gates for +30% result crystals",
+                "Reach 10 gates for +50% result crystals",
             }, new [] { 800, 1600, 2500 }, "#b17cff", "MASTERY", "streak_capacitor", 2, 3),
         };
 
@@ -4709,12 +4709,14 @@ if (surface.RailRight != null && surface.RailRight.enabled)
 
         private void BuildTechTree()
         {
-            CreateTopAnchoredText("CRYSTAL NETWORK", -16f, 23, Hex("#f4fbff"), FontStyle.Bold);
-            CreateTopAnchoredText("PERMANENT ECONOMY UPGRADES · FLIGHT DIFFICULTY STAYS FAIR", -48f, 13, new Color(.86f, .91f, 1f, .56f), FontStyle.Bold);
+            CreateTopAnchoredText("BUILD YOUR FLIGHT LEGACY", -16f, 30, Hex("#f4fbff"), FontStyle.Bold);
+            var installed = 0;
+            foreach (var upgrade in Upgrades) installed += GetUpgradeLevel(upgrade.Id);
+            CreateTopAnchoredText($"{installed} / 27 LEVELS INSTALLED  ·  BENEFITS APPLY TO EVERY BIRD", -62f, 20, Hex("#cad8ee"), FontStyle.Bold);
 
             var branches = new[] { "COLLECTION", "RECOVERY", "MASTERY" };
             var branchColours = new[] { Hex("#45eaff"), Hex("#ffc34d"), Hex("#b17cff") };
-            var cursorY = -104f;
+            var cursorY = -126f;
 
             for (var branchIndex = 0; branchIndex < branches.Length; branchIndex += 1)
             {
@@ -4734,7 +4736,7 @@ if (surface.RailRight != null && surface.RailRight.enabled)
                         cursorY -= 34f;
                     }
                     CreateTechTreeCard(upgrade, cursorY, branchColour);
-                    cursorY -= 190f;
+                    cursorY -= 310f;
                     branchNodeIndex += 1;
                 }
                 cursorY -= 48f;
@@ -4768,13 +4770,16 @@ if (surface.RailRight != null && surface.RailRight.enabled)
             rightRule.rectTransform.pivot = new Vector2(.5f, 1f);
             rightRule.raycastTarget = false;
 
-            var badge = CreatePanel(customizeContent, $"{branch} branch badge", new Vector2(0f, y), new Vector2(238f, 38f), new Color(colour.r * .12f, colour.g * .12f, colour.b * .12f, .96f));
+            var badge = CreatePanel(customizeContent, $"{branch} branch badge", new Vector2(0f, y), new Vector2(360f, 42f), new Color(colour.r * .12f, colour.g * .12f, colour.b * .12f, .96f));
             badge.anchorMin = new Vector2(.5f, 1f);
             badge.anchorMax = new Vector2(.5f, 1f);
             badge.pivot = new Vector2(.5f, 1f);
             badge.GetComponent<Image>().raycastTarget = false;
             AddOutline(badge.gameObject, new Color(colour.r, colour.g, colour.b, .72f), 1.5f);
-            CreateText(badge, branch, Vector2.zero, new Vector2(220f, 34f), 17, colour, TextAnchor.MiddleCenter, FontStyle.Bold).raycastTarget = false;
+            var installed = 0;
+            foreach (var upgrade in Upgrades)
+                if (upgrade.Branch == branch) installed += GetUpgradeLevel(upgrade.Id);
+            CreateText(badge, $"{branch}   {installed}/9", Vector2.zero, new Vector2(344f, 38f), 23, colour, TextAnchor.MiddleCenter, FontStyle.Bold).raycastTarget = false;
         }
 
         private void CreateTechConnector(float y, Color colour, bool active)
@@ -4797,108 +4802,55 @@ if (surface.RailRight != null && surface.RailRight.enabled)
             var level = GetUpgradeLevel(upgrade.Id);
             var maxed = level >= upgrade.MaxLevel;
             var unlocked = IsUpgradePrerequisiteMet(upgrade);
-            var panelColour = unlocked
-                ? Color.Lerp(Hex("#090d1c"), branchColour, .055f)
-                : Hex("#070a13");
-            var card = CreatePanel(customizeContent, $"{upgrade.Name} tech node", new Vector2(0f, y), new Vector2(812f, 166f), panelColour);
-            card.anchorMin = new Vector2(.5f, 1f);
-            card.anchorMax = new Vector2(.5f, 1f);
+            var price = maxed ? 0 : upgrade.PriceAtLevel(level);
+            var affordable = unlocked && !maxed && crystals >= price;
+            var card = CreatePanel(customizeContent, $"{upgrade.Name} tech node", new Vector2(0f, y), new Vector2(812f, 286f),
+                Color.Lerp(Hex("#090f21"), branchColour, level > 0 ? .10f : .025f));
+            card.anchorMin = card.anchorMax = new Vector2(.5f, 1f);
             card.pivot = new Vector2(.5f, 1f);
-
-            var outlineColour = unlocked ? upgrade.Accent : new Color(upgrade.Accent.r, upgrade.Accent.g, upgrade.Accent.b, .30f);
-            AddOutline(card.gameObject, outlineColour, maxed ? 3f : unlocked ? 1.6f : 1f);
+            AddOutline(card.gameObject, new Color(branchColour.r, branchColour.g, branchColour.b, affordable || maxed ? .8f : .3f), 1.5f);
             var button = card.gameObject.AddComponent<Button>();
             button.targetGraphic = card.GetComponent<Image>();
             button.interactable = unlocked && !maxed;
             button.onClick.AddListener(() => SelectUpgrade(upgrade));
+            var colours = button.colors;
+            colours.highlightedColor = new Color(.88f, .96f, 1f);
+            colours.pressedColor = new Color(.65f, .78f, .92f);
+            colours.disabledColor = Color.white;
+            button.colors = colours;
 
-            // The colour rail and icon occupy a fixed left column. Text begins to the
-            // right of that column, so long names never drift outside the card.
-            var accentRail = CreateImage(card, "Tech branch accent rail", new Vector2(-398f, 0f), new Vector2(6f, 138f), new Color(branchColour.r, branchColour.g, branchColour.b, unlocked ? .86f : .30f));
-            accentRail.raycastTarget = false;
-
-            var haloAlpha = maxed ? .62f : unlocked ? .34f : .13f;
-            var halo = CreateImage(card, "Tech node halo", new Vector2(-326f, 0f), new Vector2(96f, 96f), new Color(upgrade.Accent.r, upgrade.Accent.g, upgrade.Accent.b, haloAlpha));
+            var halo = CreateImage(card, "Tech core halo", new Vector2(-332f, 78f), new Vector2(90f, 90f), new Color(branchColour.r, branchColour.g, branchColour.b, .4f));
             halo.sprite = ringSprite;
             halo.raycastTarget = false;
-            var previewSprite = GetUpgradeArtwork(upgrade);
-            var artwork = CreateImage(card, "Tech node artwork", new Vector2(-326f, 0f), new Vector2(76f, 76f), previewSprite == null ? outlineColour : Color.white);
-            artwork.sprite = previewSprite ?? softCircleSprite;
+            var artwork = CreateImage(card, "Tech core", new Vector2(-332f, 78f), new Vector2(64f, 64f), Color.white);
+            artwork.sprite = GetUpgradeArtwork(upgrade) ?? softCircleSprite;
             artwork.preserveAspect = true;
             artwork.raycastTarget = false;
+            CreateText(card, $"TIER {upgrade.Tier}  /  {upgrade.Branch}", new Vector2(36f, 112f), new Vector2(590f, 28f), 18, branchColour, TextAnchor.MiddleLeft, FontStyle.Bold);
+            var title = CreateText(card, upgrade.Name, new Vector2(36f, 72f), new Vector2(590f, 48f), 30, Hex("#f4fbff"), TextAnchor.MiddleLeft, FontStyle.Bold);
+            title.resizeTextForBestFit = true;
+            title.resizeTextMinSize = 24;
+            title.resizeTextMaxSize = 30;
 
-            // A subtle title plate makes every bird-sized phone screenshot readable,
-            // including locked nodes. The title never shares space with the icon.
-            var titlePlate = CreatePanel(card, "Tech title plate", new Vector2(-45f, 29f), new Vector2(438f, 38f),
-                new Color(branchColour.r, branchColour.g, branchColour.b, unlocked ? .075f : .035f));
-            titlePlate.GetComponent<Image>().raycastTarget = false;
+            var current = level > 0 ? upgrade.EffectAtLevel(level - 1) : "Not installed";
+            CreateText(card, "ACTIVE", new Vector2(-318f, 16f), new Vector2(116f, 32f), 18, branchColour, TextAnchor.MiddleLeft, FontStyle.Bold);
+            CreateText(card, current, new Vector2(56f, 16f), new Vector2(626f, 38f), 22, Hex("#f4fbff"), TextAnchor.MiddleLeft, FontStyle.Normal);
+            var next = maxed ? "Fully upgraded — all benefits active" : upgrade.EffectAtLevel(level);
+            CreateText(card, maxed ? "COMPLETE" : "NEXT", new Vector2(-318f, -32f), new Vector2(116f, 32f), 18, branchColour, TextAnchor.MiddleLeft, FontStyle.Bold);
+            CreateText(card, next, new Vector2(56f, -32f), new Vector2(626f, 46f), 22, Hex("#cad8ee"), TextAnchor.MiddleLeft, FontStyle.Normal);
 
-            var tierText = $"TIER {upgrade.Tier}  ·  {upgrade.Branch}";
-            CreateText(card, tierText, new Vector2(-55f, 61f), new Vector2(418f, 20f), 11,
-                new Color(branchColour.r, branchColour.g, branchColour.b, unlocked ? .92f : .58f),
-                TextAnchor.MiddleLeft, FontStyle.Bold).raycastTarget = false;
-
-            var nameText = CreateText(card, upgrade.Name, new Vector2(-55f, 29f), new Vector2(418f, 32f), 20,
-                unlocked ? Hex("#f4fbff") : new Color(.86f, .89f, .96f, .76f),
-                TextAnchor.MiddleLeft, FontStyle.Bold);
-            nameText.resizeTextForBestFit = true;
-            nameText.resizeTextMinSize = 15;
-            nameText.resizeTextMaxSize = 20;
-            nameText.horizontalOverflow = HorizontalWrapMode.Wrap;
-            nameText.verticalOverflow = VerticalWrapMode.Truncate;
-            nameText.raycastTarget = false;
-
-            var detail = string.Empty;
-            if (!unlocked)
+            for (var pipIndex = 0; pipIndex < upgrade.MaxLevel; pipIndex++)
             {
-                var prerequisite = FindById(Upgrades, upgrade.PrerequisiteId);
-                var requirementName = prerequisite == null ? upgrade.PrerequisiteId : prerequisite.Name;
-                detail = $"REQUIRES {requirementName} LV.{upgrade.PrerequisiteLevel}";
-            }
-            else if (maxed)
-            {
-                detail = upgrade.EffectAtLevel(upgrade.MaxLevel - 1);
-            }
-            else if (level <= 0)
-            {
-                detail = upgrade.EffectAtLevel(0);
-            }
-            else
-            {
-                detail = $"ACTIVE  {upgrade.EffectAtLevel(level - 1)}\nNEXT  {upgrade.EffectAtLevel(level)}";
-            }
-            var detailText = CreateText(card, detail, new Vector2(-55f, -17f), new Vector2(418f, 54f), 12,
-                unlocked ? new Color(.90f, .94f, 1f, .80f) : new Color(.74f, .78f, .88f, .58f),
-                TextAnchor.MiddleLeft, FontStyle.Normal);
-            detailText.horizontalOverflow = HorizontalWrapMode.Wrap;
-            detailText.verticalOverflow = VerticalWrapMode.Truncate;
-            detailText.raycastTarget = false;
-
-            // Level pips live in their own right-hand column and never collide with
-            // the title or detail copy.
-            for (var pipIndex = 0; pipIndex < upgrade.MaxLevel; pipIndex += 1)
-            {
-                var filled = pipIndex < level;
-                var pipColour = filled
-                    ? new Color(upgrade.Accent.r, upgrade.Accent.g, upgrade.Accent.b, .98f)
-                    : new Color(upgrade.Accent.r, upgrade.Accent.g, upgrade.Accent.b, unlocked ? .25f : .12f);
-                var pip = CreateImage(card, $"Tech level pip {pipIndex + 1}", new Vector2(246f + pipIndex * 38f, 53f), new Vector2(26f, 10f), pipColour);
+                var pip = CreateImage(card, $"Tech level pip {pipIndex + 1}", new Vector2(-350f + pipIndex * 58f, -98f), new Vector2(46f, 8f), pipIndex < level ? branchColour : Hex("#30415b"));
                 pip.raycastTarget = false;
             }
-
-            var statusText = maxed
-                ? "MAX LEVEL"
-                : !unlocked
-                    ? "LOCKED"
-                    : level <= 0
-                        ? $"INSTALL  {upgrade.PriceAtLevel(level)} ✦"
-                        : $"LV {level}/3  ·  {upgrade.PriceAtLevel(level)} ✦";
-            var statusColour = maxed ? upgrade.Accent : unlocked ? branchColour : new Color(.70f, .74f, .82f, .66f);
-            var statusPanel = CreatePanel(card, "Tech status badge", new Vector2(286f, -47f), new Vector2(206f, 38f),
-                new Color(statusColour.r * .12f, statusColour.g * .12f, statusColour.b * .12f, unlocked ? .96f : .82f));
-            statusPanel.GetComponent<Image>().raycastTarget = false;
-            AddOutline(statusPanel.gameObject, new Color(statusColour.r, statusColour.g, statusColour.b, unlocked || maxed ? .76f : .34f), 1.2f);
-            CreateText(statusPanel, statusText, Vector2.zero, new Vector2(194f, 34f), 12, statusColour, TextAnchor.MiddleCenter, FontStyle.Bold).raycastTarget = false;
+            CreateText(card, $"{level} / {upgrade.MaxLevel}", new Vector2(-144f, -98f), new Vector2(88f, 36f), 21, Hex("#cad8ee"), TextAnchor.MiddleLeft, FontStyle.Bold);
+            var status = maxed ? "MAX LEVEL" : !unlocked ? $"Requires tier {upgrade.Tier - 1} · level {upgrade.PrerequisiteLevel}"
+                : affordable ? $"{(level == 0 ? "INSTALL" : "UPGRADE")}  {price} ✦" : $"{price} ✦  ·  Need {price - crystals} more";
+            var badge = CreatePanel(card, "Tech action", new Vector2(142f, -98f), new Vector2(466f, 52f), affordable ? Color.Lerp(Hex("#102039"), branchColour, .22f) : Hex("#101b30"));
+            badge.GetComponent<Image>().raycastTarget = false;
+            AddOutline(badge.gameObject, new Color(branchColour.r, branchColour.g, branchColour.b, .45f), 1f);
+            CreateText(badge, status, Vector2.zero, new Vector2(450f, 44f), 21, affordable || maxed ? branchColour : Hex("#cad8ee"), TextAnchor.MiddleCenter, FontStyle.Bold);
         }
 
         private void SetContentRows(int count, float rowStride = 255f)
@@ -5072,9 +5024,9 @@ if (surface.RailRight != null && surface.RailRight.enabled)
         {
             switch (GetUpgradeLevel("crystal_resonator"))
             {
-                case 3: return .14f;
-                case 2: return .10f;
-                case 1: return .06f;
+                case 3: return 0.18f;
+                case 2: return 0.13f;
+                case 1: return 0.08f;
                 default: return 0f;
             }
         }
@@ -5083,9 +5035,9 @@ if (surface.RailRight != null && surface.RailRight.enabled)
         {
             switch (GetUpgradeLevel("salvage_codec"))
             {
-                case 3: return .30f;
-                case 2: return .20f;
-                case 1: return .10f;
+                case 3: return 0.5f;
+                case 2: return 0.35f;
+                case 1: return 0.2f;
                 default: return 0f;
             }
         }
@@ -5094,9 +5046,9 @@ if (surface.RailRight != null && surface.RailRight.enabled)
         {
             switch (GetUpgradeLevel("prism_conduit"))
             {
-                case 3: return .15f;
-                case 2: return .10f;
-                case 1: return .05f;
+                case 3: return 0.5f;
+                case 2: return 0.3f;
+                case 1: return 0.15f;
                 default: return 0f;
             }
         }
@@ -5105,9 +5057,9 @@ if (surface.RailRight != null && surface.RailRight.enabled)
         {
             switch (GetUpgradeLevel("gravity_well"))
             {
-                case 3: return .06f;
-                case 2: return .04f;
-                case 1: return .02f;
+                case 3: return 0.1f;
+                case 2: return 0.06f;
+                case 1: return 0.03f;
                 default: return 0f;
             }
         }
@@ -5116,9 +5068,9 @@ if (surface.RailRight != null && surface.RailRight.enabled)
         {
             switch (GetUpgradeLevel("recovery_cache"))
             {
-                case 3: return 15;
-                case 2: return 10;
-                case 1: return 5;
+                case 3: return 25;
+                case 2: return 16;
+                case 1: return 8;
                 default: return 0;
             }
         }
@@ -5127,9 +5079,9 @@ if (surface.RailRight != null && surface.RailRight.enabled)
         {
             switch (GetUpgradeLevel("archive_engine"))
             {
-                case 3: return 30;
-                case 2: return 20;
-                case 1: return 10;
+                case 3: return 100;
+                case 2: return 50;
+                case 1: return 25;
                 default: return 0;
             }
         }
@@ -5138,9 +5090,9 @@ if (surface.RailRight != null && surface.RailRight.enabled)
         {
             switch (GetUpgradeLevel("precision_harvester"))
             {
-                case 3: return 2;
-                case 2: return 3;
-                case 1: return 5;
+                case 3: return 1;
+                case 2: return 2;
+                case 1: return 3;
                 default: return 0;
             }
         }
@@ -5149,9 +5101,9 @@ if (surface.RailRight != null && surface.RailRight.enabled)
         {
             switch (GetUpgradeLevel("streak_capacitor"))
             {
-                case 3: return 4;
-                case 2: return 3;
-                case 1: return 2;
+                case 3: return 15;
+                case 2: return 10;
+                case 1: return 5;
                 default: return 0;
             }
         }
@@ -5160,9 +5112,9 @@ if (surface.RailRight != null && surface.RailRight.enabled)
         {
             switch (GetUpgradeLevel("apex_matrix"))
             {
-                case 3: return .15f;
-                case 2: return .10f;
-                case 1: return .05f;
+                case 3: return 0.5f;
+                case 2: return 0.3f;
+                case 1: return 0.15f;
                 default: return 0f;
             }
         }
@@ -5344,6 +5296,8 @@ if (surface.RailRight != null && surface.RailRight.enabled)
                 return;
             }
             var unlockedSkin = pendingPurchase == PendingPurchase.Skin ? pendingSkin : null;
+            var keepTreePosition = pendingPurchase == PendingPurchase.Upgrade && customizeContent != null;
+            var treePosition = keepTreePosition ? customizeContent.anchoredPosition : Vector2.zero;
             if (pendingPurchase == PendingPurchase.Upgrade)
             {
                 var level = GetUpgradeLevel(pendingUpgrade.Id);
@@ -5372,6 +5326,11 @@ if (surface.RailRight != null && surface.RailRight.enabled)
             SaveProgress();
             Play(unlockSound);
             RebuildCustomizeGrid();
+            if (keepTreePosition)
+            {
+                var maxScroll = Mathf.Max(0f, customizeContent.sizeDelta.y - customizeScroll.viewport.rect.height);
+                customizeContent.anchoredPosition = new Vector2(0f, Mathf.Clamp(treePosition.y, 0f, maxScroll));
+            }
             if (unlockedSkin != null)
             {
                 PulseHaptic(.30f);
