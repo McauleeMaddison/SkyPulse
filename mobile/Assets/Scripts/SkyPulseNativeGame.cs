@@ -1032,17 +1032,6 @@ new WorldTheme(
         private bool collisionDebugEnabled;
         private SpriteRenderer collisionBirdDebug;
 
-        // These caps exercise the exact same fixed-step route at the refresh rates
-        // we need to validate before a real-device session. They never alter the
-        // flight tuning itself, which keeps a comparison meaningful.
-        private int developmentFrameRateCap = 60;
-#endif
-
-#if UNITY_EDITOR
-        private Text editorQualityText;
-        private float editorFrameSampleTime;
-        private int editorFrameSampleCount;
-        private float editorDisplayedFps;
 #endif
 
         private void Awake()
@@ -1350,6 +1339,11 @@ new WorldTheme(
                 .006f,
                 1f
             );
+            // Keep references for world colour transitions, but leave the
+            // bottom of the view clear. GroundY still defines floor collisions.
+            floorLip.enabled = false;
+            floorGlow.enabled = false;
+            floorHighlight.enabled = false;
         }
         private void CreateBird()
         {
@@ -1634,29 +1628,7 @@ new WorldTheme(
             purchaseModal.SetActive(false);
             unlockRevealModal = CreateUnlockReveal(safeAreaRoot);
             unlockRevealModal.SetActive(false);
-
-#if UNITY_EDITOR
-            CreateEditorQualityHarness(safeAreaRoot);
-#endif
         }
-
-#if UNITY_EDITOR
-        /// <summary>
-        /// Editor-only mobile QA readout. It makes frame-rate and collision checks
-        /// visible in the Game view without adding a single element to a player build.
-        /// F1/F2/F3 set a 30/60/120 FPS render cap; F4 shows the collision volumes.
-        /// </summary>
-        private void CreateEditorQualityHarness(Transform parent)
-        {
-            var bar = CreatePanel(parent, "Editor mobile quality harness", new Vector2(0f, -856f), new Vector2(796f, 44f), new Color(.008f, .014f, .04f, .78f));
-            var image = bar.GetComponent<Image>();
-            image.raycastTarget = false;
-            AddOutline(bar.gameObject, new Color(.27f, .86f, 1f, .23f), .75f);
-            editorQualityText = CreateText(bar, "EDITOR QA  ·  STARTING…", Vector2.zero, new Vector2(760f, 34f), 13, new Color(.75f, .92f, 1f, .82f), TextAnchor.MiddleCenter, FontStyle.Bold);
-            editorQualityText.raycastTarget = false;
-            UpdateEditorQualityHarness(0f);
-        }
-#endif
 
         private void ApplySafeArea()
         {
@@ -1764,7 +1736,14 @@ new WorldTheme(
             // the character on the menu.
             menuBirdSafetyImage.transform.SetAsLastSibling();
 
-            menuBestText = CreateChip(root.transform, new Vector2(0f, -160f), "BEST · 0", Hex("#8fa7c4"));
+            var bestPanel = CreatePanel(root.transform, "Personal best", new Vector2(0f, -150f), new Vector2(460f, 80f), Hex("#0a0f20"));
+            bestPanel.GetComponent<Image>().raycastTarget = false;
+            AddOutline(bestPanel.gameObject, new Color(1f, .76f, .30f, .55f), 1f);
+            CreateText(bestPanel, "HIGH SCORE", new Vector2(-124f, 0f), new Vector2(182f, 52f), 25, Hex("#ffc34d"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            menuBestText = CreateText(bestPanel, "0", new Vector2(94f, 0f), new Vector2(232f, 64f), 44, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            menuBestText.resizeTextForBestFit = true;
+            menuBestText.resizeTextMinSize = 26;
+            menuBestText.resizeTextMaxSize = 44;
             menuModeDetailText = CreateText(root.transform, "ONE FAIR ROUTE · COLLECT CRYSTALS · MASTER THE FLOW", new Vector2(0f, -211f), new Vector2(780f, 32f), 16, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             var fly = CreateNeonButton(root.transform, "PLAY", new Vector2(0f, -292f), new Vector2(592f, 108f), Hex("#f05bc6"));
             fly.onClick.AddListener(StartFlight);
@@ -1834,7 +1813,7 @@ new WorldTheme(
             resultReasonText = CreateText(card, "GATE IMPACT", new Vector2(0f, 286f), new Vector2(600f, 30f), 16, Hex("#f05bc6"), TextAnchor.MiddleCenter, FontStyle.Bold);
             resultModeText = CreateText(card, "ENDLESS CYBER ROUTE", new Vector2(0f, 248f), new Vector2(600f, 30f), 16, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             resultScoreText = CreateText(card, "SCORE  0", new Vector2(0f, 190f), new Vector2(600f, 54f), 31, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            resultBestText = CreateText(card, "BEST  0", new Vector2(0f, 143f), new Vector2(600f, 42f), 22, new Color(.93f, .95f, 1f, .78f), TextAnchor.MiddleCenter, FontStyle.Bold);
+            resultBestText = CreateText(card, "HIGH SCORE  0", new Vector2(0f, 141f), new Vector2(600f, 46f), 30, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             resultCrystalsText = CreateText(card, "CRYSTALS PICKED UP  ·  0", new Vector2(0f, 88f), new Vector2(660f, 36f), 19, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             resultBonusText = CreateText(card, "SALVAGE CODEC BONUS  ·  +0", new Vector2(0f, 48f), new Vector2(660f, 36f), 18, Hex("#ffc34d"), TextAnchor.MiddleCenter, FontStyle.Bold);
             resultBalanceText = CreateText(card, "TOTAL BALANCE  ·  0 ✦", new Vector2(0f, 8f), new Vector2(660f, 36f), 19, new Color(.93f, .95f, 1f, .78f), TextAnchor.MiddleCenter, FontStyle.Bold);
@@ -2072,10 +2051,6 @@ new WorldTheme(
             UpdateDevelopmentQualityControls();
 #endif
 
-#if UNITY_EDITOR
-            UpdateEditorQualityHarness(frameDelta);
-#endif
-
             if (state == FlightState.Playing && (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.P)))
             {
                 PauseFlight();
@@ -2166,27 +2141,8 @@ new WorldTheme(
 
         private void SetDevelopmentFrameRateCap(int frameRate)
         {
-            developmentFrameRateCap = frameRate;
             QualitySettings.vSyncCount = 0;
             Application.targetFrameRate = frameRate;
-        }
-#endif
-
-#if UNITY_EDITOR
-        private void UpdateEditorQualityHarness(float deltaTime)
-        {
-            if (editorQualityText == null) return;
-            editorFrameSampleTime += Mathf.Max(0f, deltaTime);
-            editorFrameSampleCount += 1;
-            if (editorFrameSampleTime >= .25f)
-            {
-                editorDisplayedFps = editorFrameSampleCount / editorFrameSampleTime;
-                editorFrameSampleTime = 0f;
-                editorFrameSampleCount = 0;
-            }
-
-            var hitboxState = collisionDebugEnabled ? "HITBOX ON" : "F4 HITBOX";
-            editorQualityText.text = $"EDITOR QA  ·  {developmentFrameRateCap} FPS CAP  ·  {Mathf.RoundToInt(editorDisplayedFps)} FPS  ·  F1 30  F2 60  F3 120  ·  {hitboxState}";
         }
 #endif
 
@@ -4578,7 +4534,7 @@ if (surface.RailRight != null && surface.RailRight.enabled)
             PulseHaptic(.28f);
             Play(crashSound);
             resultScoreText.text = $"SCORE  {score}";
-            resultBestText.text = $"BEST  {best}";
+            resultBestText.text = $"HIGH SCORE  {best}";
             if (resultReasonText != null) resultReasonText.text = lastCrashReason;
             if (resultModeText != null)
             {
@@ -6037,7 +5993,7 @@ if (surface.RailRight != null && surface.RailRight.enabled)
                 hudModeText.text = RouteWorldName(routeWorldIndex);
                 hudModeText.color = routeWorld == null ? Hex("#45eaff") : routeWorld.Accent;
             }
-            if (menuBestText != null) menuBestText.text = $"BEST · {best}";
+            if (menuBestText != null) menuBestText.text = best.ToString();
         }
 
         private void UpdateFlightCoach()
