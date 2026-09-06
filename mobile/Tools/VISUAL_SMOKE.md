@@ -57,3 +57,5 @@ iPhone validation or App Store marketing screenshots.
 
 The earlier iPhone and Simulator native builds passed after correcting the source-plist layout. The final icon/counter rebuild is pending because automatic approval review reached its usage limit.
 See ../Release/READINESS.md and SECURITY_REVIEW.md in that directory.
+
+Final pass: the final source passed SKYPULSE_BETA_CHECKS_PASS and SKYPULSE_VISUAL_SMOKE_PASS in an isolated QA project. Both final native Release builds compiled and the final Simulator build was installed. Native manual dragging remains to be confirmed because computer-use drag injection behaved as a tap. See ../Release/BETA_VERIFICATION.json for precise scope.

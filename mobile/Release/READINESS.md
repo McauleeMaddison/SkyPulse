@@ -1,33 +1,28 @@
 # SkyPulse beta readiness — 6 September 2026
 
-Status: beta polish saved; NOT yet ready to upload. The earlier iPhone and Simulator Release builds compiled successfully after the source-plist layout fix. The latest two-wing icon and crystal-counter correction exported successfully, but their final native rebuild was blocked by automatic approval review because its usage limit was reached. No signed archive or TestFlight upload has been produced.
+Status: final candidate installed for tonight's Simulator visual testing. Both final native builds compile successfully. Not yet uploaded or approved for distribution.
 
 ## Completed
 
-- Removed runtime bird trail and rear thrust; fixed square alpha flashes; redesigned crystal, perfect-pass and three active power-up effects, with reduced-motion handling and cleanup.
-- Tuned the complete three-world route and remix progression. First gates teach, later gates gradually tighten and accelerate; handling remains unchanged.
-- Improved safe-area fitting, full-screen dimmers, feedback placement, privacy wrapping and menu input guards. Removed disconnected edge fragments from imported bird sprites without altering source PNGs.
-- Replaced the icon with an opaque 1024×1024 two-wing mechanical bird over a vivid blue-violet cosmic background. Checked 256/180/120/60-pixel previews. See ICON.md for asset and generation prompts.
-- Unity behaviour checks PASS, including 1,300 generated gates, transitions, pause/resume, rewards/persistence, purchase guards and touch-scroll routing. All 90 registered flight frames verified.
-- 216 effects renders and 48 full-screen/menu/unlock renders produced in Unity. These establish editor behaviour and appearance, not physical-device performance.
-- Fresh Unity 6000.6.0f1 export succeeded: `Builds/iOS-beta-1.0.0-2/Unity-iPhone.xcodeproj`, version 1.0.0 (2), bundle `com.mcauleemaddison.skypulse`. Xcode 26.6 and iOS SDK 26.5 are installed.
-- The latest export is `Builds/iOS-simulator-final-2/Unity-iPhone.xcodeproj`; its build-info hashes match the final icon and crystal-counter source. Earlier compiled exports contain the previous one-wing icon and previous counter implementation.
-- Installed the earlier Simulator Release build, verified its updated Home Screen icon, and inspected home, privacy, hangar and insufficient-balance modal. A simulated drag opened a card rather than scrolling; investigate whether the gesture delivery or native routing caused it. Do not count native touch scrolling as passed.
+- Removed runtime flight trail and rear thrust, fixed square alpha flashes, redesigned pickup/perfect-pass/power-up effects and their cleanup/reduced-motion behaviour.
+- Tuned gradual challenge across all three worlds and remix progression while preserving bird handling.
+- Improved safe-area layout, full-screen dimmers, feedback placement, privacy wrapping and input guards; removed detached edge fragments during bird import.
+- Final opaque 1024×1024 icon has two dimensional wings over a blue-violet cosmic sky. Inspected 256/180/120/60px previews and verified the installed Simulator Home Screen icon.
+- Replaced missing font glyphs with crystal artwork in menu, HUD and hangar balances; all three verified in the final iOS Simulator build.
+- Final automated regression PASS: 1,300 generated gates, milestone transitions, pause/resume, rewards/persistence, purchase guards and synthetic touch-scroll routing. All 90 registered flight frames verified. Earlier visual coverage includes 216 effects renders and 48 menu/unlock renders.
+- Final iPhone Release compile PASS (unsigned): `Builds/iOS-device-final-2/Unity-iPhone.xcodeproj`.
+- Final Simulator Release compile PASS and installed: `Builds/iOS-simulator-final-2/Unity-iPhone.xcodeproj`.
+- Live Simulator checks include home, privacy, hangar, insufficient-balance modal, flight/HUD, result, retry, pause and Reduced Motion toggle. Existing progress was preserved when replacing the installed app.
+- Source-plist layout fixed permanently in the export postprocessor. macOS protections and Unity compiler signature remained unchanged. Earlier usage-limit build rejection has cleared; the final builds now pass.
 
-## Blocking release checks
+## Still needed before distribution
 
-1. Finish compiling and installing the latest Simulator export when approval review is available again. Validate the two-wing icon on the Home Screen and crystal artwork in all three counters, then complete live gameplay, pause/retry, scrolling and effects checks. Re-export a fresh DeviceSDK candidate with these final assets before signing.
-2. The user selected Xcode iOS Simulator testing for this pass. Physical-device heat, battery use, haptics and performance remain unverified; do not represent Simulator results as hardware evidence.
-3. Confirm Apple Developer membership/signing team, create/confirm App Store Connect record, archive and validate a signed Release build. Only a development signing identity was observed; distribution setup has not been validated.
-4. Supply public support contact and host the native privacy/support pages. PRIVACY_POLICY_DRAFT.md needs owner details and publication. Complete privacy answers, age rating, availability and review contact.
-5. Capture final device screenshots and distribute through TestFlight for beta testing. Beta feedback is still needed to judge difficulty and retention; technical checks cannot guarantee that players find the balance ideal.
+- Manual native swipe verification: the automation's drag arrives as a tap. Synthetic Unity drag tests pass; this does not prove native dragging works. Include this in tonight's visual testing.
+- Resolve tonight's visual/gameplay feedback and any confirmed defects, then freeze a candidate. Neither automation nor screenshots guarantee perfect balance or player appeal.
+- Confirm Apple membership/team, App Store Connect record and signing. Produce and validate a signed archive, upload and configure TestFlight.
+- Supply public support contact and host the native privacy/support pages; add the public policy link in-app. Complete required beta metadata, compliance and review contact.
+- The user selected Xcode Simulator for this pass. Physical-device performance, heat, battery use and haptics remain unverified.
 
-## Reproduce / inspect
+Follow `TOMORROW_PLAN.md`. Machine-readable evidence and source/icon hashes: `BETA_VERIFICATION.json`. Test instructions: `../Tools/VISUAL_SMOKE.md` and `../Tools/EFFECTS_QA.md`. Local logs/images: `../../artifacts/effects-qa/`.
 
-Test instructions: ../Tools/VISUAL_SMOKE.md and ../Tools/EFFECTS_QA.md.
-Evidence: ../../artifacts/effects-qa/ (smoke, screen, export and native failure logs; image captures).
-Tester notes: BETA_TEST_NOTES.md.
-
-Export with SkyPulse > Release > Export Xcode Project. Default is a new timestamped Builds/iOS-beta-* folder; SKYPULSE_IOS_OUTPUT can select another empty destination. Open Unity-iPhone.xcodeproj in Xcode; the export folder is source/build inputs, not an installable iPhone app.
-
-Apple beta distribution guidance: https://developer.apple.com/app-store/review/guidelines/#beta-testing
+Export using SkyPulse > Release > Export Xcode Project for devices, or Export Xcode Simulator Project for Simulator. Each export requires an empty folder. The output is an Xcode source project, not an installable App Store package.

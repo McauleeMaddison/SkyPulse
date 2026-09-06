@@ -24,3 +24,7 @@ Evidence log: ../../artifacts/effects-qa/skypulse-beta-xcode-retry.log
 Renaming the exported source plist from Info.plist to SkyPulse-Info.plist and updating the main Xcode target's INFOPLIST_FILE allowed the original, unmodified signed compiler to run. Both iPhone Release and Simulator Release builds then succeeded. This supports the diagnosis that macOS was assessing the source export as an app bundle. The export postprocessor now applies that standard source-file layout automatically. No security settings, compiler signatures or provenance attributes were changed.
 
 These successful builds predate the final two-wing icon and crystal-counter fix. Their subsequent Unity export succeeded; automatic approval review rejected the native rebuild due to its usage limit. That rejection is separate from macOS Gatekeeper and must not be bypassed.
+
+## Final verification completed
+
+After the user requested completion, approval review allowed the final builds. Both final two-wing-icon/counter-fix builds now compile successfully, and the final Simulator app is installed. The earlier usage-limit rejection is historical. See BETA_VERIFICATION.json and TOMORROW_PLAN.md for current status. This does not constitute an absolute malware-free certification or App Store approval.

@@ -16,7 +16,7 @@ Preserve the exact bird, identity, rendering, colours and navy full-bleed backgr
 
 ## Final visual revisions
 
-User requested a richer background and two visible wings. Final image generated with the built-in image tool and saved to the same project icon asset as an opaque RGB 1024×1024 PNG. Original generated output: exec-13610150-6e96-40fe-96ac-8abd67792565.png. Readability inspected at 256, 180, 120 and 60 pixels. Native Home Screen verification of this final revision is pending the blocked rebuild.
+User requested a richer background and two visible wings. Final image generated with the built-in image tool and saved to the same project icon asset as an opaque RGB 1024×1024 PNG. Original generated output: exec-13610150-6e96-40fe-96ac-8abd67792565.png. Readability inspected at 256, 180, 120 and 60 pixels. Native Home Screen verification of this final revision passed after the final Simulator rebuild and installation.
 
 Background prompt: Preserve the cobalt mechanical finch, gold beak and wing joints, cyan eye, silver chest and pose. Replace the near-black background with luminous blue-violet cosmic sky, broad indigo/ultraviolet nebula ribbons, cyan lower-left light, restrained magenta horizon and few distant stars. Colour across the whole square; broad clean shapes secondary to the bird; readable at 60 pixels. About 76 percent subject coverage, 10 percent safe inset. No text, circular frame, badges, busy skyline, white trail, square glow or baked rounded corners. Opaque square 1024×1024.
 
