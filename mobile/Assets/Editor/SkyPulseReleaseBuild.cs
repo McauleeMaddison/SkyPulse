@@ -1,6 +1,7 @@
 #if UNITY_EDITOR
 using System;
 using System.IO;
+using System.Security.Cryptography;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
@@ -12,6 +13,25 @@ namespace SkyPulse.Mobile.Editor
     {
         public const string BundleId = "com.mcauleemaddison.skypulse";
         public const string Scene = "Assets/Scenes/SkyPulse.unity";
+
+        [Serializable]
+        private sealed class BuildEvidence
+        {
+            public string version;
+            public string build;
+            public string bundleId;
+            public string unityVersion;
+            public string sdk;
+            public string createdUtc;
+            public string gameplaySourceSha256;
+            public string iconSha256;
+        }
+
+        private static string FileHash(string path)
+        {
+            using (var hash = SHA256.Create())
+                return BitConverter.ToString(hash.ComputeHash(File.ReadAllBytes(path))).Replace("-", "").ToLowerInvariant();
+        }
 
         [MenuItem("SkyPulse/Release/Configure iPhone Release")]
         public static void Configure()
@@ -47,11 +67,23 @@ namespace SkyPulse.Mobile.Editor
         [MenuItem("SkyPulse/Release/Export Xcode Project")]
         public static void Export()
         {
+            ExportProject(false);
+        }
+
+        [MenuItem("SkyPulse/Release/Export Xcode Simulator Project")]
+        public static void ExportSimulator()
+        {
+            ExportProject(true);
+        }
+
+        private static void ExportProject(bool simulator)
+        {
             if (!BuildPipeline.IsBuildTargetSupported(BuildTargetGroup.iOS, BuildTarget.iOS))
                 throw new BuildFailedException("Install iOS Build Support for this Unity version in Unity Hub, then restart Unity.");
             Configure();
+            if (simulator) PlayerSettings.iOS.sdkVersion = iOSSdkVersion.SimulatorSDK;
             var destination = Environment.GetEnvironmentVariable("SKYPULSE_IOS_OUTPUT");
-            if (string.IsNullOrEmpty(destination)) destination = "Builds/iOS";
+            if (string.IsNullOrEmpty(destination)) destination = (simulator ? "Builds/iOS-simulator-" : "Builds/iOS-beta-") + DateTime.UtcNow.ToString("yyyyMMdd-HHmmss");
             // A clean destination prevents stale native files entering a release.
             if (Directory.Exists(destination) && Directory.GetFileSystemEntries(destination).Length > 0)
                 throw new BuildFailedException("Export folder is not empty. Choose a fresh SKYPULSE_IOS_OUTPUT folder or move the existing export first.");
@@ -62,6 +94,18 @@ namespace SkyPulse.Mobile.Editor
             });
             if (report.summary.result != BuildResult.Succeeded)
                 throw new BuildFailedException($"iOS export failed: {report.summary.result}, {report.summary.totalErrors} errors.");
+            var evidence = new BuildEvidence
+            {
+                version = PlayerSettings.bundleVersion,
+                build = PlayerSettings.iOS.buildNumber,
+                bundleId = BundleId,
+                unityVersion = Application.unityVersion,
+                sdk = simulator ? "iphonesimulator" : "iphoneos",
+                createdUtc = DateTime.UtcNow.ToString("O"),
+                gameplaySourceSha256 = FileHash("Assets/Scripts/SkyPulseNativeGame.cs"),
+                iconSha256 = FileHash("Assets/Branding/SkyPulseAppIcon.png"),
+            };
+            File.WriteAllText(Path.Combine(destination, "SkyPulse-build-info.json"), JsonUtility.ToJson(evidence, true));
             Debug.Log($"SKYPULSE_IOS_EXPORT_PASS: {Path.GetFullPath(destination)}");
         }
     }

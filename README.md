@@ -18,11 +18,16 @@ The game has one fair endless route. Birds are cosmetic and permanent upgrades a
 
 | Score range | World | Gate behaviour | Opening / speed |
 | --- | --- | --- | --- |
-| 0–4 | Neon City tutorial | Three generous, static gates | 34% of height / 32% of width per second |
-| 5–14 | Neon City | Standard static neon towers | 31% / 36% |
-| 15–29 | Acid Foundry | 1.2 s chromatic tunnel, a recovery beat, then telegraphed vertical drift | 29% / 40% |
-| 30–44 | Orbital Bazaar | Alternating antenna pylons and container towers, high/low openings | 27% / 44% |
+| 0–2 | Neon City tutorial | Three generous gates near the centre | 34% of height / 32% of width per second |
+| 3–8 | Neon City | Static gates with gradually larger height changes | 33.5% → 31.2% / 33% → 36.5% |
+| 9–14 | Neon City | Tighter openings and a modest pace increase each gate | 30.8% → 29.2% / 37.2% → 39.5% |
+| 15–24 | Acid Foundry | Static arrival, then drift grows over four gates | 29% / 40% |
+| 25–29 | Acid Foundry | Established drift; gradual approach to the next world | 28.7% → 27.5% / 40.8% → 42.4% |
+| 30–39 | Orbital Bazaar | Bounded high/low openings; speed settles over five gates | 27% / 43% → 44% |
+| 40–44 | Orbital Bazaar | Smooth approach to remix openings | 26.7% → 25.5% / 44% |
 | 45+ | Remix loop | Existing patterns combine; no new controls | minimum 25% / capped at 48% |
+
+Gap sizes follow each gate’s route index, including gates spawned ahead of the current score. Speed follows the current score. Gravity, flap impulse, hitbox, and gate spacing stay constant.
 
 Every new gap is bounded against the previous one and generated inside the fixed flight envelope. Decorative art can overhang a gate body, but it may never create invisible collision inside the opening.
 
@@ -30,7 +35,7 @@ Every new gap is bounded against the previous one and generated inside the fixed
 
 ### Hangar
 
-All five birds use the same dimensions, hitbox, and physics. Their animation, trail colour, and flap accent differ only as presentation.
+All 15 birds use the same dimensions, hitbox, and physics. Their animation and flap accent differ only as presentation. Birds have no flight trail or rear thrust effect.
 
 | Bird | Unlock |
 | --- | ---: |
@@ -74,7 +79,7 @@ Power-ups are placed on reachable lines roughly every 8–12 gates, never in the
 
 ## Visual direction
 
-SkyPulse is illustrated 2.5D cyberpunk aviation: five scrolling depth planes, clean emissive edges, and a dark, low-detail flight corridor. The high-contrast layer always belongs to the bird, gate opening, crystals, and power-ups.
+SkyPulse is illustrated 2.5D cyberpunk aviation: layered scrolling artwork, clean emissive edges, and a dark, low-detail flight corridor. The high-contrast layer always belongs to the bird, gate opening, crystals, and power-ups.
 
 - **Neon City:** midnight navy, electric cyan, magenta, restrained amber signs.
 - **Acid Foundry:** charcoal, toxic lime, hot orange, cyan coolant.

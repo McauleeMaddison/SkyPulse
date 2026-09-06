@@ -54,6 +54,16 @@ namespace SkyPulse.Mobile.Editor
             var projectPath = PBXProject.GetPBXProjectPath(path);
             var project = new PBXProject();
             project.ReadFromFile(projectPath);
+            // Keep the source folder distinct from an iOS application bundle.
+            // A root Info.plist with APPL metadata makes macOS assess the export
+            // itself when Xcode launches the signed compiler inside that folder.
+            const string sourceInfoName = "SkyPulse-Info.plist";
+            var sourceInfoPath = Path.Combine(path, sourceInfoName);
+            File.Move(infoPath, sourceInfoPath);
+            var oldInfo = project.FindFileGuidByProjectPath("Info.plist");
+            if (!string.IsNullOrEmpty(oldInfo)) project.RemoveFile(oldInfo);
+            project.AddFile(sourceInfoName, sourceInfoName);
+            project.SetBuildProperty(project.GetUnityMainTargetGuid(), "INFOPLIST_FILE", sourceInfoName);
             var file = project.FindFileGuidByProjectPath(manifestName);
             if (string.IsNullOrEmpty(file)) file = project.AddFile(manifestName, manifestName);
             project.AddFileToBuild(project.GetUnityMainTargetGuid(), file);

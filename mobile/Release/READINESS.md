@@ -1,68 +1,33 @@
-# SkyPulse release readiness — 6 September 2026
+# SkyPulse beta readiness — 6 September 2026
 
-Status: NOT approved for public submission. Target test device: iPhone 17 Pro Max.
+Status: beta polish saved; NOT yet ready to upload. The earlier iPhone and Simulator Release builds compiled successfully after the source-plist layout fix. The latest two-wing icon and crystal-counter correction exported successfully, but their final native rebuild was blocked by automatic approval review because its usage limit was reached. No signed archive or TestFlight upload has been produced.
 
-## Completed evidence
+## Completed
 
-- Unity 6000.6.0f1 iOS Build Support installed.
-- Xcode 26.6 installed; iOS 26.5 platform download completed.
-- Initial Unity iOS export succeeded at Builds/iOS-release-1.
-- Game scripts compile with warnings treated as errors.
-- Release editor scripts compile with warnings treated as errors.
-- All 90 flight registration entries match source hashes and importer settings.
-- Thirty hit/unlock alpha bounds measured without changing source PNGs.
-- Updated interface scaling fits the complete 1080×1920 layout on tall phones.
+- Removed runtime bird trail and rear thrust; fixed square alpha flashes; redesigned crystal, perfect-pass and three active power-up effects, with reduced-motion handling and cleanup.
+- Tuned the complete three-world route and remix progression. First gates teach, later gates gradually tighten and accelerate; handling remains unchanged.
+- Improved safe-area fitting, full-screen dimmers, feedback placement, privacy wrapping and menu input guards. Removed disconnected edge fragments from imported bird sprites without altering source PNGs.
+- Replaced the icon with an opaque 1024×1024 two-wing mechanical bird over a vivid blue-violet cosmic background. Checked 256/180/120/60-pixel previews. See ICON.md for asset and generation prompts.
+- Unity behaviour checks PASS, including 1,300 generated gates, transitions, pause/resume, rewards/persistence, purchase guards and touch-scroll routing. All 90 registered flight frames verified.
+- 216 effects renders and 48 full-screen/menu/unlock renders produced in Unity. These establish editor behaviour and appearance, not physical-device performance.
+- Fresh Unity 6000.6.0f1 export succeeded: `Builds/iOS-beta-1.0.0-2/Unity-iPhone.xcodeproj`, version 1.0.0 (2), bundle `com.mcauleemaddison.skypulse`. Xcode 26.6 and iOS SDK 26.5 are installed.
+- The latest export is `Builds/iOS-simulator-final-2/Unity-iPhone.xcodeproj`; its build-info hashes match the final icon and crystal-counter source. Earlier compiled exports contain the previous one-wing icon and previous counter implementation.
+- Installed the earlier Simulator Release build, verified its updated Home Screen icon, and inspected home, privacy, hangar and insufficient-balance modal. A simulated drag opened a card rather than scrolling; investigate whether the gesture delivery or native routing caused it. Do not count native touch scrolling as passed.
 
-The initial Xcode export predates the latest canvas, privacy and pose-bounds changes.
-Do not archive or submit that export. Export into a fresh folder after testing the
-final source. The unsigned Xcode Release compilation passed after installing the iOS platform.
-This validates the initial export only; it does not validate signing, device
-installation, the latest source changes or runtime behaviour.
+## Blocking release checks
 
-## Blocking verification
+1. Finish compiling and installing the latest Simulator export when approval review is available again. Validate the two-wing icon on the Home Screen and crystal artwork in all three counters, then complete live gameplay, pause/retry, scrolling and effects checks. Re-export a fresh DeviceSDK candidate with these final assets before signing.
+2. The user selected Xcode iOS Simulator testing for this pass. Physical-device heat, battery use, haptics and performance remain unverified; do not represent Simulator results as hardware evidence.
+3. Confirm Apple Developer membership/signing team, create/confirm App Store Connect record, archive and validate a signed Release build. Only a development signing identity was observed; distribution setup has not been validated.
+4. Supply public support contact and host the native privacy/support pages. PRIVACY_POLICY_DRAFT.md needs owner details and publication. Complete privacy answers, age rating, availability and review contact.
+5. Capture final device screenshots and distribute through TestFlight for beta testing. Beta feedback is still needed to judge difficulty and retention; technical checks cannot guarantee that players find the balance ideal.
 
-Automated Unity Play-mode checks were explicitly rejected by automatic approval
-review because the earlier usage-limit restriction remained active. Do not bypass
-that restriction by launching the same tests through another route. A new approval
-or a user-run test session is required. Compilation is not evidence of gameplay,
-visual quality, mobile performance or readiness for App Review.
+## Reproduce / inspect
 
-Before release, verify:
+Test instructions: ../Tools/VISUAL_SMOKE.md and ../Tools/EFFECTS_QA.md.
+Evidence: ../../artifacts/effects-qa/ (smoke, screen, export and native failure logs; image captures).
+Tester notes: BETA_TEST_NOTES.md.
 
-1. Home, hangar, tech map, locked/available/maxed nodes, purchase modal, pause,
-   privacy, result and all 15 unlock reveals on the phone and a small portrait view.
-   Check text wrapping, touch sizes, safe area, feather clipping and tap routing.
-2. All 15 birds: single/repeated flaps, collision pose, recovery and restart. Watch
-   rigid body/face position across frames. Inspect source feather tips touching
-   the canvas; alpha-bounds fitting cannot reconstruct clipped source artwork.
-3. Repeated rounds across 15/30/45/60 gates: trails, transition pacing, empty gaps,
-   collision fairness, rewards, pause/background/resume and relaunch persistence.
-4. Actual touch scrolling in both directions, every node reachable, no accidental
-   round start or purchase after dragging, position retained after buying a level.
-5. Economy: level/prerequisite enforcement, insufficient balance, maxed upgrades,
-   one-time result rewards and meaningful reward pacing after stronger upgrades.
-6. At least 15 minutes on iPhone 17 Pro Max: stable frame pacing, memory, heat,
-   sound, haptics, Reduced Motion and offline play. Then verify a signed Release build.
+Export with SkyPulse > Release > Export Xcode Project. Default is a new timestamped Builds/iOS-beta-* folder; SKYPULSE_IOS_OUTPUT can select another empty destination. Open Unity-iPhone.xcodeproj in Xcode; the export folder is source/build inputs, not an installable iPhone app.
 
-## Monday / Apple account prerequisites
-
-- Confirm paid Apple Developer Program membership and select the correct signing team.
-- Supply a public support email and host a native-app privacy policy and support page.
-- Create App Store Connect record for com.mcauleemaddison.skypulse (version 1.0.0).
-- Complete age rating, pricing, availability, privacy answers, copyright and review contact.
-- Capture screenshots from the verified final build. No generated art as gameplay evidence.
-- Archive and validate with Xcode, distribute to TestFlight, then submit after on-device checks pass.
-
-## Build commands
-
-Unity: SkyPulse > Release > Configure iPhone Release, then
-SkyPulse > Release > Export Xcode Project. Default output: Builds/iOS.
-The export requires an empty output folder. Set SKYPULSE_IOS_OUTPUT to choose another.
-Open its Unity-iPhone.xcodeproj in Xcode. Do not create a new Xcode app or clone the
-Unity repository into Xcode as a substitute for export.
-
-The project uses earned in-game crystals, with no real-money IAP, advertising,
-analytics or account package identified in the current native implementation.
-Review generated privacy manifests and Xcode's privacy report before submission.
-The browser privacy page describes a separate browser build and is not the native
-App Store policy.
+Apple beta distribution guidance: https://developer.apple.com/app-store/review/guidelines/#beta-testing

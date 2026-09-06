@@ -390,11 +390,12 @@ namespace SkyPulse.Mobile
         }
 
         private const float CameraHeight = 18f;
+        private const float HudFeedbackY = 686f;
         private const float PortraitPlayfieldAspect = 9f / 16f;
         private const float GroundY = -8.45f;
         private const float BirdX = -2.45f;
         // One body-only gameplay hitbox shared by all birds. Its capsule excludes
-        // wing tips, tail, beak, glow, thrust and the cosmetic trail.
+        // wing tips, tail, beak, and glow.
         private const float BirdHitboxWidth = .98f;
         private const float BirdHitboxHeight = .76f;
         private const float BirdHitboxOffsetX = .20f;
@@ -403,14 +404,6 @@ namespace SkyPulse.Mobile
         // Pickups remain deliberately generous around the illustrated bird; this is
         // separate from the smaller physical collision capsule.
         private const float BirdPickupRadius = .81f;
-        // Cosmetic propulsion is deliberately independent of the bird's body size.
-        private const float BirdThrustAnchorX = -.55f;
-        private const float BirdThrustAnchorY = -.24f;
-        private const float BirdThrustCoreLength = .42f;
-        private const float BirdThrustGlowLength = .78f;
-        private const float BirdThrustPulseLength = .22f;
-        private const float BirdThrustCoreHeight = .095f;
-        private const float BirdThrustGlowHeight = .28f;
         // The bird is the primary focal point, so it must remain readable against a
         // busy world at a real phone scale—not shrink into a sparkle at the centre.
         private const float BirdDisplayWidth = 2.30f;
@@ -811,10 +804,6 @@ new WorldTheme(
         private readonly PipePair[] pipePool = new PipePair[PipeCount];
         private readonly PowerUpPickup[] crystalPickupPool = new PowerUpPickup[CrystalPickupCount];
         private readonly PowerUpPickup[] powerUpPool = new PowerUpPickup[PowerUpCount];
-        private readonly Vector3[] trailPoints = new Vector3[64];
-        private readonly SpriteRenderer[] trailSparks = new SpriteRenderer[12];
-        private int trailPointCount;
-        private float trailFlowTime;
         private SpriteRenderer incomingBackground;
         private Color transitionVeilStart, transitionFloorStart, transitionRailStart, transitionLipStart;
         private SpriteRenderer[] transitionRenderers;
@@ -876,17 +865,9 @@ new WorldTheme(
         private SpriteRenderer birdDepthRenderer;
         private SpriteRenderer birdEyeGlintRenderer;
         private CapsuleCollider2D birdBodyCollider;
-        private Transform birdThrust;
-        private SpriteRenderer birdThrustGlowRenderer;
-        private SpriteRenderer birdThrustCoreRenderer;
-        private Color birdThrustGlowColour;
-        private Color birdThrustCoreColour;
         private SpriteRenderer shieldAuraRenderer;
         private SpriteRenderer slowAuraRenderer;
         private SpriteRenderer effectAuraRenderer;
-        private LineRenderer trailGlow;
-        private LineRenderer trailCore;
-        private LineRenderer trailSafety;
         private AudioSource audioSource;
         private AudioClip flapSound;
         private AudioClip scoreSound;
@@ -898,6 +879,8 @@ new WorldTheme(
         private GameObject uiRoot;
         private GameObject privacyScreen;
         private RectTransform safeAreaRoot;
+        private RectTransform interfaceContentRoot;
+        private readonly List<RectTransform> interfaceBackdrops = new List<RectTransform>();
         private Rect appliedSafeArea;
         private Vector2Int appliedScreenSize;
         private float appliedViewportWidth = -1f;
@@ -1024,6 +1007,7 @@ new WorldTheme(
         private float simulationAccumulator;
         private float bufferedFlapUntil = -1f;
         private float flightFeedbackTimer;
+        private float flightFeedbackDuration;
         private string lastCrashReason = "GATE IMPACT";
 #if !UNITY_EDITOR
         private float hapticCooldownUntil;
@@ -1036,6 +1020,7 @@ new WorldTheme(
         private bool newBest;
         private Color flightFeedbackColour;
         private SpriteRenderer flightFeedbackRenderer;
+        private SpriteRenderer flightFeedbackRingRenderer;
         private Vector3 idleBirdBaseScale = Vector3.one;
         private Vector3 safetyBirdBaseScale = Vector3.one;
         private Vector3 parallaxBirdBaseScale = Vector3.one;
@@ -1222,7 +1207,7 @@ new WorldTheme(
             CreateFloor();
             CreateBird();
             CreateFlightFeedback();
-            CreateTrail();
+
             for (var index = 0; index < pipePool.Length; index += 1) pipePool[index] = CreatePipePair(index);
             for (var index = 0; index < crystalPickupPool.Length; index += 1) crystalPickupPool[index] = CreateCrystalPickup(index);
             for (var index = 0; index < powerUpPool.Length; index += 1) powerUpPool[index] = CreatePowerUp(index);
@@ -1365,19 +1350,19 @@ new WorldTheme(
             bird = new GameObject("Flight bird").transform;
             bird.SetParent(transform, false);
             CreateBirdHitbox();
-            CreateBirdThrust();
+
             // This compact, opaque inner silhouette is deliberately independent of
             // imported artwork. It gives every bird a readable body against bright
             // worlds and makes a missing/unsupported texture impossible to turn the
             // player avatar invisible on a phone.
             if (emergencyBirdSprite == null) emergencyBirdSprite = CreateEmergencyBirdSprite();
-            var slowAura = CreateRenderer("Slow field aura", ringSprite, new Color(.45f, .3f, 1f, 0f), 12, bird);
+            var slowAura = CreateRenderer("Slow field aura", CreatePowerFieldSprite(PowerUpKind.TimePulse), new Color(.45f, .3f, 1f, 0f), 12, bird);
             slowAura.transform.localScale = Vector3.one * 1.42f;
             slowAuraRenderer = slowAura;
-            var effectAura = CreateRenderer("Active power aura", softCircleSprite, new Color(.45f, .9f, 1f, 0f), 12, bird);
+            var effectAura = CreateRenderer("Active power aura", CreatePowerFieldSprite(PowerUpKind.CrystalMagnet), new Color(.45f, .9f, 1f, 0f), 12, bird);
             effectAura.transform.localScale = Vector3.one * 1.16f;
             effectAuraRenderer = effectAura;
-            var shieldAura = CreateRenderer("Pulse shield aura", ringSprite, new Color(.38f, 1f, .70f, 0f), 13, bird);
+            var shieldAura = CreateRenderer("Pulse shield aura", CreatePowerFieldSprite(PowerUpKind.Aegis), new Color(.38f, 1f, .70f, 0f), 13, bird);
             shieldAura.transform.localScale = Vector3.one * 1.22f;
             shieldAuraRenderer = shieldAura;
             var bodyDepth = CreateRenderer("Bird dimensional bloom", softCircleSprite, new Color(.35f, .85f, 1f, 0f), 12, bird);
@@ -1437,23 +1422,13 @@ new WorldTheme(
             SyncBirdHitbox();
         }
 
-        private void CreateBirdThrust()
-        {
-            // The existing neon trail remains the long propulsion ribbon. These two
-            // small layers give it a living engine root without adding any collider.
-            birdThrust = new GameObject("Rear propulsion thrust").transform;
-            birdThrust.SetParent(bird, false);
-            birdThrust.localPosition = new Vector3(BirdThrustAnchorX, BirdThrustAnchorY, 0f);
-            birdThrustGlowRenderer = CreateRenderer("Rear thrust glow", softCircleSprite, Color.clear, 11, birdThrust);
-            birdThrustCoreRenderer = CreateRenderer("Rear thrust core", softCircleSprite, Color.clear, 13, birdThrust);
-            birdThrustGlowRenderer.enabled = false;
-            birdThrustCoreRenderer.enabled = false;
-        }
-
         private void CreateFlightFeedback()
         {
-            flightFeedbackRenderer = CreateRenderer("Flight feedback bloom", softCircleSprite, new Color(1f, 1f, 1f, 0f), 30);
+            flightFeedbackRenderer = CreateRenderer("Flight feedback bloom", softCircleSprite, new Color(1f, 1f, 1f, 0f), 11);
             flightFeedbackRenderer.enabled = false;
+            flightFeedbackRingRenderer = CreateRenderer("Flight feedback pulse",
+                CreateRadialSprite("Fine feedback ring", 128, .43f, .5f), Color.clear, 12);
+            flightFeedbackRingRenderer.enabled = false;
         }
 
         private PowerUpPickup CreatePowerUp(int index)
@@ -1487,61 +1462,6 @@ new WorldTheme(
                 Spark = spark,
                 ArtworkBaseScale = Vector3.one,
             };
-        }
-
-        private void CreateTrail()
-        {
-            trailSafety = CreateTrailRenderer("Trail soft halo", 10, .34f, 0f);
-            trailGlow = CreateTrailRenderer("Trail colour ribbon", 11, .13f, 0f);
-            trailCore = CreateTrailRenderer("Trail incandescent filament", 12, .035f, 0f);
-            var taper = new AnimationCurve(new Keyframe(0f, .65f), new Keyframe(.10f, 1f),
-                new Keyframe(.42f, .65f), new Keyframe(.78f, .22f), new Keyframe(1f, 0f));
-            var texture = new Texture2D(8, 64, TextureFormat.RGBA32, false);
-            texture.name = "Trail feathered cross section";
-            texture.wrapMode = TextureWrapMode.Clamp;
-            texture.filterMode = FilterMode.Bilinear;
-            var pixels = new Color[8 * 64];
-            for (var y = 0; y < 64; y += 1)
-            {
-                var distance = Mathf.Abs((y + .5f) / 32f - 1f);
-                var alpha = Mathf.Pow(Mathf.Clamp01(1f - distance * distance), 3f);
-                for (var x = 0; x < 8; x += 1) pixels[y * 8 + x] = new Color(1f, 1f, 1f, alpha);
-            }
-            texture.SetPixels(pixels);
-            texture.Apply(false, true);
-            foreach (var ribbon in new[] { trailSafety, trailGlow, trailCore })
-            {
-                ribbon.widthCurve = taper;
-                ribbon.material.mainTexture = texture;
-                ribbon.textureMode = LineTextureMode.Stretch;
-            }
-            for (var index = 0; index < trailSparks.Length; index += 1)
-            {
-                trailSparks[index] = CreateRenderer($"Trail ember {index + 1}", softCircleSprite, Color.clear, 13);
-                trailSparks[index].enabled = false;
-            }
-        }
-
-        private LineRenderer CreateTrailRenderer(string name, int sortingOrder, float startWidth, float endWidth)
-        {
-            var holder = new GameObject(name);
-            holder.transform.SetParent(transform, false);
-            var renderer = holder.AddComponent<LineRenderer>();
-            renderer.useWorldSpace = true;
-            renderer.positionCount = 0;
-            renderer.sortingOrder = sortingOrder;
-            renderer.startWidth = startWidth;
-            renderer.endWidth = endWidth;
-            renderer.numCapVertices = 4;
-            renderer.numCornerVertices = 2;
-            ConfigureLineMaterial(renderer);
-            return renderer;
-        }
-
-        private static void ConfigureLineMaterial(LineRenderer renderer)
-        {
-            var shader = Shader.Find("Sprites/Default");
-            if (shader != null) renderer.material = new Material(shader);
         }
 
         private PipePair CreatePipePair(int index)
@@ -1633,16 +1553,21 @@ new WorldTheme(
                 DontDestroyOnLoad(eventSystem);
             }
 
-            homeScreen = CreateHomeScreen(safeAreaRoot);
-            hudScreen = CreateHud(safeAreaRoot);
-            pauseScreen = CreatePauseScreen(safeAreaRoot);
-            gameOverScreen = CreateGameOverScreen(safeAreaRoot);
-            customizeScreen = CreateCustomizeScreen(safeAreaRoot);
-            purchaseModal = CreatePurchaseModal(safeAreaRoot);
+            var content = new GameObject("Fitted interface", typeof(RectTransform));
+            content.transform.SetParent(safeAreaRoot, false);
+            interfaceContentRoot = content.GetComponent<RectTransform>();
+            interfaceContentRoot.anchorMin = interfaceContentRoot.anchorMax = new Vector2(.5f, .5f);
+            interfaceContentRoot.sizeDelta = new Vector2(1080f, 2040f);
+            homeScreen = CreateHomeScreen(interfaceContentRoot);
+            hudScreen = CreateHud(interfaceContentRoot);
+            pauseScreen = CreatePauseScreen(interfaceContentRoot);
+            gameOverScreen = CreateGameOverScreen(interfaceContentRoot);
+            customizeScreen = CreateCustomizeScreen(interfaceContentRoot);
+            purchaseModal = CreatePurchaseModal(interfaceContentRoot);
             purchaseModal.SetActive(false);
-            unlockRevealModal = CreateUnlockReveal(safeAreaRoot);
+            unlockRevealModal = CreateUnlockReveal(interfaceContentRoot);
             unlockRevealModal.SetActive(false);
-            privacyScreen = CreatePrivacyScreen(safeAreaRoot);
+            privacyScreen = CreatePrivacyScreen(interfaceContentRoot);
             privacyScreen.SetActive(false);
         }
 
@@ -1651,7 +1576,11 @@ new WorldTheme(
             if (safeAreaRoot == null) return;
             var safeArea = Screen.safeArea;
             var screenSize = new Vector2Int(Screen.width, Screen.height);
-            if (safeArea == appliedSafeArea && screenSize == appliedScreenSize) return;
+            if (safeArea == appliedSafeArea && screenSize == appliedScreenSize)
+            {
+                FitInterfaceToSafeArea();
+                return;
+            }
 
             appliedSafeArea = safeArea;
             appliedScreenSize = screenSize;
@@ -1660,6 +1589,23 @@ new WorldTheme(
             safeAreaRoot.anchorMax = new Vector2(safeArea.xMax / screenSize.x, safeArea.yMax / screenSize.y);
             safeAreaRoot.offsetMin = Vector2.zero;
             safeAreaRoot.offsetMax = Vector2.zero;
+            FitInterfaceToSafeArea();
+        }
+
+        private void FitInterfaceToSafeArea()
+        {
+            if (interfaceContentRoot == null || safeAreaRoot == null) return;
+            var available = safeAreaRoot.rect.size;
+            if (available.x <= 0f || available.y <= 0f) return;
+            var scale = Mathf.Min(available.x / 1080f, available.y / 2040f);
+            interfaceContentRoot.localScale = Vector3.one * scale;
+            // Controls fit the safe area; dimmers still cover the entire display.
+            var canvasRect = uiRoot.GetComponent<RectTransform>();
+            foreach (var backdrop in interfaceBackdrops)
+            {
+                backdrop.sizeDelta = canvasRect.rect.size / scale;
+                backdrop.position = canvasRect.position;
+            }
         }
 
         private void RefreshViewportDecor()
@@ -1697,11 +1643,11 @@ new WorldTheme(
             // world. Keep the world visible, then give controls a solid place to sit.
             CreateFullPanel(root.transform, "Home contrast veil", new Color(.005f, .012f, .05f, .10f));
 
-            difficultyText = CreateChip(root.transform, new Vector2(-355f, 790f), "ENDLESS ROUTE", Hex("#8f64ff"));
+            difficultyText = CreateChip(root.transform, new Vector2(-355f, 940f), "ENDLESS ROUTE", Hex("#8f64ff"));
             difficultyText.resizeTextForBestFit = true;
             difficultyText.resizeTextMinSize = 13;
             difficultyText.resizeTextMaxSize = 20;
-            menuCrystalText = CreateChip(root.transform, new Vector2(355f, 790f), "✦  0", Hex("#45eaff"));
+            menuCrystalText = CreateCrystalChip(root.transform, new Vector2(355f, 940f), "✦  0", Hex("#45eaff"));
 
             menuTitleText = CreateText(root.transform, "SKYPULSE", new Vector2(0f, 622f), new Vector2(900f, 112f), 78, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             AddOutline(menuTitleText.gameObject, new Color(.22f, .86f, 1f, .62f), 1.25f);
@@ -1788,7 +1734,9 @@ new WorldTheme(
                 "This version includes no advertising, tracking, analytics or real-money purchases. Crystals are earned by playing.\n\n" +
                 "Sharing a score copies text to your clipboard only when you choose Share. You decide where to paste it.\n\n" +
                 "Apple may separately process App Store, device backup and diagnostic information under your Apple settings and its privacy policy.";
-            CreateText(card, notice, new Vector2(0f, 30f), new Vector2(758f, 690f), 27, Hex("#d2def0"), TextAnchor.UpperLeft, FontStyle.Normal);
+            var noticeText = CreateText(card, notice, new Vector2(0f, 30f), new Vector2(758f, 690f), 27, Hex("#d2def0"), TextAnchor.UpperLeft, FontStyle.Normal);
+            noticeText.horizontalOverflow = HorizontalWrapMode.Wrap;
+            noticeText.verticalOverflow = VerticalWrapMode.Truncate;
             var close = CreateNeonButton(card, "BACK TO MENU", new Vector2(0f, -435f), new Vector2(470f, 88f), Hex("#45eaff"));
             close.onClick.AddListener(() => root.SetActive(false));
             return root;
@@ -1797,20 +1745,20 @@ new WorldTheme(
         private GameObject CreateHud(Transform parent)
         {
             var root = CreateScreen(parent, "Flight HUD");
-            var horizonRule = CreateImage(root.transform, "Flight HUD energy rail", new Vector2(0f, 756f), new Vector2(810f, 1.5f), new Color(.27f, .86f, 1f, .34f));
+            var horizonRule = CreateImage(root.transform, "Flight HUD energy rail", new Vector2(0f, 898f), new Vector2(810f, 1.5f), new Color(.27f, .86f, 1f, .34f));
             horizonRule.sprite = whiteSprite;
             horizonRule.raycastTarget = false;
-            var pause = CreateNeonButton(root.transform, "Ⅱ", new Vector2(-425f, 804f), new Vector2(82f, 70f), Hex("#8f64ff"));
+            var pause = CreateNeonButton(root.transform, "Ⅱ", new Vector2(-425f, 940f), new Vector2(82f, 70f), Hex("#8f64ff"));
             pause.onClick.AddListener(PauseFlight);
-            hudCrystalText = CreateChip(root.transform, new Vector2(365f, 804f), "✦  0", Hex("#45eaff"));
-            hudScoreText = CreateText(root.transform, "0", new Vector2(0f, 708f), new Vector2(260f, 120f), 76, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            hudCrystalText = CreateCrystalChip(root.transform, new Vector2(365f, 940f), "✦  0", Hex("#45eaff"));
+            hudScoreText = CreateText(root.transform, "0", new Vector2(0f, 844f), new Vector2(260f, 120f), 76, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             AddOutline(hudScoreText.gameObject, new Color(.27f, .86f, 1f, .23f), 1f);
-            hudModeText = CreateText(root.transform, "NEON CITY", new Vector2(0f, 652f), new Vector2(600f, 30f), 16, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            scoreBurstText = CreateText(root.transform, "+1", new Vector2(0f, 612f), new Vector2(220f, 70f), 34, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            hudModeText = CreateText(root.transform, "NEON CITY", new Vector2(0f, 788f), new Vector2(600f, 30f), 16, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            scoreBurstText = CreateText(root.transform, "+1", new Vector2(0f, HudFeedbackY), new Vector2(720f, 54f), 27, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             scoreBurstText.gameObject.SetActive(false);
             // Keep the active tactical effect beside the crystal bank; it stays out
             // of the flight corridor and leaves score as the largest top-centre cue.
-            hudPowerUpText = CreateText(root.transform, "", new Vector2(286f, 730f), new Vector2(320f, 34f), 17, Hex("#61f5b3"), TextAnchor.MiddleRight, FontStyle.Bold);
+            hudPowerUpText = CreateText(root.transform, "", new Vector2(286f, 866f), new Vector2(320f, 34f), 17, Hex("#61f5b3"), TextAnchor.MiddleRight, FontStyle.Bold);
             hudPowerUpText.gameObject.SetActive(false);
             hudCoachText = CreateText(root.transform, "", new Vector2(0f, 522f), new Vector2(760f, 34f), 16, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             hudCoachText.gameObject.SetActive(false);
@@ -1875,7 +1823,7 @@ new WorldTheme(
             veil.GetComponent<Image>().raycastTarget = true;
             var back = CreateNeonButton(root.transform, "‹  MENU", new Vector2(-390f, 802f), new Vector2(220f, 68f), Hex("#8f64ff"));
             back.onClick.AddListener(ResetToMenu);
-            customizeCrystalText = CreateChip(root.transform, new Vector2(365f, 802f), "✦  0", Hex("#45eaff"));
+            customizeCrystalText = CreateCrystalChip(root.transform, new Vector2(365f, 802f), "✦  0", Hex("#45eaff"));
             customizeTitle = CreateText(root.transform, "BIRD HANGAR", new Vector2(0f, 690f), new Vector2(720f, 80f), 48, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             CreateText(root.transform, "TAP THE BACKGROUND TO FLY  ·  SWIPE TO BROWSE", new Vector2(0f, 638f), new Vector2(800f, 38f), 18, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
 
@@ -2091,7 +2039,7 @@ new WorldTheme(
             var frameDelta = Mathf.Min(Time.unscaledDeltaTime, MaximumSimulationCatchup);
             ambientTime += frameDelta;
             UpdateAmbientVisuals();
-            UpdateRearThrust();
+
             UpdateMenuBird(frameDelta);
             UpdateUnlockReveal(frameDelta);
             UpdateScoreBurst(frameDelta);
@@ -2114,6 +2062,7 @@ new WorldTheme(
 
             if (state == FlightState.Menu)
             {
+                if (privacyScreen != null && privacyScreen.activeSelf) return;
                 if (WasTapped() && !PointerOverUi()) StartFlight();
                 return;
             }
@@ -2203,7 +2152,7 @@ new WorldTheme(
             if (shieldHitStopTimer > 0f)
             {
                 shieldHitStopTimer = Mathf.Max(0f, shieldHitStopTimer - deltaTime);
-                UpdateTrail(0f);
+
                 return;
             }
 
@@ -2215,7 +2164,7 @@ new WorldTheme(
             if (state != FlightState.Playing) return;
             if (worldTransitionTimer > 0f || worldRecoveryTimer > 0f)
             {
-                UpdateTrail(simulationDelta);
+
                 return;
             }
             UpdatePipes(simulationDelta);
@@ -2225,7 +2174,7 @@ new WorldTheme(
                 UpdateCrystalPickups(simulationDelta);
                 UpdatePowerUps(simulationDelta);
             }
-            UpdateTrail(simulationDelta);
+
         }
 
         private void BufferFlapInput()
@@ -2403,15 +2352,11 @@ new WorldTheme(
             scoreBurstText.rectTransform.anchoredPosition =
                 new Vector2(
                     0f,
-                    612f + t * riseDistance
+                    HudFeedbackY + t * riseDistance
                 );
 
-            var color =
-                scoreBurstIsCrystal
-                    ? Hex("#ffc34d")
-                    : equippedSkin != null
-                        ? equippedSkin.Accent
-                        : Color.white;
+            // Keep each event's colour, including the incoming world's accent.
+            var color = scoreBurstText.color;
 
             color.a =
                 Mathf.Clamp01(
@@ -2713,9 +2658,13 @@ new WorldTheme(
 
         private static float RouteSpeedFraction(int routeScore)
         {
-            if (routeScore < 5) return .32f;
-            if (routeScore < 15) return .36f;
-            if (routeScore < 30) return .40f;
+            // Three learning gates, then a measured ramp into Foundry's .40 pace.
+            if (routeScore < 3) return .32f;
+            if (routeScore < 9) return Mathf.Lerp(.33f, .365f, (routeScore - 3) / 5f);
+            if (routeScore < 15) return Mathf.Lerp(.372f, .395f, (routeScore - 9) / 5f);
+            if (routeScore < 25) return .40f;
+            if (routeScore < 30) return Mathf.Lerp(.408f, .424f, (routeScore - 25) / 4f);
+            if (routeScore < 35) return Mathf.Lerp(.43f, .44f, (routeScore - 30) / 4f);
             if (routeScore < 45) return .44f;
             var remixStep = 1 + Mathf.FloorToInt((routeScore - 45) / 15f);
             return Mathf.Min(.48f, .44f + remixStep * .01f);
@@ -3200,256 +3149,6 @@ new WorldTheme(
             return false;
         }
 
-        private void ConfigureRearThrust()
-        {
-            if (equippedSkin == null) return;
-            birdThrustGlowColour = equippedSkin.Trail;
-            birdThrustGlowColour.a = 1f;
-            birdThrustCoreColour = Color.Lerp(equippedSkin.Trail, Color.white, .72f);
-            birdThrustCoreColour.a = 1f;
-        }
-
-        private void UpdateRearThrust()
-        {
-            if (birdThrust == null ||
-                birdThrustGlowRenderer == null ||
-                birdThrustCoreRenderer == null)
-            {
-                return;
-            }
-
-            var alive =
-                state == FlightState.Playing &&
-                bird != null &&
-                bird.gameObject.activeInHierarchy;
-
-            var impactFade =
-                state == FlightState.Impact
-                    ? Mathf.Clamp01(
-                        impactTumbleTimer /
-                        Mathf.Max(.01f, ImpactTumbleSeconds)
-                      ) * .18f
-                    : 0f;
-
-            var visibility = alive ? 1f : impactFade;
-
-            if (visibility <= .001f)
-            {
-                birdThrustGlowRenderer.enabled = false;
-                birdThrustCoreRenderer.enabled = false;
-                return;
-            }
-
-            var motion = reduceMotionEnabled ? .30f : 1f;
-
-            // Strongest immediately after a flap.
-            var flapStrength =
-                alive
-                    ? 1f - Mathf.Clamp01(
-                        wingTimer / WingCycleSeconds
-                      )
-                    : 0f;
-
-            // Climbing gives the engine more energy.
-            var riseBoost =
-                alive
-                    ? Mathf.Clamp01(
-                        Mathf.Max(0f, birdVelocity) / 6.5f
-                      )
-                    : 0f;
-
-            // Falling softens the engine slightly.
-            var fallAmount =
-                alive
-                    ? Mathf.Clamp01(
-                        Mathf.Max(0f, -birdVelocity) / 7f
-                      )
-                    : 0f;
-
-            var fallDamp =
-                Mathf.Lerp(1f, .76f, fallAmount);
-
-            // Two frequencies stop the flame looking like
-            // a perfectly repeating sine-wave animation.
-            var fastFlicker =
-                .5f +
-                .5f * Mathf.Sin(
-                    ambientTime * 23f
-                );
-
-            var fineFlicker =
-                .5f +
-                .5f * Mathf.Sin(
-                    ambientTime * 37f + 1.4f
-                );
-
-            var energy =
-                (
-                    .50f +
-                    flapStrength * .38f +
-                    riseBoost * .25f +
-                    fastFlicker * .08f +
-                    fineFlicker * .05f
-                ) * fallDamp;
-
-            var coreLength =
-                BirdThrustCoreLength +
-                BirdThrustPulseLength *
-                energy;
-
-            var glowLength =
-                BirdThrustGlowLength +
-                BirdThrustPulseLength *
-                1.65f *
-                energy;
-
-            // Slight irregular movement keeps the flame alive.
-            var flutterY =
-                (
-                    Mathf.Sin(ambientTime * 17f) * .012f +
-                    Mathf.Sin(ambientTime * 31f) * .005f
-                ) * motion;
-
-            birdThrust.localPosition =
-                new Vector3(
-                    BirdThrustAnchorX,
-                    BirdThrustAnchorY + flutterY,
-                    0f
-                );
-
-            birdThrust.localRotation =
-                Quaternion.Euler(
-                    0f,
-                    0f,
-                    Mathf.Sin(ambientTime * 15f) *
-                    1.5f *
-                    motion
-                );
-
-            // Large soft plasma envelope.
-            birdThrustGlowRenderer.transform.localPosition =
-                new Vector3(
-                    -glowLength * .46f,
-                    0f,
-                    0f
-                );
-
-            birdThrustGlowRenderer.transform.localScale =
-                new Vector3(
-                    glowLength,
-                    BirdThrustGlowHeight *
-                    (
-                        1f +
-                        fastFlicker *
-                        .20f *
-                        motion
-                    ),
-                    1f
-                );
-
-            // Smaller, brighter hot core.
-            birdThrustCoreRenderer.transform.localPosition =
-                new Vector3(
-                    -coreLength * .43f,
-                    0f,
-                    0f
-                );
-
-            birdThrustCoreRenderer.transform.localScale =
-                new Vector3(
-                    coreLength,
-                    BirdThrustCoreHeight *
-                    (
-                        1f +
-                        fineFlicker *
-                        .14f *
-                        motion
-                    ),
-                    1f
-                );
-
-            var glow = birdThrustGlowColour;
-
-            glow.a =
-                visibility *
-                (
-                    .18f +
-                    energy * .19f
-                );
-
-            birdThrustGlowRenderer.color = glow;
-
-            var core = Color.Lerp(
-                birdThrustCoreColour,
-                Color.white,
-                .38f
-            );
-
-            core.a =
-                visibility *
-                (
-                    .62f +
-                    energy * .28f
-                );
-
-            birdThrustCoreRenderer.color = core;
-
-            birdThrustGlowRenderer.enabled = true;
-            birdThrustCoreRenderer.enabled = true;
-        }
-        private void UpdateTrail(float deltaTime)
-        {
-            if (deltaTime <= 0f) return;
-            trailFlowTime += deltaTime;
-            var anchor = bird.TransformPoint(new Vector3(BirdThrustAnchorX, BirdThrustAnchorY, .1f));
-            var travel = ActiveScrollSpeed() * deltaTime;
-            // Record the flight path and carry it backwards with the world.
-            // Following the previous point collapses a trail when the bird glides.
-            trailPointCount = Mathf.Min(trailPointCount + 1, trailPoints.Length);
-            for (var index = trailPointCount - 1; index > 0; index -= 1)
-                trailPoints[index] = trailPoints[index - 1] + Vector3.left * travel;
-            trailPoints[0] = anchor;
-            var powerScale = (slowFieldTimer > 0f ? .88f : 1f) * (magnetHaloTimer > 0f ? 1.12f : 1f);
-            var breath = reduceMotionEnabled ? 1f : 1f + .06f * Mathf.Sin(trailFlowTime * 5f);
-            trailSafety.widthMultiplier = .34f * powerScale * breath;
-            trailGlow.widthMultiplier = .13f * powerScale;
-            trailCore.widthMultiplier = .035f * powerScale;
-            trailSafety.positionCount = trailPointCount;
-            trailGlow.positionCount = trailPointCount;
-            trailCore.positionCount = trailPointCount;
-            // Fixed buffers avoid per-frame allocations; unused positions are
-            // ignored by LineRenderer when positionCount is smaller than the array.
-            trailSafety.SetPositions(trailPoints);
-            trailGlow.SetPositions(trailPoints);
-            trailCore.SetPositions(trailPoints);
-            for (var index = 0; index < trailSparks.Length; index += 1)
-            {
-                var spark = trailSparks[index];
-                var phase = Mathf.Repeat(trailFlowTime * .64f + index * .618034f, 1f);
-                var samplePosition = Mathf.Lerp(6f, trailPoints.Length - 2f, phase);
-                var sample = Mathf.FloorToInt(samplePosition);
-                spark.enabled = !reduceMotionEnabled && sample + 1 < trailPointCount;
-                if (!spark.enabled) continue;
-                var envelope = Mathf.Sin(phase * Mathf.PI);
-                var offset = Mathf.Sin(index * 2.4f + phase * 5f) * .14f * phase;
-                spark.transform.position = Vector3.Lerp(trailPoints[sample], trailPoints[sample + 1], samplePosition - sample) + Vector3.up * offset;
-                spark.transform.localScale = Vector3.one * (.018f + .032f * envelope);
-                var colour = Color.Lerp(equippedTrail.Glow, Color.white, .65f);
-                colour.a = envelope * .60f;
-                spark.color = colour;
-            }
-        }
-
-        private void ClearTrail()
-        {
-            trailPointCount = 0;
-            trailFlowTime = 0f;
-            if (trailSafety != null) trailSafety.positionCount = 0;
-            if (trailGlow != null) trailGlow.positionCount = 0;
-            if (trailCore != null) trailCore.positionCount = 0;
-            foreach (var spark in trailSparks) if (spark != null) spark.enabled = false;
-        }
-
         private void ShowScoreBurst(int scoreReward, bool perfect)
         {
             if (scoreBurstText == null) return;
@@ -3472,7 +3171,7 @@ new WorldTheme(
                     : Color.white;
 
             scoreBurstText.rectTransform.anchoredPosition =
-                new Vector2(0f, 612f);
+                new Vector2(0f, HudFeedbackY);
 
             scoreBurstText.rectTransform.localScale =
                 Vector3.one;
@@ -3494,7 +3193,7 @@ new WorldTheme(
             scoreBurstText.color = Hex("#ffc34d");
 
             scoreBurstText.rectTransform.anchoredPosition =
-                new Vector2(0f, 612f);
+                new Vector2(0f, HudFeedbackY);
 
             scoreBurstText.rectTransform.localScale =
                 Vector3.one * 1.06f;
@@ -3505,26 +3204,35 @@ new WorldTheme(
         {
             if (flightFeedbackRenderer == null || bird == null) return;
             flightFeedbackColour = colour;
-            flightFeedbackTimer = Mathf.Max(flightFeedbackTimer, duration);
-            flightFeedbackRenderer.transform.position = bird.position + new Vector3(0f, 0f, .2f);
-            flightFeedbackRenderer.enabled = true;
+            flightFeedbackDuration = Mathf.Max(.01f, duration);
+            flightFeedbackTimer = flightFeedbackDuration;
+            var origin = bird.position + new Vector3(0f, 0f, .2f);
+            flightFeedbackRenderer.transform.position = origin;
+            flightFeedbackRingRenderer.transform.position = origin;
+            // Initialise immediately: never expose the preceding event's size/alpha.
+            UpdateFlightFeedback(0f);
         }
 
         private void UpdateFlightFeedback(float deltaTime)
         {
-            if (flightFeedbackRenderer == null || flightFeedbackTimer <= 0f) return;
+            if (flightFeedbackRenderer == null) return;
             flightFeedbackTimer = Mathf.Max(0f, flightFeedbackTimer - deltaTime);
-            if (flightFeedbackTimer <= 0f)
-            {
-                flightFeedbackRenderer.enabled = false;
-                return;
-            }
+            var visible = flightFeedbackTimer > 0f;
+            flightFeedbackRenderer.enabled = visible;
+            flightFeedbackRingRenderer.enabled = visible;
+            if (!visible) return;
 
-            var progress = 1f - Mathf.Clamp01(flightFeedbackTimer / .36f);
+            var progress = 1f - flightFeedbackTimer / flightFeedbackDuration;
+            var fade = (1f - progress) * (1f - progress);
+            var expansion = 1f - (1f - progress) * (1f - progress);
             var colour = flightFeedbackColour;
-            colour.a = Mathf.Lerp(.42f, 0f, progress);
+            colour.a = .20f * fade;
             flightFeedbackRenderer.color = colour;
-            flightFeedbackRenderer.transform.localScale = Vector3.one * Mathf.Lerp(.48f, 2.15f, progress);
+            flightFeedbackRenderer.transform.localScale = Vector3.one * Mathf.Lerp(.85f, 1.65f, expansion);
+            colour.a = .55f * fade;
+            flightFeedbackRingRenderer.color = colour;
+            flightFeedbackRingRenderer.transform.localScale = Vector3.one *
+                Mathf.Lerp(1.15f, reduceMotionEnabled ? 1.32f : 2.05f, expansion);
         }
 
 #if UNITY_EDITOR || UNITY_ENABLE_CHECKS
@@ -3613,6 +3321,7 @@ new WorldTheme(
             bufferedFlapUntil = -1f;
             lastFlapInputTime = -100f;
             flightFeedbackTimer = 0f;
+            UpdateFlightFeedback(0f);
             lastCrashReason = "GATE IMPACT";
             birdY = 0f;
             birdVelocity = 0f;
@@ -3628,9 +3337,8 @@ new WorldTheme(
             shieldImmunityTimer = 0f;
             shieldHitStopTimer = 0f;
             shieldCharges = 0;
-            ClearTrail();
-            var launchTrailPoint = new Vector3(BirdX, birdY, .1f);
-            for (var index = 0; index < trailPoints.Length; index += 1) trailPoints[index] = launchTrailPoint;
+            UpdateBirdPowerUpVisuals();
+
             ApplyRouteWorldVisuals();
             spawnX = GetWorldWidth() * .5f + 3.2f;
             foreach (var pickup in powerUpPool)
@@ -3672,6 +3380,7 @@ new WorldTheme(
             simulationAccumulator = 0f;
             bufferedFlapUntil = -1f;
             flightFeedbackTimer = 0f;
+            UpdateFlightFeedback(0f);
             if (flightFeedbackRenderer != null) flightFeedbackRenderer.enabled = false;
             birdY = .15f;
             birdVelocity = 0f;
@@ -3679,7 +3388,7 @@ new WorldTheme(
             birdTiltVelocity = 0f;
             bird.position = new Vector3(BirdX, birdY, 0f);
             bird.gameObject.SetActive(false);
-            ClearTrail();
+
             if (birdBodyCollider != null) birdBodyCollider.enabled = false;
             foreach (var pair in pipePool) pair.Root.SetActive(false);
 #if UNITY_EDITOR || UNITY_ENABLE_CHECKS
@@ -3738,17 +3447,25 @@ new WorldTheme(
             pair.RouteWorldIndex = routeWorldIndex;
             pair.IsStatic = pair.RouteScore < 3 || firstGateAfterTransition;
             if (firstGateAfterTransition) firstGateAfterTransition = false;
-            pair.GapHeight = ActiveGap();
+            // Tune the gate being built, not the score while it is still off-screen.
+            pair.GapHeight = CameraHeight * RouteGapFraction(pair.RouteScore);
             var halfGap = pair.GapHeight * .5f;
             // Keep enough visible body above and below every opening. This makes a
             // low gate read as a deliberate lower route, not a clipped top pipe.
             var centreMinimum = Mathf.Max(GapCenterMinimum, GroundY + PipeMinimumVisibleHeight + halfGap);
             var centreMaximum = Mathf.Min(GapCenterMaximum, CameraHeight * .5f - PipeMinimumVisibleHeight - halfGap);
+            // The opening lesson stays near centre; later gates use the full corridor.
+            if (pair.RouteScore < 3)
+            {
+                var openingRange = pair.RouteScore == 0 ? .65f : 1.3f;
+                centreMinimum = Mathf.Max(centreMinimum, -openingRange);
+                centreMaximum = Mathf.Min(centreMaximum, openingRange);
+            }
             var nextCentre = RouteRange(centreMinimum, centreMaximum);
             var precedingPair = FindPrecedingPipe(pair, x);
             if (precedingPair != null)
             {
-                var maximumStep = CameraHeight * .20f;
+                var maximumStep = RouteMaximumCenterStep(pair.RouteScore);
                 nextCentre = Mathf.Clamp(nextCentre, precedingPair.GapCenter - maximumStep, precedingPair.GapCenter + maximumStep);
                 nextCentre = Mathf.Clamp(nextCentre, centreMinimum, centreMaximum);
             }
@@ -3765,7 +3482,8 @@ new WorldTheme(
             pair.GapCenter = nextCentre;
             // From score 45 on, remixes deliberately combine Foundry drift with
             // Bazaar alternation while preserving the familiar single opening.
-            pair.DriftAmplitude = (pair.RouteWorldIndex == 1 || usesRemixPatterns) && !pair.IsStatic ? CameraHeight * .04f : 0f;
+            pair.DriftAmplitude = (pair.RouteWorldIndex == 1 || usesRemixPatterns) && !pair.IsStatic
+                ? CameraHeight * RouteDriftFraction(pair.RouteScore) : 0f;
             pair.DriftPhase = RouteRange(0f, Mathf.PI * 2f);
             pair.Root.transform.localPosition = new Vector3(x, 0f, 0f);
             LayoutPipePair(pair);
@@ -3851,7 +3569,7 @@ new WorldTheme(
                 scoreBurstIsCrystal = false;
                 scoreBurstText.text = routeWorld.Name;
                 scoreBurstText.color = routeWorld.Accent;
-                scoreBurstText.rectTransform.anchoredPosition = new Vector2(0f, 612f);
+                scoreBurstText.rectTransform.anchoredPosition = new Vector2(0f, HudFeedbackY);
                 scoreBurstText.gameObject.SetActive(true);
             }
         }
@@ -4483,13 +4201,31 @@ if (surface.RailRight != null && surface.RailRight.enabled)
         surface.CapEnergy.color = capEnergy;
     }
 }
-        private float ActiveGap()
+        private static float RouteGapFraction(int routeScore)
         {
-            if (score < 5) return CameraHeight * .34f;
-            if (score < 15) return CameraHeight * .31f;
-            if (score < 30) return CameraHeight * .29f;
-            if (score < 45) return CameraHeight * .27f;
-            return CameraHeight * .25f;
+            if (routeScore < 3) return .34f;
+            if (routeScore < 9) return Mathf.Lerp(.335f, .312f, (routeScore - 3) / 5f);
+            if (routeScore < 15) return Mathf.Lerp(.308f, .292f, (routeScore - 9) / 5f);
+            if (routeScore < 25) return .29f;
+            if (routeScore < 30) return Mathf.Lerp(.287f, .275f, (routeScore - 25) / 4f);
+            if (routeScore < 40) return .27f;
+            if (routeScore < 45) return Mathf.Lerp(.267f, .255f, (routeScore - 40) / 4f);
+            return .25f;
+        }
+
+        private static float RouteMaximumCenterStep(int routeScore)
+        {
+            if (routeScore < 3) return 1.2f;
+            if (routeScore < 15) return Mathf.Lerp(1.4f, CameraHeight * .20f, (routeScore - 3) / 11f);
+            return CameraHeight * .20f;
+        }
+
+        private static float RouteDriftFraction(int routeScore)
+        {
+            // Foundry introduces movement over four gates after its static arrival.
+            if (routeScore < 15) return 0f;
+            if (routeScore < 20) return Mathf.Lerp(0f, .04f, (routeScore - 15) / 4f);
+            return .04f;
         }
 
         private float RouteRange(float minimum, float maximum)
@@ -4563,10 +4299,6 @@ if (surface.RailRight != null && surface.RailRight.enabled)
             if (state != FlightState.Playing) return;
             state = FlightState.Impact;
             ResetGameplayWingState();
-            if (birdThrustGlowRenderer != null)
-                birdThrustGlowRenderer.enabled = false;
-            if (birdThrustCoreRenderer != null)
-                birdThrustCoreRenderer.enabled = false;
             if (birdBodyCollider != null) birdBodyCollider.enabled = false;
             impactFrameTimer = ImpactFreezeSeconds;
             impactTumbleTimer = ImpactTumbleSeconds;
@@ -4577,9 +4309,7 @@ if (surface.RailRight != null && surface.RailRight.enabled)
             birdVelocity = Mathf.Min(birdVelocity, -2.4f);
             birdTiltVelocity = 0f;
 
-            // Kill the long flight ribbon immediately so it does not freeze
-            // awkwardly in mid-air during the crash animation.
-            ClearTrail();
+
             TriggerFlightFeedback(Hex("#f05bc6"), .36f);
             PulseHaptic(.28f);
             Play(crashSound);
@@ -5424,7 +5154,7 @@ if (surface.RailRight != null && surface.RailRight.enabled)
             UpdateCrystalLabels();
             if (menuEquippedText != null) menuEquippedText.text = $"EQUIPPED  ·  {equippedSkin.Name}";
             UpdateModeCopy();
-            ApplyTrailColors();
+
             foreach (var pair in pipePool)
             {
                 if (pair != null && pair.Root.activeSelf) ConfigurePipe(pair, pair.X);
@@ -5433,26 +5163,9 @@ if (surface.RailRight != null && surface.RailRight.enabled)
 
         private void UpdateCrystalLabels()
         {
-            if (menuCrystalText != null) menuCrystalText.text = $"✦  {crystals}";
-            if (hudCrystalText != null) hudCrystalText.text = $"✦  {crystals}";
-            if (customizeCrystalText != null) customizeCrystalText.text = $"✦  {crystals}";
-        }
-
-        private void ApplyTrailColors()
-        {
-            trailSafety.colorGradient = TrailGradient(equippedTrail.Glow, equippedTrail.Core, .22f);
-            trailGlow.colorGradient = TrailGradient(Color.Lerp(equippedTrail.Core, Color.white, .25f), equippedTrail.Glow, .80f);
-            trailCore.colorGradient = TrailGradient(Color.Lerp(equippedTrail.Core, Color.white, .88f), equippedTrail.Core, .95f);
-        }
-
-        private static Gradient TrailGradient(Color head, Color tail, float opacity)
-        {
-            var gradient = new Gradient();
-            gradient.SetKeys(new[] { new GradientColorKey(head, 0f),
-                new GradientColorKey(Color.Lerp(head, tail, .65f), .38f), new GradientColorKey(tail, 1f) },
-                new[] { new GradientAlphaKey(opacity * .75f, 0f), new GradientAlphaKey(opacity, .12f),
-                    new GradientAlphaKey(opacity * .40f, .62f), new GradientAlphaKey(0f, 1f) });
-            return gradient;
+            if (menuCrystalText != null) menuCrystalText.text = crystals.ToString();
+            if (hudCrystalText != null) hudCrystalText.text = crystals.ToString();
+            if (customizeCrystalText != null) customizeCrystalText.text = crystals.ToString();
         }
 
         private Sprite WorldBackdrop(WorldTheme world)
@@ -5569,7 +5282,7 @@ if (surface.RailRight != null && surface.RailRight.enabled)
             }
             if (birdDepthRenderer != null) birdDepthRenderer.enabled = idleBirdSprite != null;
             if (birdEyeGlintRenderer != null) birdEyeGlintRenderer.enabled = !hasFlapFrameSequence;
-            ConfigureRearThrust();
+
         }
 
         private bool LoadFlapFrameSequence(Skin skin)
@@ -5960,32 +5673,33 @@ if (surface.RailRight != null && surface.RailRight.enabled)
 
         private void UpdateBirdPowerUpVisuals()
         {
-            var effectMotion = reduceMotionEnabled ? .28f : 1f;
+            // Stable, fine geometry leaves the authored bird as the visual focus.
+            var motion = reduceMotionEnabled ? 0f : 1f;
+            var breath = Mathf.Sin(ambientTime * 3f) * .025f * motion;
             if (slowAuraRenderer != null)
             {
-                var slowPulse = 1f + Mathf.Sin(ambientTime * 6.5f) * .12f * effectMotion;
                 slowAuraRenderer.enabled = slowFieldTimer > 0f;
-                slowAuraRenderer.color = new Color(.55f, .35f, 1f, .48f + Mathf.Sin(ambientTime * 5f) * .12f * effectMotion);
-                slowAuraRenderer.transform.localScale = Vector3.one * (1.42f * slowPulse);
-                slowAuraRenderer.transform.localRotation = Quaternion.Euler(0f, 0f, -ambientTime * 110f * effectMotion);
+                slowAuraRenderer.color = new Color(.69f, .49f, 1f, .66f);
+                slowAuraRenderer.transform.localPosition = new Vector3(0f, -.18f, 0f);
+                slowAuraRenderer.transform.localScale = Vector3.one * (2.02f + breath);
+                slowAuraRenderer.transform.localRotation = Quaternion.Euler(0f, 0f, -ambientTime * 24f * motion);
             }
             if (effectAuraRenderer != null)
             {
-                var active = magnetHaloTimer > 0f;
-                var colour = Hex("#45eaff");
-                colour.a = active ? .22f + Mathf.Sin(ambientTime * 9f) * .08f * effectMotion : 0f;
-                effectAuraRenderer.enabled = active;
-                effectAuraRenderer.color = colour;
-                effectAuraRenderer.transform.localScale = Vector3.one * (1.12f + Mathf.Sin(ambientTime * 7.5f) * .10f * effectMotion);
+                effectAuraRenderer.enabled = magnetHaloTimer > 0f;
+                effectAuraRenderer.color = new Color(.27f, .92f, 1f, .68f);
+                effectAuraRenderer.transform.localPosition = new Vector3(0f, -.18f, 0f);
+                effectAuraRenderer.transform.localScale = Vector3.one * (2.08f - breath);
+                effectAuraRenderer.transform.localRotation = Quaternion.Euler(0f, 0f, ambientTime * 18f * motion);
             }
             if (shieldAuraRenderer != null)
             {
-                var visible = shieldCharges > 0 || shieldFlashTimer > 0f;
-                var flash = shieldFlashTimer > 0f ? 1f : .5f;
-                shieldAuraRenderer.enabled = visible;
-                shieldAuraRenderer.color = new Color(.38f, 1f, .70f, visible ? flash : 0f);
-                shieldAuraRenderer.transform.localScale = Vector3.one * (1.2f + Mathf.Sin(ambientTime * 8f) * .08f * effectMotion + shieldFlashTimer * .25f);
-                shieldAuraRenderer.transform.localRotation = Quaternion.Euler(0f, 0f, ambientTime * 95f * effectMotion);
+                shieldAuraRenderer.enabled = shieldCharges > 0 || shieldFlashTimer > 0f;
+                var activation = Mathf.Clamp01(shieldFlashTimer / .6f);
+                shieldAuraRenderer.color = new Color(.38f, 1f, .70f, .52f + activation * .22f);
+                shieldAuraRenderer.transform.localPosition = new Vector3(0f, -.18f, 0f);
+                shieldAuraRenderer.transform.localScale = Vector3.one * (2.08f + activation * .10f + breath);
+                shieldAuraRenderer.transform.localRotation = Quaternion.identity;
             }
         }
 
@@ -6319,6 +6033,72 @@ if (surface.RailRight != null && surface.RailRight.enabled)
             return CreateSprite(texture, width);
         }
 
+        private static Sprite CreatePowerFieldSprite(PowerUpKind kind)
+        {
+            const int size = 256;
+            var texture = new Texture2D(size, size, TextureFormat.RGBA32, false)
+            {
+                name = kind + " precision field",
+                filterMode = FilterMode.Bilinear,
+                wrapMode = TextureWrapMode.Clamp,
+            };
+            var pixels = new Color[size * size];
+            for (var y = 0; y < size; y++)
+            for (var x = 0; x < size; x++)
+            {
+                var p = new Vector2((x + .5f) / size - .5f, (y + .5f) / size - .5f);
+                var radius = p.magnitude;
+                var angle = Mathf.Atan2(p.y, p.x);
+                var alpha = 0f;
+                if (kind == PowerUpKind.Aegis)
+                {
+                    // Six plated edges with bright corner anchors, not a solid halo.
+                    var sector = Mathf.Repeat(angle + Mathf.PI / 6f, Mathf.PI / 3f) - Mathf.PI / 6f;
+                    var edge = Mathf.Abs(radius * Mathf.Cos(sector) - .36f);
+                    alpha = Mathf.Max(SoftFieldLine(edge, .004f), SoftFieldLine(edge, .014f) * .15f);
+                    for (var corner = 0; corner < 6; corner++)
+                    {
+                        var a = (corner + .5f) * Mathf.PI / 3f;
+                        var anchor = new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * (.36f / Mathf.Cos(Mathf.PI / 6f));
+                        alpha = Mathf.Max(alpha, SoftFieldLine(Vector2.Distance(p, anchor), .008f));
+                    }
+                }
+                else if (kind == PowerUpKind.TimePulse)
+                {
+                    // Three interrupted clock arcs and twelve fine timing marks.
+                    var arc = Mathf.Repeat(angle, Mathf.PI * 2f / 3f);
+                    if (arc > .20f && arc < 1.88f) alpha = SoftFieldLine(Mathf.Abs(radius - .39f), .004f);
+                    var tick = Mathf.Abs(Mathf.Repeat(angle + Mathf.PI / 12f, Mathf.PI / 6f) - Mathf.PI / 12f);
+                    if (radius > .425f && radius < .46f) alpha = Mathf.Max(alpha, SoftFieldLine(tick * radius, .003f) * .8f);
+                }
+                else
+                {
+                    // Opposed magnetic field lines; open front/rear keeps flight readable.
+                    var arc = Mathf.Repeat(angle, Mathf.PI);
+                    if (arc > .48f && arc < 2.66f)
+                    {
+                        alpha = SoftFieldLine(Mathf.Abs(radius - .42f), .004f);
+                        alpha = Mathf.Max(alpha, SoftFieldLine(Mathf.Abs(radius - .35f), .003f) * .42f);
+                    }
+                    for (var pole = 0; pole < 2; pole++)
+                    {
+                        var a = .48f + pole * Mathf.PI;
+                        var anchor = new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * .42f;
+                        alpha = Mathf.Max(alpha, SoftFieldLine(Vector2.Distance(p, anchor), .009f));
+                    }
+                }
+                pixels[y * size + x] = new Color(1f, 1f, 1f, alpha);
+            }
+            texture.SetPixels(pixels);
+            texture.Apply(false, true);
+            return CreateSprite(texture, size);
+        }
+
+        private static float SoftFieldLine(float distance, float halfWidth)
+        {
+            return 1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(halfWidth, halfWidth + .005f, distance));
+        }
+
         private static Sprite CreateRadialSprite(string name, int size, float innerRadius, float outerRadius)
         {
             var texture = new Texture2D(size, size, TextureFormat.RGBA32, false)
@@ -6337,7 +6117,9 @@ if (surface.RailRight != null && surface.RailRight.enabled)
                     var alpha = 0f;
                     if (innerRadius <= 0f)
                     {
-                        alpha = 1f - Mathf.SmoothStep(0f, outerRadius, distance);
+                        // SmoothStep interpolates output values; normalise distance first
+                        // so the entire outer edge (including corners) is transparent.
+                        alpha = 1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(0f, outerRadius, distance));
                     }
                     else if (distance >= innerRadius && distance <= outerRadius)
                     {
@@ -6696,10 +6478,8 @@ if (surface.RailRight != null && surface.RailRight.enabled)
             var objectRoot = new GameObject(name, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
             objectRoot.transform.SetParent(parent, false);
             var rect = objectRoot.GetComponent<RectTransform>();
-            rect.anchorMin = Vector2.zero;
-            rect.anchorMax = Vector2.one;
-            rect.offsetMin = Vector2.zero;
-            rect.offsetMax = Vector2.zero;
+            rect.anchorMin = rect.anchorMax = new Vector2(.5f, .5f);
+            interfaceBackdrops.Add(rect);
             var image = objectRoot.GetComponent<Image>();
             image.color = color;
             return rect;
@@ -6762,6 +6542,18 @@ if (surface.RailRight != null && surface.RailRight.enabled)
             var shell = CreatePanel(parent, "Crystal chip", position, new Vector2(200f, 68f), Hex("#0a0f20"));
             AddOutline(shell.gameObject, new Color(accent.r, accent.g, accent.b, .50f), 1f);
             return CreateText(shell, value, Vector2.zero, new Vector2(180f, 48f), 23, accent, TextAnchor.MiddleCenter, FontStyle.Bold);
+        }
+
+        private Text CreateCrystalChip(Transform parent, Vector2 position, string value, Color accent)
+        {
+            var text = CreateChip(parent, position, "0", accent);
+            text.rectTransform.anchoredPosition = new Vector2(20f, 0f);
+            text.rectTransform.sizeDelta = new Vector2(132f, 48f);
+            var icon = CreateImage(text.transform.parent, "Crystal balance icon", new Vector2(-62f, 0f), new Vector2(38f, 38f), Color.white);
+            icon.sprite = LoadSprite("SkyPulse/art/powerups/generated/crystal-pellet-v3");
+            icon.preserveAspect = true;
+            icon.raycastTarget = false;
+            return text;
         }
 
         private Button CreateNeonButton(Transform parent, string label, Vector2 position, Vector2 size, Color accent)

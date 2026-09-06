@@ -16,14 +16,23 @@ public static class SkyPulseVisualSmoke
     static void Check(bool condition, string message) { if (!condition) throw new Exception(message); }
     static SkyPulseVisualSmoke()
     {
-        if (SessionState.GetBool("SkyPulseVisualSmoke", false))
-            EditorApplication.playModeStateChanged += state =>
-            {
-                if (state == PlayModeStateChange.EnteredPlayMode) EditorApplication.delayCall += Execute;
-            };
+        EditorApplication.update += AwaitPlay;
+    }
+    static void AwaitPlay()
+    {
+        if (SessionState.GetBool("SkyPulseVisualSmoke", false) && EditorApplication.isPlaying)
+        {
+            SessionState.SetBool("SkyPulseVisualSmoke", false);
+            Execute();
+        }
     }
     public static void Run()
     {
+        if (!Application.productName.Contains("QA"))
+            throw new InvalidOperationException("Run smoke tests only in a disposable QA product, never the player's project.");
+        PlayerPrefs.DeleteAll();
+        PlayerPrefs.Save();
+        Debug.Log("SKYPULSE_SMOKE_START");
         SessionState.SetBool("SkyPulseVisualSmoke", true);
         EditorApplication.EnterPlaymode();
     }
@@ -73,23 +82,11 @@ public static class SkyPulseVisualSmoke
             var game = UnityEngine.Object.FindAnyObjectByType<SkyPulseNativeGame>();
             if (game == null) game = new GameObject("Visual smoke test").AddComponent<SkyPulseNativeGame>();
             Call(game, "StartFlight");
-            var bird = (Transform)Get(game, "bird");
-            var core = (LineRenderer)Get(game, "trailCore");
-            for (var i = 0; i < 120; i++) Call(game, "UpdateTrail", 1f / 120f);
-            Check(core.positionCount == 64, "Trail history did not fill");
-            Check(core.GetPosition(0).x - core.GetPosition(63).x > 1f, "Trail collapses on level flight");
-            for (var i = 1; i < 64; i++) Check(core.GetPosition(i).x < core.GetPosition(i - 1).x, "Trail doubles back during level flight");
-            var tail = core.GetPosition(63);
-            bird.position += Vector3.up * .2f;
-            Call(game, "UpdateTrail", 1f / 120f);
-            Check(Mathf.Abs(core.GetPosition(63).y - tail.y) < .001f, "New flap teleports old trail history");
-            Set(game, "reduceMotionEnabled", true);
-            Call(game, "UpdateTrail", 1f / 120f);
-            foreach (var spark in (SpriteRenderer[])Get(game, "trailSparks")) Check(!spark.enabled, "Reduced motion spark still active");
-            Set(game, "reduceMotionEnabled", false);
-            Call(game, "ClearTrail");
-            Check(core.positionCount == 0, "Restart retains trail geometry");
-            foreach (var spark in (SpriteRenderer[])Get(game, "trailSparks")) Check(!spark.enabled, "Restart retains sparks");
+            foreach (var renderer in game.GetComponentsInChildren<Renderer>(true))
+            {
+                Check(!renderer.name.StartsWith("Trail "), "Flight trail renderer still exists");
+                Check(!renderer.name.StartsWith("Rear thrust "), "Rear thrust renderer still exists");
+            }
 
             var backdrop = (SpriteRenderer)Get(game, "backgroundRenderer");
             var incoming = (SpriteRenderer)Get(game, "incomingBackground");
@@ -146,7 +143,8 @@ public static class SkyPulseVisualSmoke
             Check(Get(game, "state").ToString() == "Playing", "Tech tree tap fails to launch");
             CheckTouchScrolling(game, "OpenHangar");
             CheckTouchScrolling(game, "OpenUpgrades");
-            Debug.Log("SKYPULSE_VISUAL_SMOKE_PASS: trail continuity, reduced motion, resets, milestones 15/30/45/60, dissolve endpoints, recovery, retry during transition, hangar/tech taps, drag and modal guards, button click routing, touch scrolling in both directions, last-item access, tab inertia reset.");
+            SkyPulseBetaChecks.Run(game);
+            Debug.Log("SKYPULSE_VISUAL_SMOKE_PASS: no flight trail or rear thrust, milestones 15/30/45/60, dissolve endpoints, recovery, retry during transition, hangar/tech taps, drag and modal guards, button click routing, touch scrolling in both directions, last-item access, tab inertia reset.");
             EditorApplication.Exit(0);
         }
         catch (Exception ex) { Debug.LogException(ex); EditorApplication.Exit(1); }

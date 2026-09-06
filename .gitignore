@@ -22,3 +22,6 @@ mobile/*.sln
 *.kra-autosave.kra
 *.kra~
 *.ora~
+
+# Generated Unity visual QA captures (available locally for review).
+/artifacts/effects-qa/
