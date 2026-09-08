@@ -26,7 +26,12 @@ This version contains no advertising or real-money purchases. Crystals are earne
 Games / Action / Casual — confirm the final selection in App Store Connect.
 
 ## Review notes
-No login or account is required. Launch the app and tap Play, then tap the gameplay area to flap. The top-left control pauses a run. Bird Hangar and Upgrades are accessible from the main menu and result screen. Crystals are earned in-game; purchases in these screens spend earned crystals, not real money. The Privacy button is on the main menu. A public policy link must be added before submission.
+No login or account is required. Launch the app and tap Play, then tap the gameplay area to flap. The top-left control pauses a run. Bird Hangar and Upgrades are accessible from the main menu and result screen. Crystals are earned in-game; purchases in these screens spend earned crystals, not real money. The Privacy button is on the main menu.
+
+Before submitting these notes, configure and verify the public policy/support buttons in the final build.
+
+## Keywords
+arcade,flying,bird,neon,cyberpunk,offline,one tap,high score,crystals,casual
 
 ## Owner-supplied fields still required
 Public support email, support URL, privacy URL, copyright/rightsholder, review contact and beta feedback email. Confirm age-rating questionnaire answers from actual content, price/availability and the intended countries. Do not invent these details or publish placeholders.

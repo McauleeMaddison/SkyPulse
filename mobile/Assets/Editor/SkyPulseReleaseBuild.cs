@@ -25,6 +25,7 @@ namespace SkyPulse.Mobile.Editor
             public string createdUtc;
             public string gameplaySourceSha256;
             public string iconSha256;
+            public string publicLinksSha256;
         }
 
         private static string FileHash(string path)
@@ -76,6 +77,27 @@ namespace SkyPulse.Mobile.Editor
             ExportProject(true);
         }
 
+        [MenuItem("SkyPulse/Release/Export App Store Candidate")]
+        public static void ExportAppStore()
+        {
+            ValidateAppStore();
+            ExportProject(false);
+        }
+
+        [MenuItem("SkyPulse/Release/Validate App Store Configuration")]
+        public static void ValidateAppStore()
+        {
+            var links = SkyPulsePublicLinks.Load();
+            if (!SkyPulsePublicLinks.IsPublicHttpsUrl(links.privacyUrl) ||
+                !SkyPulsePublicLinks.IsPublicHttpsUrl(links.supportUrl))
+                throw new BuildFailedException("Set real public HTTPS privacyUrl and supportUrl in Assets/Resources/SkyPulsePublicLinks.json. Verify both pages and their contact details before submission.");
+            if (string.IsNullOrWhiteSpace(PlayerSettings.iOS.appleDeveloperTeamID))
+                throw new BuildFailedException("Select your paid Apple Developer signing team in iOS Player Settings before exporting an App Store candidate.");
+            if (!int.TryParse(PlayerSettings.iOS.buildNumber, out var number) || number <= 0)
+                throw new BuildFailedException("Set a positive, unused iOS build number before export.");
+            Debug.Log("SKYPULSE_STORE_CONFIGURATION_PASS: local configuration only; signed archive validation, live URLs, device testing and App Store Connect metadata still require verification.");
+        }
+
         private static void ExportProject(bool simulator)
         {
             if (!BuildPipeline.IsBuildTargetSupported(BuildTargetGroup.iOS, BuildTarget.iOS))
@@ -104,6 +126,7 @@ namespace SkyPulse.Mobile.Editor
                 createdUtc = DateTime.UtcNow.ToString("O"),
                 gameplaySourceSha256 = FileHash("Assets/Scripts/SkyPulseNativeGame.cs"),
                 iconSha256 = FileHash("Assets/Branding/SkyPulseAppIcon.png"),
+                publicLinksSha256 = FileHash("Assets/Resources/SkyPulsePublicLinks.json"),
             };
             File.WriteAllText(Path.Combine(destination, "SkyPulse-build-info.json"), JsonUtility.ToJson(evidence, true));
             Debug.Log($"SKYPULSE_IOS_EXPORT_PASS: {Path.GetFullPath(destination)}");

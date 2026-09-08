@@ -1,5 +1,12 @@
 # Security verification — 6 September 2026
 
+7 September update: build 5 adds user-initiated external privacy/support links via
+`Application.OpenURL`, restricted by configuration validation to HTTPS URLs. The
+values remain empty pending real public pages. Earlier observations below about
+the absence of URL launches apply to build 4, not the updated source. These links
+do not attach game progress or identifiers. Recheck the actual website's data
+handling when the owner selects a host and configures the URLs.
+
 Status: targeted checks completed; not a malware-free certification.
 
 ## Observed evidence

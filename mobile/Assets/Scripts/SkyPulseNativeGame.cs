@@ -1737,6 +1737,17 @@ new WorldTheme(
             var noticeText = CreateText(card, notice, new Vector2(0f, 30f), new Vector2(758f, 690f), 27, Hex("#d2def0"), TextAnchor.UpperLeft, FontStyle.Normal);
             noticeText.horizontalOverflow = HorizontalWrapMode.Wrap;
             noticeText.verticalOverflow = VerticalWrapMode.Truncate;
+            var links = SkyPulsePublicLinks.Load();
+            if (SkyPulsePublicLinks.IsPublicHttpsUrl(links.privacyUrl))
+            {
+                var policy = CreateNeonButton(card, "PRIVACY POLICY", new Vector2(-202f, -352f), new Vector2(380f, 64f), Hex("#8fa7c4"));
+                policy.onClick.AddListener(() => Application.OpenURL(links.privacyUrl));
+            }
+            if (SkyPulsePublicLinks.IsPublicHttpsUrl(links.supportUrl))
+            {
+                var support = CreateNeonButton(card, "SUPPORT", new Vector2(202f, -352f), new Vector2(380f, 64f), Hex("#8fa7c4"));
+                support.onClick.AddListener(() => Application.OpenURL(links.supportUrl));
+            }
             var close = CreateNeonButton(card, "BACK TO MENU", new Vector2(0f, -435f), new Vector2(470f, 88f), Hex("#45eaff"));
             close.onClick.AddListener(() => root.SetActive(false));
             return root;

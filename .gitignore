@@ -25,3 +25,7 @@ mobile/*.sln
 
 # Generated Unity visual QA captures (available locally for review).
 /artifacts/effects-qa/
+
+# Local package cache and separately versioned public Sites checkout
+.pnpm-store/
+/public-site/

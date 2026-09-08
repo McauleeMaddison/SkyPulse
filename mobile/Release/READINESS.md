@@ -1,4 +1,8 @@
-# SkyPulse beta readiness — 6 September 2026
+# SkyPulse readiness
+
+Current status (7 September 2026): **not ready for submission**. Build 5 source adds configurable policy/support links and an App Store export configuration check. The owner has not yet set up the Apple Developer account or public support/privacy details. See `LAUNCH_CHECKLIST.md` and `LAUNCH_VERIFICATION.json`. The build 4 native evidence below is historical and does not validate the changed source.
+
+## Beta evidence — 6 September 2026
 
 Status: final candidate installed for tonight's Simulator visual testing. Both final native builds compile successfully. Not yet uploaded or approved for distribution.
 

@@ -6,6 +6,10 @@ Game progress, including scores, earned crystals, unlocked birds, upgrade levels
 
 Choosing Share copies a score summary to the device clipboard. SkyPulse does not send that summary to other people or services; you decide whether and where to paste it.
 
-Apple may separately process store, backup and diagnostic information under its own policies. TestFlight may collect testing diagnostics and feedback under Apple's TestFlight terms.
+Apple may separately process store, backup and diagnostic information under its own policies.
 
-Publication still requires the developer's public support contact, policy URL and effective date. Do not publish this draft without filling those owner-provided details.
+For support or privacy questions, contact [macwebstudio26@gmail.com](mailto:macwebstudio26@gmail.com).
+
+If you email support, your email provider and Gmail process the message, including your email address and anything you choose to include. This correspondence is separate from locally stored game progress.
+
+Publication checklist: confirm support correspondence handling and retention, the website host's data practices, the public policy URL and effective date before publication.

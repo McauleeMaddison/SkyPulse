@@ -1,0 +1,33 @@
+{
+  "checkedUtc": "2026-09-07T10:58:14.598365+00:00",
+  "version": "1.0.0",
+  "candidateBuild": "5",
+  "submissionReady": false,
+  "unity": "6000.6.0f1",
+  "xcode": "26.6",
+  "iosSdk": "26.5",
+  "checks": {
+    "unityCompilation": "PASS (isolated QA project, Editor target)",
+    "storeConfigurationGuards": "PASS; missing links rejected and URL validation tested",
+    "gameplayRegression": "PASS; 1300 gates, milestones, handling, persistence, rewards, pause/resume, purchase guards",
+    "visualBehaviourSmoke": "PASS; transitions, retry, button routing, touch scrolling and modal guards (headless, not visual inspection)",
+    "birdRegistration": "PASS; 90 flight frames across 15 birds",
+    "diffWhitespace": "PASS"
+  },
+  "log": "/private/tmp/skypulse-launch-qa-retry.log",
+  "sourceSha256": {
+    "Assets/Scripts/SkyPulseNativeGame.cs": "e4f22946cb8c0cf54631f6d47227c7cb1db13fb6269709cfad03f96bd5990a8e",
+    "Assets/Scripts/SkyPulsePublicLinks.cs": "8427bb1103414ea4610f23293834270c4f230b9335ebd550f79c6d80e198b3b0",
+    "Assets/Resources/SkyPulsePublicLinks.json": "4eb542a55e4d9a4bbd7f267a43f4b8c98fd9501b7877345ee5c5304b1e451480",
+    "Assets/Editor/SkyPulseReleaseBuild.cs": "c5d66c93e6aebbedda690e50070896defb6906434cb52cc01cf8a365a1bcc2e6",
+    "Assets/Branding/SkyPulseAppIcon.png": "6cbc6acd07a0f1de1b07ff757e010abdf9c1b5d1befe8a61e3c6d4b6d22b0887"
+  },
+  "remaining": [
+    "Owner confirmed Apple Developer account and public support/privacy details not yet ready",
+    "Configure and verify real public policy/support pages and in-app links",
+    "Fresh native export and signed archive validation required for build 5",
+    "Physical-iPhone testing and final screenshots",
+    "App Store Connect metadata, compliance, upload and App Review"
+  ],
+  "historicalEvidence": "BETA_VERIFICATION.json applies to build 4 only"
+}

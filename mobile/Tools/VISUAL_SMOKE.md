@@ -1,6 +1,14 @@
 Unity visual-behaviour smoke checks
 ==================================
 
+Launch preparation pass (7 September 2026, build 5 source): isolated Unity compilation,
+1,300-gate beta checks and visual-behaviour smoke all PASS. `SkyPulseStoreChecks.cs`
+also passed URL validation and rejection of missing store links. To include those
+checks, copy that helper into the QA project's Assets/Editor and invoke
+`SkyPulseStoreChecks.Run()` before the smoke harness enters Play mode. This is
+headless behaviour validation, not native build or visual certification. See
+`../Release/LAUNCH_VERIFICATION.json` for current evidence; dated notes below are historical.
+
 `SkyPulseVisualSmoke.cs` runs inside Unity Play mode in a disposable project copy.
 Keep it outside the shipping Assets folder. Copy it and `SkyPulseBetaChecks.cs` into the test copy's
 `Assets/Editor` directory, use a separate test company/product name in
