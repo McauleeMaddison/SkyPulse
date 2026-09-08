@@ -29,3 +29,6 @@ mobile/*.sln
 # Local package cache and separately versioned public Sites checkout
 .pnpm-store/
 /public-site/
+
+# Local Xcode build archives
+artifacts/
