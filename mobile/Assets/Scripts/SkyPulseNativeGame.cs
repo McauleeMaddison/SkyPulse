@@ -499,10 +499,10 @@ namespace SkyPulse.Mobile
         private const int LaunchBirdCount = 15;
         private const float CosmeticCardHeight = 260f;
         private const float CosmeticCardRowStride = 286f;
-        private const float BirdHangarCardWidth = 292f;
-        private const float BirdHangarCardHeight = 330f;
-        private const float BirdHangarColumnStride = 312f;
-        private const float BirdHangarRowStride = 352f;
+        private const float BirdHangarCardWidth = 432f;
+        private const float BirdHangarCardHeight = 390f;
+        private const float BirdHangarColumnStride = 454f;
+        private const float BirdHangarRowStride = 416f;
 
         // These profiles are deliberately conservative. A play-test should alter one
         // value here at a time, never spread physics magic numbers through the loop.
@@ -991,6 +991,7 @@ new WorldTheme(
         private Sprite softCircleSprite;
         private Sprite ringSprite;
         private Sprite roundedPanelSprite;
+        private Sprite interfacePanelSprite;
         private Sprite pipeBodySprite;
         private Sprite pipeCapSprite;
         private Sprite pipeGlowSprite;
@@ -1089,6 +1090,9 @@ new WorldTheme(
         private RectTransform menuHeroTransform;
         private RectTransform customizeContent;
         private Text customizeTitle;
+        private Text customizeSubtitle;
+        private readonly List<Button> collectionTabs = new List<Button>();
+        private readonly List<Image> collectionTabRails = new List<Image>();
         private Text purchaseTitleText;
         private Text purchaseDetailText;
         private Text purchaseBalanceText;
@@ -1097,6 +1101,7 @@ new WorldTheme(
         private Text hapticsText;
         private Image purchasePreviewImage;
         private Image purchaseHalo;
+        private SkyPulseUiGlyph purchaseUpgradeGlyph;
         private Button purchaseConfirmButton;
         private RectTransform unlockRevealCard;
         private RectTransform unlockRevealBirdTransform;
@@ -1338,6 +1343,7 @@ new WorldTheme(
             softCircleSprite = CreateRadialSprite("Soft neon orb", 96, 0f, .5f);
             ringSprite = CreateRadialSprite("Neon ring", 96, .31f, .5f);
             roundedPanelSprite = CreateRoundedRectSprite("Premium rounded panel", 128, 28);
+            interfacePanelSprite = CreateFlightPanelSprite();
             // Supplied pipe PNGs use a white presentation canvas. Turn their
             // connected white background into alpha once at load time so the actual
             // mechanical art can be used without white slabs or invisible geometry.
@@ -1826,13 +1832,16 @@ new WorldTheme(
             difficultyText = CreateChip(root.transform, new Vector2(-355f, 940f), "ENDLESS ROUTE", Hex("#8f64ff"));
             difficultyText.resizeTextForBestFit = true;
             difficultyText.resizeTextMinSize = 13;
-            difficultyText.resizeTextMaxSize = 20;
+            difficultyText.resizeTextMaxSize = 24;
             menuCrystalText = CreateCrystalChip(root.transform, new Vector2(355f, 940f), "✦  0", Hex("#45eaff"));
 
             menuTitleText = CreateText(root.transform, "SKYPULSE", new Vector2(0f, 684f), new Vector2(900f, 116f), 90, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            AddOutline(menuTitleText.gameObject, new Color(.22f, .86f, 1f, .40f), 1f);
-            CreateText(root.transform, "A  R  C  A  D  E", new Vector2(0f, 606f), new Vector2(700f, 44f), 27, Hex("#f05bc6"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            CreateText(root.transform, "F I N D  Y O U R  R H Y T H M", new Vector2(0f, 536f), new Vector2(800f, 34f), 17, Hex("#8eeeff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            var titleShadow = menuTitleText.GetComponent<Shadow>();
+            if (titleShadow != null) titleShadow.enabled = false;
+            CreateText(root.transform, "A  R  C  A  D  E", new Vector2(0f, 606f), new Vector2(700f, 48f), 34, Hex("#f05bc6"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            CreateUiGlyph(root.transform, "Brand wing port", new Vector2(-298f, 606f), new Vector2(68f, 32f), Hex("#45eaff"), SkyPulseUiGlyph.Kind.WingMark);
+            CreateUiGlyph(root.transform, "Brand wing starboard", new Vector2(298f, 606f), new Vector2(68f, 32f), Hex("#45eaff"), SkyPulseUiGlyph.Kind.WingMark);
+            CreateText(root.transform, "F I N D  Y O U R  R H Y T H M", new Vector2(0f, 536f), new Vector2(800f, 40f), 26, Hex("#8eeeff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             var titleRule = CreateImage(root.transform, "Title energy rule", new Vector2(0f, 495f), new Vector2(120f, 2f), new Color(.25f, .91f, 1f, .62f));
             titleRule.sprite = whiteSprite;
             titleRule.raycastTarget = false;
@@ -1842,6 +1851,8 @@ new WorldTheme(
             var deckRule = CreateImage(flightDeck, "Flight deck rule", new Vector2(0f, -104f), new Vector2(650f, 1f), new Color(.27f, .86f, 1f, .24f));
             deckRule.sprite = whiteSprite;
             deckRule.raycastTarget = false;
+
+            CreateUiGlyph(root.transform, "Home flight dock", new Vector2(0f, 148f), new Vector2(800f, 440f), new Color(.27f, .92f, 1f, .42f), SkyPulseUiGlyph.Kind.DockRing).Animate = true;
 
             var heroObject = new GameObject("Animated menu hero", typeof(RectTransform));
             heroObject.transform.SetParent(root.transform, false);
@@ -1879,26 +1890,29 @@ new WorldTheme(
             // the character on the menu.
             menuBirdSafetyImage.transform.SetAsLastSibling();
 
-            menuEquippedText = CreateText(root.transform, "EQUIPPED  ·  NEON FINCH", new Vector2(0f, -118f), new Vector2(790f, 40f), 22, Hex("#b5d8ec"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            menuEquippedText = CreateText(root.transform, "EQUIPPED  ·  NEON FINCH", new Vector2(0f, -118f), new Vector2(790f, 44f), 28, Hex("#b5d8ec"), TextAnchor.MiddleCenter, FontStyle.Bold);
             var bestPanel = CreatePanel(root.transform, "Personal best", new Vector2(0f, -211f), new Vector2(540f, 82f), Hex("#0a132a"));
             bestPanel.GetComponent<Image>().raycastTarget = false;
             AddOutline(bestPanel.gameObject, new Color(1f, .76f, .30f, .34f), 1f);
-            CreateText(bestPanel, "PERSONAL BEST", new Vector2(-105f, 0f), new Vector2(240f, 48f), 20, Hex("#ffc34d"), TextAnchor.MiddleLeft, FontStyle.Bold);
+            CreateText(bestPanel, "PERSONAL BEST", new Vector2(-105f, 0f), new Vector2(240f, 48f), 24, Hex("#ffc34d"), TextAnchor.MiddleLeft, FontStyle.Bold);
             menuBestText = CreateText(bestPanel, "0", new Vector2(134f, 0f), new Vector2(196f, 64f), 44, Hex("#f4fbff"), TextAnchor.MiddleRight, FontStyle.Bold);
             menuBestText.resizeTextForBestFit = true;
             menuBestText.resizeTextMinSize = 26;
             menuBestText.resizeTextMaxSize = 44;
             var fly = CreateNeonButton(root.transform, "PLAY", new Vector2(0f, -333f), new Vector2(650f, 108f), Hex("#45eaff"));
             fly.onClick.AddListener(StartFlight);
-            CreateText(root.transform, "TAP TO FLAP  ·  FIND THE GAP", new Vector2(0f, -414f), new Vector2(700f, 32f), 17, Hex("#b5c8de"), TextAnchor.MiddleCenter, FontStyle.Normal);
+            CreateText(root.transform, "TAP TO FLAP  ·  FIND THE GAP", new Vector2(0f, -414f), new Vector2(700f, 36f), 24, Hex("#b5c8de"), TextAnchor.MiddleCenter, FontStyle.Normal);
 
-            var hangar = CreateNeonButton(root.transform, "BIRD HANGAR", new Vector2(-170f, -491f), new Vector2(310f, 78f), Hex("#45eaff"));
+            var hangar = CreateNeonButton(root.transform, "BIRD HANGAR", new Vector2(-170f, -491f), new Vector2(310f, 100f), Hex("#45eaff"));
+            hangar.GetComponentInChildren<Text>().fontSize = 26;
             hangar.onClick.AddListener(OpenHangar);
-            var upgrades = CreateNeonButton(root.transform, "UPGRADES", new Vector2(170f, -491f), new Vector2(310f, 78f), Hex("#ffc34d"));
+            var upgrades = CreateNeonButton(root.transform, "UPGRADES", new Vector2(170f, -491f), new Vector2(310f, 100f), Hex("#ffc34d"));
+            upgrades.GetComponentInChildren<Text>().fontSize = 26;
             upgrades.onClick.AddListener(OpenUpgrades);
-            menuModeDetailText = CreateText(root.transform, "COLLECT CRYSTALS  ·  MASTER THE FLOW", new Vector2(0f, -595f), new Vector2(750f, 34f), 18, Hex("#8eeeff"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            menuDailyText = CreateText(root.transform, "", new Vector2(0f, -644f), new Vector2(750f, 38f), 16, Hex("#aec0dc"), TextAnchor.MiddleCenter, FontStyle.Normal);
-            var privacy = CreateNeonButton(root.transform, "PRIVACY", new Vector2(0f, -810f), new Vector2(250f, 68f), Hex("#8fa7c4"));
+            menuModeDetailText = CreateText(root.transform, "COLLECT CRYSTALS  ·  MASTER THE FLOW", new Vector2(0f, -595f), new Vector2(750f, 40f), 24, Hex("#8eeeff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            menuDailyText = CreateText(root.transform, "", new Vector2(0f, -644f), new Vector2(750f, 40f), 22, Hex("#aec0dc"), TextAnchor.MiddleCenter, FontStyle.Normal);
+            var privacy = CreateNeonButton(root.transform, "PRIVACY", new Vector2(0f, -810f), new Vector2(280f, 92f), Hex("#8fa7c4"));
+            privacy.GetComponentInChildren<Text>().fontSize = 26;
             privacy.onClick.AddListener(() => privacyScreen.SetActive(true));
             return root;
         }
@@ -1937,22 +1951,26 @@ new WorldTheme(
         private GameObject CreateHud(Transform parent)
         {
             var root = CreateScreen(parent, "Flight HUD");
-            var horizonRule = CreateImage(root.transform, "Flight HUD energy rail", new Vector2(0f, 898f), new Vector2(810f, 1.5f), new Color(.27f, .86f, 1f, .34f));
-            horizonRule.sprite = whiteSprite;
-            horizonRule.raycastTarget = false;
-            var pause = CreateNeonButton(root.transform, "Ⅱ", new Vector2(-425f, 940f), new Vector2(82f, 70f), Hex("#8f64ff"));
+            // Place the instrument clusters in the corners and leave the flight
+            // corridor clear. The score remains readable over every route palette.
+            var scoreCard = CreatePanel(root.transform, "Score instrument", new Vector2(-336f, 870f), new Vector2(260f, 220f), new Color(.008f, .022f, .060f, .92f));
+            scoreCard.GetComponent<Image>().raycastTarget = false;
+            AddOutline(scoreCard.gameObject, new Color(.27f, .92f, 1f, .65f), 1.2f);
+            CreateText(scoreCard, "SCORE", new Vector2(0f, 70f), new Vector2(216f, 30f), 22, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            hudScoreText = CreateText(scoreCard, "0", new Vector2(0f, 9f), new Vector2(224f, 96f), 82, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            hudScoreText.resizeTextForBestFit = true;
+            hudScoreText.resizeTextMinSize = 34;
+            hudScoreText.resizeTextMaxSize = 82;
+            hudBestText = CreateText(scoreCard, "BEST  0", new Vector2(0f, -77f), new Vector2(226f, 32f), 20, Hex("#b5c8de"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            var pause = CreateNeonButton(root.transform, "Ⅱ", new Vector2(421f, 934f), new Vector2(88f, 88f), Hex("#b17cff"));
             pause.onClick.AddListener(PauseFlight);
-            hudCrystalText = CreateCrystalChip(root.transform, new Vector2(365f, 940f), "✦  0", Hex("#45eaff"));
-            hudScoreText = CreateText(root.transform, "0", new Vector2(0f, 844f), new Vector2(260f, 120f), 76, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            AddOutline(hudScoreText.gameObject, new Color(.27f, .86f, 1f, .23f), 1f);
-            hudModeText = CreateText(root.transform, "NEON CITY", new Vector2(0f, 788f), new Vector2(600f, 30f), 16, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            hudCrystalText = CreateCrystalChip(root.transform, new Vector2(365f, 816f), "✦  0", Hex("#45eaff"));
+            hudModeText = CreateText(root.transform, "NEON CITY", new Vector2(-326f, 724f), new Vector2(280f, 32f), 17, Hex("#45eaff"), TextAnchor.MiddleLeft, FontStyle.Bold);
             scoreBurstText = CreateText(root.transform, "+1", new Vector2(0f, HudFeedbackY), new Vector2(720f, 54f), 27, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             scoreBurstText.gameObject.SetActive(false);
-            // Keep the active tactical effect beside the crystal bank; it stays out
-            // of the flight corridor and leaves score as the largest top-centre cue.
-            hudPowerUpText = CreateText(root.transform, "", new Vector2(286f, 866f), new Vector2(320f, 34f), 17, Hex("#61f5b3"), TextAnchor.MiddleRight, FontStyle.Bold);
+            hudPowerUpText = CreateText(root.transform, "", new Vector2(296f, 744f), new Vector2(340f, 34f), 17, Hex("#61f5b3"), TextAnchor.MiddleRight, FontStyle.Bold);
             hudPowerUpText.gameObject.SetActive(false);
-            hudCoachText = CreateText(root.transform, "", new Vector2(0f, 522f), new Vector2(760f, 34f), 16, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            hudCoachText = CreateText(root.transform, "", new Vector2(0f, 617f), new Vector2(760f, 36f), 18, Hex("#b4f4ff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             hudCoachText.gameObject.SetActive(false);
             return root;
         }
@@ -1960,20 +1978,25 @@ new WorldTheme(
         private GameObject CreatePauseScreen(Transform parent)
         {
             var root = CreateScreen(parent, "Pause screen");
-            CreateFullPanel(root.transform, "Pause dim", new Color(.015f, .008f, .06f, .72f));
-            var card = CreatePanel(root.transform, "Pause card", new Vector2(0f, 20f), new Vector2(760f, 590f), Hex("#11132a"));
-            AddOutline(card.gameObject, Hex("#8f64ff"), 3f);
-            CreateText(card, "PAUSED", new Vector2(0f, 190f), new Vector2(650f, 80f), 52, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            var resume = CreateNeonButton(card, "RESUME", new Vector2(0f, 78f), new Vector2(500f, 82f), Hex("#45eaff"));
+            CreateFullPanel(root.transform, "Pause dim", new Color(.005f, .012f, .04f, .78f));
+            var card = CreatePanel(root.transform, "Pause card", new Vector2(0f, 20f), new Vector2(760f, 840f), Hex("#07152b"));
+            AddOutline(card.gameObject, new Color(.27f, .92f, 1f, .66f), 1.5f);
+            CreateUiGlyph(card, "Pause wing", new Vector2(0f, 354f), new Vector2(64f, 34f), Hex("#45eaff"), SkyPulseUiGlyph.Kind.WingMark);
+            CreateText(card, "PAUSED", new Vector2(0f, 284f), new Vector2(650f, 72f), 54, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            CreateText(card, "YOUR FLIGHT IS WAITING", new Vector2(0f, 226f), new Vector2(620f, 36f), 24, Hex("#a4bfd8"), TextAnchor.MiddleCenter, FontStyle.Normal);
+            var resume = CreateNeonButton(card, "RESUME", new Vector2(0f, 128f), new Vector2(600f, 104f), Hex("#45eaff"));
             resume.onClick.AddListener(ResumeFlight);
-            CreateText(card, "COMFORT", new Vector2(0f, -2f), new Vector2(500f, 28f), 15, new Color(.85f, .91f, 1f, .58f), TextAnchor.MiddleCenter, FontStyle.Bold);
-            var reduceMotion = CreateNeonButton(card, "", new Vector2(-158f, -68f), new Vector2(292f, 64f), Hex("#61f5b3"));
+            CreateText(card, "FLIGHT COMFORT", new Vector2(0f, 36f), new Vector2(500f, 32f), 22, Hex("#91adc8"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            var reduceMotion = CreateNeonButton(card, "", new Vector2(0f, -40f), new Vector2(600f, 92f), Hex("#61f5b3"));
             reduceMotionText = reduceMotion.GetComponentInChildren<Text>();
+            reduceMotionText.fontSize = 26;
             reduceMotion.onClick.AddListener(ToggleReduceMotion);
-            var haptics = CreateNeonButton(card, "", new Vector2(158f, -68f), new Vector2(292f, 64f), Hex("#b17cff"));
+            var haptics = CreateNeonButton(card, "", new Vector2(0f, -150f), new Vector2(600f, 92f), Hex("#b17cff"));
             hapticsText = haptics.GetComponentInChildren<Text>();
+            hapticsText.fontSize = 26;
             haptics.onClick.AddListener(ToggleHaptics);
-            var menu = CreateNeonButton(card, "MENU", new Vector2(0f, -176f), new Vector2(500f, 72f), Hex("#8f64ff"));
+            var menu = CreateNeonButton(card, "RETURN TO MENU", new Vector2(0f, -284f), new Vector2(600f, 92f), Hex("#8fa7c4"));
+            menu.GetComponentInChildren<Text>().fontSize = 26;
             menu.onClick.AddListener(ResetToMenu);
             return root;
         }
@@ -1981,27 +2004,44 @@ new WorldTheme(
         private GameObject CreateGameOverScreen(Transform parent)
         {
             var root = CreateScreen(parent, "Game over screen");
-            CreateFullPanel(root.transform, "Game over dim", new Color(.012f, .006f, .05f, .78f));
-            var card = CreatePanel(root.transform, "Game over card", new Vector2(0f, 16f), new Vector2(820f, 960f), Hex("#11132a"));
-            AddOutline(card.gameObject, Hex("#8f64ff"), 3.5f);
-            CreateText(card, "RUN COMPLETE", new Vector2(0f, 390f), new Vector2(720f, 78f), 48, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            resultNewBestText = CreateText(card, "NEW BEST", new Vector2(0f, 330f), new Vector2(500f, 42f), 25, Hex("#ffc34d"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            resultReasonText = CreateText(card, "GATE IMPACT", new Vector2(0f, 286f), new Vector2(600f, 30f), 16, Hex("#f05bc6"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            resultModeText = CreateText(card, "ENDLESS CYBER ROUTE", new Vector2(0f, 248f), new Vector2(600f, 30f), 16, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            resultScoreText = CreateText(card, "SCORE  0", new Vector2(0f, 190f), new Vector2(600f, 54f), 31, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            resultBestText = CreateText(card, "HIGH SCORE  0", new Vector2(0f, 141f), new Vector2(600f, 46f), 30, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            resultCrystalsText = CreateText(card, "CRYSTALS PICKED UP  ·  0", new Vector2(0f, 88f), new Vector2(660f, 36f), 19, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            resultBonusText = CreateText(card, "SALVAGE CODEC BONUS  ·  +0", new Vector2(0f, 48f), new Vector2(660f, 36f), 18, Hex("#ffc34d"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            resultBalanceText = CreateText(card, "TOTAL BALANCE  ·  0 ✦", new Vector2(0f, 8f), new Vector2(660f, 36f), 19, new Color(.93f, .95f, 1f, .78f), TextAnchor.MiddleCenter, FontStyle.Bold);
-            resultWorldText = CreateText(card, "ROUTE REACHED  ·  NEON CITY", new Vector2(0f, -34f), new Vector2(660f, 36f), 18, Hex("#b17cff"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            var flyAgain = CreateNeonButton(card, "RETRY", new Vector2(0f, -136f), new Vector2(570f, 88f), Hex("#f05bc6"));
+            CreateFullPanel(root.transform, "Game over dim", new Color(.005f, .012f, .04f, .82f));
+            var card = CreatePanel(root.transform, "Game over card", Vector2.zero, new Vector2(820f, 1190f), Hex("#07152b"));
+            AddOutline(card.gameObject, new Color(.27f, .92f, 1f, .66f), 1.5f);
+            CreateText(card, "RUN COMPLETE", new Vector2(0f, 505f), new Vector2(720f, 70f), 48, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            resultModeText = CreateText(card, "ENDLESS ROUTE", new Vector2(0f, 451f), new Vector2(600f, 36f), 24, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            CreateUiGlyph(card, "Result flight horizon", new Vector2(0f, 408f), new Vector2(640f, 24f), new Color(.27f, .92f, 1f, .48f), SkyPulseUiGlyph.Kind.Horizon);
+            CreateText(card, "SCORE", new Vector2(0f, 365f), new Vector2(600f, 36f), 26, Hex("#91adc8"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            resultScoreText = CreateText(card, "0", new Vector2(0f, 289f), new Vector2(650f, 130f), 108, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            resultScoreText.resizeTextForBestFit = true;
+            resultScoreText.resizeTextMinSize = 54;
+            resultScoreText.resizeTextMaxSize = 108;
+            resultBestText = CreateText(card, "PERSONAL BEST  0", new Vector2(0f, 202f), new Vector2(660f, 40f), 28, Hex("#b5c8de"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            resultNewBestText = CreateText(card, "NEW PERSONAL BEST", new Vector2(0f, 153f), new Vector2(620f, 38f), 26, Hex("#ffc34d"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            resultReasonText = CreateText(card, "GATE IMPACT", new Vector2(0f, 106f), new Vector2(620f, 34f), 22, Hex("#e6b4d6"), TextAnchor.MiddleCenter, FontStyle.Normal);
+
+            var rewards = CreatePanel(card, "Run rewards", new Vector2(0f, -38f), new Vector2(680f, 224f), Hex("#0b2137"));
+            rewards.GetComponent<Image>().raycastTarget = false;
+            var rewardIcon = CreateImage(rewards, "Run reward crystal", new Vector2(-271f, 22f), new Vector2(86f, 104f), Color.white);
+            rewardIcon.sprite = LoadSprite(CrystalArtworkPath);
+            rewardIcon.preserveAspect = true;
+            rewardIcon.raycastTarget = false;
+            resultCrystalsText = CreateText(rewards, "RUN CRYSTALS  ·  0", new Vector2(57f, 65f), new Vector2(500f, 42f), 28, Hex("#8eeeff"), TextAnchor.MiddleLeft, FontStyle.Bold);
+            resultBonusText = CreateText(rewards, "TECH REWARD BONUS  ·  +0", new Vector2(57f, 17f), new Vector2(500f, 36f), 24, Hex("#ffc34d"), TextAnchor.MiddleLeft, FontStyle.Normal);
+            var rewardRule = CreateImage(rewards, "Reward balance divider", new Vector2(0f, -20f), new Vector2(604f, 1f), new Color(.27f, .92f, 1f, .24f));
+            rewardRule.raycastTarget = false;
+            resultBalanceText = CreateText(rewards, "TOTAL BALANCE  ·  0", new Vector2(0f, -68f), new Vector2(604f, 42f), 28, Hex("#d6e9f6"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            resultWorldText = CreateText(card, "ROUTE REACHED  ·  NEON CITY", new Vector2(0f, -191f), new Vector2(710f, 38f), 24, Hex("#b5c8de"), TextAnchor.MiddleCenter, FontStyle.Normal);
+            var flyAgain = CreateNeonButton(card, "RETRY", new Vector2(0f, -276f), new Vector2(680f, 108f), Hex("#45eaff"));
             flyAgain.onClick.AddListener(RestartFlight);
-            var hangar = CreateNeonButton(card, "HANGAR", new Vector2(-193f, -246f), new Vector2(260f, 70f), Hex("#45eaff"));
+            var hangar = CreateNeonButton(card, "BIRD HANGAR", new Vector2(-177f, -397f), new Vector2(326f, 100f), Hex("#45eaff"));
+            hangar.GetComponentInChildren<Text>().fontSize = 26;
             hangar.onClick.AddListener(OpenHangar);
-            var upgrades = CreateNeonButton(card, "TECH", new Vector2(96f, -246f), new Vector2(288f, 70f), Hex("#ffc34d"));
+            var upgrades = CreateNeonButton(card, "UPGRADES", new Vector2(177f, -397f), new Vector2(326f, 100f), Hex("#ffc34d"));
+            upgrades.GetComponentInChildren<Text>().fontSize = 26;
             upgrades.onClick.AddListener(OpenUpgrades);
-            var share = CreateNeonButton(card, "SHARE", new Vector2(0f, -336f), new Vector2(570f, 64f), Hex("#8f64ff"));
+            var share = CreateNeonButton(card, "SHARE", new Vector2(0f, -509f), new Vector2(680f, 88f), Hex("#8fa7c4"));
             resultShareText = share.GetComponentInChildren<Text>();
+            resultShareText.fontSize = 26;
             share.onClick.AddListener(CopyRunSummaryToClipboard);
             return root;
         }
@@ -2011,24 +2051,29 @@ new WorldTheme(
             var root = CreateScreen(parent, "Customize screen");
             var startSurface = root.AddComponent<SkyPulseRoundStartSurface>();
             startSurface.StartRound = StartRoundFromCustomize;
-            var veil = CreateFullPanel(root.transform, "Customize veil", new Color(.01f, .006f, .05f, .48f));
+            var veil = CreateFullPanel(root.transform, "Customize veil", new Color(.006f, .012f, .036f, .74f));
             veil.GetComponent<Image>().raycastTarget = true;
-            var back = CreateNeonButton(root.transform, "‹  MENU", new Vector2(-390f, 802f), new Vector2(220f, 68f), Hex("#8f64ff"));
+            var back = CreateNeonButton(root.transform, "‹  MENU", new Vector2(-376f, 802f), new Vector2(220f, 76f), Hex("#8f64ff"));
             back.onClick.AddListener(ResetToMenu);
             customizeCrystalText = CreateCrystalChip(root.transform, new Vector2(365f, 802f), "✦  0", Hex("#45eaff"));
-            customizeTitle = CreateText(root.transform, "BIRD HANGAR", new Vector2(0f, 690f), new Vector2(720f, 80f), 48, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            CreateText(root.transform, "TAP THE BACKGROUND TO FLY  ·  SWIPE TO BROWSE", new Vector2(0f, 638f), new Vector2(800f, 38f), 18, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            CreateUiGlyph(root.transform, "Hangar flight insignia", new Vector2(0f, 800f), new Vector2(190f, 64f), Hex("#45eaff"), SkyPulseUiGlyph.Kind.WingMark);
+            customizeTitle = CreateText(root.transform, "BIRD HANGAR", new Vector2(0f, 701f), new Vector2(880f, 76f), 52, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            customizeSubtitle = CreateText(root.transform, "15 BIRDS · ONE FAIR FLIGHT", new Vector2(0f, 647f), new Vector2(880f, 40f), 27, Hex("#87cde0"), TextAnchor.MiddleCenter, FontStyle.Bold);
 
-            var labels = new[] { "HANGAR", "TECH" };
+            var labels = new[] { "HANGAR", "UPGRADES" };
             var categories = new[] { CosmeticCategory.Birds, CosmeticCategory.Upgrades };
             for (var index = 0; index < labels.Length; index += 1)
             {
-                var tab = CreateNeonButton(root.transform, labels[index], new Vector2(-150 + index * 300f, 560f), new Vector2(276f, 60f), index == 0 ? Hex("#45eaff") : Hex("#ffc34d"));
+                var tab = CreateNeonButton(root.transform, labels[index], new Vector2(-222f + index * 444f, 570f), new Vector2(422f, 76f), index == 0 ? Hex("#45eaff") : Hex("#ffc34d"));
                 var category = categories[index];
                 tab.onClick.AddListener(() => SetCosmeticCategory(category));
+                collectionTabs.Add(tab);
+                var rail = CreateImage(tab.transform, "Selected collection rail", new Vector2(0f, -36f), new Vector2(310f, 4f), Hex("#45eaff"));
+                rail.raycastTarget = false;
+                collectionTabRails.Add(rail);
             }
 
-            var viewport = CreatePanel(root.transform, "Collection viewport", new Vector2(0f, -172f), new Vector2(970f, 1380f), Hex("#070a18"));
+            var viewport = CreatePanel(root.transform, "Collection viewport", new Vector2(0f, -152f), new Vector2(950f, 1280f), new Color(.015f, .027f, .067f, .87f));
             viewport.gameObject.AddComponent<RectMask2D>();
             var scroll = viewport.gameObject.AddComponent<ScrollRect>();
             customizeScroll = scroll;
@@ -2050,15 +2095,11 @@ new WorldTheme(
             customizeContent.anchoredPosition = Vector2.zero;
             scroll.content = customizeContent;
 
-            // The collection already supports a scroll range; make that affordance
-            // visible and draggable so a longer bird roster is discoverable on touch
-            // screens and with a desktop mouse.
-            var scrollTrack = CreatePanel(viewport, "Collection scroll track", new Vector2(464f, 0f), new Vector2(14f, 1240f), new Color(.035f, .07f, .16f, .92f));
+            var scrollTrack = CreatePanel(viewport, "Collection scroll track", new Vector2(462f, 0f), new Vector2(10f, 1192f), new Color(.035f, .07f, .16f, .92f));
             scrollTrack.GetComponent<Image>().raycastTarget = true;
-            AddOutline(scrollTrack.gameObject, new Color(.27f, .86f, 1f, .42f), 1f);
             var scrollbar = scrollTrack.gameObject.AddComponent<Scrollbar>();
             scrollbar.direction = Scrollbar.Direction.BottomToTop;
-            var scrollHandle = CreatePanel(scrollTrack, "Collection scroll handle", Vector2.zero, new Vector2(14f, 112f), Hex("#45eaff"));
+            var scrollHandle = CreatePanel(scrollTrack, "Collection scroll handle", Vector2.zero, new Vector2(10f, 112f), Hex("#45eaff"));
             var handleImage = scrollHandle.GetComponent<Image>();
             handleImage.raycastTarget = true;
             scrollbar.handleRect = scrollHandle;
@@ -2066,6 +2107,7 @@ new WorldTheme(
             scroll.verticalScrollbar = scrollbar;
             scroll.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.AutoHide;
             scroll.verticalNormalizedPosition = 1f;
+            CreateText(root.transform, "SWIPE TO EXPLORE  ·  TAP THE SKY TO FLY", new Vector2(0f, -840f), new Vector2(860f, 42f), 25, Hex("#91aaca"), TextAnchor.MiddleCenter, FontStyle.Bold);
             return root;
         }
 
@@ -2073,24 +2115,37 @@ new WorldTheme(
         {
             var root = CreateScreen(parent, "Bird skin purchase confirmation");
             CreateFullPanel(root.transform, "Purchase dim", new Color(.008f, .004f, .04f, .86f));
-            var card = CreatePanel(root.transform, "Purchase card", new Vector2(0f, 18f), new Vector2(850f, 720f), Hex("#11132a"));
-            AddOutline(card.gameObject, Hex("#45eaff"), 4f);
+            var card = CreatePanel(root.transform, "Purchase card", new Vector2(0f, 18f), new Vector2(850f, 800f), Hex("#08132a"));
+            AddOutline(card.gameObject, new Color(.27f, .92f, 1f, .48f), 1.5f);
+            CreateUiGlyph(card, "Acquisition wing", new Vector2(0f, 352f), new Vector2(55f, 36f), Hex("#45eaff"), SkyPulseUiGlyph.Kind.WingMark);
+            CreateUiGlyph(card, "Acquisition dock", new Vector2(0f, 128f), new Vector2(580f, 250f), new Color(.27f, .92f, 1f, .65f), SkyPulseUiGlyph.Kind.DockRing).Animate = true;
+            CreateUiGlyph(card, "Acquisition runway", new Vector2(0f, -190f), new Vector2(640f, 32f), new Color(.27f, .92f, 1f, .48f), SkyPulseUiGlyph.Kind.Horizon);
             purchaseHalo = CreateImage(card, "Purchase focus ring", new Vector2(0f, 128f), new Vector2(340f, 340f), new Color(.27f, .92f, 1f, .20f));
             purchaseHalo.sprite = ringSprite;
             purchaseHalo.raycastTarget = false;
-            purchasePreviewImage = CreateImage(card, "Bird skin preview", new Vector2(0f, 128f), new Vector2(355f, 220f), Color.white);
+            purchasePreviewImage = CreateImage(card, "Bird skin preview", new Vector2(0f, 128f), new Vector2(465f, 248f), Color.white);
             purchasePreviewImage.preserveAspect = true;
             purchasePreviewImage.raycastTarget = false;
+            purchaseUpgradeGlyph = CreateUiGlyph(card, "Upgrade branch emblem", new Vector2(0f, 128f), new Vector2(132f, 124f),
+                Hex("#45eaff"), SkyPulseUiGlyph.Kind.WingMark);
+            purchaseUpgradeGlyph.gameObject.SetActive(false);
             purchaseTitleText = CreateText(card, "UNLOCK BIRD?", new Vector2(0f, 278f), new Vector2(710f, 52f), 35, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             purchaseTitleText.resizeTextForBestFit = true;
             purchaseTitleText.resizeTextMinSize = 24;
             purchaseTitleText.resizeTextMaxSize = 35;
             purchaseDetailText = CreateText(card, "", new Vector2(0f, -38f), new Vector2(740f, 100f), 24, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            purchaseDetailText.horizontalOverflow = HorizontalWrapMode.Wrap;
+            purchaseDetailText.resizeTextForBestFit = true;
+            purchaseDetailText.resizeTextMinSize = 21;
+            purchaseDetailText.resizeTextMaxSize = 24;
             purchaseBalanceText = CreateText(card, "", new Vector2(0f, -120f), new Vector2(760f, 52f), 19, new Color(.9f, .94f, 1f, .72f), TextAnchor.MiddleCenter, FontStyle.Bold);
-            var cancel = CreateNeonButton(card, "CANCEL", new Vector2(-190f, -250f), new Vector2(330f, 78f), Hex("#8f64ff"));
+            var cancel = CreateNeonButton(card, "CANCEL", new Vector2(-190f, -294f), new Vector2(330f, 84f), Hex("#8f64ff"));
             cancel.onClick.AddListener(ClosePurchaseModal);
-            purchaseConfirmButton = CreateNeonButton(card, "UNLOCK", new Vector2(190f, -250f), new Vector2(330f, 78f), Hex("#45eaff"));
+            purchaseConfirmButton = CreateNeonButton(card, "UNLOCK", new Vector2(190f, -294f), new Vector2(330f, 84f), Hex("#45eaff"));
             purchaseConfirmText = purchaseConfirmButton.GetComponentInChildren<Text>();
+            purchaseConfirmText.resizeTextForBestFit = true;
+            purchaseConfirmText.resizeTextMinSize = 18;
+            purchaseConfirmText.resizeTextMaxSize = 22;
             purchaseConfirmButton.onClick.AddListener(ConfirmPurchase);
             return root;
         }
@@ -2099,8 +2154,12 @@ new WorldTheme(
         {
             var root = CreateScreen(parent, "Bird unlock reveal");
             CreateFullPanel(root.transform, "Unlock reveal dim", new Color(.005f, .004f, .026f, .92f));
-            unlockRevealCard = CreatePanel(root.transform, "Unlock reveal card", new Vector2(0f, 22f), new Vector2(900f, 920f), Hex("#10142b"));
-            AddOutline(unlockRevealCard.gameObject, Hex("#45eaff"), 4f);
+            unlockRevealCard = CreatePanel(root.transform, "Unlock reveal card", new Vector2(0f, 22f), new Vector2(900f, 920f), Hex("#08132a"));
+            AddOutline(unlockRevealCard.gameObject, new Color(.27f, .92f, 1f, .42f), 1.5f);
+            CreateUiGlyph(unlockRevealCard, "New flight dock", new Vector2(0f, 80f), new Vector2(780f, 420f), new Color(.27f, .92f, 1f, .66f), SkyPulseUiGlyph.Kind.DockRing).Animate = true;
+            CreateUiGlyph(unlockRevealCard, "New flight runway", new Vector2(0f, -210f), new Vector2(720f, 48f), Hex("#45eaff"), SkyPulseUiGlyph.Kind.Horizon);
+            CreateUiGlyph(unlockRevealCard, "New flight wing port", new Vector2(-360f, 390f), new Vector2(50f, 42f), Hex("#45eaff"), SkyPulseUiGlyph.Kind.WingMark);
+            CreateUiGlyph(unlockRevealCard, "New flight wing starboard", new Vector2(360f, 390f), new Vector2(50f, 42f), Hex("#45eaff"), SkyPulseUiGlyph.Kind.WingMark);
 
             unlockRevealFlash = CreateImage(unlockRevealCard, "Unlock flare", new Vector2(0f, 150f), new Vector2(720f, 720f), Color.clear);
             unlockRevealFlash.sprite = softCircleSprite;
@@ -2513,7 +2572,9 @@ new WorldTheme(
             }
             if (menuTitleText != null)
             {
-                menuTitleText.rectTransform.localScale = Vector3.one * (1f + Mathf.Sin(ambientTime * 2.1f) * .006f);
+                menuTitleText.rectTransform.localScale = reduceMotionEnabled
+                    ? Vector3.one
+                    : Vector3.one * (1f + Mathf.Sin(ambientTime * 2.1f) * .006f);
             }
         }
 
@@ -4705,12 +4766,12 @@ new WorldTheme(
             TriggerFlightFeedback(Hex("#f05bc6"), .36f);
             PulseHaptic(.28f);
             Play(crashSound);
-            resultScoreText.text = $"SCORE  {score}";
-            resultBestText.text = $"HIGH SCORE  {best}";
+            resultScoreText.text = score.ToString();
+            resultBestText.text = $"PERSONAL BEST  {best}";
             if (resultReasonText != null) resultReasonText.text = lastCrashReason;
             if (resultModeText != null)
             {
-                resultModeText.text = "ENDLESS CYBER ROUTE";
+                resultModeText.text = "ENDLESS ROUTE";
                 resultModeText.color = routeWorld == null ? Hex("#45eaff") : routeWorld.Accent;
             }
             resultNewBestText.gameObject.SetActive(newBest);
@@ -4839,6 +4900,7 @@ new WorldTheme(
             if (customizeScroll != null) customizeScroll.StopMovement();
             for (var index = customizeContent.childCount - 1; index >= 0; index -= 1) Destroy(customizeContent.GetChild(index).gameObject);
 
+            RefreshCollectionNavigation();
             switch (cosmeticCategory)
             {
                 case CosmeticCategory.Birds:
@@ -4880,52 +4942,75 @@ new WorldTheme(
             }
         }
 
+        private void RefreshCollectionNavigation()
+        {
+            var tech = cosmeticCategory == CosmeticCategory.Upgrades;
+            var accent = tech ? Hex("#ffc34d") : Hex("#45eaff");
+            var owned = 0;
+            foreach (var skin in Skins) if (IsSkinOwned(skin)) owned++;
+            if (customizeSubtitle != null)
+                customizeSubtitle.text = tech ? "EARN CRYSTALS · POWER YOUR COLLECTION" : $"{owned} / {Skins.Length} BIRDS UNLOCKED · FIND YOUR SIGNATURE";
+            for (var index = 0; index < collectionTabs.Count; index++)
+            {
+                var selected = tech ? index == 1 : index == 0;
+                var tab = collectionTabs[index];
+                tab.targetGraphic.color = selected ? Color.Lerp(Hex("#081428"), accent, .25f) : Hex("#071022");
+                var label = tab.GetComponentInChildren<Text>();
+                if (label != null) label.color = selected ? Hex("#f4fbff") : Hex("#8da5c4");
+                collectionTabRails[index].color = new Color(accent.r, accent.g, accent.b, selected ? 1f : .08f);
+            }
+        }
+
         private void BuildTechTree()
         {
-            CreateTopAnchoredText("BUILD YOUR FLIGHT LEGACY", -16f, 30, Hex("#f4fbff"), FontStyle.Bold);
             var installed = 0;
-            foreach (var upgrade in Upgrades) installed += GetUpgradeLevel(upgrade.Id);
-            CreateTopAnchoredText($"{installed} / 27 LEVELS  ·  TAP A NODE TO EXPLORE", -62f, 21, Hex("#cad8ee"), FontStyle.Bold);
+            var capacity = 0;
+            foreach (var upgrade in Upgrades) { installed += GetUpgradeLevel(upgrade.Id); capacity += upgrade.MaxLevel; }
+            var core = CreatePanel(customizeContent, "Tech network core", new Vector2(0f, -90f), new Vector2(880f, 136f), Hex("#0b1b32"));
+            core.anchorMin = core.anchorMax = new Vector2(.5f, 1f);
+            core.GetComponent<Image>().raycastTarget = false;
+            CreateUiGlyph(core, "Core reactor", new Vector2(-338f, 0f), new Vector2(106f, 106f), Hex("#45eaff"), SkyPulseUiGlyph.Kind.CircuitHex).Animate = true;
+            CreateUiGlyph(core, "Core wings", new Vector2(-338f, 0f), new Vector2(67f, 37f), Hex("#45eaff"), SkyPulseUiGlyph.Kind.WingMark);
+            CreateText(core, "SKYPULSE CORE", new Vector2(30f, 27f), new Vector2(612f, 43f), 34, Hex("#f4fbff"), TextAnchor.MiddleLeft, FontStyle.Bold);
+            CreateText(core, $"{installed} / {capacity} LEVELS INSTALLED", new Vector2(30f, -18f), new Vector2(612f, 38f), 25, Hex("#45eaff"), TextAnchor.MiddleLeft, FontStyle.Bold);
+            CreateTopAnchoredText("THREE CONNECTED PATHS · UPGRADES USE EARNED CRYSTALS", -175f, 21, Hex("#9eb6d1"), FontStyle.Bold);
             var branches = new[] { "COLLECTION", "RECOVERY", "MASTERY" };
+            var subtitles = new[] { "Pickup reach & crystal value", "Rewards that keep you flying", "Turn precision into crystals" };
             var colours = new[] { Hex("#45eaff"), Hex("#ffc34d"), Hex("#b17cff") };
-
-            // Draw the circuit first so nodes sit above their connections.
+            // Each path is a full-width flight circuit. A thumb can inspect long
+            // upgrade names and prerequisites without squeezing three text columns.
             for (var branchIndex = 0; branchIndex < branches.Length; branchIndex++)
             {
-                var x = (branchIndex - 1) * 292f;
+                var headerY = -282f - branchIndex * 920f;
                 var colour = colours[branchIndex];
-                CreateTechPath(new Vector2(0f, -230f), new Vector2(x, -308f), colour, true);
-                CreateTechPath(new Vector2(x, -308f), new Vector2(x, -390f), colour, true);
+                var progress = 0;
+                var branchCapacity = 0;
+                foreach (var upgrade in Upgrades)
+                    if (upgrade.Branch == branches[branchIndex]) { progress += GetUpgradeLevel(upgrade.Id); branchCapacity += upgrade.MaxLevel; }
+                var branchGlyph = CreateUiGlyph(customizeContent, branches[branchIndex] + " branch emblem", new Vector2(-384f, headerY), new Vector2(92f, 92f), colour, SkyPulseUiGlyph.Kind.CircuitHex);
+                branchGlyph.rectTransform.anchorMin = branchGlyph.rectTransform.anchorMax = new Vector2(.5f, 1f);
+                var number = CreateText(customizeContent, $"0{branchIndex + 1}", new Vector2(-384f, headerY), new Vector2(80f, 50f), 29, colour, TextAnchor.MiddleCenter, FontStyle.Bold);
+                number.rectTransform.anchorMin = number.rectTransform.anchorMax = new Vector2(.5f, 1f);
+                var label = CreateText(customizeContent, branches[branchIndex], new Vector2(-30f, headerY + 20f), new Vector2(566f, 42f), 34, colour, TextAnchor.MiddleLeft, FontStyle.Bold);
+                label.rectTransform.anchorMin = label.rectTransform.anchorMax = new Vector2(.5f, 1f);
+                var subtitle = CreateText(customizeContent, subtitles[branchIndex], new Vector2(-30f, headerY - 23f), new Vector2(566f, 36f), 24, Hex("#afc0d9"), TextAnchor.MiddleLeft, FontStyle.Normal);
+                subtitle.rectTransform.anchorMin = subtitle.rectTransform.anchorMax = new Vector2(.5f, 1f);
+                var progressLabel = CreateText(customizeContent, $"{progress}/{branchCapacity}", new Vector2(360f, headerY + 12f), new Vector2(138f, 48f), 32, colour, TextAnchor.MiddleRight, FontStyle.Bold);
+                progressLabel.rectTransform.anchorMin = progressLabel.rectTransform.anchorMax = new Vector2(.5f, 1f);
                 foreach (var upgrade in Upgrades)
                 {
                     if (upgrade.Branch != branches[branchIndex]) continue;
-                    var y = -500f - (upgrade.Tier - 1) * 350f;
-                    if (upgrade.Tier > 1)
-                        CreateTechPath(new Vector2(x, y + 240f), new Vector2(x, y + 110f), colour, IsUpgradePrerequisiteMet(upgrade));
+                    var y = headerY - 158f - (upgrade.Tier - 1) * 232f;
+                    var powered = IsUpgradePrerequisiteMet(upgrade);
+                    CreateTechPath(new Vector2(-410f, upgrade.Tier == 1 ? headerY - 48f : y + 232f), new Vector2(-410f, y), colour, powered);
+                    CreateTechPath(new Vector2(-410f, y), new Vector2(-348f, y), colour, powered);
+                    var junction = CreateUiGlyph(customizeContent, "Circuit tier junction", new Vector2(-410f, y), new Vector2(30f, 30f), new Color(colour.r, colour.g, colour.b, powered ? 1f : .34f), SkyPulseUiGlyph.Kind.CircuitHex);
+                    junction.rectTransform.anchorMin = junction.rectTransform.anchorMax = new Vector2(.5f, 1f);
+                    CreateTechMapNode(upgrade, new Vector2(42f, y), colour);
                 }
             }
-            var core = CreatePanel(customizeContent, "Tech network core", new Vector2(0f, -190f), new Vector2(300f, 100f), Hex("#12263c"));
-            core.anchorMin = core.anchorMax = new Vector2(.5f, 1f);
-            core.GetComponent<Image>().raycastTarget = false;
-            AddOutline(core.gameObject, Hex("#45eaff"), 2f);
-            CreateText(core, "SKYPULSE CORE", new Vector2(0f, 14f), new Vector2(280f, 40f), 27, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            CreateText(core, "THREE PATHS · ONE FLOCK", new Vector2(0f, -24f), new Vector2(280f, 28f), 17, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
-
-            for (var branchIndex = 0; branchIndex < branches.Length; branchIndex++)
-            {
-                var x = (branchIndex - 1) * 292f;
-                var colour = colours[branchIndex];
-                var progress = 0;
-                foreach (var upgrade in Upgrades)
-                    if (upgrade.Branch == branches[branchIndex]) progress += GetUpgradeLevel(upgrade.Id);
-                var label = CreateText(customizeContent, $"{branches[branchIndex]}  {progress}/9", new Vector2(x, -345f), new Vector2(274f, 40f), 22, colour, TextAnchor.MiddleCenter, FontStyle.Bold);
-                label.rectTransform.anchorMin = label.rectTransform.anchorMax = new Vector2(.5f, 1f);
-                foreach (var upgrade in Upgrades)
-                    if (upgrade.Branch == branches[branchIndex])
-                        CreateTechMapNode(upgrade, new Vector2(x, -500f - (upgrade.Tier - 1) * 350f), colour);
-            }
-            CreateTopAnchoredText("REACH LEVEL 2 TO POWER THE NEXT NODE", -1400f, 22, Hex("#cad8ee"), FontStyle.Bold);
-            customizeContent.sizeDelta = new Vector2(0f, 1490f);
+            CreateTopAnchoredText("LEVEL 2 CONNECTS THE NEXT NODE IN EACH PATH", -2880f, 23, Hex("#cad8ee"), FontStyle.Bold);
+            customizeContent.sizeDelta = new Vector2(0f, 2970f);
             customizeContent.anchoredPosition = Vector2.zero;
         }
 
@@ -4949,28 +5034,44 @@ new WorldTheme(
             var maxed = level >= upgrade.MaxLevel;
             var unlocked = IsUpgradePrerequisiteMet(upgrade);
             var affordable = unlocked && !maxed && crystals >= upgrade.PriceAtLevel(level);
-            var node = CreatePanel(customizeContent, $"{upgrade.Name} tech node", position, new Vector2(260f, 220f),
-                Color.Lerp(Hex("#0a1124"), colour, level > 0 ? .15f : .045f));
+            var node = CreatePanel(customizeContent, $"{upgrade.Name} tech node", position, new Vector2(772f, 204f),
+                Color.Lerp(Hex("#081224"), colour, level > 0 ? .13f : .025f));
             node.anchorMin = node.anchorMax = new Vector2(.5f, 1f);
-            AddOutline(node.gameObject, new Color(colour.r, colour.g, colour.b, unlocked ? .8f : .28f), maxed ? 2.5f : 1.5f);
+            AddOutline(node.gameObject, new Color(colour.r, colour.g, colour.b, unlocked ? .72f : .24f), maxed ? 2.4f : 1.2f);
             var button = node.gameObject.AddComponent<Button>();
             button.targetGraphic = node.GetComponent<Image>();
             button.onClick.AddListener(() => InspectTechNode(upgrade));
-            var buttonColours = button.colors;
-            buttonColours.pressedColor = new Color(.60f, .72f, .86f);
-            button.colors = buttonColours;
-            var icon = CreateImage(node, "Tech emblem", new Vector2(0f, 65f), new Vector2(54f, 54f), Color.white);
-            icon.sprite = GetUpgradeArtwork(upgrade) ?? softCircleSprite;
-            icon.preserveAspect = true;
-            icon.raycastTarget = false;
-            CreateText(node, upgrade.Name.Replace(" ", "\n"), new Vector2(0f, 6f), new Vector2(244f, 62f), 24, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            node.gameObject.AddComponent<SkyPulseButtonFeedback>();
+            var emblemColour = new Color(colour.r, colour.g, colour.b, unlocked ? .78f : .26f);
+            CreateUiGlyph(node, "Tech socket", new Vector2(-308f, 25f), new Vector2(112f, 112f), emblemColour, SkyPulseUiGlyph.Kind.CircuitHex);
+            if (upgrade.Branch == "COLLECTION")
+            {
+                var icon = CreateImage(node, "Crystal collection emblem", new Vector2(-308f, 25f), new Vector2(70f, 94f), unlocked ? Color.white : new Color(.43f, .51f, .65f, .78f));
+                icon.sprite = LoadSprite(CrystalArtworkPath) ?? softCircleSprite;
+                icon.preserveAspect = true;
+                icon.raycastTarget = false;
+            }
+            else
+            {
+                var kind = upgrade.Branch == "RECOVERY" ? SkyPulseUiGlyph.Kind.RecoveryCore : SkyPulseUiGlyph.Kind.WingMark;
+                var size = upgrade.Branch == "RECOVERY" ? new Vector2(70f, 70f) : new Vector2(70f, 60f);
+                CreateUiGlyph(node, upgrade.Branch + " tech emblem", new Vector2(-308f, 25f), size,
+                    new Color(colour.r, colour.g, colour.b, unlocked ? 1f : .40f), kind);
+            }
+            CreateText(node, upgrade.Name, new Vector2(63f, 60f), new Vector2(563f, 44f), 31, unlocked ? Hex("#f4fbff") : Hex("#a8b9d2"), TextAnchor.MiddleLeft, FontStyle.Bold);
+            var effect = maxed ? upgrade.EffectAtLevel(level - 1) : upgrade.EffectAtLevel(level);
+            var detail = CreateText(node, effect, new Vector2(63f, 8f), new Vector2(563f, 60f), 27, Hex("#a9bfd9"), TextAnchor.MiddleLeft, FontStyle.Normal);
+            detail.horizontalOverflow = HorizontalWrapMode.Wrap;
             for (var i = 0; i < upgrade.MaxLevel; i++)
             {
-                var pip = CreateImage(node, $"Tech level pip {i + 1}", new Vector2((i - 1) * 54f, -42f), new Vector2(40f, 7f), i < level ? colour : Hex("#34415c"));
-                pip.raycastTarget = false;
+                var pip = CreatePanel(node, $"Tech level pip {i + 1}", new Vector2(-340f + i * 32f, -59f), new Vector2(24f, 10f), i < level ? colour : Hex("#283b54"));
+                pip.GetComponent<Image>().raycastTarget = false;
             }
-            var status = maxed ? "MAX LEVEL" : !unlocked ? $"NEEDS T{upgrade.Tier - 1} · LV 2" : affordable ? $"UPGRADE · {upgrade.PriceAtLevel(level)} ✦" : $"{upgrade.PriceAtLevel(level)} ✦";
-            CreateText(node, status, new Vector2(0f, -79f), new Vector2(246f, 40f), 20, unlocked ? colour : Hex("#adbdd3"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            CreateText(node, $"{level}/{upgrade.MaxLevel}", new Vector2(-198f, -59f), new Vector2(80f, 32f), 24, colour, TextAnchor.MiddleLeft, FontStyle.Bold);
+            var prerequisite = FindById(Upgrades, upgrade.PrerequisiteId);
+            var status = maxed ? "FULLY POWERED" : !unlocked ? $"{prerequisite?.Name} · LV {upgrade.PrerequisiteLevel} REQUIRED" : affordable ? $"UPGRADE · {upgrade.PriceAtLevel(level)} ✦" : $"{upgrade.PriceAtLevel(level)} ✦ · EARN CRYSTALS TO UPGRADE";
+            var statusLabel = CreateText(node, status, new Vector2(92f, -64f), new Vector2(494f, 54f), unlocked ? 26 : 24, maxed || affordable ? colour : Hex("#9eafc8"), TextAnchor.MiddleRight, FontStyle.Bold);
+            statusLabel.horizontalOverflow = HorizontalWrapMode.Wrap;
         }
 
         private void InspectTechNode(Upgrade upgrade)
@@ -4995,6 +5096,7 @@ new WorldTheme(
                 purchaseBalanceText.text = maxed ? "ALL THREE LEVELS ACTIVE" : $"Requires {prerequisite?.Name} · level {upgrade.PrerequisiteLevel}";
             }
             var active = level > 0 ? upgrade.EffectAtLevel(level - 1) : "Not installed";
+            SetPurchaseUpgradeArtwork(upgrade);
             purchaseDetailText.text = maxed ? $"ACTIVE · {active}" : $"ACTIVE · {active}\nNEXT · {upgrade.EffectAtLevel(level)}";
         }
 
@@ -5016,301 +5118,102 @@ new WorldTheme(
         }
         private void SetBirdHangarContentHeight(int count)
         {
-            var rows = Mathf.CeilToInt(count / 3f);
-
-            customizeContent.sizeDelta =
-                new Vector2(
-                    0f,
-                    Mathf.Max(1980f, rows * BirdHangarRowStride + 430f));
-
+            var rows = Mathf.CeilToInt(count / 2f);
+            customizeContent.sizeDelta = new Vector2(0f, 290f + rows * BirdHangarRowStride + 32f);
             customizeContent.anchoredPosition = Vector2.zero;
         }
 
         private void CreateBirdHangarCard(int index, Skin skin)
         {
-            var column = index % 3;
-            var row = index / 3;
-
+            var column = index % 2;
+            var row = index / 2;
             var owned = IsSkinOwned(skin);
             var equipped = equippedSkin != null && equippedSkin.Id == skin.Id;
             var profile = GetBirdHangarProfile(skin);
-
-            var x = (column - 1) * BirdHangarColumnStride;
-            var y = -18f - row * BirdHangarRowStride;
-
-            var background = Color.Lerp(
-                Hex("#070d20"),
-                skin.Accent,
-                equipped ? .14f : .045f);
-
-            var card = CreatePanel(
-                customizeContent,
-                $"{skin.Name} hangar card",
-                new Vector2(x, y),
+            var light = equipped ? Hex("#45eaff") : skin.Accent;
+            var card = CreatePanel(customizeContent, $"{skin.Name} hangar card",
+                new Vector2((column - .5f) * BirdHangarColumnStride, -278f - row * BirdHangarRowStride),
                 new Vector2(BirdHangarCardWidth, BirdHangarCardHeight),
-                background);
-
-            card.anchorMin = new Vector2(.5f, 1f);
-            card.anchorMax = new Vector2(.5f, 1f);
+                new Color(.018f, .040f, .080f, equipped ? .42f : owned ? .22f : .12f));
+            card.anchorMin = card.anchorMax = new Vector2(.5f, 1f);
             card.pivot = new Vector2(.5f, 1f);
-
-            AddOutline(
-                card.gameObject,
-                equipped
-                    ? skin.Accent
-                    : new Color(
-                        skin.Accent.r,
-                        skin.Accent.g,
-                        skin.Accent.b,
-                        .68f),
-                equipped ? 3f : 1.4f);
-
+            if (equipped) AddOutline(card.gameObject, new Color(light.r, light.g, light.b, .42f), 1.2f);
             var button = card.gameObject.AddComponent<Button>();
             button.targetGraphic = card.GetComponent<Image>();
             button.onClick.AddListener(() => SelectSkin(skin));
-
             card.gameObject.AddComponent<SkyPulseButtonFeedback>();
-
-            var preview = CreateImage(
-                card,
-                "Bird preview",
-                new Vector2(0f, 35f),
-                new Vector2(250f, 188f),
-                Color.white);
-
-            preview.sprite = LoadSprite(skin.ArtPath);
+            var platform = CreateUiGlyph(card, "Signature bird docking platform", new Vector2(0f, 22f), new Vector2(392f, 242f),
+                new Color(skin.Accent.r, skin.Accent.g, skin.Accent.b, owned ? .80f : .42f), SkyPulseUiGlyph.Kind.DockPlatform);
+            platform.Variant = DockVariantFor(skin);
+            var ring = CreateUiGlyph(card, "Bird docking scanner", new Vector2(0f, 19f), new Vector2(359f, 224f),
+                new Color(light.r, light.g, light.b, equipped ? .58f : owned ? .26f : .13f), SkyPulseUiGlyph.Kind.DockRing);
+            ring.Animate = equipped;
+            CreateUiGlyph(card, "Dock runway", new Vector2(0f, -78f), new Vector2(332f, 70f),
+                new Color(light.r, light.g, light.b, equipped ? .6f : .2f), SkyPulseUiGlyph.Kind.Horizon);
+            CreateText(card, $"BAY {index + 1:00}", new Vector2(-120f, 165f), new Vector2(146f, 30f), 21, Hex("#6985a4"), TextAnchor.MiddleLeft, FontStyle.Bold);
+            CreateText(card, equipped ? "EQUIPPED" : owned ? "READY" : "LOCKED", new Vector2(107f, 165f), new Vector2(174f, 36f), 24,
+                equipped ? Hex("#45eaff") : owned ? Hex("#b2d1df") : Hex("#7b8ba7"), TextAnchor.MiddleRight, FontStyle.Bold);
+            var preview = CreateImage(card, "Bird preview", new Vector2(0f, 39f), new Vector2(366f, 216f),
+                owned ? Color.white : new Color(.48f, .56f, .72f, .76f));
+            preview.sprite = LoadPresentationPose(skin.UnlockPath) ?? LoadSprite(skin.ArtPath);
             preview.preserveAspect = true;
             preview.raycastTarget = false;
-
-            if (!owned)
-            {
-                preview.color = new Color(.17f, .20f, .38f, .72f);
-
-                var lockVeil = CreatePanel(
-                    card,
-                    "Locked bird veil",
-                    new Vector2(0f, 35f),
-                    new Vector2(254f, 190f),
-                    new Color(.015f, .012f, .07f, .58f));
-
-                lockVeil.GetComponent<Image>().raycastTarget = false;
-
-                var locked = CreateText(
-                    lockVeil,
-                    "LOCKED",
-                    Vector2.zero,
-                    new Vector2(210f, 42f),
-                    22,
-                    new Color(.86f, .90f, 1f, .82f),
-                    TextAnchor.MiddleCenter,
-                    FontStyle.Bold);
-
-                locked.raycastTarget = false;
-            }
-
-            var name = CreateText(
-                card,
-                skin.Name,
-                new Vector2(0f, -79f),
-                new Vector2(270f, 38f),
-                23,
-                Hex("#f4fbff"),
-                TextAnchor.MiddleCenter,
-                FontStyle.Bold);
-
+            var name = CreateText(card, skin.Name, new Vector2(0f, -104f), new Vector2(396f, 48f), 31, owned ? Hex("#f4fbff") : Hex("#b9c7de"), TextAnchor.MiddleCenter, FontStyle.Bold);
             name.resizeTextForBestFit = true;
-            name.resizeTextMinSize = 16;
-            name.resizeTextMaxSize = 23;
-            name.raycastTarget = false;
-
-            var rarity = CreateText(
-                card,
-                profile.Rarity,
-                new Vector2(0f, -111f),
-                new Vector2(250f, 26f),
-                17,
-                profile.RarityColour,
-                TextAnchor.MiddleCenter,
-                FontStyle.Bold);
-
-            rarity.raycastTarget = false;
-
-            var statusColour = equipped
-                ? skin.Accent
-                : owned
-                    ? new Color(.80f, .88f, 1f, .74f)
-                    : Hex("#ffc34d");
-
-            var status = equipped
-                ? "EQUIPPED"
-                : owned
-                    ? "TAP TO EQUIP"
-                    : $"UNLOCK · {skin.Price} ✦";
-
-            var statusPanel = CreatePanel(
-                card,
-                "Bird status",
-                new Vector2(0f, -144f),
-                new Vector2(252f, 30f),
-                new Color(.015f, .03f, .09f, .94f));
-
-            statusPanel.GetComponent<Image>().raycastTarget = false;
-
-            AddOutline(
-                statusPanel.gameObject,
-                new Color(
-                    statusColour.r,
-                    statusColour.g,
-                    statusColour.b,
-                    .60f),
-                equipped ? 1.4f : .8f);
-
-            var statusText = CreateText(
-                statusPanel,
-                status,
-                Vector2.zero,
-                new Vector2(238f, 27f),
-                15,
-                statusColour,
-                TextAnchor.MiddleCenter,
-                FontStyle.Bold);
-
-            statusText.resizeTextForBestFit = true;
-            statusText.resizeTextMinSize = 11;
-            statusText.resizeTextMaxSize = 15;
-            statusText.raycastTarget = false;
+            name.resizeTextMinSize = 26;
+            name.resizeTextMaxSize = 31;
+            CreateText(card, profile.Rarity, new Vector2(-85f, -156f), new Vector2(220f, 36f), 24,
+                new Color(profile.RarityColour.r, profile.RarityColour.g, profile.RarityColour.b, owned ? .95f : .65f), TextAnchor.MiddleLeft, FontStyle.Bold);
+            var status = equipped ? "ACTIVE" : owned ? "EQUIP ›" : $"{skin.Price:N0} ✦";
+            CreateText(card, status, new Vector2(118f, -156f), new Vector2(164f, 36f), 28,
+                equipped ? Hex("#45eaff") : owned ? Hex("#dcefff") : Hex("#cbd7e8"), TextAnchor.MiddleRight, FontStyle.Bold);
         }
+
         private void CreateBirdHangarDetailPanel(Skin skin)
         {
             if (skin == null) return;
-
-            var rows = Mathf.CeilToInt(Skins.Length / 3f);
-            var topY = -24f - rows * BirdHangarRowStride;
-
-            var profile = GetBirdHangarProfile(skin);
-
-            var panel = CreatePanel(
-                customizeContent,
-                "Equipped bird profile",
-                new Vector2(0f, topY),
-                new Vector2(920f, 320f),
-                new Color(.018f, .035f, .10f, .96f));
-
-            panel.anchorMin = new Vector2(.5f, 1f);
-            panel.anchorMax = new Vector2(.5f, 1f);
+            var panel = CreatePanel(customizeContent, "Equipped bird profile", new Vector2(0f, -20f), new Vector2(888f, 226f), new Color(.018f, .055f, .09f, .46f));
+            panel.anchorMin = panel.anchorMax = new Vector2(.5f, 1f);
             panel.pivot = new Vector2(.5f, 1f);
-
-            AddOutline(panel.gameObject, skin.Accent, 1.7f);
-
-            var preview = CreateImage(
-                panel,
-                "Equipped bird portrait",
-                new Vector2(-348f, 42f),
-                new Vector2(180f, 150f),
-                Color.white);
-
-            preview.sprite = LoadSprite(skin.ArtPath);
+            var platform = CreateUiGlyph(panel, "Equipped signature docking platform", new Vector2(-290f, 0f), new Vector2(285f, 196f),
+                new Color(skin.Accent.r, skin.Accent.g, skin.Accent.b, .86f), SkyPulseUiGlyph.Kind.DockPlatform);
+            platform.Variant = DockVariantFor(skin);
+            CreateUiGlyph(panel, "Equipped flight dock", new Vector2(-290f, 0f), new Vector2(260f, 180f), new Color(.27f, .92f, 1f, .42f), SkyPulseUiGlyph.Kind.DockRing).Animate = true;
+            var preview = CreateImage(panel, "Equipped bird portrait", new Vector2(-289f, 4f), new Vector2(240f, 177f), Color.white);
+            preview.sprite = LoadPresentationPose(skin.UnlockPath) ?? LoadSprite(skin.ArtPath);
             preview.preserveAspect = true;
             preview.raycastTarget = false;
-
-            var name = CreateText(
-                panel,
-                skin.Name,
-                new Vector2(-220f, 70f),
-                new Vector2(500f, 48f),
-                30,
-                Hex("#f4fbff"),
-                TextAnchor.MiddleLeft,
-                FontStyle.Bold);
-
+            CreateText(panel, "ACTIVE FLIGHT SIGNATURE", new Vector2(122f, 74f), new Vector2(524f, 33f), 21, Hex("#45eaff"), TextAnchor.MiddleLeft, FontStyle.Bold);
+            var name = CreateText(panel, skin.Name, new Vector2(122f, 25f), new Vector2(524f, 53f), 34, Hex("#f4fbff"), TextAnchor.MiddleLeft, FontStyle.Bold);
             name.resizeTextForBestFit = true;
-            name.resizeTextMinSize = 20;
-            name.resizeTextMaxSize = 30;
-            name.raycastTarget = false;
-
-            CreateText(
-                panel,
-                profile.Rarity,
-                new Vector2(-220f, 33f),
-                new Vector2(500f, 30f),
-                18,
-                profile.RarityColour,
-                TextAnchor.MiddleLeft,
-                FontStyle.Bold).raycastTarget = false;
-
-            CreateText(
-                panel,
-                profile.Description,
-                new Vector2(-220f, -10f),
-                new Vector2(500f, 58f),
-                18,
-                new Color(.79f, .88f, 1f, .82f),
-                TextAnchor.MiddleLeft,
-                FontStyle.Normal).raycastTarget = false;
-
-            CreateBirdProfileStat(
-                panel,
-                "SPEED",
-                profile.Speed,
-                -285f,
-                skin.Accent);
-
-            CreateBirdProfileStat(
-                panel,
-                "MANEUVERABILITY",
-                profile.Maneuverability,
-                0f,
-                skin.Accent);
-
-            CreateBirdProfileStat(
-                panel,
-                "STABILITY",
-                profile.Stability,
-                285f,
-                skin.Accent);
-
-            CreateText(
-                panel,
-                "HANGAR PROFILE · SHARED FAIR FLIGHT RULES",
-                new Vector2(0f, -137f),
-                new Vector2(820f, 28f),
-                13,
-                new Color(.66f, .76f, .92f, .55f),
-                TextAnchor.MiddleCenter,
-                FontStyle.Bold).raycastTarget = false;
+            name.resizeTextMinSize = 28;
+            name.resizeTextMaxSize = 34;
+            CreateText(panel, "Your bird. Your neon signature.", new Vector2(122f, -25f), new Vector2(524f, 40f), 24, Hex("#adc6dd"), TextAnchor.MiddleLeft, FontStyle.Normal);
+            CreateText(panel, "SHARED HANDLING · EVERY BIRD", new Vector2(122f, -75f), new Vector2(524f, 38f), 24, Hex("#7d9cb8"), TextAnchor.MiddleLeft, FontStyle.Bold);
         }
 
-        private void CreateBirdProfileStat(
-            RectTransform parent,
-            string label,
-            int value,
-            float x,
-            Color accent)
+        private static int DockVariantFor(Skin skin)
         {
-            CreateText(
-                parent,
-                label,
-                new Vector2(x, -72f),
-                new Vector2(260f, 26f),
-                15,
-                new Color(.75f, .91f, 1f, .88f),
-                TextAnchor.MiddleCenter,
-                FontStyle.Bold).raycastTarget = false;
-
-            for (var i = 0; i < 5; i++)
+            // A structural signature accompanies the existing bird artwork:
+            // swept flight decks, reactor cradles, prism spires and solar docks.
+            switch (skin.Id)
             {
-                var pip = CreateImage(
-                    parent,
-                    $"{label} rating {i + 1}",
-                    new Vector2(x - 72f + i * 36f, -102f),
-                    new Vector2(28f, 10f),
-                    i < value
-                        ? accent
-                        : new Color(.12f, .20f, .34f, .90f));
-
-                pip.raycastTarget = false;
+                case "chrome_raven":
+                case "newbird03":
+                case "newbird09":
+                case "newbird10": return 1;
+                case "prism_hummingbird":
+                case "newbird02":
+                case "newbird04":
+                case "newbird06": return 2;
+                case "koiwing_glider":
+                case "newbird01":
+                case "newbird07":
+                case "newbird08": return 3;
+                default: return 0;
             }
         }
+
         private void CreateCosmeticCard(int index, string title, string status, Color accent, Sprite preview, Action select, Color secondary = default, Color tertiary = default, bool pipePreview = false)
         {
             var column = index % 2;
@@ -5652,12 +5555,7 @@ new WorldTheme(
 
         private static string RouteWorldName(int worldIndex)
         {
-            switch (Mathf.Clamp(worldIndex, 0, 2))
-            {
-                case 2: return "ORBITAL BAZAAR";
-                case 1: return "ACID FOUNDRY";
-                default: return "NEON CITY";
-            }
+            return Worlds[Mathf.Clamp(worldIndex, 0, Worlds.Length - 1)].Name;
         }
 
         private void RefreshProgressionResultLabels()
@@ -5665,7 +5563,7 @@ new WorldTheme(
             var bonus = ApplyResultTechBonuses();
             if (resultCrystalsText != null) resultCrystalsText.text = $"RUN CRYSTALS  ·  {runCrystalsCollected}";
             if (resultBonusText != null) resultBonusText.text = $"TECH REWARD BONUS  ·  +{bonus}";
-            if (resultBalanceText != null) resultBalanceText.text = $"TOTAL BALANCE  ·  {crystals} ✦";
+            if (resultBalanceText != null) resultBalanceText.text = $"TOTAL BALANCE  ·  {crystals}";
             if (resultWorldText != null) resultWorldText.text = $"ROUTE REACHED  ·  {RouteWorldName(runFarthestWorldIndex)}";
             if (resultShareText != null) resultShareText.text = "SHARE";
         }
@@ -5695,6 +5593,7 @@ new WorldTheme(
             pendingSkin = null;
             pendingPurchase = PendingPurchase.Upgrade;
             OpenPurchaseModal($"{upgrade.Name}  ·  L{level + 1}", upgrade.EffectAtLevel(level), upgrade.PriceAtLevel(level), upgrade.Accent, GetUpgradeArtwork(upgrade) ?? softCircleSprite);
+            SetPurchaseUpgradeArtwork(upgrade);
         }
 
         private void OpenPurchaseModal(Skin skin)
@@ -5707,6 +5606,9 @@ new WorldTheme(
 
         private void OpenPurchaseModal(string itemName, string detail, int price, Color accent, Sprite preview)
         {
+            purchaseUpgradeGlyph.gameObject.SetActive(false);
+            purchasePreviewImage.enabled = true;
+            purchasePreviewImage.rectTransform.sizeDelta = new Vector2(465f, 248f);
             purchasePreviewImage.sprite = preview;
             purchasePreviewImage.color = preview == softCircleSprite ? new Color(accent.r, accent.g, accent.b, .88f) : Color.white;
             purchaseHalo.color = new Color(accent.r, accent.g, accent.b, .10f);
@@ -5719,6 +5621,21 @@ new WorldTheme(
             purchaseConfirmButton.interactable = crystals >= price;
             purchaseConfirmText.text = crystals >= price ? $"CONFIRM · {price} ✦" : "NOT ENOUGH ✦";
             purchaseModal.SetActive(true);
+        }
+
+        private void SetPurchaseUpgradeArtwork(Upgrade upgrade)
+        {
+            if (upgrade.Branch == "COLLECTION")
+            {
+                purchasePreviewImage.sprite = LoadSprite(CrystalArtworkPath);
+                purchasePreviewImage.rectTransform.sizeDelta = new Vector2(110f, 148f);
+                return;
+            }
+            purchasePreviewImage.enabled = false;
+            purchaseUpgradeGlyph.Shape = upgrade.Branch == "RECOVERY" ? SkyPulseUiGlyph.Kind.RecoveryCore : SkyPulseUiGlyph.Kind.WingMark;
+            purchaseUpgradeGlyph.color = upgrade.Accent;
+            purchaseUpgradeGlyph.SetVerticesDirty();
+            purchaseUpgradeGlyph.gameObject.SetActive(true);
         }
 
         private void ClosePurchaseModal()
@@ -6399,12 +6316,12 @@ new WorldTheme(
             }
             if (menuModeDetailText != null)
             {
-                menuModeDetailText.text = "ONE FAIR ROUTE · COLLECT CRYSTALS · MASTER THE FLOW";
+                menuModeDetailText.text = "COLLECT CRYSTALS  ·  MASTER THE FLOW";
                 menuModeDetailText.color = Hex("#45eaff");
             }
             if (menuDailyText != null)
             {
-                menuDailyText.text = "NEON CITY  →  ACID FOUNDRY  →  ORBITAL BAZAAR";
+                menuDailyText.text = $"{Worlds[0].Name}  →  {Worlds[1].Name}  →  {Worlds[2].Name}";
             }
             if (hudModeText != null)
             {
@@ -6412,6 +6329,7 @@ new WorldTheme(
                 hudModeText.color = routeWorld == null ? Hex("#45eaff") : routeWorld.Accent;
             }
             if (menuBestText != null) menuBestText.text = best.ToString();
+            if (hudBestText != null) hudBestText.text = $"BEST  {best}";
         }
 
         private void UpdateFlightCoach()
@@ -6454,7 +6372,7 @@ new WorldTheme(
 
         private void UpdateComfortCopy()
         {
-            if (reduceMotionText != null) reduceMotionText.text = reduceMotionEnabled ? "MOTION  ·  REDUCED" : "MOTION  ·  FULL";
+            if (reduceMotionText != null) reduceMotionText.text = reduceMotionEnabled ? "REDUCED MOTION  ·  ON" : "REDUCED MOTION  ·  OFF";
             if (hapticsText != null) hapticsText.text = hapticsEnabled ? "HAPTICS  ·  ON" : "HAPTICS  ·  OFF";
         }
 
@@ -6661,6 +6579,31 @@ new WorldTheme(
             texture.SetPixel(0, 0, color);
             texture.Apply(false, true);
             return CreateSprite(texture, 1f);
+        }
+
+        private static Sprite CreateFlightPanelSprite()
+        {
+            const int size = 96;
+            const int cut = 18;
+            var texture = new Texture2D(size, size, TextureFormat.RGBA32, false)
+            {
+                name = "SkyPulse cut-corner flight panel",
+                filterMode = FilterMode.Bilinear,
+                wrapMode = TextureWrapMode.Clamp,
+            };
+            var pixels = new Color[size * size];
+            for (var y = 0; y < size; y++)
+                for (var x = 0; x < size; x++)
+                {
+                    // Opposing chamfers echo the swept wing tips. Nine-slicing keeps
+                    // their angle consistent across compact buttons and large panels.
+                    var edge = Mathf.Min(x + y + 1f - cut, 2f * size - x - y - 1f - cut);
+                    pixels[y * size + x] = new Color(1f, 1f, 1f, Mathf.Clamp01(edge * .7071f + .5f));
+                }
+            texture.SetPixels(pixels);
+            texture.Apply(false, true);
+            return Sprite.Create(texture, new Rect(0f, 0f, size, size), new Vector2(.5f, .5f), 100f, 0,
+                SpriteMeshType.FullRect, new Vector4(cut + 1, cut + 1, cut + 1, cut + 1));
         }
 
         private static Sprite CreateRoundedRectSprite(string name, int size, int radius)
@@ -7190,9 +7133,9 @@ new WorldTheme(
         private RectTransform CreatePanel(Transform parent, string name, Vector2 position, Vector2 size, Color color)
         {
             var image = CreateImage(parent, name, position, size, color);
-            if (roundedPanelSprite != null)
+            if (interfacePanelSprite != null)
             {
-                image.sprite = roundedPanelSprite;
+                image.sprite = interfacePanelSprite;
                 image.type = Image.Type.Sliced;
             }
             return image.rectTransform;
@@ -7235,22 +7178,44 @@ new WorldTheme(
             text.raycastTarget = false;
             var shadow = objectRoot.AddComponent<Shadow>();
             shadow.effectColor = new Color(.002f, .004f, .025f, .86f);
-            shadow.effectDistance = new Vector2(1.5f, -1.5f);
+            shadow.effectDistance = new Vector2(.75f, -.75f);
             return text;
+        }
+
+        private SkyPulseUiGlyph CreateUiGlyph(Transform parent, string name, Vector2 position, Vector2 size,
+            Color color, SkyPulseUiGlyph.Kind kind)
+        {
+            var root = new GameObject(name, typeof(RectTransform), typeof(CanvasRenderer), typeof(SkyPulseUiGlyph));
+            root.transform.SetParent(parent, false);
+            var glyph = root.GetComponent<SkyPulseUiGlyph>();
+            glyph.rectTransform.anchorMin = glyph.rectTransform.anchorMax = new Vector2(.5f, .5f);
+            glyph.rectTransform.pivot = new Vector2(.5f, .5f);
+            glyph.rectTransform.anchoredPosition = position;
+            glyph.rectTransform.sizeDelta = size;
+            glyph.Shape = kind;
+            glyph.color = color;
+            glyph.raycastTarget = false;
+            glyph.MotionReduced = () => reduceMotionEnabled;
+            return glyph;
         }
 
         private Text CreateChip(Transform parent, Vector2 position, string value, Color accent)
         {
             var shell = CreatePanel(parent, "Crystal chip", position, new Vector2(200f, 68f), Hex("#0a0f20"));
-            AddOutline(shell.gameObject, new Color(accent.r, accent.g, accent.b, .50f), 1f);
+            AddOutline(shell.gameObject, new Color(accent.r, accent.g, accent.b, .40f), 1f);
+            var signal = CreateImage(shell, "Flight telemetry keyline", new Vector2(0f, 30f), new Vector2(132f, 2f), accent);
+            signal.raycastTarget = false;
             return CreateText(shell, value, Vector2.zero, new Vector2(180f, 48f), 23, accent, TextAnchor.MiddleCenter, FontStyle.Bold);
         }
 
         private Text CreateCrystalChip(Transform parent, Vector2 position, string value, Color accent)
         {
-            var text = CreateChip(parent, position, "0", accent);
+            var text = CreateChip(parent, position, value, accent);
             text.rectTransform.anchoredPosition = new Vector2(20f, 0f);
             text.rectTransform.sizeDelta = new Vector2(132f, 48f);
+            text.resizeTextForBestFit = true;
+            text.resizeTextMinSize = 17;
+            text.resizeTextMaxSize = 25;
             var icon = CreateImage(text.transform.parent, "Crystal balance icon", new Vector2(-62f, 0f), new Vector2(52f, 52f), Color.white);
             icon.sprite = LoadSprite(CrystalArtworkPath);
             icon.preserveAspect = true;
@@ -7261,19 +7226,29 @@ new WorldTheme(
         private Button CreateNeonButton(Transform parent, string label, Vector2 position, Vector2 size, Color accent)
         {
             var shell = CreatePanel(parent, "Button · " + label, position, size, Hex("#090e1e"));
-            var shellImage = shell.GetComponent<Image>();
-            AddOutline(shell.gameObject, new Color(accent.r, accent.g, accent.b, .58f), 1f);
-            var primaryAction = label == "PLAY" || label == "RETRY" || label == "FLY";
-            var fill = Color.Lerp(Hex("#11172c"), accent, primaryAction ? .13f : .065f);
+            AddOutline(shell.gameObject, new Color(accent.r, accent.g, accent.b, .65f), 1f);
+            var primaryAction = label == "PLAY" || label == "RETRY" || label == "FLY" || label == "RESUME";
+            var fill = primaryAction ? Color.Lerp(accent, Color.white, .12f) : Color.Lerp(Hex("#0c172e"), accent, .055f);
             fill.a = 1f;
             var inner = CreatePanel(shell, "Button inner", Vector2.zero, size - new Vector2(8f, 8f), fill);
-            inner.GetComponent<Image>().raycastTarget = false;
-            var energy = CreatePanel(shell, "Button energy line", new Vector2(0f, -size.y * .25f), new Vector2(primaryAction ? 128f : 88f, 1.5f), new Color(accent.r, accent.g, accent.b, .60f));
-            energy.GetComponent<Image>().raycastTarget = false;
-            var text = CreateText(shell, label, Vector2.zero, size - new Vector2(22f, 14f), primaryAction ? 34 : 22, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            var innerImage = inner.GetComponent<Image>();
+            innerImage.raycastTarget = false;
+            var energy = CreateImage(shell, "Flight control keyline", new Vector2(0f, size.y * .5f - 6f),
+                new Vector2(Mathf.Max(20f, size.x - 48f), 1.5f), primaryAction ? new Color(1f, 1f, 1f, .65f) : new Color(accent.r, accent.g, accent.b, .35f));
+            energy.raycastTarget = false;
+            if (primaryAction && size.x >= 300f)
+            {
+                CreateUiGlyph(shell, "Launch wing insignia", new Vector2(-size.x * .5f + 56f, 0f),
+                    new Vector2(45f, 36f), Hex("#07354e"), SkyPulseUiGlyph.Kind.WingMark);
+                CreateUiGlyph(shell, "Launch vector", new Vector2(size.x * .5f - 56f, 0f),
+                    new Vector2(40f, 18f), Hex("#07354e"), SkyPulseUiGlyph.Kind.Horizon);
+            }
+            var text = CreateText(shell, label, Vector2.zero, size - new Vector2(22f, 14f), primaryAction ? 34 : 22,
+                primaryAction ? Hex("#03162d") : Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            if (primaryAction) text.GetComponent<Shadow>().enabled = false;
             text.raycastTarget = false;
             var button = shell.gameObject.AddComponent<Button>();
-            button.targetGraphic = shellImage;
+            button.targetGraphic = innerImage;
             shell.gameObject.AddComponent<SkyPulseButtonFeedback>();
             var colors = button.colors;
             colors.normalColor = Color.white;
