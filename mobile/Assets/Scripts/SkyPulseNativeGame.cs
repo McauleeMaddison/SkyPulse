@@ -918,6 +918,7 @@ new WorldTheme(
         private Text menuModeDetailText;
         private Text menuDailyText;
         private Text hudScoreText;
+        private Text hudBestText;
         private Text hudCrystalText;
         private Text hudPowerUpText;
         private Text hudModeText;
@@ -1674,9 +1675,9 @@ new WorldTheme(
         private GameObject CreateHomeScreen(Transform parent)
         {
             var root = CreateScreen(parent, "Home screen");
-            // The home screen is a clear flight deck, not a frosted layer over the
-            // world. Keep the world visible, then give controls a solid place to sit.
-            CreateFullPanel(root.transform, "Home contrast veil", new Color(.005f, .012f, .05f, .10f));
+            // Keep the animated bird and the world prominent, with a quiet solid
+            // deck behind the actions so the neon scene never competes with labels.
+            CreateFullPanel(root.transform, "Home contrast veil", new Color(.005f, .012f, .05f, .18f));
 
             difficultyText = CreateChip(root.transform, new Vector2(-355f, 940f), "ENDLESS ROUTE", Hex("#8f64ff"));
             difficultyText.resizeTextForBestFit = true;
@@ -1684,16 +1685,17 @@ new WorldTheme(
             difficultyText.resizeTextMaxSize = 20;
             menuCrystalText = CreateCrystalChip(root.transform, new Vector2(355f, 940f), "✦  0", Hex("#45eaff"));
 
-            menuTitleText = CreateText(root.transform, "SKYPULSE", new Vector2(0f, 622f), new Vector2(900f, 112f), 78, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            AddOutline(menuTitleText.gameObject, new Color(.22f, .86f, 1f, .62f), 1.25f);
-            CreateText(root.transform, "FLAP  ·  FLOW  ·  FLY", new Vector2(0f, 548f), new Vector2(700f, 36f), 20, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            var titleRule = CreateImage(root.transform, "Title energy rule", new Vector2(0f, 510f), new Vector2(180f, 2f), new Color(.25f, .91f, 1f, .62f));
-            titleRule.sprite = softCircleSprite;
+            menuTitleText = CreateText(root.transform, "SKYPULSE", new Vector2(0f, 684f), new Vector2(900f, 116f), 90, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            AddOutline(menuTitleText.gameObject, new Color(.22f, .86f, 1f, .40f), 1f);
+            CreateText(root.transform, "A  R  C  A  D  E", new Vector2(0f, 606f), new Vector2(700f, 44f), 27, Hex("#f05bc6"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            CreateText(root.transform, "F I N D  Y O U R  R H Y T H M", new Vector2(0f, 536f), new Vector2(800f, 34f), 17, Hex("#8eeeff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            var titleRule = CreateImage(root.transform, "Title energy rule", new Vector2(0f, 495f), new Vector2(120f, 2f), new Color(.25f, .91f, 1f, .62f));
+            titleRule.sprite = whiteSprite;
             titleRule.raycastTarget = false;
 
-            var flightDeck = CreatePanel(root.transform, "Flight deck", new Vector2(0f, -392f), new Vector2(770f, 508f), new Color(.018f, .030f, .078f, .94f));
-            AddOutline(flightDeck.gameObject, new Color(.27f, .86f, 1f, .28f), 1f);
-            var deckRule = CreateImage(flightDeck, "Flight deck rule", new Vector2(0f, 202f), new Vector2(618f, 1.5f), new Color(.27f, .86f, 1f, .36f));
+            var flightDeck = CreatePanel(root.transform, "Flight deck", new Vector2(0f, -447f), new Vector2(820f, 566f), new Color(.012f, .025f, .065f, .96f));
+            AddOutline(flightDeck.gameObject, new Color(.27f, .86f, 1f, .34f), 1f);
+            var deckRule = CreateImage(flightDeck, "Flight deck rule", new Vector2(0f, -104f), new Vector2(650f, 1f), new Color(.27f, .86f, 1f, .24f));
             deckRule.sprite = whiteSprite;
             deckRule.raycastTarget = false;
 
@@ -1733,26 +1735,26 @@ new WorldTheme(
             // the character on the menu.
             menuBirdSafetyImage.transform.SetAsLastSibling();
 
-            var bestPanel = CreatePanel(root.transform, "Personal best", new Vector2(0f, -150f), new Vector2(460f, 80f), Hex("#0a0f20"));
+            menuEquippedText = CreateText(root.transform, "EQUIPPED  ·  NEON FINCH", new Vector2(0f, -118f), new Vector2(790f, 40f), 22, Hex("#b5d8ec"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            var bestPanel = CreatePanel(root.transform, "Personal best", new Vector2(0f, -211f), new Vector2(540f, 82f), Hex("#0a132a"));
             bestPanel.GetComponent<Image>().raycastTarget = false;
-            AddOutline(bestPanel.gameObject, new Color(1f, .76f, .30f, .55f), 1f);
-            CreateText(bestPanel, "HIGH SCORE", new Vector2(-124f, 0f), new Vector2(182f, 52f), 25, Hex("#ffc34d"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            menuBestText = CreateText(bestPanel, "0", new Vector2(94f, 0f), new Vector2(232f, 64f), 44, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            AddOutline(bestPanel.gameObject, new Color(1f, .76f, .30f, .34f), 1f);
+            CreateText(bestPanel, "PERSONAL BEST", new Vector2(-105f, 0f), new Vector2(240f, 48f), 20, Hex("#ffc34d"), TextAnchor.MiddleLeft, FontStyle.Bold);
+            menuBestText = CreateText(bestPanel, "0", new Vector2(134f, 0f), new Vector2(196f, 64f), 44, Hex("#f4fbff"), TextAnchor.MiddleRight, FontStyle.Bold);
             menuBestText.resizeTextForBestFit = true;
             menuBestText.resizeTextMinSize = 26;
             menuBestText.resizeTextMaxSize = 44;
-            menuModeDetailText = CreateText(root.transform, "ONE FAIR ROUTE · COLLECT CRYSTALS · MASTER THE FLOW", new Vector2(0f, -211f), new Vector2(780f, 32f), 16, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            var fly = CreateNeonButton(root.transform, "PLAY", new Vector2(0f, -292f), new Vector2(592f, 108f), Hex("#f05bc6"));
+            var fly = CreateNeonButton(root.transform, "PLAY", new Vector2(0f, -333f), new Vector2(650f, 108f), Hex("#45eaff"));
             fly.onClick.AddListener(StartFlight);
-            CreateText(root.transform, "TAP ANYWHERE TO FLAP", new Vector2(0f, -370f), new Vector2(650f, 34f), 15, new Color(.91f, .92f, 1f, .68f), TextAnchor.MiddleCenter, FontStyle.Bold);
+            CreateText(root.transform, "TAP TO FLAP  ·  FIND THE GAP", new Vector2(0f, -414f), new Vector2(700f, 32f), 17, Hex("#b5c8de"), TextAnchor.MiddleCenter, FontStyle.Normal);
 
-            var hangar = CreateNeonButton(root.transform, "BIRD HANGAR", new Vector2(-154f, -456f), new Vector2(284f, 78f), Hex("#45eaff"));
+            var hangar = CreateNeonButton(root.transform, "BIRD HANGAR", new Vector2(-170f, -491f), new Vector2(310f, 78f), Hex("#45eaff"));
             hangar.onClick.AddListener(OpenHangar);
-            var upgrades = CreateNeonButton(root.transform, "UPGRADES", new Vector2(154f, -456f), new Vector2(284f, 78f), Hex("#ffc34d"));
+            var upgrades = CreateNeonButton(root.transform, "UPGRADES", new Vector2(170f, -491f), new Vector2(310f, 78f), Hex("#ffc34d"));
             upgrades.onClick.AddListener(OpenUpgrades);
-            menuDailyText = CreateText(root.transform, "NEON CITY  →  ACID FOUNDRY  →  ORBITAL BAZAAR", new Vector2(0f, -538f), new Vector2(760f, 40f), 17, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            menuEquippedText = CreateText(root.transform, "SELECTED  ·  NEON FINCH", new Vector2(0f, -600f), new Vector2(650f, 36f), 20, Hex("#b8a6f5"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            var privacy = CreateNeonButton(root.transform, "PRIVACY", new Vector2(0f, -726f), new Vector2(240f, 68f), Hex("#8fa7c4"));
+            menuModeDetailText = CreateText(root.transform, "COLLECT CRYSTALS  ·  MASTER THE FLOW", new Vector2(0f, -595f), new Vector2(750f, 34f), 18, Hex("#8eeeff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            menuDailyText = CreateText(root.transform, "", new Vector2(0f, -644f), new Vector2(750f, 38f), 16, Hex("#aec0dc"), TextAnchor.MiddleCenter, FontStyle.Normal);
+            var privacy = CreateNeonButton(root.transform, "PRIVACY", new Vector2(0f, -810f), new Vector2(250f, 68f), Hex("#8fa7c4"));
             privacy.onClick.AddListener(() => privacyScreen.SetActive(true));
             return root;
         }
