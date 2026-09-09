@@ -1,0 +1,35 @@
+{
+  "verified_at_utc": "2026-09-09T12:21:02.647035Z",
+  "unity": "6000.6.0f1",
+  "rendering": "Metal graphics enabled, Camera.Render, 660x1434",
+  "baseline_commit": "347f3f9c424b9599a5ffb9079912cdb4a4651612",
+  "baseline_source": "git archive HEAD mobile/Assets mobile/Packages mobile/ProjectSettings",
+  "isolated_product": "SkyPulse Neon Visual QA",
+  "isolated_company": "SkyPulseNeonQA",
+  "baseline": "baseline",
+  "updated": "updated",
+  "frame_count_per_run": 11,
+  "graphics_exit_code": 0,
+  "graphics_marker": "SKYPULSE_NEON_VISUAL_PASS",
+  "geometry_baseline_equal": true,
+  "inside_gap_and_solid_collar_collision_checks": true,
+  "reduced_motion_pickup_static": true,
+  "collection_burst_expiry_restart_menu_transition_cleanup": true,
+  "reduced_motion_collection_stationary": true,
+  "existing_smoke_exit_code": 0,
+  "existing_smoke_markers": [
+    "SKYPULSE_BETA_CHECKS_PASS",
+    "SKYPULSE_VISUAL_SMOKE_PASS"
+  ],
+  "smoke_scope": "1300 gates, progression, pause/resume, saved currency, one-time rewards, purchase guards, 15 bird poses, safe area, transitions, menu touch/scroll routing",
+  "smoke_note": "Gameplay smoke ran before final rendering-only rail and sparkle bounds normalization. Final graphics capture reran after both corrections.",
+  "source_sha256": {
+    "mobile/Assets/Scripts/SkyPulseNativeGame.cs": "888e15a91dd277cdf76709ad7e1eadb6046521b0ff1ba6c114f7fe49b444e112",
+    "mobile/Assets/Editor/SkyPulseMobileArtSetup.cs": "c6caf49778f7a7f97366ca5a26e3d8939a2e3fc4c6086a6bba02ebf8a85cdd09",
+    "mobile/Tools/SkyPulseNeonVisualCapture.cs": "1c3a597d2ab9166b624aed547ba52c44c6e4aa0a2ecf58b22d08a28ea25c2101"
+  },
+  "limitations": [
+    "Unity editor captures only; physical iPhone build/runtime performance not certified",
+    "Menus retain current functional layout; references are visual targets for future UI work"
+  ]
+}

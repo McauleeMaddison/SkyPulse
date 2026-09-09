@@ -389,9 +389,21 @@ namespace SkyPulse.Mobile
             public bool Active;
         }
 
+        private sealed class CrystalPickupBurst
+        {
+            public GameObject Root;
+            public SpriteRenderer Ring;
+            public SpriteRenderer[] Sparks;
+            public float Remaining;
+            public float Duration;
+        }
+
         private const float CameraHeight = 18f;
         private const float HudFeedbackY = 686f;
         private const float PortraitPlayfieldAspect = 9f / 16f;
+        // Keep the authored neon sky's contrast; a heavy accent wash flattened
+        // its cloud lighting and reduced separation from the gate glow.
+        private const float WorldAtmosphereTintAlpha = .035f;
         private const float GroundY = -8.45f;
         private const float BirdX = -2.45f;
         // One body-only gameplay hitbox shared by all birds. Its capsule excludes
@@ -408,7 +420,8 @@ namespace SkyPulse.Mobile
         // busy world at a real phone scale—not shrink into a sparkle at the centre.
         private const float BirdDisplayWidth = 2.30f;
         // Pipe tuning is deliberately centralised: the body can stretch only along
-        // its length, while the cap keeps the authored aspect ratio at this width.
+        // its length. New artwork fits the original cap dimensions so visual
+        // upgrades never change the established collision geometry.
         private const float PipeWidth = 1.72f;
         private const float PipeCapWidth = PipeWidth + .34f;
         private const float PipeCollisionWidth = PipeCapWidth;
@@ -430,6 +443,8 @@ namespace SkyPulse.Mobile
         // Four live gates can each carry a three-crystal arc.  The pool avoids
         // runtime allocations and lets every generated arc remain visible.
         private const int CrystalPickupCount = 12;
+        private const int CrystalPickupBurstCount = 6;
+        private const string CrystalArtworkPath = "SkyPulse/art/powerups/generated/crystal-prism-neon-v4";
         private const int PowerUpCount = 1;
         private const float PickupRadius = .43f;
         private const float CrystalPickupRadius = .34f;
@@ -589,7 +604,7 @@ namespace SkyPulse.Mobile
 new WorldTheme(
 "neon_city",
 "NEON CITY",
-"SkyPulse/backgrounds/neon-flightdeck-v1",
+"SkyPulse/backgrounds/neon-flightdeck-v2",
 "#45eaff",
 "#0a0522",
 "ROUTE 01",
@@ -602,7 +617,7 @@ new WorldTheme(
 new WorldTheme(
 "aurora_rise",
 "AURORA RISE",
-"SkyPulse/backgrounds/themes/aurora-rise-v2",
+"SkyPulse/backgrounds/themes/aurora-rise-v3",
 "#61f5b3",
 "#05251e",
 "ROUTE 02",
@@ -615,7 +630,7 @@ new WorldTheme(
 new WorldTheme(
 "solar_drift",
 "SOLAR DRIFT",
-"SkyPulse/backgrounds/themes/solar-drift-v2",
+"SkyPulse/backgrounds/themes/solar-drift-v3",
 "#ffc34d",
 "#2b0d10",
 "ROUTE 03",
@@ -803,6 +818,8 @@ new WorldTheme(
 
         private readonly PipePair[] pipePool = new PipePair[PipeCount];
         private readonly PowerUpPickup[] crystalPickupPool = new PowerUpPickup[CrystalPickupCount];
+        private readonly CrystalPickupBurst[] crystalPickupBursts = new CrystalPickupBurst[CrystalPickupBurstCount];
+        private int nextCrystalPickupBurst;
         private readonly PowerUpPickup[] powerUpPool = new PowerUpPickup[PowerUpCount];
         private SpriteRenderer incomingBackground;
         private Color transitionVeilStart, transitionFloorStart, transitionRailStart, transitionLipStart;
@@ -836,6 +853,7 @@ new WorldTheme(
         private bool hasAuthoredPipeBody;
         private bool hasAuthoredPipeCap;
         private bool hasAuthoredPipeGlow;
+        private bool hasNeonPipeArtwork;
         private float pipeCapHeight = PipeFallbackCapHeight;
         private float PipeCapHeight => pipeCapHeight;
         private Sprite emergencyBirdSprite;
@@ -1188,6 +1206,22 @@ new WorldTheme(
                 : PipeFallbackCapHeight;
             pipeGlowSprite = LoadKeyedPipeSprite("PipeGlow");
             hasAuthoredPipeGlow = pipeGlowSprite != null;
+            // Measure the shipped cap above before loading the new visuals. Its
+            // height is part of route collision geometry, not an art import setting.
+            // These rectangles exclude faint alpha specks and presentation margins
+            // measured in the original PNGs, even when iOS scales the textures.
+            var neonShaft = LoadPipeCutoutSprite("SkyPulse/art/pipes/pipe-shaft-neon-v1",
+                new Rect(266f / 1024f, 0f, 493f / 1024f, 1f));
+            var neonCollar = LoadPipeCutoutSprite("SkyPulse/art/pipes/pipe-collar-neon-v1",
+                new Rect(107f / 1934f, 91f / 813f, 1715f / 1934f, 608f / 813f));
+            hasNeonPipeArtwork = neonShaft != null && neonCollar != null;
+            if (hasNeonPipeArtwork)
+            {
+                pipeBodySprite = neonShaft;
+                pipeCapSprite = neonCollar;
+                hasAuthoredPipeBody = true;
+                hasAuthoredPipeCap = true;
+            }
 
             backgroundRenderer = CreateRenderer("Cinematic world", WorldBackdrop(equippedWorld), Color.white, -40);
             backgroundRenderer.transform.position = new Vector3(0f, .12f, 0f);
@@ -1207,6 +1241,7 @@ new WorldTheme(
             CreateFloor();
             CreateBird();
             CreateFlightFeedback();
+            CreateCrystalPickupBursts();
 
             for (var index = 0; index < pipePool.Length; index += 1) pipePool[index] = CreatePipePair(index);
             for (var index = 0; index < crystalPickupPool.Length; index += 1) crystalPickupPool[index] = CreateCrystalPickup(index);
@@ -2055,6 +2090,7 @@ new WorldTheme(
             UpdateUnlockReveal(frameDelta);
             UpdateScoreBurst(frameDelta);
             UpdateFlightFeedback(frameDelta);
+            UpdateCrystalPickupBursts(frameDelta);
 
 #if UNITY_EDITOR || UNITY_ENABLE_CHECKS
             UpdateDevelopmentQualityControls();
@@ -2793,21 +2829,116 @@ new WorldTheme(
                     pickup.Y = targetY;
                 }
 
-                var bob = Mathf.Sin(ambientTime * 3.8f + pickup.Phase) * .09f;
+                var motion = reduceMotionEnabled ? 0f : 1f;
+                var bob = Mathf.Sin(ambientTime * 3.8f + pickup.Phase) * .09f * motion;
                 pickup.Transform.localPosition = new Vector3(pickup.X, pickup.Y + bob, 0f);
-                var pulse = 1f + Mathf.Sin(ambientTime * 4.8f + pickup.Phase) * .10f;
+                var pulse = 1f + Mathf.Sin(ambientTime * 4.8f + pickup.Phase) * .08f * motion;
                 var spin = ambientTime * 2.8f + pickup.Phase;
-                pickup.Glow.transform.localScale = Vector3.one * (.72f * pulse);
-                pickup.Artwork.transform.localScale = pickup.ArtworkBaseScale * (1f + Mathf.Sin(spin) * .04f);
-                pickup.Artwork.transform.localRotation = Quaternion.Euler(0f, 0f, Mathf.Sin(spin) * 5.5f);
-                pickup.Depth.transform.localScale = pickup.ArtworkBaseScale * (1.12f + Mathf.Sin(spin) * .035f);
-                pickup.Spark.transform.localPosition = new Vector3(Mathf.Cos(ambientTime * 5.1f + pickup.Phase) * .26f, Mathf.Sin(ambientTime * 5.1f + pickup.Phase) * .26f, 0f);
+                pickup.Glow.transform.localScale = new Vector3(.80f, 1.06f, 1f) * pulse;
+                pickup.Artwork.transform.localScale = pickup.ArtworkBaseScale * (1f + Mathf.Sin(spin) * .025f * motion);
+                pickup.Artwork.transform.localRotation = Quaternion.Euler(0f, 0f, Mathf.Sin(spin) * 3.5f * motion);
+                pickup.Depth.transform.localScale = new Vector3(.42f, .78f, 1f) * pulse;
+                // A tiny facet highlight, rather than an orbiting dot, keeps the
+                // gem silhouette clear when three crystals form a close arc.
+                pickup.Spark.transform.localPosition = new Vector3(-.09f, .23f, 0f);
+                var glint = .052f + (.5f + .5f * Mathf.Sin(spin * 1.8f)) * .022f * motion;
+                pickup.Spark.transform.localScale = Vector3.one * glint;
 
                 if (Vector2.Distance(new Vector2(BirdX, birdY), new Vector2(pickup.X, pickup.Y + bob)) <= ActiveTuning().CollisionRadius + CrystalPickupRadius)
                 {
                     CollectCrystalPickup(pickup);
                 }
             }
+        }
+
+        private void CreateCrystalPickupBursts()
+        {
+            var fineRing = CreateRadialSprite("Crystal collection ring", 96, .42f, .5f);
+            // Six reusable bursts cover two full crystal arcs. Collecting currency
+            // never allocates particles, materials or GameObjects during a run.
+            for (var index = 0; index < crystalPickupBursts.Length; index += 1)
+            {
+                var root = new GameObject($"Crystal collection burst {index + 1}");
+                root.transform.SetParent(transform, false);
+                var burst = new CrystalPickupBurst
+                {
+                    Root = root,
+                    Ring = CreateRenderer("Collection ring", fineRing, Color.clear, 16, root.transform),
+                    Sparks = new SpriteRenderer[4],
+                };
+                for (var sparkIndex = 0; sparkIndex < burst.Sparks.Length; sparkIndex += 1)
+                    burst.Sparks[sparkIndex] = CreateRenderer("Facet sparkle", whiteSprite, Color.clear, 17, root.transform);
+                root.SetActive(false);
+                crystalPickupBursts[index] = burst;
+            }
+        }
+
+        private void ShowCrystalPickupBurst(Vector3 position)
+        {
+            var burst = crystalPickupBursts[nextCrystalPickupBurst];
+            if (burst == null) return;
+            nextCrystalPickupBurst = (nextCrystalPickupBurst + 1) % crystalPickupBursts.Length;
+            burst.Root.transform.localPosition = position;
+            burst.Duration = reduceMotionEnabled ? .22f : .40f;
+            burst.Remaining = burst.Duration;
+            burst.Root.SetActive(true);
+            RenderCrystalPickupBurst(burst);
+        }
+
+        private void UpdateCrystalPickupBursts(float deltaTime)
+        {
+            if (state == FlightState.Paused) return;
+            if (state != FlightState.Playing)
+            {
+                ClearCrystalPickupBursts();
+                return;
+            }
+            foreach (var burst in crystalPickupBursts)
+            {
+                if (burst == null || burst.Remaining <= 0f) continue;
+                burst.Remaining = Mathf.Max(0f, burst.Remaining - deltaTime);
+                if (burst.Remaining <= 0f) burst.Root.SetActive(false);
+                else RenderCrystalPickupBurst(burst);
+            }
+        }
+
+        private void RenderCrystalPickupBurst(CrystalPickupBurst burst)
+        {
+            var progress = 1f - burst.Remaining / burst.Duration;
+            var fade = (1f - progress) * (1f - progress);
+            var travel = 1f - (1f - progress) * (1f - progress);
+            // Reduced Motion retains a brief, stationary acknowledgement. There
+            // is no expanding ring or flying debris in that accessibility mode.
+            var ringSize = reduceMotionEnabled ? .48f : Mathf.Lerp(.36f, 1.02f, travel);
+            burst.Ring.transform.localScale = Vector3.one * ringSize;
+            burst.Ring.color = new Color(.30f, .94f, 1f, .66f * fade);
+            for (var index = 0; index < burst.Sparks.Length; index += 1)
+            {
+                var spark = burst.Sparks[index];
+                spark.enabled = !reduceMotionEnabled;
+                if (reduceMotionEnabled) continue;
+                var angle = (45f + index * 90f) * Mathf.Deg2Rad;
+                var radius = Mathf.Lerp(.12f, .54f, travel);
+                // The shared white sprite's bounds follow Unity's built-in texture
+                // dimensions. Express chips in world units to keep them tiny.
+                SetSpriteBlock(spark, new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * radius,
+                    new Vector2(Mathf.Lerp(.16f, .025f, progress), .035f));
+                spark.transform.localRotation = Quaternion.Euler(0f, 0f, angle * Mathf.Rad2Deg);
+                spark.color = index % 2 == 0
+                    ? new Color(.78f, 1f, 1f, .90f * fade)
+                    : new Color(.75f, .46f, 1f, .78f * fade);
+            }
+        }
+
+        private void ClearCrystalPickupBursts()
+        {
+            foreach (var burst in crystalPickupBursts)
+            {
+                if (burst == null || burst.Remaining <= 0f) continue;
+                burst.Remaining = 0f;
+                burst.Root.SetActive(false);
+            }
+            nextCrystalPickupBurst = 0;
         }
 
         private PipePair FindAvailableCrystalGate(PowerUpPickup ignoredPickup)
@@ -2941,26 +3072,32 @@ new WorldTheme(
             pickup.X = gate.X + pickup.LocalXOffset;
             pickup.Y = gate.GapCenter + pickup.GapOffset;
             pickup.Phase = RouteRange(0f, Mathf.PI * 2f);
-            var crystal = LoadSprite("SkyPulse/art/powerups/generated/crystal-pellet-v3");
-            var gold = Hex("#ffc34d");
+            var crystal = LoadSprite(CrystalArtworkPath);
             var cyan = Hex("#45eaff");
-            pickup.Glow.color = new Color(gold.r, gold.g, gold.b, .24f);
+            var violet = Hex("#975dff");
+            pickup.Glow.color = new Color(cyan.r, cyan.g, cyan.b, .30f);
+            pickup.Glow.transform.localScale = new Vector3(.80f, 1.06f, 1f);
             pickup.Artwork.sprite = crystal ?? softCircleSprite;
-            pickup.Artwork.color = crystal == null ? gold : Color.white;
-            pickup.ArtworkBaseScale = ArtworkScale(pickup.Artwork.sprite, .62f);
+            pickup.Artwork.color = crystal == null ? cyan : Color.white;
+            // The source canvas includes soft transparent glow. At this scale its
+            // faceted body is about .4 units wide, fitting the existing .48 arc.
+            pickup.ArtworkBaseScale = ArtworkScale(pickup.Artwork.sprite, .88f);
             pickup.Artwork.transform.localScale = pickup.ArtworkBaseScale;
             pickup.Artwork.transform.localRotation = Quaternion.identity;
             pickup.Artwork.transform.localPosition = Vector3.zero;
-            pickup.Depth.sprite = crystal ?? softCircleSprite;
+            pickup.Depth.sprite = softCircleSprite;
             pickup.Depth.transform.localPosition = Vector3.zero;
-            pickup.Depth.transform.localScale = pickup.ArtworkBaseScale * 1.12f;
-            pickup.Depth.color = new Color(gold.r, gold.g, gold.b, .14f);
-            pickup.Spark.color = new Color(cyan.r, cyan.g, cyan.b, .94f);
+            pickup.Depth.transform.localScale = new Vector3(.42f, .78f, 1f);
+            pickup.Depth.color = new Color(violet.r, violet.g, violet.b, .30f);
+            pickup.Spark.color = new Color(.87f, 1f, 1f, .96f);
+            pickup.Spark.transform.localPosition = new Vector3(-.09f, .23f, 0f);
+            pickup.Spark.transform.localScale = Vector3.one * .065f;
             pickup.Transform.localPosition = new Vector3(pickup.X, pickup.Y, 0f);
         }
 
         private void CollectCrystalPickup(PowerUpPickup pickup)
         {
+            ShowCrystalPickupBurst(pickup.Transform.localPosition);
             DeferCrystalPickup(pickup, 0f);
             // Currency is banked on contact—even a failed run keeps the find.
             // Prism Conduit adds value through a fractional carry so +5/+10/+15%
@@ -2968,7 +3105,7 @@ new WorldTheme(
             var crystalValue = CrystalPickupValue(1);
             BankCollectedCrystals(crystalValue);
             ShowCrystalBurst(crystalValue);
-            TriggerFlightFeedback(Hex("#ffc34d"), .26f);
+            TriggerFlightFeedback(Hex("#45eaff"), .26f);
             PulseHaptic(.08f);
             Play(crystalSound);
         }
@@ -3311,6 +3448,7 @@ new WorldTheme(
 
         private void BeginFlight(FlightMode mode)
         {
+            ClearCrystalPickupBursts();
             ClosePurchaseModal();
             // The launch experience is one fair route. The selected-mode preference
             // remains for the upcoming Daily Flight, but today's run is Classic.
@@ -3386,6 +3524,7 @@ new WorldTheme(
 
         private void ResetToMenu()
         {
+            ClearCrystalPickupBursts();
             ResetWorldTransition();
             ClosePurchaseModal();
             state = FlightState.Menu;
@@ -3545,6 +3684,8 @@ new WorldTheme(
             nextWorldIndex = Mathf.Clamp(nextWorldIndex, 0, Worlds.Length - 1);
             if (nextWorldIndex == routeWorldIndex || worldTransitionTimer > 0f) return;
 
+            ClearCrystalPickupBursts();
+
             transitionVeilStart = backgroundVeil.color;
             transitionFloorStart = floorSurface.color;
             transitionRailStart = floorGlow.color;
@@ -3590,7 +3731,7 @@ new WorldTheme(
                 var blend = Mathf.SmoothStep(0f, 1f, progress);
                 incomingBackground.color = new Color(1f, 1f, 1f, blend);
                 var veilTarget = routeWorld.Accent;
-                veilTarget.a = .11f;
+                veilTarget.a = WorldAtmosphereTintAlpha;
                 backgroundVeil.color = Color.Lerp(transitionVeilStart, veilTarget, blend);
                 var floorTarget = routeWorld.Floor;
                 floorTarget.a = .54f;
@@ -3682,7 +3823,7 @@ new WorldTheme(
                 backgroundRenderer.sprite = WorldBackdrop(routeWorld);
                 FitBackgroundToCamera(backgroundRenderer, 1.1f);
             }
-            if (backgroundVeil != null) backgroundVeil.color = new Color(routeWorld.Accent.r, routeWorld.Accent.g, routeWorld.Accent.b, .11f);
+            if (backgroundVeil != null) backgroundVeil.color = new Color(routeWorld.Accent.r, routeWorld.Accent.g, routeWorld.Accent.b, WorldAtmosphereTintAlpha);
             if (floorSurface != null)
             {
                 var floorColour = routeWorld.Floor;
@@ -3742,6 +3883,11 @@ new WorldTheme(
 
         private void AnimatePipeSurface(PipeSurface surface, float capY, bool topPipe, float pipeX)
         {
+            if (hasNeonPipeArtwork)
+            {
+                AnimateNeonPipeSurface(surface, capY, topPipe, pipeX);
+                return;
+            }
             // Movement stays within the non-colliding light layers. The gateway feels
             // alive, while the bright visual opening always remains the safe opening.
             var gateMotion = reduceMotionEnabled ? 0f : 1f;
@@ -3818,7 +3964,7 @@ if (surface.RailRight != null && surface.RailRight.enabled)
             seamColour.a = Mathf.Lerp(.62f, .98f, pulse);
             surface.Energy.color = seamColour;
             surface.Energy.transform.localPosition = new Vector3(0f, capY + direction * (.055f + Mathf.Sin(ambientTime * 8.8f + pipeX) * .012f * gateMotion), 0f);
-            surface.Energy.transform.localScale = new Vector3(PipeWidth * Mathf.Lerp(.60f, 72f, pulse), .018f + pulse * .014f, 1f);
+            surface.Energy.transform.localScale = new Vector3(PipeWidth * Mathf.Lerp(.60f, .72f, pulse), .018f + pulse * .014f, 1f);
 
             var highlightColour = surface.Highlight.color;
             highlightColour.a = Mathf.Lerp(.08f, .28f, pulse);
@@ -3877,6 +4023,95 @@ if (surface.RailRight != null && surface.RailRight.enabled)
             }
         }
 
+        private void LayoutNeonPipeSurface(PipeSurface surface, float centreY, float height, float capY, bool topPipe)
+        {
+            // Reuse the gate's pooled renderers. Only the two existing simple
+            // colliders below participate in flight; every light is decorative.
+            surface.Outer.enabled = false;
+            surface.Panel.enabled = false;
+            surface.Shade.enabled = false;
+            surface.Highlight.enabled = false;
+            surface.Energy.enabled = false;
+            surface.Scan.enabled = false;
+            surface.Beacon.enabled = false;
+            surface.CapOuter.enabled = false;
+            surface.CapAccent.enabled = false;
+            surface.CapEnergy.enabled = false;
+
+            surface.Artwork.enabled = true;
+            surface.Artwork.sprite = pipeBodySprite;
+            surface.Artwork.color = Color.Lerp(Color.white, equippedPipe.Accent, .045f);
+            surface.Artwork.sortingOrder = 5;
+            surface.Artwork.flipY = topPipe;
+            surface.Artwork.transform.localRotation = Quaternion.identity;
+            SetSpriteBlock(surface.Artwork, Vector2.up * centreY, new Vector2(PipeWidth, height));
+
+            var direction = topPipe ? 1f : -1f;
+            var capCentre = capY + direction * PipeCapHeight * .5f;
+            surface.CapPanel.enabled = true;
+            surface.CapPanel.sprite = pipeCapSprite;
+            surface.CapPanel.color = Color.white;
+            surface.CapPanel.sortingOrder = 11;
+            surface.CapPanel.flipY = topPipe;
+            surface.CapPanel.transform.localRotation = Quaternion.identity;
+            SetSpriteBlock(surface.CapPanel, Vector2.up * capCentre,
+                new Vector2(PipeCollisionWidth, PipeCapHeight));
+
+            surface.RailLeft.enabled = true;
+            surface.RailRight.enabled = true;
+            surface.RailLeft.sortingOrder = 6;
+            surface.RailRight.sortingOrder = 6;
+            var lightHeight = Mathf.Max(.12f, height - .12f);
+            // The white texture is not a one-unit sprite. Fit its bounds to world
+            // units so these thin rails stop inside the shaft, clear of the gap.
+            SetSpriteBlock(surface.RailLeft, new Vector2(-PipeWidth * .48f, centreY), new Vector2(.015f, lightHeight));
+            SetSpriteBlock(surface.RailRight, new Vector2(PipeWidth * .418f, centreY), new Vector2(.022f, lightHeight));
+
+            surface.Core.enabled = true;
+            surface.Core.sprite = softCircleSprite;
+            surface.Core.sortingOrder = 6;
+            SetSpriteBlock(surface.Core, Vector2.up * centreY,
+                new Vector2(PipeWidth * .21f, Mathf.Max(.12f, height - .20f)));
+            surface.CorePulse.enabled = true;
+            surface.CorePulse.sprite = softCircleSprite;
+            surface.CorePulse.sortingOrder = 7;
+
+            surface.CapGlow.enabled = true;
+            surface.CapGlow.sprite = softCircleSprite;
+            surface.CapGlow.sortingOrder = 10;
+            surface.CapGlow.transform.localRotation = Quaternion.identity;
+            AnimateNeonPipeSurface(surface, capY, topPipe, 0f);
+        }
+
+        private void AnimateNeonPipeSurface(PipeSurface surface, float capY, bool topPipe, float pipeX)
+        {
+            // A restrained breathing rim and power travelling inside the shaft add
+            // life without pulsing the metal. Reduced Motion freezes both effects.
+            var pulse = reduceMotionEnabled ? .55f : .5f + .5f * Mathf.Sin(ambientTime * 2.4f + pipeX * .42f);
+            var phase = reduceMotionEnabled ? .48f : Mathf.Repeat(ambientTime * .19f + pipeX * .09f, 1f);
+            var direction = topPipe ? 1f : -1f;
+            var bodyHeight = Mathf.Max(.12f, surface.Artwork.bounds.size.y);
+            var bodyCentre = surface.Artwork.transform.localPosition.y;
+
+            var edge = Color.Lerp(new Color(.24f, .97f, 1f), equippedPipe.Accent, .25f);
+            var power = Color.Lerp(new Color(1f, .035f, .78f), equippedPipe.Energy, .20f);
+            surface.RailLeft.color = new Color(edge.r * .4f, edge.g * .5f, edge.b, .14f + pulse * .06f);
+            surface.RailRight.color = new Color(edge.r, edge.g, edge.b, .28f + pulse * .16f);
+            surface.Core.color = new Color(power.r, power.g, power.b, .08f + pulse * .07f);
+            surface.CorePulse.color = new Color(power.r, power.g + .20f, power.b, .10f + pulse * .10f);
+            var streakHeight = Mathf.Min(.72f, bodyHeight * .30f);
+            SetSpriteBlock(surface.CorePulse,
+                new Vector2(0f, bodyCentre + direction * (phase - .5f) * Mathf.Max(0f, bodyHeight - streakHeight - .20f)),
+                new Vector2(PipeWidth * .16f, streakHeight));
+
+            // Glow can spill softly outside the rim. The cropped opaque collar
+            // remains exactly at the original visible/collision gap boundary.
+            surface.CapGlow.color = new Color(power.r, power.g, power.b, .24f + pulse * .12f);
+            SetSpriteBlock(surface.CapGlow,
+                new Vector2(0f, capY + direction * PipeCapHeight * .24f),
+                new Vector2(PipeCapWidth * (1.18f + pulse * .04f), PipeCapHeight * .76f));
+        }
+
         private void LayoutPipeSurface(PipeSurface surface, float centreY, float height, float capY, bool topPipe)
         {
             var style = equippedPipe;
@@ -3886,6 +4121,7 @@ if (surface.RailRight != null && surface.RailRight.enabled)
             var capCentre = capY + direction * (PipeCapHeight * .5f);
             SetPipeCollider(surface.BodyCollider, new Vector2(0f, centreY), new Vector2(PipeWidth, height));
             SetPipeCollider(surface.CapCollider, new Vector2(0f, capCentre), new Vector2(PipeCollisionWidth, PipeCapHeight));
+            if (hasNeonPipeArtwork) return;
             var insideOffset = direction * .048f;
             var useProceduralBodyDetails = !hasAuthoredPipeBody;
             surface.Core.enabled = useProceduralBodyDetails;
@@ -3954,6 +4190,11 @@ if (surface.RailRight != null && surface.RailRight.enabled)
     bool topPipe,
     PipeStyle style)
 {
+    if (hasNeonPipeArtwork)
+    {
+        LayoutNeonPipeSurface(surface, centreY, height, capY, topPipe);
+        return;
+    }
     var direction = topPipe ? 1f : -1f;
     var bodyHeight = Mathf.Max(.12f, height - .08f);
     var metal = Color.Lerp(Hex("#0a1222"), style.Panel, .08f);
@@ -5134,7 +5375,7 @@ if (surface.RailRight != null && surface.RailRight.enabled)
 
             backgroundRenderer.sprite = WorldBackdrop(equippedWorld);
             FitBackgroundToCamera(backgroundRenderer, 1.1f);
-            backgroundVeil.color = new Color(equippedWorld.Accent.r, equippedWorld.Accent.g, equippedWorld.Accent.b, .11f);
+            backgroundVeil.color = new Color(equippedWorld.Accent.r, equippedWorld.Accent.g, equippedWorld.Accent.b, WorldAtmosphereTintAlpha);
             var floorColour = equippedWorld.Floor;
             floorColour.a = .54f;
             floorSurface.color = floorColour;
@@ -6191,6 +6432,21 @@ if (surface.RailRight != null && surface.RailRight.enabled)
             return sprite;
         }
 
+        private Sprite LoadPipeCutoutSprite(string path, Rect normalizedRect)
+        {
+            if (spriteCache.TryGetValue(path, out var cached)) return cached;
+            var texture = Resources.Load<Texture2D>(path);
+            if (texture == null) return null;
+            // Crop UVs only: retain compressed, non-readable GPU textures instead
+            // of allocating/decompressing another full texture at runtime.
+            var pixels = new Rect(normalizedRect.x * texture.width, normalizedRect.y * texture.height,
+                normalizedRect.width * texture.width, normalizedRect.height * texture.height);
+            var sprite = Sprite.Create(texture, pixels, new Vector2(.5f, .5f), 100f, 0, SpriteMeshType.FullRect);
+            sprite.name = texture.name + " aligned gameplay cutout";
+            spriteCache[path] = sprite;
+            return sprite;
+        }
+
         private Sprite LoadKeyedPipeSprite(string path, int cropTopPixels = 0, int cropBottomPixels = 0)
         {
             var source = Resources.Load<Texture2D>(path);
@@ -6554,8 +6810,8 @@ if (surface.RailRight != null && surface.RailRight.enabled)
             var text = CreateChip(parent, position, "0", accent);
             text.rectTransform.anchoredPosition = new Vector2(20f, 0f);
             text.rectTransform.sizeDelta = new Vector2(132f, 48f);
-            var icon = CreateImage(text.transform.parent, "Crystal balance icon", new Vector2(-62f, 0f), new Vector2(38f, 38f), Color.white);
-            icon.sprite = LoadSprite("SkyPulse/art/powerups/generated/crystal-pellet-v3");
+            var icon = CreateImage(text.transform.parent, "Crystal balance icon", new Vector2(-62f, 0f), new Vector2(52f, 52f), Color.white);
+            icon.sprite = LoadSprite(CrystalArtworkPath);
             icon.preserveAspect = true;
             icon.raycastTarget = false;
             return text;

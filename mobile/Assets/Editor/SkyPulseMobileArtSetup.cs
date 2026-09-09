@@ -27,6 +27,7 @@ namespace SkyPulse.Mobile.Editor
 
                 var maxSize = MaximumSizeFor(path);
                 var isCharacter = path.Contains("/characters/");
+                var preserveAspect = isCharacter || path.Contains("/backgrounds/") || path.Contains("/pipes/");
                 // SkyPulse turns its source textures into purpose-sized sprites at
                 // runtime, so preserve Texture2D import compatibility here.
                 var changed = importer.textureType != TextureImporterType.Default
@@ -36,7 +37,7 @@ namespace SkyPulse.Mobile.Editor
                     || importer.maxTextureSize != maxSize
                     || importer.wrapMode != TextureWrapMode.Clamp
                     || importer.filterMode != FilterMode.Bilinear
-                    || (isCharacter && importer.npotScale != TextureImporterNPOTScale.None)
+                    || (preserveAspect && importer.npotScale != TextureImporterNPOTScale.None)
                     || importer.textureCompression != TextureImporterCompression.Compressed;
 
                 importer.textureType = TextureImporterType.Default;
@@ -46,9 +47,9 @@ namespace SkyPulse.Mobile.Editor
                 importer.maxTextureSize = maxSize;
                 importer.wrapMode = TextureWrapMode.Clamp;
                 importer.filterMode = FilterMode.Bilinear;
-                // Frame registration uses the authored canvas aspect ratio.
-                // Power-of-two resizing stretches 512x384 birds into squares.
-                if (isCharacter) importer.npotScale = TextureImporterNPOTScale.None;
+                // Keep registered bird canvases, portrait worlds and cropped pipe
+                // UV rectangles faithful to the source artwork's proportions.
+                if (preserveAspect) importer.npotScale = TextureImporterNPOTScale.None;
                 importer.textureCompression = TextureImporterCompression.Compressed;
 
                 changed |= ApplyPlatformCompression(importer, "Android", maxSize);
@@ -69,6 +70,7 @@ namespace SkyPulse.Mobile.Editor
             // compression keeps the mobile memory cost predictable.
             if (path.Contains("/backgrounds/")) return 2048;
             if (path.Contains("/characters/")) return 1024;
+            if (path.Contains("/pipes/")) return 1024;
             if (path.Contains("/powerups/") || path.Contains("/art/")) return 512;
             return 512;
         }
