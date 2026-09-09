@@ -533,7 +533,123 @@ namespace SkyPulse.Mobile
             collisionRadius: BirdPickupRadius, perfectPassWindow: .34f, inputBufferSeconds: .07f, maximumGapCenterStep: 3.16f,
             powerUpSlots: 1, powerUpRespawnMinimum: 0f, powerUpRespawnMaximum: 0f,
             allowsUpgrades: false, allowsPowerUps: true);
+private static BirdHangarProfile GetBirdHangarProfile(Skin skin)
+{
+    switch (skin.Id)
+    {
+        case "neon_finch":
+            return new BirdHangarProfile(
+                "COMMON",
+                "Balanced and dependable. Built for smooth flows.",
+                3, 4, 4,
+                Hex("#45eaff"));
 
+        case "chrome_raven":
+            return new BirdHangarProfile(
+                "COMMON",
+                "A composed mechanical flyer with a stable profile.",
+                3, 3, 5,
+                Hex("#45eaff"));
+
+        case "prism_hummingbird":
+            return new BirdHangarProfile(
+                "RARE",
+                "Light and responsive with an agile flight identity.",
+                4, 5, 2,
+                Hex("#ffc34d"));
+
+        case "koiwing_glider":
+            return new BirdHangarProfile(
+                "RARE",
+                "Graceful movement with a balanced aerial profile.",
+                3, 4, 4,
+                Hex("#ffc34d"));
+
+        case "verdant_kite":
+            return new BirdHangarProfile(
+                "RARE",
+                "A confident all-rounder with strong forward energy.",
+                4, 3, 4,
+                Hex("#ffc34d"));
+
+        case "newbird01":
+            return new BirdHangarProfile(
+                "EPIC",
+                "Solar-charged styling with controlled movement.",
+                4, 3, 4,
+                Hex("#f05bc6"));
+
+        case "newbird02":
+            return new BirdHangarProfile(
+                "EPIC",
+                "Fast and adaptable with a precise aerial character.",
+                4, 4, 3,
+                Hex("#f05bc6"));
+
+        case "newbird03":
+            return new BirdHangarProfile(
+                "EPIC",
+                "High-energy styling built around speed and response.",
+                5, 4, 2,
+                Hex("#f05bc6"));
+
+        case "newbird04":
+            return new BirdHangarProfile(
+                "EPIC",
+                "Highly responsive with an aggressive neon silhouette.",
+                4, 5, 2,
+                Hex("#f05bc6"));
+
+        case "newbird05":
+            return new BirdHangarProfile(
+                "EPIC",
+                "A fast mechanical hunter with a direct flight identity.",
+                5, 3, 3,
+                Hex("#f05bc6"));
+
+        case "newbird06":
+            return new BirdHangarProfile(
+                "LEGENDARY",
+                "Heavy visual presence with an exceptionally stable profile.",
+                3, 3, 5,
+                Hex("#b17cff"));
+
+        case "newbird07":
+            return new BirdHangarProfile(
+                "LEGENDARY",
+                "Elegant and agile with a highly responsive character.",
+                3, 5, 3,
+                Hex("#b17cff"));
+
+        case "newbird08":
+            return new BirdHangarProfile(
+                "LEGENDARY",
+                "Maximum visual thrust with an aggressive speed profile.",
+                5, 3, 2,
+                Hex("#b17cff"));
+
+        case "newbird09":
+            return new BirdHangarProfile(
+                "LEGENDARY",
+                "Fast and elusive with a precision-focused character.",
+                4, 5, 3,
+                Hex("#b17cff"));
+
+        case "newbird10":
+            return new BirdHangarProfile(
+                "LEGENDARY",
+                "Elite ion-powered styling with a fast balanced profile.",
+                5, 4, 3,
+                Hex("#b17cff"));
+
+        default:
+            return new BirdHangarProfile(
+                "COMMON",
+                "A balanced mechanical companion.",
+                3, 3, 3,
+                Hex("#45eaff"));
+    }
+}
         // The data-driven hangar has one free cyber-bird and fourteen crystal unlocks.
         // Their art and accent vary, but their shared collision and flight tuning
         // preserve a single fair score route. Future birds belong here as data-only additions.
