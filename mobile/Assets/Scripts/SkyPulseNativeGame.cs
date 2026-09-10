@@ -1742,10 +1742,65 @@ new WorldTheme(
             titleRule.sprite = whiteSprite;
             titleRule.raycastTarget = false;
 
-            var flightDeck = CreateLuminousPanel(root.transform, "Flight deck", new Vector2(0f, -315f), new Vector2(860f, 660f), new Color(.012f, .028f, .090f, .68f), new Color(.27f, .92f, 1f, .68f));
-            var deckRule = CreateImage(flightDeck, "Flight deck rule", new Vector2(0f, -113f), new Vector2(720f, 1f), new Color(.27f, .86f, 1f, .24f));
+            var flightDeck = CreateLuminousPanel(root.transform,"Flight deck",new Vector2(0f, -315f),new Vector2(860f, 660f),new Color(.004f, .012f, .038f, .90f),new Color(.27f, .92f, 1f, .48f));
+
+            flightDeck.GetComponent<Image>().raycastTarget = false;
+
+            // Thin illuminated rails make the panel read as a floating flight console
+            // rather than a single coloured rectangle.
+            var deckTopRail = CreateImage(
+                flightDeck,
+                "Flight deck top energy rail",
+                new Vector2(0f, 323f),
+                new Vector2(730f, 2f),
+                new Color(.32f, .95f, 1f, .72f));
+            deckTopRail.sprite = whiteSprite;
+            deckTopRail.raycastTarget = false;
+
+            var deckTopGlow = CreateImage(
+                flightDeck,
+                "Flight deck top glow",
+                new Vector2(0f, 319f),
+                new Vector2(610f, 8f),
+                new Color(.20f, .86f, 1f, .10f));
+            deckTopGlow.sprite = whiteSprite;
+            deckTopGlow.raycastTarget = false;
+
+            var deckRule = CreateImage(
+                flightDeck,
+                "Flight deck rule",
+                new Vector2(0f, -113f),
+                new Vector2(690f, 1f),
+                new Color(.27f, .86f, 1f, .22f));
             deckRule.sprite = whiteSprite;
             deckRule.raycastTarget = false;
+
+            var deckBottomRail = CreateImage(
+                flightDeck,
+                "Flight deck lower energy rail",
+                new Vector2(0f, -320f),
+                new Vector2(620f, 2f),
+                new Color(.25f, .82f, 1f, .34f));
+            deckBottomRail.sprite = whiteSprite;
+            deckBottomRail.raycastTarget = false;
+
+            var deckLeftAccent = CreateImage(
+                flightDeck,
+                "Flight deck port accent",
+                new Vector2(-424f, 0f),
+                new Vector2(2f, 510f),
+                new Color(.31f, .95f, 1f, .34f));
+            deckLeftAccent.sprite = whiteSprite;
+            deckLeftAccent.raycastTarget = false;
+
+            var deckRightAccent = CreateImage(
+                flightDeck,
+                "Flight deck starboard accent",
+                new Vector2(424f, 0f),
+                new Vector2(2f, 510f),
+                new Color(.31f, .95f, 1f, .34f));
+            deckRightAccent.sprite = whiteSprite;
+            deckRightAccent.raycastTarget = false;
 
             CreateUiGlyph(root.transform, "Home flight dock", new Vector2(0f, 355f), new Vector2(820f, 448f), new Color(.27f, .92f, 1f, .50f), SkyPulseUiGlyph.Kind.DockRing).Animate = true;
 
