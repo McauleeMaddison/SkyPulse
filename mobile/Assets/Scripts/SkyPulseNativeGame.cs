@@ -6,51 +6,6 @@ using UnityEngine.UI;
 
 namespace SkyPulse.Mobile
 {
-    /// <summary>Background clicks start a run; child controls retain their own clicks.</summary>
-    public sealed class SkyPulseRoundStartSurface : MonoBehaviour, IPointerClickHandler
-    {
-        public Action StartRound;
-
-        public void OnPointerClick(PointerEventData eventData)
-        {
-            if (eventData.button != PointerEventData.InputButton.Left || eventData.dragging) return;
-            var threshold = EventSystem.current == null ? 10f : EventSystem.current.pixelDragThreshold;
-            if ((eventData.position - eventData.pressPosition).sqrMagnitude > threshold * threshold) return;
-            StartRound?.Invoke();
-        }
-    }
-
-    /// <summary>Small, allocation-free press response for touch-first controls.</summary>
-    public sealed class SkyPulseButtonFeedback : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler
-    {
-        private RectTransform target;
-        private Vector3 restingScale;
-        private float pressAmount;
-
-        private void Awake()
-        {
-            target = transform as RectTransform;
-            restingScale = target != null ? target.localScale : Vector3.one;
-        }
-
-        private void OnEnable()
-        {
-            pressAmount = 0f;
-            if (target != null) target.localScale = restingScale;
-        }
-
-        public void OnPointerDown(PointerEventData eventData) => pressAmount = 1f;
-        public void OnPointerUp(PointerEventData eventData) => pressAmount = 0f;
-        public void OnPointerExit(PointerEventData eventData) => pressAmount = 0f;
-
-        private void Update()
-        {
-            if (target == null) return;
-            var scale = Vector3.one * (1f - pressAmount * .045f);
-            target.localScale = Vector3.Lerp(target.localScale, Vector3.Scale(restingScale, scale), 1f - Mathf.Exp(-Time.unscaledDeltaTime * 24f));
-        }
-    }
-
     /// <summary>
     /// Native, portrait-first SkyPulse presentation and flight loop.  This deliberately
     /// uses a small fixed pool of renderers: the game stays smooth on older phones while
@@ -62,10 +17,6 @@ namespace SkyPulse.Mobile
         // Authored gameplay art has a single, input-driven stroke. Keeping this
         // explicit prevents a resting bird from advancing frames on its own.
         private enum GameplayWingState { Settled, Upstroke, Downstroke }
-        // Classic is the score-first, leaderboard-ready route. Adventure deliberately
-        // keeps the expressive upgrades and power-ups that make collection rewarding.
-        // Daily shares Classic's fixed rules, plus a seeded obstacle sequence.
-        private enum FlightMode { Classic, Adventure, Daily }
         private enum CosmeticCategory { Birds, Worlds, Pipes, Upgrades }
         // These are tactical pickup effects only.  The permanent economy is kept
         // deliberately separate so no purchase can change score potential or
@@ -75,55 +26,28 @@ namespace SkyPulse.Mobile
 
         /// <summary>
         /// One place for all values that influence the way a flight feels. Keeping the
-        /// values together makes a play-test change deliberate and keeps Classic and
-        /// Daily perfectly comparable, regardless of cosmetic world selection.
+        /// values together makes a play-test change deliberate and preserves the same
+        /// handling regardless of the selected bird.
         /// </summary>
         private sealed class FlightTuning
         {
             public readonly float Gravity;
             public readonly float FlapVelocity;
             public readonly float MaxFallVelocity;
-            public readonly float StartingGap;
-            public readonly float MinimumGap;
-            public readonly float GapShrinkPerGate;
-            public readonly float StartingScrollSpeed;
-            public readonly float ScrollRampPerGate;
             public readonly float CollisionRadius;
             public readonly float PerfectPassWindow;
             public readonly float InputBufferSeconds;
-            public readonly float MaximumGapCenterStep;
-            public readonly int PowerUpSlots;
-            public readonly float PowerUpRespawnMinimum;
-            public readonly float PowerUpRespawnMaximum;
-            public readonly bool AllowsUpgrades;
-            public readonly bool AllowsPowerUps;
 
             public FlightTuning(
                 float gravity, float flapVelocity, float maxFallVelocity,
-                float startingGap, float minimumGap, float gapShrinkPerGate,
-                float startingScrollSpeed, float scrollRampPerGate,
-                float collisionRadius, float perfectPassWindow, float inputBufferSeconds,
-                float maximumGapCenterStep,
-                int powerUpSlots, float powerUpRespawnMinimum, float powerUpRespawnMaximum,
-                bool allowsUpgrades, bool allowsPowerUps)
+                float collisionRadius, float perfectPassWindow, float inputBufferSeconds)
             {
                 Gravity = gravity;
                 FlapVelocity = flapVelocity;
                 MaxFallVelocity = maxFallVelocity;
-                StartingGap = startingGap;
-                MinimumGap = minimumGap;
-                GapShrinkPerGate = gapShrinkPerGate;
-                StartingScrollSpeed = startingScrollSpeed;
-                ScrollRampPerGate = scrollRampPerGate;
                 CollisionRadius = collisionRadius;
                 PerfectPassWindow = perfectPassWindow;
                 InputBufferSeconds = inputBufferSeconds;
-                MaximumGapCenterStep = maximumGapCenterStep;
-                PowerUpSlots = powerUpSlots;
-                PowerUpRespawnMinimum = powerUpRespawnMinimum;
-                PowerUpRespawnMaximum = powerUpRespawnMaximum;
-                AllowsUpgrades = allowsUpgrades;
-                AllowsPowerUps = allowsPowerUps;
             }
         }
 
@@ -495,7 +419,6 @@ namespace SkyPulse.Mobile
         private const float WingLiftPhase = .31f;
         private const float WingDownstrokeDelay = .075f;
         private const float WingDownstrokeSpan = .90f;
-        private const float ImpactFrameSeconds = .26f;
         private const int LaunchBirdCount = 15;
         private const float CosmeticCardHeight = 260f;
         private const float CosmeticCardRowStride = 286f;
@@ -504,35 +427,13 @@ namespace SkyPulse.Mobile
         private const float BirdHangarColumnStride = 454f;
         private const float BirdHangarRowStride = 416f;
 
-        // These profiles are deliberately conservative. A play-test should alter one
-        // value here at a time, never spread physics magic numbers through the loop.
-        private static readonly FlightTuning ClassicTuning = new FlightTuning(
-            gravity: -18.2f, flapVelocity: 6.25f, maxFallVelocity: -11.2f,
-            startingGap: 4.46f, minimumGap: 3.88f, gapShrinkPerGate: .022f,
-            startingScrollSpeed: 4.38f, scrollRampPerGate: .038f,
-            collisionRadius: .255f, perfectPassWindow: .34f, inputBufferSeconds: .095f, maximumGapCenterStep: .70f,
-            powerUpSlots: 0, powerUpRespawnMinimum: 0f, powerUpRespawnMaximum: 0f,
-            allowsUpgrades: false, allowsPowerUps: false);
-
-        private static readonly FlightTuning AdventureTuning = new FlightTuning(
-            gravity: -18.2f, flapVelocity: 6.25f, maxFallVelocity: -11.2f,
-            startingGap: 4.46f, minimumGap: 3.42f, gapShrinkPerGate: .030f,
-            startingScrollSpeed: 4.30f, scrollRampPerGate: .045f,
-            collisionRadius: BirdPickupRadius, perfectPassWindow: .32f, inputBufferSeconds: .095f, maximumGapCenterStep: .90f,
-            powerUpSlots: 1, powerUpRespawnMinimum: 7.5f, powerUpRespawnMaximum: 10.5f,
-            allowsUpgrades: true, allowsPowerUps: true);
-
         // One route, one handling model. Values are expressed against the 15.82-unit
         // flight corridor above the lower hazard: ~2.2 corridor-heights/s² gravity,
         // .72 heights/s flap lift, and .95 heights/s terminal fall. Bird choice
         // never changes it.
         private static readonly FlightTuning EndlessTuning = new FlightTuning(
             gravity: -34.8f, flapVelocity: 11.4f, maxFallVelocity: -15.05f,
-            startingGap: 5.38f, minimumGap: 3.96f, gapShrinkPerGate: 0f,
-            startingScrollSpeed: 3.24f, scrollRampPerGate: 0f,
-            collisionRadius: BirdPickupRadius, perfectPassWindow: .34f, inputBufferSeconds: .07f, maximumGapCenterStep: 3.16f,
-            powerUpSlots: 1, powerUpRespawnMinimum: 0f, powerUpRespawnMaximum: 0f,
-            allowsUpgrades: false, allowsPowerUps: true);
+            collisionRadius: BirdPickupRadius, perfectPassWindow: .34f, inputBufferSeconds: .07f);
 private static BirdHangarProfile GetBirdHangarProfile(Skin skin)
 {
     switch (skin.Id)
@@ -1061,7 +962,7 @@ new WorldTheme(
         private Text menuEquippedText;
         private Text difficultyText;
         private Text menuModeDetailText;
-        private Text menuDailyText;
+        private Text menuRouteText;
         private Text hudScoreText;
         private Text hudBestText;
         private Text hudCrystalText;
@@ -1123,8 +1024,6 @@ new WorldTheme(
         private PendingPurchase pendingPurchase;
         private int score;
         private int best;
-        private int adventureBest;
-        private int dailyBest;
         private int crystals;
         private int runCrystalsCollected;
         private int runCrystalBonus;
@@ -1139,9 +1038,6 @@ new WorldTheme(
         private int flightCoachStage;
         private bool reduceMotionEnabled;
         private bool hapticsEnabled = true;
-        private FlightMode selectedFlightMode = FlightMode.Classic;
-        private System.Random dailyRouteRandom;
-        private string activeDailyRouteKey = string.Empty;
         private float birdY;
         private float birdVelocity;
         private float birdTilt;
@@ -1181,7 +1077,6 @@ new WorldTheme(
         private float hapticCooldownUntil;
 #endif
         private int shieldCharges;
-        private int gatesSinceStarheart;
         private int perfectPasses;
         private int displayedSlowTenths = -1;
         private int displayedPowerUpCode = -1;
@@ -1910,7 +1805,7 @@ new WorldTheme(
             upgrades.GetComponentInChildren<Text>().fontSize = 26;
             upgrades.onClick.AddListener(OpenUpgrades);
             menuModeDetailText = CreateText(root.transform, "COLLECT CRYSTALS  ·  MASTER THE FLOW", new Vector2(0f, -595f), new Vector2(750f, 40f), 24, Hex("#8eeeff"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            menuDailyText = CreateText(root.transform, "", new Vector2(0f, -644f), new Vector2(750f, 40f), 22, Hex("#aec0dc"), TextAnchor.MiddleCenter, FontStyle.Normal);
+            menuRouteText = CreateText(root.transform, "", new Vector2(0f, -644f), new Vector2(750f, 40f), 22, Hex("#aec0dc"), TextAnchor.MiddleCenter, FontStyle.Normal);
             var privacy = CreateNeonButton(root.transform, "PRIVACY", new Vector2(0f, -810f), new Vector2(280f, 92f), Hex("#8fa7c4"));
             privacy.GetComponentInChildren<Text>().fontSize = 26;
             privacy.onClick.AddListener(() => privacyScreen.SetActive(true));
@@ -2952,11 +2847,6 @@ new WorldTheme(
             return EndlessTuning;
         }
 
-        private bool AllowsGameplayUpgrades()
-        {
-            return false;
-        }
-
         private bool AllowsPowerUps()
         {
             return true;
@@ -3004,8 +2894,7 @@ new WorldTheme(
         }
 
         // Currency appears as a rare, visible pellet in the safe gap. It is kept
-        // separate from Adventure power-ups so Classic and Daily players can still
-        // build their collection, while power-ups remain an Adventure reward.
+        // separate from tactical power-ups so collection never changes flight handling.
         private void UpdateCrystalPickups(float deltaTime)
         {
             foreach (var pickup in crystalPickupPool)
@@ -3148,36 +3037,6 @@ new WorldTheme(
             nextCrystalPickupBurst = 0;
         }
 
-        private PipePair FindAvailableCrystalGate(PowerUpPickup ignoredPickup)
-        {
-            PipePair best = null;
-            foreach (var candidate in pipePool)
-            {
-                if (candidate == null || !candidate.Root.activeSelf || candidate.Passed || candidate.X <= BirdX + 1.05f) continue;
-                var claimed = false;
-                foreach (var pickup in powerUpPool)
-                {
-                    if (pickup.Active && pickup.Gate == candidate)
-                    {
-                        claimed = true;
-                        break;
-                    }
-                }
-                if (claimed) continue;
-                foreach (var pickup in crystalPickupPool)
-                {
-                    if (pickup != ignoredPickup && pickup.Active && pickup.Gate == candidate)
-                    {
-                        claimed = true;
-                        break;
-                    }
-                }
-                if (claimed) continue;
-                if (best == null || candidate.X > best.X) best = candidate;
-            }
-            return best;
-        }
-
         private static void DeferCrystalPickup(PowerUpPickup pickup, float delay)
         {
             pickup.Active = false;
@@ -3315,37 +3174,6 @@ new WorldTheme(
             TriggerFlightFeedback(Hex("#45eaff"), .26f);
             PulseHaptic(.08f);
             Play(crystalSound);
-        }
-
-        private PipePair FindAvailablePowerUpGate(PowerUpPickup ignoredPickup)
-        {
-            if (!AllowsPowerUps()) return null;
-            PipePair best = null;
-            foreach (var candidate in pipePool)
-            {
-                if (candidate == null || !candidate.Root.activeSelf || candidate.Passed || candidate.X <= BirdX + 1.05f) continue;
-                var claimed = false;
-                foreach (var pickup in powerUpPool)
-                {
-                    if (pickup != ignoredPickup && pickup.Active && pickup.Gate == candidate)
-                    {
-                        claimed = true;
-                        break;
-                    }
-                }
-                if (claimed) continue;
-                foreach (var pickup in crystalPickupPool)
-                {
-                    if (pickup.Active && pickup.Gate == candidate)
-                    {
-                        claimed = true;
-                        break;
-                    }
-                }
-                if (claimed) continue;
-                if (best == null || candidate.X > best.X) best = candidate;
-            }
-            return best;
         }
 
         private void DeferPowerUp(PowerUpPickup pickup, float delay)
@@ -3640,28 +3468,18 @@ new WorldTheme(
 
         private void StartFlight()
         {
-            BeginFlight(FlightMode.Classic);
+            BeginFlight();
         }
 
         private void RestartFlight()
         {
-            BeginFlight(FlightMode.Classic);
+            BeginFlight();
         }
 
-        private void StartDailyFlight()
-        {
-            BeginFlight(FlightMode.Classic);
-        }
-
-        private void BeginFlight(FlightMode mode)
+        private void BeginFlight()
         {
             ClearCrystalPickupBursts();
             ClosePurchaseModal();
-            // The launch experience is one fair route. The selected-mode preference
-            // remains for the upcoming Daily Flight, but today's run is Classic.
-            selectedFlightMode = FlightMode.Classic;
-            activeDailyRouteKey = string.Empty;
-            dailyRouteRandom = null;
             state = FlightState.Playing;
             score = 0;
             perfectPasses = 0;
@@ -4683,8 +4501,7 @@ new WorldTheme(
 
         private float RouteRange(float minimum, float maximum)
         {
-            if (dailyRouteRandom == null) return UnityEngine.Random.Range(minimum, maximum);
-            return minimum + (float)dailyRouteRandom.NextDouble() * (maximum - minimum);
+            return UnityEngine.Random.Range(minimum, maximum);
         }
 
         private static float RandomCrystalRange(float minimum, float maximum)
@@ -4694,23 +4511,7 @@ new WorldTheme(
 
         private int RouteRange(int minimumInclusive, int maximumExclusive)
         {
-            if (dailyRouteRandom == null) return UnityEngine.Random.Range(minimumInclusive, maximumExclusive);
-            return dailyRouteRandom.Next(minimumInclusive, maximumExclusive);
-        }
-
-        private static string DailyRouteKey()
-        {
-            return DateTime.UtcNow.ToString("yyyy-MM-dd");
-        }
-
-        private static int DailyRouteSeed(string routeKey)
-        {
-            unchecked
-            {
-                var hash = 17;
-                foreach (var character in routeKey) hash = hash * 31 + character;
-                return hash & int.MaxValue;
-            }
+            return UnityEngine.Random.Range(minimumInclusive, maximumExclusive);
         }
 
         private void Flap()
@@ -4817,36 +4618,6 @@ new WorldTheme(
             if (birdSafetyRenderer != null) birdSafetyRenderer.enabled = false;
         }
 
-        private void CycleFlightMode()
-        {
-            selectedFlightMode = selectedFlightMode == FlightMode.Classic ? FlightMode.Adventure : FlightMode.Classic;
-            UpdateModeCopy();
-            RefreshScreens();
-        }
-
-        private int BestFor(FlightMode mode)
-        {
-            if (mode == FlightMode.Adventure) return adventureBest;
-            return mode == FlightMode.Daily ? dailyBest : best;
-        }
-
-        private void SetBestFor(FlightMode mode, int value)
-        {
-            if (mode == FlightMode.Adventure) adventureBest = value;
-            else if (mode == FlightMode.Daily) dailyBest = value;
-            else best = value;
-        }
-
-        private static string ModeLabel(FlightMode mode)
-        {
-            return mode == FlightMode.Adventure ? "ADVENTURE" : mode == FlightMode.Daily ? "DAILY" : "CLASSIC";
-        }
-
-        private static Color ModeAccent(FlightMode mode)
-        {
-            return mode == FlightMode.Adventure ? Hex("#f05bc6") : mode == FlightMode.Daily ? Hex("#ffc34d") : Hex("#45eaff");
-        }
-
         private void StartRoundFromCustomize()
         {
             if (state != FlightState.Customize) return;
@@ -4874,15 +4645,6 @@ new WorldTheme(
             state = FlightState.Customize;
             bird.gameObject.SetActive(false);
             cosmeticCategory = CosmeticCategory.Upgrades;
-            RebuildCustomizeGrid();
-            RefreshScreens();
-        }
-
-        private void OpenWorldCollection()
-        {
-            state = FlightState.Customize;
-            bird.gameObject.SetActive(false);
-            cosmeticCategory = CosmeticCategory.Worlds;
             RebuildCustomizeGrid();
             RefreshScreens();
         }
@@ -5264,36 +5026,6 @@ new WorldTheme(
             statusText.raycastTarget = false;
         }
 
-        private void CreateUpgradeCard(int index, Upgrade upgrade)
-        {
-            var column = index % 2;
-            var row = index / 2;
-            var level = GetUpgradeLevel(upgrade.Id);
-            var maxed = level >= upgrade.MaxLevel;
-            var card = CreatePanel(customizeContent, $"{upgrade.Name} upgrade", new Vector2(column == 0 ? -235f : 235f, -12f - row * 250f), new Vector2(440f, 222f), Hex("#0b1022"));
-            card.anchorMin = new Vector2(.5f, 1f);
-            card.anchorMax = new Vector2(.5f, 1f);
-            card.pivot = new Vector2(.5f, 1f);
-            AddOutline(card.gameObject, upgrade.Accent, maxed ? 3f : 1.5f);
-            var button = card.gameObject.AddComponent<Button>();
-            button.targetGraphic = card.GetComponent<Image>();
-            button.onClick.AddListener(() => SelectUpgrade(upgrade));
-
-            var halo = CreateImage(card, "Upgrade focus ring", new Vector2(-146f, 34f), new Vector2(102f, 102f), new Color(upgrade.Accent.r, upgrade.Accent.g, upgrade.Accent.b, .42f));
-            halo.sprite = ringSprite;
-            halo.raycastTarget = false;
-            var previewSprite = GetUpgradeArtwork(upgrade);
-            var artwork = CreateImage(card, "Upgrade artwork", new Vector2(-146f, 34f), new Vector2(94f, 94f), previewSprite == null ? upgrade.Accent : Color.white);
-            artwork.sprite = previewSprite ?? softCircleSprite;
-            artwork.preserveAspect = true;
-            artwork.raycastTarget = false;
-            CreateText(card, upgrade.Name, new Vector2(-70f, 53f), new Vector2(250f, 34f), 18, Hex("#f4fbff"), TextAnchor.MiddleLeft, FontStyle.Bold).raycastTarget = false;
-            var nextEffect = maxed ? "MAXED · ALL CRYSTAL BENEFITS ACTIVE" : upgrade.EffectAtLevel(level);
-            CreateText(card, nextEffect, new Vector2(-70f, 12f), new Vector2(278f, 68f), 14, new Color(.86f, .91f, 1f, .73f), TextAnchor.MiddleLeft, FontStyle.Normal).raycastTarget = false;
-            var status = maxed ? "LEVEL 3 / 3 · MAXED" : $"LEVEL {level} / {upgrade.MaxLevel} · BUY {upgrade.PriceAtLevel(level)} ✦";
-            CreateText(card, status, new Vector2(-185f, -85f), new Vector2(380f, 28f), 15, maxed ? upgrade.Accent : new Color(.85f, .9f, 1f, .68f), TextAnchor.MiddleLeft, FontStyle.Bold).raycastTarget = false;
-        }
-
         private Sprite GetUpgradeArtwork(Upgrade upgrade)
         {
             PowerUpKind kind;
@@ -5340,15 +5072,6 @@ new WorldTheme(
         private bool IsSkinOwned(Skin skin)
         {
             return skin.Price <= 0 || ownedSkinIds.Contains(skin.Id);
-        }
-
-        private bool HasUpgrade(string id)
-        {
-            var requiredLevel = UpgradeAliasLevel(id, "crystal_resonator_");
-            if (requiredLevel > 0) return GetUpgradeLevel("crystal_resonator") >= requiredLevel;
-            requiredLevel = UpgradeAliasLevel(id, "salvage_codec_");
-            if (requiredLevel > 0) return GetUpgradeLevel("salvage_codec") >= requiredLevel;
-            return GetUpgradeLevel(id) > 0;
         }
 
         private int GetUpgradeLevel(string id)
@@ -6319,9 +6042,9 @@ new WorldTheme(
                 menuModeDetailText.text = "COLLECT CRYSTALS  ·  MASTER THE FLOW";
                 menuModeDetailText.color = Hex("#45eaff");
             }
-            if (menuDailyText != null)
+            if (menuRouteText != null)
             {
-                menuDailyText.text = $"{Worlds[0].Name}  →  {Worlds[1].Name}  →  {Worlds[2].Name}";
+                menuRouteText.text = $"{Worlds[0].Name}  →  {Worlds[1].Name}  →  {Worlds[2].Name}";
             }
             if (hudModeText != null)
             {
@@ -6422,17 +6145,7 @@ new WorldTheme(
 
         private void LoadProgress()
         {
-            // The previous single best score is intentionally carried forward as the
-            // Classic best, so existing pilots never lose progress when fair modes land.
             best = PlayerPrefs.GetInt("skypulse.native.best", 0);
-            adventureBest = PlayerPrefs.GetInt("skypulse.native.adventure-best", 0);
-            var today = DailyRouteKey();
-            dailyBest = PlayerPrefs.GetString("skypulse.native.daily-key", string.Empty) == today
-                ? PlayerPrefs.GetInt("skypulse.native.daily-best", 0)
-                : 0;
-            selectedFlightMode = PlayerPrefs.GetString("skypulse.native.selected-mode", "classic") == "adventure"
-                ? FlightMode.Adventure
-                : FlightMode.Classic;
             crystals = PlayerPrefs.GetInt("skypulse.native.crystals", 0);
             flightCoachStage = Mathf.Clamp(PlayerPrefs.GetInt("skypulse.native.flight-coach-stage", 0), 0, 2);
             reduceMotionEnabled = PlayerPrefs.GetInt("skypulse.native.reduce-motion", 0) == 1;
@@ -6508,10 +6221,6 @@ new WorldTheme(
         private void SaveProgress()
         {
             PlayerPrefs.SetInt("skypulse.native.best", best);
-            PlayerPrefs.SetInt("skypulse.native.adventure-best", adventureBest);
-            PlayerPrefs.SetString("skypulse.native.daily-key", DailyRouteKey());
-            PlayerPrefs.SetInt("skypulse.native.daily-best", dailyBest);
-            PlayerPrefs.SetString("skypulse.native.selected-mode", selectedFlightMode == FlightMode.Adventure ? "adventure" : "classic");
             PlayerPrefs.SetInt("skypulse.native.crystals", crystals);
             PlayerPrefs.SetInt("skypulse.native.farthest-world", farthestWorldIndex);
             PlayerPrefs.SetInt("skypulse.native.flight-coach-stage", flightCoachStage);
