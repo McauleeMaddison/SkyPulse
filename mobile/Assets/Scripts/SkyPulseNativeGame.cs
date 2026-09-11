@@ -2072,7 +2072,6 @@ new WorldTheme(
             scroll.verticalScrollbar = scrollbar;
             scroll.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.AutoHide;
             scroll.verticalNormalizedPosition = 1f;
-            CreateText(root.transform, "SWIPE TO EXPLORE  ·  TAP THE SKY TO FLY", new Vector2(0f, -840f), new Vector2(860f, 42f), 25, Hex("#91aaca"), TextAnchor.MiddleCenter, FontStyle.Bold);
             return root;
         }
 
@@ -4783,6 +4782,16 @@ new WorldTheme(
         private void RefreshCollectionNavigation()
         {
             var tech = cosmeticCategory == CosmeticCategory.Upgrades;
+            if (customizeScroll != null && customizeScroll.viewport != null)
+            {
+                var viewportImage = customizeScroll.viewport.GetComponent<Image>();
+                if (viewportImage != null)
+                {
+                    viewportImage.color = tech
+                        ? new Color(.015f, .027f, .067f, .87f)
+                        : new Color(.003f, .008f, .024f, .12f);
+                }
+            }
             var accent = tech ? Hex("#ffc34d") : Hex("#45eaff");
             var owned = 0;
             foreach (var skin in Skins) if (IsSkinOwned(skin)) owned++;
@@ -5138,8 +5147,8 @@ new WorldTheme(
             var informationGlass = CreateHangarGlassPanel(
                 hangarPageRoot,
                 "Flight profile glass",
-                new Vector2(0f, -235f),
-                new Vector2(740f, 430f),
+                new Vector2(0f, -225f),
+                new Vector2(790f, 470f),
                 accent,
                 .11f,
                 .34f);
@@ -5147,23 +5156,23 @@ new WorldTheme(
             var birdName = CreateText(
                 informationGlass,
                 skin.Name,
-                new Vector2(0f, 154f),
-                new Vector2(670f, 64f),
-                46,
+                new Vector2(0f, 172f),
+                new Vector2(680f, 60f),
+                44,
                 Hex("#f5fbff"),
                 TextAnchor.MiddleCenter,
                 FontStyle.Bold);
 
             birdName.resizeTextForBestFit = true;
             birdName.resizeTextMinSize = 30;
-            birdName.resizeTextMaxSize = 46;
+            birdName.resizeTextMaxSize = 44;
 
             CreateText(
                 informationGlass,
                 profile.Rarity,
-                new Vector2(0f, 108f),
-                new Vector2(400f, 38f),
-                27,
+                new Vector2(0f, 126f),
+                new Vector2(420f, 34f),
+                25,
                 profile.RarityColour,
                 TextAnchor.MiddleCenter,
                 FontStyle.Bold);
@@ -5171,36 +5180,36 @@ new WorldTheme(
             var description = CreateText(
                 informationGlass,
                 profile.Description,
-                new Vector2(0f, 62f),
-                new Vector2(650f, 50f),
-                23,
+                new Vector2(0f, 82f),
+                new Vector2(660f, 44f),
+                21,
                 Hex("#b7cede"),
                 TextAnchor.MiddleCenter,
                 FontStyle.Normal);
 
             description.resizeTextForBestFit = true;
-            description.resizeTextMinSize = 18;
-            description.resizeTextMaxSize = 23;
+            description.resizeTextMinSize = 17;
+            description.resizeTextMaxSize = 21;
 
             CreateHangarStatRow(
                 informationGlass,
                 "SPEED",
                 profile.Speed,
-                -12f,
+                10f,
                 accent);
 
             CreateHangarStatRow(
                 informationGlass,
                 "MANEUVERABILITY",
                 profile.Maneuverability,
-                -68f,
+                -48f,
                 accent);
 
             CreateHangarStatRow(
                 informationGlass,
                 "STABILITY",
                 profile.Stability,
-                -124f,
+                -106f,
                 accent);
 
             var actionLabel =
@@ -5213,8 +5222,8 @@ new WorldTheme(
             var actionButton = CreateNeonButton(
                 informationGlass,
                 actionLabel,
-                new Vector2(0f, -184f),
-                new Vector2(590f, 82f),
+                new Vector2(0f, -182f),
+                new Vector2(570f, 72f),
                 equipped
                     ? Hex("#45eaff")
                     : accent);
@@ -5232,16 +5241,6 @@ new WorldTheme(
                 actionButton.onClick.AddListener(
                     () => SelectSkin(skin));
             }
-
-            CreateText(
-                hangarPageRoot,
-                "SWIPE LEFT OR RIGHT",
-                new Vector2(0f, -482f),
-                new Vector2(520f, 34f),
-                22,
-                Hex("#83a9c2"),
-                TextAnchor.MiddleCenter,
-                FontStyle.Bold);
         }
 
         private void AddHangarSwipeEvent(
@@ -5752,9 +5751,9 @@ private RectTransform CreateHangarGlassPanel(
             CreateText(
                 parent,
                 label,
-                new Vector2(-255f, y),
-                new Vector2(300f, 44f),
-                25,
+                new Vector2(-220f, y),
+                new Vector2(260f, 40f),
+                23,
                 Hex("#c2d8e9"),
                 TextAnchor.MiddleLeft,
                 FontStyle.Bold);
@@ -5766,8 +5765,8 @@ private RectTransform CreateHangarGlassPanel(
                 var segment = CreateImage(
                     parent,
                     $"{label} segment {index + 1}",
-                    new Vector2(82f + index * 62f, y),
-                    new Vector2(46f, 14f),
+                    new Vector2(65f + index * 58f, y),
+                    new Vector2(42f, 12f),
                     filled
                         ? new Color(
                             accent.r,
@@ -5788,8 +5787,8 @@ private RectTransform CreateHangarGlassPanel(
                     var glow = CreateImage(
                         parent,
                         $"{label} glow {index + 1}",
-                        new Vector2(82f + index * 62f, y),
-                        new Vector2(54f, 24f),
+                        new Vector2(65f + index * 58f, y),
+                        new Vector2(50f, 20f),
                         new Color(
                             accent.r,
                             accent.g,
