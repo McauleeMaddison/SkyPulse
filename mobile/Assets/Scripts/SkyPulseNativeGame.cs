@@ -954,6 +954,21 @@ new WorldTheme(
         private GameObject gameOverScreen;
         private GameObject customizeScreen;
         private ScrollRect customizeScroll;
+        private int hangarPageIndex;
+        private RectTransform hangarPageRoot;
+        private Text hangarPageIndicatorText;
+        private RectTransform hangarCarouselTrack;
+        private RectTransform hangarPreviousBirdRoot;
+        private RectTransform hangarCurrentBirdRoot;
+        private RectTransform hangarNextBirdRoot;
+
+        private bool hangarDragging;
+        private Vector2 hangarDragStartPointer;
+        private Vector2 hangarTrackStartPosition;
+
+        private const float HangarCarouselSpacing = 365f;
+        private const float HangarSwipeThreshold = 90f;
+        private const float HangarSwipeDuration = .22f;
         private GameObject purchaseModal;
         private GameObject unlockRevealModal;
         private Text menuCrystalText;
@@ -1742,7 +1757,7 @@ new WorldTheme(
             titleRule.sprite = whiteSprite;
             titleRule.raycastTarget = false;
 
-            var flightDeck = CreateLuminousPanel(root.transform,"Flight deck",new Vector2(0f, -315f),new Vector2(860f, 660f),new Color(.004f, .012f, .038f, .90f),new Color(.27f, .92f, 1f, .48f));
+            var flightDeck = CreateLuminousPanel(root.transform, "Flight deck", new Vector2(0f, -315f), new Vector2(860f, 660f), new Color(.004f, .012f, .038f, .90f), new Color(.27f, .92f, 1f, .48f));
 
             flightDeck.GetComponent<Image>().raycastTarget = false;
 
@@ -4714,7 +4729,12 @@ new WorldTheme(
         {
             if (customizeContent == null) return;
             // A fling in the previous tab must not move the newly opened list.
-            if (customizeScroll != null) customizeScroll.StopMovement();
+            if (customizeScroll != null)
+            {
+                customizeScroll.StopMovement();
+                customizeScroll.vertical = cosmeticCategory != CosmeticCategory.Birds;
+                customizeScroll.horizontal = false;
+            }
             for (var index = customizeContent.childCount - 1; index >= 0; index -= 1) Destroy(customizeContent.GetChild(index).gameObject);
 
             RefreshCollectionNavigation();
@@ -4723,14 +4743,15 @@ new WorldTheme(
                 case CosmeticCategory.Birds:
                     customizeTitle.text = "BIRD HANGAR";
 
-                    for (var index = 0; index < Skins.Length; index += 1)
+                    if (customizeScroll != null)
                     {
-                        CreateBirdHangarCard(index, Skins[index]);
+                        customizeScroll.StopMovement();
+                        customizeScroll.vertical = false;
+                        customizeScroll.horizontal = false;
                     }
-
-                    CreateBirdHangarDetailPanel(equippedSkin);
-                    SetBirdHangarContentHeight(Skins.Length);
+                    BuildBirdHangarPage();
                     break;
+
                 case CosmeticCategory.Worlds:
                     customizeTitle.text = "WORLD COLLECTION";
                     for (var index = 0; index < Worlds.Length; index += 1)
@@ -4960,7 +4981,848 @@ new WorldTheme(
             customizeContent.sizeDelta = new Vector2(0f, 290f + rows * BirdHangarRowStride + 32f);
             customizeContent.anchoredPosition = Vector2.zero;
         }
+        private void BuildBirdHangarPage()
+        {
+            if (Skins == null || Skins.Length == 0) return;
 
+            hangarPageIndex = Mathf.Clamp(
+                hangarPageIndex,
+                0,
+                Skins.Length - 1);
+
+            var skin = Skins[hangarPageIndex];
+            var owned = IsSkinOwned(skin);
+            var equipped =
+                equippedSkin != null &&
+                equippedSkin.Id == skin.Id;
+
+            var profile = GetBirdHangarProfile(skin);
+            var accent = skin.Accent;
+
+            var previousIndex = hangarPageIndex - 1;
+            if (previousIndex < 0)
+                previousIndex = Skins.Length - 1;
+
+            var nextIndex = hangarPageIndex + 1;
+            if (nextIndex >= Skins.Length)
+                nextIndex = 0;
+
+            customizeContent.sizeDelta =
+                new Vector2(0f, 1110f);
+
+            customizeContent.anchoredPosition =
+                Vector2.zero;
+
+            // Transparent container only.
+            // This is NOT another giant blue card.
+            var pageObject = new GameObject(
+                "Bird carousel page",
+                typeof(RectTransform));
+
+            pageObject.transform.SetParent(
+                customizeContent,
+                false);
+
+            hangarPageRoot =
+                pageObject.GetComponent<RectTransform>();
+
+            hangarPageRoot.anchorMin =
+                new Vector2(.5f, 1f);
+
+            hangarPageRoot.anchorMax =
+                new Vector2(.5f, 1f);
+
+            hangarPageRoot.pivot =
+                new Vector2(.5f, 1f);
+
+            hangarPageRoot.anchoredPosition =
+                new Vector2(0f, -12f);
+
+            hangarPageRoot.sizeDelta =
+                new Vector2(920f, 1080f);
+
+            // Page number.
+            hangarPageIndicatorText = CreateText(
+                hangarPageRoot,
+                $"BAY {hangarPageIndex + 1:00}  /  {Skins.Length:00}",
+                new Vector2(0f, 502f),
+                new Vector2(500f, 38f),
+                23,
+                Hex("#a9d8ea"),
+                TextAnchor.MiddleCenter,
+                FontStyle.Bold);
+
+            // ==========================================================
+            // REAL CAROUSEL TRACK
+            // ==========================================================
+
+            var trackObject = new GameObject(
+                "Bird carousel track",
+                typeof(RectTransform));
+
+            trackObject.transform.SetParent(
+                hangarPageRoot,
+                false);
+
+            hangarCarouselTrack =
+                trackObject.GetComponent<RectTransform>();
+
+            hangarCarouselTrack.anchorMin =
+                new Vector2(.5f, .5f);
+
+            hangarCarouselTrack.anchorMax =
+                new Vector2(.5f, .5f);
+
+            hangarCarouselTrack.pivot =
+                new Vector2(.5f, .5f);
+
+            hangarCarouselTrack.sizeDelta =
+                new Vector2(1250f, 420f);
+
+            hangarCarouselTrack.anchoredPosition =
+                new Vector2(0f, 245f);
+
+            // Previous bird first, so it renders behind centre.
+            hangarPreviousBirdRoot = CreateHangarCarouselBird(
+            hangarCarouselTrack,
+            Skins[previousIndex],
+            -HangarCarouselSpacing,
+            false,
+            ShowPreviousHangarBird);
+
+            hangarNextBirdRoot = CreateHangarCarouselBird(
+                hangarCarouselTrack,
+                Skins[nextIndex],
+                HangarCarouselSpacing,
+                false,
+                ShowNextHangarBird);
+
+            hangarCurrentBirdRoot = CreateHangarCarouselBird(
+                hangarCarouselTrack,
+                skin,
+                0f,
+                true,
+                null);
+
+            var swipeSurface = CreateImage(
+            hangarPageRoot,
+            "Hangar swipe surface",
+            new Vector2(0f, 245f),
+            new Vector2(900f, 420f),
+            new Color(1f, 1f, 1f, .001f));
+
+            swipeSurface.sprite = whiteSprite;
+            swipeSurface.raycastTarget = true;
+
+            var swipeTrigger = swipeSurface.gameObject.AddComponent<EventTrigger>();
+
+            AddHangarSwipeEvent(
+                swipeTrigger,
+                EventTriggerType.BeginDrag,
+                OnHangarBeginDrag);
+
+            AddHangarSwipeEvent(
+                swipeTrigger,
+                EventTriggerType.Drag,
+                OnHangarDrag);
+
+            AddHangarSwipeEvent(
+                swipeTrigger,
+                EventTriggerType.EndDrag,
+                OnHangarEndDrag);
+
+            // ==========================================================
+            // FLOATING GLASS INFORMATION CONSOLE
+            // ==========================================================
+
+            var informationGlass = CreateHangarGlassPanel(
+                hangarPageRoot,
+                "Flight profile glass",
+                new Vector2(0f, -235f),
+                new Vector2(740f, 430f),
+                accent,
+                .20f,
+                .48f);
+
+            var birdName = CreateText(
+                informationGlass,
+                skin.Name,
+                new Vector2(0f, 154f),
+                new Vector2(670f, 64f),
+                46,
+                Hex("#f5fbff"),
+                TextAnchor.MiddleCenter,
+                FontStyle.Bold);
+
+            birdName.resizeTextForBestFit = true;
+            birdName.resizeTextMinSize = 30;
+            birdName.resizeTextMaxSize = 46;
+
+            CreateText(
+                informationGlass,
+                profile.Rarity,
+                new Vector2(0f, 108f),
+                new Vector2(400f, 38f),
+                27,
+                profile.RarityColour,
+                TextAnchor.MiddleCenter,
+                FontStyle.Bold);
+
+            var description = CreateText(
+                informationGlass,
+                profile.Description,
+                new Vector2(0f, 62f),
+                new Vector2(650f, 50f),
+                23,
+                Hex("#b7cede"),
+                TextAnchor.MiddleCenter,
+                FontStyle.Normal);
+
+            description.resizeTextForBestFit = true;
+            description.resizeTextMinSize = 18;
+            description.resizeTextMaxSize = 23;
+
+            CreateHangarStatRow(
+                informationGlass,
+                "SPEED",
+                profile.Speed,
+                -12f,
+                accent);
+
+            CreateHangarStatRow(
+                informationGlass,
+                "MANEUVERABILITY",
+                profile.Maneuverability,
+                -68f,
+                accent);
+
+            CreateHangarStatRow(
+                informationGlass,
+                "STABILITY",
+                profile.Stability,
+                -124f,
+                accent);
+
+            var actionLabel =
+                equipped
+                    ? "EQUIPPED"
+                    : owned
+                        ? "EQUIP BIRD"
+                        : $"UNLOCK   ·   {skin.Price:N0} ✦";
+
+            var actionButton = CreateNeonButton(
+                informationGlass,
+                actionLabel,
+                new Vector2(0f, -184f),
+                new Vector2(590f, 82f),
+                equipped
+                    ? Hex("#45eaff")
+                    : accent);
+
+            actionButton
+                .GetComponentInChildren<Text>()
+                .fontSize = 29;
+
+            if (equipped)
+            {
+                actionButton.interactable = false;
+            }
+            else
+            {
+                actionButton.onClick.AddListener(
+                    () => SelectSkin(skin));
+            }
+
+            CreateText(
+                hangarPageRoot,
+                "SWIPE LEFT OR RIGHT",
+                new Vector2(0f, -482f),
+                new Vector2(520f, 34f),
+                22,
+                Hex("#83a9c2"),
+                TextAnchor.MiddleCenter,
+                FontStyle.Bold);
+        }
+
+        private void AddHangarSwipeEvent(
+            EventTrigger trigger,
+            EventTriggerType type,
+            Action<PointerEventData> callback)
+        {
+            var entry = new EventTrigger.Entry
+            {
+                eventID = type
+            };
+
+            entry.callback.AddListener(data =>
+            {
+                if (data is PointerEventData pointerData)
+                    callback(pointerData);
+            });
+
+            trigger.triggers.Add(entry);
+        }
+
+        private void OnHangarBeginDrag(PointerEventData eventData)
+        {
+            if (hangarCarouselTrack == null) return;
+
+            hangarDragging = true;
+
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                hangarPageRoot,
+                eventData.position,
+                eventData.pressEventCamera,
+                out hangarDragStartPointer);
+
+            hangarTrackStartPosition =
+                hangarCarouselTrack.anchoredPosition;
+        }
+
+        private void OnHangarDrag(PointerEventData eventData)
+        {
+            if (!hangarDragging || hangarCarouselTrack == null)
+                return;
+
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                hangarPageRoot,
+                eventData.position,
+                eventData.pressEventCamera,
+                out var pointer);
+
+            var dragX =
+                Mathf.Clamp(
+                    pointer.x - hangarDragStartPointer.x,
+                    -HangarCarouselSpacing,
+                    HangarCarouselSpacing);
+
+            hangarCarouselTrack.anchoredPosition =
+                new Vector2(
+                    hangarTrackStartPosition.x + dragX,
+                    hangarTrackStartPosition.y);
+
+            UpdateHangarDragPresentation(dragX);
+        }
+
+        private void OnHangarEndDrag(PointerEventData eventData)
+        {
+            if (!hangarDragging) return;
+
+            hangarDragging = false;
+
+            var dragX =
+                hangarCarouselTrack.anchoredPosition.x -
+                hangarTrackStartPosition.x;
+
+            if (dragX <= -HangarSwipeThreshold)
+            {
+                StartCoroutine(
+                    AnimateHangarSwipe(
+                        -HangarCarouselSpacing,
+                        1));
+            }
+            else if (dragX >= HangarSwipeThreshold)
+            {
+                StartCoroutine(
+                    AnimateHangarSwipe(
+                        HangarCarouselSpacing,
+                        -1));
+            }
+            else
+            {
+                StartCoroutine(
+                    AnimateHangarSwipe(
+                        0f,
+                        0));
+            }
+        }
+
+        private void UpdateHangarDragPresentation(float dragX)
+        {
+            if (hangarCurrentBirdRoot == null) return;
+
+            var progress =
+                Mathf.Clamp01(
+                    Mathf.Abs(dragX) /
+                    HangarCarouselSpacing);
+
+            hangarCurrentBirdRoot.localScale =
+                Vector3.one *
+                Mathf.Lerp(1f, .58f, progress);
+
+            if (dragX < 0f && hangarNextBirdRoot != null)
+            {
+                hangarNextBirdRoot.localScale =
+                    Vector3.one *
+                    Mathf.Lerp(1f, 1.75f, progress);
+
+                if (hangarPreviousBirdRoot != null)
+                    hangarPreviousBirdRoot.localScale =
+                        Vector3.one;
+            }
+            else if (dragX > 0f && hangarPreviousBirdRoot != null)
+            {
+                hangarPreviousBirdRoot.localScale =
+                    Vector3.one *
+                    Mathf.Lerp(1f, 1.75f, progress);
+
+                if (hangarNextBirdRoot != null)
+                    hangarNextBirdRoot.localScale =
+                        Vector3.one;
+            }
+        }
+
+        private System.Collections.IEnumerator AnimateHangarSwipe(
+            float targetOffset,
+            int pageDirection)
+        {
+            if (hangarCarouselTrack == null)
+                yield break;
+
+            var start =
+                hangarCarouselTrack.anchoredPosition;
+
+            var target =
+                new Vector2(
+                    targetOffset,
+                    start.y);
+
+            var elapsed = 0f;
+
+            while (elapsed < HangarSwipeDuration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+
+                var t =
+                    Mathf.Clamp01(
+                        elapsed / HangarSwipeDuration);
+
+                // Smooth ease-out rather than a robotic linear slide.
+                t = 1f - Mathf.Pow(1f - t, 3f);
+
+                hangarCarouselTrack.anchoredPosition =
+                    Vector2.Lerp(
+                        start,
+                        target,
+                        t);
+
+                UpdateHangarDragPresentation(
+                    hangarCarouselTrack.anchoredPosition.x);
+
+                yield return null;
+            }
+
+            if (pageDirection != 0)
+            {
+                hangarPageIndex += pageDirection;
+
+                if (hangarPageIndex < 0)
+                    hangarPageIndex =
+                        Skins.Length - 1;
+
+                if (hangarPageIndex >= Skins.Length)
+                    hangarPageIndex = 0;
+
+                RebuildCustomizeGrid();
+            }
+            else
+            {
+                hangarCarouselTrack.anchoredPosition =
+                    new Vector2(
+                        0f,
+                        target.y);
+
+                if (hangarCurrentBirdRoot != null)
+                    hangarCurrentBirdRoot.localScale =
+                        Vector3.one;
+
+                if (hangarPreviousBirdRoot != null)
+                    hangarPreviousBirdRoot.localScale =
+                        Vector3.one;
+
+                if (hangarNextBirdRoot != null)
+                    hangarNextBirdRoot.localScale =
+                        Vector3.one;
+            }
+        }
+
+        private RectTransform CreateHangarGlassPanel(
+            Transform parent,
+            string name,
+            Vector2 position,
+            Vector2 size,
+            Color accent,
+            float fillAlpha,
+            float edgeAlpha)
+        {
+            var glass = CreateImage(
+                parent,
+                name,
+                position,
+                size,
+                new Color(
+                    .018f,
+                    .035f,
+                    .060f,
+                    fillAlpha));
+
+            // Important:
+            // use a plain neutral sprite rather than the normal blue
+            // interface panel artwork.
+            glass.sprite = whiteSprite;
+            glass.raycastTarget = false;
+
+            AddOutline(
+                glass.gameObject,
+                new Color(
+                    accent.r,
+                    accent.g,
+                    accent.b,
+                    edgeAlpha),
+                1.2f);
+
+            // Dark floating shadow beneath the glass.
+            var shadow =
+                glass.gameObject.AddComponent<Shadow>();
+
+            shadow.effectColor =
+                new Color(0f, 0f, 0f, .30f);
+
+            shadow.effectDistance =
+                new Vector2(0f, -6f);
+
+            // Bright upper glass reflection.
+            var topReflection = CreateImage(
+                glass.rectTransform,
+                "Glass top reflection",
+                new Vector2(
+                    0f,
+                    size.y * .5f - 6f),
+                new Vector2(
+                    size.x - 34f,
+                    3f),
+                new Color(
+                    .82f,
+                    .96f,
+                    1f,
+                    .18f));
+
+            topReflection.sprite = whiteSprite;
+            topReflection.raycastTarget = false;
+
+            // Very subtle coloured bloom inside the glass.
+            var atmosphere = CreateImage(
+                glass.rectTransform,
+                "Glass atmosphere",
+                new Vector2(0f, 24f),
+                new Vector2(
+                    size.x * .82f,
+                    size.y * .72f),
+                new Color(
+                    accent.r,
+                    accent.g,
+                    accent.b,
+                    .035f));
+
+            atmosphere.sprite = softCircleSprite;
+            atmosphere.raycastTarget = false;
+
+            return glass.rectTransform;
+        }
+        private RectTransform CreateHangarCarouselBird(
+            Transform parent,
+            Skin skin,
+            float x,
+            bool selected,
+            Action onPressed)
+        {
+            var owned = IsSkinOwned(skin);
+            var accent = skin.Accent;
+
+            // No visible rectangular card.
+            var rootObject = new GameObject(
+                selected
+                    ? skin.Name + " hero"
+                    : skin.Name + " neighbour",
+                typeof(RectTransform));
+
+            rootObject.transform.SetParent(parent, false);
+
+            var root = rootObject.GetComponent<RectTransform>();
+
+            root.anchorMin = root.anchorMax =
+                new Vector2(.5f, .5f);
+
+            root.pivot =
+                new Vector2(.5f, .5f);
+
+            root.anchoredPosition =
+                new Vector2(x, 0f);
+
+            root.sizeDelta = selected
+                ? new Vector2(520f, 390f)
+                : new Vector2(260f, 290f);
+
+            // Invisible touch target for neighbouring birds.
+            if (!selected && onPressed != null)
+            {
+                var hitArea = CreateImage(
+                    root,
+                    "Neighbour touch area",
+                    Vector2.zero,
+                    root.sizeDelta,
+                    new Color(1f, 1f, 1f, .001f));
+
+                hitArea.sprite = whiteSprite;
+                hitArea.raycastTarget = true;
+
+                var button =
+                    hitArea.gameObject.AddComponent<Button>();
+
+                button.targetGraphic = hitArea;
+
+                button.onClick.AddListener(
+                    () => onPressed());
+
+                hitArea.gameObject
+                    .AddComponent<SkyPulseButtonFeedback>();
+            }
+
+            // Soft colour atmosphere behind each bird.
+            var aura = CreateImage(
+                root,
+                selected
+                    ? "Hero atmosphere"
+                    : "Neighbour atmosphere",
+                new Vector2(0f, 5f),
+                selected
+                    ? new Vector2(460f, 310f)
+                    : new Vector2(210f, 180f),
+                new Color(
+                    accent.r,
+                    accent.g,
+                    accent.b,
+                    selected ? .12f : .045f));
+
+            aura.sprite = softCircleSprite;
+            aura.raycastTarget = false;
+
+            // Holographic scanner.
+            var scanner = CreateUiGlyph(
+                root,
+                selected
+                    ? "Hero scanner"
+                    : "Neighbour scanner",
+                new Vector2(0f, selected ? 8f : 14f),
+                selected
+                    ? new Vector2(455f, 315f)
+                    : new Vector2(205f, 170f),
+                new Color(
+                    accent.r,
+                    accent.g,
+                    accent.b,
+                    selected ? .58f : .17f),
+                SkyPulseUiGlyph.Kind.DockRing);
+
+            scanner.Animate = selected;
+
+            // Only the featured bird gets the full platform.
+            if (selected)
+            {
+                var platform = CreateUiGlyph(
+                    root,
+                    "Hero docking platform",
+                    new Vector2(0f, -22f),
+                    new Vector2(470f, 320f),
+                    new Color(
+                        accent.r,
+                        accent.g,
+                        accent.b,
+                        .70f),
+                    SkyPulseUiGlyph.Kind.DockPlatform);
+
+                platform.Variant =
+                    DockVariantFor(skin);
+
+                CreateUiGlyph(
+                    root,
+                    "Hero horizon",
+                    new Vector2(0f, -118f),
+                    new Vector2(405f, 70f),
+                    new Color(
+                        accent.r,
+                        accent.g,
+                        accent.b,
+                        .38f),
+                    SkyPulseUiGlyph.Kind.Horizon);
+            }
+
+            // Bird itself.
+            var preview = CreateImage(
+                root,
+                selected
+                    ? "Selected bird"
+                    : "Neighbour bird",
+                new Vector2(0f, selected ? 8f : 8f),
+                selected
+                    ? new Vector2(480f, 315f)
+                    : new Vector2(230f, 180f),
+                selected
+                    ? owned
+                        ? Color.white
+                        : new Color(.55f, .62f, .76f, .88f)
+                    : owned
+                        ? new Color(1f, 1f, 1f, .48f)
+                        : new Color(.45f, .52f, .66f, .26f));
+
+            preview.sprite =
+                LoadPresentationPose(skin.UnlockPath)
+                ??
+                LoadSprite(skin.ArtPath);
+
+            preview.preserveAspect = true;
+            preview.raycastTarget = false;
+
+            // Side birds only need a subtle identity label.
+            if (!selected)
+            {
+                var neighbourName = CreateText(
+                    root,
+                    skin.Name,
+                    new Vector2(0f, -112f),
+                    new Vector2(235f, 36f),
+                    19,
+                    new Color(.82f, .91f, 1f, .58f),
+                    TextAnchor.MiddleCenter,
+                    FontStyle.Bold);
+
+                neighbourName.resizeTextForBestFit = true;
+                neighbourName.resizeTextMinSize = 13;
+                neighbourName.resizeTextMaxSize = 19;
+            }
+
+            return root;
+        }
+        private void CreateHangarStatRow(
+            Transform parent,
+            string label,
+            int value,
+            float y,
+            Color accent)
+        {
+            CreateText(
+                parent,
+                label,
+                new Vector2(-255f, y),
+                new Vector2(300f, 44f),
+                25,
+                Hex("#c2d8e9"),
+                TextAnchor.MiddleLeft,
+                FontStyle.Bold);
+
+            for (var index = 0; index < 5; index++)
+            {
+                var filled = index < value;
+
+                var segment = CreateImage(
+                    parent,
+                    $"{label} segment {index + 1}",
+                    new Vector2(82f + index * 62f, y),
+                    new Vector2(46f, 14f),
+                    filled
+                        ? new Color(
+                            accent.r,
+                            accent.g,
+                            accent.b,
+                            .96f)
+                        : new Color(
+                            .14f,
+                            .22f,
+                            .32f,
+                            .72f));
+
+                segment.sprite = whiteSprite;
+                segment.raycastTarget = false;
+
+                if (filled)
+                {
+                    var glow = CreateImage(
+                        parent,
+                        $"{label} glow {index + 1}",
+                        new Vector2(82f + index * 62f, y),
+                        new Vector2(54f, 24f),
+                        new Color(
+                            accent.r,
+                            accent.g,
+                            accent.b,
+                            .10f));
+
+                    glow.sprite = whiteSprite;
+                    glow.raycastTarget = false;
+                    glow.transform.SetSiblingIndex(
+                        Mathf.Max(0, segment.transform.GetSiblingIndex() - 1));
+                }
+            }
+        }
+
+        private void CreateHangarRatingRow(
+            Transform parent,
+            string label,
+            int value,
+            float y,
+            Color accent)
+        {
+            CreateText(
+                parent,
+                label,
+                new Vector2(-235f, y),
+                new Vector2(270f, 42f),
+                24,
+                Hex("#b5cbe0"),
+                TextAnchor.MiddleLeft,
+                FontStyle.Bold);
+
+            for (var index = 0; index < 5; index++)
+            {
+                var filled = index < value;
+
+                var dot = CreateImage(
+                    parent,
+                    $"{label} stat {index + 1}",
+                    new Vector2(70f + index * 60f, y),
+                    new Vector2(28f, 28f),
+                    filled
+                        ? new Color(accent.r, accent.g, accent.b, .95f)
+                        : new Color(.20f, .28f, .40f, .55f));
+
+                dot.sprite = softCircleSprite;
+                dot.raycastTarget = false;
+            }
+        }
+
+        private void ShowPreviousHangarBird()
+        {
+            if (Skins == null || Skins.Length == 0) return;
+
+            hangarPageIndex--;
+
+            if (hangarPageIndex < 0)
+                hangarPageIndex = Skins.Length - 1;
+
+            RebuildCustomizeGrid();
+        }
+
+        private void ShowNextHangarBird()
+        {
+            if (Skins == null || Skins.Length == 0) return;
+
+            hangarPageIndex++;
+
+            if (hangarPageIndex >= Skins.Length)
+                hangarPageIndex = 0;
+
+            RebuildCustomizeGrid();
+        }
         private void CreateBirdHangarCard(int index, Skin skin)
         {
             var column = index % 2;
