@@ -5141,8 +5141,8 @@ new WorldTheme(
                 new Vector2(0f, -235f),
                 new Vector2(740f, 430f),
                 accent,
-                .20f,
-                .48f);
+                .11f,
+                .34f);
 
             var birdName = CreateText(
                 informationGlass,
@@ -5445,90 +5445,129 @@ new WorldTheme(
                         Vector3.one;
             }
         }
+private RectTransform CreateHangarGlassPanel(
+    Transform parent,
+    string name,
+    Vector2 position,
+    Vector2 size,
+    Color accent,
+    float fillAlpha,
+    float edgeAlpha)
+{
+    var glass = CreateImage(
+        parent,
+        name,
+        position,
+        size,
+        new Color(
+            .015f,
+            .030f,
+            .050f,
+            Mathf.Clamp01(fillAlpha)));
 
-        private RectTransform CreateHangarGlassPanel(
-            Transform parent,
-            string name,
-            Vector2 position,
-            Vector2 size,
-            Color accent,
-            float fillAlpha,
-            float edgeAlpha)
-        {
-            var glass = CreateImage(
-                parent,
-                name,
-                position,
-                size,
-                new Color(
-                    .018f,
-                    .035f,
-                    .060f,
-                    fillAlpha));
+    // Rounded glass instead of a square slab.
+    glass.sprite = roundedPanelSprite;
+    glass.type = Image.Type.Sliced;
+    glass.raycastTarget = false;
 
-            // Important:
-            // use a plain neutral sprite rather than the normal blue
-            // interface panel artwork.
-            glass.sprite = whiteSprite;
-            glass.raycastTarget = false;
+    AddOutline(
+        glass.gameObject,
+        new Color(
+            accent.r,
+            accent.g,
+            accent.b,
+            edgeAlpha),
+        1.15f);
 
-            AddOutline(
-                glass.gameObject,
-                new Color(
-                    accent.r,
-                    accent.g,
-                    accent.b,
-                    edgeAlpha),
-                1.2f);
+    // Soft depth below the floating glass.
+    var shadow = glass.gameObject.AddComponent<Shadow>();
+    shadow.effectColor = new Color(0f, 0f, 0f, .38f);
+    shadow.effectDistance = new Vector2(0f, -7f);
 
-            // Dark floating shadow beneath the glass.
-            var shadow =
-                glass.gameObject.AddComponent<Shadow>();
+    // Large subtle coloured atmosphere.
+    var atmosphere = CreateImage(
+        glass.rectTransform,
+        "Glass ambient glow",
+        new Vector2(0f, 12f),
+        new Vector2(
+            size.x * .90f,
+            size.y * .78f),
+        new Color(
+            accent.r,
+            accent.g,
+            accent.b,
+            .035f));
 
-            shadow.effectColor =
-                new Color(0f, 0f, 0f, .30f);
+    atmosphere.sprite = softCircleSprite;
+    atmosphere.raycastTarget = false;
 
-            shadow.effectDistance =
-                new Vector2(0f, -6f);
+    // Thin bright reflection across the upper glass edge.
+    var reflection = CreateImage(
+        glass.rectTransform,
+        "Glass upper reflection",
+        new Vector2(
+            0f,
+            size.y * .5f - 10f),
+        new Vector2(
+            size.x - 50f,
+            3f),
+        new Color(
+            .80f,
+            .96f,
+            1f,
+            .28f));
 
-            // Bright upper glass reflection.
-            var topReflection = CreateImage(
-                glass.rectTransform,
-                "Glass top reflection",
-                new Vector2(
-                    0f,
-                    size.y * .5f - 6f),
-                new Vector2(
-                    size.x - 34f,
-                    3f),
-                new Color(
-                    .82f,
-                    .96f,
-                    1f,
-                    .18f));
+    reflection.sprite = whiteSprite;
+    reflection.raycastTarget = false;
 
-            topReflection.sprite = whiteSprite;
-            topReflection.raycastTarget = false;
+    // Secondary inner edge gives the panel physical thickness.
+    var innerFrame = CreateImage(
+        glass.rectTransform,
+        "Glass inner frame",
+        Vector2.zero,
+        new Vector2(
+            size.x - 18f,
+            size.y - 18f),
+        new Color(
+            accent.r,
+            accent.g,
+            accent.b,
+            .035f));
 
-            // Very subtle coloured bloom inside the glass.
-            var atmosphere = CreateImage(
-                glass.rectTransform,
-                "Glass atmosphere",
-                new Vector2(0f, 24f),
-                new Vector2(
-                    size.x * .82f,
-                    size.y * .72f),
-                new Color(
-                    accent.r,
-                    accent.g,
-                    accent.b,
-                    .035f));
+    innerFrame.sprite = roundedPanelSprite;
+    innerFrame.type = Image.Type.Sliced;
+    innerFrame.raycastTarget = false;
 
-            atmosphere.sprite = softCircleSprite;
-            atmosphere.raycastTarget = false;
+    AddOutline(
+        innerFrame.gameObject,
+        new Color(
+            .70f,
+            .92f,
+            1f,
+            .10f),
+        .7f);
 
-            return glass.rectTransform;
-        }
+    // Bottom edge reflection, much dimmer.
+    var lowerReflection = CreateImage(
+        glass.rectTransform,
+        "Glass lower reflection",
+        new Vector2(
+            0f,
+            -size.y * .5f + 10f),
+        new Vector2(
+            size.x - 72f,
+            2f),
+        new Color(
+            accent.r,
+            accent.g,
+            accent.b,
+            .12f));
+
+    lowerReflection.sprite = whiteSprite;
+    lowerReflection.raycastTarget = false;
+
+    return glass.rectTransform;
+}
         private RectTransform CreateHangarCarouselBird(
             Transform parent,
             Skin skin,
