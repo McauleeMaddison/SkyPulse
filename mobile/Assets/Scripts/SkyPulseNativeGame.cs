@@ -961,6 +961,14 @@ new WorldTheme(
         private RectTransform hangarPreviousBirdRoot;
         private RectTransform hangarCurrentBirdRoot;
         private RectTransform hangarNextBirdRoot;
+        private RectTransform hangarHeroBirdArt;
+        private Vector2 hangarHeroBirdBasePosition;
+        private float hangarHeroAnimationTime;
+        private Image hangarHeroBirdImage;
+        private Sprite[] hangarHeroWingFrames;
+        private Image hangarHeroAura;
+        private RectTransform hangarGlassShimmer;
+        private Image hangarGlassShimmerImage;
 
         private bool hangarDragging;
         private Vector2 hangarDragStartPointer;
@@ -2251,6 +2259,7 @@ new WorldTheme(
         {
             ApplySafeArea();
             RefreshViewportDecor();
+            UpdateHangarHeroPresentation();
             var frameDelta = Mathf.Min(Time.unscaledDeltaTime, MaximumSimulationCatchup);
             ambientTime += frameDelta;
             UpdateAmbientVisuals();
@@ -5152,6 +5161,22 @@ new WorldTheme(
                 accent,
                 .11f,
                 .34f);
+            var shimmer = CreateImage(informationGlass,"Glass travelling reflection",
+            new Vector2(-315f, 0f),
+            new Vector2(105f, 390f),
+            new Color(.82f,.96f,1f,.055f));
+
+            shimmer.sprite = softCircleSprite;
+            shimmer.raycastTarget = false;
+
+            hangarGlassShimmer = shimmer.rectTransform;
+            hangarGlassShimmerImage = shimmer;
+
+            hangarGlassShimmer.localRotation =
+                Quaternion.Euler(
+                    0f,
+                    0f,
+                    -9f);
 
             var birdName = CreateText(
                 informationGlass,
@@ -5335,6 +5360,107 @@ new WorldTheme(
                         0));
             }
         }
+        private void UpdateHangarHeroPresentation()
+        {
+            if (state != FlightState.Customize)
+                return;
+
+            if (cosmeticCategory != CosmeticCategory.Birds)
+                return;
+
+            if (hangarHeroBirdArt == null)
+                return;
+
+            hangarHeroAnimationTime += Time.unscaledDeltaTime;
+            if (hangarHeroBirdImage != null &&
+            hangarHeroWingFrames != null &&
+            hangarHeroWingFrames.Length > 0)
+            {
+                // Ping-pong through the authored flight poses so the loop
+                // returns smoothly rather than snapping from last to first.
+                var frameCount = hangarHeroWingFrames.Length;
+
+                var cycleLength =
+                    Mathf.Max(1, frameCount * 2 - 2);
+
+                var normalized =
+                    Mathf.Repeat(
+                        hangarHeroAnimationTime /
+                        SharedWingAnimationSeconds,
+                        1f);
+
+                var sequenceIndex =
+                    Mathf.FloorToInt(
+                        normalized * cycleLength);
+
+                sequenceIndex =
+                    Mathf.Clamp(
+                        sequenceIndex,
+                        0,
+                        cycleLength - 1);
+
+                var frameIndex =
+                    sequenceIndex < frameCount
+                        ? sequenceIndex
+                        : cycleLength - sequenceIndex;
+
+                var frame =
+                    hangarHeroWingFrames[frameIndex];
+
+                if (frame != null)
+                    hangarHeroBirdImage.sprite = frame;
+            }
+
+            // Very slow vertical hover.
+            var hover =
+                Mathf.Sin(hangarHeroAnimationTime * 1.65f) * 7f;
+
+            // Tiny aircraft-like bank. Keep this subtle.
+            var bank =
+                Mathf.Sin(hangarHeroAnimationTime * 1.15f) * 1.25f;
+
+            // Small breathing scale keeps the bird alive without looking cartoony.
+            var breathe =
+                1f +
+                Mathf.Sin(hangarHeroAnimationTime * 1.35f) * .012f;
+
+            hangarHeroBirdArt.anchoredPosition =
+                hangarHeroBirdBasePosition +
+                new Vector2(0f, hover);
+
+            hangarHeroBirdArt.localRotation =
+                Quaternion.Euler(
+                    0f,
+                    0f,
+                    bank);
+
+            hangarHeroBirdArt.localScale =
+                Vector3.one * breathe;
+            if (hangarHeroAura != null)
+            {
+                var auraPulse =
+                    .94f +
+                    Mathf.Sin(
+                        hangarHeroAnimationTime * 1.8f) *
+                    .06f;
+
+                hangarHeroAura.rectTransform.localScale =
+                    Vector3.one * auraPulse;
+
+                var auraColour = hangarHeroAura.color;
+
+                auraColour.a =
+                    .13f +
+                    (
+                        Mathf.Sin(
+                            hangarHeroAnimationTime * 1.55f)
+                        * .5f + .5f
+                    ) * .07f;
+
+                hangarHeroAura.color = auraColour;
+            }
+        }
+
 
         private void UpdateHangarDragPresentation(float dragX)
         {
@@ -5444,129 +5570,129 @@ new WorldTheme(
                         Vector3.one;
             }
         }
-private RectTransform CreateHangarGlassPanel(
-    Transform parent,
-    string name,
-    Vector2 position,
-    Vector2 size,
-    Color accent,
-    float fillAlpha,
-    float edgeAlpha)
-{
-    var glass = CreateImage(
-        parent,
-        name,
-        position,
-        size,
-        new Color(
-            .015f,
-            .030f,
-            .050f,
-            Mathf.Clamp01(fillAlpha)));
+        private RectTransform CreateHangarGlassPanel(
+            Transform parent,
+            string name,
+            Vector2 position,
+            Vector2 size,
+            Color accent,
+            float fillAlpha,
+            float edgeAlpha)
+        {
+            var glass = CreateImage(
+                parent,
+                name,
+                position,
+                size,
+                new Color(
+                    .015f,
+                    .030f,
+                    .050f,
+                    Mathf.Clamp01(fillAlpha)));
 
-    // Rounded glass instead of a square slab.
-    glass.sprite = roundedPanelSprite;
-    glass.type = Image.Type.Sliced;
-    glass.raycastTarget = false;
+            // Rounded glass instead of a square slab.
+            glass.sprite = roundedPanelSprite;
+            glass.type = Image.Type.Sliced;
+            glass.raycastTarget = false;
 
-    AddOutline(
-        glass.gameObject,
-        new Color(
-            accent.r,
-            accent.g,
-            accent.b,
-            edgeAlpha),
-        1.15f);
+            AddOutline(
+                glass.gameObject,
+                new Color(
+                    accent.r,
+                    accent.g,
+                    accent.b,
+                    edgeAlpha),
+                1.15f);
 
-    // Soft depth below the floating glass.
-    var shadow = glass.gameObject.AddComponent<Shadow>();
-    shadow.effectColor = new Color(0f, 0f, 0f, .38f);
-    shadow.effectDistance = new Vector2(0f, -7f);
+            // Soft depth below the floating glass.
+            var shadow = glass.gameObject.AddComponent<Shadow>();
+            shadow.effectColor = new Color(0f, 0f, 0f, .38f);
+            shadow.effectDistance = new Vector2(0f, -7f);
 
-    // Large subtle coloured atmosphere.
-    var atmosphere = CreateImage(
-        glass.rectTransform,
-        "Glass ambient glow",
-        new Vector2(0f, 12f),
-        new Vector2(
-            size.x * .90f,
-            size.y * .78f),
-        new Color(
-            accent.r,
-            accent.g,
-            accent.b,
-            .035f));
+            // Large subtle coloured atmosphere.
+            var atmosphere = CreateImage(
+                glass.rectTransform,
+                "Glass ambient glow",
+                new Vector2(0f, 12f),
+                new Vector2(
+                    size.x * .90f,
+                    size.y * .78f),
+                new Color(
+                    accent.r,
+                    accent.g,
+                    accent.b,
+                    .035f));
 
-    atmosphere.sprite = softCircleSprite;
-    atmosphere.raycastTarget = false;
+            atmosphere.sprite = softCircleSprite;
+            atmosphere.raycastTarget = false;
 
-    // Thin bright reflection across the upper glass edge.
-    var reflection = CreateImage(
-        glass.rectTransform,
-        "Glass upper reflection",
-        new Vector2(
-            0f,
-            size.y * .5f - 10f),
-        new Vector2(
-            size.x - 50f,
-            3f),
-        new Color(
-            .80f,
-            .96f,
-            1f,
-            .28f));
+            // Thin bright reflection across the upper glass edge.
+            var reflection = CreateImage(
+                glass.rectTransform,
+                "Glass upper reflection",
+                new Vector2(
+                    0f,
+                    size.y * .5f - 10f),
+                new Vector2(
+                    size.x - 50f,
+                    3f),
+                new Color(
+                    .80f,
+                    .96f,
+                    1f,
+                    .28f));
 
-    reflection.sprite = whiteSprite;
-    reflection.raycastTarget = false;
+            reflection.sprite = whiteSprite;
+            reflection.raycastTarget = false;
 
-    // Secondary inner edge gives the panel physical thickness.
-    var innerFrame = CreateImage(
-        glass.rectTransform,
-        "Glass inner frame",
-        Vector2.zero,
-        new Vector2(
-            size.x - 18f,
-            size.y - 18f),
-        new Color(
-            accent.r,
-            accent.g,
-            accent.b,
-            .035f));
+            // Secondary inner edge gives the panel physical thickness.
+            var innerFrame = CreateImage(
+                glass.rectTransform,
+                "Glass inner frame",
+                Vector2.zero,
+                new Vector2(
+                    size.x - 18f,
+                    size.y - 18f),
+                new Color(
+                    accent.r,
+                    accent.g,
+                    accent.b,
+                    .035f));
 
-    innerFrame.sprite = roundedPanelSprite;
-    innerFrame.type = Image.Type.Sliced;
-    innerFrame.raycastTarget = false;
+            innerFrame.sprite = roundedPanelSprite;
+            innerFrame.type = Image.Type.Sliced;
+            innerFrame.raycastTarget = false;
 
-    AddOutline(
-        innerFrame.gameObject,
-        new Color(
-            .70f,
-            .92f,
-            1f,
-            .10f),
-        .7f);
+            AddOutline(
+                innerFrame.gameObject,
+                new Color(
+                    .70f,
+                    .92f,
+                    1f,
+                    .10f),
+                .7f);
 
-    // Bottom edge reflection, much dimmer.
-    var lowerReflection = CreateImage(
-        glass.rectTransform,
-        "Glass lower reflection",
-        new Vector2(
-            0f,
-            -size.y * .5f + 10f),
-        new Vector2(
-            size.x - 72f,
-            2f),
-        new Color(
-            accent.r,
-            accent.g,
-            accent.b,
-            .12f));
+            // Bottom edge reflection, much dimmer.
+            var lowerReflection = CreateImage(
+                glass.rectTransform,
+                "Glass lower reflection",
+                new Vector2(
+                    0f,
+                    -size.y * .5f + 10f),
+                new Vector2(
+                    size.x - 72f,
+                    2f),
+                new Color(
+                    accent.r,
+                    accent.g,
+                    accent.b,
+                    .12f));
 
-    lowerReflection.sprite = whiteSprite;
-    lowerReflection.raycastTarget = false;
+            lowerReflection.sprite = whiteSprite;
+            lowerReflection.raycastTarget = false;
 
-    return glass.rectTransform;
-}
+            return glass.rectTransform;
+        }
         private RectTransform CreateHangarCarouselBird(
             Transform parent,
             Skin skin,
@@ -5576,6 +5702,14 @@ private RectTransform CreateHangarGlassPanel(
         {
             var owned = IsSkinOwned(skin);
             var accent = skin.Accent;
+            var profile = GetBirdHangarProfile(skin);
+
+            var presentationColour = selected
+                ? Color.Lerp(
+                    accent,
+                    profile.RarityColour,
+                    .55f)
+                : accent;
 
             // No visible rectangular card.
             var rootObject = new GameObject(
@@ -5637,13 +5771,15 @@ private RectTransform CreateHangarGlassPanel(
                     ? new Vector2(460f, 310f)
                     : new Vector2(210f, 180f),
                 new Color(
-                    accent.r,
-                    accent.g,
-                    accent.b,
-                    selected ? .12f : .045f));
+    presentationColour.r,
+    presentationColour.g,
+    presentationColour.b,
+    selected ? .16f : .045f));
 
             aura.sprite = softCircleSprite;
             aura.raycastTarget = false;
+            if (selected)
+                hangarHeroAura = aura;
 
             // Holographic scanner.
             var scanner = CreateUiGlyph(
@@ -5656,10 +5792,10 @@ private RectTransform CreateHangarGlassPanel(
                     ? new Vector2(455f, 315f)
                     : new Vector2(205f, 170f),
                 new Color(
-                    accent.r,
-                    accent.g,
-                    accent.b,
-                    selected ? .58f : .17f),
+    presentationColour.r,
+    presentationColour.g,
+    presentationColour.b,
+    selected ? .68f : .17f),
                 SkyPulseUiGlyph.Kind.DockRing);
 
             scanner.Animate = selected;
@@ -5672,11 +5808,11 @@ private RectTransform CreateHangarGlassPanel(
                     "Hero docking platform",
                     new Vector2(0f, -22f),
                     new Vector2(470f, 320f),
-                    new Color(
-                        accent.r,
-                        accent.g,
-                        accent.b,
-                        .70f),
+                   new Color(
+    presentationColour.r,
+    presentationColour.g,
+    presentationColour.b,
+    .76f),
                     SkyPulseUiGlyph.Kind.DockPlatform);
 
                 platform.Variant =
@@ -5687,11 +5823,11 @@ private RectTransform CreateHangarGlassPanel(
                     "Hero horizon",
                     new Vector2(0f, -118f),
                     new Vector2(405f, 70f),
-                    new Color(
-                        accent.r,
-                        accent.g,
-                        accent.b,
-                        .38f),
+                     new Color(
+        presentationColour.r,
+        presentationColour.g,
+        presentationColour.b,
+        .38f),
                     SkyPulseUiGlyph.Kind.Horizon);
             }
 
@@ -5720,6 +5856,36 @@ private RectTransform CreateHangarGlassPanel(
 
             preview.preserveAspect = true;
             preview.raycastTarget = false;
+            if (selected)
+            {
+                hangarHeroBirdArt = preview.rectTransform;
+                hangarHeroBirdImage = preview;
+
+                hangarHeroBirdBasePosition =
+                    hangarHeroBirdArt.anchoredPosition;
+
+                hangarHeroAnimationTime = 0f;
+
+                if (skin.FlapFramePaths != null &&
+                    skin.FlapFramePaths.Length > 0)
+                {
+                    hangarHeroWingFrames =
+                        new Sprite[skin.FlapFramePaths.Length];
+
+                    for (var frameIndex = 0;
+                         frameIndex < skin.FlapFramePaths.Length;
+                         frameIndex++)
+                    {
+                        hangarHeroWingFrames[frameIndex] =
+                            LoadSprite(
+                                skin.FlapFramePaths[frameIndex]);
+                    }
+                }
+                else
+                {
+                    hangarHeroWingFrames = null;
+                }
+            }
 
             // Side birds only need a subtle identity label.
             if (!selected)
