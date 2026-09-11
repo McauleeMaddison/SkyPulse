@@ -979,6 +979,7 @@ new WorldTheme(
         private const float HangarInformationFadeDuration = .20f;
 
         private bool hangarDragging;
+        private bool hangarSwipeAnimating;
         private Vector2 hangarDragStartPointer;
         private Vector2 hangarTrackStartPosition;
 
@@ -5183,10 +5184,10 @@ hangarPreviousBirdRoot != null
                 accent,
                 .11f,
                 .34f);
-                hangarInformationCanvas =
-            informationGlass.gameObject.AddComponent<CanvasGroup>();
-               hangarInformationCanvas.alpha =
-               hangarInformationFadeTime >= 0f? 0f: 1f;
+            hangarInformationCanvas =
+        informationGlass.gameObject.AddComponent<CanvasGroup>();
+            hangarInformationCanvas.alpha =
+            hangarInformationFadeTime >= 0f ? 0f : 1f;
             var shimmer = CreateImage(informationGlass, "Glass travelling reflection",
             new Vector2(-315f, 0f),
             new Vector2(105f, 390f),
@@ -5315,8 +5316,9 @@ hangarPreviousBirdRoot != null
 
         private void OnHangarBeginDrag(PointerEventData eventData)
         {
-            if (hangarCarouselTrack == null) return;
-
+            if (hangarCarouselTrack == null ||
+                hangarSwipeAnimating)
+                return;
             hangarDragging = true;
 
             RectTransformUtility.ScreenPointToLocalPointInRectangle(
@@ -5356,9 +5358,12 @@ hangarPreviousBirdRoot != null
 
         private void OnHangarEndDrag(PointerEventData eventData)
         {
-            if (!hangarDragging) return;
+            if (!hangarDragging ||
+    hangarSwipeAnimating)
+                return;
 
             hangarDragging = false;
+            hangarSwipeAnimating = true;
 
             var dragX =
                 hangarCarouselTrack.anchoredPosition.x -
@@ -5435,31 +5440,31 @@ hangarPreviousBirdRoot != null
 
                 if (frame != null)
                     hangarHeroBirdImage.sprite = frame;
-                    if (hangarInformationFadeTime >= 0f &&
-    hangarInformationCanvas != null)
-{
-    hangarInformationFadeTime +=
-        Time.unscaledDeltaTime;
+                if (hangarInformationFadeTime >= 0f &&
+hangarInformationCanvas != null)
+                {
+                    hangarInformationFadeTime +=
+                        Time.unscaledDeltaTime;
 
-    var fadeProgress =
-        Mathf.Clamp01(
-            hangarInformationFadeTime /
-            HangarInformationFadeDuration);
+                    var fadeProgress =
+                        Mathf.Clamp01(
+                            hangarInformationFadeTime /
+                            HangarInformationFadeDuration);
 
-    fadeProgress =
-        fadeProgress *
-        fadeProgress *
-        (3f - 2f * fadeProgress);
+                    fadeProgress =
+                        fadeProgress *
+                        fadeProgress *
+                        (3f - 2f * fadeProgress);
 
-    hangarInformationCanvas.alpha =
-        fadeProgress;
+                    hangarInformationCanvas.alpha =
+                        fadeProgress;
 
-    if (fadeProgress >= 1f)
-    {
-        hangarInformationCanvas.alpha = 1f;
-        hangarInformationFadeTime = -1f;
-    }
-}
+                    if (fadeProgress >= 1f)
+                    {
+                        hangarInformationCanvas.alpha = 1f;
+                        hangarInformationFadeTime = -1f;
+                    }
+                }
             }
 
             // Very slow vertical hover.
@@ -5474,26 +5479,26 @@ hangarPreviousBirdRoot != null
             var breathe =
                 1f +
                 Mathf.Sin(hangarHeroAnimationTime * 1.35f) * .012f;
-                var arrivalScale = 1f;
+            var arrivalScale = 1f;
 
-if (hangarArrivalPulseTime >= 0f)
-{
-    hangarArrivalPulseTime += Time.unscaledDeltaTime;
+            if (hangarArrivalPulseTime >= 0f)
+            {
+                hangarArrivalPulseTime += Time.unscaledDeltaTime;
 
-    var arrivalProgress =
-        Mathf.Clamp01(
-            hangarArrivalPulseTime /
-            HangarArrivalPulseDuration);
+                var arrivalProgress =
+                    Mathf.Clamp01(
+                        hangarArrivalPulseTime /
+                        HangarArrivalPulseDuration);
 
-    arrivalScale =
-        1f +
-        Mathf.Sin(
-            arrivalProgress * Mathf.PI) *
-        .035f;
+                arrivalScale =
+                    1f +
+                    Mathf.Sin(
+                        arrivalProgress * Mathf.PI) *
+                    .035f;
 
-    if (arrivalProgress >= 1f)
-        hangarArrivalPulseTime = -1f;
-}
+                if (arrivalProgress >= 1f)
+                    hangarArrivalPulseTime = -1f;
+            }
 
             hangarHeroBirdArt.anchoredPosition =
                 hangarHeroBirdBasePosition +
@@ -5541,14 +5546,14 @@ if (hangarArrivalPulseTime >= 0f)
                 Mathf.Clamp01(
                     Mathf.Abs(dragX) /
                     HangarCarouselSpacing);
-                    if (hangarInformationCanvas != null)
-{
-    hangarInformationCanvas.alpha =
-        Mathf.Lerp(
-            1f,
-            .18f,
-            progress);
-}
+            if (hangarInformationCanvas != null)
+            {
+                hangarInformationCanvas.alpha =
+                    Mathf.Lerp(
+                        1f,
+                        .18f,
+                        progress);
+            }
 
             // Current hero shrinks and fades as it leaves centre.
             hangarCurrentBirdRoot.localScale =
@@ -5696,19 +5701,19 @@ if (hangarArrivalPulseTime >= 0f)
                 if (hangarNextBirdCanvas != null)
                 {
                     hangarNextBirdCanvas.alpha =
-                        Mathf.Lerp(
-                            .50f,
-                            .22f,
-                            progress);
+                        Mathf.Lerp(.50f, .22f, progress);
                 }
             }
         }
         private System.Collections.IEnumerator AnimateHangarSwipe(
-            float targetOffset,
-            int pageDirection)
+    float targetOffset,
+    int pageDirection)
         {
             if (hangarCarouselTrack == null)
+            {
+                hangarSwipeAnimating = false;
                 yield break;
+            }
 
             var start =
                 hangarCarouselTrack.anchoredPosition;
@@ -5728,7 +5733,7 @@ if (hangarArrivalPulseTime >= 0f)
                     Mathf.Clamp01(
                         elapsed / HangarSwipeDuration);
 
-                // Smooth ease-out rather than a robotic linear slide.
+                // Smooth ease-out.
                 t = 1f - Mathf.Pow(1f - t, 3f);
 
                 hangarCarouselTrack.anchoredPosition =
@@ -5743,39 +5748,93 @@ if (hangarArrivalPulseTime >= 0f)
                 yield return null;
             }
 
+            // Make absolutely sure we finish at the intended position.
+            hangarCarouselTrack.anchoredPosition = target;
+
             if (pageDirection != 0)
             {
                 hangarPageIndex += pageDirection;
 
                 if (hangarPageIndex < 0)
-                    hangarPageIndex =
-                        Skins.Length - 1;
+                    hangarPageIndex = Skins.Length - 1;
 
                 if (hangarPageIndex >= Skins.Length)
                     hangarPageIndex = 0;
+
+                // New information panel will fade back in.
                 hangarInformationFadeTime = 0f;
+
                 RebuildCustomizeGrid();
+
+                // Tiny arrival settle on the new centre bird.
                 hangarArrivalPulseTime = 0f;
             }
             else
             {
+                // Swipe was too small, so return everything to its normal state.
                 hangarCarouselTrack.anchoredPosition =
                     new Vector2(
                         0f,
                         target.y);
 
                 if (hangarCurrentBirdRoot != null)
+                {
                     hangarCurrentBirdRoot.localScale =
                         Vector3.one;
 
+                    var position =
+                        hangarCurrentBirdRoot.anchoredPosition;
+
+                    position.y = 0f;
+
+                    hangarCurrentBirdRoot.anchoredPosition =
+                        position;
+                }
+
                 if (hangarPreviousBirdRoot != null)
+                {
                     hangarPreviousBirdRoot.localScale =
                         Vector3.one;
 
+                    var position =
+                        hangarPreviousBirdRoot.anchoredPosition;
+
+                    position.y = 0f;
+
+                    hangarPreviousBirdRoot.anchoredPosition =
+                        position;
+                }
+
                 if (hangarNextBirdRoot != null)
+                {
                     hangarNextBirdRoot.localScale =
                         Vector3.one;
+
+                    var position =
+                        hangarNextBirdRoot.anchoredPosition;
+
+                    position.y = 0f;
+
+                    hangarNextBirdRoot.anchoredPosition =
+                        position;
+                }
+
+                if (hangarCurrentBirdCanvas != null)
+                    hangarCurrentBirdCanvas.alpha = 1f;
+
+                if (hangarPreviousBirdCanvas != null)
+                    hangarPreviousBirdCanvas.alpha = .50f;
+
+                if (hangarNextBirdCanvas != null)
+                    hangarNextBirdCanvas.alpha = .50f;
+
+                if (hangarInformationCanvas != null)
+                    hangarInformationCanvas.alpha = 1f;
             }
+
+            // Snap has completely finished.
+            // New swipe input is allowed again.
+            hangarSwipeAnimating = false;
         }
         private RectTransform CreateHangarGlassPanel(
             Transform parent,
