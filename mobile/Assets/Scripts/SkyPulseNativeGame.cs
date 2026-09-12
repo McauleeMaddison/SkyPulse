@@ -4151,7 +4151,7 @@ new WorldTheme(
         topPipe ? 1f : -1f;
 
     // ---------------------------------------------------------
-    // CLEAN PREMIUM BASE
+    // PREMIUM NEON BASE
     // ---------------------------------------------------------
 
     surface.Outer.enabled = false;
@@ -4166,7 +4166,7 @@ new WorldTheme(
     surface.CapEnergy.enabled = false;
 
     // ---------------------------------------------------------
-    // PREMIUM AUTHORED COLLAR
+    // AUTHORED PREMIUM COLLAR
     // ---------------------------------------------------------
 
     var visualCapWidth =
@@ -4198,11 +4198,9 @@ new WorldTheme(
             visualCapHeight));
 
     // ---------------------------------------------------------
-    // AUTHORED SHAFT
-    //
-    // CRITICAL FIX:
-    // The shaft must stop at the BODY side of the collar,
-    // NOT at capY on the playable-gap side.
+    // AUTHORED PIPE SHAFT
+    // IMPORTANT:
+    // The shaft deliberately overlaps BEHIND the collar.
     // ---------------------------------------------------------
 
     var farBodyY =
@@ -4210,13 +4208,17 @@ new WorldTheme(
         direction *
         height * .5f;
 
-    // Slight overlap underneath the BACK of the collar prevents
-    // a hairline gap while keeping the cyan artwork completely
-    // away from the visible opening.
+    var collarBodyEdgeY =
+        capY +
+        direction *
+        visualCapHeight;
+
+    // Allow most of the collar depth to overlap the shaft.
+    // This makes the pipe and collar physically read as one object.
     var shaftJoinY =
         capY +
         direction *
-        (visualCapHeight - .035f);
+        (visualCapHeight * .28f);
 
     var visualShaftHeight =
         Mathf.Max(
@@ -4246,18 +4248,16 @@ new WorldTheme(
             visualShaftHeight));
 
     // ---------------------------------------------------------
-    // POWER RAILS
-    //
-    // Stop BEFORE the collar begins.
+    // STATIC ENERGY RAILS
     // ---------------------------------------------------------
 
     var railNearY =
-        shaftJoinY +
-        direction * .14f;
+        collarBodyEdgeY +
+        direction * .12f;
 
     var railFarY =
         farBodyY -
-        direction * .12f;
+        direction * .14f;
 
     var railHeight =
         Mathf.Max(
@@ -4293,12 +4293,10 @@ new WorldTheme(
             .024f,
             railHeight));
 
-    // ---------------------------------------------------------
-    // TRAVELLING ENERGY LAYERS
-    // ---------------------------------------------------------
-
+    // The authored shaft already supplies its main permanent detail.
     surface.Core.enabled = false;
 
+    // Travelling energy packets.
     surface.CorePulse.enabled = true;
     surface.CorePulse.sprite = softCircleSprite;
     surface.CorePulse.sortingOrder = 8;
@@ -4317,7 +4315,7 @@ new WorldTheme(
         topPipe,
         0f);
 }
-     private void AnimateNeonPipeSurface(
+private void AnimateNeonPipeSurface(
     PipeSurface surface,
     float capY,
     bool topPipe,
@@ -4339,8 +4337,19 @@ new WorldTheme(
                   gateOffset * 4.1f);
 
     // ---------------------------------------------------------
-    // EXACT VISIBLE SHAFT BOUNDS
+    // PROTECTED ANIMATION REGION
+    //
+    // The shaft may overlap behind the collar for seamless metal.
+    // Animated light is NEVER allowed into that overlap.
     // ---------------------------------------------------------
+
+    var visualCapHeight =
+        PipeCapHeight * .82f;
+
+    var collarBodyEdgeY =
+        capY +
+        direction *
+        visualCapHeight;
 
     var shaftHeight =
         surface.Artwork.sprite != null
@@ -4357,34 +4366,27 @@ new WorldTheme(
     var shaftCentre =
         surface.Artwork.transform.localPosition.y;
 
-    // Edge nearest the collar.
-    var shaftNearY =
-        shaftCentre -
-        direction *
-        shaftHeight * .5f;
-
-    // Opposite/far end of pipe.
     var shaftFarY =
         shaftCentre +
         direction *
         shaftHeight * .5f;
 
-    // Every moving light stays safely INSIDE the shaft.
+    // Animation starts well away from the collar.
     var packetNearY =
-        shaftNearY +
-        direction * .20f;
+        collarBodyEdgeY +
+        direction * .18f;
 
     var packetFarY =
         shaftFarY -
-        direction * .20f;
+        direction * .22f;
 
     // ---------------------------------------------------------
-    // PREMIUM ENERGY PALETTE
+    // PREMIUM COLOURS
     // ---------------------------------------------------------
 
     var cyan =
         Color.Lerp(
-            new Color(.08f, .94f, 1f),
+            new Color(.07f, .95f, 1f),
             equippedPipe.Accent,
             .12f);
 
@@ -4395,32 +4397,32 @@ new WorldTheme(
             .10f);
 
     // ---------------------------------------------------------
-    // SUBTLE METAL RESPONSE
+    // SUBTLE METAL BREATHING
     // ---------------------------------------------------------
 
     surface.Artwork.color =
         Color.Lerp(
             Color.white,
             equippedPipe.Accent,
-            .008f +
+            .007f +
             breathe * .012f);
 
     surface.CapPanel.color =
         Color.Lerp(
             Color.white,
             equippedPipe.Energy,
-            .004f +
-            breathe * .009f);
+            .003f +
+            breathe * .008f);
 
     // ---------------------------------------------------------
-    // BASE RAIL ENERGY
+    // BASE POWER RAILS
     // ---------------------------------------------------------
 
     var leftRail =
         cyan;
 
     leftRail.a =
-        .28f +
+        .27f +
         breathe * .15f;
 
     surface.RailLeft.color =
@@ -4433,14 +4435,14 @@ new WorldTheme(
             .20f);
 
     rightRail.a =
-        .26f +
+        .25f +
         breathe * .16f;
 
     surface.RailRight.color =
         rightRail;
 
     // ---------------------------------------------------------
-    // CENTRE MAGENTA PACKET
+    // CENTRE MAGENTA ENERGY PACKET
     // ---------------------------------------------------------
 
     var centrePhase =
@@ -4478,8 +4480,8 @@ new WorldTheme(
             .48f);
 
     centreColour.a =
-        .04f +
-        centreEnvelope * .90f;
+        .03f +
+        centreEnvelope * .91f;
 
     surface.CorePulse.color =
         centreColour;
@@ -4491,13 +4493,13 @@ new WorldTheme(
             centreY),
         new Vector2(
             PipeWidth *
-            (.095f +
+            (.090f +
              centreEnvelope * .030f),
-            .50f +
+            .46f +
             centreEnvelope * .16f));
 
     // ---------------------------------------------------------
-    // LEFT CYAN PACKET
+    // LEFT CYAN ENERGY PACKET
     // ---------------------------------------------------------
 
     var cyanPhase =
@@ -4548,13 +4550,13 @@ new WorldTheme(
             -PipeWidth * .465f,
             cyanY),
         new Vector2(
-            .050f +
+            .048f +
             cyanEnvelope * .020f,
-            .56f +
+            .52f +
             cyanEnvelope * .18f));
 
     // ---------------------------------------------------------
-    // RIGHT MAGENTA / WHITE PACKET
+    // RIGHT MAGENTA / WHITE ENERGY PACKET
     // ---------------------------------------------------------
 
     var secondaryPhase =
@@ -4605,13 +4607,13 @@ new WorldTheme(
             PipeWidth * .405f,
             secondaryY),
         new Vector2(
-            .052f +
+            .050f +
             secondaryEnvelope * .018f,
-            .48f +
+            .45f +
             secondaryEnvelope * .15f));
 
     // ---------------------------------------------------------
-    // ENERGY SURGE THROUGH THE STATIC RAILS
+    // RAIL RESPONSE
     // ---------------------------------------------------------
 
     var surge =
@@ -4625,7 +4627,7 @@ new WorldTheme(
     surgedLeft.a =
         Mathf.Clamp01(
             surgedLeft.a +
-            surge * .10f);
+            surge * .09f);
 
     surface.RailLeft.color =
         surgedLeft;
@@ -4636,13 +4638,13 @@ new WorldTheme(
     surgedRight.a =
         Mathf.Clamp01(
             surgedRight.a +
-            surge * .11f);
+            surge * .10f);
 
     surface.RailRight.color =
         surgedRight;
 
     // ---------------------------------------------------------
-    // CAP SAFETY
+    // HARD CAP SAFETY
     // ---------------------------------------------------------
 
     surface.CapGlow.enabled = false;
@@ -4669,9 +4671,6 @@ private void LayoutPipeSurface(
 
     // ---------------------------------------------------------
     // GAMEPLAY COLLISION
-    //
-    // Keep collision completely independent from visual polish.
-    // Nothing below changes gate difficulty, gap size or scoring.
     // ---------------------------------------------------------
 
     SetPipeCollider(
@@ -4694,9 +4693,6 @@ private void LayoutPipeSurface(
 
     // ---------------------------------------------------------
     // PREMIUM NEON PIPE PATH
-    //
-    // Our current premium gates go directly into the dedicated
-    // neon renderer and never initialise the old fallback visuals.
     // ---------------------------------------------------------
 
     if (hasNeonPipeArtwork)
@@ -4786,9 +4782,6 @@ private void LayoutPipeSurface(
 
     // ---------------------------------------------------------
     // FALLBACK CAP DETAILS
-    //
-    // These remain disabled unless an older pipe style explicitly
-    // requires them.
     // ---------------------------------------------------------
 
     surface.Energy.enabled = false;
