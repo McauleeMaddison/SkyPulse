@@ -1290,8 +1290,14 @@ new WorldTheme(
             // measured in the original PNGs, even when iOS scales the textures.
             var neonShaft = LoadPipeCutoutSprite("SkyPulse/art/pipes/pipe-shaft-neon-v1",
                 new Rect(266f / 1024f, 0f, 493f / 1024f, 1f));
-            var neonCollar = LoadPipeCutoutSprite("SkyPulse/art/pipes/pipe-collar-neon-v1",
-                new Rect(107f / 1934f, 91f / 813f, 1715f / 1934f, 608f / 813f));
+            var neonCollar =
+    LoadPipeCutoutSprite(
+        "SkyPulse/art/pipes/pipe-collar-neon-v1",
+        new Rect(
+            225f / 1934f,
+            91f / 813f,
+            1484f / 1934f,
+            608f / 813f));
             hasNeonPipeArtwork = neonShaft != null && neonCollar != null;
             if (hasNeonPipeArtwork)
             {
@@ -4083,9 +4089,8 @@ new WorldTheme(
             surface.Highlight.color = highlightColour;
             surface.Highlight.transform.localPosition = new Vector3(0f, capY + direction * (.035f + Mathf.Cos(ambientTime * 7.2f + pipeX) * .010f * gateMotion), 0f);
             surface.Highlight.transform.localScale = new Vector3(PipeWidth * Mathf.Lerp(.56f, .68f, pulse), .008f + pulse * .009f, 1f);
-            var scanPhase = reduceMotionEnabled ? .48f : Mathf.Repeat(ambientTime * .82f + pipeX * .11f, 1f);
-            var scanColour = surface.Scan.color;
-            scanColour.a = Mathf.Lerp(.08f, .26f, pulse);
+            var scanPhase = reduceMotionEnabled ? .48f : Mathf.Repeat(ambientTime * 1.05f + pipeX * .11f,1f);
+            var scanColour = Color.Lerp(equippedPipe.Energy,Color.white,.48f);scanColour.a = Mathf.Lerp(.16f,.48f,pulse);
             surface.Scan.color = scanColour;
             surface.Scan.transform.localPosition = new Vector3(0f, capY + direction * (capBodyInset + scanPhase * Mathf.Max(.08f, bodyHeight - .30f)), 0f);
             surface.Scan.transform.localScale = new Vector3(PipeWidth * .72f, .010f, 1f);
@@ -4135,165 +4140,757 @@ new WorldTheme(
             }
         }
 
-        private void LayoutNeonPipeSurface(PipeSurface surface, float centreY, float height, float capY, bool topPipe)
-        {
-            // Reuse the gate's pooled renderers. Only the two existing simple
-            // colliders below participate in flight; every light is decorative.
-            surface.Outer.enabled = false;
-            surface.Panel.enabled = false;
-            surface.Shade.enabled = false;
-            surface.Highlight.enabled = false;
-            surface.Energy.enabled = false;
-            surface.Scan.enabled = false;
-            surface.Beacon.enabled = false;
-            surface.CapOuter.enabled = false;
-            surface.CapAccent.enabled = false;
-            surface.CapEnergy.enabled = false;
+      private void LayoutNeonPipeSurface(
+    PipeSurface surface,
+    float centreY,
+    float height,
+    float capY,
+    bool topPipe)
+{
+    // Authored neon artwork owns the entire visible gate.
+    // Procedural fallback geometry must never sit behind it.
+    surface.Outer.enabled = false;
+    surface.Panel.enabled = false;
+    surface.Shade.enabled = false;
+    surface.Energy.enabled = false;
+    surface.Beacon.enabled = false;
 
-            surface.Artwork.enabled = true;
-            surface.Artwork.sprite = pipeBodySprite;
-            surface.Artwork.color = Color.Lerp(Color.white, equippedPipe.Accent, .045f);
-            surface.Artwork.sortingOrder = 5;
-            surface.Artwork.flipY = topPipe;
-            surface.Artwork.transform.localRotation = Quaternion.identity;
-            SetSpriteBlock(surface.Artwork, Vector2.up * centreY, new Vector2(PipeWidth, height));
+    // MAIN SHAFT
+    surface.Artwork.enabled = true;
+    surface.Artwork.sprite = pipeBodySprite;
+    surface.Artwork.color = Color.white;
+    surface.Artwork.sortingOrder = 5;
+    surface.Artwork.flipY = topPipe;
+    surface.Artwork.transform.localRotation =
+        Quaternion.identity;
 
-            var direction = topPipe ? 1f : -1f;
-            var capCentre = capY + direction * PipeCapHeight * .5f;
-            surface.CapPanel.enabled = true;
-            surface.CapPanel.sprite = pipeCapSprite;
-            surface.CapPanel.color = Color.white;
-            surface.CapPanel.sortingOrder = 11;
-            surface.CapPanel.flipY = topPipe;
-            surface.CapPanel.transform.localRotation = Quaternion.identity;
-            SetSpriteBlock(surface.CapPanel, Vector2.up * capCentre,
-                new Vector2(PipeCollisionWidth, PipeCapHeight));
+    SetSpriteBlock(
+        surface.Artwork,
+        Vector2.up * centreY,
+        new Vector2(
+            PipeWidth,
+            height));
 
-            surface.RailLeft.enabled = true;
-            surface.RailRight.enabled = true;
-            surface.RailLeft.sortingOrder = 6;
-            surface.RailRight.sortingOrder = 6;
-            var lightHeight = Mathf.Max(.12f, height - .12f);
-            // The white texture is not a one-unit sprite. Fit its bounds to world
-            // units so these thin rails stop inside the shaft, clear of the gap.
-            SetSpriteBlock(surface.RailLeft, new Vector2(-PipeWidth * .48f, centreY), new Vector2(.015f, lightHeight));
-            SetSpriteBlock(surface.RailRight, new Vector2(PipeWidth * .418f, centreY), new Vector2(.022f, lightHeight));
+    var direction =
+        topPipe ? 1f : -1f;
 
-            surface.Core.enabled = true;
-            surface.Core.sprite = softCircleSprite;
-            surface.Core.sortingOrder = 6;
-            SetSpriteBlock(surface.Core, Vector2.up * centreY,
-                new Vector2(PipeWidth * .21f, Mathf.Max(.12f, height - .20f)));
-            surface.CorePulse.enabled = true;
-            surface.CorePulse.sprite = softCircleSprite;
-            surface.CorePulse.sortingOrder = 7;
+    // PREMIUM COLLAR
+    //
+    // The collar is only slightly wider than the shaft.
+    // This removes the oversized dark opening / saucer appearance
+    // while preserving the detailed authored metalwork.
+    var visualCapWidth =
+        PipeWidth * 1.015f;
 
-            surface.CapGlow.enabled = true;
-            surface.CapGlow.sprite = softCircleSprite;
-            surface.CapGlow.sortingOrder = 10;
-            surface.CapGlow.transform.localRotation = Quaternion.identity;
-            AnimateNeonPipeSurface(surface, capY, topPipe, 0f);
-        }
+    var visualCapHeight =
+        PipeCapHeight * .78f;
 
-        private void AnimateNeonPipeSurface(PipeSurface surface, float capY, bool topPipe, float pipeX)
-        {
-            // A restrained breathing rim and power travelling inside the shaft add
-            // life without pulsing the metal. Reduced Motion freezes both effects.
-            var pulse = reduceMotionEnabled ? .55f : .5f + .5f * Mathf.Sin(ambientTime * 2.4f + pipeX * .42f);
-            var phase = reduceMotionEnabled ? .48f : Mathf.Repeat(ambientTime * .19f + pipeX * .09f, 1f);
-            var direction = topPipe ? 1f : -1f;
-            var bodyHeight = Mathf.Max(.12f, surface.Artwork.bounds.size.y);
-            var bodyCentre = surface.Artwork.transform.localPosition.y;
+    // Preserve the exact playable gap boundary.
+    // Only the visible collar dimensions change.
+    var visualCapCentre =
+        capY +
+        direction *
+        visualCapHeight * .5f;
 
-            var edge = Color.Lerp(new Color(.24f, .97f, 1f), equippedPipe.Accent, .25f);
-            var power = Color.Lerp(new Color(1f, .035f, .78f), equippedPipe.Energy, .20f);
-            surface.RailLeft.color = new Color(edge.r * .4f, edge.g * .5f, edge.b, .14f + pulse * .06f);
-            surface.RailRight.color = new Color(edge.r, edge.g, edge.b, .28f + pulse * .16f);
-            surface.Core.color = new Color(power.r, power.g, power.b, .08f + pulse * .07f);
-            surface.CorePulse.color = new Color(power.r, power.g + .20f, power.b, .10f + pulse * .10f);
-            var streakHeight = Mathf.Min(.72f, bodyHeight * .30f);
-            SetSpriteBlock(surface.CorePulse,
-                new Vector2(0f, bodyCentre + direction * (phase - .5f) * Mathf.Max(0f, bodyHeight - streakHeight - .20f)),
-                new Vector2(PipeWidth * .16f, streakHeight));
+    surface.CapPanel.enabled = true;
+    surface.CapPanel.sprite = pipeCapSprite;
+    surface.CapPanel.color = Color.white;
+    surface.CapPanel.sortingOrder = 11;
+    surface.CapPanel.flipY = topPipe;
+    surface.CapPanel.transform.localRotation =
+        Quaternion.identity;
 
-            // Glow can spill softly outside the rim. The cropped opaque collar
-            // remains exactly at the original visible/collision gap boundary.
-            surface.CapGlow.color = new Color(power.r, power.g, power.b, .24f + pulse * .12f);
-            SetSpriteBlock(surface.CapGlow,
-                new Vector2(0f, capY + direction * PipeCapHeight * .24f),
-                new Vector2(PipeCapWidth * (1.18f + pulse * .04f), PipeCapHeight * .76f));
-        }
+    SetSpriteBlock(
+        surface.CapPanel,
+        Vector2.up * visualCapCentre,
+        new Vector2(
+            visualCapWidth,
+            visualCapHeight));
 
-        private void LayoutPipeSurface(PipeSurface surface, float centreY, float height, float capY, bool topPipe)
-        {
-            var style = equippedPipe;
-            LayoutPlumbingGate(surface, centreY, height, capY, topPipe, style);
+    // Nothing is allowed to create a halo, fake lip,
+    // black rectangle or floating ring around the cap.
+    surface.CapGlow.enabled = false;
+    surface.CapOuter.enabled = false;
+    surface.CapAccent.enabled = false;
+    surface.CapEnergy.enabled = false;
 
-            var direction = topPipe ? 1f : -1f;
-            var capCentre = capY + direction * (PipeCapHeight * .5f);
-            SetPipeCollider(surface.BodyCollider, new Vector2(0f, centreY), new Vector2(PipeWidth, height));
-            SetPipeCollider(surface.CapCollider, new Vector2(0f, capCentre), new Vector2(PipeCollisionWidth, PipeCapHeight));
-            if (hasNeonPipeArtwork) return;
-            var insideOffset = direction * .048f;
-            var useProceduralBodyDetails = !hasAuthoredPipeBody;
-            surface.Core.enabled = useProceduralBodyDetails;
-            surface.CorePulse.enabled = useProceduralBodyDetails;
-            surface.Core.sortingOrder = 6;
-            surface.CorePulse.sortingOrder = 7;
-            surface.CapGlow.sortingOrder = 8;
-            var coreColor = style.Energy;
-            coreColor.a = .12f;
-            surface.Core.color = coreColor;
-            SetBlock(surface.Core, new Vector2(0f, centreY), new Vector2(PipeWidth * .29f, Mathf.Max(.16f, height - .44f)));
-            surface.CorePulse.color = new Color(coreColor.r, coreColor.g, coreColor.b, 0f);
-            surface.CorePulse.transform.localPosition = new Vector3(0f, capY + direction * .68f, 0f);
-            surface.CorePulse.transform.localScale = new Vector3(.38f, .10f, 1f);
+    // SHAFT RAILS
+    //
+    // Deliberately stop them before the collar.
+    // Their shortened centre is shifted AWAY from the gap,
+    // rather than shortening both ends equally.
+    const float railClearanceFromCap = .38f;
 
-            surface.Energy.enabled = false;
-            surface.Energy.sortingOrder = 9;
-            var seamColor = style.Energy;
-            seamColor.a = .72f;
-            surface.Energy.color = seamColor;
-            surface.Energy.transform.localPosition = new Vector3(0f, capY + insideOffset, 0f);
-            surface.Energy.transform.localScale = new Vector3(PipeWidth * .64f, .022f, 1f);
+    var lightHeight =
+        Mathf.Max(
+            .12f,
+            height - railClearanceFromCap);
 
-            surface.Highlight.enabled = false;
-            surface.Highlight.sortingOrder = 10;
-            surface.Highlight.color = new Color(1f, 1f, 1f, .13f);
-            surface.Highlight.transform.localPosition = new Vector3(0f, capY + insideOffset * .45f, 0f);
-            surface.Highlight.transform.localScale = new Vector3(PipeWidth * .57f, .008f, 1f);
+    var lightCentre =
+        centreY +
+        direction *
+        railClearanceFromCap * .5f;
 
-            surface.Scan.enabled = false;
-            surface.Scan.sortingOrder = 10;
-            var scanColor = style.Energy;
-            scanColor.a = .18f;
-            surface.Scan.color = scanColor;
-            surface.Scan.transform.localPosition = new Vector3(0f, capY + direction * .36f, 0f);
-            surface.Scan.transform.localScale = new Vector3(PipeWidth * .70f, .008f, 1f);
+    surface.RailLeft.enabled = true;
+    surface.RailRight.enabled = true;
 
-            surface.Beacon.enabled = false;
-            surface.Beacon.sortingOrder = 12;
-            var beaconColor = style.Energy;
-            beaconColor.a = .28f;
-            surface.Beacon.color = beaconColor;
-            surface.Beacon.transform.localPosition = new Vector3(0f, capY + direction * .10f, 0f);
-            surface.Beacon.transform.localScale = Vector3.one * .28f;
+    surface.RailLeft.sortingOrder = 6;
+    surface.RailRight.sortingOrder = 6;
 
-            surface.CapGlow.enabled = hasAuthoredPipeCap && hasAuthoredPipeGlow;
-            if (surface.CapGlow.enabled)
-            {
-                // Initialise the glow here; AnimatePipeSurface supplies its live pulse.
-                const float initialPulse = .56f;
-                var collarGlow = style.Energy;
-                collarGlow.a = Mathf.Lerp(.18f, .34f, initialPulse);
-                surface.CapGlow.color = collarGlow;
-                SetSpriteBlock(surface.CapGlow, Vector2.up * capCentre, new Vector2(
-                    PipeCapWidth * (.82f + initialPulse * .06f),
-                    PipeCapHeight * (.29f + initialPulse * .03f)));
-                surface.CapGlow.transform.localRotation = Quaternion.identity;
-            }
-        }
+    SetSpriteBlock(
+        surface.RailLeft,
+        new Vector2(
+            -PipeWidth * .465f,
+            lightCentre),
+        new Vector2(
+            .018f,
+            lightHeight));
 
+    SetSpriteBlock(
+        surface.RailRight,
+        new Vector2(
+            PipeWidth * .405f,
+            lightCentre),
+        new Vector2(
+            .024f,
+            lightHeight));
+
+    // The artwork already contains its own central strip.
+    // Do not lay a permanent fuzzy procedural glow over it.
+    surface.Core.enabled = false;
+
+    // Three travelling packets provide motion without changing
+    // the physical pipe or covering its mechanical detail.
+    surface.CorePulse.enabled = true;
+    surface.CorePulse.sprite = softCircleSprite;
+    surface.CorePulse.sortingOrder = 8;
+
+    surface.Highlight.enabled = true;
+    surface.Highlight.sprite = softCircleSprite;
+    surface.Highlight.sortingOrder = 8;
+
+    surface.Scan.enabled = true;
+    surface.Scan.sprite = softCircleSprite;
+    surface.Scan.sortingOrder = 8;
+
+    AnimateNeonPipeSurface(
+        surface,
+        capY,
+        topPipe,
+        0f);
+}
+     private void AnimateNeonPipeSurface(
+    PipeSurface surface,
+    float capY,
+    bool topPipe,
+    float pipeX)
+{
+    var direction =
+        topPipe ? 1f : -1f;
+
+    // Each gate receives its own phase offset so the route feels alive
+    // rather than every obstacle flashing at exactly the same moment.
+    var gateOffset =
+        pipeX * .113f;
+
+    var breathingPulse =
+        reduceMotionEnabled
+            ? .58f
+            : .5f +
+              .5f *
+              Mathf.Sin(
+                  ambientTime * 2.15f +
+                  gateOffset * 3.7f);
+
+    var microPulse =
+        reduceMotionEnabled
+            ? .5f
+            : .5f +
+              .5f *
+              Mathf.Sin(
+                  ambientTime * 5.2f +
+                  gateOffset * 5.1f);
+
+    // ---------------------------------------------------------
+    // TRAVELLING ENERGY PHASES
+    // ---------------------------------------------------------
+
+    var centrePhase =
+        reduceMotionEnabled
+            ? .48f
+            : Mathf.Repeat(
+                ambientTime * .74f +
+                gateOffset,
+                1f);
+
+    var cyanPhase =
+        reduceMotionEnabled
+            ? .36f
+            : Mathf.Repeat(
+                ambientTime * .61f +
+                gateOffset +
+                .31f,
+                1f);
+
+    var secondaryPhase =
+        reduceMotionEnabled
+            ? .64f
+            : Mathf.Repeat(
+                ambientTime * .67f +
+                gateOffset +
+                .63f,
+                1f);
+
+    // ---------------------------------------------------------
+    // VISIBLE SHAFT AREA
+    //
+    // The travelling packets must never enter the collar.
+    // surface.Artwork already represents the trimmed visual shaft.
+    // ---------------------------------------------------------
+
+    var shaftHeight =
+        Mathf.Max(
+            .12f,
+            surface.Artwork.bounds.size.y);
+
+    var shaftCentre =
+        surface.Artwork.transform.localPosition.y;
+
+    const float packetEndClearance = .24f;
+
+    var usableHeight =
+        Mathf.Max(
+            .16f,
+            shaftHeight -
+            packetEndClearance * 2f);
+
+    // Slight shift away from the playable opening gives the cap
+    // an additional clean visual buffer.
+    var usableCentre =
+        shaftCentre +
+        direction * .035f;
+
+    // ---------------------------------------------------------
+    // COLOUR PALETTE
+    // ---------------------------------------------------------
+
+    var cyan =
+        Color.Lerp(
+            new Color(.10f, .93f, 1f),
+            equippedPipe.Accent,
+            .13f);
+
+    var magenta =
+        Color.Lerp(
+            new Color(1f, .015f, .72f),
+            equippedPipe.Energy,
+            .12f);
+
+    // ---------------------------------------------------------
+    // PREMIUM METAL BREATHING
+    //
+    // Extremely subtle. The pipe should look powered,
+    // not like its metal is flashing.
+    // ---------------------------------------------------------
+
+    var metalTint =
+        Color.Lerp(
+            Color.white,
+            equippedPipe.Accent,
+            .008f +
+            breathingPulse * .014f);
+
+    surface.Artwork.color =
+        metalTint;
+
+    // The collar stays mostly neutral metal.
+    // Just enough power tint to visually connect it to the shaft.
+    var collarTint =
+        Color.Lerp(
+            Color.white,
+            equippedPipe.Energy,
+            .004f +
+            breathingPulse * .010f);
+
+    surface.CapPanel.color =
+        collarTint;
+
+    // ---------------------------------------------------------
+    // BASE ENERGY RAILS
+    // ---------------------------------------------------------
+
+    var leftRail =
+        cyan;
+
+    leftRail.a =
+        .26f +
+        breathingPulse * .13f +
+        microPulse * .035f;
+
+    surface.RailLeft.color =
+        leftRail;
+
+    var rightRail =
+        Color.Lerp(
+            cyan,
+            Color.white,
+            .18f);
+
+    rightRail.a =
+        .24f +
+        breathingPulse * .14f +
+        microPulse * .04f;
+
+    surface.RailRight.color =
+        rightRail;
+
+    // ---------------------------------------------------------
+    // CENTRE MAGENTA POWER PACKET
+    // ---------------------------------------------------------
+
+    var centrePacketHeight =
+        Mathf.Min(
+            .68f,
+            usableHeight * .21f);
+
+    var centreTravel =
+        Mathf.Max(
+            0f,
+            usableHeight -
+            centrePacketHeight);
+
+    // Sin envelope fades the packet smoothly at both ends.
+    var centreEnvelope =
+        Mathf.Sin(
+            centrePhase *
+            Mathf.PI);
+
+    centreEnvelope =
+        Mathf.Pow(
+            Mathf.Clamp01(centreEnvelope),
+            .72f);
+
+    var centreColour =
+        Color.Lerp(
+            magenta,
+            Color.white,
+            .48f);
+
+    centreColour.a =
+        .06f +
+        centreEnvelope * .88f;
+
+    surface.CorePulse.color =
+        centreColour;
+
+    var centreWidthPulse =
+        .095f +
+        centreEnvelope * .035f;
+
+    SetSpriteBlock(
+        surface.CorePulse,
+        new Vector2(
+            0f,
+            usableCentre +
+            direction *
+            (centrePhase - .5f) *
+            centreTravel),
+        new Vector2(
+            PipeWidth * centreWidthPulse,
+            centrePacketHeight));
+
+    // ---------------------------------------------------------
+    // CYAN LEFT-RAIL PACKET
+    // ---------------------------------------------------------
+
+    var cyanPacketHeight =
+        Mathf.Min(
+            .78f,
+            usableHeight * .245f);
+
+    var cyanTravel =
+        Mathf.Max(
+            0f,
+            usableHeight -
+            cyanPacketHeight);
+
+    var cyanEnvelope =
+        Mathf.Sin(
+            cyanPhase *
+            Mathf.PI);
+
+    cyanEnvelope =
+        Mathf.Pow(
+            Mathf.Clamp01(cyanEnvelope),
+            .68f);
+
+    var cyanPacket =
+        Color.Lerp(
+            cyan,
+            Color.white,
+            .64f);
+
+    cyanPacket.a =
+        .05f +
+        cyanEnvelope * .92f;
+
+    surface.Highlight.color =
+        cyanPacket;
+
+    SetSpriteBlock(
+        surface.Highlight,
+        new Vector2(
+            -PipeWidth * .465f,
+            usableCentre +
+            direction *
+            (cyanPhase - .5f) *
+            cyanTravel),
+        new Vector2(
+            .052f +
+            cyanEnvelope * .022f,
+            cyanPacketHeight));
+
+    // ---------------------------------------------------------
+    // MAGENTA / WHITE RIGHT-RAIL PACKET
+    // ---------------------------------------------------------
+
+    var secondaryPacketHeight =
+        Mathf.Min(
+            .64f,
+            usableHeight * .215f);
+
+    var secondaryTravel =
+        Mathf.Max(
+            0f,
+            usableHeight -
+            secondaryPacketHeight);
+
+    var secondaryEnvelope =
+        Mathf.Sin(
+            secondaryPhase *
+            Mathf.PI);
+
+    secondaryEnvelope =
+        Mathf.Pow(
+            Mathf.Clamp01(secondaryEnvelope),
+            .72f);
+
+    var secondaryPacket =
+        Color.Lerp(
+            magenta,
+            Color.white,
+            .58f);
+
+    secondaryPacket.a =
+        .05f +
+        secondaryEnvelope * .84f;
+
+    surface.Scan.color =
+        secondaryPacket;
+
+    SetSpriteBlock(
+        surface.Scan,
+        new Vector2(
+            PipeWidth * .405f,
+            usableCentre +
+            direction *
+            (secondaryPhase - .5f) *
+            secondaryTravel),
+        new Vector2(
+            .054f +
+            secondaryEnvelope * .020f,
+            secondaryPacketHeight));
+
+    // ---------------------------------------------------------
+    // RESPONSIVE RAIL SURGE
+    //
+    // When a packet is bright, the rail beneath it gains a tiny
+    // amount of intensity. This makes the energy feel connected.
+    // ---------------------------------------------------------
+
+    var railSurge =
+        Mathf.Max(
+            cyanEnvelope,
+            secondaryEnvelope);
+
+    var surgeLeft =
+        surface.RailLeft.color;
+
+    surgeLeft.a =
+        Mathf.Clamp01(
+            surgeLeft.a +
+            railSurge * .08f);
+
+    surface.RailLeft.color =
+        surgeLeft;
+
+    var surgeRight =
+        surface.RailRight.color;
+
+    surgeRight.a =
+        Mathf.Clamp01(
+            surgeRight.a +
+            railSurge * .09f);
+
+    surface.RailRight.color =
+        surgeRight;
+
+    // ---------------------------------------------------------
+    // ABSOLUTE CAP SAFETY
+    //
+    // Never allow the old halo / fake-cap renderers back.
+    // ---------------------------------------------------------
+
+    surface.CapGlow.enabled = false;
+    surface.CapOuter.enabled = false;
+    surface.CapAccent.enabled = false;
+    surface.CapEnergy.enabled = false;
+}
+    private void LayoutPipeSurface(
+    PipeSurface surface,
+    float centreY,
+    float height,
+    float capY,
+    bool topPipe)
+{
+    var style = equippedPipe;
+
+    var direction =
+        topPipe ? 1f : -1f;
+
+    var capCentre =
+        capY +
+        direction *
+        (PipeCapHeight * .5f);
+
+    // ---------------------------------------------------------
+    // GAMEPLAY GEOMETRY
+    //
+    // Keep collision completely independent from presentation.
+    // Premium visual changes must never alter the established
+    // gate width, gap or difficulty.
+    // ---------------------------------------------------------
+
+    SetPipeCollider(
+        surface.BodyCollider,
+        new Vector2(
+            0f,
+            centreY),
+        new Vector2(
+            PipeWidth,
+            height));
+
+    SetPipeCollider(
+        surface.CapCollider,
+        new Vector2(
+            0f,
+            capCentre),
+        new Vector2(
+            PipeCollisionWidth,
+            PipeCapHeight));
+
+    // ---------------------------------------------------------
+    // PREMIUM NEON GATE
+    //
+    // The new authored neon system completely owns presentation.
+    // Do not initialise any fallback plumbing layers first.
+    // ---------------------------------------------------------
+
+    if (hasNeonPipeArtwork)
+    {
+        LayoutNeonPipeSurface(
+            surface,
+            centreY,
+            height,
+            capY,
+            topPipe);
+
+        return;
+    }
+
+    // ---------------------------------------------------------
+    // LEGACY / FALLBACK PIPE PRESENTATION
+    // ---------------------------------------------------------
+
+    LayoutPlumbingGate(
+        surface,
+        centreY,
+        height,
+        capY,
+        topPipe,
+        style);
+
+    var insideOffset =
+        direction * .048f;
+
+    var useProceduralBodyDetails =
+        !hasAuthoredPipeBody;
+
+    // ---------------------------------------------------------
+    // SUBTLE INNER ENERGY
+    //
+    // Only generated when no authored body exists.
+    // ---------------------------------------------------------
+
+    surface.Core.enabled =
+        useProceduralBodyDetails;
+
+    surface.CorePulse.enabled =
+        useProceduralBodyDetails;
+
+    surface.Core.sortingOrder = 6;
+    surface.CorePulse.sortingOrder = 7;
+
+    if (useProceduralBodyDetails)
+    {
+        var coreColour =
+            style.Energy;
+
+        coreColour.a = .085f;
+
+        surface.Core.color =
+            coreColour;
+
+        SetBlock(
+            surface.Core,
+            new Vector2(
+                0f,
+                centreY),
+            new Vector2(
+                PipeWidth * .24f,
+                Mathf.Max(
+                    .16f,
+                    height - .48f)));
+
+        // Initialise the travelling pulse invisibly.
+        // Animation controls its live appearance.
+        surface.CorePulse.color =
+            new Color(
+                coreColour.r,
+                coreColour.g,
+                coreColour.b,
+                0f);
+
+        surface.CorePulse.transform.localPosition =
+            new Vector3(
+                0f,
+                capY +
+                direction * .72f,
+                0f);
+
+        surface.CorePulse.transform.localScale =
+            new Vector3(
+                .30f,
+                .09f,
+                1f);
+    }
+
+    // ---------------------------------------------------------
+    // CAP DETAILS
+    //
+    // Avoid static seams, floating lines or bloom rings.
+    // The mechanical cap should remain the focal element.
+    // ---------------------------------------------------------
+
+    surface.Energy.enabled = false;
+    surface.Energy.sortingOrder = 9;
+
+    surface.Highlight.enabled = false;
+    surface.Highlight.sortingOrder = 10;
+
+    surface.Scan.enabled = false;
+    surface.Scan.sortingOrder = 10;
+
+    surface.Beacon.enabled = false;
+    surface.Beacon.sortingOrder = 12;
+
+    // No broad procedural collar halo.
+    //
+    // Authored cap artwork should provide its own lighting
+    // rather than being surrounded by a floating glow disc.
+    surface.CapGlow.enabled = false;
+
+    // Keep dormant renderer values sensible in case another
+    // non-neon style chooses to animate them later.
+    var seamColour =
+        style.Energy;
+
+    seamColour.a = .58f;
+
+    surface.Energy.color =
+        seamColour;
+
+    surface.Energy.transform.localPosition =
+        new Vector3(
+            0f,
+            capY + insideOffset,
+            0f);
+
+    surface.Energy.transform.localScale =
+        new Vector3(
+            PipeWidth * .56f,
+            .016f,
+            1f);
+
+    surface.Highlight.color =
+        new Color(
+            1f,
+            1f,
+            1f,
+            .10f);
+
+    surface.Highlight.transform.localPosition =
+        new Vector3(
+            0f,
+            capY +
+            insideOffset * .45f,
+            0f);
+
+    surface.Highlight.transform.localScale =
+        new Vector3(
+            PipeWidth * .50f,
+            .006f,
+            1f);
+
+    var scanColour =
+        style.Energy;
+
+    scanColour.a = .12f;
+
+    surface.Scan.color =
+        scanColour;
+
+    surface.Scan.transform.localPosition =
+        new Vector3(
+            0f,
+            capY +
+            direction * .34f,
+            0f);
+
+    surface.Scan.transform.localScale =
+        new Vector3(
+            PipeWidth * .58f,
+            .006f,
+            1f);
+
+    var beaconColour =
+        style.Energy;
+
+    beaconColour.a = .18f;
+
+    surface.Beacon.color =
+        beaconColour;
+
+    surface.Beacon.transform.localPosition =
+        new Vector3(
+            0f,
+            capY +
+            direction * .10f,
+            0f);
+
+    surface.Beacon.transform.localScale =
+        Vector3.one * .22f;
+}
         private void LayoutPlumbingGate(
      PipeSurface surface,
      float centreY,
