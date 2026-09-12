@@ -4650,6 +4650,241 @@ new WorldTheme(
     surface.CapAccent.enabled = false;
     surface.CapEnergy.enabled = false;
 }
+private void LayoutPipeSurface(
+    PipeSurface surface,
+    float centreY,
+    float height,
+    float capY,
+    bool topPipe)
+{
+    var style = equippedPipe;
+
+    var direction =
+        topPipe ? 1f : -1f;
+
+    var capCentre =
+        capY +
+        direction *
+        (PipeCapHeight * .5f);
+
+    // ---------------------------------------------------------
+    // GAMEPLAY COLLISION
+    //
+    // Keep collision completely independent from visual polish.
+    // Nothing below changes gate difficulty, gap size or scoring.
+    // ---------------------------------------------------------
+
+    SetPipeCollider(
+        surface.BodyCollider,
+        new Vector2(
+            0f,
+            centreY),
+        new Vector2(
+            PipeWidth,
+            height));
+
+    SetPipeCollider(
+        surface.CapCollider,
+        new Vector2(
+            0f,
+            capCentre),
+        new Vector2(
+            PipeCollisionWidth,
+            PipeCapHeight));
+
+    // ---------------------------------------------------------
+    // PREMIUM NEON PIPE PATH
+    //
+    // Our current premium gates go directly into the dedicated
+    // neon renderer and never initialise the old fallback visuals.
+    // ---------------------------------------------------------
+
+    if (hasNeonPipeArtwork)
+    {
+        LayoutNeonPipeSurface(
+            surface,
+            centreY,
+            height,
+            capY,
+            topPipe);
+
+        return;
+    }
+
+    // ---------------------------------------------------------
+    // FALLBACK / NON-NEON PIPE PATH
+    // ---------------------------------------------------------
+
+    LayoutPlumbingGate(
+        surface,
+        centreY,
+        height,
+        capY,
+        topPipe,
+        style);
+
+    var insideOffset =
+        direction * .048f;
+
+    var useProceduralBodyDetails =
+        !hasAuthoredPipeBody;
+
+    // ---------------------------------------------------------
+    // PROCEDURAL BODY ENERGY
+    // ---------------------------------------------------------
+
+    surface.Core.enabled =
+        useProceduralBodyDetails;
+
+    surface.CorePulse.enabled =
+        useProceduralBodyDetails;
+
+    surface.Core.sortingOrder = 6;
+    surface.CorePulse.sortingOrder = 7;
+
+    if (useProceduralBodyDetails)
+    {
+        var coreColor =
+            style.Energy;
+
+        coreColor.a = .10f;
+
+        surface.Core.color =
+            coreColor;
+
+        SetBlock(
+            surface.Core,
+            new Vector2(
+                0f,
+                centreY),
+            new Vector2(
+                PipeWidth * .26f,
+                Mathf.Max(
+                    .16f,
+                    height - .46f)));
+
+        surface.CorePulse.color =
+            new Color(
+                coreColor.r,
+                coreColor.g,
+                coreColor.b,
+                0f);
+
+        surface.CorePulse.transform.localPosition =
+            new Vector3(
+                0f,
+                capY +
+                direction * .68f,
+                0f);
+
+        surface.CorePulse.transform.localScale =
+            new Vector3(
+                .34f,
+                .09f,
+                1f);
+    }
+
+    // ---------------------------------------------------------
+    // FALLBACK CAP DETAILS
+    //
+    // These remain disabled unless an older pipe style explicitly
+    // requires them.
+    // ---------------------------------------------------------
+
+    surface.Energy.enabled = false;
+    surface.Energy.sortingOrder = 9;
+
+    var seamColor =
+        style.Energy;
+
+    seamColor.a = .60f;
+
+    surface.Energy.color =
+        seamColor;
+
+    surface.Energy.transform.localPosition =
+        new Vector3(
+            0f,
+            capY + insideOffset,
+            0f);
+
+    surface.Energy.transform.localScale =
+        new Vector3(
+            PipeWidth * .58f,
+            .018f,
+            1f);
+
+    surface.Highlight.enabled = false;
+    surface.Highlight.sortingOrder = 10;
+
+    surface.Highlight.color =
+        new Color(
+            1f,
+            1f,
+            1f,
+            .10f);
+
+    surface.Highlight.transform.localPosition =
+        new Vector3(
+            0f,
+            capY +
+            insideOffset * .45f,
+            0f);
+
+    surface.Highlight.transform.localScale =
+        new Vector3(
+            PipeWidth * .52f,
+            .006f,
+            1f);
+
+    surface.Scan.enabled = false;
+    surface.Scan.sortingOrder = 10;
+
+    var scanColor =
+        style.Energy;
+
+    scanColor.a = .14f;
+
+    surface.Scan.color =
+        scanColor;
+
+    surface.Scan.transform.localPosition =
+        new Vector3(
+            0f,
+            capY +
+            direction * .36f,
+            0f);
+
+    surface.Scan.transform.localScale =
+        new Vector3(
+            PipeWidth * .60f,
+            .006f,
+            1f);
+
+    surface.Beacon.enabled = false;
+    surface.Beacon.sortingOrder = 12;
+
+    var beaconColor =
+        style.Energy;
+
+    beaconColor.a = .20f;
+
+    surface.Beacon.color =
+        beaconColor;
+
+    surface.Beacon.transform.localPosition =
+        new Vector3(
+            0f,
+            capY +
+            direction * .10f,
+            0f);
+
+    surface.Beacon.transform.localScale =
+        Vector3.one * .24f;
+
+    // Never create a broad floating collar halo.
+    surface.CapGlow.enabled = false;
+}
      private void LayoutPlumbingGate(
      PipeSurface surface,
      float centreY,
