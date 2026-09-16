@@ -942,6 +942,7 @@ new WorldTheme(
 
         private GameObject uiRoot;
         private GameObject privacyScreen;
+        private GameObject flightGuideScreen;
         private RectTransform safeAreaRoot;
         private RectTransform interfaceContentRoot;
         private readonly List<RectTransform> interfaceBackdrops = new List<RectTransform>();
@@ -995,6 +996,8 @@ new WorldTheme(
         private Text difficultyText;
         private Text menuModeDetailText;
         private Text menuRouteText;
+        private Text menuHangarProgressText;
+        private Text menuTechProgressText;
         private Text hudScoreText;
         private Text hudBestText;
         private Text hudCrystalText;
@@ -1688,6 +1691,8 @@ new WorldTheme(
             unlockRevealModal.SetActive(false);
             privacyScreen = CreatePrivacyScreen(interfaceContentRoot);
             privacyScreen.SetActive(false);
+            flightGuideScreen = CreateFlightGuideScreen(interfaceContentRoot);
+            flightGuideScreen.SetActive(false);
         }
 
         private void ApplySafeArea()
@@ -1775,7 +1780,7 @@ new WorldTheme(
             CreateText(root.transform, "A  R  C  A  D  E", new Vector2(0f, 753f), new Vector2(720f, 52f), 37, Hex("#ff54df"), TextAnchor.MiddleCenter, FontStyle.Bold);
             CreateUiGlyph(root.transform, "Brand wing port", new Vector2(-326f, 753f), new Vector2(76f, 34f), Hex("#45eaff"), SkyPulseUiGlyph.Kind.WingMark);
             CreateUiGlyph(root.transform, "Brand wing starboard", new Vector2(326f, 753f), new Vector2(76f, 34f), Hex("#45eaff"), SkyPulseUiGlyph.Kind.WingMark);
-            CreateText(root.transform, "F I N D  Y O U R  R H Y T H M", new Vector2(0f, 680f), new Vector2(860f, 40f), 26, Hex("#8eeeff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            CreateText(root.transform, "BUILD YOUR FLOCK · POWER YOUR NEXT FLIGHT", new Vector2(0f, 680f), new Vector2(860f, 40f), 26, Hex("#8eeeff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             var titleRule = CreateImage(root.transform, "Title energy rule", new Vector2(0f, 639f), new Vector2(150f, 2f), new Color(.25f, .91f, 1f, .62f));
             titleRule.sprite = whiteSprite;
             titleRule.raycastTarget = false;
@@ -1894,14 +1899,61 @@ new WorldTheme(
             var hangar = CreateNeonButton(root.transform, "BIRD HANGAR", new Vector2(-187f, -355f), new Vector2(346f, 112f), Hex("#45eaff"));
             hangar.GetComponentInChildren<Text>().fontSize = 29;
             hangar.onClick.AddListener(OpenHangar);
-            var upgrades = CreateNeonButton(root.transform, "UPGRADES", new Vector2(187f, -355f), new Vector2(346f, 112f), Hex("#ffc34d"));
+            var upgrades = CreateNeonButton(root.transform, "TECH TREE", new Vector2(187f, -355f), new Vector2(346f, 112f), Hex("#ffc34d"));
             upgrades.GetComponentInChildren<Text>().fontSize = 29;
             upgrades.onClick.AddListener(OpenUpgrades);
-            menuModeDetailText = CreateText(root.transform, "COLLECT CRYSTALS  ·  MASTER THE FLOW", new Vector2(0f, -481f), new Vector2(790f, 42f), 25, Hex("#8eeeff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            menuHangarProgressText = CreateText(root.transform, "", new Vector2(-187f, -436f), new Vector2(346f, 38f), 23, Hex("#8eeeff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            menuTechProgressText = CreateText(root.transform, "", new Vector2(187f, -436f), new Vector2(346f, 38f), 23, Hex("#ffc34d"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            menuModeDetailText = CreateText(root.transform, "EARN CRYSTALS · UNLOCK BIRDS & TECH", new Vector2(0f, -491f), new Vector2(790f, 42f), 25, Hex("#8eeeff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             menuRouteText = CreateText(root.transform, "", new Vector2(0f, -540f), new Vector2(790f, 42f), 24, Hex("#c0d1e9"), TextAnchor.MiddleCenter, FontStyle.Normal);
-            var privacy = CreateNeonButton(root.transform, "PRIVACY", new Vector2(0f, -755f), new Vector2(280f, 96f), Hex("#8fa7c4"));
+            var guide = CreateNeonButton(root.transform, "WORLDS & POWER-UPS", new Vector2(0f, -694f), new Vector2(660f, 96f), Hex("#b17cff"));
+            guide.GetComponentInChildren<Text>().fontSize = 28;
+            guide.onClick.AddListener(() => flightGuideScreen.SetActive(true));
+            var privacy = CreateNeonButton(root.transform, "PRIVACY", new Vector2(0f, -822f), new Vector2(280f, 96f), Hex("#8fa7c4"));
             privacy.GetComponentInChildren<Text>().fontSize = 26;
             privacy.onClick.AddListener(() => privacyScreen.SetActive(true));
+            return root;
+        }
+
+        private GameObject CreateFlightGuideScreen(Transform parent)
+        {
+            var root = CreateScreen(parent, "Worlds and power-ups guide");
+            CreateFullPanel(root.transform, "Flight guide backdrop", new Color(.004f, .008f, .025f, .98f));
+            var card = CreateLuminousPanel(root.transform, "Flight guide", Vector2.zero, new Vector2(940f, 1720f), Hex("#07152b"), Hex("#8f64ff"));
+            CreateText(card, "YOUR SKYPULSE JOURNEY", new Vector2(0f, 752f), new Vector2(860f, 64f), 42, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            CreateText(card, "ONE ENDLESS ROUTE · THREE WORLDS", new Vector2(0f, 685f), new Vector2(850f, 44f), 27, Hex("#8eeeff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            for (var index = 0; index < 3; index++)
+            {
+                var world = Worlds[index];
+                var y = 538f - index * 170f;
+                var row = CreateLuminousPanel(card, world.Name + " route preview", new Vector2(0f, y), new Vector2(836f, 150f), Hex("#0a2038"), world.Accent);
+                var preview = CreateImage(row, world.Name + " artwork", new Vector2(-324f, 0f), new Vector2(140f, 130f), Color.white);
+                preview.sprite = WorldBackdrop(world);
+                preview.preserveAspect = true;
+                preview.raycastTarget = false;
+                CreateText(row, world.Name, new Vector2(80f, 31f), new Vector2(590f, 46f), 32, world.Accent, TextAnchor.MiddleLeft, FontStyle.Bold);
+                CreateText(row, index == 0 ? "Every run starts here" : $"Reach score {index * 15} in a run", new Vector2(80f, -30f), new Vector2(590f, 44f), 27, Hex("#d2def0"), TextAnchor.MiddleLeft, FontStyle.Normal);
+            }
+            CreateText(card, "Worlds rotate every 15 gates. The route keeps evolving.", new Vector2(0f, 88f), new Vector2(850f, 42f), 25, Hex("#adc6dd"), TextAnchor.MiddleCenter, FontStyle.Normal);
+            CreateText(card, "COLLECT POWER-UPS IN FLIGHT", new Vector2(0f, 10f), new Vector2(850f, 48f), 30, Hex("#ffc34d"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            var kinds = new[] { PowerUpKind.Aegis, PowerUpKind.TimePulse, PowerUpKind.CrystalMagnet };
+            var names = new[] { "AEGIS", "TIME PULSE", "CRYSTAL MAGNET" };
+            var details = new[] { "Absorbs one collision", "Slows flight for 4 seconds", "Draws in crystals for 6 seconds" };
+            for (var index = 0; index < kinds.Length; index++)
+            {
+                var y = -96f - index * 128f;
+                var icon = CreateImage(card, names[index] + " pickup", new Vector2(-335f, y), new Vector2(92f, 92f), Color.white);
+                icon.sprite = LoadSprite(PowerUpArtworkPath(kinds[index]));
+                icon.preserveAspect = true;
+                icon.raycastTarget = false;
+                CreateText(card, names[index], new Vector2(68f, y + 24f), new Vector2(650f, 42f), 28, Hex("#8eeeff"), TextAnchor.MiddleLeft, FontStyle.Bold);
+                CreateText(card, details[index], new Vector2(68f, y - 23f), new Vector2(650f, 42f), 27, Hex("#d2def0"), TextAnchor.MiddleLeft, FontStyle.Normal);
+            }
+            CreateText(card, "EVERY RUN BUILDS YOUR COLLECTION", new Vector2(0f, -479f), new Vector2(850f, 46f), 28, Hex("#ffc34d"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            var progression = CreateText(card, "Spend earned crystals in Bird Hangar on 15 cosmetic birds, or in the Tech Tree on Collection, Recovery and Mastery. All birds share the same handling.", new Vector2(0f, -573f), new Vector2(822f, 116f), 27, Hex("#d2def0"), TextAnchor.MiddleCenter, FontStyle.Normal);
+            progression.horizontalOverflow = HorizontalWrapMode.Wrap;
+            var close = CreateNeonButton(card, "BACK TO HOME", new Vector2(0f, -750f), new Vector2(600f, 110f), Hex("#45eaff"));
+            close.onClick.AddListener(() => root.SetActive(false));
             return root;
         }
 
@@ -2024,7 +2076,7 @@ new WorldTheme(
             var hangar = CreateNeonButton(card, "BIRD HANGAR", new Vector2(-177f, -397f), new Vector2(326f, 100f), Hex("#45eaff"));
             hangar.GetComponentInChildren<Text>().fontSize = 26;
             hangar.onClick.AddListener(OpenHangar);
-            var upgrades = CreateNeonButton(card, "UPGRADES", new Vector2(177f, -397f), new Vector2(326f, 100f), Hex("#ffc34d"));
+            var upgrades = CreateNeonButton(card, "TECH TREE", new Vector2(177f, -397f), new Vector2(326f, 100f), Hex("#ffc34d"));
             upgrades.GetComponentInChildren<Text>().fontSize = 26;
             upgrades.onClick.AddListener(OpenUpgrades);
             var share = CreateNeonButton(card, "SHARE", new Vector2(0f, -509f), new Vector2(680f, 88f), Hex("#8fa7c4"));
@@ -2048,7 +2100,7 @@ new WorldTheme(
             customizeTitle = CreateText(root.transform, "BIRD HANGAR", new Vector2(0f, 701f), new Vector2(880f, 76f), 52, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             customizeSubtitle = CreateText(root.transform, "15 BIRDS · ONE FAIR FLIGHT", new Vector2(0f, 647f), new Vector2(880f, 40f), 27, Hex("#87cde0"), TextAnchor.MiddleCenter, FontStyle.Bold);
 
-            var labels = new[] { "HANGAR", "UPGRADES" };
+            var labels = new[] { "HANGAR", "TECH TREE" };
             var categories = new[] { CosmeticCategory.Birds, CosmeticCategory.Upgrades };
             for (var index = 0; index < labels.Length; index += 1)
             {
@@ -2303,6 +2355,11 @@ new WorldTheme(
             if (state == FlightState.Menu)
             {
                 if (privacyScreen != null && privacyScreen.activeSelf) return;
+                if (flightGuideScreen != null && flightGuideScreen.activeSelf)
+                {
+                    if (Input.GetKeyDown(KeyCode.Escape)) flightGuideScreen.SetActive(false);
+                    return;
+                }
                 if (WasTapped() && !PointerOverUi()) StartFlight();
                 return;
             }
@@ -5812,7 +5869,7 @@ hangarPreviousBirdRoot != null
 
             var description = CreateText(
                 informationGlass,
-                profile.Description,
+                "A cosmetic flight signature for your collection.",
                 new Vector2(0f, 82f),
                 new Vector2(660f, 44f),
                 21,
@@ -5824,26 +5881,13 @@ hangarPreviousBirdRoot != null
             description.resizeTextMinSize = 17;
             description.resizeTextMaxSize = 21;
 
-            CreateHangarStatRow(
-                informationGlass,
-                "SPEED",
-                profile.Speed,
-                10f,
-                accent);
-
-            CreateHangarStatRow(
-                informationGlass,
-                "MANEUVERABILITY",
-                profile.Maneuverability,
-                -48f,
-                accent);
-
-            CreateHangarStatRow(
-                informationGlass,
-                "STABILITY",
-                profile.Stability,
-                -106f,
-                accent);
+            // Birds are cosmetic: avoid suggesting that price buys better physics.
+            CreateText(informationGlass, "SHARED HANDLING · EVERY BIRD", new Vector2(0f, 10f), new Vector2(690f, 42f), 25, Hex("#d2def0"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            CreateText(informationGlass, $"YOUR CRYSTALS · {crystals:N0}", new Vector2(0f, -48f), new Vector2(690f, 42f), 27, accent, TextAnchor.MiddleCenter, FontStyle.Bold);
+            var unlockProgress = owned ? "OWNED · READY FOR YOUR NEXT FLIGHT"
+                : crystals >= skin.Price ? "READY TO UNLOCK WITH EARNED CRYSTALS"
+                : $"EARN {skin.Price - crystals:N0} MORE CRYSTALS TO UNLOCK";
+            CreateText(informationGlass, unlockProgress, new Vector2(0f, -106f), new Vector2(710f, 42f), 23, Hex("#adc6dd"), TextAnchor.MiddleCenter, FontStyle.Normal);
 
             var actionLabel =
                 equipped
@@ -8033,13 +8077,22 @@ hangarInformationCanvas != null)
             }
             if (menuModeDetailText != null)
             {
-                menuModeDetailText.text = "COLLECT CRYSTALS  ·  MASTER THE FLOW";
+                menuModeDetailText.text = "EARN CRYSTALS · UNLOCK BIRDS & TECH";
                 menuModeDetailText.color = Hex("#45eaff");
             }
             if (menuRouteText != null)
             {
-                menuRouteText.text = $"{Worlds[0].Name}  →  {Worlds[1].Name}  →  {Worlds[2].Name}";
+                menuRouteText.text = farthestWorldIndex < 2
+                    ? $"NEXT WORLD · {Worlds[farthestWorldIndex + 1].Name} · SCORE {(farthestWorldIndex + 1) * 15}"
+                    : "3 WORLDS REACHED · CHASE YOUR NEXT BEST";
             }
+            var owned = 0;
+            foreach (var skin in Skins) if (IsSkinOwned(skin)) owned++;
+            var installed = 0;
+            var capacity = 0;
+            foreach (var upgrade in Upgrades) { installed += GetUpgradeLevel(upgrade.Id); capacity += upgrade.MaxLevel; }
+            if (menuHangarProgressText != null) menuHangarProgressText.text = $"{owned} / {Skins.Length} BIRDS OWNED";
+            if (menuTechProgressText != null) menuTechProgressText.text = $"{installed} / {capacity} TECH LEVELS";
             if (hudModeText != null)
             {
                 hudModeText.text = RouteWorldName(routeWorldIndex);

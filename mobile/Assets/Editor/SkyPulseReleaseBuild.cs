@@ -22,6 +22,7 @@ namespace SkyPulse.Mobile.Editor
             public string bundleId;
             public string unityVersion;
             public string sdk;
+            public string targetDevice;
             public string createdUtc;
             public string gameplaySourceSha256;
             public string iconSha256;
@@ -34,7 +35,7 @@ namespace SkyPulse.Mobile.Editor
                 return BitConverter.ToString(hash.ComputeHash(File.ReadAllBytes(path))).Replace("-", "").ToLowerInvariant();
         }
 
-        [MenuItem("SkyPulse/Release/Configure iPhone Release")]
+        [MenuItem("SkyPulse/Release/Configure iPhone and iPad Release")]
         public static void Configure()
         {
             PlayerSettings.companyName = "SkyPulse";
@@ -46,7 +47,7 @@ namespace SkyPulse.Mobile.Editor
             PlayerSettings.allowedAutorotateToPortraitUpsideDown = false;
             PlayerSettings.allowedAutorotateToLandscapeLeft = false;
             PlayerSettings.allowedAutorotateToLandscapeRight = false;
-            PlayerSettings.iOS.targetDevice = iOSTargetDevice.iPhoneOnly;
+            PlayerSettings.iOS.targetDevice = iOSTargetDevice.iPhoneAndiPad;
             PlayerSettings.iOS.sdkVersion = iOSSdkVersion.DeviceSDK;
             PlayerSettings.iOS.targetOSVersionString = "15.0";
             PlayerSettings.iOS.appleEnableAutomaticSigning = true;
@@ -62,7 +63,7 @@ namespace SkyPulse.Mobile.Editor
                 PlayerSettings.SetPlatformIcons(NamedBuildTarget.iOS, kind, slots);
             }
             AssetDatabase.SaveAssets();
-            Debug.Log("SkyPulse iPhone release settings configured. Apple team selection and device validation remain required.");
+            Debug.Log("SkyPulse iPhone and iPad release settings configured. Apple team selection and device validation remain required.");
         }
 
         [MenuItem("SkyPulse/Release/Export Xcode Project")]
@@ -123,6 +124,7 @@ namespace SkyPulse.Mobile.Editor
                 bundleId = BundleId,
                 unityVersion = Application.unityVersion,
                 sdk = simulator ? "iphonesimulator" : "iphoneos",
+                targetDevice = PlayerSettings.iOS.targetDevice.ToString(),
                 createdUtc = DateTime.UtcNow.ToString("O"),
                 gameplaySourceSha256 = FileHash("Assets/Scripts/SkyPulseNativeGame.cs"),
                 iconSha256 = FileHash("Assets/Branding/SkyPulseAppIcon.png"),
