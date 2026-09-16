@@ -86,3 +86,11 @@ Native Hangar inspection exposed performance bars that differed by bird despite 
 - `final-verification.json` records matching source hash, archive metadata and all 44 preserved build 5 file hashes rechecked unchanged.
 - Native simulator captures are under `final-native-ipad/`; these are not physical-phone captures. Editor captures remain QA-only.
 - Revised listing text and Review Notes saved live. Build 5 remains selected; old screenshots remain until replacement evidence is ready. No new review-thread reply or submission has been sent.
+
+## Owner device sign-off
+
+On 16 September, the owner confirmed the iPad simulator layout and game/features work: crystal pickup, Tech Tree, bird roster/Hangar, swipe, tap-to-fly and visible wing frames. The owner confirmed the same for physical iPhone. These are owner-reported hands-on results, not claims of additional automated device testing.
+
+## App Store Connect continuation
+
+Final build 6 uploaded successfully at 12:33 BST, processed successfully and is selected/saved for version 1.0. Status is Prepare for Submission; review has not been submitted. One genuine native 13-inch iPad Home screenshot (2048×2732) was uploaded. Name/subtitle/Bundle ID/categories/4+ rating and published Data Not Collected privacy entry verified. Existing contact phone/email visually verified and retained at owner request. Old phone media and historical review attachment still require replacement. Device Hub UI automation times out after Xcode 27 update, preventing the remaining agent-driven navigation captures; native simctl screenshot capture works.
