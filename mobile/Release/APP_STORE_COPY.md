@@ -1,3 +1,5 @@
+> Historical release document. Do not reuse for the current candidate. See [WorldExpansion/RELEASE_NOTES.md](WorldExpansion/RELEASE_NOTES.md) and the root [4.3(a) audit](../../APPLE_4_3A_AUDIT.md). The dated content below is retained as history.
+
 # SkyPulse — store copy draft
 
 Prepared for owner review and entry in App Store Connect. This file does not publish a listing or certify review readiness.

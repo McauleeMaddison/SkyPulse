@@ -1,0 +1,14 @@
+{
+  "inventory_date": "2026-09-29",
+  "baseline_head": "edaf03da16a0c2f44f8ce67c953e3005283fbfc7",
+  "branch": "codex/4-3a-audit-worlds-20260929",
+  "files": 167,
+  "scope": "All non-hidden, non-meta files under mobile/Assets plus three retained visual references",
+  "limitations": [
+    "First-path commit and author date are repository claims, not independently verified creation dates.",
+    "First-path commit does not necessarily contain the current bytes; see same_bytes_as_HEAD and SHA256.",
+    "This ledger does not certify authorship, licence compliance, uniqueness or Apple account relationships."
+  ],
+  "audio_prototype_matches": 0,
+  "audio_replacement_record": "mobile/Release/Provenance/AUDIO_REPLACEMENT.json"
+}

@@ -1,3 +1,13 @@
+# Review preparation update — 29 September 2026
+
+The 4.3(a) source/archive audit is complete: see [APPLE_4_3A_AUDIT.md](../../APPLE_4_3A_AUDIT.md). No imported game template or unrelated app identity was identified; Apple's comparison remains unresolved.
+
+The user separately requested additional worlds. Current source now has a 12-world route and paged guide, with five supplied JPEG backgrounds. Isolated Unity compilation, existing gameplay regression, new world/save/guide checks and bird registration passed. This source is **not the archived/uploaded build 6**. No fresh device archive or App Store submission was made in this audit. PlayerSettings still records build 6; select an unused build number only after checking ASC before exporting the next candidate.
+
+Use [WorldExpansion/RELEASE_NOTES.md](WorldExpansion/RELEASE_NOTES.md) for exact route, tests, candidate-specific draft copy and remaining device work. The later provenance remediation replaces five sound effects with source-generated audio; Unity import/decoding passed. See [Provenance/REMEDIATION_STATUS.md](Provenance/REMEDIATION_STATUS.md). App Store Connect access on 29 September reached a failed/expired sign-in, so the review thread was not re-read; the state below is a dated historical snapshot, not a current status guarantee. A direct recording attempt on 16 September did not start because automatic approval review hit a usage limit; no video is claimed from that attempt.
+
+---
+
 # Current review status — 16 September 2026
 
 SkyPulse Arcade version 1.0 is now Prepare for Submission, with processed build 1.0.0 (6) selected and saved. The earlier 4.3(a) / Design: Spam rejection remains unresolved. Build 6 has not been submitted for review. See [Build6/AUDIT.md](Build6/AUDIT.md) for the actual rejection, source audit and preservation record.

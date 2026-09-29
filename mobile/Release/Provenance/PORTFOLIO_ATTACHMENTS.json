@@ -1,0 +1,138 @@
+{
+  "received": "2026-09-29",
+  "purpose": "Owner-supplied creative background; not SkyPulse asset-generation proof",
+  "files": [
+    {
+      "label": "Pups Universe logo",
+      "file": "artifacts/apple-43a-audit-20260929/owner-portfolio/codex-clipboard-5472aaca-1c56-4c08-b4fc-1de0fb56f55f.png",
+      "sha256": "44ae51036dd6eb6958b1a2139cdf60d7c29754b1ea977b40b0f56c87a9626f32",
+      "bytes": 78861
+    },
+    {
+      "label": "Eddie illustration",
+      "file": "artifacts/apple-43a-audit-20260929/owner-portfolio/codex-clipboard-13ab5a2a-4a20-43f5-b051-225f2dc43d48.jpg",
+      "sha256": "5977cb53de0116b9fd1121e623737328964cfc40ef80f4dd43d95a522972b46b",
+      "bytes": 87777
+    },
+    {
+      "label": "Eddie story",
+      "file": "artifacts/apple-43a-audit-20260929/owner-portfolio/codex-clipboard-af003b09-917a-49ff-9af4-1c09fa2f5b1c.jpg",
+      "sha256": "d5a7d3e52c6f9b1371cd08bf1ba96924efe93b87529a98f8191068285ac31b8d",
+      "bytes": 133827
+    },
+    {
+      "label": "Kai illustration",
+      "file": "artifacts/apple-43a-audit-20260929/owner-portfolio/codex-clipboard-34542a90-a04e-45e7-8369-8946c7e4422f.jpg",
+      "sha256": "6af1ca7e8bf034885658078904d81e528ffc4e2ae418de098f779a2536b99238",
+      "bytes": 86296
+    },
+    {
+      "label": "Kai story",
+      "file": "artifacts/apple-43a-audit-20260929/owner-portfolio/codex-clipboard-6b6a70de-d36d-47cf-8dfe-860f357bb6f2.jpg",
+      "sha256": "9f49ccd9bc90c280b186fbf5b5cf781087590644fb84b1e72ff3a68bd7f85cb2",
+      "bytes": 93982
+    },
+    {
+      "label": "Daisy illustration",
+      "file": "artifacts/apple-43a-audit-20260929/owner-portfolio/codex-clipboard-15ae3bf7-172e-4ed1-9553-10bc8f0a3052.jpg",
+      "sha256": "0e78d52a35d7a5f83a3cede669720e5d0e57dbfbd33614725d9821739bf5cbfb",
+      "bytes": 92511
+    },
+    {
+      "label": "Daisy story",
+      "file": "artifacts/apple-43a-audit-20260929/owner-portfolio/codex-clipboard-b70d084b-ae0b-4374-a793-db23d87f066d.jpg",
+      "sha256": "1f9b50d0538e898b0d4510f4d1c5650a3f8024b067399daf4e2ac31b924821ea",
+      "bytes": 104411
+    },
+    {
+      "label": "Lilly illustration",
+      "file": "artifacts/apple-43a-audit-20260929/owner-portfolio/codex-clipboard-a9cc3d37-4064-4eb4-9077-4a38f77395b8.jpg",
+      "sha256": "a4f89d89c2ada494271b33d68a6052423c7518aece7d5161154f0a650e324cc2",
+      "bytes": 90242
+    },
+    {
+      "label": "Lilly story",
+      "file": "artifacts/apple-43a-audit-20260929/owner-portfolio/codex-clipboard-210523e1-5067-409b-80a8-c1a31095eff7.jpg",
+      "sha256": "f39fe98a94282ade6eb1531812b42259717db1cf09ac07c669c505b329a1a3eb",
+      "bytes": 101159
+    },
+    {
+      "label": "Davey illustration",
+      "file": "artifacts/apple-43a-audit-20260929/owner-portfolio/codex-clipboard-531063ca-7bab-40a3-bb1c-a6509fd34baf.jpg",
+      "sha256": "0d5ee5cd7355730768a31ef00309eb0cf5dfb69afa26ee4eae3ce8ddcafc11b3",
+      "bytes": 102579
+    },
+    {
+      "label": "Davey story",
+      "file": "artifacts/apple-43a-audit-20260929/owner-portfolio/codex-clipboard-02a4c498-bb05-4c96-9b54-13613a575e78.jpg",
+      "sha256": "bd88e083c1cdd3d7b0743663dbeed75f4d61db855f09a396310a2181ff3d090e",
+      "bytes": 112256
+    },
+    {
+      "label": "Finnley story",
+      "file": "artifacts/apple-43a-audit-20260929/owner-portfolio/codex-clipboard-f7ad4b1c-0c0a-400e-94ca-8e7182cf38e4.jpg",
+      "sha256": "2d338e599d43f37f8e0bb4fba59da374305eca5f503f5f35b967f90e3c30da76",
+      "bytes": 107450
+    },
+    {
+      "label": "Ella illustration",
+      "file": "artifacts/apple-43a-audit-20260929/owner-portfolio/codex-clipboard-9de579e0-2220-4d25-ac00-e20722c05c43.jpg",
+      "sha256": "2f54bca4891f126884be19e0b64535c5e86e76fdd8c9fa1cade52ba0f77fa724",
+      "bytes": 82695
+    },
+    {
+      "label": "Finnley illustration",
+      "file": "artifacts/apple-43a-audit-20260929/owner-portfolio/codex-clipboard-aaedf92f-0649-4ccc-8f09-224b5fe833d0.jpg",
+      "sha256": "2661b440a1a7a2dbfca9a0f224e8c2d274008164a9c71ad9cca7c87bb327ee6d",
+      "bytes": 100082
+    },
+    {
+      "label": "Ella story",
+      "file": "artifacts/apple-43a-audit-20260929/owner-portfolio/codex-clipboard-f99003dd-0601-4d6b-b637-a8d111b0b7b6.jpg",
+      "sha256": "fc50f73618650e65060ebc5f0849822ece60762603610f12c876d64a1b8c29b5",
+      "bytes": 98658
+    },
+    {
+      "label": "Mickey illustration",
+      "file": "artifacts/apple-43a-audit-20260929/owner-portfolio/codex-clipboard-8ba5b60e-7065-4110-af7a-938705902727.jpg",
+      "sha256": "59e3d141a86f6f95f47f32fa1a11c39e717e5dbdaf0250289f245d408cc0a87e",
+      "bytes": 82734
+    },
+    {
+      "label": "Curly illustration",
+      "file": "artifacts/apple-43a-audit-20260929/owner-portfolio/codex-clipboard-97c4b51f-f135-4e45-b663-cbabb13302a8.jpg",
+      "sha256": "2b818ee0dc306bf0765cfbd3dea12cf686381c8a551d5fc82ab213c33210b887",
+      "bytes": 95484
+    },
+    {
+      "label": "Mickey story",
+      "file": "artifacts/apple-43a-audit-20260929/owner-portfolio/codex-clipboard-373e23e6-c6bf-490f-b6bc-c49d9b172e57.jpg",
+      "sha256": "28c44cd5f1e3e1a739a99991514aa29afcdc829f031a3bc1ec2f4eef4b11aad9",
+      "bytes": 100297
+    },
+    {
+      "label": "Curly story",
+      "file": "artifacts/apple-43a-audit-20260929/owner-portfolio/codex-clipboard-514b4378-b50d-4217-aa10-12cfb9f49a40.jpg",
+      "sha256": "eac42f3e00a7b67dbffc4f4695c021b794ea26847f89d4067f00e64b814ec635",
+      "bytes": 104820
+    },
+    {
+      "label": "Elsie story",
+      "file": "artifacts/apple-43a-audit-20260929/owner-portfolio/codex-clipboard-1fb95358-e480-44e2-b777-52380526e2e5.jpg",
+      "sha256": "5ab4f3fa5a78c3989be2c4a7d420fb030c21130676822af767b35c3de47827bc",
+      "bytes": 93832
+    },
+    {
+      "label": "Elsie illustration A",
+      "file": "artifacts/apple-43a-audit-20260929/owner-portfolio/codex-clipboard-7939d6e7-4225-41c3-a7d1-c351423897c1.jpg",
+      "sha256": "5c7111f569838d8c3898e4f159bb30d233265ae3fc35c360ec29095befde31cf",
+      "bytes": 81359
+    },
+    {
+      "label": "Elsie illustration B",
+      "file": "artifacts/apple-43a-audit-20260929/owner-portfolio/codex-clipboard-fb208125-eeea-499a-8e59-8d6e70ae1754.jpg",
+      "sha256": "5c7111f569838d8c3898e4f159bb30d233265ae3fc35c360ec29095befde31cf",
+      "bytes": 81359
+    }
+  ]
+}

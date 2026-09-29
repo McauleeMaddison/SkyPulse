@@ -1,3 +1,5 @@
+> Historical release document. Do not reuse for the current candidate. See [WorldExpansion/RELEASE_NOTES.md](WorldExpansion/RELEASE_NOTES.md) and the root [4.3(a) audit](../../APPLE_4_3A_AUDIT.md). The dated content below is retained as history.
+
 # SkyPulse — App Review information
 
 Draft response to Apple's Guideline 2.1 information request, for submission with the physical-device screen recording `IMG_0728.mov`.

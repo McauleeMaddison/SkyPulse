@@ -714,7 +714,7 @@ new WorldTheme(
 new WorldTheme(
 "crystal_night",
 "CRYSTAL NIGHT",
-"SkyPulse/backgrounds/themes/crystal-night-v2",
+"SkyPulse/backgrounds/themes/crystal-night-user-20260929",
 "#edf7ff",
 "#071239",
 "ROUTE 06",
@@ -753,7 +753,7 @@ new WorldTheme(
 new WorldTheme(
 "eclipse",
 "ECLIPSE",
-"SkyPulse/backgrounds/themes/eclipse-v2",
+"SkyPulse/backgrounds/themes/eclipse-user-20260929",
 "#b17cff",
 "#10051f",
 "ROUTE 09",
@@ -762,6 +762,12 @@ new WorldTheme(
 "obsidian",
 "starlight"
 ),
+new WorldTheme("cobalt_storm", "COBALT STORM", "SkyPulse/backgrounds/themes/cobalt-storm-user-20260929",
+    "#409bff", "#040e27", "ROUTE 10", 1f, 3.56f, "cobalt", "seaglass"),
+new WorldTheme("amber_skies", "AMBER SKIES", "SkyPulse/backgrounds/themes/amber-skies-user-20260929",
+    "#ffb347", "#281006", "ROUTE 11", 1f, 3.56f, "solar", "solar"),
+new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-glow-user-20260929",
+    "#72e9ed", "#041925", "ROUTE 12", 1f, 3.56f, "frost", "aurora"),
 };
 
         private static readonly Upgrade[] Upgrades =
@@ -1318,8 +1324,8 @@ new WorldTheme(
             incomingBackground.enabled = false;
             FitBackgroundToCamera(incomingBackground, 1.1f);
             // Warm the route backdrops before play, avoiding first-use Resources
-            // loading at gate 15 or 30. The sprite cache retains them for remixes.
-            for (var worldIndex = 0; worldIndex < 3; worldIndex += 1) WorldBackdrop(Worlds[worldIndex]);
+            // loading at a world boundary. The sprite cache retains the full route.
+            for (var worldIndex = 0; worldIndex < Worlds.Length; worldIndex += 1) WorldBackdrop(Worlds[worldIndex]);
             backgroundVeil = CreateRenderer("World colour veil", whiteSprite, new Color(.015f, .01f, .08f, .20f), -38);
             backgroundVeil.transform.position = new Vector3(0f, .1f, 0f);
             backgroundVeil.transform.localScale = new Vector3(GetViewportWidth() + 1f, CameraHeight + .5f, 1f);
@@ -1921,27 +1927,58 @@ new WorldTheme(
             CreateFullPanel(root.transform, "Flight guide backdrop", new Color(.004f, .008f, .025f, .98f));
             var card = CreateLuminousPanel(root.transform, "Flight guide", Vector2.zero, new Vector2(940f, 1720f), Hex("#07152b"), Hex("#8f64ff"));
             CreateText(card, "YOUR SKYPULSE JOURNEY", new Vector2(0f, 752f), new Vector2(860f, 64f), 42, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            CreateText(card, "ONE ENDLESS ROUTE · THREE WORLDS", new Vector2(0f, 685f), new Vector2(850f, 44f), 27, Hex("#8eeeff"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            for (var index = 0; index < 3; index++)
+            CreateText(card, $"ONE ENDLESS ROUTE · {Worlds.Length} WORLDS", new Vector2(0f, 685f), new Vector2(850f, 44f), 27, Hex("#8eeeff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            const int worldsPerPage = 3;
+            var page = 0;
+            var pageCount = (Worlds.Length + worldsPerPage - 1) / worldsPerPage;
+            var previews = new Image[worldsPerPage];
+            var titles = new Text[worldsPerPage];
+            var milestones = new Text[worldsPerPage];
+            var rows = new RectTransform[worldsPerPage];
+            for (var index = 0; index < worldsPerPage; index++)
             {
-                var world = Worlds[index];
                 var y = 538f - index * 170f;
-                var row = CreateLuminousPanel(card, world.Name + " route preview", new Vector2(0f, y), new Vector2(836f, 150f), Hex("#0a2038"), world.Accent);
-                var preview = CreateImage(row, world.Name + " artwork", new Vector2(-324f, 0f), new Vector2(140f, 130f), Color.white);
-                preview.sprite = WorldBackdrop(world);
-                preview.preserveAspect = true;
-                preview.raycastTarget = false;
-                CreateText(row, world.Name, new Vector2(80f, 31f), new Vector2(590f, 46f), 32, world.Accent, TextAnchor.MiddleLeft, FontStyle.Bold);
-                CreateText(row, index == 0 ? "Every run starts here" : $"Reach score {index * 15} in a run", new Vector2(80f, -30f), new Vector2(590f, 44f), 27, Hex("#d2def0"), TextAnchor.MiddleLeft, FontStyle.Normal);
+                var row = CreateLuminousPanel(card, "Route preview " + index, new Vector2(0f, y), new Vector2(836f, 150f), Hex("#0a2038"), Hex("#45eaff"));
+                rows[index] = row;
+                previews[index] = CreateImage(row, "World artwork", new Vector2(-324f, 0f), new Vector2(140f, 130f), Color.white);
+                previews[index].preserveAspect = true;
+                previews[index].raycastTarget = false;
+                titles[index] = CreateText(row, "", new Vector2(80f, 31f), new Vector2(590f, 46f), 32, Hex("#8eeeff"), TextAnchor.MiddleLeft, FontStyle.Bold);
+                milestones[index] = CreateText(row, "", new Vector2(80f, -30f), new Vector2(590f, 44f), 27, Hex("#d2def0"), TextAnchor.MiddleLeft, FontStyle.Normal);
             }
-            CreateText(card, "Worlds rotate every 15 gates. The route keeps evolving.", new Vector2(0f, 88f), new Vector2(850f, 42f), 25, Hex("#adc6dd"), TextAnchor.MiddleCenter, FontStyle.Normal);
-            CreateText(card, "COLLECT POWER-UPS IN FLIGHT", new Vector2(0f, 10f), new Vector2(850f, 48f), 30, Hex("#ffc34d"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            var pageLabel = CreateText(card, "", new Vector2(0f, 79f), new Vector2(420f, 40f), 24, Hex("#adc6dd"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            var previous = CreateNeonButton(card, "PREVIOUS", new Vector2(-327f, 79f), new Vector2(180f, 66f), Hex("#45eaff"));
+            var next = CreateNeonButton(card, "NEXT", new Vector2(327f, 79f), new Vector2(180f, 66f), Hex("#45eaff"));
+            previous.GetComponentInChildren<Text>().fontSize = 23;
+            next.GetComponentInChildren<Text>().fontSize = 23;
+            Action refreshPage = () =>
+            {
+                for (var slot = 0; slot < worldsPerPage; slot++)
+                {
+                    var worldIndex = page * worldsPerPage + slot;
+                    rows[slot].gameObject.SetActive(worldIndex < Worlds.Length);
+                    if (worldIndex >= Worlds.Length) continue;
+                    var world = Worlds[worldIndex];
+                    previews[slot].sprite = WorldBackdrop(world);
+                    titles[slot].text = world.Name;
+                    titles[slot].color = world.Accent;
+                    milestones[slot].text = worldIndex == 0 ? "Every run starts here" : $"Reach score {worldIndex * 15} in a run";
+                }
+                pageLabel.text = $"ROUTE MAP · {page + 1} / {pageCount}";
+                previous.interactable = page > 0;
+                next.interactable = page < pageCount - 1;
+            };
+            previous.onClick.AddListener(() => { page = Mathf.Max(0, page - 1); refreshPage(); });
+            next.onClick.AddListener(() => { page = Mathf.Min(pageCount - 1, page + 1); refreshPage(); });
+            refreshPage();
+            CreateText(card, "Next world every 15 gates · full route repeats", new Vector2(0f, 22f), new Vector2(850f, 36f), 23, Hex("#adc6dd"), TextAnchor.MiddleCenter, FontStyle.Normal);
+            CreateText(card, "COLLECT POWER-UPS IN FLIGHT", new Vector2(0f, -30f), new Vector2(850f, 48f), 30, Hex("#ffc34d"), TextAnchor.MiddleCenter, FontStyle.Bold);
             var kinds = new[] { PowerUpKind.Aegis, PowerUpKind.TimePulse, PowerUpKind.CrystalMagnet };
             var names = new[] { "AEGIS", "TIME PULSE", "CRYSTAL MAGNET" };
             var details = new[] { "Absorbs one collision", "Slows flight for 4 seconds", "Draws in crystals for 6 seconds" };
             for (var index = 0; index < kinds.Length; index++)
             {
-                var y = -96f - index * 128f;
+                var y = -124f - index * 128f;
                 var icon = CreateImage(card, names[index] + " pickup", new Vector2(-335f, y), new Vector2(92f, 92f), Color.white);
                 icon.sprite = LoadSprite(PowerUpArtworkPath(kinds[index]));
                 icon.preserveAspect = true;
@@ -3793,7 +3830,7 @@ new WorldTheme(
             var usesRemixPatterns = pair.RouteScore >= 45;
             if ((pair.RouteWorldIndex == 2 || usesRemixPatterns) && precedingPair != null)
             {
-                // Bazaar gates—and every post-45 remix—alternate their preferred
+                // Solar Drift gates—and every post-45 segment—alternate their preferred
                 // opening without ever breaking the bounded reachable-path rule.
                 var desired = (pair.Sequence & 1) == 0 ? 1.10f : -1.10f;
                 nextCentre = Mathf.Clamp(desired, centreMinimum, centreMaximum);
@@ -3801,8 +3838,8 @@ new WorldTheme(
             }
             pair.BaseGapCenter = nextCentre;
             pair.GapCenter = nextCentre;
-            // From score 45 on, remixes deliberately combine Foundry drift with
-            // Bazaar alternation while preserving the familiar single opening.
+            // From score 45 on, route segments combine Aurora Rise drift with
+            // Solar Drift alternation while preserving the familiar single opening.
             pair.DriftAmplitude = (pair.RouteWorldIndex == 1 || usesRemixPatterns) && !pair.IsStatic
                 ? CameraHeight * RouteDriftFraction(pair.RouteScore) : 0f;
             pair.DriftPhase = RouteRange(0f, Mathf.PI * 2f);
@@ -3848,10 +3885,7 @@ new WorldTheme(
 
         private static int WorldIndexForScore(int routeScore)
         {
-            if (routeScore < 15) return 0;
-            if (routeScore < 30) return 1;
-            if (routeScore < 45) return 2;
-            return Mathf.FloorToInt((routeScore - 45) / 15f) % 3;
+            return (Mathf.Max(0, routeScore) / 15) % Worlds.Length;
         }
 
         private void BeginWorldTransition(int nextWorldIndex)
@@ -7309,7 +7343,7 @@ hangarInformationCanvas != null)
 
         private void RecordFarthestWorld(int worldIndex)
         {
-            runFarthestWorldIndex = Mathf.Max(runFarthestWorldIndex, Mathf.Clamp(worldIndex, 0, 2));
+            runFarthestWorldIndex = Mathf.Max(runFarthestWorldIndex, Mathf.Clamp(worldIndex, 0, Worlds.Length - 1));
             farthestWorldIndex = Mathf.Max(farthestWorldIndex, runFarthestWorldIndex);
             SaveProgress();
         }
@@ -8082,9 +8116,9 @@ hangarInformationCanvas != null)
             }
             if (menuRouteText != null)
             {
-                menuRouteText.text = farthestWorldIndex < 2
+                menuRouteText.text = farthestWorldIndex < Worlds.Length - 1
                     ? $"NEXT WORLD · {Worlds[farthestWorldIndex + 1].Name} · SCORE {(farthestWorldIndex + 1) * 15}"
-                    : "3 WORLDS REACHED · CHASE YOUR NEXT BEST";
+                    : $"{Worlds.Length} WORLDS REACHED · CHASE YOUR NEXT BEST";
             }
             var owned = 0;
             foreach (var skin in Skins) if (IsSkinOwned(skin)) owned++;
@@ -8197,7 +8231,7 @@ hangarInformationCanvas != null)
             flightCoachStage = Mathf.Clamp(PlayerPrefs.GetInt("skypulse.native.flight-coach-stage", 0), 0, 2);
             reduceMotionEnabled = PlayerPrefs.GetInt("skypulse.native.reduce-motion", 0) == 1;
             hapticsEnabled = PlayerPrefs.GetInt("skypulse.native.haptics", 1) == 1;
-            farthestWorldIndex = Mathf.Clamp(PlayerPrefs.GetInt("skypulse.native.farthest-world", 0), 0, 2);
+            farthestWorldIndex = Mathf.Clamp(PlayerPrefs.GetInt("skypulse.native.farthest-world", 0), 0, Worlds.Length - 1);
             var savedSkinId = MigrateRosterSkinId(PlayerPrefs.GetString("skypulse.native.skin", "neon_finch"));
             equippedSkin = FindById(Skins, savedSkinId) ?? Skins[0];
             equippedWorld = FindById(Worlds, PlayerPrefs.GetString("skypulse.native.world", "neon_city")) ?? Worlds[0];
@@ -8215,7 +8249,7 @@ hangarInformationCanvas != null)
             else
             {
                 // Existing native players keep the bird they were already using when the
-                // collection gains unlock states; new players simply begin with Nova.
+                // collection gains unlock states; new players simply begin with Neon Finch.
                 ownedSkinIds.Add(Skins[0].Id);
                 if (equippedSkin != null) ownedSkinIds.Add(equippedSkin.Id);
             }
