@@ -12,6 +12,9 @@ REVIEW WALKTHROUGH
 4. Home → Play. Tap to flap, pass gates and collect crystals. Aegis absorbs one collision, Time Pulse slows flight for four seconds, and Crystal Magnet attracts crystals for six seconds. Pause is at the top right. Game Over offers Retry and a return to the progression screens.
 5. The route starts in Neon City and changes every 15 gates: Aurora Rise (15), Solar Drift (30), Midnight Tide (45), Velvet Dawn (60), Crystal Night (75), Jade Horizon (90), Violet Rain (105), Eclipse (120), Cobalt Storm (135), Amber Skies (150), Polar Glow (165). It repeats at 180. These are environments along the same endless route, not separate gameplay modes.
 
+ACCOUNT HISTORY
+I confirm that SkyPulse, its earlier prototype and its source have never been submitted or supplied through another Apple developer account, publisher, contractor or purchased game template.
+
 GUIDELINE 4.3(a)
 The collection, crystal economy, prerequisite Tech Tree, saved progression and tactical pickups are implemented in the project's SkyPulseNativeGame.cs and supporting SkyPulse UI/data components. The retained repository records development from an August Python prototype through the Unity version and subsequent progression systems. We have prepared a file inventory with hashes and available origin records. Artwork includes AI-generated content: the owner's ARTA work and documented later AI-assisted visual updates. The new audio is reproducible from the retained synthesis script.
 

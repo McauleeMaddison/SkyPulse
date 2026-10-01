@@ -1,12 +1,14 @@
 # Build 7 response — staged, not sent
 
-Use after build 7 and matching evidence are ready. Confirm the uploaded build and test record first. The account-history answer remains pending; do not assert a denial on the owner's behalf. Do not resend the existing clarification question as a separate duplicate message.
+Use after build 7 and matching evidence are ready. Confirm the uploaded build and test record first. The owner explicitly confirmed the project/account history on 1 October; this is their statement, not independent verification. Do not resend the existing clarification question as a separate duplicate message.
 
 ---
 
 Hello App Review,
 
 Following the 4.3(a) finding and my clarification request of 29 September, I have uploaded SkyPulse build 7 and prepared a traceable development/asset record. The new build has passed the requested checks on my physical iPhone and the iPad simulator, including progression, pickups, audio, retry and saved progress.
+
+I confirm that SkyPulse, its earlier prototype and its source have never been submitted or supplied through another Apple developer account, publisher, contractor or purchased game template.
 
 The project audit found no identifiable imported game-template package, unrelated app identity or included demo scene. The repository records the progression from the earlier Python prototype to Unity and the implementation of the collection, crystal economy, prerequisite-based Tech Tree, persistent saves and tactical pickups. I can provide the relevant history and file inventory to help investigate the similarity you identified.
 
