@@ -1,0 +1,18 @@
+SkyPulse Arcade — version 1.0.0, build 7
+
+No login, subscription, advertising or real-money purchase is required. The game runs offline; crystals are earned in play and progress is saved locally.
+
+CHANGES SINCE REJECTED BUILD 6
+The endless route now visits 12 worlds instead of cycling three. The Home guide previews all 12 across four pages, with the actual score milestones. Previously included environments are now reachable; Cobalt Storm, Amber Skies and Polar Glow were added, and Crystal Night and Eclipse received updated artwork. The five sound effects were replaced with effects synthesized from retained project source. Existing bird ownership, crystals and technology upgrades are preserved.
+
+REVIEW WALKTHROUGH
+1. Home → Bird Hangar. Swipe through 15 animated mechanical birds; inspect the unlock cost and ownership state. Birds are cosmetic choices and share the same flight handling.
+2. Home → Tech Tree (also available through the Hangar's Tech Tree tab). Inspect Collection, Recovery and Mastery: nine nodes with three levels each. Tap a node to see its effect, cost and prerequisite. Later nodes require level 2 in the preceding node. Purchases use earned crystals.
+3. Home → Worlds & Power-ups. Use Next and Previous to inspect all four guide pages. This requires no currency or high score. The guide explains Aegis, Time Pulse and Crystal Magnet.
+4. Home → Play. Tap to flap, pass gates and collect crystals. Aegis absorbs one collision, Time Pulse slows flight for four seconds, and Crystal Magnet attracts crystals for six seconds. Pause is at the top right. Game Over offers Retry and a return to the progression screens.
+5. The route starts in Neon City and changes every 15 gates: Aurora Rise (15), Solar Drift (30), Midnight Tide (45), Velvet Dawn (60), Crystal Night (75), Jade Horizon (90), Violet Rain (105), Eclipse (120), Cobalt Storm (135), Amber Skies (150), Polar Glow (165). It repeats at 180. These are environments along the same endless route, not separate gameplay modes.
+
+GUIDELINE 4.3(a)
+The collection, crystal economy, prerequisite Tech Tree, saved progression and tactical pickups are implemented in the project's SkyPulseNativeGame.cs and supporting SkyPulse UI/data components. The retained repository records development from an August Python prototype through the Unity version and subsequent progression systems. We have prepared a file inventory with hashes and available origin records. Artwork includes AI-generated content: the owner's ARTA work and documented later AI-assisted visual updates. The new audio is reproducible from the retained synthesis script.
+
+The local package, asset, scene and identifier audit found no identifiable imported game template, unrelated app identity or included demo scene. We recognize that this does not identify the comparison behind the review finding. Our 29 September clarification request asks which binary component, metadata element, concept similarity or account-history information needs to be addressed. We can provide relevant development records if requested.

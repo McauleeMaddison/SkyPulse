@@ -1,0 +1,39 @@
+{
+  "sourceCommit": "096b6c8",
+  "build": "7",
+  "archiveZipSha256": "76f39ecb6b200975dfdaf614d7e291b3bdc356d404f7119c529cb527c269e2c0",
+  "appPlist": {
+    "CFBundleIdentifier": "com.mcauleemaddison.skypulse",
+    "CFBundleVersion": "7",
+    "CFBundleShortVersionString": "1.0.0",
+    "MinimumOSVersion": "15.0",
+    "UIDeviceFamily": [
+      1,
+      2
+    ]
+  },
+  "codeSignatureVerification": "codesign --verify --deep --strict passed with macOS trust services outside sandbox",
+  "uploadResult": {
+    "date": "2026-09-30",
+    "status": "Upload succeeded; EXPORT SUCCEEDED",
+    "log": "xcode-upload.log",
+    "processingCompleteVerified": true
+  },
+  "deviceTests": {
+    "physicalIPhone": "Owner confirmed all requested build 7 checks passed",
+    "iPadSimulator": "Owner confirmed all requested build 7 checks passed",
+    "coverage": "Four guide pages, Hangar swipe/equip, Tech Tree, flight/crystals/power-ups, sounds, game over/retry, retained progress after reopen",
+    "signoffSource": "Explicit user replies in this chat"
+  },
+  "submissionVerified": false,
+  "appStoreConnect": {
+    "verifiedAt": "2026-10-01",
+    "buildId": "4e38a14f-2b9e-4532-80a9-73e342401155",
+    "selectedBuild": "7",
+    "metadataAndNotesSaved": true,
+    "iPad13ScreenshotCount": 5,
+    "automaticReleaseAfterApproval": true,
+    "submissionStatus": "Prepare for Submission",
+    "newReviewReplySent": false
+  }
+}
