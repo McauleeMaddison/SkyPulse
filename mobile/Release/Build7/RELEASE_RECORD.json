@@ -25,20 +25,52 @@
     "coverage": "Four guide pages, Hangar swipe/equip, Tech Tree, flight/crystals/power-ups, sounds, game over/retry, retained progress after reopen",
     "signoffSource": "Explicit user replies in this chat"
   },
-  "submissionVerified": false,
+  "submissionVerified": true,
   "appStoreConnect": {
-    "verifiedAt": "2026-10-01",
+    "verifiedAt": "2026-10-06",
     "buildId": "4e38a14f-2b9e-4532-80a9-73e342401155",
     "selectedBuild": "7",
     "metadataAndNotesSaved": true,
     "iPad13ScreenshotCount": 5,
     "automaticReleaseAfterApproval": true,
-    "submissionStatus": "Prepare for Submission",
+    "submissionStatus": "Waiting for Review",
     "newReviewReplySent": false,
     "subtitle": "15 Birds, 12 Worlds, Tech Tree",
     "ownerAccountHistorySaved": true,
     "iPhoneGuideScreenshotUploaded": true,
-    "iPhoneScreenshotSetFullyRefreshed": false,
-    "reviewAttachmentRefreshed": false
+    "iPhoneScreenshotSetFullyRefreshed": true,
+    "reviewAttachmentRefreshed": true,
+    "submittedAtDisplayed": "Oct 6, 2026 at 11:44 AM",
+    "submissionId": "d5ba215d-daa2-4d6b-9441-3ae6e1507bc6",
+    "iPhoneScreenshotCount": 5,
+    "reviewAttachment": "SkyPulse-build7-review.mp4",
+    "reviewNotesCharacters": 3695
+  },
+  "website": {
+    "verifiedAt": "2026-10-05",
+    "version": 3,
+    "sourceCommit": "361fcce004d9bb9ce06cf0edb25ac40a218fbfb9",
+    "deployment": "appgdep_6ac390779c0c8191bbb9dbeec9961da7",
+    "status": "succeeded",
+    "supportURL": "https://skypulse.macwebstudio.com/support",
+    "privacyURL": "https://skypulse.macwebstudio.com/privacy",
+    "customDomainStatus": "active",
+    "sslStatus": "active",
+    "appStoreURLsUpdated": true
+  },
+  "freshIPhoneEvidence": {
+    "receivedAt": "2026-10-05",
+    "source": "Owner-provided SkyPulse Build 7 .MP4 in iCloud Downloads",
+    "originalSHA256": "d0b86a9e20c38453e11476b5c33d88e0d4f3a9c6c66c14f5fcab2384228a4e82",
+    "reviewSHA256": "f03d47f947bdb71101d59e5bec38c6e47656a28e8f8f7f393ed7cea3b26da073",
+    "reviewDurationSeconds": 42,
+    "trim": "Original seconds 2 through 44; exclude opening Control Centre. No synthetic game visuals.",
+    "nativeFrameSize": "1320x2868",
+    "frames": {
+      "home": 2,
+      "hangar": 20,
+      "techTree": 27
+    },
+    "uploaded": true
   }
 }

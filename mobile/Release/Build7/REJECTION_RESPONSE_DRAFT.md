@@ -6,9 +6,11 @@ Use after build 7 and matching evidence are ready. Confirm the uploaded build an
 
 Hello App Review,
 
-Following the 4.3(a) finding and my clarification request of 29 September, I have uploaded SkyPulse build 7 and prepared a traceable development/asset record. The new build has passed the requested checks on my physical iPhone and the iPad simulator, including progression, pickups, audio, retry and saved progress.
+Following the 4.3(a) finding and my clarification request of 29 September, I have uploaded SkyPulse build 7 and prepared a traceable development/asset record. The attached 42-second physical-iPhone walkthrough and the iPhone/iPad screenshots now show build 7. The listing describes the actual systems and identifies me, Mcaulee Maddison, as the creator; the official support and privacy pages are at skypulse.macwebstudio.com. The new build has passed the requested checks on my physical iPhone and the iPad simulator, including progression, pickups, audio, retry and saved progress.
 
 I confirm that SkyPulse, its earlier prototype and its source have never been submitted or supplied through another Apple developer account, publisher, contractor or purchased game template.
+
+I developed the project with AI coding assistance and have retained its contribution history and third-party dependency records.
 
 The project audit found no identifiable imported game-template package, unrelated app identity or included demo scene. The repository records the progression from the earlier Python prototype to Unity and the implementation of the collection, crystal economy, prerequisite-based Tech Tree, persistent saves and tactical pickups. I can provide the relevant history and file inventory to help investigate the similarity you identified.
 

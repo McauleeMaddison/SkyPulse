@@ -1,0 +1,12 @@
+{
+  "verifiedAt": "2026-10-05",
+  "version": 3,
+  "sourceCommit": "361fcce004d9bb9ce06cf0edb25ac40a218fbfb9",
+  "deployment": "appgdep_6ac390779c0c8191bbb9dbeec9961da7",
+  "status": "succeeded",
+  "supportURL": "https://skypulse.macwebstudio.com/support",
+  "privacyURL": "https://skypulse.macwebstudio.com/privacy",
+  "customDomainStatus": "active",
+  "sslStatus": "active",
+  "appStoreURLsUpdated": true
+}

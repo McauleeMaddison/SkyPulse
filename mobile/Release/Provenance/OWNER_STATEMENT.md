@@ -13,8 +13,10 @@ Recorded 29 September 2026 from this conversation. Statements below are owner-re
 ## Remaining facts and records
 
 1. Original audio creation remains unknown, but this is no longer a source gap for the next candidate: the five effects have been replaced using a retained synthesis generator. Old files are preserved. See [AUDIO_PROVENANCE.md](AUDIO_PROVENANCE.md).
-2. Whether SkyPulse, a version of it, or its source was submitted through another Apple developer account. Ownership of the code does not answer account/submission history.
+2. Account/submission history was answered on 1 October: the owner states SkyPulse, its prototype and its source were never submitted or supplied through another Apple developer account, publisher, contractor or purchased game template. See Build7/OWNER_ACCOUNT_HISTORY.md; this remains owner attestation.
 3. Retain available ARTA exports/generation records and input/reference sources. Account for the specific later built-in-tool outputs already documented in the repository. Do not invent records that were not retained.
 4. Retain any applicable dependency licences and contribution records. The owner's code ownership statement has been received; do not rewrite it as proof that no third-party or AI-assisted contribution exists.
 
 No statement has been signed or sent on the owner's behalf. The received account of the artwork and code is now recorded; independent rights verification and Apple's similarity assessment are separate matters.
+
+6 October follow-up: the owner explicitly describes writing sections of the game with AI coding assistance. Record Mcaulee Maddison as the project creator and preserve the contribution history. Do not describe VS Code as proof of code provenance, or claim every dependency, engine component or generated code fragment is globally exclusive.
