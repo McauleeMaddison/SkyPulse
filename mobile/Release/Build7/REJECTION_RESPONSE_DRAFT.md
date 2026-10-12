@@ -1,6 +1,6 @@
 # Build 7 response — staged, not sent
 
-Use after build 7 and matching evidence are ready. Confirm the uploaded build and test record first. The owner explicitly confirmed the project/account history on 1 October; this is their statement, not independent verification. Do not resend the existing clarification question as a separate duplicate message.
+ON HOLD: do not send or resubmit while awaiting Apple clarification. See SUBMISSION_HOLD.md. Revise this draft against the actual Apple reply before any future use. Confirm the uploaded build and test record first. The owner explicitly confirmed the project/account history on 1 October; this is their statement, not independent verification. Do not resend the existing clarification question as a separate duplicate message.
 
 ---
 

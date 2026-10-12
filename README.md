@@ -1,5 +1,7 @@
 # SkyPulse Arcade
 
+> **App Review hold (6 October 2026):** build 7 is Removed. Continue local QA only; await Apple’s clarification and renewed owner authorization before resubmitting. See [current hold](mobile/Release/Build7/SUBMISSION_HOLD.md).
+
 SkyPulse is an offline, portrait Unity arcade game for iPhone and iPad. The shipping source is `mobile/`; open it with Unity **6000.6.0f1**.
 
 ## Project layout

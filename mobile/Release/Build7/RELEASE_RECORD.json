@@ -33,7 +33,7 @@
     "metadataAndNotesSaved": true,
     "iPad13ScreenshotCount": 5,
     "automaticReleaseAfterApproval": true,
-    "submissionStatus": "Waiting for Review",
+    "submissionStatus": "Removed",
     "newReviewReplySent": false,
     "subtitle": "15 Birds, 12 Worlds, Tech Tree",
     "ownerAccountHistorySaved": true,
@@ -44,7 +44,8 @@
     "submissionId": "d5ba215d-daa2-4d6b-9441-3ae6e1507bc6",
     "iPhoneScreenshotCount": 5,
     "reviewAttachment": "SkyPulse-build7-review.mp4",
-    "reviewNotesCharacters": 3695
+    "reviewNotesCharacters": 3695,
+    "statusVerifiedAt": "2026-10-06"
   },
   "website": {
     "verifiedAt": "2026-10-05",
@@ -72,5 +73,22 @@
       "techTree": 27
     },
     "uploaded": true
+  },
+  "submissionHold": {
+    "active": true,
+    "requestedAt": "2026-10-06",
+    "reason": "Owner withdrew submission pending Apple clarification of the specific similarity concern.",
+    "resumeCondition": "Apple answers received and owner explicitly authorizes resubmission.",
+    "allowedWork": "Local investigation, bug fixes, tests and evidence preparation; no App Review submission."
+  },
+  "appleSupportClarification": {
+    "caseId": "102987914250",
+    "sentAt": "2026-10-06",
+    "receiptVerified": true,
+    "channel": "Apple Developer Support > App Review Status > Email",
+    "purpose": "Follow up unanswered 29 September request and obtain actionable similarity details",
+    "requestFile": "APPLE_SUPPORT_REQUEST_20261006.txt",
+    "appResubmitted": false,
+    "responsePending": true
   }
 }
