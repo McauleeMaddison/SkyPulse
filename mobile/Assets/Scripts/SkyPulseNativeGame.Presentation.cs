@@ -16,6 +16,10 @@ namespace SkyPulse.Mobile
         private bool modeDropdownOpen;
         private float modeDropdownReveal, protocolVisualTime;
         private Text modeBadgeArrow, homeBestCaption;
+        private SkyPulseCircuitGraphic homeProtocolHero;
+        private Transform homeFlightDock;
+        private const string RelayStationPath="SkyPulse/backgrounds/pulse-relay-station-v1";
+        private const string BlackoutCorePath="SkyPulse/backgrounds/blackout-core-v1";
         private Button homeLaunchButton;
         private Sprite relayGlowSprite, relayPlateSprite;
         private readonly List<SpriteRenderer> relayApertureGlow=new List<SpriteRenderer>();
@@ -34,7 +38,8 @@ namespace SkyPulse.Mobile
         private SkyPulseCircuitGraphic ProtocolBackdrop(RectTransform backing,int variant)
         {
             var graphic=ProtocolGraphic(backing,"Protocol architecture",Vector2.zero,Vector2.zero,variant,SkyPulseSurface.Backdrop,Color.white,true);
-            var rect=graphic.rectTransform;rect.anchorMin=Vector2.zero;rect.anchorMax=Vector2.one;rect.offsetMin=rect.offsetMax=Vector2.zero;return graphic;
+            var rect=graphic.rectTransform;rect.anchorMin=Vector2.zero;rect.anchorMax=Vector2.one;rect.offsetMin=rect.offsetMax=Vector2.zero;
+            if(variant==2){backing.GetComponent<Image>().sprite=LoadSprite(BlackoutCorePath);backing.GetComponent<Image>().color=Color.white;graphic.CinematicUnderlay=true;}return graphic;
         }
         private RectTransform PremiumPanel(Transform parent,string name,Vector2 at,Vector2 size,int variant,Color accent,bool primary=false)
         {
@@ -101,6 +106,9 @@ namespace SkyPulse.Mobile
                 var rect=(RectTransform)root;var frame=ProtocolGraphic(root,"Home deck surface",Vector2.zero,rect.sizeDelta,0,SkyPulseSurface.Panel,Hex("#45eaff"));frame.transform.SetAsFirstSibling();homeFrames.Add(frame);
             }
             if(homeLaunchButton!=null)homeFrames.Add(PolishButton(homeLaunchButton,0,Hex("#45eaff"),true));
+            homeProtocolHero=ProtocolGraphic(homeScreen.transform,"Protocol hero display",new Vector2(0,355),new Vector2(850,480),1,SkyPulseSurface.HomeHero,Color.white,true);
+            homeProtocolHero.transform.SetSiblingIndex(menuHeroTransform.GetSiblingIndex());homeProtocolHero.gameObject.SetActive(false);
+            homeFlightDock=homeScreen.transform.Find("Home flight dock");
             foreach(var text in homeScreen.GetComponentsInChildren<Text>())if(text.text=="PERSONAL BEST")homeBestCaption=text;
         }
         private void ApplyPremiumHomeTheme()
@@ -112,10 +120,22 @@ namespace SkyPulse.Mobile
             if(modeBadgeArrow!=null)modeBadgeArrow.color=accent;
             if(homeLaunchButton!=null)homeLaunchButton.GetComponentInChildren<Text>().text="PLAY";
             if(homeBestCaption!=null)homeBestCaption.text=homeProtocol==SkyPulseMode.EndlessRoute?"PERSONAL BEST":"ENDLESS BEST";
+            ApplyHomePlayerView();
+        }
+        private void ApplyHomePlayerView()
+        {
+            if(menuHeroTransform==null)return;
+            menuHeroTransform.gameObject.SetActive(homeProtocol!=SkyPulseMode.BlackoutProtocol);
+            if(homeFlightDock!=null)homeFlightDock.gameObject.SetActive(homeProtocol==SkyPulseMode.EndlessRoute);
+            if(homeProtocolHero!=null){homeProtocolHero.gameObject.SetActive(homeProtocol!=SkyPulseMode.EndlessRoute);if(homeProtocolHero.Variant!=(int)homeProtocol){homeProtocolHero.Variant=(int)homeProtocol;homeProtocolHero.SetVerticesDirty();}}
+            if(homeProtocol==SkyPulseMode.PulseRelay){menuHeroTransform.localScale=Vector3.one*.54f;menuHeroTransform.anchoredPosition=new Vector2(-105,355);menuEquippedText.text="PILOT · "+equippedSkin.Name;}
+            else if(homeProtocol==SkyPulseMode.BlackoutProtocol)menuEquippedText.text="PACKETS · FIREWALLS · TRACE";
+            else {menuHeroTransform.localScale=Vector3.one;menuHeroTransform.anchoredPosition=new Vector2(0,355);menuEquippedText.text="EQUIPPED · "+equippedSkin.Name;}
         }
         private void UpdateProtocolPresentation(float dt)
         {
             bool paused=state==FlightState.Paused;
+            if(homeProtocol!=SkyPulseMode.EndlessRoute && homeScreen.activeSelf)ApplyHomePlayerView();
             for(int i=protocolGraphics.Count-1;i>=0;i--)
             {
                 var graphic=protocolGraphics[i];if(graphic==null){protocolGraphics.RemoveAt(i);continue;}
@@ -174,8 +194,8 @@ namespace SkyPulse.Mobile
         private void BuildPremiumRelayWorld()
         {
             missionWorld=new GameObject("Authored Pulse circuit").transform;HideOriginalWorld(true);
-            int[] scenery={0,1,2,3};
-            relayScenery=CreateRenderer("Relay cinematic environment",WorldBackdrop(Worlds[scenery[selectedMission]]),new Color(.70f,.87f,.97f,1),-40,missionWorld);FitBackgroundToCamera(relayScenery,1.1f);
+            var tint=selectedMission==1?new Color(.76f,.95f,1):selectedMission==2?new Color(1,.87f,.68f):selectedMission==3?new Color(.70f,.82f,1):Color.white;
+            relayScenery=CreateRenderer("Relay orbital station",LoadSprite(RelayStationPath),tint,-40,missionWorld);FitBackgroundToCamera(relayScenery,1.1f);
             CircuitSprite(missionWorld,"Station atmosphere veil",Vector2.zero,new Vector2(GetViewportWidth()+1,22),new Color(.005f,.035f,.065f,.24f),-30);
             WorldGlow(missionWorld,"Station atmosphere",new Vector2(1,2),new Vector2(20,26),new Color(.1f,.68f,.83f,.31f),-28);
             WorldGlow(missionWorld,"Gold horizon",new Vector2(0,-7),new Vector2(18,7),new Color(1,.6f,.12f,.16f),-27);
@@ -184,16 +204,17 @@ namespace SkyPulse.Mobile
             for(int i=0;i<relaySession.Mission.RelayCount;i++)
             {
                 float y=relaySession.Mission.RelayY[i];var gate=new GameObject("Relay "+(i+1)).transform;gate.SetParent(missionWorld,false);relayShutters.Add(gate);
-                float top=9-(y+1.8f),bottom=9+y-1.8f;
-                var upper=CreateRenderer("Upper relay tower",pipeBodySprite,Color.white,2,gate);SetSpriteBlock(upper,new Vector2(0,y+1.8f+top*.5f),new Vector2(.65f,top));
-                var lower=CreateRenderer("Lower relay tower",pipeBodySprite,Color.white,2,gate);SetSpriteBlock(lower,new Vector2(0,-9+bottom*.5f),new Vector2(.65f,bottom));
+                // Floating portal hardware, not Endless's ceiling/floor pipe silhouettes.
+                WorldLine(gate,"Energy plane",new Vector2(0,-9),new Vector2(0,9),.022f,new Color(.2f,.8f,1,.22f),2);
+                for(int segment=0;segment<32;segment++)
+                {
+                    float t=segment*Mathf.PI*2/32,next=(segment+1)*Mathf.PI*2/32;
+                    var p0=new Vector2(Mathf.Cos(t)*.75f,y+Mathf.Sin(t)*1.95f);var p1=new Vector2(Mathf.Cos(next)*.75f,y+Mathf.Sin(next)*1.95f);
+                    WorldLine(gate,"Portal metal rim",p0,p1,.13f,Hex("#37677a"),5);
+                    WorldLine(gate,"Portal cyan filament",p0,p1,.025f,Hex("#5df4ff"),7);
+                }
                 CircuitSprite(gate,"Activation window",new Vector2(0,y),new Vector2(.8f,3.6f),new Color(.1f,.62f,.75f,.17f),4);
                 CircuitSprite(gate,"Energy shutter",new Vector2(0,y),new Vector2(.08f,3.6f),Hex("#ffd078"),5);
-                for(int step=-6;step<=6;step++)if(Mathf.Abs(step*1.4f-y)>2)
-                {
-                    CircuitSprite(gate,"Machined band",new Vector2(0,step*1.4f),new Vector2(.73f,.11f),Hex("#21394d"),5);
-                    CircuitSprite(gate,"Telemetry stud",new Vector2(-.2f,step*1.4f+.25f),new Vector2(.04f,.05f),Hex("#75eaff"),6);
-                }
                 foreach(int side in new[]{-1,1})
                 {
                     float railY=y+side*1.83f;var collar=CreateRenderer("Port collar",pipeCapSprite,Color.white,6,gate);SetSpriteBlock(collar,new Vector2(0,railY),new Vector2(1.2f,.49f));if(side>0)collar.transform.localRotation=Quaternion.Euler(0,0,180);

@@ -19,8 +19,10 @@ def git(*args):
     return result.stdout
 
 def evidence_for(path):
-    if path.endswith('SkyPulseNativeGame.Presentation.cs') or path.endswith('SkyPulseCircuitGraphic.cs'):
-        return 'Codex-assisted authored presentation on 12 October 2026: gradient/soft-light/pixel geometry, badge dropdown and motion; existing cinematic/pipe artwork reused under its earlier provenance; no new external artwork/shader/font inputs', 'mobile/Release/PremiumPresentation20261012/PROVENANCE_ADDENDUM.md'
+    if any(path.endswith(name) for name in ['pulse-relay-station-v1.png','blackout-core-v1.png']):
+        return 'Generated in this session with the built-in image_gen tool on 12 October 2026, without reference images; exact prompts/output records/hash retained; no independent certification of exclusivity', 'mobile/Release/ModeIdentityWidth20261012/ASSET_GENERATION.json'
+    if any(path.endswith(name) for name in ['SkyPulseNativeGame.Presentation.cs','SkyPulseCircuitGraphic.cs','SkyPulseNativeGame.Missions.cs']):
+        return 'Codex-assisted presentation on 12 October 2026: procedural geometry, distinct portal/data-core views, badge navigation and motion; new generated backdrops and retained artwork separately documented; no external shader/font inputs', 'mobile/Release/ModeIdentityWidth20261012/PROVENANCE_ADDENDUM.md'
     if path.endswith('SkyPulseNativeGame.cs'):
         return 'Existing gameplay implementation retained; Codex-assisted protocol, UI, lifecycle and explicit-wallet hooks added on 12 October 2026 against baseline 026e382; protected flight methods/catalogues unchanged', 'mobile/Release/ThreeModes20261012/PROVENANCE_ADDENDUM.md'
     if any(path.endswith(name) for name in ['SkyPulseMissionModels.cs','SkyPulseDailyMissions.cs','SkyPulseNativeGame.Missions.cs','SkyPulseCircuitGraphic.cs']):

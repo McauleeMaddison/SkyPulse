@@ -1,5 +1,7 @@
 # Premium presentation and badge navigation — 12 October 2026
 
+**Later width/identity revision:** the owner subsequently requested shared Endless widths, distinct Home/player views and a major Blackout redesign. Follow [the current guide](../ModeIdentityWidth20261012/README.md); the checkpoint below is retained as dated evidence.
+
 This update follows the owner's visual feedback and later badge-dropdown instruction. It supersedes the earlier full-screen mode chooser and retained-mode startup behavior. A new launch shows Home in Endless Route. Selection remains active during the current session; the existing Home preference key is retained for backwards compatibility.
 
 Open `/Users/mcauleemaddison/Desktop/SkyPulse/mobile` in Unity **6000.6.0f1**, open `Assets/Scenes/SkyPulse.unity` and press Play. Tap the **top-left mode badge**, select one of the three free modes, then press **PLAY**. Endless starts flight; Relay and Blackout open their four mission/puzzle choices. The dropdown grows from the badge in 0.2 seconds, dismisses on an outside tap, and changes modes without starting gameplay. Reduced Motion makes its expansion/dismissal immediate.

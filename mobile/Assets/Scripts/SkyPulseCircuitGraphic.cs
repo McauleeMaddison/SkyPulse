@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 namespace SkyPulse.Mobile
 {
-    public enum SkyPulseSurface { Emblem, Backdrop, Panel, TerminalNode }
+    public enum SkyPulseSurface { Emblem, Backdrop, Panel, TerminalNode, HomeHero }
 
     // Authored geometry: gradients, soft light, machined frames and pixel glyphs.
     // No external artwork, shader, font or generation service is required.
@@ -31,6 +31,7 @@ namespace SkyPulse.Mobile
             if(Surface==SkyPulseSurface.Backdrop)Backdrop(vh,r);
             else if(Surface==SkyPulseSurface.Panel)Panel(vh,r);
             else if(Surface==SkyPulseSurface.TerminalNode)Node(vh,r);
+            else if(Surface==SkyPulseSurface.HomeHero)HomeHero(vh,r);
             else Emblem(vh,r);
         }
         private static Color A(Color c,float alpha){c.a=alpha;return c;}
@@ -38,7 +39,7 @@ namespace SkyPulse.Mobile
         {
             bool terminal=Variant==2;
             float opacity=CinematicUnderlay?.62f:1f;
-            Gradient(vh,r,terminal?new Color(.002f,.014f,.011f):new Color(.014f,.035f,.075f,opacity),terminal?new Color(.006f,.047f,.034f):new Color(.017f,.10f,.14f,opacity));
+            Gradient(vh,r,terminal?new Color(.002f,.014f,.011f,opacity):new Color(.014f,.035f,.075f,opacity),terminal?new Color(.006f,.047f,.034f,opacity):new Color(.017f,.10f,.14f,opacity));
             Glow(vh,new Vector2(r.xMin+r.width*.15f,r.yMax-r.height*.24f),r.width*.64f,A(terminal?Green:Cyan,.09f));
             Glow(vh,new Vector2(r.xMax,r.yMin+r.height*.35f),r.width*.7f,A(terminal?Green:Gold,.065f));
             float y=355f;var centre=new Vector2(0,y);
@@ -62,7 +63,7 @@ namespace SkyPulse.Mobile
             {
                 for(int side=-1;side<=1;side+=2)
                 {
-                    Gradient(vh,new Rect(side<0?r.xMin:r.xMax-84,r.yMin,84,r.height),new Color(.024f,.06f,.10f),new Color(.005f,.02f,.04f));
+                    // The shared full-width view has no opaque decorative side strips.
                     for(int i=0;i<9;i++)
                     {
                         float row=r.yMin+(i+.5f)*r.height/9;
@@ -81,6 +82,40 @@ namespace SkyPulse.Mobile
             }
             for(float scan=r.yMin;scan<r.yMax;scan+=18)Quad(vh,new Rect(r.xMin,scan,r.width,1),new Color(0,0,0,.13f));
             Line(vh,new Vector2(-430,735),new Vector2(-265,735),2,A(Accent,.4f));Line(vh,new Vector2(265,735),new Vector2(430,735),2,A(Accent,.4f));
+        }
+        private void HomeHero(VertexHelper vh,Rect r)
+        {
+            if(Variant==1)
+            {
+                var c=new Vector2(138,0);
+                Glow(vh,c,230,A(Cyan,.16f));
+                Ellipse(vh,c+new Vector2(33,12),83,169,3,A(Cyan,.27f),0,360);
+                Ellipse(vh,c,93,184,10,new Color(.14f,.25f,.29f),0,360);
+                Ellipse(vh,c,93,184,2,Gold,0,360);
+                Ellipse(vh,c,81,170,4,Cyan,Motion*360,110);Ellipse(vh,c,81,170,4,Cyan,Motion*360+180,110);
+                for(int i=0;i<8;i++){float y=-160+i*45;Line(vh,new Vector2(0,y),new Vector2(45,y+18),1,A(Gold,.15f));}
+                Diamond(vh,new Vector2(-270,90+Mathf.Sin(Motion*Mathf.PI*2)*8),18,Gold);
+                for(int i=0;i<3;i++)Quad(vh,new Rect(246,-30+i*26,30,6),A(Cyan,.7f));
+            }
+            else
+            {
+                var board=new Rect(-276,-193,552,386);Bevel(vh,board,24,new Color(.008f,.04f,.025f),new Color(.024f,.12f,.074f));Border(vh,board,24,2,A(Green,.65f));
+                for(int row=-1;row<=1;row++)for(int col=-2;col<=2;col++)
+                {
+                    var point=new Vector2(col*105,row*110);if(col<2)GlowLine(vh,point,point+new Vector2(105,0),1,A(Green,.20f));if(row<1)GlowLine(vh,point,point+new Vector2(0,110),1,A(Green,.20f));
+                    Quad(vh,new Rect(point.x-20,point.y-20,40,40),A(Green,.075f));Border(vh,new Rect(point.x-20,point.y-20,40,40),3,1,A(Green,.45f));
+                }
+                Glow(vh,Vector2.zero,135,A(Green,.18f));Diamond(vh,Vector2.zero,64,Green);Diamond(vh,Vector2.zero,28,new Color(.84f,1,.91f));
+                Ring(vh,Vector2.zero,86,2,Green,Motion*360,120);Ring(vh,Vector2.zero,86,2,Green,Motion*360+180,120);
+                var packet=Vector2.Lerp(new Vector2(-210,110),new Vector2(0,110),Motion);Quad(vh,new Rect(packet.x-5,packet.y-5,10,10),Green);
+                for(int i=0;i<3;i++)Quad(vh,new Rect(184,90+i*12,52,6),Gold);
+                Diamond(vh,new Vector2(-210,-110),15,Green);Diamond(vh,new Vector2(210,-110),15,Green);
+            }
+        }
+        private static void Ellipse(VertexHelper vh,Vector2 c,float rx,float ry,float width,Color colour,float angle,float span)
+        {
+            int steps=Mathf.Max(3,Mathf.CeilToInt(span/6));var previous=c+new Vector2(Mathf.Cos(angle*Mathf.Deg2Rad)*rx,Mathf.Sin(angle*Mathf.Deg2Rad)*ry);
+            for(int i=1;i<=steps;i++){float t=(angle+span*i/steps)*Mathf.Deg2Rad;var next=c+new Vector2(Mathf.Cos(t)*rx,Mathf.Sin(t)*ry);Line(vh,previous,next,width,colour);previous=next;}
         }
         private void Panel(VertexHelper vh,Rect r)
         {
@@ -116,13 +151,19 @@ namespace SkyPulse.Mobile
         private void Node(VertexHelper vh,Rect r)
         {
             bool wall=NodeKind==1;var c=r.center;float s=Mathf.Min(r.width,r.height);Color accent=NodeKind==3?Gold:NodeKind==5?Color.white:Green;
-            Bevel(vh,r,6,wall?new Color(.009f,.02f,.022f):new Color(.012f,.05f,.034f),wall?new Color(.022f,.039f,.035f):new Color(.025f,.12f,.075f));Border(vh,r,6,Adjacent?1.8f:.8f,A(accent,wall?.08f:Adjacent?.85f:.23f));
+            // Layered physical pads: dark plinth, metal face, bevel and emissive edge.
+            Bevel(vh,new Rect(r.xMin,r.yMin-5,r.width,r.height),8,new Color(0,0,0,.85f),new Color(.025f,.06f,.047f));
+            Bevel(vh,r,8,wall?new Color(.014f,.026f,.025f):new Color(.025f,.085f,.066f),wall?new Color(.035f,.06f,.05f):new Color(.07f,.17f,.125f));
+            Border(vh,r,8,Adjacent?2.2f:1f,A(accent,wall?.10f:Adjacent?.95f:.36f));
+            Line(vh,new Vector2(r.xMin+10,r.yMax-4),new Vector2(r.xMax-14,r.yMax-4),1,new Color(.65f,1,.82f,wall?.08f:.19f));
+            Border(vh,new Rect(r.xMin+5,r.yMin+5,r.width-10,r.height-10),5,.6f,A(accent,wall?.03f:.13f));
             if(wall){for(int i=-2;i<=2;i++)Line(vh,c+new Vector2(-s*.25f,i*s*.12f),c+new Vector2(s*.25f,i*s*.12f),2,A(Green,.11f));return;}
             var icon=c+new Vector2(0,12);float radius=s*.18f;
             if(NodeKind==5 || NodeKind==2)Glow(vh,icon,s*.40f,A(accent,.10f+Mathf.Sin(Motion*Mathf.PI*2)*.03f));
             if(NodeKind==2 || NodeKind==6)
             {
-                Diamond(vh,icon,radius,A(Green,NodeKind==6?.28f:.85f));Diamond(vh,icon,radius*.47f,new Color(.8f,1f,.86f,NodeKind==6?.4f:1));for(int i=0;i<3;i++)Quad(vh,new Rect(icon.x-radius-5,icon.y-9+i*8,3,3),Green);
+                Cube(vh,icon,radius,A(Green,NodeKind==6?.28f:.95f));
+                for(int i=0;i<3;i++)Quad(vh,new Rect(icon.x-radius-5,icon.y-9+i*8,3,3),Green);
             }
             else if(NodeKind==3)
             {
@@ -130,7 +171,7 @@ namespace SkyPulse.Mobile
             }
             else if(NodeKind==5)
             {
-                Ring(vh,icon,radius+5,1.5f,A(Green,.8f),Motion*360,145);Ring(vh,icon,radius+5,1.5f,A(Green,.8f),Motion*360+180,145);Diamond(vh,icon,radius*.72f,Color.white);Diamond(vh,icon,radius*.26f,Green);Quad(vh,new Rect(r.xMin+4,r.yMax-8,18,2),Green);Quad(vh,new Rect(r.xMax-22,r.yMin+6,18,2),Green);
+                Ring(vh,icon,radius+5,1.5f,A(Green,.8f),Motion*360,145);Ring(vh,icon,radius+5,1.5f,A(Green,.8f),Motion*360+180,145);Cube(vh,icon,radius*.77f,new Color(.84f,1,.91f));Quad(vh,new Rect(r.xMin+4,r.yMax-8,18,2),Green);Quad(vh,new Rect(r.xMax-22,r.yMin+6,18,2),Green);
             }
             else if(NodeKind==4)
             {
@@ -158,6 +199,13 @@ namespace SkyPulse.Mobile
         {
             int steps=Mathf.Max(3,Mathf.CeilToInt(span/6));var old=c+new Vector2(Mathf.Cos(angle*Mathf.Deg2Rad),Mathf.Sin(angle*Mathf.Deg2Rad))*radius;
             for(int i=1;i<=steps;i++){float t=(angle+span*i/steps)*Mathf.Deg2Rad;var next=c+new Vector2(Mathf.Cos(t),Mathf.Sin(t))*radius;Line(vh,old,next,width,colour);old=next;}
+        }
+        private static void Cube(VertexHelper vh,Vector2 c,float size,Color colour)
+        {
+            int n=vh.currentVertCount;var upper=c+new Vector2(0,size);var left=c+new Vector2(-size,size*.38f);var right=c+new Vector2(size,size*.38f);var middle=c+new Vector2(0,-size*.18f);
+            Vert(vh,upper,Color.Lerp(colour,Color.white,.5f));Vert(vh,left,colour);Vert(vh,middle,colour);Vert(vh,right,colour);vh.AddTriangle(n,n+1,n+2);vh.AddTriangle(n,n+2,n+3);
+            n=vh.currentVertCount;Vert(vh,left,colour);Vert(vh,c+new Vector2(-size,-size*.58f),A(colour,colour.a));Vert(vh,c+new Vector2(0,-size),Color.Lerp(colour,Color.black,.35f));Vert(vh,middle,colour);vh.AddTriangle(n,n+1,n+2);vh.AddTriangle(n,n+2,n+3);
+            n=vh.currentVertCount;var dark=Color.Lerp(colour,Color.black,.42f);Vert(vh,middle,dark);Vert(vh,c+new Vector2(0,-size),dark);Vert(vh,c+new Vector2(size,-size*.58f),dark);Vert(vh,right,dark);vh.AddTriangle(n,n+1,n+2);vh.AddTriangle(n,n+2,n+3);
         }
         private static void Diamond(VertexHelper vh,Vector2 c,float size,Color colour){int start=vh.currentVertCount;Vert(vh,c+Vector2.left*size,colour);Vert(vh,c+Vector2.up*size,colour);Vert(vh,c+Vector2.right*size,colour);Vert(vh,c+Vector2.down*size,colour);vh.AddTriangle(start,start+1,start+2);vh.AddTriangle(start,start+2,start+3);}
         private static Vector2[] Corners(Rect r,float cut)=>new[]{new Vector2(r.xMin,r.yMin+cut),new Vector2(r.xMin,r.yMax),new Vector2(r.xMax-cut,r.yMax),new Vector2(r.xMax,r.yMax-cut),new Vector2(r.xMax,r.yMin),new Vector2(r.xMin+cut,r.yMin)};

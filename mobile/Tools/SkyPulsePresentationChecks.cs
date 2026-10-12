@@ -23,11 +23,12 @@ public static class SkyPulsePresentationChecks
         var camera=(Camera)Get(game,"flightCamera");var canvas=((GameObject)Get(game,"uiRoot")).GetComponent<Canvas>();canvas.renderMode=RenderMode.ScreenSpaceCamera;canvas.worldCamera=camera;canvas.planeDistance=1;
         var rt=RenderTexture.GetTemporary(750,1334,24);camera.targetTexture=rt;camera.rect=new Rect(0,0,1,1);Call(game,"RefreshViewportDecor");
         string folder=Path.Combine(Environment.GetEnvironmentVariable("SKYPULSE_QA_OUTPUT"),"motion");Directory.CreateDirectory(folder);
-        foreach(string scene in new[]{"home-relay","home-blackout","mode-dropdown","relay-flight","blackout-puzzle"})
+        foreach(string scene in new[]{"home-endless","home-relay","home-blackout","mode-dropdown","endless-flight","relay-flight","blackout-puzzle"})
         {
             string output=Path.Combine(folder,scene);Directory.CreateDirectory(output);
-            if(scene.StartsWith("home")){Call(game,"SetHomeProtocol",scene=="home-relay"?SkyPulseMode.PulseRelay:SkyPulseMode.BlackoutProtocol);Call(game,"ResetToMenu");}
+            if(scene.StartsWith("home")){Call(game,"SetHomeProtocol",scene=="home-relay"?SkyPulseMode.PulseRelay:scene=="home-blackout"?SkyPulseMode.BlackoutProtocol:SkyPulseMode.EndlessRoute);Call(game,"ResetToMenu");}
             if(scene=="mode-dropdown"){Call(game,"SetHomeProtocol",SkyPulseMode.EndlessRoute);Call(game,"ResetToMenu");}
+            if(scene=="endless-flight")Call(game,"StartFlight");
             if(scene=="relay-flight")
             {
                 Call(game,"LaunchMission",SkyPulseMode.PulseRelay,0);
@@ -40,6 +41,16 @@ public static class SkyPulsePresentationChecks
                 {
                     if(frame==5)Call(game,"OpenModeSelection");
                     if(frame==25)Call(game,"SelectHomeProtocol",SkyPulseMode.PulseRelay);
+                }
+                if(scene=="endless-flight")
+                {
+                    for(int step=0;step<12;step++)
+                    {
+                        float target=0,nearest=float.MaxValue;foreach(var gate in (Array)Get(game,"pipePool"))
+                        {float x=(float)Get(gate,"X");if(!(bool)Get(gate,"Passed") && x>=-3f && x<nearest){nearest=x;target=(float)Get(gate,"GapCenter");}}
+                        if((float)Get(game,"birdY")<target-.65f && (float)Get(game,"birdVelocity")<0)Call(game,"Flap");Call(game,"SimulateFlight",1f/120f);
+                    }
+                    Call(game,"UpdateGameplayWingState",.1f);Call(game,"UpdateBirdWingMotion");
                 }
                 if(scene=="relay-flight")
                 {

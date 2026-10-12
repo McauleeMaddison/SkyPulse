@@ -10,6 +10,8 @@ Local quality checks, fixes and preparation may continue. Build 7's retained arc
 
 **Later owner-requested presentation update — 12 October:** richer animated Relay/terminal/Home visuals and a compact badge dropdown are implemented and locally verified. New launches default to Endless; the selected mode controls Home/Play during the session. Current [guide](PremiumPresentation20261012/README.md) and [tests](PremiumPresentation20261012/TEST_RESULTS.md) supersede the earlier navigation instructions. Submission remains on hold.
 
+**Subsequent width/identity update — 12 October:** mode widths match the tested Endless viewport/layout. Relay has its own orbital station/portals, Blackout has a core chamber and raised puzzle board, and all three Home screens have distinct player presentations. Current [guide/evidence](ModeIdentityWidth20261012/README.md) includes new artwork generation records. Device validation remains pending; the submission hold is unchanged.
+
 ---
 
 Historical records below; superseded by the current hold.

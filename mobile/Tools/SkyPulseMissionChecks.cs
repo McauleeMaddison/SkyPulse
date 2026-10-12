@@ -199,12 +199,15 @@ public static class SkyPulseMissionChecks
         foreach(var size in new[]{new Vector2Int(750,1334),new Vector2Int(1320,2868),new Vector2Int(1640,2360)})
         {
             var rt=RenderTexture.GetTemporary(size.x,size.y,24);camera.targetTexture=rt;camera.rect=new Rect(0,0,1,1);Call(game,"RefreshViewportDecor");
+            Rect expectedViewport=camera.rect;float expectedCameraWidth=2f*camera.orthographicSize*camera.aspect;float expectedContentWidth=((RectTransform)Get(game,"interfaceContentRoot")).rect.width;
             foreach(string screen in new[]{"mode-selection","relay-selection","relay-flight","blackout-selection","blackout-puzzle","mission-control","home-endless","home-relay","home-blackout"})
             {
                 if(screen.StartsWith("home-"))
                 {
                     Call(game,"SetHomeProtocol",screen=="home-relay"?SkyPulseMode.PulseRelay:screen=="home-blackout"?SkyPulseMode.BlackoutProtocol:SkyPulseMode.EndlessRoute);Call(game,"ResetToMenu");
                     Check(((Image)Get(game,"homeProtocolBackdrop")).gameObject.activeSelf==(screen!="home-endless"),"Home theme follows selected protocol");
+                    Check(((RectTransform)Get(game,"menuHeroTransform")).gameObject.activeSelf==(screen!="home-blackout"),"Blackout uses data core instead of bird hero");
+                    Check(((SkyPulseCircuitGraphic)Get(game,"homeProtocolHero")).gameObject.activeSelf==(screen!="home-endless"),"Distinct protocol hero is shown for each new Home");
                     if(screen=="home-blackout")
                     {
                         var protocol=(Text)Get(game,"difficultyText");
@@ -233,6 +236,13 @@ public static class SkyPulseMissionChecks
                 }
                 if(screen=="mission-control")Call(game,"OpenMissionControl");
                 yield return null;Canvas.ForceUpdateCanvases();Call(game,"ApplySafeArea");Call(game,"FitInterfaceToSafeArea");Canvas.ForceUpdateCanvases();camera.Render();
+                Check(camera.rect==expectedViewport && Mathf.Abs(2f*camera.orthographicSize*camera.aspect-expectedCameraWidth)<.001f,"Shared Endless camera width: "+screen+" at "+size.x);
+                Check(((RectTransform)Get(game,"interfaceContentRoot")).rect.width==expectedContentWidth,"Shared Endless interface width: "+screen);
+                if(screen=="home-relay" || screen=="home-blackout")
+                {
+                    var backdrop=((Image)Get(game,"homeProtocolBackdrop")).rectTransform;var content=(RectTransform)Get(game,"interfaceContentRoot");
+                    Check(Mathf.Abs(backdrop.rect.width*content.localScale.x-((RectTransform)canvas.transform).rect.width)<2f,"Home backdrop fills same canvas width as Endless");
+                }
                 var screens=new[]{"modeSelectionScreen","missionSelectionScreen","blackoutScreen","missionControlScreen","relayHudScreen"};
                 foreach(string field in screens)
                 {
