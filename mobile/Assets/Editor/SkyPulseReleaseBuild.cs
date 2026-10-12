@@ -46,7 +46,7 @@ namespace SkyPulse.Mobile.Editor
             PlayerSettings.companyName = "SkyPulse";
             PlayerSettings.productName = "SkyPulse";
             PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.iOS, BundleId);
-            PlayerSettings.bundleVersion = "1.0.0";
+            if (string.IsNullOrWhiteSpace(PlayerSettings.bundleVersion)) PlayerSettings.bundleVersion = "1.0.0";
             PlayerSettings.defaultInterfaceOrientation = UIOrientation.Portrait;
             PlayerSettings.allowedAutorotateToPortrait = true;
             PlayerSettings.allowedAutorotateToPortraitUpsideDown = false;
@@ -97,6 +97,10 @@ namespace SkyPulse.Mobile.Editor
             if (!SkyPulsePublicLinks.IsPublicHttpsUrl(links.privacyUrl) ||
                 !SkyPulsePublicLinks.IsPublicHttpsUrl(links.supportUrl))
                 throw new BuildFailedException("Set real public HTTPS privacyUrl and supportUrl in Assets/Resources/SkyPulsePublicLinks.json. Verify both pages and their contact details before submission.");
+            if (links.privacyUrl != "https://skypulse.macwebstudio.com/privacy" || links.supportUrl != "https://skypulse.macwebstudio.com/support")
+                throw new BuildFailedException("Runtime support/privacy URLs must match the current branded listing. Update the URL contract and release metadata deliberately if the official domain changes.");
+            if (PlayerSettings.GetApplicationIdentifier(NamedBuildTarget.iOS) != BundleId)
+                throw new BuildFailedException("The candidate bundle ID must match the existing SkyPulse App Store Connect app.");
             if (string.IsNullOrWhiteSpace(PlayerSettings.iOS.appleDeveloperTeamID))
                 throw new BuildFailedException("Select your paid Apple Developer signing team in iOS Player Settings before exporting an App Store candidate.");
             if (!int.TryParse(PlayerSettings.iOS.buildNumber, out var number) || number <= 0)
