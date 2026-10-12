@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Inventory evidence, without inferring copyright or authorship from Git."""
+import argparse
 import csv
 import hashlib
 import json
@@ -7,13 +8,21 @@ from pathlib import Path
 import subprocess
 
 ROOT = Path(__file__).resolve().parents[2]
-OUT = ROOT / 'mobile/Release/Provenance'
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--output', type=Path, default=ROOT / 'mobile/Release/Provenance')
+parser.add_argument('--date', default='2026-09-29')
+args = parser.parse_args()
+OUT = args.output if args.output.is_absolute() else ROOT / args.output
 
 def git(*args):
     result = subprocess.run(['git', *args], cwd=ROOT, capture_output=True, check=True)
     return result.stdout
 
 def evidence_for(path):
+    if path.endswith('SkyPulseNativeGame.cs'):
+        return 'Existing gameplay implementation retained; Codex-assisted protocol, UI, lifecycle and explicit-wallet hooks added on 12 October 2026 against baseline 026e382; protected flight methods/catalogues unchanged', 'mobile/Release/ThreeModes20261012/PROVENANCE_ADDENDUM.md'
+    if any(path.endswith(name) for name in ['SkyPulseMissionModels.cs','SkyPulseDailyMissions.cs','SkyPulseNativeGame.Missions.cs','SkyPulseCircuitGraphic.cs']):
+        return 'SkyPulse three-mode implementation authored with Codex assistance on 12 October 2026 from the owner request; procedural circuit/grid/pixel geometry retained in code; no new image, sample or font inputs', 'mobile/Release/ThreeModes20261012/PROVENANCE_ADDENDUM.md'
     if 'characters/roster/' in path:
         return 'Bird artwork: owner confirms ARTA-generated SkyPulse artwork; original generation records and reference origins not independently verified', ''
     if '/audio/' in path:
@@ -66,7 +75,7 @@ with (OUT / 'FILE_LEDGER.csv').open('w', newline='') as f:
     writer = csv.DictWriter(f, fieldnames=list(rows[0]), lineterminator="\n")
     writer.writeheader()
     writer.writerows(rows)
-metadata = dict(inventory_date='2026-09-29', baseline_head=git('rev-parse','HEAD').decode().strip(),
+metadata = dict(inventory_date=args.date, baseline_head=git('rev-parse','HEAD').decode().strip(),
     branch=git('branch','--show-current').decode().strip(), files=len(rows),
     scope='All non-hidden, non-meta files under mobile/Assets plus three retained visual references',
     limitations=['First-path commit and author date are repository claims, not independently verified creation dates.',

@@ -255,3 +255,11 @@ Do not say Apple approved this audit, the rejection is resolved, no third-party 
 3. Recheck the current ASC rejection/build selection and media; the September 16 snapshot is stale. Replace any historical evidence with the exact newly tested candidate.
 4. Correct support/marketing copy through its separate site publishing workflow, and retain honest cosmetic-bird/shared-physics language. Keep candidate world names/counts aligned.
 5. Only after actual device verification, upload a new numbered candidate and submit a concise, accurate reviewer walkthrough. This audit alone cannot guarantee approval.
+
+## Current remediation addendum — 12 October 2026
+
+The changed source now implements Endless Route, Pulse Relay, Blackout Protocol and Mission Control; Home follows the selected protocol. Each new mode has a tutorial plus three authored missions/puzzles, separate medals and isolated session logic. Daily rewards are five per task, at most twenty per UTC period, with recoverable claims. The requested branch was fast-forwarded to the latest preserved work before implementation; build-5/6/7 binaries and prior evidence remain unchanged.
+
+This is a source candidate newer than build 7. Available isolated Unity compilation/gameplay/persistence/solvability/layout checks passed. Current [test results](mobile/Release/ThreeModes20261012/TEST_RESULTS.md), [evidence index](mobile/Release/ThreeModes20261012/EVIDENCE_INDEX.md), [provenance addendum](mobile/Release/ThreeModes20261012/PROVENANCE_ADDENDUM.md), listing and unsent reviewer drafts describe only this candidate. Physical-device verification, a new signed numbered binary and new media remain pending.
+
+The original art-generation/reference gaps and Apple's unidentified comparison to terminated-account apps remain unresolved. No Apple reply was inspected, no App Store Connect change or upload was made, and no website or message was published. The 6 October submission hold remains in force; earlier next-step suggestions do not authorize resubmission.

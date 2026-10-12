@@ -1,0 +1,257 @@
+Implement the following SkyPulse update in my existing Unity project. Complete the implementation, validation and documentation; do not stop after producing a plan.
+
+GOAL
+
+Address the controllable issues behind the App Store similarity concerns through meaningful new gameplay, accurate metadata and traceable asset origins. Add two distinct playable modes and daily missions while preserving the existing tested Endless Route.
+
+Do not promise Apple approval or claim to know which app, asset or binary component Apple compared against SkyPulse.
+
+ESTABLISH AND PRESERVE THE CURRENT BASELINE
+
+Read applicable AGENTS.md instructions, Git status, current source, README, APPLE_4_3A_AUDIT.md and the release/provenance records before editing.
+
+The Unity project is mobile/. Inspect mobile/Assets/Scripts/SkyPulseNativeGame.cs and supporting scripts. Use the latest local working copy as the baseline.
+
+Preserve all existing user changes. Future development should belong on codex/neon-visual-update, but reconcile its history with the latest local world/audio/build-7 work before using it. Never overwrite newer work with an older branch.
+
+Preserve the App Store build 5 rollback point and archived binaries. Preserve historical build 6/7 archives and evidence.
+
+The supplied README records build 7 as Removed with a submission hold dated 6 October 2026. Local implementation and QA are authorized. Do not upload, resubmit, change App Store Connect, publish the website or send Apple a message.
+
+My existing physical iPhone 17 Pro Max testing and recording remain evidence for the build actually tested. Record that evidence accurately. Test the changed candidate separately; do not claim old footage proves the new modes work.
+
+ADD EXACTLY THREE GAME MODES
+
+Provide a polished mode-selection screen with three clearly named cards. Each card needs its visual identity, a short gameplay explanation and a launch button.
+
+Keep Bird Hangar, Tech Tree, Worlds & Power-ups, privacy and Mission Control easily accessible. Match the existing premium SkyPulse UI: illuminated borders, depth, clean spacing and readable controls. Fit iPhone and iPad safe areas.
+
+MODE 1 — ENDLESS ROUTE
+
+Preserve the current tested flight game.
+
+Keep its existing:
+
+Tap-to-flap controls and animation.
+Flight physics, input buffering and flap strength.
+Collision shapes, hitboxes and pipe/gate dimensions.
+Scroll speed, scoring and difficulty progression.
+Twelve-world route and transitions.
+Crystal values, collection and upgrade effects.
+Aegis, Time Pulse and Crystal Magnet behavior and durations.
+Pause, focus-loss pause, retry and save behavior.
+
+Do not make balancing or physics changes to Endless Route as part of this update. Necessary integration hooks must dispatch to the original behavior.
+
+MODE 2 — PULSE RELAY
+
+Create a finite flight-mission mode with cyan/gold circuit artwork, mechanical relays, energy shutters and a clear finish line.
+
+Core loop:
+
+Pilot the equipped mechanical bird using the existing flight controls.
+Collect gold pulse-charge cells.
+Approach numbered relays and align with their activation area.
+Press a separate, clearly visible Pulse button to spend one charge and open the next relay shutter.
+Fly through the activated relay.
+Activate the required relays in order, then reach the exit.
+
+Include easier routes and optional charge opportunities that require a deliberate flight choice.
+
+This must have an objective beyond surviving or accumulating score. Missing a required relay, hitting an unprotected hazard or missing the exit must produce a clear failure reason.
+
+Start with a tutorial and at least three authored, playable missions with different circuit layouts and objectives. Increase complexity through mission design, not by changing Endless physics.
+
+Use procedural circuit artwork where practical. Give the mode a distinct HUD for charge, relay progress and mission objectives.
+
+Include mission selection, success/failure, retry, return to mode selection and persistent completion/medals.
+
+Reuse existing tactical pickup behavior where applicable. Keep pulse charge separate from wallet crystals.
+
+MODE 3 — BLACKOUT PROTOCOL
+
+Create a genuinely different, touch-controlled hacking puzzle mode.
+
+Visual direction:
+
+Black backgrounds and luminous green pixel graphics.
+Terminal panels, circuit grids, data packets and firewall tiles.
+Crisp pixel edges and readable text.
+Restrained scanlines and terminal transitions.
+Respect Reduced Motion; avoid rapid flashing.
+Use authored/procedural visuals and existing licensed fonts wherever possible.
+
+Gameplay:
+
+Navigate a data cursor through an authored circuit grid.
+Tap adjacent valid nodes to move.
+Recover required data packets before reaching the exit.
+Spend limited hack charges to disable selected firewalls or open shortcuts.
+Advance a visible trace meter according to clearly explained actions.
+Choose between safer routes and riskier shortcuts.
+
+Use turn-based decisions so it works comfortably on a phone without a keyboard. This mode must not simply replace the bird and pipes with green artwork.
+
+Start with a tutorial and at least three authored puzzles introducing packet collection, firewall decisions and route planning.
+
+Validate that every puzzle has a winning solution within its move/trace budget. Avoid randomly generated impossible boards.
+
+Provide distinct mission progress and medals. Its puzzle results must never overwrite the Endless high score.
+
+ADD DAILY MISSIONS AND A MISSION CONTROL CENTRE
+
+Create a Mission Control Centre accessible from Home and the mode-selection screen.
+
+Match the existing SkyPulse graphic style. Use readable mission cards, illuminated progress bars, reward icons and clear completion states.
+
+Display:
+
+Today’s tasks.
+Each task’s objective and relevant mode.
+Current progress and target.
+Five-crystal reward.
+In Progress, Ready to Claim or Claimed status.
+Time until the next daily reset.
+Total daily rewards claimed.
+
+Rules:
+
+Maximum four daily tasks.
+Each completed task grants exactly five wallet crystals when claimed.
+Maximum daily-task reward: 20 crystals per daily reset period.
+No purchase, paid bird, locked upgrade or login is required.
+New players must be able to attempt all selected tasks.
+Completed tasks stay completed until claimed or the daily period ends.
+Disable repeated claims immediately and persist the result.
+Daily rewards must not receive upgrade multipliers or count as collected gameplay crystals.
+Claimed daily rewards must not recursively advance crystal-collection tasks.
+
+Suitable starting tasks:
+
+Pass 10 Endless gates across attempts.
+Activate three Pulse Relay relays across attempts.
+Complete one introductory Blackout Protocol puzzle.
+Collect 10 crystals through actual gameplay pickups.
+
+Use stable mission IDs and event-driven progress. Count legitimate gameplay events only. Pausing, restarting, opening screens and replaying result animations must not duplicate progress.
+
+Use one consistent daily boundary, such as UTC, and show the next reset in the player’s local time. Select tasks deterministically for the day so reopening the app cannot reroll them.
+
+Check rollover at launch, resume and before progress or reward claims. Preserve tasks and claim status across restarts. Handle backward clock changes without reopening already claimed days. Keep the system offline; do not claim server-backed anti-cheat protection.
+
+Add versioned daily-mission save data without renaming existing save keys. Implement recoverable reward claiming so rapid taps or interruption during saving cannot grant the same reward twice.
+
+Centralize wallet credits with an explicit reward source. Daily credits must update the balance without changing run-crystal totals, high scores or result bonuses.
+
+PRESERVE ROSTER, TECH TREE AND SAVE COMPATIBILITY
+
+Maintain exactly 15 birds, including newbird01–newbird10.
+
+Each bird must retain its own eight unique frame paths:
+
+Six flap frames.
+One distinct hit pose.
+One distinct unlock pose.
+
+Preserve roster paths, Unity GUIDs, equipped-skin IDs, ownership and legacy migrations.
+
+Keep exactly nine existing Tech Tree nodes, unique stable IDs, MaxLevel 3, valid prerequisites and existing effects.
+
+Preserve existing crystals, scores, owned birds, upgrade levels, preferences and world progress.
+
+New mode completion, medals and daily missions need separate versioned save keys. Do not reset real player saves or silently reinterpret existing scores.
+
+Keep the existing Tech Tree meaningful and truthful. Do not imply cosmetic birds have different flight physics or existing upgrades provide hacking abilities they do not implement.
+
+New mode completion initially awards progress/medals, not additional wallet bonuses. Daily mission rewards are the explicitly authorized new five-crystal credits. Any regular flight-crystal collection must retain its existing values and applicable effects.
+
+IMPLEMENT A CLEAN MODE LIFECYCLE
+
+Use explicit mode and session state. Separate new mission/puzzle logic from the existing Endless simulation rather than adding scattered exceptions throughout the game.
+
+Ensure:
+
+Only the selected mode processes gameplay input.
+Hacking puzzles never run flight gravity or pipe updates.
+Pause and focus loss freeze relevant gameplay.
+Retry resets temporary state for the current mode.
+Switching modes clears previous hazards, pickups, objectives and timers.
+Returning to Home cannot award rewards.
+Success/failure results cannot finalize twice.
+UI taps do not accidentally flap, launch a different mode or move through a puzzle.
+New content requires no external network service.
+
+Prefer focused supporting classes where they reduce risk. Keep QA/editor tools outside shipping runtime code.
+
+COMPLETE THE CONTROLLABLE PROVENANCE AND BINARY WORK
+
+Inspect the existing provenance ledger and records before repeating work. Five source-generated sound replacements and an owner account-history statement already exist; verify and retain those records.
+
+Regenerate the file ledger after changes. Record hashes, file paths, contribution history and origins for new code and procedural artwork.
+
+Keep distinct records for owner-declared ARTA artwork and the documented later image-generation work.
+
+Identify which original exports, generation records, reference-image sources or permissions remain missing. Mark them unresolved; never invent dates, prompts, receipts, licences or proof of ownership.
+
+If a specific asset needs replacement, preserve the original outside shipping Assets and keep compatibility-sensitive paths/GUIDs where safe. Do not mass-delete artwork or rename stable identifiers to change a fingerprint.
+
+Retain legitimate Unity frameworks, package identifiers, signing and the existing bundle ID. Audit the actual build scenes/resources for unintended content.
+
+The new modes must produce real, visible functionality in the next binary. Renaming files, identifiers or metadata is not sufficient.
+
+PREPARE ACCURATE METADATA AND REVIEW EVIDENCE
+
+Update local draft description, subtitle, promotional text, keywords and reviewer walkthrough to describe all three implemented modes and daily missions.
+
+Keep Apple’s field-length limits. Describe only working, tested features.
+
+Explain:
+
+Endless Route is the existing flight mode.
+Pulse Relay is objective-based circuit flight.
+Blackout Protocol is a terminal-style hacking puzzle.
+Mission Control offers up to four daily tasks, each worth five crystals.
+Birds are cosmetic where their handling remains shared.
+Worlds are environments, not twelve separate gameplay modes.
+The game remains offline with no login, advertising or real-money purchases unless the existing project proves otherwise.
+
+Keep historical audit findings dated. Add a current remediation addendum instead of rewriting history as if the old builds contained these features.
+
+Prepare a factual reviewer response and an evidence index. Preserve the owner-provided account-history statement with its correct attribution.
+
+Do not claim the terminated-account allegation is disproved, all artwork is hand-drawn, every file is globally unique, or Apple has approved the changes.
+
+Do not send the response or submit a candidate.
+
+VALIDATE AND REPORT
+
+Run available Unity compilation and existing isolated regression checks. Add focused tests for:
+
+Mode isolation and mode switching.
+Relay order, charge spending, missed objectives and exit completion.
+Hacking puzzle solvability, legal moves, hack charges and trace limits.
+Daily progress across attempts.
+Exactly five crystals per claim and maximum 20 per daily period.
+Double-click claims, interruption/recovery, restart and day rollover.
+Exclusion of reward credits from collection objectives.
+Legacy save compatibility.
+Fifteen birds and frame uniqueness.
+Nine stable three-level upgrade nodes and valid prerequisites.
+Unchanged Endless constants, collision behavior and reward calculations.
+
+Do not run save-resetting QA against my real player save.
+
+Provide a short physical iPhone 17 Pro Max and iPad checklist for the changed candidate: all three modes, Mission Control, pause/background/resume, retry, UI safe areas and retained progress.
+
+Clearly distinguish automated results, my existing device evidence and tests still awaiting execution. If Unity or device tooling is unavailable, report that limitation rather than claiming a pass.
+
+Deliver:
+
+The complete implemented scripts, assets and required Unity integration.
+A concise change summary.
+Test results and remaining blockers.
+Updated local metadata/review drafts.
+A provenance addendum listing genuine evidence and missing records.
+Simple copy-paste-friendly steps for opening, testing and later building the project.
+
+Implement all three playable modes and the daily-mission system end to end. Keep the App Store submission hold in place until the changed candidate is tested and I explicitly authorize submission.

@@ -11,7 +11,7 @@ namespace SkyPulse.Mobile
     /// uses a small fixed pool of renderers: the game stays smooth on older phones while
     /// retaining the layered, neon look of the web beta.
     /// </summary>
-    public sealed class SkyPulseNativeGame : MonoBehaviour
+    public sealed partial class SkyPulseNativeGame : MonoBehaviour
     {
         private enum FlightState { Menu, Playing, Impact, Paused, GameOver, Customize }
         // Authored gameplay art has a single, input-driven stroke. Keeping this
@@ -1152,6 +1152,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             // prevents unrelated Unity systems from trying to catch up an entire pause.
             Time.maximumDeltaTime = MaximumSimulationCatchup;
 
+            InitializeMissionServices();
             LoadProgress();
             ValidateBirdRewardPoseContracts();
             ValidateTechTreeContracts();
@@ -1247,11 +1248,13 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
 
         private void OnApplicationFocus(bool hasFocus)
         {
+            CheckDailyPeriod();
             if (!hasFocus) PauseFlight();
         }
 
         private void OnApplicationPause(bool paused)
         {
+            CheckDailyPeriod();
             if (paused) PauseFlight();
         }
 
@@ -1699,6 +1702,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             privacyScreen.SetActive(false);
             flightGuideScreen = CreateFlightGuideScreen(interfaceContentRoot);
             flightGuideScreen.SetActive(false);
+            CreateMissionInterface();
         }
 
         private void ApplySafeArea()
@@ -1897,10 +1901,10 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             menuBestText.resizeTextForBestFit = true;
             menuBestText.resizeTextMinSize = 26;
             menuBestText.resizeTextMaxSize = 44;
-            var fly = CreateNeonButton(root.transform, "PLAY", new Vector2(0f, -165f), new Vector2(720f, 128f), Hex("#45eaff"));
+            var fly = CreateNeonButton(root.transform, "CHOOSE MODE", new Vector2(0f, -165f), new Vector2(720f, 128f), Hex("#45eaff"));
             fly.GetComponentInChildren<Text>().fontSize = 40;
-            fly.onClick.AddListener(StartFlight);
-            CreateText(root.transform, "TAP TO FLAP  ·  FIND THE GAP", new Vector2(0f, -269f), new Vector2(740f, 38f), 25, Hex("#d0e5f5"), TextAnchor.MiddleCenter, FontStyle.Normal);
+            fly.onClick.AddListener(OpenModeSelection);
+            CreateText(root.transform, "FLIGHT · CIRCUITS · PUZZLES", new Vector2(0f, -269f), new Vector2(740f, 38f), 25, Hex("#d0e5f5"), TextAnchor.MiddleCenter, FontStyle.Normal);
 
             var hangar = CreateNeonButton(root.transform, "BIRD HANGAR", new Vector2(-187f, -355f), new Vector2(346f, 112f), Hex("#45eaff"));
             hangar.GetComponentInChildren<Text>().fontSize = 29;
@@ -2373,6 +2377,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             UpdateScoreBurst(frameDelta);
             UpdateFlightFeedback(frameDelta);
             UpdateCrystalPickupBursts(frameDelta);
+            if (UpdateMissionModes(frameDelta)) return;
 
 #if UNITY_EDITOR || UNITY_ENABLE_CHECKS
             UpdateDevelopmentQualityControls();
@@ -2397,7 +2402,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
                     if (Input.GetKeyDown(KeyCode.Escape)) flightGuideScreen.SetActive(false);
                     return;
                 }
-                if (WasTapped() && !PointerOverUi()) StartFlight();
+                if (homeProtocol == SkyPulseMode.EndlessRoute && WasTapped() && !PointerOverUi()) StartFlight();
                 return;
             }
 
@@ -2962,6 +2967,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
                     // One physical gate is always exactly one score. Crystals,
                     // birds and permanent economy never leak into this number.
                     score += 1;
+                    RecordDailyEvent(DailyGameplayEvent.EndlessGate);
                     ApplyStreakCapacitorReward();
                     hudScoreText.text = score.ToString();
                     AdvanceFlightCoach();
@@ -3357,6 +3363,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             // remains mathematically fair even though the wallet stores whole crystals.
             var crystalValue = CrystalPickupValue(1);
             BankCollectedCrystals(crystalValue);
+            RecordDailyEvent(DailyGameplayEvent.CrystalPickup, crystalValue);
             ShowCrystalBurst(crystalValue);
             TriggerFlightFeedback(Hex("#45eaff"), .26f);
             PulseHaptic(.08f);
@@ -3655,6 +3662,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
 
         private void StartFlight()
         {
+            PrepareEndlessMode();
             BeginFlight();
         }
 
@@ -3736,6 +3744,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
 
         private void ResetToMenu()
         {
+            ClearMissionSession();
             ClearCrystalPickupBursts();
             ResetWorldTransition();
             ClosePurchaseModal();
@@ -5309,6 +5318,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
         }
         private void EndFlight()
         {
+            if (activeMode == SkyPulseMode.PulseRelay) { FinishRelayFailure(lastCrashReason); return; }
             if (state != FlightState.Playing) return;
             state = FlightState.Impact;
             ResetGameplayWingState();
@@ -7310,8 +7320,7 @@ hangarInformationCanvas != null)
         private void BankCollectedCrystals(int amount)
         {
             if (amount <= 0) return;
-            crystals += amount;
-            runCrystalsCollected += amount;
+            CreditWallet(amount, WalletRewardSource.FlightPickup);
             UpdateCrystalLabels();
             SaveProgress();
         }
@@ -7334,7 +7343,7 @@ hangarInformationCanvas != null)
 
             if (runCrystalBonus > 0)
             {
-                crystals += runCrystalBonus;
+                CreditWallet(runCrystalBonus, WalletRewardSource.FlightTechBonus);
                 UpdateCrystalLabels();
                 SaveProgress();
             }
@@ -7443,6 +7452,7 @@ hangarInformationCanvas != null)
 
         private void ConfirmPurchase()
         {
+            if (!RecoverWalletTransaction()) return;
             if (pendingPurchase == PendingPurchase.Upgrade &&
                 (pendingUpgrade == null || !IsUpgradePrerequisiteMet(pendingUpgrade) || GetUpgradeLevel(pendingUpgrade.Id) >= pendingUpgrade.MaxLevel))
             {
@@ -8182,6 +8192,7 @@ hangarInformationCanvas != null)
 
         private void RefreshScreens()
         {
+            if (RefreshMissionScreens()) return;
             homeScreen.SetActive(state == FlightState.Menu);
             hudScreen.SetActive(state == FlightState.Playing || state == FlightState.Impact);
             pauseScreen.SetActive(state == FlightState.Paused);
@@ -8191,6 +8202,7 @@ hangarInformationCanvas != null)
             {
                 UpdateModeCopy();
                 menuEquippedText.text = $"EQUIPPED  ·  {equippedSkin.Name}";
+                ApplyHomeProtocolTheme();
             }
         }
 
@@ -8301,6 +8313,7 @@ hangarInformationCanvas != null)
 
         private void SaveProgress()
         {
+            if (!RecoverWalletTransaction()) return;
             PlayerPrefs.SetInt("skypulse.native.best", best);
             PlayerPrefs.SetInt("skypulse.native.crystals", crystals);
             PlayerPrefs.SetInt("skypulse.native.farthest-world", farthestWorldIndex);

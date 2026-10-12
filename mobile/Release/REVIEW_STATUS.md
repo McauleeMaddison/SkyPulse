@@ -6,6 +6,8 @@ App Store Connect was read directly on 6 October: submission d5ba215d-daa2-4d6b-
 
 Local quality checks, fixes and preparation may continue. Build 7's retained archive and evidence describe its original tested source; any runtime changes require a new numbered candidate and matching verification before a future submission. Do not describe Apple's similarity allegation as resolved without its assessment.
 
+**Local source update — 12 October 2026:** three playable modes, four daily tasks and mode-specific Home themes are implemented on `codex/neon-visual-update`. Available isolated automated checks passed; physical-device testing and a new numbered binary remain pending. Start with [the changed-candidate guide](ThreeModes20261012/README.md) and [test results](ThreeModes20261012/TEST_RESULTS.md). App Store Connect was not inspected or changed during this update, and the withdrawal/hold is unchanged.
+
 ---
 
 Historical records below; superseded by the current hold.
