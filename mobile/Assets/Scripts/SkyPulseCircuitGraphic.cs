@@ -89,10 +89,7 @@ namespace SkyPulse.Mobile
             {
                 var c=new Vector2(138,0);
                 Glow(vh,c,230,A(Cyan,.16f));
-                Ellipse(vh,c+new Vector2(33,12),83,169,3,A(Cyan,.27f),0,360);
-                Ellipse(vh,c,93,184,10,new Color(.14f,.25f,.29f),0,360);
-                Ellipse(vh,c,93,184,2,Gold,0,360);
-                Ellipse(vh,c,81,170,4,Cyan,Motion*360,110);Ellipse(vh,c,81,170,4,Cyan,Motion*360+180,110);
+                // The detailed portal frame is a separate transparent sprite; ambient telemetry stays procedural.
                 for(int i=0;i<8;i++){float y=-160+i*45;Line(vh,new Vector2(0,y),new Vector2(45,y+18),1,A(Gold,.15f));}
                 Diamond(vh,new Vector2(-270,90+Mathf.Sin(Motion*Mathf.PI*2)*8),18,Gold);
                 for(int i=0;i<3;i++)Quad(vh,new Rect(246,-30+i*26,30,6),A(Cyan,.7f));

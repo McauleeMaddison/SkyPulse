@@ -21,12 +21,27 @@ public static class SkyPulsePresentationChecks
         Call(game,"SetHomeProtocol",SkyPulseMode.EndlessRoute);Call(game,"ResetToMenu");
         var worlds=(Array)typeof(SkyPulseNativeGame).GetField("Worlds",BindingFlags.Static|BindingFlags.NonPublic).GetValue(null);Call(game,"EquipWorld",worlds.GetValue(0));
         var camera=(Camera)Get(game,"flightCamera");var canvas=((GameObject)Get(game,"uiRoot")).GetComponent<Canvas>();canvas.renderMode=RenderMode.ScreenSpaceCamera;canvas.worldCamera=camera;canvas.planeDistance=1;
-        var rt=RenderTexture.GetTemporary(750,1334,24);camera.targetTexture=rt;camera.rect=new Rect(0,0,1,1);Call(game,"RefreshViewportDecor");
+        foreach(var size in new[]{new Vector2Int(750,1334),new Vector2Int(1320,2868),new Vector2Int(1640,2360)})
+        {
+            var widthTarget=RenderTexture.GetTemporary(size.x,size.y,24);camera.targetTexture=widthTarget;
+            Call(game,"StartFlight");float spacing=(float)Call(game,"RoutePipeSpacing");
+            Check(Mathf.Abs(spacing-5.265f)<.0001f,"Original Endless gate spacing stays 5.265 world units at "+size.x+"x"+size.y);
+            var gates=(Array)Get(game,"pipePool");
+            for(int i=1;i<gates.Length;i++)Check(Mathf.Abs((float)Get(gates.GetValue(i),"X")-(float)Get(gates.GetValue(i-1),"X")-spacing)<.0001f,"Endless spawned gate centres retain original spacing");
+            Debug.Log("ENDLESS_SPACING_VIEW: "+size.x+"x"+size.y+" world="+spacing+" fraction="+(spacing/(float)Call(game,"GetViewportWidth")));
+            camera.targetTexture=null;RenderTexture.ReleaseTemporary(widthTarget);
+        }
+        Call(game,"ResetToMenu");
+        int captureWidth=750,captureHeight=1334;
+        if(Environment.GetEnvironmentVariable("SKYPULSE_PHONE_PREVIEW")=="1"){captureWidth=1320;captureHeight=2868;}
+        var rt=RenderTexture.GetTemporary(captureWidth,captureHeight,24);camera.targetTexture=rt;camera.rect=new Rect(0,0,1,1);Call(game,"RefreshViewportDecor");
         string folder=Path.Combine(Environment.GetEnvironmentVariable("SKYPULSE_QA_OUTPUT"),"motion");Directory.CreateDirectory(folder);
-        foreach(string scene in new[]{"home-endless","home-relay","home-blackout","mode-dropdown","endless-flight","relay-flight","blackout-puzzle"})
+        var scenes=Environment.GetEnvironmentVariable("SKYPULSE_PREVIEW_SCENES");
+        foreach(string scene in string.IsNullOrEmpty(scenes)?new[]{"home-endless","home-relay","home-blackout","mode-dropdown","endless-flight","relay-flight","blackout-puzzle"}:scenes.Split(','))
         {
             string output=Path.Combine(folder,scene);Directory.CreateDirectory(output);
             if(scene.StartsWith("home")){Call(game,"SetHomeProtocol",scene=="home-relay"?SkyPulseMode.PulseRelay:scene=="home-blackout"?SkyPulseMode.BlackoutProtocol:SkyPulseMode.EndlessRoute);Call(game,"ResetToMenu");}
+            if(scene.StartsWith("home"))Check(((Image)Get(game,"homeRelayPortal")).gameObject.activeSelf==(scene=="home-relay"),"Detailed Home portal appears only in Relay");
             if(scene=="mode-dropdown"){Call(game,"SetHomeProtocol",SkyPulseMode.EndlessRoute);Call(game,"ResetToMenu");}
             if(scene=="endless-flight")Call(game,"StartFlight");
             if(scene=="relay-flight")
@@ -61,13 +76,24 @@ public static class SkyPulsePresentationChecks
                 Set(game,"ambientTime",(float)Get(game,"ambientTime")+.1f);Call(game,"UpdateMenuBird",.1f);Call(game,"UpdateProtocolPresentation",.1f);
                 yield return new WaitForSecondsRealtime(.1f);
                 Canvas.ForceUpdateCanvases();Call(game,"ApplySafeArea");Call(game,"FitInterfaceToSafeArea");Canvas.ForceUpdateCanvases();camera.Render();
-                RenderTexture.active=rt;var texture=new Texture2D(750,1334,TextureFormat.RGB24,false);texture.ReadPixels(new Rect(0,0,750,1334),0,0);texture.Apply();File.WriteAllBytes(Path.Combine(output,frame.ToString("000")+".png"),texture.EncodeToPNG());UnityEngine.Object.Destroy(texture);RenderTexture.active=null;
+                RenderTexture.active=rt;var texture=new Texture2D(captureWidth,captureHeight,TextureFormat.RGB24,false);texture.ReadPixels(new Rect(0,0,captureWidth,captureHeight),0,0);texture.Apply();File.WriteAllBytes(Path.Combine(output,frame.ToString("000")+".png"),texture.EncodeToPNG());UnityEngine.Object.Destroy(texture);RenderTexture.active=null;
             }
         }
         Call(game,"LaunchMission",SkyPulseMode.PulseRelay,0);Call(game,"UpdateProtocolPresentation",.1f);
+        foreach(Transform gate in (System.Collections.IEnumerable)Get(game,"relayShutters"))
+        {
+            var hardware=gate.Find("Machined relay portal");Check(hardware!=null && hardware.GetComponent<SpriteRenderer>().sprite.texture.name=="pulse-relay-gate-v2","Relay uses detailed portal texture");
+            Check(gate.Find("Port collar")==null && gate.Find("Portal metal rim")==null,"Relay has no reused Endless collar or segmented block rim");
+            Check(gate.GetComponentsInChildren<Collider2D>().Length==0,"Presentation does not add collision shapes");
+        }
+        var testRelay=(RelaySession)Get(game,"relaySession");testRelay.Collect(700);testRelay.Advance(6,0);Check(testRelay.Pulse(0),"Visual shutter can be opened with existing model rules");Call(game,"UpdateRelayPresentation");
+        var firstGate=((System.Collections.IList)Get(game,"relayShutters"))[0] as Transform;
+        var shutter=firstGate.Find("Energy shutter").GetComponent<SpriteRenderer>();var previousShutterScale=shutter.transform.localScale;
         float time=(float)Get(game,"protocolVisualTime");Call(game,"PauseFlight");Call(game,"UpdateProtocolPresentation",2f);
+        Call(game,"UpdateRelayPresentation");Check(shutter.transform.localScale==previousShutterScale,"Pause preserves shutter opening state");
         Check((float)Get(game,"protocolVisualTime")==time,"Pause freezes relay presentation clock");
         Call(game,"ResumeFlight");Set(game,"reduceMotionEnabled",true);Call(game,"UpdateProtocolPresentation",2f);
+        Call(game,"UpdateRelayPresentation");Check(shutter.color.a==0 && firstGate.Find("Activation window").GetComponent<SpriteRenderer>().color.a==0,"Reduced Motion clears activated shutter immediately");
         Check((float)Get(game,"protocolVisualTime")==time,"Reduced Motion freezes relay scenery and charge animation");
         Call(game,"ResetToMenu");Call(game,"OpenModeSelection");
         Check(((RectTransform)Get(game,"modeDropdownClip")).rect.height==496,"Reduced Motion opens complete dropdown immediately");

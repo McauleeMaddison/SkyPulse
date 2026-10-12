@@ -1,3 +1,7 @@
+## Relay gate presentation — 12 October 2026
+
+The [Relay hardware uplift](RelayGateUplift20261012/README.md) adds detailed transparent portal art to numbered gates, exit and Relay Home. Endless gate spacing remains the original 5.265 units; the earlier 9:16 animation preview showed proportionally tighter spacing than the taller iPhone screenshots. New preview framing uses 1320×2868. This is local source/Editor work newer than build 7; physical-device validation and Apple comparator clarification remain pending. The submission hold is maintained.
+
 # Submission hold — 6 October 2026
 
 **DO NOT SUBMIT TO APP REVIEW.** The owner withdrew build 7 and explicitly requires it to remain removed while awaiting Apple's answers about the specific similarity concern. Resume only after those answers are received and the owner explicitly authorizes resubmission. Earlier submission instructions are superseded.

@@ -17,12 +17,15 @@ namespace SkyPulse.Mobile
         private float modeDropdownReveal, protocolVisualTime;
         private Text modeBadgeArrow, homeBestCaption;
         private SkyPulseCircuitGraphic homeProtocolHero;
+        private Image homeRelayPortal;
         private Transform homeFlightDock;
         private const string RelayStationPath="SkyPulse/backgrounds/pulse-relay-station-v1";
         private const string BlackoutCorePath="SkyPulse/backgrounds/blackout-core-v1";
+        private const string RelayPortalPath="SkyPulse/art/relays/pulse-relay-gate-v2";
         private Button homeLaunchButton;
-        private Sprite relayGlowSprite, relayPlateSprite;
+        private Sprite relayGlowSprite, relayPlateSprite, relayFieldSprite;
         private readonly List<SpriteRenderer> relayApertureGlow=new List<SpriteRenderer>();
+        private readonly List<SpriteRenderer> relayPortalHardware=new List<SpriteRenderer>();
         private readonly List<Transform> relayChargeArt=new List<Transform>();
         private readonly List<float> relayOpeningTimes=new List<float>();
         private SpriteRenderer relayScenery;
@@ -108,6 +111,9 @@ namespace SkyPulse.Mobile
             if(homeLaunchButton!=null)homeFrames.Add(PolishButton(homeLaunchButton,0,Hex("#45eaff"),true));
             homeProtocolHero=ProtocolGraphic(homeScreen.transform,"Protocol hero display",new Vector2(0,355),new Vector2(850,480),1,SkyPulseSurface.HomeHero,Color.white,true);
             homeProtocolHero.transform.SetSiblingIndex(menuHeroTransform.GetSiblingIndex());homeProtocolHero.gameObject.SetActive(false);
+            homeRelayPortal=CreateImage(homeScreen.transform,"Relay hardware hero",new Vector2(138,355),new Vector2(320,480),Color.white);
+            homeRelayPortal.sprite=LoadSprite(RelayPortalPath);homeRelayPortal.raycastTarget=false;
+            homeRelayPortal.transform.SetSiblingIndex(menuHeroTransform.GetSiblingIndex());homeRelayPortal.gameObject.SetActive(false);
             homeFlightDock=homeScreen.transform.Find("Home flight dock");
             foreach(var text in homeScreen.GetComponentsInChildren<Text>())if(text.text=="PERSONAL BEST")homeBestCaption=text;
         }
@@ -127,6 +133,7 @@ namespace SkyPulse.Mobile
             if(menuHeroTransform==null)return;
             menuHeroTransform.gameObject.SetActive(homeProtocol!=SkyPulseMode.BlackoutProtocol);
             if(homeFlightDock!=null)homeFlightDock.gameObject.SetActive(homeProtocol==SkyPulseMode.EndlessRoute);
+            if(homeRelayPortal!=null)homeRelayPortal.gameObject.SetActive(homeProtocol==SkyPulseMode.PulseRelay);
             if(homeProtocolHero!=null){homeProtocolHero.gameObject.SetActive(homeProtocol!=SkyPulseMode.EndlessRoute);if(homeProtocolHero.Variant!=(int)homeProtocol){homeProtocolHero.Variant=(int)homeProtocol;homeProtocolHero.SetVerticesDirty();}}
             if(homeProtocol==SkyPulseMode.PulseRelay){menuHeroTransform.localScale=Vector3.one*.54f;menuHeroTransform.anchoredPosition=new Vector2(-105,355);menuEquippedText.text="PILOT · "+equippedSkin.Name;}
             else if(homeProtocol==SkyPulseMode.BlackoutProtocol)menuEquippedText.text="PACKETS · FIREWALLS · TRACE";
@@ -151,7 +158,7 @@ namespace SkyPulse.Mobile
             }
             if(activeMode==SkyPulseMode.PulseRelay && state==FlightState.Playing && !reduceMotionEnabled)protocolVisualTime+=dt;
         }
-        private void ClearProtocolWorldArt(){relayApertureGlow.Clear();relayChargeArt.Clear();relayOpeningTimes.Clear();relayScenery=null;protocolVisualTime=0;modeDropdownOpen=false;}
+        private void ClearProtocolWorldArt(){relayApertureGlow.Clear();relayPortalHardware.Clear();relayChargeArt.Clear();relayOpeningTimes.Clear();relayScenery=null;protocolVisualTime=0;modeDropdownOpen=false;}
         private void RemoveScreenPresentation(GameObject root)
         {
             protocolGraphics.RemoveAll(g=>g==null || (g.transform.IsChildOf(root.transform) && !g.transform.parent.name.EndsWith("backdrop")));
@@ -172,6 +179,23 @@ namespace SkyPulse.Mobile
                 float t=x/31f;float brightness=.26f+Mathf.Sin(t*Mathf.PI)*.42f;pixels[y*32+x]=new Color(brightness,brightness,brightness,1);
             }
             texture.SetPixels(pixels);texture.Apply(false,true);relayPlateSprite=Sprite.Create(texture,new Rect(0,0,32,256),Vector2.one*.5f,32);return relayPlateSprite;
+        }
+        private Sprite RelayFieldSprite()
+        {
+            if(relayFieldSprite!=null)return relayFieldSprite;
+            var texture=new Texture2D(64,128,TextureFormat.RGBA32,false);texture.name="Authored elliptical relay membrane";texture.wrapMode=TextureWrapMode.Clamp;texture.filterMode=FilterMode.Bilinear;
+            var pixels=new Color[64*128];for(int y=0;y<128;y++)for(int x=0;x<64;x++)
+            {
+                float dx=(x-31.5f)/31.5f,dy=(y-63.5f)/63.5f;float edge=Mathf.Clamp01(1-dx*dx-dy*dy);
+                float bands=.58f+.42f*Mathf.Pow(Mathf.Sin(y*.35f),8);pixels[y*64+x]=new Color(1,1,1,Mathf.Sqrt(edge)*bands);
+            }
+            texture.SetPixels(pixels);texture.Apply(false,true);relayFieldSprite=Sprite.Create(texture,new Rect(0,0,64,128),Vector2.one*.5f,32);return relayFieldSprite;
+        }
+        private SpriteRenderer RelayPortalFrame(Transform parent,float y,Color colour)
+        {
+            var frame=CreateRenderer("Machined relay portal",LoadSprite(RelayPortalPath),colour,6,parent);
+            // Transparent sprite's measured inner opening is 3.6 units tall, centred on the existing objective.
+            SetSpriteBlock(frame,new Vector2(0,y-.084f),new Vector2(3.18f,4.77f));return frame;
         }
         private SpriteRenderer WorldGlow(Transform parent,string name,Vector2 at,Vector2 size,Color colour,int order)
         {
@@ -206,23 +230,11 @@ namespace SkyPulse.Mobile
                 float y=relaySession.Mission.RelayY[i];var gate=new GameObject("Relay "+(i+1)).transform;gate.SetParent(missionWorld,false);relayShutters.Add(gate);
                 // Floating portal hardware, not Endless's ceiling/floor pipe silhouettes.
                 WorldLine(gate,"Energy plane",new Vector2(0,-9),new Vector2(0,9),.022f,new Color(.2f,.8f,1,.22f),2);
-                for(int segment=0;segment<32;segment++)
-                {
-                    float t=segment*Mathf.PI*2/32,next=(segment+1)*Mathf.PI*2/32;
-                    var p0=new Vector2(Mathf.Cos(t)*.75f,y+Mathf.Sin(t)*1.95f);var p1=new Vector2(Mathf.Cos(next)*.75f,y+Mathf.Sin(next)*1.95f);
-                    WorldLine(gate,"Portal metal rim",p0,p1,.13f,Hex("#37677a"),5);
-                    WorldLine(gate,"Portal cyan filament",p0,p1,.025f,Hex("#5df4ff"),7);
-                }
-                CircuitSprite(gate,"Activation window",new Vector2(0,y),new Vector2(.8f,3.6f),new Color(.1f,.62f,.75f,.17f),4);
-                CircuitSprite(gate,"Energy shutter",new Vector2(0,y),new Vector2(.08f,3.6f),Hex("#ffd078"),5);
-                foreach(int side in new[]{-1,1})
-                {
-                    float railY=y+side*1.83f;var collar=CreateRenderer("Port collar",pipeCapSprite,Color.white,6,gate);SetSpriteBlock(collar,new Vector2(0,railY),new Vector2(1.2f,.49f));if(side>0)collar.transform.localRotation=Quaternion.Euler(0,0,180);
-                    CircuitSprite(gate,"Window rail",new Vector2(0,railY),new Vector2(1.2f,.06f),Hex("#45eaff"),8);
-                    WorldGlow(gate,"Collar bloom",new Vector2(0,railY),new Vector2(2.6f,.8f),new Color(.15f,.85f,1,.55f),7);
-                }
+                relayPortalHardware.Add(RelayPortalFrame(gate,y,new Color(.82f,.89f,.92f)));
+                var membrane=CreateRenderer("Activation window",RelayFieldSprite(),new Color(.12f,.72f,.88f,.27f),4,gate);SetSpriteBlock(membrane,new Vector2(0,y),new Vector2(1.50f,3.6f));
+                CircuitSprite(gate,"Energy shutter",new Vector2(0,y),new Vector2(.035f,3.6f),Hex("#ffd078"),5);
                 var glow=WorldGlow(gate,"Aperture illumination",new Vector2(0,y),new Vector2(2.5f,4.2f),new Color(1,.6f,.15f,.22f),3);relayApertureGlow.Add(glow);relayOpeningTimes.Add(-1f);
-                WorldPlate(gate,"Relay address plate",new Vector2(-.3f,y+2.4f),new Vector2(1.18f,.57f),Hex("#2b536d"),8);WorldLabel(gate,(i+1).ToString("00"),new Vector2(-.3f,y+2.4f),Hex("#ffd078"),.12f);
+                WorldLabel(gate,(i+1).ToString("00"),new Vector2(0,y+2.72f),Hex("#ffd078"),.12f);
                 AddRelayCell(i*2,new Vector2(relaySession.Mission.RelayX(i)-8f,y));AddRelayCell(i*2+1,new Vector2(relaySession.Mission.RelayX(i)-5f,Mathf.Clamp(y+3.2f,-4.5f,5.2f)));
             }
             if(relaySession.Mission.HasShield)
@@ -231,8 +243,8 @@ namespace SkyPulse.Mobile
             }
             relayExit=new GameObject("Circuit finish line").transform;relayExit.SetParent(missionWorld,false);
             WorldGlow(relayExit,"Exit atmosphere",new Vector2(0,relaySession.Mission.ExitY),new Vector2(3,5),new Color(.2f,1,.55f,.38f),4);
-            foreach(int side in new[]{-1,1})WorldPlate(relayExit,"Exit collar",new Vector2(0,relaySession.Mission.ExitY+side*1.9f),new Vector2(1.6f,.18f),Hex("#65ffad"),7);
-            CircuitSprite(relayExit,"Exit beacon",new Vector2(0,relaySession.Mission.ExitY),new Vector2(.08f,3.8f),Hex("#65ffad"),5);WorldLabel(relayExit,"EXIT",new Vector2(0,relaySession.Mission.ExitY+2.3f),Hex("#65ffad"),.13f);
+            RelayPortalFrame(relayExit,relaySession.Mission.ExitY,new Color(.65f,1,.83f));
+            WorldLabel(relayExit,"EXIT",new Vector2(0,relaySession.Mission.ExitY+2.7f),Hex("#65ffad"),.13f);
         }
         private void BuildPremiumRelayCell(int id,Vector2 at)
         {
@@ -249,10 +261,12 @@ namespace SkyPulse.Mobile
             if(relayScenery!=null)relayScenery.transform.localPosition=new Vector2(Mathf.Sin(motion*.22f)*.10f,.12f+Mathf.Sin(motion*.3f)*.06f);
             for(int i=0;i<relayShutters.Count;i++)
             {
-                bool open=relaySession.IsOpen(i);var gate=relayShutters[i];gate.Find("Activation window").GetComponent<SpriteRenderer>().color=open?Color.clear:new Color(.1f,.62f,.75f,.17f);
+                bool open=relaySession.IsOpen(i);var gate=relayShutters[i];
                 if(open && relayOpeningTimes[i]<0)relayOpeningTimes[i]=protocolVisualTime;
                 float opening=!open?0:reduceMotionEnabled?1:Mathf.Clamp01((protocolVisualTime-relayOpeningTimes[i])/.28f);
-                var shutter=gate.Find("Energy shutter").GetComponent<SpriteRenderer>();SetSpriteBlock(shutter,new Vector2(0,relaySession.Mission.RelayY[i]),new Vector2(.08f,3.6f*(1-opening)));shutter.color=opening>=1?Color.clear:Hex("#ffd078");
+                var shutter=gate.Find("Energy shutter").GetComponent<SpriteRenderer>();SetSpriteBlock(shutter,new Vector2(0,relaySession.Mission.RelayY[i]),new Vector2(.035f,3.6f*(1-opening)));shutter.color=opening>=1?Color.clear:Hex("#ffd078");
+                gate.Find("Activation window").GetComponent<SpriteRenderer>().color=new Color(.12f,.72f,.88f,.27f*(1-opening));
+                relayPortalHardware[i].color=Color.Lerp(new Color(.82f,.89f,.92f),Color.white,opening);
                 relayApertureGlow[i].color=open?new Color(.14f,.9f,1,.13f):new Color(1,.6f,.15f,.20f+Mathf.Sin(motion*1.8f+i)*.03f);
             }
             for(int i=0;i<relayChargeArt.Count;i++){relayChargeArt[i].localRotation=Quaternion.Euler(0,0,Mathf.Sin(motion*1.6f+i)*12);relayChargeArt[i].localPosition=new Vector2(0,Mathf.Sin(motion*1.8f+i)*.055f);}

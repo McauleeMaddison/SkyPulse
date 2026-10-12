@@ -1,5 +1,7 @@
 # Shared width and distinct mode views — 12 October 2026
 
+Later on the same day, [RelayGateUplift20261012](../RelayGateUplift20261012/README.md) adds realistic Relay hardware and corrects preview framing. This record is retained as the preceding checkpoint.
+
 This is still the existing **Unity 6000.6.0f1 mobile game for iPhone and iPad**. Open `mobile/Assets/Scenes/SkyPulse.unity`; new launches start on Endless Home. Tap the top-left badge, choose a free mode, then Play. Submission remains on hold; these source changes are newer than the retained build 7.
 
 ## Completed visual changes

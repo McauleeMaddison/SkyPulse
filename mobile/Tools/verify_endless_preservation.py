@@ -19,7 +19,7 @@ def bodies(source,name):
                 result.append(source[match.start():index+1]);break
     assert result,'Missing method: '+name
     return result
-methods=['SimulateFlight','BufferFlapInput','ConsumeBufferedFlap','UpdateBird','UpdateGameplayWingState','UpdateBirdWingMotion','Flap','BirdCollidesWithPipe','CollidersOverlap','ConfigurePipe','UpdateRouteGateMotion','UpdateWorldTransition','BeginWorldTransition','RouteSpeedFraction','RouteGapFraction','UseShield','UpdatePowerUpEffects','CollectPowerUp','CrystalPickupValue','LoadProgress','BeginFlight']
+methods=['SimulateFlight','BufferFlapInput','ConsumeBufferedFlap','UpdateBird','UpdateGameplayWingState','UpdateBirdWingMotion','Flap','BirdCollidesWithPipe','CollidersOverlap','ConfigurePipe','UpdateRouteGateMotion','UpdateWorldTransition','BeginWorldTransition','RouteSpeedFraction','RouteGapFraction','UseShield','UpdatePowerUpEffects','CollectPowerUp','CrystalPickupValue','LoadProgress','BeginFlight','CreateCamera','CreateVisuals','GetWorldWidth','GetViewportWidth','RoutePipeSpacing','ActiveScrollSpeed']
 checks={}
 for name in methods:
     a,b=bodies(old,name),bodies(new,name)
