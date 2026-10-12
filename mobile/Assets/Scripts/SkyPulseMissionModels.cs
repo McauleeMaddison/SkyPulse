@@ -75,12 +75,15 @@ namespace SkyPulse.Mobile
         public readonly string Id, Name, Briefing;
         public readonly string[] Rows;
         public readonly int TraceLimit, HackCharges, Par;
+        public readonly bool PunishMistakes;
         public int Width => Rows[0].Length;
         public int Height => Rows.Length;
         public char Tile(int index) => Rows[index/Width][index%Width];
         public int Start => string.Join("",Rows).IndexOf('S');
-        public BlackoutPuzzle(string id,string name,string briefing,string[] rows,int budget,int hacks,int par)
-        { Id=id;Name=name;Briefing=briefing;Rows=rows;TraceLimit=budget;HackCharges=hacks;Par=par; }
+        public bool HasPhaseRouting => Array.Exists(Rows,row=>row.IndexOf('C')>=0);
+        public int CipherKeyMask => (Array.Exists(Rows,row=>row.IndexOf('K')>=0)?1:0) | (Array.Exists(Rows,row=>row.IndexOf('k')>=0)?2:0);
+        public BlackoutPuzzle(string id,string name,string briefing,string[] rows,int budget,int hacks,int par,bool punishMistakes=false)
+        { Id=id;Name=name;Briefing=briefing;Rows=rows;TraceLimit=budget;HackCharges=hacks;Par=par;PunishMistakes=punishMistakes; }
         public static readonly BlackoutPuzzle[] All = {
             new BlackoutPuzzle("blackout.tutorial","01 · PACKET RECOVERY","Tap an adjacent connected tile. Recover both DATA packets, then enter EXIT. Every move adds 1 TRACE. Walls cannot be crossed. Stay within 18 TRACE.",new[]{"S..#..",".#P#..","...#P.",".#....",".....E"},18,0,12),
             new BlackoutPuzzle("blackout.firewall","02 · FIREWALL FORK","Every move adds 1 TRACE. Arm HACK, then tap an adjacent firewall: opening it costs 1 charge and 3 TRACE. Tap the opened tile again to move. Recover both packets. A longer safe route also exists.",new[]{"S.F.P.",".#.##.","...F..","P#.#..",".....E"},23,2,18),
@@ -98,6 +101,12 @@ namespace SkyPulse.Mobile
         public int Charges { get; private set; }
         public int Packets { get; private set; }
         public int RequiredPackets { get; private set; }
+        public int CircuitPhase { get; private set; }
+        public int CipherKeys { get; private set; }
+        public int SwitchesUsed { get; private set; }
+        public bool LastActionFailed { get; private set; }
+        public int LastActionCost { get; private set; }
+        public string LastFault { get; private set; } = "";
         public string Result { get; private set; } = "";
         public readonly HashSet<int> Recovered = new HashSet<int>();
         public readonly HashSet<int> Opened = new HashSet<int>();
@@ -108,24 +117,60 @@ namespace SkyPulse.Mobile
         }
         public void Pause(bool paused) { if(State==MissionSessionState.Playing && paused)State=MissionSessionState.Paused; else if(State==MissionSessionState.Paused && !paused)State=MissionSessionState.Playing; }
         public bool Adjacent(int tile) => tile>=0 && tile<Puzzle.Width*Puzzle.Height && Math.Abs(tile%Puzzle.Width-Cursor%Puzzle.Width)+Math.Abs(tile/Puzzle.Width-Cursor/Puzzle.Width)==1;
+        public int MoveCost(int tile)=>Puzzle.Tile(tile)=='T'?2:1;
+        public bool Powered(int tile)
+        {
+            char kind=Puzzle.Tile(tile);
+            return kind=='A'?CircuitPhase==0:kind=='B'?CircuitPhase==1:kind=='L'?(CipherKeys&1)!=0:kind=='l'?(CipherKeys&2)!=0:true;
+        }
+        public string BlockReason(int tile)
+        {
+            if(tile<0 || tile>=Puzzle.Width*Puzzle.Height)return "";
+            char kind=Puzzle.Tile(tile);
+            if(kind=='A' && CircuitPhase!=0)return "MINT CIRCUIT OFFLINE · FIND A SWITCH";
+            if(kind=='B' && CircuitPhase!=1)return "AMBER CIRCUIT OFFLINE · FIND A SWITCH";
+            if(kind=='L' && (CipherKeys&1)==0)return "CIPHER LOCK · RECOVER THE ICE KEY";
+            if(kind=='l' && (CipherKeys&2)==0)return "CIPHER LOCK · RECOVER THE VIOLET KEY";
+            if(kind=='#')return "WALL · NO ROUTE";
+            if(kind=='F' && !Opened.Contains(tile))return "FIREWALL · BREACH REQUIRED";
+            return "";
+        }
+        bool Mistake(int tile,bool breach)
+        {
+            if(!Puzzle.PunishMistakes)return false;
+            LastActionFailed=true;LastActionCost=breach?3:1;
+            LastFault=BlockReason(tile);
+            if(string.IsNullOrEmpty(LastFault))LastFault=breach?"BREACH REJECTED · NO FIREWALL":"MOVE REJECTED";
+            if(breach && Charges>0)Charges--;
+            Trace+=LastActionCost;ResolveState();return true;
+        }
+        void ResolveState()
+        {
+            if(Trace>Puzzle.TraceLimit){State=MissionSessionState.Failed;Result="TRACE LIMIT EXCEEDED";}
+            else if(!LastActionFailed && Puzzle.Tile(Cursor)=='E' && Packets==RequiredPackets){State=MissionSessionState.Succeeded;Result="DATA SECURED";}
+            else if(Puzzle.PunishMistakes && Trace>=Puzzle.TraceLimit){State=MissionSessionState.Failed;Result="TRACE EXHAUSTED · RESTART SECTOR";}
+        }
         public bool Act(int tile,bool hack)
         {
             if(State!=MissionSessionState.Playing || !Adjacent(tile))return false;
+            LastActionFailed=false;LastActionCost=0;LastFault="";
             char kind=Puzzle.Tile(tile);
-            if(kind=='#')return false;
+            if(kind=='#' || !Powered(tile))return Mistake(tile,hack);
             if(kind=='F' && !Opened.Contains(tile))
             {
-                if(!hack || Charges<=0)return false;
-                Charges--; Trace+=3; Opened.Add(tile);
+                if(!hack || Charges<=0)return Mistake(tile,hack);
+                Charges--; Trace+=3;LastActionCost=3;Opened.Add(tile);
             }
             else
             {
-                if(hack)return false;
-                Cursor=tile; Trace++;
+                if(hack)return Mistake(tile,true);
+                Cursor=tile;LastActionCost=MoveCost(tile);Trace+=LastActionCost;
                 if(kind=='P' && Recovered.Add(tile))Packets++;
+                if(kind=='K'){CipherKeys|=1;Recovered.Add(tile);}
+                if(kind=='k'){CipherKeys|=2;Recovered.Add(tile);}
+                if(kind=='C'){CircuitPhase=1-CircuitPhase;SwitchesUsed++;}
             }
-            if(Trace>Puzzle.TraceLimit) { State=MissionSessionState.Failed;Result="TRACE LIMIT EXCEEDED"; }
-            else if(Cursor==tile && kind=='E' && Packets==RequiredPackets) { State=MissionSessionState.Succeeded;Result="DATA SECURED"; }
+            ResolveState();
             return true;
         }
         public int Medal => State!=MissionSessionState.Succeeded ? 0 : Trace<=Puzzle.Par ? 3 : Trace<=Puzzle.TraceLimit-2 ? 2 : 1;

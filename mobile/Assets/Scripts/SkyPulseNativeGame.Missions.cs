@@ -44,6 +44,7 @@ namespace SkyPulse.Mobile
             missionStore=new PlayerPrefsMissionStore();
             dailyMissions=new SkyPulseDailyMissions(missionStore,()=>DateTime.UtcNow);
             missionProgress=new SkyPulseModeProgress(missionStore);
+            blackoutCampaign=new BlackoutCampaignProgress(missionStore);
         }
         private void CheckDailyPeriod()
         {
@@ -112,6 +113,7 @@ namespace SkyPulse.Mobile
         private void ClearScreen(GameObject root)
         {
             RemoveScreenPresentation(root);
+            PrepareBlackoutScreenClear(root);
             // Screens are regenerated only on navigation/action, never every frame.
             foreach(Transform child in root.transform)
             {
@@ -127,6 +129,7 @@ namespace SkyPulse.Mobile
         }
         private void ClearMissionSession()
         {
+            ResetBlackoutEffects();
             ClearProtocolWorldArt();
             if(activeMode!=SkyPulseMode.EndlessRoute){shieldImmunityTimer=0f;shieldHitStopTimer=0f;}
             if(missionWorld!=null){missionWorld.gameObject.SetActive(false);Destroy(missionWorld.gameObject);missionWorld=null;}
@@ -150,6 +153,7 @@ namespace SkyPulse.Mobile
             homeProtocolGraphic.Variant=homeProtocol==SkyPulseMode.BlackoutProtocol?2:1;
             homeProtocolGraphic.color=Color.white;
             homeProtocolGraphic.CinematicUnderlay=homeProtocol!=SkyPulseMode.EndlessRoute;
+            homeProtocolGraphic.enabled=homeProtocol!=SkyPulseMode.BlackoutProtocol;
             homeProtocolBackdrop.sprite=homeProtocol==SkyPulseMode.PulseRelay?LoadSprite(RelayStationPath):LoadSprite(BlackoutCorePath);homeProtocolBackdrop.color=Color.white;
             homeProtocolGraphic.ReducedMotion=reduceMotionEnabled;homeProtocolGraphic.SetVerticesDirty();
             difficultyText.text=homeProtocol==SkyPulseMode.BlackoutProtocol?"BLACKOUT PROTOCOL":homeProtocol==SkyPulseMode.PulseRelay?"PULSE RELAY":"ENDLESS ROUTE";
@@ -171,6 +175,7 @@ namespace SkyPulse.Mobile
         }
         private void OpenMissionSelection(SkyPulseMode mode)
         {
+            if(mode==SkyPulseMode.BlackoutProtocol){OpenBlackoutSectors();return;}
             SetHomeProtocol(mode);
             ResetToMenu();homeScreen.SetActive(false);activeMode=mode;
             ClearScreen(missionSelectionScreen);missionSelectionScreen.SetActive(true);
@@ -196,6 +201,7 @@ namespace SkyPulse.Mobile
         }
         private void LaunchMission(SkyPulseMode mode,int index)
         {
+            if(mode==SkyPulseMode.BlackoutProtocol && !blackoutCampaign.CanPlay(index))return;
             SetHomeProtocol(mode);
             ResetToMenu();homeScreen.SetActive(false);selectedMission=index;activeMode=mode;missionFinalized=false;
             if(mode==SkyPulseMode.PulseRelay)
@@ -209,7 +215,7 @@ namespace SkyPulse.Mobile
             else
             {
                 shieldImmunityTimer=0f;shieldHitStopTimer=0f;
-                state=FlightState.Playing;bird.gameObject.SetActive(false);blackoutSession=new BlackoutSession(BlackoutPuzzle.All[index]);
+                state=FlightState.Playing;bird.gameObject.SetActive(false);blackoutSession=new BlackoutSession(SkyPulseBlackoutCampaign.Stages[index]);
                 HideOriginalWorld(false);BuildBlackoutBoard();
             }
             RefreshScreens();
@@ -334,60 +340,14 @@ namespace SkyPulse.Mobile
             blackoutScreen.SetActive(activeMode==SkyPulseMode.BlackoutProtocol && state==FlightState.Playing);
             return true;
         }
-        private void BuildBlackoutBoard()
-        {
-            ClearScreen(blackoutScreen);blackoutScreen.SetActive(true);
-            var puzzle=blackoutSession.Puzzle;var green=Hex("#65ffad");
-            var command=PremiumPanel(blackoutScreen.transform,"Blackout command deck",new Vector2(0,816),new Vector2(966,286),2,green);
-            MissionText(command,"BLACKOUT",65,52,Hex("#e2fff2"));
-            MissionText(command,"P R O T O C O L",4,23,green);
-            MissionText(command,puzzle.Name,-72,25,Hex("#bce4d0"));
-            blackoutDataText=ProtocolStat(blackoutScreen.transform,"DATA SECURED",$"{blackoutSession.Packets} / {blackoutSession.RequiredPackets}",-320,606,300,2,green);
-            blackoutTraceText=ProtocolStat(blackoutScreen.transform,"TRACE",$"{blackoutSession.Trace} / {puzzle.TraceLimit}",0,606,300,2,green);
-            blackoutHackText=ProtocolStat(blackoutScreen.transform,"HACK CHARGES",blackoutSession.Charges.ToString(),320,606,300,2,Hex("#ffd078"));
-            blackoutStatusText=MissionText(blackoutScreen.transform,"RECOVER EVERY DATA PACKET · THEN FIND THE EXIT",515,21,Hex("#a3cdb8"));
-            float stride=Mathf.Min(130,900f/puzzle.Width);float startX=-(puzzle.Width-1)*stride*.5f;const float boardTop=415;
-            PremiumPanel(blackoutScreen.transform,"Data lattice frame",new Vector2(0,boardTop-(puzzle.Height-1)*stride*.5f),new Vector2(puzzle.Width*stride+44,puzzle.Height*stride+44),2,new Color(.2f,.8f,.5f,.45f));
-            for(int row=0;row<puzzle.Height;row++)for(int col=0;col<puzzle.Width;col++)
-            {
-                int tile=row*puzzle.Width+col;char type=puzzle.Tile(tile);var position=new Vector2(startX+col*stride,boardTop-row*stride);
-                if(type!='#')
-                {
-                    if(col+1<puzzle.Width && puzzle.Tile(tile+1)!='#'){var wire=CreateImage(blackoutScreen.transform,"Horizontal bus",position+new Vector2(stride*.5f,0),new Vector2(stride,2),new Color(.2f,.8f,.5f,.26f));wire.sprite=whiteSprite;wire.raycastTarget=false;}
-                    if(row+1<puzzle.Height && puzzle.Tile(tile+puzzle.Width)!='#'){var wire=CreateImage(blackoutScreen.transform,"Vertical bus",position-new Vector2(0,stride*.5f),new Vector2(2,stride),new Color(.2f,.8f,.5f,.26f));wire.sprite=whiteSprite;wire.raycastTarget=false;}
-                }
-            }
-            for(int row=0;row<puzzle.Height;row++)for(int col=0;col<puzzle.Width;col++)
-            {
-                int tile=row*puzzle.Width+col;char type=puzzle.Tile(tile);bool cursor=tile==blackoutSession.Cursor,opened=blackoutSession.Opened.Contains(tile),recovered=blackoutSession.Recovered.Contains(tile);
-                string label=cursor?"YOU":type=='P'?(recovered?"SECURED":"DATA"):type=='E'?"EXIT":type=='F'?(opened?"OPEN":"FIREWALL"):"";
-                var node=CreatePanel(blackoutScreen.transform,"Terminal node "+tile,new Vector2(startX+col*stride,boardTop-row*stride),new Vector2(stride-12,stride-12),Color.clear);
-                var face=node.GetComponent<Image>();face.sprite=whiteSprite;face.type=Image.Type.Simple;
-                var graphic=ProtocolGraphic(node,"Pixel circuit node",Vector2.zero,node.sizeDelta,2,SkyPulseSurface.TerminalNode,Color.white,cursor || type=='P'&&!recovered);
-                graphic.NodeKind=cursor?5:type=='#'?1:type=='P'?(recovered?6:2):type=='F'?(opened?7:3):type=='E'?4:0;graphic.Adjacent=blackoutSession.Adjacent(tile) && type!='#';
-                var text=CreateText(node,label,new Vector2(0,-34),new Vector2(stride-20,30),17,type=='F'&&!opened?Hex("#ffd078"):green,TextAnchor.MiddleCenter,FontStyle.Bold);text.horizontalOverflow=HorizontalWrapMode.Wrap;text.verticalOverflow=VerticalWrapMode.Truncate;
-                var button=node.gameObject.AddComponent<Button>();button.targetGraphic=graphic;var colours=button.colors;colours.disabledColor=Color.white;colours.fadeDuration=.12f;button.colors=colours;
-                button.interactable=type!='#' && blackoutSession.Adjacent(tile);node.gameObject.AddComponent<SkyPulseButtonFeedback>();button.onClick.AddListener(()=>BlackoutAction(tile));
-            }
-            blackoutHintText=MissionText(blackoutScreen.transform,hackArmed?"HACK ARMED · TAP AN ADJACENT FIREWALL":"MOVE +1 TRACE · HACK +3 TRACE · TAP ADJACENT NODES",-356,21,green);
-            MissionText(blackoutScreen.transform,"DATA FIRST · EXIT LAST · PLAN YOUR ROUTE",-420,19,Hex("#8aac9e"));
-            var traceColour=blackoutSession.Trace>=puzzle.TraceLimit-2?Hex("#ffb35c"):green;
-            string safety=blackoutSession.Trace>=puzzle.TraceLimit-2?"CRITICAL TRACE":blackoutSession.Trace>=puzzle.TraceLimit-5?"WATCH YOUR TRACE":"CONNECTION SECURE";
-            MissionText(blackoutScreen.transform,safety,-474,18,traceColour);
-            var traceBack=PremiumPanel(blackoutScreen.transform,"Trace meter",new Vector2(0,-525),new Vector2(890,32),2,traceColour);
-            var bar=CreateImage(traceBack,"Trace level",new Vector2(-430+(860f*blackoutSession.Trace/puzzle.TraceLimit)*.5f,0),new Vector2(Mathf.Min(860,860f*blackoutSession.Trace/puzzle.TraceLimit),6),traceColour);bar.sprite=whiteSprite;bar.raycastTarget=false;
-            hackButton=MissionButton(blackoutScreen.transform,hackArmed?"CANCEL HACK":"ARM HACK",-235,-645,430,()=>{hackArmed=!hackArmed;BuildBlackoutBoard();},green);hackButton.interactable=blackoutSession.Charges>0;
-            MissionButton(blackoutScreen.transform,"PAUSE",235,-645,430,PauseFlight,green);
-            MissionText(blackoutScreen.transform,"SILVER: 2 SPARE TRACE · GOLD: MEET PAR "+puzzle.Par,-780,20,Hex("#8aac9e"));
-            MissionButton(blackoutScreen.transform,"RESTART PUZZLE",0,-895,900,()=>LaunchMission(SkyPulseMode.BlackoutProtocol,selectedMission),green);
-        }
+        private void BuildBlackoutBoard() { BuildBlackoutLab(); }
         private void BlackoutAction(int tile)
         {
             if(activeMode!=SkyPulseMode.BlackoutProtocol || state!=FlightState.Playing || blackoutSession==null)return;
             if(!blackoutSession.Act(tile,hackArmed))return;
             hackArmed=false;Play(scoreSound);
             if(blackoutSession.State==MissionSessionState.Succeeded || blackoutSession.State==MissionSessionState.Failed)FinalizeMission();
-            else BuildBlackoutBoard();
+            else RefreshBlackoutLab();
         }
         private void FinishRelayFailure(string reason)
         {
@@ -402,13 +362,14 @@ namespace SkyPulse.Mobile
             string reason=activeMode==SkyPulseMode.PulseRelay?relaySession.Result:blackoutSession.Result;
             if(won)
             {
-                try { missionProgress.Complete(activeMode,selectedMission,medal); }
+                try { if(activeMode==SkyPulseMode.BlackoutProtocol)blackoutCampaign.Complete(selectedMission,medal,blackoutSession.Trace);else missionProgress.Complete(activeMode,selectedMission,medal); }
                 catch(Exception e) { Debug.LogWarning("SkyPulse medal save failed: "+e.GetType().Name);reason+=" · SAVE FAILED"; }
                 if(activeMode==SkyPulseMode.BlackoutProtocol && selectedMission==0)RecordDailyEvent(DailyGameplayEvent.IntroBlackoutCompleted);
             }
             state=FlightState.GameOver;bird.gameObject.SetActive(false);if(birdBodyCollider!=null)birdBodyCollider.enabled=false;
             relayHudScreen.SetActive(false);blackoutScreen.SetActive(false);pauseScreen.SetActive(false);
             ClearScreen(missionResultScreen);missionResultScreen.SetActive(true);missionResultScreen.transform.SetAsLastSibling();
+            if(activeMode==SkyPulseMode.BlackoutProtocol){BuildBlackoutResult(won,reason,medal);Play(won?unlockSound:crashSound);return;}
             var colour=won?Hex("#65ff9d"):Hex("#ffc34d");
             MissionText(missionResultScreen.transform,won?"PROTOCOL COMPLETE":"PROTOCOL INTERRUPTED",500,44,colour);
             MissionText(missionResultScreen.transform,reason,360,34,colour);

@@ -187,7 +187,7 @@ public sealed class SkyPulseWorldExpansionRunner : MonoBehaviour
             try { more = routine.MoveNext(); next = more ? routine.Current : null; }
             catch (Exception e) { Debug.LogException(e); EditorApplication.Exit(1); yield break; }
             if (!more) yield break;
-            yield return next;
+            if(next is IEnumerator nested)yield return Guard(nested);else yield return next;
         }
     }
 }

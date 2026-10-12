@@ -19,6 +19,8 @@ def git(*args):
     return result.stdout
 
 def evidence_for(path):
+    if any(path.endswith(name) for name in ['SkyPulseBlackoutCampaign.cs','SkyPulseBlackoutGraphic.cs','SkyPulseNativeGame.Blackout.cs','SkyPulseNativeGame.Presentation.cs','SkyPulseNativeGame.Missions.cs','SkyPulseMissionModels.cs']):
+        return 'Local Blackout revamp authored with Codex assistance on 12 October 2026: procedural meshes/motion, eight authored cipher/phase sectors and separate campaign saves; earlier code/art origins remain recorded separately; not uploaded', 'mobile/Release/BlackoutComplexityLocal20261012/PROVENANCE.md'
     if path.endswith('pulse-relay-gate-v2.png'):
         return 'Generated with the built-in image_gen tool on 12 October 2026, without reference inputs; transparent portal hardware used only by Relay; exact prompt/output/hash retained; no exclusivity certification', 'mobile/Release/RelayGateUplift20261012/ASSET_GENERATION.json'
     if any(path.endswith(name) for name in ['pulse-relay-station-v1.png','blackout-core-v1.png']):

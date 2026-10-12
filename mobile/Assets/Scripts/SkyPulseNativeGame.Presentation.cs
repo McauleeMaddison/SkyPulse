@@ -139,14 +139,16 @@ namespace SkyPulse.Mobile
             menuHeroTransform.gameObject.SetActive(homeProtocol!=SkyPulseMode.BlackoutProtocol);
             if(homeFlightDock!=null)homeFlightDock.gameObject.SetActive(homeProtocol==SkyPulseMode.EndlessRoute);
             if(homeRelayPortal!=null)homeRelayPortal.gameObject.SetActive(homeProtocol==SkyPulseMode.PulseRelay);
-            if(homeProtocolHero!=null){homeProtocolHero.gameObject.SetActive(homeProtocol!=SkyPulseMode.EndlessRoute);if(homeProtocolHero.Variant!=(int)homeProtocol){homeProtocolHero.Variant=(int)homeProtocol;homeProtocolHero.SetVerticesDirty();}}
+            if(homeProtocolHero!=null){homeProtocolHero.gameObject.SetActive(homeProtocol==SkyPulseMode.PulseRelay);if(homeProtocolHero.Variant!=(int)homeProtocol){homeProtocolHero.Variant=(int)homeProtocol;homeProtocolHero.SetVerticesDirty();}}
             if(homeProtocol==SkyPulseMode.PulseRelay){menuHeroTransform.localScale=Vector3.one*.54f;menuHeroTransform.anchoredPosition=new Vector2(-105,355);menuEquippedText.text="PILOT · "+equippedSkin.Name;}
             else if(homeProtocol==SkyPulseMode.BlackoutProtocol)menuEquippedText.text="PACKETS · FIREWALLS · TRACE";
             else {menuHeroTransform.localScale=Vector3.one;menuHeroTransform.anchoredPosition=new Vector2(0,355);menuEquippedText.text="EQUIPPED · "+equippedSkin.Name;}
+            ApplyBlackoutHomeView();
         }
         private void UpdateProtocolPresentation(float dt)
         {
             bool paused=state==FlightState.Paused;
+            UpdateBlackoutPresentation();
             if(homeProtocol!=SkyPulseMode.EndlessRoute && homeScreen.activeSelf)ApplyHomePlayerView();
             for(int i=protocolGraphics.Count-1;i>=0;i--)
             {

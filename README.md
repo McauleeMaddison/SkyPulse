@@ -1,5 +1,7 @@
 # SkyPulse Arcade
 
+> **Source newer than TestFlight 9:** Blackout now has eight sectors with cipher keys, switching power circuits, costly mistakes and a richer animated lattice. The owner authorized committing/pushing the completed source update to the existing GitHub branch. No new build upload or App Store change is part of this update. See [the current development record](mobile/Release/BlackoutComplexityLocal20261012/README.md); the [earlier presentation experiment](mobile/Release/BlackoutLocal20261012/README.md) remains a historical record. The release records below still describe the retained build 9.
+
 > **App Review hold:** the public version remains Prepare for Submission/unsubmitted. Build 9 and its updated metadata are saved in the draft and available for private TestFlight testing. Await Apple’s clarification and renewed owner authorization before resubmitting. See [current status](mobile/Release/REVIEW_STATUS.md).
 
 SkyPulse is an offline, portrait Unity arcade game for iPhone and iPad. The current source candidate is `mobile/`; open it with Unity **6000.6.0f1**. The 12 October updates add three modes, daily missions, shared tested widths, distinct animated Home/player views and a compact mode dropdown. **1.0.0 (9) is Testing in the existing SkyPulse Internal group.** Automated checks and native archive validation pass; fresh physical-device testing is pending. Start with [the current guide](mobile/Release/PremiumTestFlight20261012/README.md).
