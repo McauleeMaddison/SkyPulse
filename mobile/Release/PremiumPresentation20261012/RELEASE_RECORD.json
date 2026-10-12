@@ -2,7 +2,7 @@
   "date": "2026-10-12",
   "branch": "codex/neon-visual-update",
   "baselineCommit": "5eb1b13",
-  "sourceCommit": "Pending local presentation commit",
+  "sourceCommit": "4e351dea707074740b9f322820827a5a1e9e9075",
   "automatedChecksPassed": [
     "SKYPULSE_MISSION_PURE_PASS",
     "SKYPULSE_BETA_CHECKS_PASS",
