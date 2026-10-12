@@ -2,7 +2,7 @@
   "date": "2026-10-12",
   "branch": "codex/neon-visual-update",
   "baselineCommit": "026e382",
-  "sourceCommit": "Pending local implementation commit",
+  "sourceCommit": "7123f71e777d573bc6447bd31859ff7d06cb12e9",
   "status": "Changed source candidate; automated checks passed; device build and verification pending",
   "historicalBuild7Unchanged": true,
   "storedIosBuildNumber": "7 (historical configuration; select a new unused number before later export)",
@@ -39,5 +39,9 @@
   "remainingEvidenceGaps": [
     "Apple has not identified a specific comparator in the records read.",
     "Some original artwork generation/reference/permission records are incomplete."
-  ]
+  ],
+  "evidenceLogHashes": {
+    "artifacts/modes-update-20261012/reproducible-run/final-layout-unity.log": "d13b186ffd85d581fc54291f0227134968a785e2ec9a5978f5bf3e51db1b840a",
+    "artifacts/modes-update-20261012/reproducible-run/static-final.log": "ec40ef12588204473549104bca2a2528448bd85f0ff3a59fc5eee18ac1cd340f"
+  }
 }
