@@ -1,8 +1,8 @@
 # SkyPulse Arcade
 
-> **App Review hold (6 October 2026):** build 7 is Removed. Continue local QA only; await Apple’s clarification and renewed owner authorization before resubmitting. See [current hold](mobile/Release/Build7/SUBMISSION_HOLD.md).
+> **App Review hold:** the public version remains Prepare for Submission/unsubmitted. Build 9 and its updated metadata are saved in the draft and available for private TestFlight testing. Await Apple’s clarification and renewed owner authorization before resubmitting. See [current status](mobile/Release/REVIEW_STATUS.md).
 
-SkyPulse is an offline, portrait Unity arcade game for iPhone and iPad. The current source candidate is `mobile/`; open it with Unity **6000.6.0f1**. The 12 October updates add three modes, daily missions, shared tested widths, distinct animated Home/player views and a compact mode dropdown. It is newer than the retained/uploaded build 7 and needs separate physical-device tests. Start with [the current guide](mobile/Release/PremiumTestFlight20261012/README.md).
+SkyPulse is an offline, portrait Unity arcade game for iPhone and iPad. The current source candidate is `mobile/`; open it with Unity **6000.6.0f1**. The 12 October updates add three modes, daily missions, shared tested widths, distinct animated Home/player views and a compact mode dropdown. **1.0.0 (9) is Testing in the existing SkyPulse Internal group.** Automated checks and native archive validation pass; fresh physical-device testing is pending. Start with [the current guide](mobile/Release/PremiumTestFlight20261012/README.md).
 
 ## Project layout
 

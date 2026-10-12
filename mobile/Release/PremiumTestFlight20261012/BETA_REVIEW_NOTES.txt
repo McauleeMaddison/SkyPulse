@@ -1,0 +1,5 @@
+SkyPulse 1.0.0 (9) is available for the existing internal tester. No external beta review or public App Store review is being requested.
+
+No login, advertisements or real-money purchases. Open the top-left Endless Route badge, select a mode and press Play. Endless Route uses tap-to-flap flight. Pulse Relay has a separate Pulse control: collect gold charge, align with the numbered relay and activate relays in order before the exit. Blackout Protocol uses adjacent-node taps and limited hacks to collect packets and reach the exit within a trace budget. Both authored modes begin with an introductory mission.
+
+Mission Control has four daily tasks worth five crystals each, claimable once per UTC day. Hangar birds are cosmetic and Tech Tree upgrades use earned crystals. Saved progress stays on the device. Pause is at the top right. The Home privacy screen links to branded privacy/support pages. Fresh physical-device validation of this candidate is pending.

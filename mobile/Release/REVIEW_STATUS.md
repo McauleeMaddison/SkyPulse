@@ -1,6 +1,8 @@
 ## Private TestFlight authorization — 12 October 2026
 
-The owner requested additional visual polish and a fresh TestFlight build for iPhone testing. Build 8 is being prepared under this authorization. Public App Store submission remains on hold; the previously withdrawn public submission is not reinstated. See [PremiumTestFlight20261012](PremiumTestFlight20261012/README.md) for exact candidate/upload records.
+The owner requested additional visual polish and a fresh TestFlight build for iPhone testing. **Build 9 is uploaded, processed and Testing in the existing one-person SkyPulse Internal group.** Its tester notes are saved. Build 8 was superseded after a runtime support/privacy URL mismatch was found; the final build uses the branded domain. Automated QA and strict native archive/metadata validation pass. Fresh physical-device testing remains pending.
+
+The owner explicitly authorized new three-mode App Store metadata to be saved without review. The English (U.K.) subtitle, description, promotional text, keywords and reviewer notes are saved; build 9 is selected in the public draft. After saving build 9, the draft label changed from Developer Rejected to **Prepare for Submission**, and Add for Review/Submit was not used. Retained build 7 screenshots/video are explicitly historical; fresh evidence is needed before any later public submission. Public review remains on hold while awaiting Apple's clarification and renewed owner authorization. See [PremiumTestFlight20261012](PremiumTestFlight20261012/README.md) for exact candidate/upload records.
 
 ## Relay gate presentation — 12 October 2026
 

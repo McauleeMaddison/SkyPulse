@@ -1,0 +1,23 @@
+SkyPulse Arcade — version 1.0.0, build 9 candidate
+
+REVIEW HOLD
+This version is withdrawn at the developer's request while awaiting Apple's answer about the specific similarity finding and the reference to a terminated developer account. Saving this draft does not request a new review.
+
+CURRENT CANDIDATE
+Build 9 adds two authored modes alongside the original Endless Route: four Pulse Relay flight missions and four Blackout Protocol route puzzles. Four offline daily tasks award five crystals per completed task, claimable once, up to 20 per UTC day. All three modes have distinct Home scenery and gameplay presentation. The top-left mode badge opens the mode list; select a mode, then press Play. The original Endless flight handling, gate spacing and progression are preserved.
+
+WALKTHROUGH
+1. Endless Route: tap to flap, pass gates, collect crystals and use Aegis, Time Pulse or Crystal Magnet. Home's Hangar offers 15 cosmetic birds with shared handling. Tech Tree contains nine nodes with three levels each. Worlds & Power-ups previews twelve environments across four pages.
+2. Pulse Relay: start First Circuit. Collect gold charge cells, align with the numbered relay window and press the separate Pulse control. Activate relays in order and reach the exit. Pulse charges are separate from wallet crystals. The three later missions are Switchback, Highwire and Crossfeed.
+3. Blackout Protocol: start Packet Recovery. Tap adjacent nodes, collect required packets and reach the exit within the trace budget. A move costs one trace; a hack costs three without moving. Later puzzles are Firewall Fork, Quiet Bypass and Dark Weave.
+4. Mission Control: inspect four daily tasks and claim a completed task. Progress and claims persist locally. Daily reset uses the device's UTC date, displayed in local time.
+
+No login, advertisements, subscription or real-money purchases. The game runs offline. Scores, crystals, collection, upgrades, medals, daily progress and preferences save on the device. Support and privacy links open the branded website in a browser.
+
+VALIDATION AND EVIDENCE
+Build 9 is a fresh signed iPhone/iPad candidate. Automated Unity gameplay, save/recovery, original-route preservation and presentation checks passed. Fresh physical-device testing is pending. The retained SkyPulse-build7-review.mp4 and store screenshots are historical build 7 evidence; they do not show or validate the two new modes. They must be replaced before future public submission.
+
+DEVELOPMENT AND ACCOUNT HISTORY
+Mcaulee Maddison developed this project with AI coding assistance. Retained history distinguishes project code, generated assets and third-party Unity dependencies. Artwork includes the owner's ARTA work and documented later AI-assisted visual updates. The five sound effects are reproducible from retained synthesis source. File hashes and available origin records are retained; missing older generation/rights records are not represented as verified.
+
+The owner confirms that SkyPulse, its earlier prototype and its source have never been submitted or supplied through another Apple developer account, publisher, contractor or purchased game template. The local source/package audit found no identifiable imported game template or unrelated app identity. This does not establish which comparison led to Apple's finding. We are awaiting the specific matching code, asset, metadata or gameplay element, and clarification of the terminated-account reference.
