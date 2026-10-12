@@ -39,7 +39,8 @@ namespace SkyPulse.Mobile
 
         private void InitializeMissionServices()
         {
-            homeProtocol=(SkyPulseMode)Mathf.Clamp(PlayerPrefs.GetInt("skypulse.home-protocol.v1",0),0,2);
+            // A new launch opens on Endless; retain the older preference key for backwards compatibility.
+            homeProtocol=SkyPulseMode.EndlessRoute;
             missionStore=new PlayerPrefsMissionStore();
             dailyMissions=new SkyPulseDailyMissions(missionStore,()=>DateTime.UtcNow);
             missionProgress=new SkyPulseModeProgress(missionStore);
@@ -85,45 +86,22 @@ namespace SkyPulse.Mobile
         {
             var b=CreateNeonButton(root,label,new Vector2(x,y),new Vector2(width,height),colour??Hex("#45eaff"));
             var t=b.GetComponentInChildren<Text>();t.resizeTextForBestFit=true;t.resizeTextMinSize=20;t.resizeTextMaxSize=28;
+            PolishButton(b,colour.HasValue && colour.Value.g>.85f && colour.Value.r<.6f?2:1,colour??Hex("#45eaff"),label=="PLAY" || label.StartsWith("PULSE") || label.StartsWith("START"));
             b.onClick.AddListener(()=>action());return b;
         }
         private GameObject MissionScreen(string name,bool blackout=false,bool backdrop=true)
         {
             var root=CreateScreen(interfaceContentRoot,name);
-            if(backdrop)CreateFullPanel(root.transform,name+" backdrop",blackout?Color.black:Hex("#030b1c"));
+            if(backdrop){var backing=CreateFullPanel(root.transform,name+" backdrop",blackout?Color.black:Hex("#030b1c"));ProtocolBackdrop(backing,blackout?2:0);}
             root.SetActive(false);return root;
         }
         private void CreateMissionInterface()
         {
             homeProtocolBackdrop=CreateFullPanel(homeScreen.transform,"Home protocol backdrop",Color.black).GetComponent<Image>();
             homeProtocolBackdrop.transform.SetAsFirstSibling();homeProtocolBackdrop.raycastTarget=false;
-            var themeArt=new GameObject("Home protocol circuits",typeof(RectTransform),typeof(CanvasRenderer),typeof(SkyPulseCircuitGraphic));
-            themeArt.transform.SetParent(homeProtocolBackdrop.transform,false);var themeRect=themeArt.GetComponent<RectTransform>();themeRect.sizeDelta=new Vector2(1000,1880);
-            homeProtocolGraphic=themeArt.GetComponent<SkyPulseCircuitGraphic>();homeProtocolGraphic.raycastTarget=false;homeProtocolGraphic.Ambient=true;
+            homeProtocolGraphic=ProtocolBackdrop(homeProtocolBackdrop.rectTransform,1);
             foreach(var text in homeScreen.GetComponentsInChildren<Text>())if(text.text=="BUILD YOUR FLOCK · POWER YOUR NEXT FLIGHT")homeProtocolCaption=text;
-            modeSelectionScreen=MissionScreen("Mode selection");
-            MissionText(modeSelectionScreen.transform,"SELECT YOUR PROTOCOL",855,50);
-            MissionText(modeSelectionScreen.transform,"THREE WAYS TO PLAY · ONE SKYPULSE COLLECTION",785,23);
-            var names=new[]{"ENDLESS ROUTE","PULSE RELAY","BLACKOUT PROTOCOL"};
-            var details=new[]{"Tap to fly through the 12-world route.\nEarn crystals and build your Endless best.","Collect charge. Align. Pulse the numbered relays.\nRestore an authored circuit and reach its exit.","Tap through a terminal circuit. Recover data.\nSpend hacks carefully and stay below the trace limit."};
-            var colours=new[]{Hex("#b17cff"),Hex("#ffc34d"),Hex("#65ff9d")};
-            for(int i=0;i<3;i++)
-            {
-                int mode=i;float y=500-i*390;
-                var card=CreateLuminousPanel(modeSelectionScreen.transform,names[i]+" card",new Vector2(0,y),new Vector2(950,350),Hex("#0a1629"),colours[i]);
-                var art=new GameObject("Protocol artwork",typeof(RectTransform),typeof(CanvasRenderer),typeof(SkyPulseCircuitGraphic));
-                art.transform.SetParent(card,false);var ar=art.GetComponent<RectTransform>();ar.sizeDelta=new Vector2(200,260);ar.anchoredPosition=new Vector2(-355,0);
-                var circuit=art.GetComponent<SkyPulseCircuitGraphic>();circuit.Variant=i;circuit.color=colours[i];circuit.raycastTarget=false;
-                CreateText(card,names[i],new Vector2(95,104),new Vector2(650,62),35,colours[i],TextAnchor.MiddleLeft,FontStyle.Bold);
-                CreateText(card,details[i],new Vector2(95,18),new Vector2(650,104),27,Hex("#c6dded"),TextAnchor.MiddleLeft,FontStyle.Normal);
-                MissionButton(card,i==0?"LAUNCH ROUTE":"SELECT MISSION",95,-100,610,()=>{if(mode==0)StartFlight();else OpenMissionSelection((SkyPulseMode)mode);},colours[i]);
-            }
-            MissionButton(modeSelectionScreen.transform,"MISSION CONTROL",0,-620,900,OpenMissionControl,Hex("#ffc34d"));
-            MissionButton(modeSelectionScreen.transform,"BIRD HANGAR",-235,-760,430,()=>{CloseAuxiliaryScreens();OpenHangar();});
-            MissionButton(modeSelectionScreen.transform,"TECH TREE",235,-760,430,()=>{CloseAuxiliaryScreens();OpenUpgrades();});
-            MissionButton(modeSelectionScreen.transform,"HOME",-300,-905,270,ResetToMenu);
-            MissionButton(modeSelectionScreen.transform,"WORLD GUIDE",0,-905,270,()=>{ResetToMenu();flightGuideScreen.SetActive(true);});
-            MissionButton(modeSelectionScreen.transform,"PRIVACY",300,-905,270,()=>{ResetToMenu();privacyScreen.SetActive(true);});
+            CreateProtocolDropdown();SetupHomePresentation();
             MissionButton(homeScreen.transform,"MISSION CONTROL",0,-950,720,OpenMissionControl,Hex("#ffc34d"));
             missionSelectionScreen=MissionScreen("Mission selection");
             missionControlScreen=MissionScreen("Mission Control");
@@ -133,6 +111,7 @@ namespace SkyPulse.Mobile
         }
         private void ClearScreen(GameObject root)
         {
+            RemoveScreenPresentation(root);
             // Screens are regenerated only on navigation/action, never every frame.
             foreach(Transform child in root.transform)
             {
@@ -143,10 +122,12 @@ namespace SkyPulse.Mobile
         }
         private void CloseAuxiliaryScreens()
         {
+            modeDropdownOpen=false;
             foreach(var screen in new[]{modeSelectionScreen,missionSelectionScreen,missionControlScreen,missionResultScreen})if(screen!=null)screen.SetActive(false);
         }
         private void ClearMissionSession()
         {
+            ClearProtocolWorldArt();
             if(activeMode!=SkyPulseMode.EndlessRoute){shieldImmunityTimer=0f;shieldHitStopTimer=0f;}
             if(missionWorld!=null){missionWorld.gameObject.SetActive(false);Destroy(missionWorld.gameObject);missionWorld=null;}
             foreach(var item in hiddenModeRenderers)if(item.Key!=null)item.Key.enabled=item.Value;
@@ -167,7 +148,9 @@ namespace SkyPulse.Mobile
             bool alternate=homeProtocol!=SkyPulseMode.EndlessRoute;homeProtocolBackdrop.gameObject.SetActive(alternate);
             homeProtocolBackdrop.color=homeProtocol==SkyPulseMode.BlackoutProtocol?Color.black:Hex("#02131c");
             homeProtocolGraphic.Variant=homeProtocol==SkyPulseMode.BlackoutProtocol?2:1;
-            homeProtocolGraphic.color=homeProtocol==SkyPulseMode.BlackoutProtocol?new Color(.2f,1f,.4f,.15f):new Color(.1f,.9f,1f,.18f);
+            homeProtocolGraphic.color=Color.white;
+            homeProtocolGraphic.CinematicUnderlay=homeProtocol==SkyPulseMode.PulseRelay;
+            homeProtocolBackdrop.sprite=homeProtocol==SkyPulseMode.PulseRelay?LoadSprite(Worlds[0].BackgroundPath):null;homeProtocolBackdrop.color=Color.white;
             homeProtocolGraphic.ReducedMotion=reduceMotionEnabled;homeProtocolGraphic.SetVerticesDirty();
             difficultyText.text=homeProtocol==SkyPulseMode.BlackoutProtocol?"BLACKOUT PROTOCOL":homeProtocol==SkyPulseMode.PulseRelay?"PULSE RELAY":"ENDLESS ROUTE";
             bool terminal=homeProtocol==SkyPulseMode.BlackoutProtocol;
@@ -179,15 +162,12 @@ namespace SkyPulse.Mobile
             difficultyText.verticalOverflow=terminal?VerticalWrapMode.Truncate:VerticalWrapMode.Overflow;
             menuTitleText.color=homeProtocol==SkyPulseMode.BlackoutProtocol?Hex("#65ff9d"):homeProtocol==SkyPulseMode.PulseRelay?Hex("#ffc34d"):Hex("#d8fbff");
             if(homeProtocolCaption!=null)homeProtocolCaption.text=homeProtocol==SkyPulseMode.BlackoutProtocol?"BLACKOUT PROTOCOL · RECOVER THE DATA":homeProtocol==SkyPulseMode.PulseRelay?"PULSE RELAY · RESTORE THE CIRCUIT":"BUILD YOUR FLOCK · POWER YOUR NEXT FLIGHT";
-            if(modeSelectionScreen!=null)
-            {
-                var backdrop=modeSelectionScreen.transform.Find("Mode selection backdrop");if(backdrop!=null)backdrop.GetComponent<Image>().color=homeProtocol==SkyPulseMode.BlackoutProtocol?Color.black:Hex("#030b1c");
-            }
+            ApplyPremiumHomeTheme();
         }
         private void PrepareEndlessMode() { SetHomeProtocol(SkyPulseMode.EndlessRoute);ResetToMenu(); }
         private void OpenModeSelection()
         {
-            ResetToMenu();homeScreen.SetActive(false);modeSelectionScreen.SetActive(true);CheckDailyPeriod();
+            ResetToMenu();ShowProtocolDropdown();CheckDailyPeriod();
         }
         private void OpenMissionSelection(SkyPulseMode mode)
         {
@@ -195,12 +175,13 @@ namespace SkyPulse.Mobile
             ResetToMenu();homeScreen.SetActive(false);activeMode=mode;
             ClearScreen(missionSelectionScreen);missionSelectionScreen.SetActive(true);
             var colour=mode==SkyPulseMode.PulseRelay?Hex("#ffc34d"):Hex("#65ff9d");
+            var architecture=missionSelectionScreen.GetComponentInChildren<SkyPulseCircuitGraphic>();architecture.Variant=(int)mode;architecture.SetVerticesDirty();
             MissionText(missionSelectionScreen.transform,mode==SkyPulseMode.PulseRelay?"PULSE RELAY":"BLACKOUT PROTOCOL",870,50,colour);
             MissionText(missionSelectionScreen.transform,"TUTORIAL + THREE MISSIONS · ALL AVAILABLE",795,25);
             for(int i=0;i<4;i++)
             {
                 int index=i;float y=555-i*340;
-                var card=CreateLuminousPanel(missionSelectionScreen.transform,"Mission "+i,new Vector2(0,y),new Vector2(940,310),Hex("#09162a"),colour);
+                var card=PremiumPanel(missionSelectionScreen.transform,"Mission "+i,new Vector2(0,y),new Vector2(940,310),(int)mode,colour);
                 string name=mode==SkyPulseMode.PulseRelay?RelayMission.All[i].Name:BlackoutPuzzle.All[i].Name;
                 string briefing=mode==SkyPulseMode.PulseRelay?RelayMission.All[i].Briefing:BlackoutPuzzle.All[i].Briefing;
                 int medal=(mode==SkyPulseMode.PulseRelay?missionProgress.Relay:missionProgress.Blackout).medals[i];
@@ -249,54 +230,27 @@ namespace SkyPulse.Mobile
         }
         private void CreateRelayWorld()
         {
-            missionWorld=new GameObject("Authored Pulse circuit").transform;
-            HideOriginalWorld(true);
-            CircuitSprite(missionWorld,"Circuit void",Vector2.zero,new Vector2(GetViewportWidth()+1,22),Hex("#02121b"),-30);
-            for(int i=0;i<19;i++)CircuitSprite(missionWorld,"Quiet circuit rail "+i,new Vector2(0,-8.5f+i),new Vector2(GetViewportWidth()+1,.015f),Hex("#07343f"),-20);
-            for(int i=0;i<relaySession.Mission.RelayCount;i++)
-            {
-                var shutter=new GameObject("Relay "+(i+1)).transform;shutter.SetParent(missionWorld,false);relayShutters.Add(shutter);
-                CircuitSprite(shutter,"Mechanical spine",Vector2.zero,new Vector2(.65f,18),Hex("#194759"),2);
-                CircuitSprite(shutter,"Energy shutter",Vector2.zero,new Vector2(.22f,18),Hex("#ffc34d"),3);
-                float y=relaySession.Mission.RelayY[i];
-                CircuitSprite(shutter,"Activation window",new Vector2(0,y),new Vector2(.8f,3.6f),Hex("#116575"),4);
-                CircuitSprite(shutter,"Window top rail",new Vector2(0,y+1.83f),new Vector2(1.2f,.07f),Hex("#45eaff"),6);
-                CircuitSprite(shutter,"Window bottom rail",new Vector2(0,y-1.83f),new Vector2(1.2f,.07f),Hex("#45eaff"),6);
-                for(int n=0;n<5;n++)CircuitSprite(shutter,"Mechanical bus "+n,new Vector2(0,-6f+n*3f),new Vector2(1f,.10f),Hex("#41798b"),3);
-                var labelObject=new GameObject("Relay number "+(i+1),typeof(TextMesh));labelObject.transform.SetParent(shutter,false);labelObject.transform.localPosition=new Vector3(-.9f,y+2.15f,0);
-                var label=labelObject.GetComponent<TextMesh>();label.text=(i+1).ToString();label.font=uiFont;label.fontSize=36;label.characterSize=.18f;label.anchor=TextAnchor.MiddleCenter;label.color=Hex("#ffc34d");
-                var labelRenderer=labelObject.GetComponent<MeshRenderer>();labelRenderer.sharedMaterial=uiFont.material;labelRenderer.sortingOrder=8;
-                AddRelayCell(i*2,new Vector2(relaySession.Mission.RelayX(i)-8f,y));
-                AddRelayCell(i*2+1,new Vector2(relaySession.Mission.RelayX(i)-5f,Mathf.Clamp(y+3.2f,-4.5f,5.2f)));
-            }
-            if(relaySession.Mission.HasShield)
-            {
-                relayShield=new GameObject("Aegis circuit pickup").transform;relayShield.SetParent(missionWorld,false);
-                var icon=CreateRenderer("Aegis",LoadSprite(PowerUpArtworkPath(PowerUpKind.Aegis)),Color.white,8,relayShield);
-                icon.transform.localScale=Vector3.one*(.9f/icon.sprite.bounds.size.x);
-            }
-            relayExit=new GameObject("Circuit finish line").transform;relayExit.SetParent(missionWorld,false);
-            CircuitSprite(relayExit,"Exit beacon",new Vector2(0,relaySession.Mission.ExitY),new Vector2(.5f,3.8f),Hex("#65ff9d"),5);
-            CircuitSprite(relayExit,"Exit port",new Vector2(0,relaySession.Mission.ExitY),new Vector2(.8f,18),new Color(.1f,.6f,.3f,.15f),2);
+            BuildPremiumRelayWorld();
         }
         private void AddRelayCell(int id,Vector2 at)
         {
-            var cell=new GameObject("Gold charge "+id).transform;cell.SetParent(missionWorld,false);
-            CircuitSprite(cell,"Charge shell",Vector2.zero,new Vector2(.46f,.64f),Hex("#ffc34d"),7);
-            CircuitSprite(cell,"Charge core",Vector2.zero,new Vector2(.18f,.4f),Color.white,8);
-            relayCells.Add(cell);relayCellPositions.Add(at);
+            BuildPremiumRelayCell(id,at);
         }
         private void BuildRelayHud()
         {
             ClearScreen(relayHudScreen);relayHudScreen.SetActive(true);
-            var top=CreateLuminousPanel(relayHudScreen.transform,"Relay instrument panel",new Vector2(0,795),new Vector2(970,320),Hex("#061626"),Hex("#45eaff"));
-            MissionText(top,"PULSE RELAY · "+relaySession.Mission.Name,95,32,Hex("#ffc34d"));
-            relayStatusText=MissionText(top,"",15,29);
-            relayHintText=MissionText(top,"",-70,24,Hex("#9aefff"),890,68);
-            MissionButton(relayHudScreen.transform,"PAUSE",375,540,230,PauseFlight);
-            pulseButton=MissionButton(relayHudScreen.transform,"PULSE · 0",230,-780,460,PressPulse,Hex("#ffc34d"));
-            MissionButton(relayHudScreen.transform,"FLAP",-240,-780,430,()=>{if(state==FlightState.Playing)BufferFlapInput();});
-            MissionText(relayHudScreen.transform,"GOLD CELLS = CHARGE · ALIGN BEFORE PULSING",-925,23);
+            var header=PremiumPanel(relayHudScreen.transform,"Relay flight deck",new Vector2(0,784),new Vector2(970,355),1,Hex("#45eaff"));
+            MissionText(header,"PULSE RELAY",118,43,Hex("#ffd078"));
+            MissionText(header,relaySession.Mission.Name,51,26,Hex("#bdebf0"));
+            relayChargeText=ProtocolStat(header,"CHARGE", "0",-313,-52,286,1,Hex("#ffd078"));
+            relayProgressText=ProtocolStat(header,"RELAYS", "0 / 0",0,-52,286,1,Hex("#45eaff"));
+            relayStatusText=ProtocolStat(header,"NEXT RELAY", "01",313,-52,286,1,Hex("#45eaff"));
+            relayHintText=MissionText(relayHudScreen.transform,"",535,24,Hex("#c4f4f5"),940,64);
+            MissionButton(relayHudScreen.transform,"PAUSE",375,425,230,PauseFlight);
+            PremiumPanel(relayHudScreen.transform,"Pilot control deck",new Vector2(0,-800),new Vector2(990,200),1,Hex("#45eaff"));
+            pulseButton=MissionButton(relayHudScreen.transform,"PULSE · 0",230,-770,460,PressPulse,Hex("#ffd078"));
+            MissionButton(relayHudScreen.transform,"FLAP",-240,-770,430,()=>{if(state==FlightState.Playing)BufferFlapInput();});
+            MissionText(relayHudScreen.transform,"GOLD CELLS = CHARGE · ALIGN BEFORE PULSING",-860,21,Hex("#a3c7d8"));
             UpdateRelayPresentation();
         }
         private void PressPulse()
@@ -308,7 +262,7 @@ namespace SkyPulse.Mobile
         private void UpdateRelayPresentation()
         {
             if(relaySession==null)return;
-            relayStatusText.text=$"CHARGE  {relaySession.Charges}   ·   RELAYS  {relaySession.Passed}/{relaySession.Mission.RelayCount}";
+            relayChargeText.text=relaySession.Charges.ToString();relayProgressText.text=$"{relaySession.Passed} / {relaySession.Mission.RelayCount}";relayStatusText.text=relaySession.NextRelay>=relaySession.Mission.RelayCount?"EXIT":(relaySession.NextRelay+1).ToString("00");
             int next=relaySession.NextRelay;float ahead=next<relaySession.Mission.RelayCount?relaySession.Mission.RelayX(next)-relaySession.Distance:0;
             relayHintText.text=next==relaySession.Mission.RelayCount?"ALL ACTIVATED · REACH THE GREEN EXIT":$"NEXT: RELAY {next+1} · "+(ahead<=6f?"ALIGN & PRESS PULSE":"COLLECT A GOLD CELL");
             pulseButton.GetComponentInChildren<Text>().text="PULSE · "+relaySession.Charges;
@@ -316,11 +270,10 @@ namespace SkyPulse.Mobile
             for(int i=0;i<relayShutters.Count;i++)
             {
                 relayShutters[i].localPosition=new Vector3(BirdX+relaySession.Mission.RelayX(i)-relaySession.Distance,0,0);
-                var window=relayShutters[i].Find("Activation window").GetComponent<SpriteRenderer>();
-                window.color=relaySession.IsOpen(i)?Hex("#02121b"):Hex("#116575");
-                relayShutters[i].Find("Energy shutter").GetComponent<SpriteRenderer>().color=relaySession.IsOpen(i)?Hex("#45eaff"):Hex("#ffc34d");
+
             }
             for(int i=0;i<relayCells.Count;i++)relayCells[i].localPosition=new Vector3(BirdX+relayCellPositions[i].x-relaySession.Distance,relayCellPositions[i].y,0);
+            AnimateRelayArtwork();
             if(relayShield!=null)relayShield.localPosition=new Vector3(BirdX+2f-relaySession.Distance,0,0);
             if(relayExit!=null)relayExit.localPosition=new Vector3(BirdX+relaySession.Mission.ExitX-relaySession.Distance,0,0);
         }
@@ -350,6 +303,7 @@ namespace SkyPulse.Mobile
         }
         private bool UpdateMissionModes(float dt)
         {
+            UpdateProtocolPresentation(dt);
             if(homeProtocolGraphic!=null)homeProtocolGraphic.ReducedMotion=reduceMotionEnabled;
             missionUiTimer+=dt;
             if(missionUiTimer>=1f){missionUiTimer=0;CheckDailyPeriod();if(missionControlScreen!=null && missionControlScreen.activeSelf)RefreshDailyCards();}
@@ -383,41 +337,44 @@ namespace SkyPulse.Mobile
         private void BuildBlackoutBoard()
         {
             ClearScreen(blackoutScreen);blackoutScreen.SetActive(true);
-            var puzzle=blackoutSession.Puzzle;var green=Hex("#65ff9d");
-            for(int scan=-930;scan<940;scan+=90)
-            {
-                var rail=CreateImage(blackoutScreen.transform,"Static terminal scanline",new Vector2(0,scan),new Vector2(1020,1),new Color(.2f,1f,.4f,.035f));rail.sprite=whiteSprite;rail.raycastTarget=false;
-            }
-            MissionText(blackoutScreen.transform,"BLACKOUT PROTOCOL",850,48,green);
-            MissionText(blackoutScreen.transform,puzzle.Name,770,30,green);
-            blackoutStatusText=MissionText(blackoutScreen.transform,$"DATA {blackoutSession.Packets}/{blackoutSession.RequiredPackets}   TRACE {blackoutSession.Trace}/{puzzle.TraceLimit}   HACKS {blackoutSession.Charges}",675,28,green);
+            var puzzle=blackoutSession.Puzzle;var green=Hex("#65ffad");
+            MissionText(blackoutScreen.transform,"BLACKOUT PROTOCOL",880,44,green);
+            MissionText(blackoutScreen.transform,"TERMINAL OPERATIONS · OFFLINE CIRCUIT",817,19,Hex("#8aac9e"));
+            MissionText(blackoutScreen.transform,puzzle.Name,735,29,Hex("#dcfff1"));
+            blackoutDataText=ProtocolStat(blackoutScreen.transform,"DATA SECURED",$"{blackoutSession.Packets} / {blackoutSession.RequiredPackets}",-320,622,300,2,green);
+            blackoutTraceText=ProtocolStat(blackoutScreen.transform,"TRACE",$"{blackoutSession.Trace} / {puzzle.TraceLimit}",0,622,300,2,green);
+            blackoutHackText=ProtocolStat(blackoutScreen.transform,"HACK CHARGES",blackoutSession.Charges.ToString(),320,622,300,2,Hex("#ffd078"));
+            blackoutStatusText=MissionText(blackoutScreen.transform,"RECOVER EVERY DATA PACKET · THEN FIND THE EXIT",515,21,Hex("#a3cdb8"));
             float stride=Mathf.Min(130,900f/puzzle.Width);float startX=-(puzzle.Width-1)*stride*.5f;
+            PremiumPanel(blackoutScreen.transform,"Data lattice frame",new Vector2(0,400-(puzzle.Height-1)*stride*.5f),new Vector2(puzzle.Width*stride+44,puzzle.Height*stride+44),2,new Color(.2f,.8f,.5f,.45f));
             for(int row=0;row<puzzle.Height;row++)for(int col=0;col<puzzle.Width;col++)
             {
-                int tile=row*puzzle.Width+col;char type=puzzle.Tile(tile);
-                bool cursor=tile==blackoutSession.Cursor,opened=blackoutSession.Opened.Contains(tile);
-                string symbol=cursor?"[YOU]":type=='P'?(blackoutSession.Recovered.Contains(tile)?"[OK]":"DATA"):type=='E'?"EXIT":type=='F'?(opened?"OPEN":"FIRE"):type=='#'?"####":"+";
-                Color colour=cursor?Color.white:type=='F'&&!opened?Hex("#ffa958"):green;
-                var node=CreatePanel(blackoutScreen.transform,"Terminal node "+tile,new Vector2(startX+col*stride,400-row*stride),new Vector2(stride-12,stride-12),type=='#'?Hex("#08100a"):Hex("#061b0e"));
-                var face=node.GetComponent<Image>();face.sprite=whiteSprite;face.type=Image.Type.Simple;
-                AddOutline(node.gameObject,blackoutSession.Adjacent(tile)?colour:new Color(colour.r,colour.g,colour.b,.30f),1.5f);
-                var pixelText=CreateText(node,symbol,Vector2.zero,new Vector2(stride-20,40),22,colour,TextAnchor.MiddleCenter,FontStyle.Bold);pixelText.raycastTarget=false;
-                if(type=='P' || cursor)for(int pixel=0;pixel<4;pixel++)
+                int tile=row*puzzle.Width+col;char type=puzzle.Tile(tile);var position=new Vector2(startX+col*stride,400-row*stride);
+                if(type!='#')
                 {
-                    var dot=CreateImage(node,"Data pixel "+pixel,new Vector2(-24+pixel*16,34),new Vector2(8,8),colour);dot.sprite=whiteSprite;dot.raycastTarget=false;
+                    if(col+1<puzzle.Width && puzzle.Tile(tile+1)!='#'){var wire=CreateImage(blackoutScreen.transform,"Horizontal bus",position+new Vector2(stride*.5f,0),new Vector2(stride,2),new Color(.2f,.8f,.5f,.16f));wire.sprite=whiteSprite;wire.raycastTarget=false;}
+                    if(row+1<puzzle.Height && puzzle.Tile(tile+puzzle.Width)!='#'){var wire=CreateImage(blackoutScreen.transform,"Vertical bus",position-new Vector2(0,stride*.5f),new Vector2(2,stride),new Color(.2f,.8f,.5f,.16f));wire.sprite=whiteSprite;wire.raycastTarget=false;}
                 }
-                var button=node.gameObject.AddComponent<Button>();button.targetGraphic=face;
-                button.interactable=type!='#' && blackoutSession.Adjacent(tile);
-                button.onClick.AddListener(()=>BlackoutAction(tile));
             }
-            blackoutHintText=MissionText(blackoutScreen.transform,hackArmed?"HACK ARMED · TAP AN ADJACENT FIREWALL":"TAP ADJACENT NODE · MOVE +1 TRACE · HACK +3 TRACE",-330,24,green);
-            MissionText(blackoutScreen.transform,"DATA FIRST · EXIT LAST · CHARGES OPEN FIREWALLS",-415,23,green);
-            var traceBack=CreatePanel(blackoutScreen.transform,"Trace meter",new Vector2(0,-505),new Vector2(880,28),Hex("#12321d"));
-            CreatePanel(traceBack,"Trace level",new Vector2(-440+(880f*blackoutSession.Trace/puzzle.TraceLimit)*.5f,0),new Vector2(Mathf.Min(880,880f*blackoutSession.Trace/puzzle.TraceLimit),22),green);
-            hackButton=MissionButton(blackoutScreen.transform,hackArmed?"CANCEL HACK":"ARM HACK",-235,-645,430,()=>{hackArmed=!hackArmed;BuildBlackoutBoard();},green);
-            hackButton.interactable=blackoutSession.Charges>0;
+            for(int row=0;row<puzzle.Height;row++)for(int col=0;col<puzzle.Width;col++)
+            {
+                int tile=row*puzzle.Width+col;char type=puzzle.Tile(tile);bool cursor=tile==blackoutSession.Cursor,opened=blackoutSession.Opened.Contains(tile),recovered=blackoutSession.Recovered.Contains(tile);
+                string label=cursor?"YOU":type=='P'?(recovered?"SECURED":"DATA"):type=='E'?"EXIT":type=='F'?(opened?"OPEN":"FIREWALL"):"";
+                var node=CreatePanel(blackoutScreen.transform,"Terminal node "+tile,new Vector2(startX+col*stride,400-row*stride),new Vector2(stride-12,stride-12),Color.clear);
+                var face=node.GetComponent<Image>();face.sprite=whiteSprite;face.type=Image.Type.Simple;
+                var graphic=ProtocolGraphic(node,"Pixel circuit node",Vector2.zero,node.sizeDelta,2,SkyPulseSurface.TerminalNode,Color.white,cursor || type=='P'&&!recovered);
+                graphic.NodeKind=cursor?5:type=='#'?1:type=='P'?(recovered?6:2):type=='F'?(opened?7:3):type=='E'?4:0;graphic.Adjacent=blackoutSession.Adjacent(tile) && type!='#';
+                var text=CreateText(node,label,new Vector2(0,-34),new Vector2(stride-20,30),17,type=='F'&&!opened?Hex("#ffd078"):green,TextAnchor.MiddleCenter,FontStyle.Bold);text.horizontalOverflow=HorizontalWrapMode.Wrap;text.verticalOverflow=VerticalWrapMode.Truncate;
+                var button=node.gameObject.AddComponent<Button>();button.targetGraphic=graphic;var colours=button.colors;colours.disabledColor=Color.white;colours.fadeDuration=.12f;button.colors=colours;
+                button.interactable=type!='#' && blackoutSession.Adjacent(tile);button.onClick.AddListener(()=>BlackoutAction(tile));
+            }
+            blackoutHintText=MissionText(blackoutScreen.transform,hackArmed?"HACK ARMED · TAP AN ADJACENT FIREWALL":"MOVE +1 TRACE · HACK +3 TRACE · TAP ADJACENT NODES",-347,22,green);
+            MissionText(blackoutScreen.transform,"DATA FIRST · EXIT LAST · PLAN YOUR ROUTE",-420,19,Hex("#8aac9e"));
+            var traceBack=PremiumPanel(blackoutScreen.transform,"Trace meter",new Vector2(0,-505),new Vector2(890,32),2,green);
+            var bar=CreateImage(traceBack,"Trace level",new Vector2(-430+(860f*blackoutSession.Trace/puzzle.TraceLimit)*.5f,0),new Vector2(Mathf.Min(860,860f*blackoutSession.Trace/puzzle.TraceLimit),6),green);bar.sprite=whiteSprite;bar.raycastTarget=false;
+            hackButton=MissionButton(blackoutScreen.transform,hackArmed?"CANCEL HACK":"ARM HACK",-235,-645,430,()=>{hackArmed=!hackArmed;BuildBlackoutBoard();},green);hackButton.interactable=blackoutSession.Charges>0;
             MissionButton(blackoutScreen.transform,"PAUSE",235,-645,430,PauseFlight,green);
-            MissionText(blackoutScreen.transform,"Silver: finish with 2 spare trace. Gold: meet mission par "+puzzle.Par+".",-785,22,green);
+            MissionText(blackoutScreen.transform,"SILVER: 2 SPARE TRACE · GOLD: MEET PAR "+puzzle.Par,-780,20,Hex("#8aac9e"));
             MissionButton(blackoutScreen.transform,"RESTART PUZZLE",0,-895,900,()=>LaunchMission(SkyPulseMode.BlackoutProtocol,selectedMission),green);
         }
         private void BlackoutAction(int tile)
@@ -468,7 +425,7 @@ namespace SkyPulse.Mobile
             dailyResetText=MissionText(missionControlScreen.transform,"",780,23);
             for(int i=0;i<4;i++)
             {
-                int index=i;var card=CreateLuminousPanel(missionControlScreen.transform,"Daily task "+SkyPulseDailyMissions.Ids[i],new Vector2(0,535-i*350),new Vector2(940,310),Hex("#0b182a"),Hex("#45eaff"));
+                int index=i;var card=PremiumPanel(missionControlScreen.transform,"Daily task "+SkyPulseDailyMissions.Ids[i],new Vector2(0,535-i*350),new Vector2(940,310),i==2?2:1,i==2?Hex("#65ffad"):Hex("#45eaff"));
                 MissionText(card,SkyPulseDailyMissions.Modes[i],106,22,Hex("#45eaff"));
                 MissionText(card,SkyPulseDailyMissions.Objectives[i],48,31);
                 var back=CreatePanel(card,"Progress rail",new Vector2(-195,-30),new Vector2(430,18),Hex("#142d46"));

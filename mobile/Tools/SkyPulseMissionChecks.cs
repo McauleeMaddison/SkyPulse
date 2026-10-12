@@ -176,7 +176,14 @@ public static class SkyPulseMissionChecks
         Call(game,"ClosePurchaseModal");Call(game,"SelectUpgrade",tech.GetValue(2));Call(game,"ConfirmPurchase");
         Check((int)Get(game,"crystals")==321 && (int)Call(game,"GetUpgradeLevel",Get(tech.GetValue(2),"Id"))==0,"Locked prerequisite cannot spend wallet crystals");
         Call(game,"SetHomeProtocol",SkyPulseMode.BlackoutProtocol);Call(game,"ResetToMenu");Call(game,"InitializeMissionServices");Call(game,"ApplyHomeProtocolTheme");
-        Check(Get(game,"homeProtocol").ToString()=="BlackoutProtocol" && ((Text)Get(game,"difficultyText")).text=="BLACKOUT PROTOCOL","Home protocol persists through service reload and updates its label");
+        Check(Get(game,"homeProtocol").ToString()=="EndlessRoute" && ((Text)Get(game,"difficultyText")).text=="ENDLESS ROUTE","New launch defaults to Endless while retaining player progression");
+        Call(game,"SetHomeProtocol",SkyPulseMode.BlackoutProtocol);Call(game,"ApplyHomeProtocolTheme");
+        Call(game,"OpenModeSelection");Call(game,"UpdateProtocolPresentation",.25f);
+        Check(((GameObject)Get(game,"homeScreen")).activeSelf && ((RectTransform)Get(game,"modeDropdownClip")).rect.height==496f,"Mode list expands beneath badge while Home remains visible");
+        Call(game,"SelectHomeProtocol",SkyPulseMode.PulseRelay);
+        Check(!((GameObject)Get(game,"modeSelectionScreen")).activeSelf && Get(game,"homeProtocol").ToString()=="PulseRelay" && Get(game,"state").ToString()=="Menu","Selecting dropdown item changes Home without launching gameplay");
+        Call(game,"LaunchHomeProtocol");Check(((GameObject)Get(game,"missionSelectionScreen")).activeSelf && Get(game,"activeMode").ToString()=="PulseRelay","Home Play opens selected Relay missions");
+        Call(game,"ResetToMenu");Call(game,"SetHomeProtocol",SkyPulseMode.BlackoutProtocol);
         Set(game,"reduceMotionEnabled",true);Call(game,"UpdateMissionModes",.02f);
         var circuit=(SkyPulseCircuitGraphic)Get(game,"homeProtocolGraphic");Set(circuit,"phase",.37f);Call(circuit,"Update");
         Check(circuit.ReducedMotion && (float)Get(circuit,"phase")==.37f,"Reduced Motion freezes Home circuit animation");
@@ -204,7 +211,7 @@ public static class SkyPulseMissionChecks
                         Check(protocol.preferredWidth<=protocol.rectTransform.rect.width+2f,"Blackout Home protocol label fits its badge");
                     }
                 }
-                if(screen=="mode-selection")Call(game,"OpenModeSelection");
+                if(screen=="mode-selection"){Call(game,"SetHomeProtocol",SkyPulseMode.EndlessRoute);Call(game,"OpenModeSelection");Call(game,"UpdateProtocolPresentation",.25f);}
                 if(screen=="relay-selection")Call(game,"OpenMissionSelection",SkyPulseMode.PulseRelay);
                 if(screen=="relay-flight")
                 {

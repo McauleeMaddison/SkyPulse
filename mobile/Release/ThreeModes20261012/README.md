@@ -1,5 +1,7 @@
 # Three-mode source update — 12 October 2026
 
+**Later presentation/navigation update:** the owner's subsequent instruction replaces the full-screen chooser with a top-left badge dropdown and defaults new launches to Endless. Follow [the current guide](../PremiumPresentation20261012/README.md). The implementation/testing record below describes the earlier three-mode checkpoint and is retained as dated evidence.
+
 Current branch: `codex/neon-visual-update`, fast-forwarded from its older state to the latest world/audio/build-7 work before implementation. Baseline source/release records were retained locally and committed as `026e382`. Earlier build 5 rollback tag/bundle and build 5/6/7 binaries remain preserved.
 
 This is a changed Unity source candidate. It is **not** the uploaded build 7. App Store submission remains on hold; no App Store Connect change, upload, website publication or Apple message is authorized by this update.

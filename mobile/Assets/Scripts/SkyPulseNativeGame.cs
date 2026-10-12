@@ -1901,9 +1901,10 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             menuBestText.resizeTextForBestFit = true;
             menuBestText.resizeTextMinSize = 26;
             menuBestText.resizeTextMaxSize = 44;
-            var fly = CreateNeonButton(root.transform, "CHOOSE MODE", new Vector2(0f, -165f), new Vector2(720f, 128f), Hex("#45eaff"));
+            var fly = CreateNeonButton(root.transform, "PLAY", new Vector2(0f, -165f), new Vector2(620f, 104f), Hex("#45eaff"));
+            homeLaunchButton = fly;
             fly.GetComponentInChildren<Text>().fontSize = 40;
-            fly.onClick.AddListener(OpenModeSelection);
+            fly.onClick.AddListener(LaunchHomeProtocol);
             CreateText(root.transform, "FLIGHT · CIRCUITS · PUZZLES", new Vector2(0f, -269f), new Vector2(740f, 38f), 25, Hex("#d0e5f5"), TextAnchor.MiddleCenter, FontStyle.Normal);
 
             var hangar = CreateNeonButton(root.transform, "BIRD HANGAR", new Vector2(-187f, -355f), new Vector2(346f, 112f), Hex("#45eaff"));

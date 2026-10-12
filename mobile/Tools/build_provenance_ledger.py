@@ -19,6 +19,8 @@ def git(*args):
     return result.stdout
 
 def evidence_for(path):
+    if path.endswith('SkyPulseNativeGame.Presentation.cs') or path.endswith('SkyPulseCircuitGraphic.cs'):
+        return 'Codex-assisted authored presentation on 12 October 2026: gradient/soft-light/pixel geometry, badge dropdown and motion; existing cinematic/pipe artwork reused under its earlier provenance; no new external artwork/shader/font inputs', 'mobile/Release/PremiumPresentation20261012/PROVENANCE_ADDENDUM.md'
     if path.endswith('SkyPulseNativeGame.cs'):
         return 'Existing gameplay implementation retained; Codex-assisted protocol, UI, lifecycle and explicit-wallet hooks added on 12 October 2026 against baseline 026e382; protected flight methods/catalogues unchanged', 'mobile/Release/ThreeModes20261012/PROVENANCE_ADDENDUM.md'
     if any(path.endswith(name) for name in ['SkyPulseMissionModels.cs','SkyPulseDailyMissions.cs','SkyPulseNativeGame.Missions.cs','SkyPulseCircuitGraphic.cs']):

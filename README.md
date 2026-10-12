@@ -2,7 +2,7 @@
 
 > **App Review hold (6 October 2026):** build 7 is Removed. Continue local QA only; await Apple’s clarification and renewed owner authorization before resubmitting. See [current hold](mobile/Release/Build7/SUBMISSION_HOLD.md).
 
-SkyPulse is an offline, portrait Unity arcade game for iPhone and iPad. The current source candidate is `mobile/`; open it with Unity **6000.6.0f1**. The 12 October update adds three modes and daily missions. It is newer than the retained/uploaded build 7 and needs separate physical-device tests. Start with [the update and testing guide](mobile/Release/ThreeModes20261012/README.md).
+SkyPulse is an offline, portrait Unity arcade game for iPhone and iPad. The current source candidate is `mobile/`; open it with Unity **6000.6.0f1**. The 12 October updates add three modes, daily missions, premium animated presentation and a compact mode dropdown. It is newer than the retained/uploaded build 7 and needs separate physical-device tests. Start with [the current opening/testing guide](mobile/Release/PremiumPresentation20261012/README.md).
 
 ## Project layout
 
@@ -22,12 +22,12 @@ The retired browser prototype and its root-level assets have been removed. Runti
 
 1. Add `mobile/` in Unity Hub and open `Assets/Scenes/SkyPulse.unity`.
 2. Press Play and use a portrait Game view.
-3. Choose **CHOOSE MODE**: Endless Route, Pulse Relay or Blackout Protocol. Flight uses tap/Space/Up Arrow; Pulse Relay has a separate Pulse control. Blackout uses adjacent-node taps and an Arm Hack control. Use the pause control or Escape/P to pause.
+3. Home starts on Endless Route. Tap its top-left badge to expand the three free modes, select one, then press **PLAY**. Flight uses tap/Space/Up Arrow; Pulse Relay has a separate Pulse control. Blackout uses adjacent-node taps and an Arm Hack control. Use the pause control or Escape/P to pause.
 4. Open Bird Hangar to unlock cosmetic birds, or Tech Tree to spend earned crystals.
 
 Endless Route retains fixed handling for all 15 birds. Each passed gate awards one point. Neon City starts the run, Aurora Rise begins at score 15 and Solar Drift at 30; the route continues through Midnight Tide (45), Velvet Dawn (60), Crystal Night (75), Jade Horizon (90), Violet Rain (105), Eclipse (120), Cobalt Storm (135), Amber Skies (150) and Polar Glow (165), returning to Neon City at 180. Worlds change every 15 gates with the existing capped difficulty. The Worlds & Power-ups guide previews all 12 across four pages. Crystals bank during the run. Nine upgrade nodes affect collection/rewards, while three temporary pickups provide Aegis, Time Pulse and Crystal Magnet. No login, ads, analytics or real-money purchases are used.
 
-Pulse Relay adds a tutorial and three finite circuits; Blackout Protocol adds a tutorial and three authored puzzles. Their separate medals and completion data never replace the Endless best. Mission Control tracks four UTC-day tasks worth five crystals each, up to 20 per period, with journaled claim recovery. Home remembers the last selected protocol and changes its cinematic/circuit/terminal theme.
+Pulse Relay adds a tutorial and three finite circuits; Blackout Protocol adds a tutorial and three authored puzzles. Their separate medals and completion data never replace the Endless best. Mission Control tracks four UTC-day tasks worth five crystals each, up to 20 per period, with journaled claim recovery. Home changes its cinematic/circuit/terminal theme with the selected mode during the session; new launches begin on Endless. Relay shares the original cinematic/metal artwork, and Blackout uses animated green terminal graphics. Reduced Motion freezes ambient effects.
 
 Saved scores, crystals, owned birds, upgrade levels and preferences retain their existing keys and migration paths. New mode, daily and Home-protocol data uses separate versioned keys.
 

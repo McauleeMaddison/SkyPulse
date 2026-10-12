@@ -8,6 +8,8 @@ Local quality checks, fixes and preparation may continue. Build 7's retained arc
 
 **Local source update — 12 October 2026:** three playable modes, four daily tasks and mode-specific Home themes are implemented on `codex/neon-visual-update`. Available isolated automated checks passed; physical-device testing and a new numbered binary remain pending. Start with [the changed-candidate guide](ThreeModes20261012/README.md) and [test results](ThreeModes20261012/TEST_RESULTS.md). App Store Connect was not inspected or changed during this update, and the withdrawal/hold is unchanged.
 
+**Later owner-requested presentation update — 12 October:** richer animated Relay/terminal/Home visuals and a compact badge dropdown are implemented and locally verified. New launches default to Endless; the selected mode controls Home/Play during the session. Current [guide](PremiumPresentation20261012/README.md) and [tests](PremiumPresentation20261012/TEST_RESULTS.md) supersede the earlier navigation instructions. Submission remains on hold.
+
 ---
 
 Historical records below; superseded by the current hold.
