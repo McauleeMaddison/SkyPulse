@@ -1,0 +1,12 @@
+SkyPulse 1.0.0 (8) — three modes and premium presentation
+
+Tap the top-left Endless Route badge to choose a free mode, then press Play.
+
+Please test:
+1. Endless Route: original flight, pipes, crystals, power-ups and retry.
+2. Pulse Relay: collect gold charge, align with the numbered portal and press Pulse; complete First Circuit and try the other missions.
+3. Blackout Protocol: tap adjacent nodes, collect data, use limited hacks and reach the exit within the trace budget.
+4. Mission Control: daily progress, one five-crystal claim per completed task and retained claim status.
+5. All three Home screens, Hangar/equip, Tech Tree, world guide, sound, pause/background/resume, Reduced Motion and saved progress after reopening.
+
+Look for readable controls, correct touch targets, smooth portal/data effects, frame pacing and safe-area fit on your iPhone. Report the mode/mission and what happened if anything fails. Bird cosmetics retain shared flight handling. This beta is for fresh device validation; prior build 7 tests do not establish this build's behavior.

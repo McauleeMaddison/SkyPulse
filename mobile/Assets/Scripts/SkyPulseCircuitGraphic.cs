@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 namespace SkyPulse.Mobile
 {
-    public enum SkyPulseSurface { Emblem, Backdrop, Panel, TerminalNode, HomeHero }
+    public enum SkyPulseSurface { Emblem, Backdrop, Panel, TerminalNode, HomeHero, Atmosphere }
 
     // Authored geometry: gradients, soft light, machined frames and pixel glyphs.
     // No external artwork, shader, font or generation service is required.
@@ -32,6 +32,7 @@ namespace SkyPulse.Mobile
             else if(Surface==SkyPulseSurface.Panel)Panel(vh,r);
             else if(Surface==SkyPulseSurface.TerminalNode)Node(vh,r);
             else if(Surface==SkyPulseSurface.HomeHero)HomeHero(vh,r);
+            else if(Surface==SkyPulseSurface.Atmosphere)Atmosphere(vh,r);
             else Emblem(vh,r);
         }
         private static Color A(Color c,float alpha){c.a=alpha;return c;}
@@ -102,12 +103,32 @@ namespace SkyPulse.Mobile
                     var point=new Vector2(col*105,row*110);if(col<2)GlowLine(vh,point,point+new Vector2(105,0),1,A(Green,.20f));if(row<1)GlowLine(vh,point,point+new Vector2(0,110),1,A(Green,.20f));
                     Quad(vh,new Rect(point.x-20,point.y-20,40,40),A(Green,.075f));Border(vh,new Rect(point.x-20,point.y-20,40,40),3,1,A(Green,.45f));
                 }
-                Glow(vh,Vector2.zero,135,A(Green,.18f));Diamond(vh,Vector2.zero,64,Green);Diamond(vh,Vector2.zero,28,new Color(.84f,1,.91f));
-                Ring(vh,Vector2.zero,86,2,Green,Motion*360,120);Ring(vh,Vector2.zero,86,2,Green,Motion*360+180,120);
+                Glow(vh,Vector2.zero,155,A(Green,.18f));Cube(vh,new Vector2(0,Mathf.Sin(Motion*Mathf.PI*2)*5),78,Green);
+                Ring(vh,Vector2.zero,106,2,A(Green,.72f),Motion*360,120);Ring(vh,Vector2.zero,106,2,A(Green,.72f),Motion*360+180,120);
                 var packet=Vector2.Lerp(new Vector2(-210,110),new Vector2(0,110),Motion);Quad(vh,new Rect(packet.x-5,packet.y-5,10,10),Green);
                 for(int i=0;i<3;i++)Quad(vh,new Rect(184,90+i*12,52,6),Gold);
                 Diamond(vh,new Vector2(-210,-110),15,Green);Diamond(vh,new Vector2(210,-110),15,Green);
             }
+        }
+        private void Atmosphere(VertexHelper vh,Rect r)
+        {
+            // Soft, mode-specific Home lighting; no camera, gameplay or input changes.
+            for(int i=0;i<12;i++)
+            {
+                float side=i%2==0?-1:1;float y=-820+i*145;float x=side*(420+Mathf.Sin(i*2.1f)*25);
+                var point=new Vector2(x,y+Mathf.Sin(Motion*Mathf.PI*2+i)*18);
+                Color light=Variant==2?Green:Variant==1?Gold:Cyan;
+                Glow(vh,point,Variant==2?34:54,A(light,.06f));
+                if(Variant==2){Quad(vh,new Rect(point.x-2,point.y-2,4,4),A(light,.32f));}
+                else {Line(vh,point-new Vector2(0,7),point+new Vector2(0,7),1,A(light,.2f));}
+            }
+            if(Variant==0)
+            {
+                float t=Motion;var star=Vector2.Lerp(new Vector2(-430,730),new Vector2(435,350),t);
+                GlowLine(vh,star-new Vector2(60,-27),star,1,A(Cyan,.14f*Mathf.Sin(t*Mathf.PI)));
+            }
+            Glow(vh,new Vector2(-480,390),290,A(Variant==2?Green:Cyan,.065f));
+            Glow(vh,new Vector2(490,-420),260,A(Variant==1?Gold:Variant==2?Green:new Color(.7f,.3f,1),.045f));
         }
         private static void Ellipse(VertexHelper vh,Vector2 c,float rx,float ry,float width,Color colour,float angle,float span)
         {
@@ -118,9 +139,13 @@ namespace SkyPulse.Mobile
         {
             Color accent=color;accent.a=1;
             var shadow=new Rect(r.xMin-2,r.yMin-9,r.width+4,r.height+4);Bevel(vh,shadow,18,new Color(0,0,0,.65f),new Color(0,0,0,.65f));
-            var bottom=Variant==2?new Color(.012f,.065f,.045f):new Color(.025f,.055f,.095f);var top=Variant==2?new Color(.025f,.11f,.073f):new Color(.075f,.13f,.18f);
+            var bottom=Variant==2?new Color(.006f,.034f,.024f):new Color(.013f,.027f,.046f);var top=Variant==2?new Color(.035f,.13f,.093f):new Color(.085f,.15f,.20f);
             if(Primary){bottom=Color.Lerp(bottom,accent,.14f);top=Color.Lerp(top,accent,.28f);}
             Bevel(vh,r,18,bottom,top);Border(vh,r,18,1.1f,A(accent,.55f));Border(vh,new Rect(r.xMin+5,r.yMin+5,r.width-10,r.height-10),14,.7f,new Color(1,1,1,.09f));
+            var glass=new Rect(r.xMin+8,r.yMax-r.height*.42f,r.width-16,r.height*.42f-8);
+            Gradient(vh,glass,new Color(.65f,.91f,1,0),new Color(.65f,.91f,1,Primary?.065f:.032f));
+            for(int i=0;i<3;i++)Line(vh,new Vector2(r.xMin+18,r.yMin+17+i*3),new Vector2(r.xMax-18,r.yMin+17+i*3),.5f,new Color(1,1,1,.018f));
+            Line(vh,new Vector2(r.xMin+24,r.yMax-9),new Vector2(r.xMax-28,r.yMax-9),.7f,new Color(.75f,.96f,1,.13f));
             GlowLine(vh,new Vector2(r.xMin+24,r.yMax),new Vector2(r.xMin+Mathf.Min(r.width*.44f,205),r.yMax),2,A(accent,.8f));Quad(vh,new Rect(r.xMax-46,r.yMin+10,24,2),A(accent,.62f));
             if(Ambient){float x=r.xMin+26+(r.width-64)*Motion;Glow(vh,new Vector2(x,r.yMax-2),13,A(accent,.24f));}
         }
@@ -155,7 +180,8 @@ namespace SkyPulse.Mobile
             Line(vh,new Vector2(r.xMin+10,r.yMax-4),new Vector2(r.xMax-14,r.yMax-4),1,new Color(.65f,1,.82f,wall?.08f:.19f));
             Border(vh,new Rect(r.xMin+5,r.yMin+5,r.width-10,r.height-10),5,.6f,A(accent,wall?.03f:.13f));
             if(wall){for(int i=-2;i<=2;i++)Line(vh,c+new Vector2(-s*.25f,i*s*.12f),c+new Vector2(s*.25f,i*s*.12f),2,A(Green,.11f));return;}
-            var icon=c+new Vector2(0,12);float radius=s*.18f;
+            var icon=c+new Vector2(0,12+(NodeKind==2 || NodeKind==5?Mathf.Sin(Motion*Mathf.PI*2)*1.5f:0));float radius=s*.18f;
+            if(Adjacent)Glow(vh,c,s*.55f,A(accent,.045f));
             if(NodeKind==5 || NodeKind==2)Glow(vh,icon,s*.40f,A(accent,.10f+Mathf.Sin(Motion*Mathf.PI*2)*.03f));
             if(NodeKind==2 || NodeKind==6)
             {

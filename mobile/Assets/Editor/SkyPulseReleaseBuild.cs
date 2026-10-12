@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using UnityEditor;
@@ -27,7 +28,11 @@ namespace SkyPulse.Mobile.Editor
             public string gameplaySourceSha256;
             public string iconSha256;
             public string publicLinksSha256;
+            public string sourceCommit;
+            public string sourceManifestSha256;
         }
+        [Serializable] private sealed class SourceFileEvidence { public string path; public string sha256; }
+        [Serializable] private sealed class SourceManifest { public SourceFileEvidence[] files; }
 
         private static string FileHash(string path)
         {
@@ -117,6 +122,12 @@ namespace SkyPulse.Mobile.Editor
             });
             if (report.summary.result != BuildResult.Succeeded)
                 throw new BuildFailedException($"iOS export failed: {report.summary.result}, {report.summary.totalErrors} errors.");
+            var sourcePaths = new List<string>(Directory.GetFiles("Assets", "*", SearchOption.AllDirectories));
+            sourcePaths.RemoveAll(path => Path.GetFileName(path).StartsWith(".", StringComparison.Ordinal));
+            sourcePaths.Add("Packages/manifest.json");sourcePaths.Add("ProjectSettings/ProjectSettings.asset");sourcePaths.Sort(StringComparer.Ordinal);
+            var manifest = new SourceManifest { files = sourcePaths.ConvertAll(path => new SourceFileEvidence { path = path.Replace('\\', '/'), sha256 = FileHash(path) }).ToArray() };
+            var manifestPath = Path.Combine(destination, "SkyPulse-source-manifest.json");
+            File.WriteAllText(manifestPath, JsonUtility.ToJson(manifest, true));
             var evidence = new BuildEvidence
             {
                 version = PlayerSettings.bundleVersion,
@@ -129,6 +140,8 @@ namespace SkyPulse.Mobile.Editor
                 gameplaySourceSha256 = FileHash("Assets/Scripts/SkyPulseNativeGame.cs"),
                 iconSha256 = FileHash("Assets/Branding/SkyPulseAppIcon.png"),
                 publicLinksSha256 = FileHash("Assets/Resources/SkyPulsePublicLinks.json"),
+                sourceCommit = Environment.GetEnvironmentVariable("SKYPULSE_SOURCE_COMMIT") ?? "Working tree; inspect source manifest",
+                sourceManifestSha256 = FileHash(manifestPath),
             };
             File.WriteAllText(Path.Combine(destination, "SkyPulse-build-info.json"), JsonUtility.ToJson(evidence, true));
             Debug.Log($"SKYPULSE_IOS_EXPORT_PASS: {Path.GetFullPath(destination)}");

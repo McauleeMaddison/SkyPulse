@@ -1,3 +1,7 @@
+## Private TestFlight authorization — 12 October 2026
+
+The owner requested additional visual polish and a fresh TestFlight build for iPhone testing. Build 8 is being prepared under this authorization. Public App Store submission remains on hold; the previously withdrawn public submission is not reinstated. See [PremiumTestFlight20261012](PremiumTestFlight20261012/README.md) for exact candidate/upload records.
+
 ## Relay gate presentation — 12 October 2026
 
 The [Relay hardware uplift](RelayGateUplift20261012/README.md) adds detailed transparent portal art to numbered gates, exit and Relay Home. Endless gate spacing remains the original 5.265 units; the earlier 9:16 animation preview showed proportionally tighter spacing than the taller iPhone screenshots. New preview framing uses 1320×2868. This is local source/Editor work newer than build 7; physical-device validation and Apple comparator clarification remain pending. The submission hold is maintained.

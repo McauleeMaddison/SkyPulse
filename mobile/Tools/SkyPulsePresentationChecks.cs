@@ -89,11 +89,14 @@ public static class SkyPulsePresentationChecks
         var testRelay=(RelaySession)Get(game,"relaySession");testRelay.Collect(700);testRelay.Advance(6,0);Check(testRelay.Pulse(0),"Visual shutter can be opened with existing model rules");Call(game,"UpdateRelayPresentation");
         var firstGate=((System.Collections.IList)Get(game,"relayShutters"))[0] as Transform;
         var shutter=firstGate.Find("Energy shutter").GetComponent<SpriteRenderer>();var previousShutterScale=shutter.transform.localScale;
+        var glint=firstGate.Find("Portal emitter orbit").GetChild(0);var previousGlint=glint.localPosition;
         float time=(float)Get(game,"protocolVisualTime");Call(game,"PauseFlight");Call(game,"UpdateProtocolPresentation",2f);
         Call(game,"UpdateRelayPresentation");Check(shutter.transform.localScale==previousShutterScale,"Pause preserves shutter opening state");
+        Check(glint.localPosition==previousGlint,"Pause freezes premium portal glints");
         Check((float)Get(game,"protocolVisualTime")==time,"Pause freezes relay presentation clock");
         Call(game,"ResumeFlight");Set(game,"reduceMotionEnabled",true);Call(game,"UpdateProtocolPresentation",2f);
         Call(game,"UpdateRelayPresentation");Check(shutter.color.a==0 && firstGate.Find("Activation window").GetComponent<SpriteRenderer>().color.a==0,"Reduced Motion clears activated shutter immediately");
+        var reducedGlint=glint.localPosition;Call(game,"UpdateProtocolPresentation",1f);Call(game,"UpdateRelayPresentation");Check(glint.localPosition==reducedGlint,"Reduced Motion freezes premium portal glints");
         Check((float)Get(game,"protocolVisualTime")==time,"Reduced Motion freezes relay scenery and charge animation");
         Call(game,"ResetToMenu");Call(game,"OpenModeSelection");
         Check(((RectTransform)Get(game,"modeDropdownClip")).rect.height==496,"Reduced Motion opens complete dropdown immediately");
