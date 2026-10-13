@@ -1,3 +1,11 @@
+## Private TestFlight follow-up — 13 October 2026
+
+**SkyPulse 1.0.0 (11) is uploaded, processed and Testing in the existing one-person SkyPulse Internal group.** Notes were saved and verified after reload. It includes the owner's build 10 feedback: daily refreshed Relay circuits, Next Mission, Main Menu on each mode's result, slightly wider Endless spacing/smaller gaps and cleaner gameplay overlays. Fourteen automated QA markers, exact source/export agreement and strict native archive/packaged metadata checks pass. Fresh build 11 physical gameplay and sustained FPS checks remain pending.
+
+Public App Review remains on hold. The public draft/build 9 selection was not submitted or replaced. Build 11 listing copy is prepared locally. Apple's unidentified similarity comparison remains unresolved. See [the current release guide](DailyRoutes20261013/README.md) and [publication evidence](DailyRoutes20261013/RELEASE_RECORD.json). The vendor UnityRuntime dSYM warning limits engine crash symbolication; upload succeeded.
+
+---
+
 ## Private TestFlight update — 13 October 2026
 
 **SkyPulse 1.0.0 (10) is uploaded, processed and Testing in the existing one-person SkyPulse Internal group.** Build-specific tester notes are saved and matched after reload. It contains automatic numbered Relay crystal gates, responsive one-thumb controls, eight Blackout sectors with instant saved progression, pooled presentation and mode-specific Home controls. Twelve automated QA pass markers and strict native signing/packaged metadata checks pass. Fresh physical-device gameplay and sustained FPS checks are pending; do not reuse older owner checks as build 10 evidence.

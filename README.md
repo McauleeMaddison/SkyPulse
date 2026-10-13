@@ -1,6 +1,6 @@
 # SkyPulse Arcade
 
-> **Current candidate: build 11.** The owner’s build 10 feedback adds daily refreshed Relay circuits, direct Next Mission, Main Menu on every result, small Endless spacing/gap tuning and cleaner gameplay overlays. See [the follow-up release guide](mobile/Release/DailyRoutes20261013/README.md). Build 10 is already Testing in SkyPulse Internal; build 11 publication is recorded in its release folder.
+> **Current candidate: build 11.** The owner’s build 10 feedback adds daily refreshed Relay circuits, direct Next Mission, Main Menu on every result, small Endless spacing/gap tuning and cleaner gameplay overlays. See [the follow-up release guide](mobile/Release/DailyRoutes20261013/README.md). **Build 11 is now processed and Testing in SkyPulse Internal**, with matching tester notes saved. Physical build 11 gameplay checks remain pending.
 
 > **App Review hold:** the public version remains Prepare for Submission/unsubmitted. Build 9 and its updated metadata are saved in the draft and available for private TestFlight testing. Await Apple’s clarification and renewed owner authorization before resubmitting. See [current status](mobile/Release/REVIEW_STATUS.md).
 

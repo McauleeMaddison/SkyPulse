@@ -1,6 +1,6 @@
 # SkyPulse daily routes and result navigation — build 11
 
-Owner feedback on TestFlight build 10 requested daily refreshed Relay missions, wider Endless pipe spacing, slightly smaller openings, direct next-mission navigation, Main Menu on every mode's result, and cleaner gameplay text. This is the follow-up candidate, **1.0.0 (11)**. The build 10 record remains historical.
+Owner feedback on TestFlight build 10 requested daily refreshed Relay missions, wider Endless pipe spacing, slightly smaller openings, direct next-mission navigation, Main Menu on every mode's result, and cleaner gameplay text. **1.0.0 (11) is now processed and Testing in SkyPulse Internal**, with build-specific notes saved and matched after reload. The build 10 record remains historical.
 
 ## Behaviour
 
@@ -21,3 +21,11 @@ Rendered from the actual runtime in an isolated QA save; not physical-device scr
 ![Relay next mission](relay-next-result.png)
 
 ![Endless Main Menu](endless-result.png)
+
+## Private TestFlight availability
+
+The existing one-person internal group shows **Testing** for 1.0.0 (11). Update SkyPulse Arcade in TestFlight on iPhone. Physical checks remain pending for this exact build. No public review or external beta review was submitted.
+
+![Build 11 Testing](testflight-build11-testing.jpg)
+
+![Current three modes](three-gameplay.png)

@@ -1,0 +1,40 @@
+{
+  "limits": {
+    "name": {
+      "length": 15,
+      "limit": 30,
+      "unit": "characters"
+    },
+    "subtitle": {
+      "length": 24,
+      "limit": 30,
+      "unit": "characters"
+    },
+    "promotionalText": {
+      "length": 160,
+      "limit": 170,
+      "unit": "characters"
+    },
+    "description": {
+      "length": 2226,
+      "limit": 4000,
+      "unit": "characters"
+    },
+    "keywords": {
+      "length": 80,
+      "limit": 100,
+      "unit": "UTF-8 bytes"
+    }
+  },
+  "limitations": [
+    "No global duplication/comparator test or rights certification.",
+    "Later source, policy and live listing changes require renewed checks."
+  ],
+  "build": "11",
+  "uniqueUnityGuids": 197,
+  "canonicalRuntimeLinks": true,
+  "identityRetained": true,
+  "advertisingAnalyticsPurchasingPackages": false,
+  "archiveIdentityPrivacyAndPackagedLinks": true,
+  "passed": true
+}
