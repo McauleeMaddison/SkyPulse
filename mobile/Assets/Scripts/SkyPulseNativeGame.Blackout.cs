@@ -159,11 +159,11 @@ namespace SkyPulse.Mobile
                 blackoutStatusText=MissionText(blackoutScreen.transform,"",-508,32,BlackoutIce,950,52);
                 blackoutPulseText=MissionText(blackoutScreen.transform,"",-562,28,BlackoutMint,950,48);blackoutPulseText.raycastTarget=false;
                 blackoutActionText=MissionText(blackoutScreen.transform,"",-562,25,Hex("#8eacba"),950,48);
-                MissionText(blackoutScreen.transform,"TAP A NEIGHBOUR · FIREWALLS AUTO-BREACH",-634,23,Hex("#a0bac9"),950,38);
-                MissionText(blackoutScreen.transform,"BLOCKED MOVE +1 TRACE · FAILED BREACH +3 TRACE",-678,21,Hex("#a0bac9"),950,38);
+
+
                 BlackoutButton(blackoutScreen.transform,"RESTART",-235,-785,430,()=>LaunchMission(SkyPulseMode.BlackoutProtocol,selectedMission),112);
                 BlackoutButton(blackoutScreen.transform,"PAUSE",235,-785,430,PauseFlight,112);
-                MissionText(blackoutScreen.transform,"RECOVER THE CORES · REACH THE UPLINK",-904,25,BlackoutMint,950,40);
+
             }
             blackoutTileCount=p.Width*p.Height;
             float stride=Mathf.Min(164,960f/p.Width),vertical=136,top=24+(p.Height-1)*vertical*.5f;
@@ -219,7 +219,7 @@ namespace SkyPulse.Mobile
             }
             int spare=p.TraceLimit-s.Trace;
             blackoutStatusText.text=s.Packets==s.RequiredPackets?"ALL CORES SECURED · REACH THE UPLINK":(s.RequiredPackets-s.Packets)+" CORE"+(s.RequiredPackets-s.Packets==1?"":"S")+" REMAINING";
-            blackoutActionText.text=spare<=2?"TRACE CRITICAL · "+spare+" REMAINING":"TRACE RESERVE "+spare+" · PLAN YOUR NEXT MOVE";
+            blackoutActionText.text=spare<=2?"TRACE CRITICAL · "+spare+" REMAINING":"";
             var actionColour=spare<=2?Hex("#ff8595"):Hex("#8eacba");actionColour.a=blackoutActionElapsed<blackoutActionDuration&&!string.IsNullOrEmpty(blackoutPulseText.text)?0:1;blackoutActionText.color=actionColour;
         }
         void TouchBlackoutNode(int tile)
@@ -289,7 +289,7 @@ namespace SkyPulse.Mobile
             int current=selectedMission;
             BlackoutButton(missionResultScreen.transform,won&&current==7?"REPLAY CAMPAIGN":"RETRY SECTOR",0,-390,900,()=>LaunchMission(SkyPulseMode.BlackoutProtocol,won&&current==7?0:current),110);
             BlackoutButton(missionResultScreen.transform,"SECTOR MAP",0,-545,900,OpenBlackoutSectors);
-            BlackoutButton(missionResultScreen.transform,"HOME",0,-690,900,ResetToMenu);
+            BlackoutButton(missionResultScreen.transform,"MAIN MENU",0,-690,900,ResetToMenu);
             MissionText(missionResultScreen.transform,won && current==7?"BLACKOUT CAMPAIGN COMPLETE":"A DEEPER NETWORK AWAITS",-840,22,BlackoutMint);
         }
     }

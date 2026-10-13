@@ -28,7 +28,7 @@ namespace SkyPulse.Mobile
         public const string SaveKey="skypulse.daily.v1", BackupKey="skypulse.daily.v1.backup", WalletKey="skypulse.native.crystals";
         public static readonly string[] Ids={"daily.endless.gates","daily.relay.activate","daily.blackout.intro","daily.flight.crystals"};
         public static readonly int[] Targets={10,3,1,10};
-        public static readonly string[] Objectives={"Pass 10 Endless gates","Activate 3 Pulse Relay relays","Complete Packet Recovery","Collect 10 flight pickup crystals"};
+        public static readonly string[] Objectives={"Pass 10 Endless gates","Open 3 Relay gates","Clear Blackout sector 01","Collect 10 flight pickup crystals"};
         public static readonly string[] Modes={"ENDLESS ROUTE","PULSE RELAY","BLACKOUT PROTOCOL","ENDLESS ROUTE"};
         readonly IMissionStore store;
         readonly Func<DateTime> clock;

@@ -1,0 +1,11 @@
+Build 11 — follow-up to your build 10 feedback
+
+Pulse Relay now offers four new seeded circuits every UTC day. Routes and today's medals remain stable through app restarts, then refresh at the local reset time shown on the circuit map. Names and approaches change daily; all four circuits are free. Numbered spectral crystals still open their gates automatically, with tap-to-flap flight.
+
+After a Relay clear, choose NEXT MISSION to launch the next circuit directly. The fourth circuit ends today's sequence. All three modes now have MAIN MENU on their result screens.
+
+Endless pipe spacing is about 6% wider and all openings are 0.18 world units smaller. Flight handling, speed, world width, scores and economy are retained. Repeated gameplay instruction overlays are removed; live objectives and warnings remain.
+
+Please test these changes on iPhone: daily circuits/Next Mission, all Main Menu actions, Endless cadence/openings, real thumb input, automatic gates, Blackout immediate progression, pause/retry, sound/haptics/Reduced Motion, and saved progress after relaunch. Editor regressions cover daily rollover/rollback, save failures and 30/60/120 FPS; physical gameplay and sustained FPS still require feedback.
+
+Private internal testing only. Public App Review remains on hold.

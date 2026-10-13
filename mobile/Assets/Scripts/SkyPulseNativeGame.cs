@@ -376,7 +376,7 @@ namespace SkyPulse.Mobile
         private const float PipeFallbackCapHeight = .62f;
         private const float TopPipeOverscan = .68f;
         private const float BottomPipeFloorOverlap = .62f;
-        private const float PipeSpacingFraction = .52f;
+        private const float PipeSpacingFraction = .552f;
         private const int PipeBodyCropTopPixels = 145;
         private const int PipeBodyCropBottomPixels = 145;
         private const float PipeMinimumVisibleHeight = 1.56f;
@@ -2121,10 +2121,13 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             var upgrades = CreateNeonButton(card, "TECH TREE", new Vector2(177f, -397f), new Vector2(326f, 100f), Hex("#ffc34d"));
             upgrades.GetComponentInChildren<Text>().fontSize = 26;
             upgrades.onClick.AddListener(OpenUpgrades);
-            var share = CreateNeonButton(card, "SHARE", new Vector2(0f, -509f), new Vector2(680f, 88f), Hex("#8fa7c4"));
+            var share = CreateNeonButton(card, "SHARE", new Vector2(-177f, -509f), new Vector2(326f, 88f), Hex("#8fa7c4"));
             resultShareText = share.GetComponentInChildren<Text>();
             resultShareText.fontSize = 26;
             share.onClick.AddListener(CopyRunSummaryToClipboard);
+            var menu = CreateNeonButton(card, "MAIN MENU", new Vector2(177f, -509f), new Vector2(326f, 88f), Hex("#8fa7c4"));
+            menu.GetComponentInChildren<Text>().fontSize = 26;
+            menu.onClick.AddListener(ResetToMenu);
             return root;
         }
 
@@ -5246,12 +5249,12 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
         private static float RouteGapFraction(int routeScore)
         {
             // Every opening belongs to the same steadily tightening course.
-            if (routeScore < 15) return Mathf.Lerp(.32f, .282f, routeScore / 14f);
-            if (routeScore < 25) return .28f;
-            if (routeScore < 30) return Mathf.Lerp(.277f, .265f, (routeScore - 25) / 4f);
-            if (routeScore < 40) return .26f;
-            if (routeScore < 45) return Mathf.Lerp(.257f, .245f, (routeScore - 40) / 4f);
-            return .24f;
+            if (routeScore < 15) return Mathf.Lerp(.31f, .272f, routeScore / 14f);
+            if (routeScore < 25) return .27f;
+            if (routeScore < 30) return Mathf.Lerp(.267f, .255f, (routeScore - 25) / 4f);
+            if (routeScore < 40) return .25f;
+            if (routeScore < 45) return Mathf.Lerp(.247f, .235f, (routeScore - 40) / 4f);
+            return .23f;
         }
 
         private static float RouteMaximumCenterStep(int routeScore)
@@ -8150,8 +8153,7 @@ hangarInformationCanvas != null)
         private void UpdateFlightCoach()
         {
             if (hudCoachText == null) return;
-            var activePowerUp = hudPowerUpText != null && hudPowerUpText.gameObject.activeSelf;
-            var showCoach = state == FlightState.Playing && flightCoachStage < 2 && !activePowerUp;
+            var showCoach = false; // Controls are explained in the guide, not repeated over gameplay.
             hudCoachText.gameObject.SetActive(showCoach);
             if (!showCoach) return;
 

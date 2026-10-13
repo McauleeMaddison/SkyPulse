@@ -66,5 +66,6 @@
     "testflight-build10-testing.jpg": "50631a1c3ec3ec69fa6b77ae7c1a9d74f44bed1e55700ac61f718548defd4d71",
     "testflight-notes-saved.jpg": "4be8faae47485822a27bbdadea484c22532a1300e0bc74bf41f3ff0c8e54ad56"
   },
-  "directDeviceInstallation": "Not performed: automatic approval review rejected direct installation over the existing app due to saved-state overwrite risk; delivery completed through TestFlight instead."
+  "directDeviceInstallation": "Not performed: automatic approval review rejected direct installation over the existing app due to saved-state overwrite risk; delivery completed through TestFlight instead.",
+  "ownerDeviceFeedback": "Owner used build 10 and requested daily Relay refresh, direct next/main-menu navigation, slightly wider Endless spacing/smaller gaps and cleaner gameplay copy. No full physical-device pass was reported."
 }

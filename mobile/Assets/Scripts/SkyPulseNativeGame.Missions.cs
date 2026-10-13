@@ -12,6 +12,7 @@ namespace SkyPulse.Mobile
         private BlackoutSession blackoutSession;
         private SkyPulseDailyMissions dailyMissions;
         private SkyPulseModeProgress missionProgress;
+        private SkyPulseDailyRelay dailyRelay;
         private IMissionStore missionStore;
         private SkyPulseMode homeProtocol;
         private Image homeProtocolBackdrop;
@@ -43,12 +44,20 @@ namespace SkyPulse.Mobile
             missionStore=new PlayerPrefsMissionStore();
             dailyMissions=new SkyPulseDailyMissions(missionStore,()=>DateTime.UtcNow);
             missionProgress=new SkyPulseModeProgress(missionStore);
+            dailyRelay=new SkyPulseDailyRelay(missionStore,()=>DateTime.UtcNow);
             blackoutCampaign=new BlackoutCampaignProgress(missionStore);
         }
         private void CheckDailyPeriod()
         {
             if(dailyMissions==null)return;
-            try { dailyMissions.EnsurePeriod(); crystals=missionStore.GetInt(SkyPulseDailyMissions.WalletKey,crystals); }
+            try {
+                dailyMissions.EnsurePeriod();crystals=missionStore.GetInt(SkyPulseDailyMissions.WalletKey,crystals);
+                if(dailyRelay!=null && dailyRelay.EnsurePeriod())
+                {
+                    if(missionSelectionScreen!=null && missionSelectionScreen.activeSelf && activeMode==SkyPulseMode.PulseRelay)OpenMissionSelection(SkyPulseMode.PulseRelay);
+                    else if(homeScreen!=null && homeScreen.activeSelf && homeProtocol==SkyPulseMode.PulseRelay)ApplyHomeProtocolTheme();
+                }
+            }
             catch(Exception e) { Debug.LogWarning("SkyPulse mission save will retry: "+e.GetType().Name); }
         }
         private void RecordDailyEvent(DailyGameplayEvent kind,int amount=1)
@@ -176,20 +185,20 @@ namespace SkyPulse.Mobile
         private void OpenMissionSelection(SkyPulseMode mode)
         {
             if(mode==SkyPulseMode.BlackoutProtocol){OpenBlackoutSectors();return;}
-            SetHomeProtocol(mode);
+            CheckDailyPeriod();SetHomeProtocol(mode);
             ResetToMenu();homeScreen.SetActive(false);activeMode=mode;
             ClearScreen(missionSelectionScreen);missionSelectionScreen.SetActive(true);
             var colour=mode==SkyPulseMode.PulseRelay?Hex("#ffc34d"):Hex("#65ff9d");
             var architecture=missionSelectionScreen.GetComponentInChildren<SkyPulseCircuitGraphic>();architecture.Variant=(int)mode;architecture.CinematicUnderlay=true;var sceneImage=architecture.transform.parent.GetComponent<Image>();sceneImage.sprite=LoadSprite(mode==SkyPulseMode.PulseRelay?RelayStationPath:BlackoutCorePath);sceneImage.color=Color.white;architecture.SetVerticesDirty();
             MissionText(missionSelectionScreen.transform,mode==SkyPulseMode.PulseRelay?"PULSE RELAY":"BLACKOUT PROTOCOL",870,50,colour);
-            MissionText(missionSelectionScreen.transform,"TUTORIAL + THREE MISSIONS · ALL AVAILABLE",795,25);
+            MissionText(missionSelectionScreen.transform,"FOUR DAILY CIRCUITS · REFRESH "+dailyRelay.ResetUtc.ToLocalTime().ToString("HH:mm")+" LOCAL",795,25);
             for(int i=0;i<4;i++)
             {
                 int index=i;float y=555-i*340;
                 var card=PremiumPanel(missionSelectionScreen.transform,"Mission "+i,new Vector2(0,y),new Vector2(940,310),(int)mode,colour);
-                string name=mode==SkyPulseMode.PulseRelay?RelayMission.All[i].Name:BlackoutPuzzle.All[i].Name;
-                string briefing=mode==SkyPulseMode.PulseRelay?RelayMission.All[i].Briefing:BlackoutPuzzle.All[i].Briefing;
-                int medal=(mode==SkyPulseMode.PulseRelay?missionProgress.Relay:missionProgress.Blackout).medals[i];
+                string name=mode==SkyPulseMode.PulseRelay?dailyRelay.Missions[i].Name:BlackoutPuzzle.All[i].Name;
+                string briefing=mode==SkyPulseMode.PulseRelay?dailyRelay.Missions[i].Briefing:BlackoutPuzzle.All[i].Briefing;
+                int medal=(mode==SkyPulseMode.PulseRelay?dailyRelay.Data.medals:missionProgress.Blackout.medals)[i];
                 MissionText(card,name,117,30,colour,850,48);
                 var brief=CreateText(card,briefing,new Vector2(0,25),new Vector2(850,114),24,Hex("#c6dded"),TextAnchor.MiddleCenter,FontStyle.Normal);
                 brief.horizontalOverflow=HorizontalWrapMode.Wrap;brief.verticalOverflow=VerticalWrapMode.Truncate;
@@ -201,6 +210,8 @@ namespace SkyPulse.Mobile
         }
         private void LaunchMission(SkyPulseMode mode,int index)
         {
+            CheckDailyPeriod();
+            if(mode==SkyPulseMode.PulseRelay && (index<0 || index>=dailyRelay.Missions.Length))return;
             if(mode==SkyPulseMode.BlackoutProtocol && !blackoutCampaign.CanPlay(index))return;
             FenceGameplayBoundary();
             SetHomeProtocol(mode);
@@ -211,7 +222,7 @@ namespace SkyPulse.Mobile
                 BeginFlight();foreach(var pair in pipePool)pair.Root.SetActive(false);
                 foreach(var pickup in powerUpPool){pickup.Active=false;pickup.Root.SetActive(false);}
                 foreach(var pickup in crystalPickupPool){pickup.Active=false;pickup.Root.SetActive(false);}
-                relaySession=new RelaySession(RelayMission.All[index]);CreateRelayWorld();BuildRelayHud();
+                relaySession=new RelaySession(dailyRelay.Missions[index]);CreateRelayWorld();BuildRelayHud();
             }
             else
             {
@@ -257,7 +268,7 @@ namespace SkyPulse.Mobile
             relayStatusText=ProtocolStat(relayHudScreen.transform,"PASSED", "0",320,665,300,1,Hex("#65ffad"));
             MissionButton(header,"Ⅱ",410,28,100,PauseFlight,Hex("#8eeaff"),100);
             relayHintText=MissionText(relayHudScreen.transform,"CRYSTALS OPEN THEIR MATCHING GATES",-800,25,Hex("#c4f4f5"),940,58);
-            MissionText(relayHudScreen.transform,"TAP THE FLIGHT AREA TO FLAP",-885,23,Hex("#a3c7d8"));
+
             relayDisplayedCells=relayDisplayedPassed=relayDisplayedOpen=-1;relayUnlockFeedback=0;
             UpdateRelayPresentation();
         }
@@ -273,7 +284,8 @@ namespace SkyPulse.Mobile
             if(relayDisplayedCells!=relaySession.Cells){relayDisplayedCells=relaySession.Cells;relayChargeText.text=relayDisplayedCells+" / "+(relaySession.Mission.RelayCount*2);}
             if(relayDisplayedOpen!=relaySession.UnlockedGates){relayDisplayedOpen=relaySession.UnlockedGates;relayProgressText.text=relayDisplayedOpen+" / "+relaySession.Mission.RelayCount;}
             if(relayDisplayedPassed!=relaySession.Passed){relayDisplayedPassed=relaySession.Passed;relayStatusText.text=relayDisplayedPassed+" / "+relaySession.Mission.RelayCount;}
-            string hint=relayUnlockFeedback>0?relayUnlockCaption:relaySession.Passed==relaySession.Mission.RelayCount?"CIRCUIT OPEN · REACH THE GREEN EXIT":"CRYSTALS OPEN THEIR MATCHING GATES";
+            string hint=relayUnlockFeedback>0?relayUnlockCaption:relaySession.Passed==relaySession.Mission.RelayCount?"REACH THE GREEN EXIT":"";
+            if(relayHintText.gameObject.activeSelf!=(hint.Length>0))relayHintText.gameObject.SetActive(hint.Length>0);
             if(relayHintText.text!=hint)relayHintText.text=hint;
             for(int i=0;i<relayShutters.Count;i++)relayShutters[i].localPosition=new Vector3(BirdX+relaySession.Mission.RelayX(i)-relaySession.Distance,0,0);
             for(int i=0;i<relayCells.Count;i++)if(relayCells[i].gameObject.activeSelf)relayCells[i].localPosition=new Vector3(BirdX+relayCellPositions[i].x-relaySession.Distance,relayCellPositions[i].y,0);
@@ -382,7 +394,7 @@ namespace SkyPulse.Mobile
             if(won)
             {
                 bool saved=true;
-                try { if(activeMode==SkyPulseMode.BlackoutProtocol)blackoutCampaign.Complete(selectedMission,medal,blackoutSession.Trace);else missionProgress.Complete(activeMode,selectedMission,medal); }
+                try { if(activeMode==SkyPulseMode.BlackoutProtocol)blackoutCampaign.Complete(selectedMission,medal,blackoutSession.Trace);else dailyRelay.Complete(relaySession.Mission.Day,selectedMission,medal); }
                 catch(Exception e) { saved=false;Debug.LogWarning("SkyPulse medal save failed: "+e.GetType().Name);reason+=" · SAVE FAILED"; }
                 if(saved && activeMode==SkyPulseMode.BlackoutProtocol && selectedMission==0)RecordDailyEvent(DailyGameplayEvent.IntroBlackoutCompleted);
                 if(saved && activeMode==SkyPulseMode.BlackoutProtocol && selectedMission<SkyPulseBlackoutCampaign.Stages.Length-1)
@@ -396,15 +408,20 @@ namespace SkyPulse.Mobile
             ClearScreen(missionResultScreen);missionResultScreen.SetActive(true);missionResultScreen.transform.SetAsLastSibling();
             if(activeMode==SkyPulseMode.BlackoutProtocol){BuildBlackoutResult(won,reason,medal);Play(won?unlockSound:crashSound);return;}
             var colour=won?Hex("#65ff9d"):Hex("#ffc34d");
-            MissionText(missionResultScreen.transform,won?"PROTOCOL COMPLETE":"PROTOCOL INTERRUPTED",500,44,colour);
-            MissionText(missionResultScreen.transform,reason,360,34,colour);
-            MissionText(missionResultScreen.transform,won?"MEDAL · "+MedalName(medal):"RETRY THE MISSION TO RESTORE THIS CIRCUIT",230,30);
-            MissionText(missionResultScreen.transform,"Mission completion saves medals. Daily tasks reward crystals.",90,24);
-            var mode=activeMode;int mission=selectedMission;
-            MissionButton(missionResultScreen.transform,"RETRY MISSION",0,-85,850,()=>LaunchMission(mode,mission),colour);
-            MissionButton(missionResultScreen.transform,"MISSIONS",0,-235,850,()=>OpenMissionSelection(mode));
-            MissionButton(missionResultScreen.transform,"MISSION CONTROL",0,-385,850,OpenMissionControl,Hex("#ffc34d"));
-            MissionButton(missionResultScreen.transform,"MODE SELECTION",0,-535,850,OpenModeSelection);
+            var architecture=missionResultScreen.GetComponentInChildren<SkyPulseCircuitGraphic>();architecture.Variant=1;architecture.CinematicUnderlay=true;var backing=architecture.transform.parent.GetComponent<Image>();backing.sprite=LoadSprite(RelayStationPath);backing.color=Color.white;
+            MissionText(missionResultScreen.transform,"PULSE RELAY",840,48,Hex("#ffd078"));
+            var report=PremiumPanel(missionResultScreen.transform,"Circuit report",new Vector2(0,365),new Vector2(930,650),1,colour);
+            MissionText(report,won?"CIRCUIT COMPLETE":"FLIGHT INTERRUPTED",240,40,colour);
+            MissionText(report,relaySession.Mission.Name,150,30);
+            MissionText(report,won?MedalName(medal)+" MEDAL":reason,42,36,colour,860,100);
+            MissionText(report,"CRYSTALS  "+relaySession.Cells+" / "+(relaySession.Mission.RelayCount*2),-75,28,Hex("#aeefff"));
+            MissionText(report,"GATES  "+relaySession.Passed+" / "+relaySession.Mission.RelayCount,-145,28,Hex("#94ffe1"));
+            if(reason.Contains("SAVE FAILED"))MissionText(report,"MEDAL SAVE FAILED · RETRY",-240,26,Hex("#ff8595"));
+            var mode=activeMode;int mission=selectedMission;long day=relaySession.Mission.Day;
+            if(won && mission<3 && !reason.Contains("SAVE FAILED"))MissionButton(missionResultScreen.transform,"NEXT MISSION",0,-90,850,()=>LaunchMission(mode,day==dailyRelay.Data.day?mission+1:HomeNextMission()),colour,112);
+            MissionButton(missionResultScreen.transform,"RETRY MISSION",0,won&&mission<3?-240:-90,850,()=>LaunchMission(mode,mission),colour,112);
+            MissionButton(missionResultScreen.transform,"DAILY CIRCUITS",0,-405,850,()=>OpenMissionSelection(mode));
+            MissionButton(missionResultScreen.transform,"MAIN MENU",0,-550,850,ResetToMenu);
             Play(won?unlockSound:crashSound);
         }
         private void OpenMissionControl()

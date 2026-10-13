@@ -1,0 +1,3 @@
+# Contribution record
+
+Owner-requested follow-up authored with Codex assistance in the existing Unity project on 13 October 2026: deterministic bounded daily Relay generation and separate medal saves, result navigation, two narrowly authorized Endless tuning deltas and removal of repeated gameplay instruction overlays. Existing generated portal/crystal/backdrop artwork and procedural Blackout geometry are reused. No new external code sample, asset, shader, audio or font was introduced. Earlier rights/origin records remain applicable with their stated limits. This is not a certification of exclusivity or clearance of Apple's unidentified comparison.

@@ -89,7 +89,7 @@ namespace SkyPulse.Mobile
         int HomeNextMission()
         {
             if(homeProtocol==SkyPulseMode.BlackoutProtocol)return blackoutCampaign.Data.medals[7]>0?0:blackoutCampaign.Unlocked;
-            for(int i=0;i<RelayMission.All.Length;i++)if(missionProgress.Relay.medals[i]==0)return i;
+            for(int i=0;i<RelayMission.All.Length;i++)if(dailyRelay.Data.medals[i]==0)return i;
             return 0;
         }
         void ApplyModeHomeLayout()
@@ -107,14 +107,14 @@ namespace SkyPulse.Mobile
             foreach(var button in new[]{modeHomeMap,modeHomeGuide}){var surface=button.targetGraphic as SkyPulseCircuitGraphic;surface.Variant=(int)homeProtocol;surface.color=ProtocolAccent(homeProtocol);surface.SetVerticesDirty();}
             if(endless){menuModeDetailText.rectTransform.anchoredPosition=new Vector2(0,-491);menuRouteText.rectTransform.anchoredPosition=new Vector2(0,-540);homeActivityCopy.text="FLIGHT · CIRCUITS · PUZZLES";return;}
             int next=HomeNextMission(),completed=0,total=relay?4:8;
-            foreach(int medal in relay?missionProgress.Relay.medals:blackoutCampaign.Data.medals)if(medal>0)completed++;
-            homeBestCaption.text=relay?"CIRCUITS CLEARED":"SECTORS CLEARED";menuBestText.text=completed+" / "+total;
+            foreach(int medal in relay?dailyRelay.Data.medals:blackoutCampaign.Data.medals)if(medal>0)completed++;
+            homeBestCaption.text=relay?"TODAY CLEARED":"SECTORS CLEARED";menuBestText.text=completed+" / "+total;
             homeLaunchButton.GetComponentInChildren<Text>().text=relay?"FLY CIRCUIT "+(next+1).ToString("00"):"ENTER SECTOR "+(next+1).ToString("00");
             modeHomeMap.GetComponentInChildren<Text>().text=relay?"CIRCUIT MAP":"SECTOR MAP";
             homeActivityCopy.text=relay?"TAP TO FLY · CRYSTALS OPEN GATES":"ONE THUMB · RECOVER THE CORE";
             menuModeDetailText.rectTransform.anchoredPosition=relay?new Vector2(0,-640):new Vector2(0,-478);
             menuRouteText.rectTransform.anchoredPosition=relay?new Vector2(0,-745):new Vector2(0,-540);
-            if(relay){menuModeDetailText.text="SPECTRAL CRYSTALS · AUTOMATIC GATES";menuRouteText.text="NEXT · "+RelayMission.All[next].Name;}
+            if(relay){menuModeDetailText.text="SPECTRAL CRYSTALS · AUTOMATIC GATES";menuRouteText.text="NEXT · "+dailyRelay.Missions[next].Name;}
             else{menuModeDetailText.text="CIPHER KEYS · PHASE ROUTING · TRACE";menuRouteText.text="NEXT · "+SkyPulseBlackoutCampaign.Stages[next].Name;}
         }
         void OpenModeGuide()
@@ -127,7 +127,7 @@ namespace SkyPulse.Mobile
             MissionText(card,relay?"Each fresh tap flaps your bird. Pause and menus never flap.":"Your core moves immediately. Its trail follows smoothly; you can make the next move at once.",300,29,null,820,150);
             MissionText(card,relay?"Collect a numbered crystal to open its matching gate automatically. A spare crystal improves your medal.":"Firewalls auto-breach on the first tap: one charge and three trace. Tap again to enter. Keys open their matching locks.",70,29,null,820,200);
             MissionText(card,relay?"Follow the crystal trail through each aperture, then fly through the green exit.":"Mint and amber routes depend on circuit phase. Enter a SWITCH to change phase. Collect every CORE, then reach UPLINK.",-180,29,null,820,190);
-            MissionText(card,relay?"Four circuits. Your equipped bird is cosmetic; Tech Tree upgrades do not change Relay.":"A blocked move adds one trace. A failed firewall breach adds three. Exhausted trace loses the sector. Each clear activates the next sector immediately.",-415,27,accent,820,180);
+            MissionText(card,relay?"Four new circuits each UTC day. Today’s medals are saved until refresh. Your equipped bird is cosmetic; Tech Tree does not alter Relay.":"A blocked move adds one trace. A failed firewall breach adds three. Exhausted trace loses the sector. Each clear activates the next sector immediately.",-415,27,accent,820,180);
             MissionButton(modeGuideScreen.transform,"BACK",0,-785,850,()=>modeGuideScreen.SetActive(false),accent,112);
         }
     }

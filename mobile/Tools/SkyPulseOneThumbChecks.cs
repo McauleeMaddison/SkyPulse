@@ -42,8 +42,8 @@ public static class SkyPulseOneThumbChecks
         foreach(int fps in new[]{30,60,120})
         {
             Call(game,"LaunchMission",SkyPulseMode.PulseRelay,0);var r=(RelaySession)Get(game,"relaySession");
-            var cells=(List<Vector2>)Get(game,"relayCellPositions");cells[0]=new Vector2(12,0);r.Move(11.97f);
-            Set(game,"birdY",0f);Set(game,"birdVelocity",0f);Set(game,"shieldCharges",0);Set(game,"shieldImmunityTimer",0f);
+            var cells=(List<Vector2>)Get(game,"relayCellPositions");cells[0]=new Vector2(12,r.Mission.RelayY[0]);r.Move(11.97f);
+            Set(game,"birdY",r.Mission.RelayY[0]);Set(game,"birdVelocity",0f);Set(game,"shieldCharges",0);Set(game,"shieldImmunityTimer",0f);
             Call(game,"SimulateRelay",1f/fps);
             Check(r.IsOpen(0)&&r.Cells==1&&r.HazardHits==0&&r.State==MissionSessionState.Playing,"Same-frame crystal + gate succeeds at "+fps+" FPS before opening animation");
             Check(((List<float>)Get(game,"relayOpeningTimes"))[0]==(float)Get(game,"protocolVisualTime"),"Logical opening is immediate at animation start");

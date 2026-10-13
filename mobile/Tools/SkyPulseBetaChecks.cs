@@ -25,7 +25,7 @@ public static class SkyPulseBetaChecks
         for(int score=0;score<=300;score++)
         {
             float s=(float)Static("RouteSpeedFraction",score), g=(float)Static("RouteGapFraction",score);
-            Check(s>=speed && s<=.48001f && g<=gap && g>=.23999f,"Non-monotonic or uncapped route at "+score);
+            Check(s>=speed && s<=.48001f && g<=gap && g>=.22999f,"Non-monotonic or uncapped route at "+score);
             if(score>0 && score<=15) Check(s>speed && g<gap,"Early route has a plateau at "+score);
             if(score==15 || score==30 || score==40 || score==45 || score==60) Check(s-speed<.011f && gap-g<.006f,"World transition difficulty cliff");
             speed=s;gap=g;

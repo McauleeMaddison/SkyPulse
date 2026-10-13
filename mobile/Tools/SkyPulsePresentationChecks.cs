@@ -25,7 +25,7 @@ public static class SkyPulsePresentationChecks
         {
             var widthTarget=RenderTexture.GetTemporary(size.x,size.y,24);camera.targetTexture=widthTarget;
             Call(game,"StartFlight");float spacing=(float)Call(game,"RoutePipeSpacing");
-            Check(Mathf.Abs(spacing-5.265f)<.0001f,"Original Endless gate spacing stays 5.265 world units at "+size.x+"x"+size.y);
+            Check(Mathf.Abs(spacing-5.589f)<.0001f,"Owner-requested Endless gate spacing is 5.589 world units at "+size.x+"x"+size.y);
             var gates=(Array)Get(game,"pipePool");
             for(int i=1;i<gates.Length;i++)Check(Mathf.Abs((float)Get(gates.GetValue(i),"X")-(float)Get(gates.GetValue(i-1),"X")-spacing)<.0001f,"Endless spawned gate centres retain original spacing");
             Debug.Log("ENDLESS_SPACING_VIEW: "+size.x+"x"+size.y+" world="+spacing+" fraction="+(spacing/(float)Call(game,"GetViewportWidth")));

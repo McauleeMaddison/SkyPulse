@@ -19,6 +19,9 @@ def git(*args):
     return result.stdout
 
 def evidence_for(path):
+    if 'DailyRoutes20261013' in str(OUT) and any(path.endswith(name) for name in ['SkyPulseDailyRelay.cs','SkyPulseDailyMissions.cs','SkyPulseMissionModels.cs','SkyPulseNativeGame.cs','SkyPulseNativeGame.Controls.cs','SkyPulseNativeGame.Missions.cs','SkyPulseNativeGame.Blackout.cs']):
+        return 'Owner-requested build 11 follow-up with Codex assistance on 13 October 2026: bounded seeded daily Relay routes/separate medals, direct result navigation, small explicitly authorized Endless spacing/gap adjustments and removal of repeated gameplay copy; retained origins recorded separately', 'mobile/Release/DailyRoutes20261013/PROVENANCE.md'
+
     if args.date >= '2026-10-13' and any(path.endswith(name) for name in ['SkyPulseInputFence.cs','SkyPulsePressTarget.cs','SkyPulseNativeGame.Controls.cs','SkyPulseNativeGame.Missions.cs','SkyPulseNativeGame.Blackout.cs','SkyPulseNativeGame.Presentation.cs','SkyPulseMissionModels.cs','SkyPulseBlackoutGraphic.cs','SkyPulseCircuitGraphic.cs']):
         return 'Owner-requested mobile gameplay polish with Codex assistance, 13 October 2026: automatic numbered Relay crystals, swept unlock/collision ordering, pointer fences, pooled immediate Blackout progression, frame-independent presentation and mode Home controls; retained asset origins recorded separately', 'mobile/Release/OneThumbPolish20261013/PROVENANCE_ADDENDUM.md'
 

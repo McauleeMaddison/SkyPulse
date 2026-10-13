@@ -23,7 +23,11 @@ methods=['SimulateFlight','BufferFlapInput','ConsumeBufferedFlap','UpdateBird','
 checks={}
 for name in methods:
     a,b=bodies(old,name),bodies(new,name)
-    assert a==b,'Protected Endless method changed: '+name
+    if name=='RouteGapFraction':
+        expected=a[0]
+        for x,y in [('.32f','.31f'),('.282f','.272f'),('.28f','.27f'),('.277f','.267f'),('.265f','.255f'),('.26f','.25f'),('.257f','.247f'),('.245f','.235f'),('.24f','.23f')]:expected=expected.replace(x,y)
+        assert b==[expected],'Unexpected change beyond owner-authorized aperture tuning'
+    else: assert a==b,'Protected Endless method changed: '+name
     checks[name]=hashlib.sha256('\n'.join(b).encode()).hexdigest()
 # These original methods gain only dispatch/progress/explicit-source hooks.
 hooks={
@@ -40,7 +44,7 @@ for name,replacements in hooks.items():
     for a,b in replacements:normalized=normalized.replace(a,b)
     assert normalized==bodies(old,name)[0],'Non-hook Endless change: '+name
 constants=lambda s: re.findall(r'^        private const [^\n]+',s,re.M)
-assert constants(old)==constants(new),'Endless constants changed'
+assert constants(old.replace('PipeSpacingFraction = .52f','PipeSpacingFraction = .552f'))==constants(new),'Unexpected Endless constant change'
 def catalogue(source,name):
     start=source.index(' '+name+' =')
     begin=source.index('{',start);depth=0
@@ -51,4 +55,4 @@ def catalogue(source,name):
     raise AssertionError(name)
 for name in ['Skins','Worlds','Upgrades']:
     assert catalogue(old,name)==catalogue(new,name),'Stable catalogue changed: '+name
-print(json.dumps({'baseline':BASELINE,'protectedMethodCount':len(methods),'exactBodyHashes':checks,'integrationHookMethods':list(hooks),'allEndlessConstantsUnchanged':True},indent=2))
+print(json.dumps({'baseline':BASELINE,'protectedMethodCount':len(methods),'exactBodyHashes':checks,'integrationHookMethods':list(hooks),'allOtherEndlessConstantsUnchanged':True,'ownerAuthorizedTuning':{'pipeSpacingWorldUnitsBefore':5.265,'pipeSpacingWorldUnitsAfter':5.589,'openingHeightChangeWorldUnits':-.18,'date':'2026-10-13'}},indent=2))

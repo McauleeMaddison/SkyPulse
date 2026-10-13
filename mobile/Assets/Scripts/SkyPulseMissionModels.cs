@@ -12,12 +12,13 @@ namespace SkyPulse.Mobile
         public readonly string Id, Name, Briefing;
         public readonly float[] RelayY;
         public readonly float Spacing, ExitY;
+        public readonly long Day;
         public readonly bool HasShield;
         public int RelayCount => RelayY.Length;
         public float RelayX(int index) => 12f + index * Spacing;
         public float ExitX => RelayX(RelayCount - 1) + 13f;
-        public RelayMission(string id, string name, string briefing, float[] heights, float spacing, float exitY, bool shield)
-        { Id=id; Name=name; Briefing=briefing; RelayY=heights; Spacing=spacing; ExitY=exitY; HasShield=shield; }
+        public RelayMission(string id, string name, string briefing, float[] heights, float spacing, float exitY, bool shield, long day=-1)
+        { Id=id; Name=name; Briefing=briefing; RelayY=heights; Spacing=spacing; ExitY=exitY; HasShield=shield;Day=day; }
         public static readonly RelayMission[] All = {
             new RelayMission("relay.tutorial", "01 · FIRST CIRCUIT", "Tap the flight area to flap. Collect a crystal to open its numbered gate automatically. Fly through both gates and the green exit.", new[]{0f, .6f}, 18f, 0f, true),
             new RelayMission("relay.switchback", "02 · SWITCHBACK", "Follow three alternating crystal trails. Each crystal opens its matching gate; spare crystals improve your medal.", new[]{-1.1f, 1.1f, -.4f}, 20f, .4f, false),
