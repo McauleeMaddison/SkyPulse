@@ -1,3 +1,11 @@
+## Private TestFlight update — 13 October 2026
+
+**SkyPulse 1.0.0 (10) is uploaded, processed and Testing in the existing one-person SkyPulse Internal group.** Build-specific tester notes are saved and matched after reload. It contains automatic numbered Relay crystal gates, responsive one-thumb controls, eight Blackout sectors with instant saved progression, pooled presentation and mode-specific Home controls. Twelve automated QA pass markers and strict native signing/packaged metadata checks pass. Fresh physical-device gameplay and sustained FPS checks are pending; do not reuse older owner checks as build 10 evidence.
+
+Public App Review remains on hold. The existing public build 9 selection and saved listing were not changed or submitted. Updated build 10 listing copy is prepared locally for a later authorized submission. Apple's unidentified comparison is not cleared by these changes. See [the release record](OneThumbPolish20261013/RELEASE_RECORD.json) and [the current guide](OneThumbPolish20261013/README.md). The recurring vendor UnityRuntime dSYM warning affects engine crash symbolication, not upload success.
+
+---
+
 ## Private TestFlight authorization — 12 October 2026
 
 The owner requested additional visual polish and a fresh TestFlight build for iPhone testing. **Build 9 is uploaded, processed and Testing in the existing one-person SkyPulse Internal group.** Its tester notes are saved. Build 8 was superseded after a runtime support/privacy URL mismatch was found; the final build uses the branded domain. Automated QA and strict native archive/metadata validation pass. Fresh physical-device testing remains pending.

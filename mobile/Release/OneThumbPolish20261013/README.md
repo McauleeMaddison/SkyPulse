@@ -1,6 +1,6 @@
 # SkyPulse mobile controls and gameplay polish — 13 October 2026
 
-Candidate: **1.0.0 (10)**. Build 9 cannot be replaced on TestFlight. Public App Review remains on hold pending Apple's reply and renewed owner authorization.
+Published for private testing: **1.0.0 (10), Testing in SkyPulse Internal**. Build-specific notes were saved and verified after reload. Build 9 cannot be replaced on TestFlight. Public App Review remains on hold pending Apple's reply and renewed owner authorization.
 
 ## Controls and modes
 
@@ -16,3 +16,17 @@ Candidate: **1.0.0 (10)**. Build 9 cannot be replaced on TestFlight. Public App 
 See [TEST_RESULTS.md](TEST_RESULTS.md) for automated and remaining physical checks. Test harnesses live under `mobile/Tools`, outside production Assets. The QA runner creates a separate project and separate player-save namespace. Original Endless preservation is checked against baseline `026e382`; 27 method bodies, seven integration hooks and all protected constants are unchanged.
 
 Source and signing evidence are kept in ignored local `artifacts/one-thumb-polish-20261013/`. TestFlight publication status is recorded after upload in `RELEASE_RECORD.json`. Current public listing/build selection is retained while review is on hold. `metadata.json` is a prepared future listing, not a claim it has been saved publicly.
+
+## Actual Unity previews
+
+These are rendered from the tested runtime in an isolated QA save, not proposed artwork or physical screenshots.
+
+![Three Home screens](three-homes.png)
+
+![Three gameplay modes](three-gameplay.png)
+
+## TestFlight publication
+
+Apple processed the signed upload. The existing one-person internal group shows **Testing**. No tester access was expanded; public App Review was not submitted. Open TestFlight on iPhone and update SkyPulse Arcade to 1.0.0 (10). Physical gameplay checks remain separately recorded in `TEST_RESULTS.md` and `RELEASE_RECORD.json`.
+
+![Internal TestFlight availability](testflight-build10-testing.jpg)

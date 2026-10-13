@@ -1,10 +1,10 @@
 # SkyPulse Arcade
 
-> **Current candidate: build 10.** Relay has automatic numbered crystal gates and tap-only flight; Blackout has eight increasingly demanding sectors, automatic firewall breach and instant saved progression. Mode-specific Home controls and pooled effects are documented in [the current development record](mobile/Release/OneThumbPolish20261013/README.md). TestFlight upload status is recorded there after publication. Build 9 remains historical.
+> **Current candidate: build 10.** Relay has automatic numbered crystal gates and tap-only flight; Blackout has eight increasingly demanding sectors, automatic firewall breach and instant saved progression. Mode-specific Home controls and pooled effects are documented in [the current development record](mobile/Release/OneThumbPolish20261013/README.md). **Build 10 is processed and Testing in SkyPulse Internal**, with matching notes saved. Physical build 10 gameplay testing remains pending. Build 9 remains historical.
 
 > **App Review hold:** the public version remains Prepare for Submission/unsubmitted. Build 9 and its updated metadata are saved in the draft and available for private TestFlight testing. Await Apple’s clarification and renewed owner authorization before resubmitting. See [current status](mobile/Release/REVIEW_STATUS.md).
 
-SkyPulse is an offline, portrait Unity arcade game for iPhone and iPad. The current source candidate is `mobile/`; open it with Unity **6000.6.0f1**. The 12 October updates add three modes, daily missions, shared tested widths, distinct animated Home/player views and a compact mode dropdown. Build 9 is already in the existing SkyPulse Internal group. Build 10 is the current update candidate; see [its release guide](mobile/Release/OneThumbPolish20261013/README.md) for validation and publication status.
+SkyPulse is an offline, portrait Unity arcade game for iPhone and iPad. The current source candidate is `mobile/`; open it with Unity **6000.6.0f1**. The 12 October updates add three modes, daily missions, shared tested widths, distinct animated Home/player views and a compact mode dropdown. Build 9 is already in the existing SkyPulse Internal group. Build 10 is now Testing in SkyPulse Internal; see [its release guide](mobile/Release/OneThumbPolish20261013/README.md) for validation and publication status.
 
 ## Project layout
 
