@@ -1,104 +1,46 @@
-# SkyPulse
+# SkyPulse Arcade
 
-SkyPulse is a portrait-first Unity 6 one-tap cyberpunk flyer. It keeps the readable Flappy Bird rhythm—tap, judge momentum, clear a paired gate—but makes a successful run feel like a continuous flight through three transforming worlds.
+> **Current candidate: build 11.** The owner’s build 10 feedback adds daily refreshed Relay circuits, direct Next Mission, Main Menu on every result, small Endless spacing/gap tuning and cleaner gameplay overlays. See [the follow-up release guide](mobile/Release/DailyRoutes20261013/README.md). **Build 11 is now processed and Testing in SkyPulse Internal**, with matching tester notes saved. Physical build 11 gameplay checks remain pending.
 
-The Unity project in [`mobile/`](/Users/user/Desktop/SkyPulse/mobile) is the shipping source of truth. The older web experiment is kept separately and is not the native game's implementation target.
+> **App Review hold:** build 11 is now selected in the saved public draft, with matching English (U.K.) metadata and creator attribution. The version remains Prepare for Submission/unsubmitted. Await Apple’s clarification, current device/media validation and renewed owner authorization before resubmitting. See [current identity/rights audit](mobile/Release/IdentityRights20261013/README.md) and [review status](mobile/Release/REVIEW_STATUS.md).
 
-## Game contract
+SkyPulse is Mcaulee Maddison’s offline, portrait Unity arcade game for iPhone and iPad. The current source candidate is `mobile/`; open it with Unity **6000.6.0f1**. It includes three modes, daily missions, shared tested widths, distinct animated Home/player views and a compact mode dropdown. [CURRENT_RELEASE.json](mobile/Release/CURRENT_RELEASE.json) identifies the current build, metadata, tested source and artwork ledger. Older numbered release folders are historical evidence.
 
-The game has one fair endless route. Birds are cosmetic and permanent upgrades affect crystal collection only: no bird, item, or purchase changes flap physics, gate score, or a player's scoring potential.
+## Project layout
 
-- **Controls:** tap/click in the playfield, Space, or Up Arrow flaps. The first flap starts the run; inputs use a short duplicate-touch lockout. Escape, P, and the top-left pause control pause the run.
-- **Camera:** the playable world remains a fixed 9:16 portrait side view. On desktop, it is centred while the active world decorates the side margins; gameplay geometry is never widened for landscape.
-- **Flight:** shared gravity, flap impulse, terminal fall speed, collision ellipse, and bird dimensions. The top boundary clamps ascent; the lower hazard and gates are fatal unless Aegis is active.
-- **Score:** each fully passed gate is exactly one point. Crystals are separate, persistent currency and bank the moment they are collected—even on a failed run.
-- **Route:** Neon City runs from 0–14, Acid Foundry starts at score 15, and Orbital Bazaar at score 30. From score 45 onward the worlds rotate in harder remixes every 15 gates, capped at the intended speed and minimum opening.
+- `mobile/Assets/Scripts/`: game loop, UI glyphs, button feedback, tap handling, bootstrap and public links.
+- `mobile/Assets/Resources/`: runtime artwork, five sound effects, bird registration data and privacy/support URLs.
+- `mobile/Assets/Editor/`: art import tools, playtest checklist and iOS release/export setup.
+- `mobile/Assets/Scenes/`: the shipping `SkyPulse.unity` scene.
+- `mobile/Packages/` and `mobile/ProjectSettings/`: reproducible Unity configuration.
+- `mobile/Tools/`: isolated QA harnesses and artwork checks; excluded from the shipping player.
+- `mobile/Release/`: App Review drafts, release evidence and historical design/provenance notes. Start with `REVIEW_STATUS.md` for the current review status; older verification applies only to its recorded build.
+- `public-site/`: separately versioned privacy/support website, ignored by this game's Git repository.
+- `artifacts/`: ignored local test captures and signed archives. Preserve archives and dSYMs for release diagnosis.
 
-## World pacing
+The retired browser prototype and its root-level assets have been removed. Runtime assets belong inside the Unity project. Generated `Library`, `Builds`, `Logs`, `Temp` and `UserSettings` folders are ignored; Xcode exports are snapshots, not editable game source.
 
-| Score range | World | Gate behaviour | Opening / speed |
-| --- | --- | --- | --- |
-| 0–14 | Neon City | Varied opening heights from the first gate, with continuous tightening and acceleration | 32% → 28.2% / 34.5% → 39.5% |
-| 15–24 | Acid Foundry | Static arrival, then drift grows over four gates | 28% / 40% |
-| 25–29 | Acid Foundry | Established drift; gradual approach to the next world | 27.7% → 26.5% / 40.8% → 42.4% |
-| 30–39 | Orbital Bazaar | Bounded high/low openings; speed settles over five gates | 26% / 43% → 44% |
-| 40–44 | Orbital Bazaar | Smooth approach to remix openings | 25.7% → 24.5% / 45% → 46% |
-| 45–59 | Remix loop | Existing patterns combine; pace holds | 24% / 46% |
-| 60–64 | Remix loop | A second modest speed increase settles over five gates | 24% / 47% → 48% |
-| 65+ | Remix loop | Bounded difficulty ceiling | 24% / 48% |
+## Play
 
-Gap sizes follow each gate’s route index, including gates spawned ahead of the current score. Speed follows the current score. Gravity, flap impulse, hitbox, and gate spacing stay constant.
+1. Add `mobile/` in Unity Hub and open `Assets/Scenes/SkyPulse.unity`.
+2. Press Play and use a portrait Game view.
+3. Home starts on Endless Route. Tap its top-left badge to expand the three free modes, select one, then press **PLAY**. Flight uses tap/Space/Up Arrow; Relay crystals automatically open matching gates. Blackout uses immediate adjacent-node taps and automatic firewall breaches. Use the pause control or Escape/P to pause.
+4. Open Bird Hangar to unlock cosmetic birds, or Tech Tree to spend earned crystals.
 
-Every new gap is bounded against the previous one and generated inside the fixed flight envelope. Decorative art can overhang a gate body, but it may never create invisible collision inside the opening.
+Endless Route retains fixed handling for all 15 birds. Each passed gate awards one point. Neon City starts the run, Aurora Rise begins at score 15 and Solar Drift at 30; the route continues through Midnight Tide (45), Velvet Dawn (60), Crystal Night (75), Jade Horizon (90), Violet Rain (105), Eclipse (120), Cobalt Storm (135), Amber Skies (150) and Polar Glow (165), returning to Neon City at 180. Worlds change every 15 gates with the existing capped difficulty. The Worlds & Power-ups guide previews all 12 across four pages. Crystals bank during the run. Nine upgrade nodes affect collection/rewards, while three temporary pickups provide Aegis, Time Pulse and Crystal Magnet. No login, ads, analytics or real-money purchases are used.
 
-## Progression
+Pulse Relay offers four finite circuits refreshed each UTC day; Blackout Protocol has eight authored cipher/phase sectors with increasing difficulty and instant progression. Their separate medals and completion data never replace the Endless best. Mission Control tracks four UTC-day tasks worth five crystals each, up to 20 per period, with journaled claim recovery. Home changes its cinematic/circuit/terminal theme with the selected mode during the session; new launches begin on Endless. Relay shares the original cinematic/metal artwork, and Blackout uses animated obsidian lattice geometry and a suspended data core. Reduced Motion freezes ambient effects.
 
-### Hangar
+Saved scores, crystals, owned birds, upgrade levels and preferences retain their existing keys and migration paths. New mode, daily and Home-protocol data uses separate versioned keys.
 
-All 15 birds use the same dimensions, hitbox, and physics. Their animation and flap accent differ only as presentation. Birds have no flight trail or rear thrust effect.
+## Verify changes
 
-| Bird | Unlock |
-| --- | ---: |
-| Neon Finch | Available immediately |
-| Chrome Raven | 250 crystals |
-| Prism Hummingbird | 500 crystals |
-| Koiwing Glider | 800 crystals |
-| Verdant Kite | 1,200 crystals |
+Run `python3 mobile/Tools/check_release_metadata.py --online --require-build 11` for the current listing, identity, links and exact candidate source checks, `python3 mobile/Tools/test_release_metadata.py` for stale-copy guards, and `python3 mobile/Tools/check_artwork_ledger.py` for complete current image/hash coverage. Update `CURRENT_RELEASE.json` and matching evidence when a future candidate changes; historical metadata must be selected explicitly with `--metadata`. These checks do not certify exclusive rights or Apple's private comparison.
 
-Each bird uses eight dedicated transparent frames: six flap positions, one impact pose, and one unlock pose. New birds should follow the same resource layout below, so a future addition stays data-driven.
+Run `python3 mobile/Tools/verify_bird_registration.py` to validate all 90 flight frames. For gameplay, persistence, purchases, scrolling and safe-area checks, follow `mobile/Tools/VISUAL_SMOKE.md`; run those harnesses only in an isolated QA project, because they reset the QA save. Use **SkyPulse → Playtest Checklist** for manual testing.
 
-```text
-Assets/Resources/SkyPulse/characters/roster/
-  <visual-id>-frame-01-v1.png              # raised wing
-  …
-  <visual-id>-frame-06-v1.png              # downstroke
-  <visual-id>-frame-07-v1.png              # impact
-  <visual-id>-frame-08-v1.png              # unlock
-```
+The 29 September audit and world expansion are documented in [APPLE_4_3A_AUDIT.md](APPLE_4_3A_AUDIT.md) and [WorldExpansion/RELEASE_NOTES.md](mobile/Release/WorldExpansion/RELEASE_NOTES.md). They require a fresh candidate and device verification; the preserved build 6 does not contain this expansion.
 
-The shipped visual IDs are `volt`, `steel`, `prism`, `cinder`, and `verdant`.
-Each new bird must add exactly the same eight-frame set and one new `Skin` entry;
-the validation hook rejects a roster that drifts from the six-flap/one-hit/one-unlock contract.
+## Prepare a release
 
-### Crystal-only upgrades
-
-| Track | Levels | Effect |
-| --- | --- | --- |
-| Crystal Resonator | 150 / 400 / 900 | Attracts crystals within 6% / 10% / 14% of playfield width |
-| Salvage Codec | 200 / 500 / 1000 | Adds 10% / 20% / 30% of run crystals on the results screen |
-
-The result screen separates the crystals picked up during the flight from the Salvage Codec bonus and shows the resulting persistent balance. Saved data includes balance, upgrade levels, unlocked/selected bird, best score, and farthest route reached.
-
-## Power-ups
-
-Power-ups are placed on reachable lines roughly every 8–12 gates, never in the first three gates or immediately before a world transition. Only one can be active at a time.
-
-- **Aegis:** absorbs one obstacle impact, visibly shatters, safely neutralises dangerous downward velocity, and grants a short immunity beat.
-- **Time Pulse:** runs the simulation at 70% for four seconds, preserving the same handling relationship between the bird and world.
-- **Crystal Magnet:** attracts crystals inside 25% of the playfield width for six seconds; it does not pull power-ups.
-
-## Visual direction
-
-SkyPulse is illustrated 2.5D cyberpunk aviation: layered scrolling artwork, clean emissive edges, and a dark, low-detail flight corridor. The high-contrast layer always belongs to the bird, gate opening, crystals, and power-ups.
-
-- **Neon City:** midnight navy, electric cyan, magenta, restrained amber signs.
-- **Acid Foundry:** charcoal, toxic lime, hot orange, cyan coolant.
-- **Orbital Bazaar:** deep violet, cobalt, holographic gold, white starlight.
-
-Avoid pixel art, chibi proportions, photorealism, muddy bloom, dense opaque foreground objects, and decorative text in the flight corridor. New art should be transparent PNG, right-facing, consistently registered on its canvas, and imported through **SkyPulse → Optimise Mobile Art** so Android and iPhone use the established compressed texture budget.
-
-## Open and play
-
-1. Open Unity Hub and add [`mobile/`](/Users/user/Desktop/SkyPulse/mobile).
-2. Open [`Assets/Scenes/SkyPulse.unity`](/Users/user/Desktop/SkyPulse/mobile/Assets/Scenes/SkyPulse.unity).
-3. Press Play. The project forces portrait orientation and targets 60 fps. The canvas uses
-   the device safe area and a fixed logical 9:16 playfield, so it fits iPhone 17 Pro Max
-   safely while preserving the same gate geometry on smaller, taller, or wider screens.
-4. Tap/click to start and flap. Use Escape/P or the pause control to pause.
-5. In the editor, use **SkyPulse → Playtest Checklist** for the milestone-focused test pass. `F4` displays collision guides in editor/development builds.
-
-## Suggested playtest pass
-
-Run enough sessions to reach score 5, 15, and 30 repeatedly. Record whether the opening course feels fair and engaging; whether the Foundry tunnel leaves a safe recovery window; whether moving and alternating patterns read before they become dangerous; and whether a crystal arc ever asks for an impossible line. Change a single tuning value only after observing the same problem across multiple runs.
-
-The most valuable next refinement after this pass is authored world audio stems. A restrained, cross-faded music layer for each world will make the score-15 and score-30 transitions land without adding visual clutter or changing the fair core loop.
+Configure the iPhone and iPad release through **SkyPulse → Release**. Set an unused iOS build number and signing team, check the configured privacy/support pages, then export **App Store Candidate** into a fresh folder. Build and test that exported candidate on a physical iPhone before archiving and submitting it through Xcode/App Store Connect. Local checks do not establish App Review acceptance.

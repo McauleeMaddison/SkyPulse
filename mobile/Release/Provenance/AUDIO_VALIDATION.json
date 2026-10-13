@@ -1,0 +1,38 @@
+{
+  "unity_import_decode": "passed",
+  "game_code_unchanged_this_remediation": true,
+  "build5_files_preserved": 44,
+  "build6_zip_preserved": true,
+  "clips": [
+    {
+      "file": "mobile/Assets/Resources/SkyPulse/audio/crash.wav",
+      "peak": 0.29998779296875,
+      "rms": 0.062308278721188624,
+      "duration": 0.32
+    },
+    {
+      "file": "mobile/Assets/Resources/SkyPulse/audio/crystal.wav",
+      "peak": 0.22998046875,
+      "rms": 0.05333822494800676,
+      "duration": 0.12997732426303854
+    },
+    {
+      "file": "mobile/Assets/Resources/SkyPulse/audio/flap.wav",
+      "peak": 0.17999267578125,
+      "rms": 0.06396171014880703,
+      "duration": 0.1
+    },
+    {
+      "file": "mobile/Assets/Resources/SkyPulse/audio/score.wav",
+      "peak": 0.25,
+      "rms": 0.07801186070292357,
+      "duration": 0.18
+    },
+    {
+      "file": "mobile/Assets/Resources/SkyPulse/audio/unlock.wav",
+      "peak": 0.259979248046875,
+      "rms": 0.08005834301280539,
+      "duration": 0.28997732426303857
+    }
+  ]
+}

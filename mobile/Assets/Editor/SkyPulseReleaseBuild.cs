@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using UnityEditor;
@@ -22,11 +23,16 @@ namespace SkyPulse.Mobile.Editor
             public string bundleId;
             public string unityVersion;
             public string sdk;
+            public string targetDevice;
             public string createdUtc;
             public string gameplaySourceSha256;
             public string iconSha256;
             public string publicLinksSha256;
+            public string sourceCommit;
+            public string sourceManifestSha256;
         }
+        [Serializable] private sealed class SourceFileEvidence { public string path; public string sha256; }
+        [Serializable] private sealed class SourceManifest { public SourceFileEvidence[] files; }
 
         private static string FileHash(string path)
         {
@@ -34,19 +40,19 @@ namespace SkyPulse.Mobile.Editor
                 return BitConverter.ToString(hash.ComputeHash(File.ReadAllBytes(path))).Replace("-", "").ToLowerInvariant();
         }
 
-        [MenuItem("SkyPulse/Release/Configure iPhone Release")]
+        [MenuItem("SkyPulse/Release/Configure iPhone and iPad Release")]
         public static void Configure()
         {
             PlayerSettings.companyName = "SkyPulse";
             PlayerSettings.productName = "SkyPulse";
             PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.iOS, BundleId);
-            PlayerSettings.bundleVersion = "1.0.0";
+            if (string.IsNullOrWhiteSpace(PlayerSettings.bundleVersion)) PlayerSettings.bundleVersion = "1.0.0";
             PlayerSettings.defaultInterfaceOrientation = UIOrientation.Portrait;
             PlayerSettings.allowedAutorotateToPortrait = true;
             PlayerSettings.allowedAutorotateToPortraitUpsideDown = false;
             PlayerSettings.allowedAutorotateToLandscapeLeft = false;
             PlayerSettings.allowedAutorotateToLandscapeRight = false;
-            PlayerSettings.iOS.targetDevice = iOSTargetDevice.iPhoneOnly;
+            PlayerSettings.iOS.targetDevice = iOSTargetDevice.iPhoneAndiPad;
             PlayerSettings.iOS.sdkVersion = iOSSdkVersion.DeviceSDK;
             PlayerSettings.iOS.targetOSVersionString = "15.0";
             PlayerSettings.iOS.appleEnableAutomaticSigning = true;
@@ -62,7 +68,7 @@ namespace SkyPulse.Mobile.Editor
                 PlayerSettings.SetPlatformIcons(NamedBuildTarget.iOS, kind, slots);
             }
             AssetDatabase.SaveAssets();
-            Debug.Log("SkyPulse iPhone release settings configured. Apple team selection and device validation remain required.");
+            Debug.Log("SkyPulse iPhone and iPad release settings configured. Apple team selection and device validation remain required.");
         }
 
         [MenuItem("SkyPulse/Release/Export Xcode Project")]
@@ -91,6 +97,10 @@ namespace SkyPulse.Mobile.Editor
             if (!SkyPulsePublicLinks.IsPublicHttpsUrl(links.privacyUrl) ||
                 !SkyPulsePublicLinks.IsPublicHttpsUrl(links.supportUrl))
                 throw new BuildFailedException("Set real public HTTPS privacyUrl and supportUrl in Assets/Resources/SkyPulsePublicLinks.json. Verify both pages and their contact details before submission.");
+            if (links.privacyUrl != "https://skypulse.macwebstudio.com/privacy" || links.supportUrl != "https://skypulse.macwebstudio.com/support")
+                throw new BuildFailedException("Runtime support/privacy URLs must match the current branded listing. Update the URL contract and release metadata deliberately if the official domain changes.");
+            if (PlayerSettings.GetApplicationIdentifier(NamedBuildTarget.iOS) != BundleId)
+                throw new BuildFailedException("The candidate bundle ID must match the existing SkyPulse App Store Connect app.");
             if (string.IsNullOrWhiteSpace(PlayerSettings.iOS.appleDeveloperTeamID))
                 throw new BuildFailedException("Select your paid Apple Developer signing team in iOS Player Settings before exporting an App Store candidate.");
             if (!int.TryParse(PlayerSettings.iOS.buildNumber, out var number) || number <= 0)
@@ -116,6 +126,12 @@ namespace SkyPulse.Mobile.Editor
             });
             if (report.summary.result != BuildResult.Succeeded)
                 throw new BuildFailedException($"iOS export failed: {report.summary.result}, {report.summary.totalErrors} errors.");
+            var sourcePaths = new List<string>(Directory.GetFiles("Assets", "*", SearchOption.AllDirectories));
+            sourcePaths.RemoveAll(path => Path.GetFileName(path).StartsWith(".", StringComparison.Ordinal));
+            sourcePaths.Add("Packages/manifest.json");sourcePaths.Add("ProjectSettings/ProjectSettings.asset");sourcePaths.Sort(StringComparer.Ordinal);
+            var manifest = new SourceManifest { files = sourcePaths.ConvertAll(path => new SourceFileEvidence { path = path.Replace('\\', '/'), sha256 = FileHash(path) }).ToArray() };
+            var manifestPath = Path.Combine(destination, "SkyPulse-source-manifest.json");
+            File.WriteAllText(manifestPath, JsonUtility.ToJson(manifest, true));
             var evidence = new BuildEvidence
             {
                 version = PlayerSettings.bundleVersion,
@@ -123,10 +139,13 @@ namespace SkyPulse.Mobile.Editor
                 bundleId = BundleId,
                 unityVersion = Application.unityVersion,
                 sdk = simulator ? "iphonesimulator" : "iphoneos",
+                targetDevice = PlayerSettings.iOS.targetDevice.ToString(),
                 createdUtc = DateTime.UtcNow.ToString("O"),
                 gameplaySourceSha256 = FileHash("Assets/Scripts/SkyPulseNativeGame.cs"),
                 iconSha256 = FileHash("Assets/Branding/SkyPulseAppIcon.png"),
                 publicLinksSha256 = FileHash("Assets/Resources/SkyPulsePublicLinks.json"),
+                sourceCommit = Environment.GetEnvironmentVariable("SKYPULSE_SOURCE_COMMIT") ?? "Working tree; inspect source manifest",
+                sourceManifestSha256 = FileHash(manifestPath),
             };
             File.WriteAllText(Path.Combine(destination, "SkyPulse-build-info.json"), JsonUtility.ToJson(evidence, true));
             Debug.Log($"SKYPULSE_IOS_EXPORT_PASS: {Path.GetFullPath(destination)}");

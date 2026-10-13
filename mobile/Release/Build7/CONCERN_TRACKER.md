@@ -1,0 +1,45 @@
+# Apple 4.3(a) work record — updated 6 October 2026
+
+Apple's 29 September message on submitted build 6 alleges similar binary, metadata and/or concept to apps previously submitted by a terminated developer account. These are possible comparison categories in one rejection; Apple has not identified a specific matching asset, component or comparison app. The owner's 29 September 21:41 clarification request is the latest message observed today. No reply after it was visible on 1 October.
+
+| Concern | Concrete action/evidence | Status |
+|---|---|---|
+| Binary/template residue | Package/scene/resource/identifier audit; only the SkyPulse scene; no identifiable imported game template or unrelated app identity. Retain Unity's legitimate engine identifiers and save migrations. | Local inspection complete; Apple's comparison remains unidentified. |
+| Source and asset origins | Owner statements, Git history, hashed 167-file ledger, ARTA terms record, retained later generation records; new five-effect audio synthesis script. | New audio origin documented. Original art prompts/reference records remain incomplete; do not claim independent legal verification. |
+| Account-related finding | Asked owner whether app/prototype/source was supplied or submitted through another account, publisher, contractor or purchased template. | Owner explicitly answered ‘No—none of those apply’ on 1 October. Record as owner attestation; not independently verified. |
+| Metadata accuracy | Prepared `metadata.json` and `REVIEW_NOTES.txt` for 12 environments, cosmetic birds/shared handling and exact navigation. Saved subtitle: “15 Birds, 12 Worlds, Tech Tree”. | Saved in App Store Connect on 1 October with build 7 selected. |
+| Similar concept | Preserve functioning game and show the actual persistent collection, Tech Tree, earned-crystal economy and tactical pickups through a precise walkthrough and real-build evidence. | Tap-to-fly obstacle concept remains; no claim extra backgrounds alone resolves similarity. No speculative redesign. |
+| Release/evidence mismatch | Fresh device and simulator exports from source 096b6c8 with iOS build number 7; no test harness in Assets. New archive retained separately with SHA manifest. | Unity export, Xcode archive and simulator compile passed. iPhone install/launch succeeded. |
+| Device quality | Owner reports all requested build 7 iPhone tests passed: four guide pages, Hangar, Tech Tree, flight/pickups, sounds, retry and retained progress after restart. | Owner sign-off received today for both physical iPhone and iPad simulator build 7 checks. Agent separately inspected Home and all four guide pages. Complete matching media still in progress. |
+
+Build 7 was verified unused before adopting it. App Store validation and upload succeeded on 30 September (`xcode-validation.log`, `xcode-upload.log`). Processing completed; build 7 was available, selected and saved in App Store Connect on 1 October. Existing build 5/6 archives remain unchanged. Build 7 has not been submitted and no new reviewer reply has been sent. The expired session was restored by the owner on 1 October.
+
+Validation artifacts: `artifacts/release-7-20260930/` (ignored, retained locally). Device archive SHA256: `76f39ecb6b200975dfdaf614d7e291b3bdc356d404f7119c529cb527c269e2c0`. Gameplay source SHA256: `ae366a78689116d70df58c35655e1d6782a0494e916a720ecc3b539cdbaf7b26`.
+
+Build 7 device archive was signed for development for the physical test; App Store export/validation and upload subsequently succeeded. Full-app deep/strict signature verification succeeded through macOS trust services. The initial sandbox verification returned a trust-service error; it was not treated as a bad-signature finding.
+
+Do not mark the rejection resolved before Apple's assessment. Do not submit while the candidate evidence is incomplete. Use the existing review thread and avoid unsupported claims about another developer account.
+
+App Store package validation passed (`Validated Unity-iPhone`, `EXPORT SUCCEEDED`). Apple reported a nonblocking missing UnityRuntime.framework dSYM warning, UUID `3C32AE36-550D-3FCA-A8C4-69FC56FF5B23`; retain this limitation for crash symbolication. Validation is not upload or App Review approval.
+
+Native iPhone capture produced a 1320×2868 guide screenshot. Four native iPad guide captures are retained at 1640×2360. Later simulator screenshot capture timed out waiting for screen surfaces; investigate the simulator service before attributing it to the app. Xcode physical-device screen recording reports unsupported capability; requested a Control Centre recording/AirDrop from the owner. No walkthrough video has been captured by this command.
+
+Three native iPad Air 13-inch screenshots (Home, Bird Hangar and Tech Tree) are retained in `artifacts/release-7-20260930/ipad13/`. The earlier capture timeout occurred after the 11-inch simulator was shut down; it is not evidence of a SkyPulse crash. No recent iPhone walkthrough video was found in Downloads on 1 October.
+
+1 October: saved build 7 selection, promotional text, description and factual Review Notes in App Store Connect. Replaced the old iPad image with five native 2048×2732 captures from build 7 (Hangar, Tech Tree, guide pages and Home). Automatic release after approval remains selected. Version status is Prepare for Submission; final submission/reply are not yet performed.
+
+1 October metadata follow-up: subtitle changed to “15 Birds, 12 Worlds, Tech Tree” (30 characters) and saved. Owner account-history statement added and saved to Review Notes. Public searches returned no relevant exact-match evidence, but were inconclusive; no claim of global metadata uniqueness is made. Support and privacy URLs load; published App Privacy is Data Not Collected. Support still says top-left pause (actual top-right); privacy introduction still says iPhone only. Website correction is pending because the Sites hosting skill file is unavailable at the supplied path or elsewhere in the plugin cache. An unintended Catalan localization created during UI recovery was removed; the English listing was saved again.
+
+5 October completion update: replaced the public website with version 3, a responsive branded home/support/privacy design. Preserved all eight privacy sections, corrected iPhone/iPad coverage and top-right pause instructions, and added factual guide/pickup help. Production build passed; desktop 1280px and phone 390px layouts were inspected, and FAQ expansion verified. Namecheap CNAME and two validation TXT records saved without altering existing root, www or mail records. Custom domain skypulse.macwebstudio.com and HTTPS are active.
+
+The owner supplied a real 45.288-second build 7 iPhone recording in iCloud Downloads. Original preserved; a 42-second review copy excludes the opening Control Centre. Native 1320×2868 Home, Hangar and Tech Tree frames were extracted without retouching. Uploading these and replacing the prior review attachment remain pending App Store Connect sign-in. The game source hash remains identical to the tested build 7 record. The earlier website-tool and missing-video blockers described above are now resolved.
+
+6 October: verified all five iPhone images are build 7 and reordered Hangar/Tech Tree first. Replaced the old review video with the 42-second build 7 recording after explicit owner approval to remove the old attachment. Saved branded support, marketing and privacy URLs. Review Notes now include current evidence and AI coding assistance (3695 characters). Update Review succeeded; Resubmit to App Review succeeded. Apple shows 1.0.0 (7), Waiting for Review, submitted 6 October at 11:44 AM. Automatic release after approval remains selected. The reply control disappeared after submission, so the separately prepared response has not been sent. Core response facts are in the submitted Review Notes. Do not cancel the queued submission just to regain the reply control.
+
+The prior pending statements above are chronological history, superseded by this completion update. Submission readiness and queue entry are complete; Apple's 4.3(a) decision and public release are still pending.
+
+## Current hold — 6 October, after submission removal
+
+Owner explicitly withdrew build 7 pending Apple answers. App Store Connect directly verified **Removed** for the submission and build. No newer Apple reply is visible. All earlier instructions to submit or keep it queued are superseded by [SUBMISSION_HOLD.md](SUBMISSION_HOLD.md). Local QA continues; no resubmission without Apple answers and renewed owner authorization.
+
+6 October follow-up: at the owner’s renewed request, sent a support escalation through Apple’s dedicated overdue App Review response route. Receipt confirmed **case 102987914250**; Apple says it will reply by email. Exact message retained in APPLE_SUPPORT_REQUEST_20261006.txt. Asked for specific matching elements, actionable examples and required corrections/evidence. This does not resolve the finding or resubmit the app; the hold remains active. The original App Store Connect thread was not modified.

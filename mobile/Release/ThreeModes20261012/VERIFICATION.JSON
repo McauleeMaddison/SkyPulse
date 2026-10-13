@@ -1,0 +1,74 @@
+{
+  "date": "2026-10-12",
+  "unityVersion": "6000.6.0f1",
+  "baselineCommit": "026e382",
+  "branch": "codex/neon-visual-update",
+  "changedSourceCandidateNotBuild7": true,
+  "automatedPassMarkers": [
+    "SKYPULSE_MISSION_PURE_PASS",
+    "SKYPULSE_BETA_CHECKS_PASS",
+    "SKYPULSE_RELEASE_EDGE_PASS",
+    "SKYPULSE_MISSION_LEGACY_PASS",
+    "SKYPULSE_MISSION_INTEGRATION_PASS",
+    "SKYPULSE_WORLD_EXPANSION_GAMEPLAY_PASS",
+    "SKYPULSE_MISSION_CAPTURES_PASS",
+    "SKYPULSE_WORLD_CHECKS_PASS"
+  ],
+  "finalGameplayLog": "artifacts/modes-update-20261012/reproducible-run/final-layout-unity.log",
+  "staticLog": "artifacts/modes-update-20261012/reproducible-run/static-final.log",
+  "staticPass": true,
+  "csharpCompilerErrors": 0,
+  "enabledScene": "Assets/Scenes/SkyPulse.unity",
+  "runtimeScriptCount": 11,
+  "qaScriptsExcludedFromPlayer": true,
+  "resourcesAssetsImported": 149,
+  "isolatedQaCompanyAndProduct": "SkyPulseQA20261006",
+  "physicalChangedCandidateTests": "Pending",
+  "newSignedBinary": "Not created",
+  "appStoreSubmission": "On hold; no changes or upload",
+  "captures": 63,
+  "captureSizes": [
+    [
+      750,
+      1334
+    ],
+    [
+      1320,
+      2868
+    ],
+    [
+      1640,
+      2360
+    ]
+  ],
+  "uniqueAssetGuids": 185,
+  "duplicateAssetGuids": [],
+  "baselinePreservation": {
+    "changedBaselineFiles": [
+      "mobile/Assets/Scripts/SkyPulseNativeGame.cs"
+    ],
+    "allOtherAssetsAndGuidsUnchanged": true,
+    "allRecordedArchiveZipHashesUnchanged": true,
+    "recordedFiles": 349,
+    "recordedArchiveZipCount": 3
+  },
+  "sourceHashes": {
+    "mobile/Assets/Scripts/SkyPulsePublicLinks.cs": "8427bb1103414ea4610f23293834270c4f230b9335ebd550f79c6d80e198b3b0",
+    "mobile/Assets/Scripts/SkyPulseRoundStartSurface.cs": "379650ff3d28470bf3eae7abbdb0eada594ce98b865ba97d1149265fa68e4671",
+    "mobile/Assets/Scripts/SkyPulseBootstrap.cs": "ece7b674b01bc9b2a7df94a5842ef056d3cf4e30df2d0b63a042f7ac7f799f3c",
+    "mobile/Assets/Scripts/SkyPulseDailyMissions.cs": "dce461cd4006e5f815724570e62d49263419103b2bdf173d0614fa073e41e046",
+    "mobile/Assets/Scripts/SkyPulseCircuitGraphic.cs": "2bdf7a2378aadf0a4d4fc233bf79e893908620ebbb6867e78be1efc51c5d536f",
+    "mobile/Assets/Scripts/SkyPulseUiGlyph.cs": "85498185a92fdd6c546a0ef1d4a78bf22b40b0e26a9fc755f62da870feac7bc6",
+    "mobile/Assets/Scripts/SkyPulseTechConnection.cs": "d68ac7dba1b6c6136359719bbb1c932b2a9eac9f9eea106306aa2366e130ab0f",
+    "mobile/Assets/Scripts/SkyPulseNativeGame.cs": "60cf54889b76405af9faa08ffcdec95c006b40da8a9222e088c295cb41e77aec",
+    "mobile/Assets/Scripts/SkyPulseMissionModels.cs": "ebf3515b667d01df3ee481420fa64a5075620f7bd054c0f03b282e3821890117",
+    "mobile/Assets/Scripts/SkyPulseNativeGame.Missions.cs": "b7e8051da91a526f03c2dcdb2f2b4fede6da8e7df5afdc7a6cab08d24d6d211c",
+    "mobile/Assets/Scripts/SkyPulseButtonFeedback.cs": "ab2a9c0a78c313870afcc8a50d0f9322fd665b480071f9eda8246271ef0e5261"
+  },
+  "knownLogIssues": [
+    "Unity Editor Search indexing ArgumentOutOfRangeException; retained in QA log, separate from gameplay pass markers.",
+    "Licence/service/USB shutdown diagnostics are retained; the Editor log is not warning-free.",
+    "Expected injected medal-save IOException verifies result UI remains available."
+  ],
+  "baselineWorkingCopyArchiveSha256": "c07c45ae23678a68eb28d1e25bbd539435cf2b3f9663371146f29a097aab6b6e"
+}

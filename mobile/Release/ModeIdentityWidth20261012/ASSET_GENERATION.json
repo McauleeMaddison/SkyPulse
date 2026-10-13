@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-12",
+  "method": "Built-in image_gen tool; no CLI/API key fallback",
+  "inputImages": [],
+  "purpose": "Distinct premium mode environments, integrated in the Unity mobile game",
+  "assets": [
+    {
+      "path": "mobile/Assets/Resources/SkyPulse/backgrounds/pulse-relay-station-v1.png",
+      "originalOutput": "/Users/mcauleemaddison/.codex/generated_images/01a0a9c2-82f8-7213-bfef-47b76d423345/exec-6090282b-b7e6-4604-9df6-8d6a5bf90851.png",
+      "sha256": "9f769c1556d0bba058b6a285444c6d6f89f849d0f95f16f4505ff151c19c80d3",
+      "prompt": "Use case: stylized-game-asset. Asset type: a portrait gameplay background to be integrated into an existing premium 2D mobile game, SkyPulse Pulse Relay. Create one finished, beautifully detailed cinematic cyan-and-gold orbital circuit station interior. Rich painted/3D-rendered mechanical materials, luminous cyan conduits, small warm gold indicator lights, immense dark teal/navy depth, subtle volumetric light, distant architecture and a lightly reflective lower deck. It must feel polished and cohesive with a colourful mechanical bird arcade game, but be unmistakably an engineered indoor station rather than the purple cloud/sky city used in the other mode. Camera: oblique side-view inside the station, dramatic deep perspective receding to the right, level horizon, portrait framing. Keep the middle 70 percent of the image open and uncluttered for a bird and separately rendered interactive relays; put most structural detail at top/bottom and very distant background. Continuous scenery right to both image edges: no dark border strips, no pillarboxing, no framing panels. Beautiful tonal contrast without harsh white glare. No bird, characters, foreground obstacles, gates, portals, charge pickups, UI, lettering, numbers, logos or watermark. Those interactive pieces are rendered by game code. 9:16 portrait composition."
+    },
+    {
+      "path": "mobile/Assets/Resources/SkyPulse/backgrounds/blackout-core-v1.png",
+      "prompt": "Use case: stylized-game-asset. Asset type: portrait background for the Blackout Protocol hacking puzzle in a Unity mobile game. Create a premium cinematic dark emerald/black computer-core chamber viewed almost straight down, with a slight 3D perspective. Sleek physically detailed graphite metal, recessed glass panels, very fine luminous emerald PCB routing, occasional pale mint glints, soft depth and realistic materials, high-end mobile game art direction. Centre 70 percent must remain dark, plain and spacious for a game code-rendered puzzle grid and controls. Fine hardware architecture should mostly sit in the distance and near the top/bottom, subtle enough to keep gameplay clear. Green light with black, dark charcoal, very restrained gold accents. No purple skies, birds, city, glowing large planet, space station hangar, characters, readable text, numbers, logos, buttons, UI, predefined puzzle tiles, obvious obstacles or watermarks. Edge-to-edge continuous environment with no side bars or frame. 9:16 portrait.",
+      "originalOutput": "/Users/mcauleemaddison/.codex/generated_images/01a0a9c2-82f8-7213-bfef-47b76d423345/exec-ba75c8cd-eafb-4ec9-836f-ac4e21c30714.png",
+      "sha256": "f7d62626df0ba4e39ad382a7113cf86ef052f3241ed5395f2304d8b83a340af4"
+    }
+  ],
+  "limitations": [
+    "A generation record is not certification of global uniqueness or exclusive rights.",
+    "Original dated artwork/reference evidence gaps remain separate."
+  ]
+}

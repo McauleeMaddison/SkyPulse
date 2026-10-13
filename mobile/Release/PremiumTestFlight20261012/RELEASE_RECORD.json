@@ -1,0 +1,121 @@
+{
+  "date": "2026-10-12",
+  "candidate": "SkyPulse 1.0.0 (9)",
+  "branch": "codex/neon-visual-update",
+  "compiledSourceCommit": "d0f993df4146a0e4509e79d75b2ec53c14cf251a",
+  "archive": {
+    "version": "1.0.0",
+    "build": "9",
+    "bundleId": "com.mcauleemaddison.skypulse",
+    "deviceFamilies": [
+      1,
+      2
+    ],
+    "minimumOS": "15.0",
+    "sdk": "iphoneos27.0",
+    "archivePath": "/private/tmp/skypulse-testflight-9-20261012/SkyPulse-1.0.0-9.xcarchive",
+    "signedArchiveValid": true,
+    "nonExemptEncryption": false,
+    "compiledPresentationMarkers": [
+      "Mode atmosphere",
+      "Portal emitter orbit",
+      "Machined relay portal",
+      "Blackout command deck"
+    ],
+    "sourceCommit": "d0f993df4146a0e4509e79d75b2ec53c14cf251a",
+    "sourceManifestSha256": "385268479a4d079a17f2b4ce92ef5d9c99d1c4f7a24963d6074630ee09daef9c",
+    "appExecutableSha256": "dfe058052084d695fbf3dcf51226410d12339b4506c590cf8595c1f1901771a6",
+    "metadataSha256": "c8e8f6b617a092b619c4d908e10cc40dc6c2f5b8c5c26bb4d13ef0fc67f9eb07",
+    "packagedLinksCheck": "metadata-archive-checks.json"
+  },
+  "exportManifestEntries": 364,
+  "runtimeScriptsMatchPassedQA": 12,
+  "all175LedgerHashesMatch": true,
+  "automatedSuitesPassed": 9,
+  "physicalDeviceValidation": "Pending for build 9; earlier build 7 owner tests are historical",
+  "testFlight": {
+    "buildId": "1465c1e8-23b5-4df1-acdd-32fadb27d886",
+    "processed": true,
+    "group": "SkyPulse Internal",
+    "existingTesters": 1,
+    "groupStatus": "Testing",
+    "uploadedAtLocal": "2026-10-12 22:20 BST",
+    "testerNotesSaved": true,
+    "sharedBetaDescriptionNotesAndPrivacyUrlSaved": true,
+    "externalReviewSubmitted": false
+  },
+  "publicDraft": {
+    "version": "1.0",
+    "selectedBuild": "9",
+    "status": "Prepare for Submission",
+    "savedFields": [
+      "subtitle",
+      "promotionalText",
+      "description",
+      "keywords",
+      "reviewNotes"
+    ],
+    "reloadedFieldsMatch": true,
+    "publicReviewSubmitted": false,
+    "hold": "Await Apple comparator/account clarification and renewed owner authorization",
+    "oldMedia": "Build 7 screenshots/video retained and labelled historical; new evidence required before public submission"
+  },
+  "warnings": [
+    "Xcode upload completed with missing vendor UnityRuntime.framework dSYM UUID 3C32AE36-550D-3FCA-A8C4-69FC56FF5B23; symbolication for that framework is limited.",
+    "Editor Search/service diagnostics and deliberate injected medal-save IOException retained."
+  ],
+  "attemptHistory": {
+    "build8": "Superseded after runtime branded URL correction. Interrupted during upload completion; not visible in later ASC build list.",
+    "build9CLI": "Failed to Use Accounts due missing cached Xcode-Username; signed-in Organizer upload succeeded.",
+    "initialArchive8": "Finder metadata caused local signing failure on Desktop; staging outside Desktop resolved it."
+  },
+  "limitations": [
+    "No guarantee of Apple approval or global uniqueness; Apple comparison remains unspecified.",
+    "Older artwork/reference provenance gaps remain documented.",
+    "Saved drafts and metadata checks do not constitute a public review submission."
+  ],
+  "evidenceSha256": {
+    "artifacts/testflight-9-20261012/iOS/SkyPulse-build-info.json": "4042730b5e2af12b958b9fd8787f41f6d638d3aa045e239aca063963672983e6",
+    "artifacts/testflight-9-20261012/iOS/SkyPulse-source-manifest.json": "385268479a4d079a17f2b4ce92ef5d9c99d1c4f7a24963d6074630ee09daef9c",
+    "artifacts/testflight-9-20261012/archive-verification.json": "3503454c0f6709b777ee0220799756ad76c24952e3cb52879699d14c5ce3121a",
+    "artifacts/testflight-9-20261012/metadata-archive-checks.json": "c464eccc4526e5713ad9cdd295b518ddedf5dec4cc6e965be90ccf1dfd531478",
+    "artifacts/testflight-9-20261012/unity-export.log": "8cca60da1bf8def4522ad3825dc1806f21d8b8f88f0297ec73d33a20dcda1d7e",
+    "artifacts/testflight-9-20261012/xcode-archive.log": "daad8d0e880bebefb52ce74adeb935c91c9342dfb55c88dc77b843f627257699",
+    "artifacts/testflight-9-20261012/SkyPulse-1.0.0-9.xcarchive.zip": "56bb36913efbb2bde018668182e908be1043e334977bd7129754dc80005635c6",
+    "artifacts/testflight-9-20261012/Xcode-build9-upload/SkyPulse.ipa": "e320102f10ad67c5090aa5ca28d17a6593ff568a3611f3dbe0513bcc823a9f45",
+    "artifacts/testflight-9-20261012/app-store-connect-verification.json": "f2f87fd5632bc99dad11c1836b85698ca9eeb75ecc53dc30f8e4ab47c14a095b",
+    "artifacts/testflight-9-20261012/testflight-build9-testing.png": "7c07cb265ae8dccc25ce9e70ba4de7939d1987f9dd26a9410e4797691168602b",
+    "artifacts/premium-testflight-20261012/qa/unity.log": "87419e43f82dddc6484faa1766d5176270a703f33c35441561c9d9d764210cab",
+    "artifacts/premium-testflight-20261012/static-unity.log": "d666a1db05e5a80793971852292781f986a893e2521d59b4b14204ee8abb6420",
+    "artifacts/premium-testflight-20261012/endless-preservation.json": "49fff4332b35d752fc3cc80db72ceaf1f0af05979a562283c239520c11f9731d",
+    "artifacts/premium-testflight-20261012/app-store-connect-saved-copy.json": "ddddb77c7a23907fc446478dd2ad7d531f82cece54033876b2662efa97427322",
+    "artifacts/premium-testflight-20261012/beta-metadata-saved.json": "5ea8087c6bb46c2db96538eb130858fae681c10863f905e6914d31902ed2bcce",
+    "mobile/Release/PremiumTestFlight20261012/metadata.json": "eac921598b4518444f9862f7a04cd553e926773043404726eb2bace90aaf0a43",
+    "mobile/Release/PremiumTestFlight20261012/REVIEW_NOTES.txt": "aecbcd736a69d6e6a2e25b29f5a83836ea3a63497e61210cc911ee82319baa1f",
+    "mobile/Release/PremiumTestFlight20261012/BETA_REVIEW_NOTES.txt": "15716949aa6e7d285d4351b0638d869c8ab8bbe7ade183d977faa9f5c44c7363",
+    "mobile/Release/PremiumTestFlight20261012/TESTFLIGHT_NOTES.txt": "e160c9bf6e3a27c9c525ecaba978f2a45daf9bda90d4c2a9fb5b598efa419ec4",
+    "mobile/Release/PremiumTestFlight20261012/Provenance/FILE_LEDGER.csv": "4e4b19edd2965c2b0e6b1d11bee6823ef0c9364c390485bc35b3c2733c4a0495",
+    "artifacts/testflight-9-20261012/xcode-distribution-logs/ContentDelivery.log": "1c2e5a211de83df4b0e321e6bff4a0bdc0bd7b1bb93b31c010fd4d4dc6317640",
+    "artifacts/testflight-9-20261012/xcode-distribution-logs/DVTITunesSoftwareService.log": "aa55c1eefd534ec7f644e0da1f72fadb089cc91f48f0b90733654b8d5ce1c21f",
+    "artifacts/testflight-9-20261012/xcode-distribution-logs/IDEDistribution.critical.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/testflight-9-20261012/xcode-distribution-logs/IDEDistribution.standard.log": "dab6f9e56466ab3421d899afd784e4e2ffec692427f09d24a68bda724b380156",
+    "artifacts/testflight-9-20261012/xcode-distribution-logs/IDEDistribution.verbose.log": "7112521bb9a2e21912f58ef097308bf30d55bd5705421d6c7f3f6bc8fec10bb8",
+    "artifacts/testflight-9-20261012/xcode-distribution-logs/IDEDistributionAppStoreConnect.log": "e210eb1a268806495d35f99f95930f6ffdabe9e52044f0e50e443b00ac1fbf91",
+    "artifacts/testflight-9-20261012/xcode-distribution-logs/IDEDistributionPipeline.log": "5a6d8097195a2ac99cc65a536ddd425b32d37bbf674d65e3ae00bfce5be748e6",
+    "artifacts/testflight-9-20261012/xcode-distribution-logs/IDEDistributionProvisioning.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "runtimeSourceSha256": {
+    "mobile/Assets/Scripts/SkyPulseBootstrap.cs": "ece7b674b01bc9b2a7df94a5842ef056d3cf4e30df2d0b63a042f7ac7f799f3c",
+    "mobile/Assets/Scripts/SkyPulseButtonFeedback.cs": "ab2a9c0a78c313870afcc8a50d0f9322fd665b480071f9eda8246271ef0e5261",
+    "mobile/Assets/Scripts/SkyPulseCircuitGraphic.cs": "de0820b4f61a52f43c8ac607bdf03e82df3e91698563dc18ca337074d493993f",
+    "mobile/Assets/Scripts/SkyPulseDailyMissions.cs": "dce461cd4006e5f815724570e62d49263419103b2bdf173d0614fa073e41e046",
+    "mobile/Assets/Scripts/SkyPulseMissionModels.cs": "ebf3515b667d01df3ee481420fa64a5075620f7bd054c0f03b282e3821890117",
+    "mobile/Assets/Scripts/SkyPulseNativeGame.Missions.cs": "9eec172ea83d284385ea7557f9d1cdca29b44888f9af82569de1ef2af9580d16",
+    "mobile/Assets/Scripts/SkyPulseNativeGame.Presentation.cs": "6e93f47c414f86736f32eb159d028c9ab52d13eefe3093ff4bec06a747f8313f",
+    "mobile/Assets/Scripts/SkyPulseNativeGame.cs": "6781bb2a3fa4a67666ef63448ccec9661f59916265075c75fd70f829d9c05d91",
+    "mobile/Assets/Scripts/SkyPulsePublicLinks.cs": "8427bb1103414ea4610f23293834270c4f230b9335ebd550f79c6d80e198b3b0",
+    "mobile/Assets/Scripts/SkyPulseRoundStartSurface.cs": "379650ff3d28470bf3eae7abbdb0eada594ce98b865ba97d1149265fa68e4671",
+    "mobile/Assets/Scripts/SkyPulseTechConnection.cs": "d68ac7dba1b6c6136359719bbb1c932b2a9eac9f9eea106306aa2366e130ab0f",
+    "mobile/Assets/Scripts/SkyPulseUiGlyph.cs": "85498185a92fdd6c546a0ef1d4a78bf22b40b0e26a9fc755f62da870feac7bc6"
+  }
+}

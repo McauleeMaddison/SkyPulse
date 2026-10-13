@@ -1,0 +1,41 @@
+{
+  "candidate": "1.0.0 (10)",
+  "allMarkersPresent": [
+    "SKYPULSE_ONE_THUMB_PURE_PASS",
+    "SKYPULSE_ONE_THUMB_LIVE_PASS",
+    "SKYPULSE_BLACKOUT_PURE_PASS",
+    "SKYPULSE_BLACKOUT_LIVE_PASS",
+    "SKYPULSE_BETA_CHECKS_PASS",
+    "SKYPULSE_RELEASE_EDGE_PASS",
+    "SKYPULSE_MISSION_PURE_PASS",
+    "SKYPULSE_MISSION_INTEGRATION_PASS",
+    "SKYPULSE_MISSION_LEGACY_PASS",
+    "SKYPULSE_MISSION_CAPTURES_PASS",
+    "SKYPULSE_PRESENTATION_CAPTURES_PASS",
+    "SKYPULSE_WORLD_CHECKS_PASS"
+  ],
+  "unityLogSha256": "824699a5c6fe28e92a939ccb1fa6a0dfa3657aafb9a91ff002f4f76cae00135b",
+  "runtimeSourceSha256": {
+    "Assets/Scripts/SkyPulseNativeGame.Presentation.cs": "aabeec2a5c904e7083af59d239f1f101086c42601a0db829d1dac156bc803bf1",
+    "Assets/Scripts/SkyPulsePublicLinks.cs": "8427bb1103414ea4610f23293834270c4f230b9335ebd550f79c6d80e198b3b0",
+    "Assets/Scripts/SkyPulseRoundStartSurface.cs": "379650ff3d28470bf3eae7abbdb0eada594ce98b865ba97d1149265fa68e4671",
+    "Assets/Scripts/SkyPulseBootstrap.cs": "ece7b674b01bc9b2a7df94a5842ef056d3cf4e30df2d0b63a042f7ac7f799f3c",
+    "Assets/Scripts/SkyPulsePressTarget.cs": "c796bcf41af73bb8198709a13d6b43605fe38a9636cd9645e28616e64831d73d",
+    "Assets/Scripts/SkyPulseDailyMissions.cs": "dce461cd4006e5f815724570e62d49263419103b2bdf173d0614fa073e41e046",
+    "Assets/Scripts/SkyPulseNativeGame.Blackout.cs": "6adecb361a431a8832d0383bfd6e256dff1f450439b17dd479d41fb5ba106106",
+    "Assets/Scripts/SkyPulseCircuitGraphic.cs": "a8875f5bc0639bbc8019220eddbf5827d65e508d5fda527fd1a86507990437db",
+    "Assets/Scripts/SkyPulseBlackoutGraphic.cs": "562535cc134a351280917e974323504a1698ef384199aa23886a3adcacadcd21",
+    "Assets/Scripts/SkyPulseUiGlyph.cs": "85498185a92fdd6c546a0ef1d4a78bf22b40b0e26a9fc755f62da870feac7bc6",
+    "Assets/Scripts/SkyPulseBlackoutCampaign.cs": "0fee019dd768ca3784096e67d4f7af41276a3c6092df4cbdb0e611a3f6881f1d",
+    "Assets/Scripts/SkyPulseInputFence.cs": "ccf585a47e7bb3d401c4358d792209b548185f755b27b494a368ce7838ec7b25",
+    "Assets/Scripts/SkyPulseNativeGame.Controls.cs": "8827c17bcaa33a95d5396fa1d44b518ef088a781ede307349b6a54a63ae12070",
+    "Assets/Scripts/SkyPulseTechConnection.cs": "d68ac7dba1b6c6136359719bbb1c932b2a9eac9f9eea106306aa2366e130ab0f",
+    "Assets/Scripts/SkyPulseNativeGame.cs": "6781bb2a3fa4a67666ef63448ccec9661f59916265075c75fd70f829d9c05d91",
+    "Assets/Scripts/SkyPulseMissionModels.cs": "cd11eb3b060c10cfbe71063b7f8e7687bab7feded6c11362ace119cbc8d7a87e",
+    "Assets/Scripts/SkyPulseNativeGame.Missions.cs": "a80a9428e6c5d85f89620170c97d009d51cc73ef552d787f8578853a40ab7189",
+    "Assets/Scripts/SkyPulseButtonFeedback.cs": "ab2a9c0a78c313870afcc8a50d0f9322fd665b480071f9eda8246271ef0e5261"
+  },
+  "qaProject": "/var/folders/ff/j4_1x4b13lddw8n7x11k6vy00000gn/T/skypulse-modes-qa-i6_hkly5",
+  "physicalDeviceGameplay": "Pending for build 10",
+  "publicReview": "On hold; not submitted"
+}

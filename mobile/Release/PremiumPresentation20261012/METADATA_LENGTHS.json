@@ -1,0 +1,22 @@
+{
+  "name": {
+    "length": 15,
+    "limit": 30
+  },
+  "subtitle": {
+    "length": 24,
+    "limit": 30
+  },
+  "promotionalText": {
+    "length": 160,
+    "limit": 170
+  },
+  "description": {
+    "length": 2564,
+    "limit": 4000
+  },
+  "keywords": {
+    "length": 87,
+    "limit": 100
+  }
+}

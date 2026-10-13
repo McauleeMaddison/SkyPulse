@@ -1,0 +1,40 @@
+{
+  "date": "2026-10-12",
+  "method": "Built-in image_gen tool; no CLI/API key fallback",
+  "inputImages": [],
+  "prompt": "Use case: stylized-concept. Asset type: one production game sprite for SkyPulse Pulse Relay, a premium 2D Unity mobile game. Primary request: a realistic, beautifully rendered freestanding oval mechanical energy portal frame, replacing thin blocky procedural gates. One single tall narrow oval ring, shown in slight three-quarter side perspective with physical depth, facing a bird flying left to right. Silhouette: vertically elongated, smooth uninterrupted oval with subtly engineered joints. Materials: graphite titanium and brushed dark silver, chamfered edges, machined grooves, tiny bolts, restrained warm gold hardware accents and small cyan emitter lights. A fine luminous cyan inner channel follows the inside oval, with soft restrained bloom. Lighting: rich studio-quality metallic highlights and shadowed depth, coherent upper-left illumination, high-end console-quality PBR-like painted game asset. Composition: entire gate centred, isolated, fully visible, about 90 percent of image height and 65 percent of image width in a 2:3 portrait canvas; no clipping. Ring opening must be large and empty, about 72 percent of total image height. The hollow centre AND outside the ring must be genuinely transparent alpha, no glass or background plane; the game renders the shutter separately. No floor, stand, support arms, horizontal pipe caps, pillars, bird, character, scene, smoke cloud, text, numbers, lettering, logos, interface or watermark. Keep cyan light modest enough to read the detailed solid metal. Transparent background.",
+  "originalOutput": "/Users/mcauleemaddison/.codex/generated_images/01a0a9c2-82f8-7213-bfef-47b76d423345/exec-a32fe692-96b1-4cc5-8baf-5008da316890.png",
+  "path": "mobile/Assets/Resources/SkyPulse/art/relays/pulse-relay-gate-v2.png",
+  "sha256": "a1ed06332efaa07d12f37b701e35c7aced3a9aa2127c47e84ca33ed06c098b8e",
+  "dimensions": [
+    1024,
+    1536
+  ],
+  "alphaVerified": true,
+  "referenceRole": "No reference or target image supplied",
+  "geometry": {
+    "opaqueBounds": [
+      119,
+      18,
+      908,
+      1517
+    ],
+    "alpha128VerticalInnerOpeningPixels": [
+      161,
+      1321
+    ],
+    "worldSpriteSize": [
+      3.18,
+      4.77
+    ],
+    "worldCentreOffset": [
+      0,
+      -0.084
+    ],
+    "intendedVisualOpeningHeight": 3.6
+  },
+  "limitations": [
+    "Generation records do not certify uniqueness or exclusive rights.",
+    "Existing dated artwork/reference evidence gaps remain separate."
+  ]
+}

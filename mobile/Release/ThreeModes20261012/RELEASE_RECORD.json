@@ -1,0 +1,47 @@
+{
+  "date": "2026-10-12",
+  "branch": "codex/neon-visual-update",
+  "baselineCommit": "026e382",
+  "sourceCommit": "7123f71e777d573bc6447bd31859ff7d06cb12e9",
+  "status": "Changed source candidate; automated checks passed; device build and verification pending",
+  "historicalBuild7Unchanged": true,
+  "storedIosBuildNumber": "7 (historical configuration; select a new unused number before later export)",
+  "signedArchive": null,
+  "uploaded": false,
+  "submitted": false,
+  "appStoreConnectChanged": false,
+  "websitePublished": false,
+  "appleMessageSent": false,
+  "submissionHold": "Await Apple clarification and renewed owner authorization after changed-candidate device testing",
+  "newModeMissionCounts": {
+    "PulseRelay": 4,
+    "BlackoutProtocol": 4
+  },
+  "dailyTasks": 4,
+  "dailyCrystalsPerTask": 5,
+  "maximumDailyTaskCrystals": 20,
+  "homeThemes": "Last protocol retained; Endless cinematic / Relay cyan-gold / Blackout black-green; Reduced Motion freezes circuit movement",
+  "verification": "VERIFICATION.JSON",
+  "sourceHashes": {
+    "mobile/Assets/Scripts/SkyPulsePublicLinks.cs": "8427bb1103414ea4610f23293834270c4f230b9335ebd550f79c6d80e198b3b0",
+    "mobile/Assets/Scripts/SkyPulseRoundStartSurface.cs": "379650ff3d28470bf3eae7abbdb0eada594ce98b865ba97d1149265fa68e4671",
+    "mobile/Assets/Scripts/SkyPulseBootstrap.cs": "ece7b674b01bc9b2a7df94a5842ef056d3cf4e30df2d0b63a042f7ac7f799f3c",
+    "mobile/Assets/Scripts/SkyPulseDailyMissions.cs": "dce461cd4006e5f815724570e62d49263419103b2bdf173d0614fa073e41e046",
+    "mobile/Assets/Scripts/SkyPulseCircuitGraphic.cs": "2bdf7a2378aadf0a4d4fc233bf79e893908620ebbb6867e78be1efc51c5d536f",
+    "mobile/Assets/Scripts/SkyPulseUiGlyph.cs": "85498185a92fdd6c546a0ef1d4a78bf22b40b0e26a9fc755f62da870feac7bc6",
+    "mobile/Assets/Scripts/SkyPulseTechConnection.cs": "d68ac7dba1b6c6136359719bbb1c932b2a9eac9f9eea106306aa2366e130ab0f",
+    "mobile/Assets/Scripts/SkyPulseNativeGame.cs": "60cf54889b76405af9faa08ffcdec95c006b40da8a9222e088c295cb41e77aec",
+    "mobile/Assets/Scripts/SkyPulseMissionModels.cs": "ebf3515b667d01df3ee481420fa64a5075620f7bd054c0f03b282e3821890117",
+    "mobile/Assets/Scripts/SkyPulseNativeGame.Missions.cs": "b7e8051da91a526f03c2dcdb2f2b4fede6da8e7df5afdc7a6cab08d24d6d211c",
+    "mobile/Assets/Scripts/SkyPulseButtonFeedback.cs": "ab2a9c0a78c313870afcc8a50d0f9322fd665b480071f9eda8246271ef0e5261"
+  },
+  "deviceEvidence": "Pending; build-7 footage/sign-offs are historical only",
+  "remainingEvidenceGaps": [
+    "Apple has not identified a specific comparator in the records read.",
+    "Some original artwork generation/reference/permission records are incomplete."
+  ],
+  "evidenceLogHashes": {
+    "artifacts/modes-update-20261012/reproducible-run/final-layout-unity.log": "d13b186ffd85d581fc54291f0227134968a785e2ec9a5978f5bf3e51db1b840a",
+    "artifacts/modes-update-20261012/reproducible-run/static-final.log": "ec40ef12588204473549104bca2a2528448bd85f0ff3a59fc5eee18ac1cd340f"
+  }
+}

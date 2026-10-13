@@ -1,0 +1,37 @@
+{
+  "baseline": "026e382",
+  "protectedMethodCount": 21,
+  "exactBodyHashes": {
+    "SimulateFlight": "b5dac544e4ecba2cda256271b6aef7d22a4def775efda5a9f5bbc64fb40f501b",
+    "BufferFlapInput": "4c0330c5c8d4f5c9ab25fdb71f6f80d74aedcac1453217a09c7a3ff7942eebd3",
+    "ConsumeBufferedFlap": "ea5b095cefd072f138b54ef0e2b613a525456c8381b59fb4562a99eb32d2e16b",
+    "UpdateBird": "ae8c0d012f0868ae02085df8ea68d00702bda3781b7163940313efd5f33bbbe7",
+    "UpdateGameplayWingState": "0ce261691d671083c605286c935078adb99b254c781fe8202c45209a3b7ccd21",
+    "UpdateBirdWingMotion": "0655efa85e460cb97b88618033eaace8562ecb27b80660c5e0ffefd086a4c5ea",
+    "Flap": "b120999ad74f7436880e3c0217ac9ee75ebe65ec0b31b9f2208cfbc2c7a30123",
+    "BirdCollidesWithPipe": "3db1473ee6b1c2f2aaeaaaa631535c8a479f482a06bd2414cd220872320e4f28",
+    "CollidersOverlap": "d0b529e13ebc67eb2f0d341bce735a77ca0af4d99404e8142f2c2612f23494e9",
+    "ConfigurePipe": "c1ddd585024c3efd0dd396928c33b083a555b30b26bc7fe4e8cfa26cb6cc26e5",
+    "UpdateRouteGateMotion": "c94dfe6513cdc8506cce479f0a07334dd45875c58712be8e09ae64cf00b661e6",
+    "UpdateWorldTransition": "ea6221abf0290ce5b48c2aa08cb1f2a9ba0328814deea264e6397913955ce4c2",
+    "BeginWorldTransition": "2e57733075db660c523bdc89e0fb29215f263a37006fabf6f659a8de510b9654",
+    "RouteSpeedFraction": "ef3f51df6bd9c0fad88a13694b0eb2973c8c98ea367bf85a08dd6b8a7f204523",
+    "RouteGapFraction": "439206842064635fc6f0fb7e51eb151fa6ffea7e2c3df0a9e7286f29c012f9ca",
+    "UseShield": "7e07ff52201ae45ac211378cc6b1029a16165d5c739d3bcf8b532235b4d98c84",
+    "UpdatePowerUpEffects": "fcb816b4d2f31f7e4590d993e8b60c3d0be65733703022af2ec59222a449f13c",
+    "CollectPowerUp": "961b5fcb4c087ad8fd7a8467e821433bc3a893a6053b74ba8dab3b7eeb8b8526",
+    "CrystalPickupValue": "001e20c5ee50c6ad19542173e16beb5e8ade56d30f60e25dde8cfaedb5cb73a3",
+    "LoadProgress": "dfacff548d1fb9842c5e3d544f5abc10c1455ae48c6ba0d499e98caca540f025",
+    "BeginFlight": "fcf02f21b8ca0e851ba286102b358fe1d8e56068dda52aeaadfa222bc9aad080"
+  },
+  "integrationHookMethods": [
+    "SaveProgress",
+    "ConfirmPurchase",
+    "UpdatePipes",
+    "CollectCrystalPickup",
+    "EndFlight",
+    "BankCollectedCrystals",
+    "ApplyResultTechBonuses"
+  ],
+  "allEndlessConstantsUnchanged": true
+}

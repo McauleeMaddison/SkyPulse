@@ -1,0 +1,94 @@
+{
+  "sourceCommit": "096b6c8",
+  "build": "7",
+  "archiveZipSha256": "76f39ecb6b200975dfdaf614d7e291b3bdc356d404f7119c529cb527c269e2c0",
+  "appPlist": {
+    "CFBundleIdentifier": "com.mcauleemaddison.skypulse",
+    "CFBundleVersion": "7",
+    "CFBundleShortVersionString": "1.0.0",
+    "MinimumOSVersion": "15.0",
+    "UIDeviceFamily": [
+      1,
+      2
+    ]
+  },
+  "codeSignatureVerification": "codesign --verify --deep --strict passed with macOS trust services outside sandbox",
+  "uploadResult": {
+    "date": "2026-09-30",
+    "status": "Upload succeeded; EXPORT SUCCEEDED",
+    "log": "xcode-upload.log",
+    "processingCompleteVerified": true
+  },
+  "deviceTests": {
+    "physicalIPhone": "Owner confirmed all requested build 7 checks passed",
+    "iPadSimulator": "Owner confirmed all requested build 7 checks passed",
+    "coverage": "Four guide pages, Hangar swipe/equip, Tech Tree, flight/crystals/power-ups, sounds, game over/retry, retained progress after reopen",
+    "signoffSource": "Explicit user replies in this chat"
+  },
+  "submissionVerified": true,
+  "appStoreConnect": {
+    "verifiedAt": "2026-10-06",
+    "buildId": "4e38a14f-2b9e-4532-80a9-73e342401155",
+    "selectedBuild": "7",
+    "metadataAndNotesSaved": true,
+    "iPad13ScreenshotCount": 5,
+    "automaticReleaseAfterApproval": true,
+    "submissionStatus": "Removed",
+    "newReviewReplySent": false,
+    "subtitle": "15 Birds, 12 Worlds, Tech Tree",
+    "ownerAccountHistorySaved": true,
+    "iPhoneGuideScreenshotUploaded": true,
+    "iPhoneScreenshotSetFullyRefreshed": true,
+    "reviewAttachmentRefreshed": true,
+    "submittedAtDisplayed": "Oct 6, 2026 at 11:44 AM",
+    "submissionId": "d5ba215d-daa2-4d6b-9441-3ae6e1507bc6",
+    "iPhoneScreenshotCount": 5,
+    "reviewAttachment": "SkyPulse-build7-review.mp4",
+    "reviewNotesCharacters": 3695,
+    "statusVerifiedAt": "2026-10-06"
+  },
+  "website": {
+    "verifiedAt": "2026-10-05",
+    "version": 3,
+    "sourceCommit": "361fcce004d9bb9ce06cf0edb25ac40a218fbfb9",
+    "deployment": "appgdep_6ac390779c0c8191bbb9dbeec9961da7",
+    "status": "succeeded",
+    "supportURL": "https://skypulse.macwebstudio.com/support",
+    "privacyURL": "https://skypulse.macwebstudio.com/privacy",
+    "customDomainStatus": "active",
+    "sslStatus": "active",
+    "appStoreURLsUpdated": true
+  },
+  "freshIPhoneEvidence": {
+    "receivedAt": "2026-10-05",
+    "source": "Owner-provided SkyPulse Build 7 .MP4 in iCloud Downloads",
+    "originalSHA256": "d0b86a9e20c38453e11476b5c33d88e0d4f3a9c6c66c14f5fcab2384228a4e82",
+    "reviewSHA256": "f03d47f947bdb71101d59e5bec38c6e47656a28e8f8f7f393ed7cea3b26da073",
+    "reviewDurationSeconds": 42,
+    "trim": "Original seconds 2 through 44; exclude opening Control Centre. No synthetic game visuals.",
+    "nativeFrameSize": "1320x2868",
+    "frames": {
+      "home": 2,
+      "hangar": 20,
+      "techTree": 27
+    },
+    "uploaded": true
+  },
+  "submissionHold": {
+    "active": true,
+    "requestedAt": "2026-10-06",
+    "reason": "Owner withdrew submission pending Apple clarification of the specific similarity concern.",
+    "resumeCondition": "Apple answers received and owner explicitly authorizes resubmission.",
+    "allowedWork": "Local investigation, bug fixes, tests and evidence preparation; no App Review submission."
+  },
+  "appleSupportClarification": {
+    "caseId": "102987914250",
+    "sentAt": "2026-10-06",
+    "receiptVerified": true,
+    "channel": "Apple Developer Support > App Review Status > Email",
+    "purpose": "Follow up unanswered 29 September request and obtain actionable similarity details",
+    "requestFile": "APPLE_SUPPORT_REQUEST_20261006.txt",
+    "appResubmitted": false,
+    "responsePending": true
+  }
+}

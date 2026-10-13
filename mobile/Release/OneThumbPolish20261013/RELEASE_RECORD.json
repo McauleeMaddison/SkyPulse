@@ -1,0 +1,71 @@
+{
+  "candidate": "SkyPulse 1.0.0 (10)",
+  "compiledSourceCommit": "5f0ecfc1d5762bc6dde6a21ddbba6cad225f9975",
+  "exportRecordedSourceAbbreviation": "5f0ecfc",
+  "branch": "codex/neon-visual-update",
+  "all18RuntimeScriptsMatchPassedQA": true,
+  "archive": {
+    "archive": "/private/tmp/skypulse-testflight-10-20261013/SkyPulse-1.0.0-10.xcarchive",
+    "version": "1.0.0",
+    "build": "10",
+    "bundle": "com.mcauleemaddison.skypulse",
+    "deviceFamilies": [
+      1,
+      2
+    ],
+    "appExecutableSha256": "4701ca420f38d1c95d21d501ff4b9b884b7ed140a2bdb2b2a1621ada8f911fdd",
+    "physicalDeviceGameplay": "Pending"
+  },
+  "strictCodeSignatureVerification": true,
+  "automatedRequiredPassMarkers": 12,
+  "testFlight": {
+    "buildId": "396b5cff-921f-4ca3-97a2-c5aae3a9462c",
+    "uploaded": true,
+    "processed": true,
+    "status": "Testing",
+    "group": "SkyPulse Internal",
+    "testerNotesSaved": true,
+    "externalReviewSubmitted": false,
+    "existingTesters": 1,
+    "notesReloadMatched": true,
+    "verifiedUtc": "2026-10-13T13:21:55.893332+00:00"
+  },
+  "physicalDeviceGameplay": "Pending for build 10",
+  "publicReviewSubmitted": false,
+  "publicDraft": "Build 9 retained; review hold continues",
+  "warnings": [
+    "Vendor UnityRuntime.framework dSYM UUID 3C32AE36-550D-3FCA-A8C4-69FC56FF5B23 not included in the installed Unity distribution. Upload succeeded; engine crash symbolication is limited."
+  ],
+  "runtimeSourceSha256": {
+    "Assets/Scripts/SkyPulseNativeGame.Presentation.cs": "aabeec2a5c904e7083af59d239f1f101086c42601a0db829d1dac156bc803bf1",
+    "Assets/Scripts/SkyPulsePublicLinks.cs": "8427bb1103414ea4610f23293834270c4f230b9335ebd550f79c6d80e198b3b0",
+    "Assets/Scripts/SkyPulseRoundStartSurface.cs": "379650ff3d28470bf3eae7abbdb0eada594ce98b865ba97d1149265fa68e4671",
+    "Assets/Scripts/SkyPulseBootstrap.cs": "ece7b674b01bc9b2a7df94a5842ef056d3cf4e30df2d0b63a042f7ac7f799f3c",
+    "Assets/Scripts/SkyPulsePressTarget.cs": "c796bcf41af73bb8198709a13d6b43605fe38a9636cd9645e28616e64831d73d",
+    "Assets/Scripts/SkyPulseDailyMissions.cs": "dce461cd4006e5f815724570e62d49263419103b2bdf173d0614fa073e41e046",
+    "Assets/Scripts/SkyPulseNativeGame.Blackout.cs": "6adecb361a431a8832d0383bfd6e256dff1f450439b17dd479d41fb5ba106106",
+    "Assets/Scripts/SkyPulseCircuitGraphic.cs": "a8875f5bc0639bbc8019220eddbf5827d65e508d5fda527fd1a86507990437db",
+    "Assets/Scripts/SkyPulseBlackoutGraphic.cs": "562535cc134a351280917e974323504a1698ef384199aa23886a3adcacadcd21",
+    "Assets/Scripts/SkyPulseUiGlyph.cs": "85498185a92fdd6c546a0ef1d4a78bf22b40b0e26a9fc755f62da870feac7bc6",
+    "Assets/Scripts/SkyPulseBlackoutCampaign.cs": "0fee019dd768ca3784096e67d4f7af41276a3c6092df4cbdb0e611a3f6881f1d",
+    "Assets/Scripts/SkyPulseInputFence.cs": "ccf585a47e7bb3d401c4358d792209b548185f755b27b494a368ce7838ec7b25",
+    "Assets/Scripts/SkyPulseNativeGame.Controls.cs": "8827c17bcaa33a95d5396fa1d44b518ef088a781ede307349b6a54a63ae12070",
+    "Assets/Scripts/SkyPulseTechConnection.cs": "d68ac7dba1b6c6136359719bbb1c932b2a9eac9f9eea106306aa2366e130ab0f",
+    "Assets/Scripts/SkyPulseNativeGame.cs": "6781bb2a3fa4a67666ef63448ccec9661f59916265075c75fd70f829d9c05d91",
+    "Assets/Scripts/SkyPulseMissionModels.cs": "cd11eb3b060c10cfbe71063b7f8e7687bab7feded6c11362ace119cbc8d7a87e",
+    "Assets/Scripts/SkyPulseNativeGame.Missions.cs": "a80a9428e6c5d85f89620170c97d009d51cc73ef552d787f8578853a40ab7189",
+    "Assets/Scripts/SkyPulseButtonFeedback.cs": "ab2a9c0a78c313870afcc8a50d0f9322fd665b480071f9eda8246271ef0e5261"
+  },
+  "evidenceSha256": {
+    "xcode-archive.log": "c6884e4fcdcb3a7233a07835d3ad9057fbfb20517c8a7291e37808bc4b48ff79",
+    "xcode-upload.log": "ae5de0d22fad725f277c5da2f7be4e367d97755f188493666215991834f1b589",
+    "unity-export.log": "47e55d82a4ecc76583da0aedc0f015ee3825984c3ae664ac09163659ae2368ef",
+    "qa-export-agreement.json": "bea117482932e54c55d7c0561bb505310503a1822aaeaeb390581bb90dbd0cab",
+    "metadata-archive-checks.json": "cb40befe51aa316b25a3ec6df68b1cb37451ed1fd88b27f511d89a5a6d370e9b",
+    "SkyPulse-1.0.0-10.xcarchive.zip": "128c27fc49fcf3b5c18a1c208612aedb7f11af692358abcd1838d5222cb4aeb4",
+    "testflight-build10-testing.jpg": "50631a1c3ec3ec69fa6b77ae7c1a9d74f44bed1e55700ac61f718548defd4d71",
+    "testflight-notes-saved.jpg": "4be8faae47485822a27bbdadea484c22532a1300e0bc74bf41f3ff0c8e54ad56"
+  },
+  "directDeviceInstallation": "Not performed: automatic approval review rejected direct installation over the existing app due to saved-state overwrite risk; delivery completed through TestFlight instead.",
+  "ownerDeviceFeedback": "Owner used build 10 and requested daily Relay refresh, direct next/main-menu navigation, slightly wider Endless spacing/smaller gaps and cleaner gameplay copy. No full physical-device pass was reported."
+}

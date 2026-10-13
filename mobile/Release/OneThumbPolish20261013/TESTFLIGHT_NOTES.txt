@@ -1,0 +1,11 @@
+Build 10: mobile controls and gameplay polish
+
+Endless Route keeps its original flight handling, width and gate spacing.
+
+Pulse Relay: tap the flight area to flap. Numbered spectral crystals automatically open their matching gates; there is no FLAP or PULSE button. Verify clear unlock sound/light, reliable pickups and passage during the opening effect across First Circuit, Switchback, Highwire and Crossfeed.
+
+Blackout Protocol: tap a connected neighbour. A closed firewall automatically breaches for one charge and three trace; tap again to enter. Blocked moves cost one trace; failed breaches cost three. Recover cores, keys and phase routes before trace runs out. Each clear saves and immediately starts the harder next sector; the eighth sector ends the campaign.
+
+Check rapid fresh taps versus held touches, pause/UI exclusion, restart, background/resume, Reduced Motion/haptics, sounds and saved progress after relaunch. Blackout Home has a sector map and field guide, with no Bird Hangar or Tech Tree. Relay Home has its circuit map and cosmetic Hangar.
+
+Editor regressions cover 30/60/120 FPS, same-frame pickup/collision and instant progression. Physical iPhone/iPad feedback and sustained frame-rate testing are still needed. Public App Review remains on hold.

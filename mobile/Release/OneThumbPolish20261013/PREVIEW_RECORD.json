@@ -1,0 +1,21 @@
+{
+  "sourceCommit": "5f0ecfc1d5762bc6dde6a21ddbba6cad225f9975",
+  "type": "Unity rendered QA; not physical device captures",
+  "framesPerAnimation": 40,
+  "seconds": 4,
+  "frameSampling": ".1 sec scripted presentation and gameplay steps",
+  "sources": [
+    "qa-release/captures/motion/home-endless",
+    "qa-release/captures/motion/home-relay",
+    "qa-release/captures/motion/home-blackout",
+    "qa-release/captures/motion/endless-flight",
+    "qa-release/captures/motion/relay-flight",
+    "qa-release/captures/motion/blackout-puzzle"
+  ],
+  "files": {
+    "three-gameplay.gif": "c8fdd12055d80bf033d06a34b585d3a6e48aae5e351fa30e220af9691fd7453d",
+    "three-homes.gif": "17b00efd7a10aaab67c9b46610df304fc4e12a954bd5c5dd96b279de21ee1efa",
+    "three-gameplay.png": "20b444249f4eea4cb80778c7cc9f8d6a118fd526a45f8d771b27a1281bc07aa9",
+    "three-homes.png": "ad036e977cf2245d6a730b0da115e6ca61daa2a1a8a1f28d7670d8a1c8922b81"
+  }
+}

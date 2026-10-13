@@ -1,0 +1,21 @@
+Apple Developer Support case 102987914250
+Sent and receipt verified 6 October 2026.
+Route: App Review > rejection/removal support > waiting for response > email.
+Submission remains Removed; this is not a resubmission or an appeal.
+
+Hello Apple Developer Support / App Review,
+
+Please help obtain a response to my unanswered App Review clarification request for SkyPulse Arcade (Apple ID 6809440803, iOS).
+
+On 29 September 2026, App Review cited Guideline 4.3(a), stating that the app shares a similar binary, metadata and/or concept with apps previously submitted by a terminated Apple Developer Program account. I requested clarification in App Store Connect on 29 September at 21:41; no later Apple response is currently visible.
+
+Submission ID: d5ba215d-daa2-4d6b-9441-3ae6e1507bc6. Build 1.0.0 (7) was submitted and then withdrawn on 6 October. It must remain withdrawn while I await clarification. This support request is not a request to resubmit or expedite the app.
+
+Please route this to the team that made the similarity determination and identify which area requires correction: (1) binary/code or framework, (2) bundled artwork/audio or other assets, (3) listing text, icon or screenshots, (4) gameplay concept, or (5) account/submission history.
+
+For each relevant area, please provide an actionable example, such as a component or asset name, the specific metadata wording/image, or the gameplay feature considered insufficiently distinct, and explain what correction or evidence is needed. If another app or account's identity cannot be disclosed, a description of the matching element within my own app would still let me investigate.
+
+I have retained development history, a dependency and asset-origin inventory, the build archive, current screenshots and a physical-iPhone walkthrough. Please specify which supporting records would help. I want to address the actual finding before submitting another candidate.
+
+Thank you,
+Mcaulee Maddison

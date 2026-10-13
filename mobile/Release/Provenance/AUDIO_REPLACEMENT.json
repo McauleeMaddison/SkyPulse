@@ -1,0 +1,37 @@
+{
+  "date": "2026-09-29",
+  "generator": "mobile/Tools/generate_skypulse_audio.py",
+  "generator_sha256": "86017ecba57fdfa2869096f9c969fc723e198ac6eca5b41119c252fb8f464fba",
+  "records": [
+    {
+      "file": "mobile/Assets/Resources/SkyPulse/audio/crash.wav",
+      "old_sha256": "19354caefefbeda580d3efeaf1a47399da1a76f3b487de0de0ee9152d170d821",
+      "new_sha256": "d1ef6b95713b0df4c19218df11fb331af2eb95fad0ea2b3887be5715269eb36d",
+      "meta_sha256": "00c546e138af60b73a45aa508612dd29dbe5515528d50bfdc246319dd88350a0"
+    },
+    {
+      "file": "mobile/Assets/Resources/SkyPulse/audio/crystal.wav",
+      "old_sha256": "c6e3328564a9f4863eb1d9f992c23a889a33eaa7befee073cbfc2373bc606609",
+      "new_sha256": "07f2d25eab664bec43d65ff6565bea2fb3fdef5057efb40b76bdb84db8c84a8d",
+      "meta_sha256": "5bea402d3115407b2cedfb91cb71972d72230408a19557754e43327f0a83fb93"
+    },
+    {
+      "file": "mobile/Assets/Resources/SkyPulse/audio/flap.wav",
+      "old_sha256": "aee2f4e7147cb97b0c74345b2702cf84f0cd30429cf3623ad3bb9a1fd016072e",
+      "new_sha256": "1ed6fefec6d5e1b3623a4942ad653893769dcc74c49e863ba4332247510a9b9a",
+      "meta_sha256": "b85ceb96eece6d1b3371de9f9f36342ff346909af6be91d15aab93a919361fd9"
+    },
+    {
+      "file": "mobile/Assets/Resources/SkyPulse/audio/score.wav",
+      "old_sha256": "8a1d44787d6bb4592e0e41b5329736999f20d19d377a3a351d98e375a5590dec",
+      "new_sha256": "716c509700cd94b00ecae271a806083942684cb1fb7bfbbf93e79f1d5b294649",
+      "meta_sha256": "deebf78df3494eb74903aa5b200ad08877cd46000630b25ec189ff24e37d6697"
+    },
+    {
+      "file": "mobile/Assets/Resources/SkyPulse/audio/unlock.wav",
+      "old_sha256": "1f21ab098644074c37ae86e09a34ffbf3d388e0e964463b9a2328fe02b7b9f9e",
+      "new_sha256": "e117b2599f5269c5228506ad53e3f6e426e904ff03de8103a716c806703a83d2",
+      "meta_sha256": "09575c9815697f9ea3fe1b00eb20b1b5fb87d41d69ae09b792edfacddc28820a"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "inventory_date": "2026-10-12",
+  "baseline_head": "77f002fb1c3a0a619bfb126b67eab32ebd9a4701",
+  "branch": "codex/neon-visual-update",
+  "files": 174,
+  "scope": "All non-hidden, non-meta files under mobile/Assets plus three retained visual references",
+  "limitations": [
+    "First-path commit and author date are repository claims, not independently verified creation dates.",
+    "First-path commit does not necessarily contain the current bytes; see same_bytes_as_HEAD and SHA256.",
+    "This ledger does not certify authorship, licence compliance, uniqueness or Apple account relationships."
+  ],
+  "audio_prototype_matches": 0,
+  "audio_replacement_record": "mobile/Release/Provenance/AUDIO_REPLACEMENT.json"
+}

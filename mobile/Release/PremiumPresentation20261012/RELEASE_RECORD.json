@@ -1,0 +1,60 @@
+{
+  "date": "2026-10-12",
+  "branch": "codex/neon-visual-update",
+  "baselineCommit": "5eb1b13",
+  "sourceCommit": "4e351dea707074740b9f322820827a5a1e9e9075",
+  "automatedChecksPassed": [
+    "SKYPULSE_MISSION_PURE_PASS",
+    "SKYPULSE_BETA_CHECKS_PASS",
+    "SKYPULSE_RELEASE_EDGE_PASS",
+    "SKYPULSE_MISSION_LEGACY_PASS",
+    "SKYPULSE_MISSION_INTEGRATION_PASS",
+    "SKYPULSE_WORLD_EXPANSION_GAMEPLAY_PASS",
+    "SKYPULSE_MISSION_CAPTURES_PASS",
+    "SKYPULSE_PRESENTATION_CAPTURES_PASS",
+    "SKYPULSE_WORLD_CHECKS_PASS"
+  ],
+  "staticPass": true,
+  "unityVersion": "6000.6.0f1",
+  "runtimeScripts": 12,
+  "qaExcludedFromPlayer": true,
+  "csharpCompilerErrors": 0,
+  "resourcesImported": 149,
+  "uniqueAssetGuids": 186,
+  "originalArtworkGuidAndArchiveHashesUnchanged": true,
+  "baselineAssetsChanged": [
+    "mobile/Assets/Scripts/SkyPulseNativeGame.cs"
+  ],
+  "objectiveAndDailyRuleFilesUnchanged": true,
+  "captureStills": 63,
+  "animationFrames": 200,
+  "sourceHashes": {
+    "mobile/Assets/Scripts/SkyPulseNativeGame.Presentation.cs": "1efb7e6d78a5ce574afd5515789ba9c0124fa4ca8901a99be2fb991ab41208d2",
+    "mobile/Assets/Scripts/SkyPulsePublicLinks.cs": "8427bb1103414ea4610f23293834270c4f230b9335ebd550f79c6d80e198b3b0",
+    "mobile/Assets/Scripts/SkyPulseRoundStartSurface.cs": "379650ff3d28470bf3eae7abbdb0eada594ce98b865ba97d1149265fa68e4671",
+    "mobile/Assets/Scripts/SkyPulseBootstrap.cs": "ece7b674b01bc9b2a7df94a5842ef056d3cf4e30df2d0b63a042f7ac7f799f3c",
+    "mobile/Assets/Scripts/SkyPulseDailyMissions.cs": "dce461cd4006e5f815724570e62d49263419103b2bdf173d0614fa073e41e046",
+    "mobile/Assets/Scripts/SkyPulseCircuitGraphic.cs": "146b1865e6cc320c8c018cf68b1947010f871600801abd2793c2cfb81ecf5d0a",
+    "mobile/Assets/Scripts/SkyPulseUiGlyph.cs": "85498185a92fdd6c546a0ef1d4a78bf22b40b0e26a9fc755f62da870feac7bc6",
+    "mobile/Assets/Scripts/SkyPulseTechConnection.cs": "d68ac7dba1b6c6136359719bbb1c932b2a9eac9f9eea106306aa2366e130ab0f",
+    "mobile/Assets/Scripts/SkyPulseNativeGame.cs": "6781bb2a3fa4a67666ef63448ccec9661f59916265075c75fd70f829d9c05d91",
+    "mobile/Assets/Scripts/SkyPulseMissionModels.cs": "ebf3515b667d01df3ee481420fa64a5075620f7bd054c0f03b282e3821890117",
+    "mobile/Assets/Scripts/SkyPulseNativeGame.Missions.cs": "900745c28366bfbe63839bd9452ef2a63de9afee0650b27c415cef5cf63f6745",
+    "mobile/Assets/Scripts/SkyPulseButtonFeedback.cs": "ab2a9c0a78c313870afcc8a50d0f9322fd665b480071f9eda8246271ef0e5261"
+  },
+  "evidenceLogHashes": {
+    "artifacts/premium-presentation-20261012/final-qa/unity.log": "44da44eacb3c7416e7d06f27186603edb3abae6419a2b8659d0bab0b72745c6a",
+    "artifacts/premium-presentation-20261012/static-unity.log": "81ae12479e27548f38feef688a639276d93edabfb07382fec1a587e838d99d47"
+  },
+  "navBehavior": "Startup Endless Home; badge expands three free modes; selecting changes Home; Play launches current mode",
+  "pending": "New numbered signed binary and physical iPhone/iPad visual/performance validation",
+  "uploaded": false,
+  "submitted": false,
+  "appleMessagesSent": false,
+  "submissionHoldMaintained": true,
+  "knownDiagnostics": [
+    "Retained Unity Editor Search indexing exception/service diagnostics.",
+    "Expected injected medal-save IOException.",
+    "Earlier static invocation without the helper failed; corrected exact-copy audit passed."
+  ]
+}

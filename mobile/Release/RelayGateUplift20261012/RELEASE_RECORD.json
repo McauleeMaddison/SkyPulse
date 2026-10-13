@@ -1,0 +1,90 @@
+{
+  "date": "2026-10-12",
+  "branch": "codex/neon-visual-update",
+  "baselineCommit": "b5ad96b5c0aa267e8752992f3358502417183094",
+  "sourceCommit": "d45741ad93ecd8c12f86f683509fbaf5c034b758",
+  "unityVersion": "6000.6.0f1",
+  "automatedChecksPassed": [
+    "SKYPULSE_MISSION_PURE_PASS",
+    "SKYPULSE_BETA_CHECKS_PASS",
+    "SKYPULSE_RELEASE_EDGE_PASS",
+    "SKYPULSE_MISSION_LEGACY_PASS",
+    "SKYPULSE_MISSION_INTEGRATION_PASS",
+    "SKYPULSE_WORLD_EXPANSION_GAMEPLAY_PASS",
+    "SKYPULSE_MISSION_CAPTURES_PASS",
+    "SKYPULSE_PRESENTATION_CAPTURES_PASS",
+    "SKYPULSE_WORLD_CHECKS_PASS"
+  ],
+  "staticPass": true,
+  "resourcesImported": 152,
+  "runtimeScripts": 12,
+  "qaExcludedFromPlayer": true,
+  "csharpCompilerErrors": 0,
+  "uniqueAssetGuids": 190,
+  "qaSourceMatches": true,
+  "mainEndlessRuntimeUnchangedFromPrecedingCandidate": true,
+  "protectedBuild7MethodCount": 27,
+  "endlessGateSpacingWorldUnits": 5.265,
+  "testDimensions": [
+    [
+      750,
+      1334
+    ],
+    [
+      1320,
+      2868
+    ],
+    [
+      1640,
+      2360
+    ]
+  ],
+  "phonePreviewDimensions": [
+    1320,
+    2868
+  ],
+  "sourceHashes": {
+    "mobile/Assets/Scripts/SkyPulseBootstrap.cs": "ece7b674b01bc9b2a7df94a5842ef056d3cf4e30df2d0b63a042f7ac7f799f3c",
+    "mobile/Assets/Scripts/SkyPulseButtonFeedback.cs": "ab2a9c0a78c313870afcc8a50d0f9322fd665b480071f9eda8246271ef0e5261",
+    "mobile/Assets/Scripts/SkyPulseCircuitGraphic.cs": "166fccbe44446a0eae226567abaad95fd2edebb6ef2929394a174f72502f3ec4",
+    "mobile/Assets/Scripts/SkyPulseDailyMissions.cs": "dce461cd4006e5f815724570e62d49263419103b2bdf173d0614fa073e41e046",
+    "mobile/Assets/Scripts/SkyPulseMissionModels.cs": "ebf3515b667d01df3ee481420fa64a5075620f7bd054c0f03b282e3821890117",
+    "mobile/Assets/Scripts/SkyPulseNativeGame.Missions.cs": "9eec172ea83d284385ea7557f9d1cdca29b44888f9af82569de1ef2af9580d16",
+    "mobile/Assets/Scripts/SkyPulseNativeGame.Presentation.cs": "2aa2617a27dcf7f4af1a519f249649f353257094852428a6e3ed9a2b018ef9f0",
+    "mobile/Assets/Scripts/SkyPulseNativeGame.cs": "6781bb2a3fa4a67666ef63448ccec9661f59916265075c75fd70f829d9c05d91",
+    "mobile/Assets/Scripts/SkyPulsePublicLinks.cs": "8427bb1103414ea4610f23293834270c4f230b9335ebd550f79c6d80e198b3b0",
+    "mobile/Assets/Scripts/SkyPulseRoundStartSurface.cs": "379650ff3d28470bf3eae7abbdb0eada594ce98b865ba97d1149265fa68e4671",
+    "mobile/Assets/Scripts/SkyPulseTechConnection.cs": "d68ac7dba1b6c6136359719bbb1c932b2a9eac9f9eea106306aa2366e130ab0f",
+    "mobile/Assets/Scripts/SkyPulseUiGlyph.cs": "85498185a92fdd6c546a0ef1d4a78bf22b40b0e26a9fc755f62da870feac7bc6"
+  },
+  "newPortalAssetSha256": "a1ed06332efaa07d12f37b701e35c7aced3a9aa2127c47e84ca33ed06c098b8e",
+  "existingAssetChanges": [
+    "mobile/Assets/Scripts/SkyPulseNativeGame.Presentation.cs",
+    "mobile/Assets/Scripts/SkyPulseCircuitGraphic.cs"
+  ],
+  "originalBaselineChanges": [
+    "mobile/Assets/Scripts/SkyPulseNativeGame.cs"
+  ],
+  "originalArtworkGuidsAndArchivesPreserved": true,
+  "captureStills": 63,
+  "fullSuiteAnimationFrames": 280,
+  "phoneAnimationFrames": 120,
+  "evidenceLogHashes": {
+    "artifacts/relay-gate-uplift-20261012/qa/unity.log": "d2c47173d1c53b2a6de64ae6c88ac2a5c85f0eb4e92bab1aeaa7a5587bcd9f1a",
+    "artifacts/relay-gate-uplift-20261012/phone-unity.log": "11e52b303631c65a8d13e3b485041c85664bfc8c021677563fcffa1e8e00490e",
+    "artifacts/relay-gate-uplift-20261012/static-unity.log": "8d32cdc4405a5ac191741e3d60eccd23d59ec9a2d5fa89088e740cbcd6ed1b26"
+  },
+  "pending": [
+    "New numbered signed binary",
+    "Physical iPhone/iPad visual and performance checks",
+    "Apple comparator clarification; original provenance gaps remain dated"
+  ],
+  "uploaded": false,
+  "submitted": false,
+  "appleMessagesSent": false,
+  "submissionHoldMaintained": true,
+  "knownDiagnostics": [
+    "Retained Unity Editor Search indexing exception and service diagnostics",
+    "Expected injected medal-save IOException"
+  ]
+}

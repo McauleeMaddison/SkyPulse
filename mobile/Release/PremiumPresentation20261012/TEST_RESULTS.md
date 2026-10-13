@@ -1,0 +1,15 @@
+# Presentation checks — 12 October 2026
+
+**Available automated checks passed.** Exact final suite: `artifacts/premium-presentation-20261012/final-qa/unity.log`; isolated company/product `SkyPulseQA20261006`. The owner's real player save was not reset. Source and objective tests remain separate from the artificial capture state.
+
+- Existing beta, world, release-edge, mission model, integration and legacy-save checks passed again, including 1,300 Endless gates, all four playable Relay courses, all four budget-feasible gold-capable Blackout solutions, daily claim interruption/recovery and 15-bird/nine-node contracts.
+- The original Endless constants/catalogues and 21 protected methods still match baseline `026e382`; normalized integration hooks match. `SkyPulseMissionModels.cs` and `SkyPulseDailyMissions.cs` are byte-identical to presentation baseline `5eb1b13`.
+- Badge navigation checks: new launch defaults to Endless; the 496-unit dropdown expands while Home remains visible; selecting a row changes the Home theme without starting a session; Play opens the selected Relay mission list. Full Blackout badge and new-screen text fit at 750×1334, 1320×2868 and 1640×2360.
+- Pause freezes the Relay presentation clock. Reduced Motion freezes Relay scenery/charge animation, freezes circuit mesh phase, and expands/dismisses the complete dropdown immediately. The pre-existing one-time result/save and gameplay pause guards remain tested.
+- Generated and visually inspected representative stills from 63 Editor screenshots. Five actual animation sequences contain 40 frames each (Home Relay, Home Blackout, badge dropdown, Relay flight, Blackout puzzle). Comparison GIFs use those frames and differ across frames, rather than synthesizing animations over still screenshots.
+- Final scene/resource/player-assembly audit passes on the same final copy: one enabled SkyPulse scene, no missing imports/scene scripts, 149 Resources assets and 12 authored runtime scripts. QA and capture helpers are excluded from the shipping player. No C# compiler errors.
+- Bird registration, retained audio byte checks, original artwork/GUID preservation and recorded archive ZIP preservation pass. Diff whitespace checks pass. Original signing/project settings are unchanged.
+
+The Editor log retains the previously observed Unity Search indexing `ArgumentOutOfRangeException` and service/licensing diagnostics. A deliberately injected medal-save IOException is expected test evidence. An initial static-audit invocation targeted the earlier copy without the added audit helper and failed to find its entrypoint; that log is retained as `static-prior-copy.log`. It is not counted as a pass. The final exact-copy audit is `static-unity.log` and contains `SKYPULSE_43A_STATIC_UNITY_PASS`.
+
+**Pending:** a new numbered/signed device candidate, physical iPhone/iPad UI/motion/performance verification and fresh device evidence. Existing build 7 sign-offs and footage do not validate these changes. App Store submission remains withdrawn, and Apple's unidentified similarity comparison is not claimed resolved.
