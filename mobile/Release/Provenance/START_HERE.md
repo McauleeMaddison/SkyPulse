@@ -1,5 +1,7 @@
 # SkyPulse provenance evidence — 29 September 2026
 
+This is a historical evidence packet. For the current build 11 image ledger, published output terms and 13 October owner reference/purchase statements, start with [the current identity/rights audit](../IdentityRights20261013/README.md). Earlier unresolved entries below are retained as dated records, not silently reclassified as verified rights.
+
 Status: **development traceability documented; owner confirms ARTA artwork and code ownership. The next candidate’s audio origin is now documented through a retained generator. Account history and supporting artwork records remain open.** No finding of copied material or terminated-account affiliation is made. This packet is an evidence inventory, not a legal certificate or assurance of App Store approval.
 
 See [REMEDIATION_STATUS.md](REMEDIATION_STATUS.md) for completed fixes and remaining release work.

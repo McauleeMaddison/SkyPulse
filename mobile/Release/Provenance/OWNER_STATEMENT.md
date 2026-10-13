@@ -20,3 +20,5 @@ Recorded 29 September 2026 from this conversation. Statements below are owner-re
 No statement has been signed or sent on the owner's behalf. The received account of the artwork and code is now recorded; independent rights verification and Apple's similarity assessment are separate matters.
 
 6 October follow-up: the owner explicitly describes writing sections of the game with AI coding assistance. Record Mcaulee Maddison as the project creator and preserve the contribution history. Do not describe VS Code as proof of code provenance, or claim every dependency, engine component or generated code fragment is globally exclusive.
+
+13 October follow-up: the owner confirms that the artwork includes images generated using ChatGPT and ARTA, reports a lifetime ARTA purchase, and confirms that all reference images were his own images or generated outputs. This refines the earlier broad ARTA statement. No receipt or original-export folder location was supplied. See [the current rights record](../IdentityRights20261013/RIGHTS_RECORD.md); record these statements without inventing purchase verification or exclusivity.

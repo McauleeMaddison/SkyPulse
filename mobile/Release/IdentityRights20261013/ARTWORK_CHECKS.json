@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "imagesCovered": 145,
+  "sha256AndSizesMatch": true,
+  "exactByteDuplicateGroups": [],
+  "ownerReferenceStatementRecorded": true,
+  "exclusiveRightsCertified": false,
+  "appleSimilarityResolved": false,
+  "limitations": [
+    "Exact byte checks do not compare against other apps or certify copyright.",
+    "Owner attestations and published terms do not authenticate every original export."
+  ]
+}

@@ -1,3 +1,13 @@
+## Current identity, artwork and draft selection — 13 October 2026
+
+**Build 11 is selected and saved in the public draft**, replacing build 9 at the owner's request. English (U.K.) subtitle, promotional text, description, keywords and reviewer notes describe build 11, identify Mcaulee Maddison, and were verified after navigation/reload. The version remains **Prepare for Submission**; no Add for Review/Submit action was taken. Build 11 is also Testing in SkyPulse Internal. Historical uploads remain Apple's build history.
+
+The [current audit](IdentityRights20261013/README.md) records all 145 source images, no exact byte duplicates, published ARTA/OpenAI output terms, and the owner's confirmation that references were his own images/generated outputs. Lifetime ARTA access is owner-reported, not receipt-verified. Nine metadata regression tests and full 378-file source/archive/link/identity checks pass. Current device/media validation and Apple's comparison details remain pending; no exclusivity or approval certificate is claimed.
+
+The following sections are dated history, superseded by this current selection where they describe build 9.
+
+---
+
 ## Private TestFlight follow-up — 13 October 2026
 
 **SkyPulse 1.0.0 (11) is uploaded, processed and Testing in the existing one-person SkyPulse Internal group.** Notes were saved and verified after reload. It includes the owner's build 10 feedback: daily refreshed Relay circuits, Next Mission, Main Menu on each mode's result, slightly wider Endless spacing/smaller gaps and cleaner gameplay overlays. Fourteen automated QA markers, exact source/export agreement and strict native archive/packaged metadata checks pass. Fresh build 11 physical gameplay and sustained FPS checks remain pending.

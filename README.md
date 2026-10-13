@@ -2,9 +2,9 @@
 
 > **Current candidate: build 11.** The owner’s build 10 feedback adds daily refreshed Relay circuits, direct Next Mission, Main Menu on every result, small Endless spacing/gap tuning and cleaner gameplay overlays. See [the follow-up release guide](mobile/Release/DailyRoutes20261013/README.md). **Build 11 is now processed and Testing in SkyPulse Internal**, with matching tester notes saved. Physical build 11 gameplay checks remain pending.
 
-> **App Review hold:** the public version remains Prepare for Submission/unsubmitted. Build 9 and its updated metadata are saved in the draft and available for private TestFlight testing. Await Apple’s clarification and renewed owner authorization before resubmitting. See [current status](mobile/Release/REVIEW_STATUS.md).
+> **App Review hold:** build 11 is now selected in the saved public draft, with matching English (U.K.) metadata and creator attribution. The version remains Prepare for Submission/unsubmitted. Await Apple’s clarification, current device/media validation and renewed owner authorization before resubmitting. See [current identity/rights audit](mobile/Release/IdentityRights20261013/README.md) and [review status](mobile/Release/REVIEW_STATUS.md).
 
-SkyPulse is an offline, portrait Unity arcade game for iPhone and iPad. The current source candidate is `mobile/`; open it with Unity **6000.6.0f1**. The 12 October updates add three modes, daily missions, shared tested widths, distinct animated Home/player views and a compact mode dropdown. Build 9 is already in the existing SkyPulse Internal group. Build 10 is now Testing in SkyPulse Internal; see [its release guide](mobile/Release/OneThumbPolish20261013/README.md) for validation and publication status.
+SkyPulse is Mcaulee Maddison’s offline, portrait Unity arcade game for iPhone and iPad. The current source candidate is `mobile/`; open it with Unity **6000.6.0f1**. It includes three modes, daily missions, shared tested widths, distinct animated Home/player views and a compact mode dropdown. [CURRENT_RELEASE.json](mobile/Release/CURRENT_RELEASE.json) identifies the current build, metadata, tested source and artwork ledger. Older numbered release folders are historical evidence.
 
 ## Project layout
 
@@ -34,6 +34,8 @@ Pulse Relay offers four finite circuits refreshed each UTC day; Blackout Protoco
 Saved scores, crystals, owned birds, upgrade levels and preferences retain their existing keys and migration paths. New mode, daily and Home-protocol data uses separate versioned keys.
 
 ## Verify changes
+
+Run `python3 mobile/Tools/check_release_metadata.py --online --require-build 11` for the current listing, identity, links and exact candidate source checks, `python3 mobile/Tools/test_release_metadata.py` for stale-copy guards, and `python3 mobile/Tools/check_artwork_ledger.py` for complete current image/hash coverage. Update `CURRENT_RELEASE.json` and matching evidence when a future candidate changes; historical metadata must be selected explicitly with `--metadata`. These checks do not certify exclusive rights or Apple's private comparison.
 
 Run `python3 mobile/Tools/verify_bird_registration.py` to validate all 90 flight frames. For gameplay, persistence, purchases, scrolling and safe-area checks, follow `mobile/Tools/VISUAL_SMOKE.md`; run those harnesses only in an isolated QA project, because they reset the QA save. Use **SkyPulse → Playtest Checklist** for manual testing.
 
