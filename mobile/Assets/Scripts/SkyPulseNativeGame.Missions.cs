@@ -22,20 +22,19 @@ namespace SkyPulse.Mobile
         private readonly List<Transform> relayShutters=new List<Transform>();
         private readonly List<Transform> relayCells=new List<Transform>();
         private readonly List<Vector2> relayCellPositions=new List<Vector2>();
-        private readonly HashSet<int> usedRelayCells=new HashSet<int>();
+        private readonly HashSet<int> usedRelayCells=new HashSet<int>(10);
         private Transform relayExit, relayShield;
-        private bool relayShieldCollected, missionFinalized, hackArmed;
+        private bool relayShieldCollected, missionFinalized;
         private int selectedMission;
         private float missionUiTimer;
         private Text relayStatusText, relayHintText, blackoutStatusText, blackoutHintText, dailyResetText, dailyTotalText;
-        private Button pulseButton, hackButton;
         private readonly List<Button> dailyClaimButtons=new List<Button>();
         private readonly List<Text> dailyProgressLabels=new List<Text>();
         private readonly List<RectTransform> dailyProgressBars=new List<RectTransform>();
         private readonly Dictionary<SpriteRenderer,bool> hiddenModeRenderers=new Dictionary<SpriteRenderer,bool>();
         private bool AuxiliaryScreenOpen => (modeSelectionScreen!=null && modeSelectionScreen.activeSelf) ||
             (missionSelectionScreen!=null && missionSelectionScreen.activeSelf) || (missionControlScreen!=null && missionControlScreen.activeSelf) ||
-            (missionResultScreen!=null && missionResultScreen.activeSelf);
+            (missionResultScreen!=null && missionResultScreen.activeSelf) || (modeGuideScreen!=null && modeGuideScreen.activeSelf);
 
         private void InitializeMissionServices()
         {
@@ -109,6 +108,7 @@ namespace SkyPulse.Mobile
             blackoutScreen=MissionScreen("Blackout terminal",true);
             relayHudScreen=MissionScreen("Pulse Relay HUD",false,false);
             missionResultScreen=MissionScreen("Protocol result");
+            SetupModeHomeControls();
         }
         private void ClearScreen(GameObject root)
         {
@@ -125,7 +125,7 @@ namespace SkyPulse.Mobile
         private void CloseAuxiliaryScreens()
         {
             modeDropdownOpen=false;
-            foreach(var screen in new[]{modeSelectionScreen,missionSelectionScreen,missionControlScreen,missionResultScreen})if(screen!=null)screen.SetActive(false);
+            foreach(var screen in new[]{modeSelectionScreen,missionSelectionScreen,missionControlScreen,missionResultScreen,modeGuideScreen})if(screen!=null)screen.SetActive(false);
         }
         private void ClearMissionSession()
         {
@@ -139,7 +139,7 @@ namespace SkyPulse.Mobile
             if(relayHudScreen!=null)relayHudScreen.SetActive(false);
             if(blackoutScreen!=null)blackoutScreen.SetActive(false);
             CloseAuxiliaryScreens();relaySession=null;blackoutSession=null;activeMode=SkyPulseMode.EndlessRoute;
-            missionFinalized=false;hackArmed=false;relayShieldCollected=false;
+            missionFinalized=false;relayShieldCollected=false;
         }
         private void SetHomeProtocol(SkyPulseMode mode)
         {
@@ -202,6 +202,7 @@ namespace SkyPulse.Mobile
         private void LaunchMission(SkyPulseMode mode,int index)
         {
             if(mode==SkyPulseMode.BlackoutProtocol && !blackoutCampaign.CanPlay(index))return;
+            FenceGameplayBoundary();
             SetHomeProtocol(mode);
             ResetToMenu();homeScreen.SetActive(false);selectedMission=index;activeMode=mode;missionFinalized=false;
             if(mode==SkyPulseMode.PulseRelay)
@@ -242,73 +243,95 @@ namespace SkyPulse.Mobile
         {
             BuildPremiumRelayCell(id,at);
         }
+        private int relayDisplayedCells=-1,relayDisplayedPassed=-1,relayDisplayedOpen=-1;
+        private float relayUnlockFeedback;
+        private string relayUnlockCaption="";
         private void BuildRelayHud()
         {
             ClearScreen(relayHudScreen);relayHudScreen.SetActive(true);
-            var header=PremiumPanel(relayHudScreen.transform,"Relay flight deck",new Vector2(0,784),new Vector2(970,355),1,Hex("#45eaff"));
-            MissionText(header,"PULSE RELAY",118,43,Hex("#ffd078"));
-            MissionText(header,relaySession.Mission.Name,51,26,Hex("#bdebf0"));
-            relayChargeText=ProtocolStat(header,"CHARGE", "0",-313,-52,286,1,Hex("#ffd078"));
-            relayProgressText=ProtocolStat(header,"RELAYS", "0 / 0",0,-52,286,1,Hex("#45eaff"));
-            relayStatusText=ProtocolStat(header,"NEXT RELAY", "01",313,-52,286,1,Hex("#45eaff"));
-            relayHintText=MissionText(relayHudScreen.transform,"",535,24,Hex("#c4f4f5"),940,64);
-            MissionButton(relayHudScreen.transform,"PAUSE",375,425,230,PauseFlight);
-            PremiumPanel(relayHudScreen.transform,"Pilot control deck",new Vector2(0,-800),new Vector2(990,200),1,Hex("#45eaff"));
-            pulseButton=MissionButton(relayHudScreen.transform,"PULSE · 0",230,-770,460,PressPulse,Hex("#ffd078"));
-            MissionButton(relayHudScreen.transform,"FLAP",-240,-770,430,()=>{if(state==FlightState.Playing)BufferFlapInput();});
-            MissionText(relayHudScreen.transform,"GOLD CELLS = CHARGE · ALIGN BEFORE PULSING",-860,21,Hex("#a3c7d8"));
+            var header=PremiumPanel(relayHudScreen.transform,"Relay flight deck",new Vector2(0,849),new Vector2(970,220),1,Hex("#45eaff"));
+            MissionText(header,"PULSE RELAY",62,40,Hex("#ffd078"));
+            MissionText(header,relaySession.Mission.Name,8,23,Hex("#bdebf0"));
+            relayChargeText=ProtocolStat(relayHudScreen.transform,"CRYSTALS", "0",-320,665,300,1,Hex("#77eaff"));
+            relayProgressText=ProtocolStat(relayHudScreen.transform,"GATES OPEN", "0",0,665,300,1,Hex("#45eaff"));
+            relayStatusText=ProtocolStat(relayHudScreen.transform,"PASSED", "0",320,665,300,1,Hex("#65ffad"));
+            MissionButton(header,"Ⅱ",410,28,100,PauseFlight,Hex("#8eeaff"),100);
+            relayHintText=MissionText(relayHudScreen.transform,"CRYSTALS OPEN THEIR MATCHING GATES",-800,25,Hex("#c4f4f5"),940,58);
+            MissionText(relayHudScreen.transform,"TAP THE FLIGHT AREA TO FLAP",-885,23,Hex("#a3c7d8"));
+            relayDisplayedCells=relayDisplayedPassed=relayDisplayedOpen=-1;relayUnlockFeedback=0;
             UpdateRelayPresentation();
         }
-        private void PressPulse()
+        private void RelayUnlocked(int gate)
         {
-            if(activeMode!=SkyPulseMode.PulseRelay || state!=FlightState.Playing || relaySession==null)return;
-            if(relaySession.Pulse(birdY)) { RecordDailyEvent(DailyGameplayEvent.RelayActivated);Play(unlockSound); }
-            UpdateRelayPresentation();
+            RecordDailyEvent(DailyGameplayEvent.RelayActivated);Play(unlockSound);PulseHaptic(.12f);
+            relayUnlockCaption="GATE "+(gate+1).ToString("00")+" OPEN · FLY THROUGH";relayUnlockFeedback=.8f;
+            relayOpeningTimes[gate]=protocolVisualTime;
         }
         private void UpdateRelayPresentation()
         {
             if(relaySession==null)return;
-            relayChargeText.text=relaySession.Charges.ToString();relayProgressText.text=$"{relaySession.Passed} / {relaySession.Mission.RelayCount}";relayStatusText.text=relaySession.NextRelay>=relaySession.Mission.RelayCount?"EXIT":(relaySession.NextRelay+1).ToString("00");
-            int next=relaySession.NextRelay;float ahead=next<relaySession.Mission.RelayCount?relaySession.Mission.RelayX(next)-relaySession.Distance:0;
-            relayHintText.text=next==relaySession.Mission.RelayCount?"ALL ACTIVATED · REACH THE GREEN EXIT":$"NEXT: RELAY {next+1} · "+(ahead<=6f?"ALIGN & PRESS PULSE":"COLLECT A GOLD CELL");
-            pulseButton.GetComponentInChildren<Text>().text="PULSE · "+relaySession.Charges;
-            pulseButton.interactable=state==FlightState.Playing && next<relaySession.Mission.RelayCount && relaySession.Charges>0 && ahead>=.6f && ahead<=6f && Mathf.Abs(birdY-relaySession.Mission.RelayY[next])<=1.55f;
-            for(int i=0;i<relayShutters.Count;i++)
-            {
-                relayShutters[i].localPosition=new Vector3(BirdX+relaySession.Mission.RelayX(i)-relaySession.Distance,0,0);
-
-            }
-            for(int i=0;i<relayCells.Count;i++)relayCells[i].localPosition=new Vector3(BirdX+relayCellPositions[i].x-relaySession.Distance,relayCellPositions[i].y,0);
+            if(relayDisplayedCells!=relaySession.Cells){relayDisplayedCells=relaySession.Cells;relayChargeText.text=relayDisplayedCells+" / "+(relaySession.Mission.RelayCount*2);}
+            if(relayDisplayedOpen!=relaySession.UnlockedGates){relayDisplayedOpen=relaySession.UnlockedGates;relayProgressText.text=relayDisplayedOpen+" / "+relaySession.Mission.RelayCount;}
+            if(relayDisplayedPassed!=relaySession.Passed){relayDisplayedPassed=relaySession.Passed;relayStatusText.text=relayDisplayedPassed+" / "+relaySession.Mission.RelayCount;}
+            string hint=relayUnlockFeedback>0?relayUnlockCaption:relaySession.Passed==relaySession.Mission.RelayCount?"CIRCUIT OPEN · REACH THE GREEN EXIT":"CRYSTALS OPEN THEIR MATCHING GATES";
+            if(relayHintText.text!=hint)relayHintText.text=hint;
+            for(int i=0;i<relayShutters.Count;i++)relayShutters[i].localPosition=new Vector3(BirdX+relaySession.Mission.RelayX(i)-relaySession.Distance,0,0);
+            for(int i=0;i<relayCells.Count;i++)if(relayCells[i].gameObject.activeSelf)relayCells[i].localPosition=new Vector3(BirdX+relayCellPositions[i].x-relaySession.Distance,relayCellPositions[i].y,0);
             AnimateRelayArtwork();
             if(relayShield!=null)relayShield.localPosition=new Vector3(BirdX+2f-relaySession.Distance,0,0);
             if(relayExit!=null)relayExit.localPosition=new Vector3(BirdX+relaySession.Mission.ExitX-relaySession.Distance,0,0);
         }
+        private static bool RelayCellContact(Vector2 from,Vector2 to,Vector2 cell)
+        {
+            // Swept generous pickup ellipse: never miss a crystal between two
+            // simulation samples, and do not make a thumb chase its tiny glint.
+            from=new Vector2((from.x-cell.x)/1.05f,(from.y-cell.y)/1.4f);
+            to=new Vector2((to.x-cell.x)/1.05f,(to.y-cell.y)/1.4f);
+            var delta=to-from;float t=delta.sqrMagnitude>.000001f?Mathf.Clamp01(-Vector2.Dot(from,delta)/delta.sqrMagnitude):0;
+            return (from+delta*t).sqrMagnitude<=1;
+        }
+        private bool RelayPlaneContact(float plane,float previousDistance,float previousY,out float impactY)
+        {
+            float current=relaySession.Distance,radius=BirdHitboxHorizontalExtent()+.32f;
+            bool contact=previousDistance<=plane+radius && current>=plane-radius;
+            float t=current>previousDistance?Mathf.Clamp01((plane-previousDistance)/(current-previousDistance)):1;
+            impactY=Mathf.Lerp(previousY,birdY,t)+BirdHitboxWorldOffset().y;return contact;
+        }
         private void SimulateRelay(float dt)
         {
+            if(state!=FlightState.Playing || relaySession==null || relaySession.State!=MissionSessionState.Playing)return;
             ConsumeBufferedFlap();UpdatePowerUpEffects(dt);
             if(shieldHitStopTimer>0){shieldHitStopTimer=Mathf.Max(0,shieldHitStopTimer-dt);return;}
-            float step=slowFieldTimer>0?dt*.70f:dt;
+            float step=slowFieldTimer>0?dt*.70f:dt,previousY=birdY,previousDistance=relaySession.Distance;
             UpdateBird(step);if(state!=FlightState.Playing)return;
-            relaySession.Advance(GetWorldWidth()*.345f*step,birdY);
+            relaySession.Move(GetWorldWidth()*.345f*step);
+            var from=new Vector2(previousDistance,previousY);var to=new Vector2(relaySession.Distance,birdY);
+            // Collection and logical unlocking precede every gate impact and
+            // course/pass resolution, including a crystal at the gate this step.
             for(int i=0;i<relayCellPositions.Count;i++)
             {
-                var at=relayCellPositions[i];float x=BirdX+at.x-relaySession.Distance;
-                if(!usedRelayCells.Contains(i) && Mathf.Abs(x-BirdX)<.6f && Mathf.Abs(at.y-birdY)<.9f && relaySession.Collect(i))
-                {usedRelayCells.Add(i);relayCells[i].gameObject.SetActive(false);Play(crystalSound);}
+                if(usedRelayCells.Contains(i) || !RelayCellContact(from,to,relayCellPositions[i]) || !relaySession.Collect(i))continue;
+                usedRelayCells.Add(i);ShowCrystalPickupBurst(new Vector3(BirdX+relayCellPositions[i].x-relaySession.Distance,relayCellPositions[i].y,0));
+                relayCells[i].gameObject.SetActive(false);
+                if(relaySession.LastUnlockedGate>=0)RelayUnlocked(relaySession.LastUnlockedGate);else {Play(crystalSound);PulseHaptic(.10f);}
             }
-            // Reuse one-collision Aegis behavior; no charge cells enter the crystal wallet.
-            if(relaySession.Mission.HasShield && !relayShieldCollected && Mathf.Abs(2f-relaySession.Distance)<.65f && Mathf.Abs(birdY)<1f)
-            { relayShieldCollected=true;shieldCharges=1;if(relayShield!=null)relayShield.gameObject.SetActive(false);UpdatePowerUpHud(); }
-            for(int i=0;i<relayShutters.Count;i++)
+            if(relaySession.Mission.HasShield && !relayShieldCollected && RelayCellContact(from,to,new Vector2(2,0)))
+            {relayShieldCollected=true;shieldCharges=1;if(relayShield!=null)relayShield.gameObject.SetActive(false);UpdatePowerUpHud();}
+            for(int i=0;i<relayShutters.Count && relaySession.State==MissionSessionState.Playing;i++)
             {
-                float x=relaySession.Mission.RelayX(i)-relaySession.Distance;
-                if(Mathf.Abs(x)<=BirdHitboxHorizontalExtent()+.32f && (!relaySession.IsOpen(i) || Mathf.Abs(birdY-relaySession.Mission.RelayY[i])+BirdHitboxVerticalExtent()>1.8f) && shieldImmunityTimer<=0)
+                float impact;
+                if(RelayPlaneContact(relaySession.Mission.RelayX(i),previousDistance,previousY,out impact) &&
+                   (!relaySession.IsOpen(i) || Mathf.Abs(impact-relaySession.Mission.RelayY[i])+BirdHitboxVerticalExtent()>RelaySession.ApertureHalfHeight) && shieldImmunityTimer<=0)
                     relaySession.Hazard(UseShield());
             }
+            float exitY;
+            if(relaySession.State==MissionSessionState.Playing && RelayPlaneContact(relaySession.Mission.ExitX,previousDistance,previousY,out exitY) && Mathf.Abs(exitY-relaySession.Mission.ExitY)+BirdHitboxVerticalExtent()>RelaySession.ApertureHalfHeight && shieldImmunityTimer<=0)relaySession.Hazard(UseShield());
+            relaySession.ResolveCourse(birdY,false);
             if(relaySession.State==MissionSessionState.Succeeded || relaySession.State==MissionSessionState.Failed)FinalizeMission();
         }
         private bool UpdateMissionModes(float dt)
         {
+            UpdateGameplayPointerReleases();
             UpdateProtocolPresentation(dt);
             if(homeProtocolGraphic!=null)homeProtocolGraphic.ReducedMotion=reduceMotionEnabled;
             missionUiTimer+=dt;
@@ -321,7 +344,7 @@ namespace SkyPulse.Mobile
             if(state!=FlightState.Playing)return true;
             if(activeMode==SkyPulseMode.PulseRelay && relaySession!=null)
             {
-                if(WasTapped() && !PointerOverUi())BufferFlapInput();
+                PollRelayGameplayPress();
                 simulationAccumulator=Mathf.Min(simulationAccumulator+dt,MaximumSimulationCatchup);
                 while(simulationAccumulator>=SimulationStep && state==FlightState.Playing){SimulateRelay(SimulationStep);simulationAccumulator-=SimulationStep;}
                 if(state==FlightState.Playing){UpdateGameplayWingState(dt);UpdateBirdWingMotion();UpdateRelayPresentation();}
@@ -332,6 +355,7 @@ namespace SkyPulse.Mobile
         {
             if(activeMode==SkyPulseMode.EndlessRoute || (relaySession==null && blackoutSession==null))return false;
             homeScreen.SetActive(false);hudScreen.SetActive(false);gameOverScreen.SetActive(false);customizeScreen.SetActive(false);
+            FenceGameplayBoundary();
             bool paused=state==FlightState.Paused;
             if(relaySession!=null)relaySession.Pause(paused);
             if(blackoutSession!=null)blackoutSession.Pause(paused);
@@ -341,14 +365,6 @@ namespace SkyPulse.Mobile
             return true;
         }
         private void BuildBlackoutBoard() { BuildBlackoutLab(); }
-        private void BlackoutAction(int tile)
-        {
-            if(activeMode!=SkyPulseMode.BlackoutProtocol || state!=FlightState.Playing || blackoutSession==null)return;
-            if(!blackoutSession.Act(tile,hackArmed))return;
-            hackArmed=false;Play(scoreSound);
-            if(blackoutSession.State==MissionSessionState.Succeeded || blackoutSession.State==MissionSessionState.Failed)FinalizeMission();
-            else RefreshBlackoutLab();
-        }
         private void FinishRelayFailure(string reason)
         {
             if(relaySession==null)return;relaySession.Fail(reason);FinalizeMission();
@@ -356,16 +372,25 @@ namespace SkyPulse.Mobile
         private static string MedalName(int medal)=>medal>=3?"GOLD":medal==2?"SILVER":"BRONZE";
         private void FinalizeMission()
         {
+            if(activeMode==SkyPulseMode.EndlessRoute)return;
+            var outcome=activeMode==SkyPulseMode.PulseRelay?(relaySession==null?MissionSessionState.Selection:relaySession.State):(blackoutSession==null?MissionSessionState.Selection:blackoutSession.State);
+            if(outcome!=MissionSessionState.Succeeded && outcome!=MissionSessionState.Failed)return;
             if(missionFinalized)return;missionFinalized=true;
             bool won=activeMode==SkyPulseMode.PulseRelay?relaySession.State==MissionSessionState.Succeeded:blackoutSession.State==MissionSessionState.Succeeded;
             int medal=activeMode==SkyPulseMode.PulseRelay?relaySession.Medal:blackoutSession.Medal;
             string reason=activeMode==SkyPulseMode.PulseRelay?relaySession.Result:blackoutSession.Result;
             if(won)
             {
+                bool saved=true;
                 try { if(activeMode==SkyPulseMode.BlackoutProtocol)blackoutCampaign.Complete(selectedMission,medal,blackoutSession.Trace);else missionProgress.Complete(activeMode,selectedMission,medal); }
-                catch(Exception e) { Debug.LogWarning("SkyPulse medal save failed: "+e.GetType().Name);reason+=" · SAVE FAILED"; }
-                if(activeMode==SkyPulseMode.BlackoutProtocol && selectedMission==0)RecordDailyEvent(DailyGameplayEvent.IntroBlackoutCompleted);
+                catch(Exception e) { saved=false;Debug.LogWarning("SkyPulse medal save failed: "+e.GetType().Name);reason+=" · SAVE FAILED"; }
+                if(saved && activeMode==SkyPulseMode.BlackoutProtocol && selectedMission==0)RecordDailyEvent(DailyGameplayEvent.IntroBlackoutCompleted);
+                if(saved && activeMode==SkyPulseMode.BlackoutProtocol && selectedMission<SkyPulseBlackoutCampaign.Stages.Length-1)
+                {
+                    int completed=selectedMission;ActivateNextBlackoutPuzzle(completed);Play(unlockSound);PulseHaptic(.16f);return;
+                }
             }
+            FenceGameplayBoundary();
             state=FlightState.GameOver;bird.gameObject.SetActive(false);if(birdBodyCollider!=null)birdBodyCollider.enabled=false;
             relayHudScreen.SetActive(false);blackoutScreen.SetActive(false);pauseScreen.SetActive(false);
             ClearScreen(missionResultScreen);missionResultScreen.SetActive(true);missionResultScreen.transform.SetAsLastSibling();

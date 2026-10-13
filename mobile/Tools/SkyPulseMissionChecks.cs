@@ -52,11 +52,11 @@ public static class SkyPulseMissionChecks
         }
         foreach(var mission in RelayMission.All)
         {
-            var relay=new RelaySession(mission);Check(!relay.Pulse(0),"Relay requires charge");relay.Collect(0);Check(!relay.Collect(0),"Charge cell cannot collect twice");
-            Check(!relay.Pulse(0),"Relay activation requires proximity");relay.Advance(7,mission.RelayY[0]);Check(!relay.Pulse(8),"Relay activation requires alignment");
-            Check(relay.Pulse(mission.RelayY[0]) && relay.Charges==0 && relay.NextRelay==1,"Relay spends one charge and activates next in order");
-            relay.Advance(mission.RelayX(0)+1-relay.Distance,mission.RelayY[0]);
-            for(int i=1;i<mission.RelayCount;i++){relay.Collect(i);relay.Advance(mission.RelayX(i)-5-relay.Distance,mission.RelayY[i]);Check(relay.Pulse(mission.RelayY[i]),"Next relay activates in sequence");relay.Advance(6,mission.RelayY[i]);}
+            var relay=new RelaySession(mission);Check(!relay.IsOpen(0),"Gate begins closed");
+            Check(relay.Collect(0) && relay.IsOpen(0) && relay.Charges==0 && relay.NextRelay==1,"Matching crystal opens immediately and spends one charge");
+            Check(!relay.Collect(0),"Charge cell cannot collect twice");
+            relay.Advance(mission.RelayX(0)+1,mission.RelayY[0]);
+            for(int i=1;i<mission.RelayCount;i++){Check(relay.Collect(i*2) && relay.IsOpen(i),"Next gate opens from its own crystal");relay.Advance(mission.RelayX(i)+1-relay.Distance,mission.RelayY[i]);}
             relay.Advance(mission.ExitX+1-relay.Distance,mission.ExitY);Check(relay.State==MissionSessionState.Succeeded,"Every relay mission has a complete objective route");int cells=relay.Cells;relay.Collect(999);relay.Advance(20,0);Check(relay.Cells==cells,"Finalized relay ignores repeated events");
         }
         var missed=new RelaySession(RelayMission.All[0]);missed.Advance(14,0);Check(missed.State==MissionSessionState.Failed,"Missing required relay produces failure");
@@ -127,7 +127,7 @@ public static class SkyPulseMissionChecks
                 float target=relay.Passed==relay.Mission.RelayCount?relay.Mission.ExitY:relay.Mission.RelayY[gate];
                 float y=(float)Get(game,"birdY"),v=(float)Get(game,"birdVelocity");
                 if(y<target-.65f && v<0)Call(game,"Flap");
-                Call(game,"PressPulse");Call(game,"SimulateRelay",1f/120f);
+                Call(game,"SimulateRelay",1f/120f);
             }
             Check(relay.State==MissionSessionState.Succeeded,"Real flight forces and authored course can complete relay mission "+mission+": "+relay.Result);
             Call(game,"FinalizeMission");Check((int)Get(game,"best")==originalBest && (int)Get(game,"crystals")==wallet,"Relay result does not overwrite Endless score or award wallet bonus");
@@ -137,13 +137,13 @@ public static class SkyPulseMissionChecks
         for(int i=0;i<50;i++)Call(game,"Update");Check((float)Get(game,"birdY")==birdY && blackout.Trace==0,"Puzzle never simulates flight or processes background taps");
         Call(game,"OnApplicationPause",true);Check(blackout.State==MissionSessionState.Paused,"Focus-loss pause freezes puzzle");
         Call(game,"OnApplicationPause",false);Check(blackout.State==MissionSessionState.Paused,"Returning from background waits for resume");Call(game,"ResumeFlight");
-        foreach(var action in Solve(blackout.Puzzle)){Set(game,"hackArmed",action.Item2);Call(game,"BlackoutAction",action.Item1);}
+        foreach(var action in Solve(blackout.Puzzle)){Call(game,"TouchBlackoutNode",action.Item1);}
         Call(game,"FinalizeMission");Check((int)Get(game,"best")==originalBest && (int)Get(game,"crystals")==wallet,"Puzzle result does not change Endless score or wallet");
         Call(game,"LaunchMission",SkyPulseMode.BlackoutProtocol,0);
         var medalFault=new Store { FailAt=1 };
         Set(game,"blackoutCampaign",new BlackoutCampaignProgress(medalFault));
         blackout=(BlackoutSession)Get(game,"blackoutSession");
-        foreach(var action in Solve(blackout.Puzzle)){Set(game,"hackArmed",action.Item2);Call(game,"BlackoutAction",action.Item1);}
+        foreach(var action in Solve(blackout.Puzzle)){Call(game,"TouchBlackoutNode",action.Item1);}
         Check(Get(game,"state").ToString()=="GameOver" && ((GameObject)Get(game,"missionResultScreen")).activeSelf && ((GameObject)Get(game,"missionResultScreen")).GetComponentsInChildren<Text>().Any(t=>t.text.Contains("SAVE FAILED")),"Medal-save interruption still shows a completed result and a truthful save failure");
         Call(game,"InitializeMissionServices");
         Call(game,"OpenMissionControl");var daily=(SkyPulseDailyMissions)Get(game,"dailyMissions");
@@ -189,7 +189,7 @@ public static class SkyPulseMissionChecks
         Check(((GameObject)Get(game,"homeScreen")).activeSelf && ((RectTransform)Get(game,"modeDropdownClip")).rect.height==496f,"Mode list expands beneath badge while Home remains visible");
         Call(game,"SelectHomeProtocol",SkyPulseMode.PulseRelay);
         Check(!((GameObject)Get(game,"modeSelectionScreen")).activeSelf && Get(game,"homeProtocol").ToString()=="PulseRelay" && Get(game,"state").ToString()=="Menu","Selecting dropdown item changes Home without launching gameplay");
-        Call(game,"LaunchHomeProtocol");Check(((GameObject)Get(game,"missionSelectionScreen")).activeSelf && Get(game,"activeMode").ToString()=="PulseRelay","Home Play opens selected Relay missions");
+        Call(game,"LaunchHomeProtocol");Check(Get(game,"state").ToString()=="Playing" && Get(game,"activeMode").ToString()=="PulseRelay","Home Play launches the next Relay circuit directly");
         Call(game,"ResetToMenu");Call(game,"SetHomeProtocol",SkyPulseMode.BlackoutProtocol);
         Set(game,"reduceMotionEnabled",true);Call(game,"UpdateMissionModes",.02f);
         var circuit=(SkyPulseCircuitGraphic)Get(game,"homeProtocolGraphic");Set(circuit,"phase",.37f);Call(circuit,"Update");
@@ -241,7 +241,7 @@ public static class SkyPulseMissionChecks
                 {
                     Call(game,"LaunchMission",SkyPulseMode.BlackoutProtocol,1);
                     var puzzle=(BlackoutSession)Get(game,"blackoutSession");
-                    foreach(var action in Solve(puzzle.Puzzle).Take(8)){Set(game,"hackArmed",action.Item2);Call(game,"BlackoutAction",action.Item1);}
+                    foreach(var action in Solve(puzzle.Puzzle).Take(8)){Call(game,"TouchBlackoutNode",action.Item1);}
                 }
                 if(screen=="mission-control")Call(game,"OpenMissionControl");
                 yield return null;Canvas.ForceUpdateCanvases();Call(game,"ApplySafeArea");Call(game,"FitInterfaceToSafeArea");Canvas.ForceUpdateCanvases();camera.Render();
@@ -261,7 +261,6 @@ public static class SkyPulseMissionChecks
                 }
                 RenderTexture.active=rt;var texture=new Texture2D(size.x,size.y,TextureFormat.RGB24,false);texture.ReadPixels(new Rect(0,0,size.x,size.y),0,0);texture.Apply();
                 File.WriteAllBytes(Path.Combine(folder,size.x+"-"+screen+".png"),texture.EncodeToPNG());UnityEngine.Object.Destroy(texture);RenderTexture.active=null;
-                if(screen=="relay-flight")Call(game,"PressPulse");
             }
             camera.targetTexture=null;RenderTexture.ReleaseTemporary(rt);
         }

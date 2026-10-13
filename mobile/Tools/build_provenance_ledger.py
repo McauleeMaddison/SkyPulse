@@ -19,6 +19,9 @@ def git(*args):
     return result.stdout
 
 def evidence_for(path):
+    if args.date >= '2026-10-13' and any(path.endswith(name) for name in ['SkyPulseInputFence.cs','SkyPulsePressTarget.cs','SkyPulseNativeGame.Controls.cs','SkyPulseNativeGame.Missions.cs','SkyPulseNativeGame.Blackout.cs','SkyPulseNativeGame.Presentation.cs','SkyPulseMissionModels.cs','SkyPulseBlackoutGraphic.cs','SkyPulseCircuitGraphic.cs']):
+        return 'Owner-requested mobile gameplay polish with Codex assistance, 13 October 2026: automatic numbered Relay crystals, swept unlock/collision ordering, pointer fences, pooled immediate Blackout progression, frame-independent presentation and mode Home controls; retained asset origins recorded separately', 'mobile/Release/OneThumbPolish20261013/PROVENANCE_ADDENDUM.md'
+
     if any(path.endswith(name) for name in ['SkyPulseBlackoutCampaign.cs','SkyPulseBlackoutGraphic.cs','SkyPulseNativeGame.Blackout.cs','SkyPulseNativeGame.Presentation.cs','SkyPulseNativeGame.Missions.cs','SkyPulseMissionModels.cs']):
         return 'Local Blackout revamp authored with Codex assistance on 12 October 2026: procedural meshes/motion, eight authored cipher/phase sectors and separate campaign saves; earlier code/art origins remain recorded separately; not uploaded', 'mobile/Release/BlackoutComplexityLocal20261012/PROVENANCE.md'
     if path.endswith('pulse-relay-gate-v2.png'):

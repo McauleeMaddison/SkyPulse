@@ -231,11 +231,11 @@ namespace SkyPulse.Mobile
             n=vh.currentVertCount;var dark=Color.Lerp(colour,Color.black,.42f);Vert(vh,middle,dark);Vert(vh,c+new Vector2(0,-size),dark);Vert(vh,c+new Vector2(size,-size*.58f),dark);Vert(vh,right,dark);vh.AddTriangle(n,n+1,n+2);vh.AddTriangle(n,n+2,n+3);
         }
         private static void Diamond(VertexHelper vh,Vector2 c,float size,Color colour){int start=vh.currentVertCount;Vert(vh,c+Vector2.left*size,colour);Vert(vh,c+Vector2.up*size,colour);Vert(vh,c+Vector2.right*size,colour);Vert(vh,c+Vector2.down*size,colour);vh.AddTriangle(start,start+1,start+2);vh.AddTriangle(start,start+2,start+3);}
-        private static Vector2[] Corners(Rect r,float cut)=>new[]{new Vector2(r.xMin,r.yMin+cut),new Vector2(r.xMin,r.yMax),new Vector2(r.xMax-cut,r.yMax),new Vector2(r.xMax,r.yMax-cut),new Vector2(r.xMax,r.yMin),new Vector2(r.xMin+cut,r.yMin)};
-        private static void Border(VertexHelper vh,Rect r,float cut,float width,Color colour){var points=Corners(r,cut);for(int i=0;i<points.Length;i++)Line(vh,points[i],points[(i+1)%points.Length],width,colour);}
+        private static Vector2 Corner(Rect r,float cut,int i){switch(i){case 0:return new Vector2(r.xMin,r.yMin+cut);case 1:return new Vector2(r.xMin,r.yMax);case 2:return new Vector2(r.xMax-cut,r.yMax);case 3:return new Vector2(r.xMax,r.yMax-cut);case 4:return new Vector2(r.xMax,r.yMin);default:return new Vector2(r.xMin+cut,r.yMin);}}
+        private static void Border(VertexHelper vh,Rect r,float cut,float width,Color colour){for(int i=0;i<6;i++)Line(vh,Corner(r,cut,i),Corner(r,cut,(i+1)%6),width,colour);}
         private static void Bevel(VertexHelper vh,Rect r,float cut,Color bottom,Color top)
         {
-            int start=vh.currentVertCount;Vert(vh,r.center,Color.Lerp(bottom,top,.5f));var points=Corners(r,cut);foreach(var p in points)Vert(vh,p,Color.Lerp(bottom,top,(p.y-r.yMin)/r.height));for(int i=0;i<points.Length;i++)vh.AddTriangle(start,start+1+i,start+1+(i+1)%points.Length);
+            int start=vh.currentVertCount;Vert(vh,r.center,Color.Lerp(bottom,top,.5f));for(int i=0;i<6;i++){var p=Corner(r,cut,i);Vert(vh,p,Color.Lerp(bottom,top,(p.y-r.yMin)/r.height));}for(int i=0;i<6;i++)vh.AddTriangle(start,start+1+i,start+1+(i+1)%6);
         }
     }
 }

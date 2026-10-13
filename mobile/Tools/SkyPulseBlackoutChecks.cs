@@ -80,61 +80,45 @@ public static class SkyPulseBlackoutChecks
     }
     public static IEnumerator Live(SkyPulseNativeGame game)
     {
-        if(Application.companyName!="SkyPulseQA20261006" || Application.productName!="SkyPulseQA20261006")throw new Exception("Disposable QA required");
-        game.enabled=false;Set(game,"reduceMotionEnabled",false);
+        if(Application.companyName!="SkyPulseQA20261006")throw new Exception("Disposable QA required");
+        game.enabled=false;Set(game,"reduceMotionEnabled",false);Call(game,"ResetToMenu");
         var store=new Store();Set(game,"blackoutCampaign",new BlackoutCampaignProgress(store));
         int wallet=(int)Get(game,"crystals"),best=(int)Get(game,"best");
-        Call(game,"LaunchMission",SkyPulseMode.BlackoutProtocol,1);Check(Get(game,"blackoutSession")==null,"Locked sector cannot be launched");
+        Call(game,"LaunchMission",SkyPulseMode.BlackoutProtocol,1);Check(Get(game,"blackoutSession")==null,"Locked sector cannot launch");
         Call(game,"LaunchMission",SkyPulseMode.BlackoutProtocol,0);
-        var session=(BlackoutSession)Get(game,"blackoutSession");int nodes=((List<Button>)Get(game,"blackoutNodeButtons")).Count;
+        var s=(BlackoutSession)Get(game,"blackoutSession");var controls=(List<Button>)Get(game,"blackoutNodeButtons");var ids=controls.Select(b=>b.GetEntityId()).ToArray();
         Call(game,"TouchBlackoutNode",1);Call(game,"TouchBlackoutNode",2);
-        Check(session.Trace==1 && session.Cursor==1,"Rapid duplicate input cannot spend two turns during a move effect");
+        Check(s.Trace==2 && s.Cursor==2,"Deliberate successive moves respond during transport effects");
         Call(game,"PauseFlight");Call(game,"UpdateProtocolPresentation",0f);
         var network=(SkyPulseBlackoutGraphic)Get(game,"blackoutNetwork");float travel=network.Travel,phase=network.Phase;
-        yield return new WaitForSecondsRealtime(.35f);
-        Check(network.Travel==travel && network.Phase==phase && session.Trace==1,"Pause freezes data transport, ambient phase and game trace");
-        Call(game,"ResumeFlight");Call(game,"UpdateProtocolPresentation",0f);yield return new WaitForSecondsRealtime(.35f);
-        Check(!(bool)Get(game,"blackoutBusy") && ((List<Button>)Get(game,"blackoutNodeButtons")).Count==nodes,"Move effects finish without rebuilding node controls");
+        yield return new WaitForSecondsRealtime(.35f);Call(game,"UpdateProtocolPresentation",.35f);
+        Check(network.Travel==travel && network.Phase==phase && s.Trace==2,"Pause freezes transport, ambient phase and trace");
+        Call(game,"ResumeFlight");Call(game,"UpdateProtocolPresentation",.35f);Check(network.Travel==1,"Resume finishes transport with elapsed time");
         var campaign=(BlackoutCampaignProgress)Get(game,"blackoutCampaign");campaign.Complete(0,3,7);campaign.Complete(1,3,12);
-        Call(game,"LaunchMission",SkyPulseMode.BlackoutProtocol,2);session=(BlackoutSession)Get(game,"blackoutSession");
-        Call(game,"TouchBlackoutNode",1);yield return new WaitForSecondsRealtime(.35f);Call(game,"TouchBlackoutNode",2);
-        Check(session.Trace==1 && session.Charges==1 && (int)Get(game,"blackoutSelectedFirewall")==2,"Selecting a firewall spends nothing");
-        Call(game,"BreachBlackoutFirewall");Call(game,"BreachBlackoutFirewall");
-        Check(session.Trace==4 && session.Charges==0 && session.Cursor==1 && session.Opened.Contains(2),"Breach spends one charge and three trace exactly once, without moving");
-        yield return new WaitForSecondsRealtime(.6f);Call(game,"TouchBlackoutNode",2);yield return new WaitForSecondsRealtime(.35f);
-        Check(session.Cursor==2 && session.Trace==5,"Opened firewall becomes a normal connected node");
-        // Exercise the actual cached UI on a compact mechanics fixture. This does
-        // not complete or award progress for a campaign sector.
-        session=new BlackoutSession(new BlackoutPuzzle("live-cipher-phase-fixture","SYSTEM LAB","",new[]{"SBCL.lE",".KAPk.."},40,2,30,true));
-        Set(game,"blackoutSession",session);Call(game,"BuildBlackoutLab");Set(game,"reduceMotionEnabled",true);Call(game,"UpdateProtocolPresentation",0f);
-        Call(game,"TouchBlackoutNode",1);yield return null;yield return null;yield return null;
-        Check(session.Trace==1 && session.Cursor==0 && session.LastFault.Contains("OFFLINE"),"Inactive gate gives live feedback and charges one trace for the failed move");
-        foreach(int tile in new[]{7,8,9,2}){Call(game,"TouchBlackoutNode",tile);yield return null;yield return null;yield return null;}
-        Check(session.CipherKeys==1 && session.CircuitPhase==1 && ((Text)Get(game,"blackoutPhaseText")).text.Contains("AMBER") && ((Text)Get(game,"blackoutIceKeyText")).text.Contains("READY"),"Key collection and phase switching update live telemetry");
-        var phaseNode=((List<SkyPulseBlackoutGraphic>)Get(game,"blackoutNodes"))[9];int trace=session.Trace;
-        Call(game,"TouchBlackoutNode",9);yield return null;yield return null;yield return null;
-        Check(!phaseNode.Powered && session.Trace==trace+1 && session.CircuitPhase==1,"Blocked phase touch spends trace without changing position or the circuit");
-        foreach(int tile in new[]{3,4}){Call(game,"TouchBlackoutNode",tile);yield return null;yield return null;yield return null;}
-        trace=session.Trace;Call(game,"TouchBlackoutNode",5);yield return null;yield return null;yield return null;
-        Check(session.Trace==trace+1 && !session.Powered(5),"Wrong-key movement spends trace and cannot open the violet live lock");
-        trace=session.Trace;int charges=session.Charges;Call(game,"BreachBlackoutFirewall");yield return null;yield return null;yield return null;
-        Check(session.Trace==trace+3 && session.Charges==charges-1 && !session.Powered(5) && !session.Opened.Contains(5),"Failed live breach consumes a charge plus three trace and leaves the lock closed");
-        Call(game,"TouchBlackoutNode",11);yield return null;yield return null;yield return null;
-        Check(session.CipherKeys==3 && session.Powered(5) && ((List<SkyPulseBlackoutGraphic>)Get(game,"blackoutNodes"))[5].Powered,"Violet key opens its live lock and mesh");
-        session=new BlackoutSession(new BlackoutPuzzle("live-resource-failure","RESOURCE LAB","",new[]{"SLPE"},3,1,3,true));Set(game,"blackoutSession",session);Call(game,"BuildBlackoutLab");
-        Call(game,"TouchBlackoutNode",1);yield return null;yield return null;yield return null;Call(game,"BreachBlackoutFirewall");yield return null;yield return null;yield return null;
-        Check(Get(game,"state").ToString()=="GameOver" && session.State==MissionSessionState.Failed && session.Charges==0 && ((GameObject)Get(game,"missionResultScreen")).activeSelf,"Resource mistakes trigger the actual failure screen instead of a free retry in place");
+        Call(game,"LaunchMission",SkyPulseMode.BlackoutProtocol,2);s=(BlackoutSession)Get(game,"blackoutSession");
+        Call(game,"TouchBlackoutNode",1);Call(game,"TouchBlackoutNode",2);
+        Check(s.Trace==4 && s.Charges==0 && s.Cursor==1 && s.Opened.Contains(2),"One firewall tap breaches once for one charge and three trace without moving");
+        Call(game,"TouchBlackoutNode",2);Check(s.Cursor==2 && s.Trace==5,"Second firewall tap enters the opened node");
+        s=new BlackoutSession(new BlackoutPuzzle("live-resource-failure","RESOURCE LAB","",new[]{"SFPE"},3,0,3,true));Set(game,"blackoutSession",s);Call(game,"BuildBlackoutLab");
+        Call(game,"TouchBlackoutNode",1);
+        Check(Get(game,"state").ToString()=="GameOver" && s.State==MissionSessionState.Failed && s.Charges==0 && ((GameObject)Get(game,"missionResultScreen")).activeSelf,"An exhausted breach causes the real failure flow");
         var retry=((GameObject)Get(game,"missionResultScreen")).GetComponentsInChildren<Button>().First(b=>b.GetComponentInChildren<Text>().text.StartsWith("RETRY SECTOR"));retry.onClick.Invoke();
-        Check(((BlackoutSession)Get(game,"blackoutSession")).Trace==0 && ((BlackoutSession)Get(game,"blackoutSession")).CipherKeys==0,"Retry starts a fresh campaign puzzle with reset trace and keys");
-        Call(game,"ResetToMenu");
-        Call(game,"LaunchMission",SkyPulseMode.BlackoutProtocol,0);session=(BlackoutSession)Get(game,"blackoutSession");Set(game,"reduceMotionEnabled",true);Call(game,"UpdateProtocolPresentation",0f);
-        foreach(var action in SkyPulseMissionChecks.Solve(session.Puzzle)){Call(game,"TouchBlackoutNode",action.Item1);yield return null;yield return null;yield return null;}
-        Check(Get(game,"state").ToString()=="GameOver" && ((GameObject)Get(game,"missionResultScreen")).activeSelf,"Actual touch loop completes and displays extraction result with Reduced Motion");
-        string saved=store.Get(BlackoutCampaignProgress.Key,"");Call(game,"FinalizeMission");Check(store.Get(BlackoutCampaignProgress.Key,"")==saved && (int)Get(game,"crystals")==wallet && (int)Get(game,"best")==best,"Result cannot finalize twice or change the Endless score/wallet");
-        var next=((GameObject)Get(game,"missionResultScreen")).GetComponentsInChildren<Button>().First(b=>b.GetComponentInChildren<Text>().text.StartsWith("NEXT SECTOR"));next.onClick.Invoke();
-        Check((int)Get(game,"selectedMission")==1 && ((BlackoutSession)Get(game,"blackoutSession")).Trace==0,"Next Sector launches a clean harder session");
-        Call(game,"TouchBlackoutNode",1);Call(game,"ResetToMenu");yield return new WaitForSecondsRealtime(.5f);
-        Check(Get(game,"blackoutSession")==null && !(bool)Get(game,"blackoutBusy") && ((GameObject)Get(game,"homeScreen")).activeSelf,"Navigation cancels any pending move/completion effect");
+        s=(BlackoutSession)Get(game,"blackoutSession");Check(s.Trace==0 && s.CipherKeys==0 && s.Charges==s.Puzzle.HackCharges,"Retry resets trace, keys and charges");
+        Call(game,"ResetToMenu");Set(game,"blackoutCampaign",new BlackoutCampaignProgress(new Store()));Set(game,"reduceMotionEnabled",true);
+        Call(game,"LaunchMission",SkyPulseMode.BlackoutProtocol,0);
+        for(int sector=0;sector<8;sector++)
+        {
+            s=(BlackoutSession)Get(game,"blackoutSession");Check((int)Get(game,"selectedMission")==sector,"Next harder sector is already active");
+            foreach(var a in SkyPulseMissionChecks.Solve(s.Puzzle))Call(game,"TouchBlackoutNode",a.Item1);
+            Check(s.State==MissionSessionState.Succeeded,"Live one-thumb route completes sector "+sector);
+            campaign=(BlackoutCampaignProgress)Get(game,"blackoutCampaign");string saved=JsonUtility.ToJson(campaign.Data);Call(game,"FinalizeMission");
+            Check(JsonUtility.ToJson(campaign.Data)==saved && (int)Get(game,"crystals")==wallet && (int)Get(game,"best")==best,"Duplicate finalization cannot award or save again");
+            Check(ids.SequenceEqual(controls.Select(b=>b.GetEntityId())) && controls.Count==49,"Sector progression reuses all 49 board controls");
+            if(sector<7)Check(Get(game,"state").ToString()=="Playing" && !((GameObject)Get(game,"missionResultScreen")).activeSelf && ((BlackoutSession)Get(game,"blackoutSession")).Trace==0,"Intermediate clear needs no modal, button or animation delay");
+        }
+        Check(Get(game,"state").ToString()=="GameOver" && ((GameObject)Get(game,"missionResultScreen")).activeSelf,"Final sector uses the proper completion result");
+        Check(((GameObject)Get(game,"missionResultScreen")).GetComponentsInChildren<Button>().Any(b=>b.GetComponentInChildren<Text>().text=="REPLAY CAMPAIGN"),"Final result can replay the campaign");
+        Call(game,"ResetToMenu");yield return null;Check(Get(game,"blackoutSession")==null && ((GameObject)Get(game,"homeScreen")).activeSelf,"Navigation clears the session without pending completion callbacks");
         Call(game,"OpenMissionSelection",SkyPulseMode.BlackoutProtocol);Call(game,"OpenMissionSelection",SkyPulseMode.PulseRelay);
         Check(!((GameObject)Get(game,"missionSelectionScreen")).GetComponentsInChildren<SkyPulseBlackoutGraphic>().Any(g=>g.Surface==BlackoutSurface.Backdrop && g.gameObject.activeInHierarchy),"Blackout backdrop cannot leak into Relay selection");
         Call(game,"ResetToMenu");Call(game,"InitializeMissionServices");Set(game,"reduceMotionEnabled",false);

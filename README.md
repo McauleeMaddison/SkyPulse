@@ -1,10 +1,10 @@
 # SkyPulse Arcade
 
-> **Source newer than TestFlight 9:** Blackout now has eight sectors with cipher keys, switching power circuits, costly mistakes and a richer animated lattice. The owner authorized committing/pushing the completed source update to the existing GitHub branch. No new build upload or App Store change is part of this update. See [the current development record](mobile/Release/BlackoutComplexityLocal20261012/README.md); the [earlier presentation experiment](mobile/Release/BlackoutLocal20261012/README.md) remains a historical record. The release records below still describe the retained build 9.
+> **Current candidate: build 10.** Relay has automatic numbered crystal gates and tap-only flight; Blackout has eight increasingly demanding sectors, automatic firewall breach and instant saved progression. Mode-specific Home controls and pooled effects are documented in [the current development record](mobile/Release/OneThumbPolish20261013/README.md). TestFlight upload status is recorded there after publication. Build 9 remains historical.
 
 > **App Review hold:** the public version remains Prepare for Submission/unsubmitted. Build 9 and its updated metadata are saved in the draft and available for private TestFlight testing. Await Apple’s clarification and renewed owner authorization before resubmitting. See [current status](mobile/Release/REVIEW_STATUS.md).
 
-SkyPulse is an offline, portrait Unity arcade game for iPhone and iPad. The current source candidate is `mobile/`; open it with Unity **6000.6.0f1**. The 12 October updates add three modes, daily missions, shared tested widths, distinct animated Home/player views and a compact mode dropdown. **1.0.0 (9) is Testing in the existing SkyPulse Internal group.** Automated checks and native archive validation pass; fresh physical-device testing is pending. Start with [the current guide](mobile/Release/PremiumTestFlight20261012/README.md).
+SkyPulse is an offline, portrait Unity arcade game for iPhone and iPad. The current source candidate is `mobile/`; open it with Unity **6000.6.0f1**. The 12 October updates add three modes, daily missions, shared tested widths, distinct animated Home/player views and a compact mode dropdown. Build 9 is already in the existing SkyPulse Internal group. Build 10 is the current update candidate; see [its release guide](mobile/Release/OneThumbPolish20261013/README.md) for validation and publication status.
 
 ## Project layout
 
@@ -24,12 +24,12 @@ The retired browser prototype and its root-level assets have been removed. Runti
 
 1. Add `mobile/` in Unity Hub and open `Assets/Scenes/SkyPulse.unity`.
 2. Press Play and use a portrait Game view.
-3. Home starts on Endless Route. Tap its top-left badge to expand the three free modes, select one, then press **PLAY**. Flight uses tap/Space/Up Arrow; Pulse Relay has a separate Pulse control. Blackout uses adjacent-node taps and an Arm Hack control. Use the pause control or Escape/P to pause.
+3. Home starts on Endless Route. Tap its top-left badge to expand the three free modes, select one, then press **PLAY**. Flight uses tap/Space/Up Arrow; Relay crystals automatically open matching gates. Blackout uses immediate adjacent-node taps and automatic firewall breaches. Use the pause control or Escape/P to pause.
 4. Open Bird Hangar to unlock cosmetic birds, or Tech Tree to spend earned crystals.
 
 Endless Route retains fixed handling for all 15 birds. Each passed gate awards one point. Neon City starts the run, Aurora Rise begins at score 15 and Solar Drift at 30; the route continues through Midnight Tide (45), Velvet Dawn (60), Crystal Night (75), Jade Horizon (90), Violet Rain (105), Eclipse (120), Cobalt Storm (135), Amber Skies (150) and Polar Glow (165), returning to Neon City at 180. Worlds change every 15 gates with the existing capped difficulty. The Worlds & Power-ups guide previews all 12 across four pages. Crystals bank during the run. Nine upgrade nodes affect collection/rewards, while three temporary pickups provide Aegis, Time Pulse and Crystal Magnet. No login, ads, analytics or real-money purchases are used.
 
-Pulse Relay adds a tutorial and three finite circuits; Blackout Protocol adds a tutorial and three authored puzzles. Their separate medals and completion data never replace the Endless best. Mission Control tracks four UTC-day tasks worth five crystals each, up to 20 per period, with journaled claim recovery. Home changes its cinematic/circuit/terminal theme with the selected mode during the session; new launches begin on Endless. Relay shares the original cinematic/metal artwork, and Blackout uses animated green terminal graphics. Reduced Motion freezes ambient effects.
+Pulse Relay adds a tutorial and three finite circuits; Blackout Protocol has eight authored cipher/phase sectors with increasing difficulty and instant progression. Their separate medals and completion data never replace the Endless best. Mission Control tracks four UTC-day tasks worth five crystals each, up to 20 per period, with journaled claim recovery. Home changes its cinematic/circuit/terminal theme with the selected mode during the session; new launches begin on Endless. Relay shares the original cinematic/metal artwork, and Blackout uses animated obsidian lattice geometry and a suspended data core. Reduced Motion freezes ambient effects.
 
 Saved scores, crystals, owned birds, upgrade levels and preferences retain their existing keys and migration paths. New mode, daily and Home-protocol data uses separate versioned keys.
 

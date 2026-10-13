@@ -119,7 +119,7 @@ public static class SkyPulseWorldExpansionChecks
         ((IDictionary)Get(game, "upgradeLevels")).Clear();
         ((HashSet<string>)Get(game, "ownedUpgradeIds")).Clear();
         ((HashSet<string>)Get(game, "ownedSkinIds")).Clear();
-        Call(game, "LoadProgress"); Call(game, "ResetToMenu"); Call(game, "UpdateCrystalLabels");
+        Call(game, "LoadProgress"); Call(game, "SetHomeProtocol", SkyPulseMode.EndlessRoute); Call(game, "ResetToMenu"); Call(game, "UpdateCrystalLabels");
         var folder = Environment.GetEnvironmentVariable("SKYPULSE_QA_OUTPUT");
         Directory.CreateDirectory(folder);
         var camera = (Camera)Get(game, "flightCamera");

@@ -69,10 +69,10 @@ public static class SkyPulsePresentationChecks
                 }
                 if(scene=="relay-flight")
                 {
-                    for(int step=0;step<12;step++){Pilot(game);if(frame>=7)Call(game,"PressPulse");Call(game,"SimulateRelay",1f/120f);}
+                    for(int step=0;step<12;step++){Pilot(game);Call(game,"SimulateRelay",1f/120f);}
                     Call(game,"UpdateGameplayWingState",.1f);Call(game,"UpdateBirdWingMotion");Call(game,"UpdateRelayPresentation");
                 }
-                if(scene=="blackout-puzzle" && frame==18){Set(game,"hackArmed",false);Call(game,"BlackoutAction",1);}
+                if(scene=="blackout-puzzle" && frame==18){Call(game,"TouchBlackoutNode",1);}
                 Set(game,"ambientTime",(float)Get(game,"ambientTime")+.1f);Call(game,"UpdateMenuBird",.1f);Call(game,"UpdateProtocolPresentation",.1f);
                 yield return new WaitForSecondsRealtime(.1f);
                 Canvas.ForceUpdateCanvases();Call(game,"ApplySafeArea");Call(game,"FitInterfaceToSafeArea");Canvas.ForceUpdateCanvases();camera.Render();
@@ -86,7 +86,7 @@ public static class SkyPulsePresentationChecks
             Check(gate.Find("Port collar")==null && gate.Find("Portal metal rim")==null,"Relay has no reused Endless collar or segmented block rim");
             Check(gate.GetComponentsInChildren<Collider2D>().Length==0,"Presentation does not add collision shapes");
         }
-        var testRelay=(RelaySession)Get(game,"relaySession");testRelay.Collect(700);testRelay.Advance(6,0);Check(testRelay.Pulse(0),"Visual shutter can be opened with existing model rules");Call(game,"UpdateRelayPresentation");
+        var testRelay=(RelaySession)Get(game,"relaySession");Check(testRelay.Collect(0) && testRelay.IsOpen(0),"Crystal logically opens shutter before artwork");Call(game,"UpdateRelayPresentation");
         var firstGate=((System.Collections.IList)Get(game,"relayShutters"))[0] as Transform;
         var shutter=firstGate.Find("Energy shutter").GetComponent<SpriteRenderer>();var previousShutterScale=shutter.transform.localScale;
         var glint=firstGate.Find("Portal emitter orbit").GetChild(0);var previousGlint=glint.localPosition;

@@ -15,6 +15,7 @@ namespace SkyPulse.Mobile
         public float TraceFraction, Travel=1, Impact;
         public Vector2 Origin, Target;
         public Vector2[] EdgeFrom=new Vector2[0],EdgeTo=new Vector2[0],Trail=new Vector2[0];
+        public int EdgeCount=-1,TrailCount=-1;
         public bool[] EdgePowered=new bool[0];
         public BlackoutPuzzle Miniature;
         public float Phase { get; private set; }
@@ -79,7 +80,7 @@ namespace SkyPulse.Mobile
             for(int side=-1;side<=1;side+=2)
             {
                 var arm=core+new Vector2(side*s*.285f,-s*.055f);
-                Polygon(vh,new[]{arm+new Vector2(-15,-42),arm+new Vector2(-15,42),arm+new Vector2(9,27),arm+new Vector2(9,-52)},new Color(.10f,.17f,.20f));
+                Polygon(vh,arm+new Vector2(-15,-42),arm+new Vector2(-15,42),arm+new Vector2(9,27),arm+new Vector2(9,-52),new Color(.10f,.17f,.20f));
                 Line(vh,arm+new Vector2(side*10,-31),arm+new Vector2(side*10,27),3,A(Mint,.75f));
                 Crystal(vh,arm+new Vector2(0,67),s*.035f,Ice);
             }
@@ -102,14 +103,14 @@ namespace SkyPulse.Mobile
             Bevel(vh,r,18,new Color(.012f,.022f,.034f),new Color(.038f,.059f,.078f));Border(vh,r,18,1.2f,A(Ice,.28f));
             var inset=new Rect(r.xMin+7,r.yMin+8,r.width-14,r.height-16);Bevel(vh,inset,14,new Color(.002f,.011f,.017f),new Color(.012f,.025f,.032f));
             // Narrow brushed facets and glass glints retain the obsidian material.
-            Polygon(vh,new[]{new Vector2(r.xMin+9,r.yMax-9),new Vector2(r.xMax-24,r.yMax-9),new Vector2(r.xMax-48,r.yMax-23),new Vector2(r.xMin+9,r.yMax-17)},A(Ice,.045f));
+            Polygon(vh,new Vector2(r.xMin+9,r.yMax-9),new Vector2(r.xMax-24,r.yMax-9),new Vector2(r.xMax-48,r.yMax-23),new Vector2(r.xMin+9,r.yMax-17),A(Ice,.045f));
             Line(vh,new Vector2(r.xMin+28,r.yMin+11),new Vector2(r.xMax-28,r.yMin+11),1,A(Ice,.10f));
             Line(vh,new Vector2(r.xMin+20,r.yMax-2),new Vector2(r.xMax-20,r.yMax-2),2,A(Ice,.26f));
             Line(vh,new Vector2(r.xMin+20,r.yMax-7),new Vector2(r.xMin+r.width*.35f,r.yMax-7),2,A(Mint,.8f));
             for(int side=-1;side<=1;side+=2)
             {
                 float x=side*(r.width*.5f-14);Line(vh,new Vector2(x,r.yMin+28),new Vector2(x,r.yMin+r.height*.3f),1,A(Mint,.34f));
-                foreach(float y in new[]{r.yMin+18,r.yMax-18}){Ring(vh,new Vector2(x,y),3,1,A(Ice,.22f));}
+                Ring(vh,new Vector2(x,r.yMin+18),3,1,A(Ice,.22f));Ring(vh,new Vector2(x,r.yMax-18),3,1,A(Ice,.22f));
             }
         }
         void Node(VertexHelper vh,Rect r)
@@ -124,7 +125,7 @@ namespace SkyPulse.Mobile
             var glass=new Rect(top.xMin+8,top.yMin+7,top.width-16,top.height-14);Bevel(vh,glass,7,new Color(.007f,.019f,.028f),new Color(.055f,.082f,.098f));
             Line(vh,new Vector2(glass.xMin+8,glass.yMax-1),new Vector2(glass.xMax-8,glass.yMax-1),1,A(accent,Powered?.34f:.08f));
             Line(vh,new Vector2(top.xMin+12,top.yMax-1),new Vector2(top.xMax-12,top.yMax-1),2,A(Ice,.22f));
-            Polygon(vh,new[]{new Vector2(top.xMax,top.yMin),new Vector2(top.xMax+4,top.yMin-6),new Vector2(top.xMax+4,top.yMax-10),new Vector2(top.xMax,top.yMax-10)},new Color(.036f,.061f,.077f));
+            Polygon(vh,new Vector2(top.xMax,top.yMin),new Vector2(top.xMax+4,top.yMin-6),new Vector2(top.xMax+4,top.yMax-10),new Vector2(top.xMax,top.yMax-10),new Color(.036f,.061f,.077f));
             Line(vh,c+new Vector2(-s*.3f,-s*.32f),c+new Vector2(s*.3f,-s*.32f),3,A(accent,Adjacent?.5f:.12f));
             var icon=c+new Vector2(0,s*.07f);float lift=ReducedMotion?0:Mathf.Sin((Clock+.14f)*Mathf.PI*2)*2;
             if(NodeKind==2 || NodeKind==5)
@@ -192,7 +193,8 @@ namespace SkyPulse.Mobile
         void Network(VertexHelper vh)
         {
             Color signal=HasPhaseRouting && CircuitPhase==1?Amber:Mint;
-            for(int i=0;i<EdgeFrom.Length;i++)
+            int edges=EdgeCount<0?EdgeFrom.Length:EdgeCount;
+            for(int i=0;i<edges;i++)
             {
                 bool live=i>=EdgePowered.Length || EdgePowered[i];var a=EdgeFrom[i];var b=EdgeTo[i];
                 Line(vh,a+Vector2.down*4,b+Vector2.down*4,4,new Color(.002f,.009f,.014f));
@@ -201,7 +203,8 @@ namespace SkyPulse.Mobile
                 var p=Vector2.Lerp(a,b,Mathf.Repeat(Clock+i*.097f,1));Glow(vh,p,14,A(signal,.21f));Quad(vh,new Rect(p.x-2,p.y-2,4,4),A(Ice,.95f));
                 var tail=Vector2.Lerp(a,b,Mathf.Repeat(Clock+i*.097f-.045f,1));Line(vh,tail,p,1.4f,A(signal,.46f));
             }
-            for(int i=1;i<Trail.Length;i++){Line(vh,Trail[i-1],Trail[i],6,A(Ice,.06f));Line(vh,Trail[i-1],Trail[i],2,A(Ice,.45f*(i/(float)Trail.Length)));}
+            int trail=TrailCount<0?Trail.Length:TrailCount;
+            for(int i=1;i<trail;i++){Line(vh,Trail[i-1],Trail[i],6,A(Ice,.06f));Line(vh,Trail[i-1],Trail[i],2,A(Ice,.45f*(i/(float)trail)));}
             if(Travel<1)
             {
                 var p=Vector2.Lerp(Origin,Target,Travel*Travel*(3-2*Travel));Glow(vh,p,40,A(Ice,.25f));Crystal(vh,p+new Vector2(0,6),17,Ice);
@@ -234,20 +237,20 @@ namespace SkyPulse.Mobile
         }
         static void Crystal(VertexHelper vh,Vector2 c,float s,Color tint)
         {
-            Polygon(vh,new[]{c+new Vector2(0,s),c+new Vector2(-s,s*.35f),c+new Vector2(0,-s*.16f),c+new Vector2(s,s*.35f)},Color.Lerp(tint,Color.white,.32f));
-            Polygon(vh,new[]{c+new Vector2(-s,s*.35f),c+new Vector2(-s,-s*.6f),c+new Vector2(0,-s),c+new Vector2(0,-s*.16f)},tint);
-            Polygon(vh,new[]{c+new Vector2(0,-s*.16f),c+new Vector2(0,-s),c+new Vector2(s,-s*.6f),c+new Vector2(s,s*.35f)},Color.Lerp(tint,Color.black,.46f));
+            Polygon(vh,c+new Vector2(0,s),c+new Vector2(-s,s*.35f),c+new Vector2(0,-s*.16f),c+new Vector2(s,s*.35f),Color.Lerp(tint,Color.white,.32f));
+            Polygon(vh,c+new Vector2(-s,s*.35f),c+new Vector2(-s,-s*.6f),c+new Vector2(0,-s),c+new Vector2(0,-s*.16f),tint);
+            Polygon(vh,c+new Vector2(0,-s*.16f),c+new Vector2(0,-s),c+new Vector2(s,-s*.6f),c+new Vector2(s,s*.35f),Color.Lerp(tint,Color.black,.46f));
             Line(vh,c+new Vector2(-s,s*.35f),c+new Vector2(0,s),1.5f,A(Color.white,.64f));
         }
         static void Vert(VertexHelper vh,Vector2 p,Color c){var v=UIVertex.simpleVert;v.position=p;v.color=c;vh.AddVert(v);}
-        static void Polygon(VertexHelper vh,Vector2[] p,Color c){int n=vh.currentVertCount;foreach(var v in p)Vert(vh,v,c);for(int i=1;i<p.Length-1;i++)vh.AddTriangle(n,n+i,n+i+1);}
-        static Vector2[] Corners(Rect r,float cut)=>new[]{new Vector2(r.xMin,r.yMin+cut),new Vector2(r.xMin,r.yMax),new Vector2(r.xMax-cut,r.yMax),new Vector2(r.xMax,r.yMax-cut),new Vector2(r.xMax,r.yMin),new Vector2(r.xMin+cut,r.yMin)};
-        static void Border(VertexHelper vh,Rect r,float cut,float width,Color c){var p=Corners(r,cut);for(int i=0;i<p.Length;i++)Line(vh,p[i],p[(i+1)%p.Length],width,c);}
-        static void Bevel(VertexHelper vh,Rect r,float cut,Color lower,Color upper){int n=vh.currentVertCount;Vert(vh,r.center,Color.Lerp(lower,upper,.5f));var p=Corners(r,cut);foreach(var v in p)Vert(vh,v,Color.Lerp(lower,upper,Mathf.InverseLerp(r.yMin,r.yMax,v.y)));for(int i=0;i<p.Length;i++)vh.AddTriangle(n,n+1+i,n+1+(i+1)%p.Length);}
+        static void Polygon(VertexHelper vh,Vector2 a,Vector2 b,Vector2 c,Vector2 d,Color tint){int n=vh.currentVertCount;Vert(vh,a,tint);Vert(vh,b,tint);Vert(vh,c,tint);Vert(vh,d,tint);vh.AddTriangle(n,n+1,n+2);vh.AddTriangle(n,n+2,n+3);}
+        static Vector2 Corner(Rect r,float cut,int i){switch(i){case 0:return new Vector2(r.xMin,r.yMin+cut);case 1:return new Vector2(r.xMin,r.yMax);case 2:return new Vector2(r.xMax-cut,r.yMax);case 3:return new Vector2(r.xMax,r.yMax-cut);case 4:return new Vector2(r.xMax,r.yMin);default:return new Vector2(r.xMin+cut,r.yMin);}}
+        static void Border(VertexHelper vh,Rect r,float cut,float width,Color c){for(int i=0;i<6;i++)Line(vh,Corner(r,cut,i),Corner(r,cut,(i+1)%6),width,c);}
+        static void Bevel(VertexHelper vh,Rect r,float cut,Color lower,Color upper){int n=vh.currentVertCount;Vert(vh,r.center,Color.Lerp(lower,upper,.5f));for(int i=0;i<6;i++){var v=Corner(r,cut,i);Vert(vh,v,Color.Lerp(lower,upper,Mathf.InverseLerp(r.yMin,r.yMax,v.y)));}for(int i=0;i<6;i++)vh.AddTriangle(n,n+1+i,n+1+(i+1)%6);}
         static void Quad(VertexHelper vh,Rect r,Color c)=>Gradient(vh,r,c,c);
         static void Gradient(VertexHelper vh,Rect r,Color lower,Color upper){int n=vh.currentVertCount;Vert(vh,new Vector2(r.xMin,r.yMin),lower);Vert(vh,new Vector2(r.xMin,r.yMax),upper);Vert(vh,new Vector2(r.xMax,r.yMax),upper);Vert(vh,new Vector2(r.xMax,r.yMin),lower);vh.AddTriangle(n,n+1,n+2);vh.AddTriangle(n,n+2,n+3);}
-        static void Line(VertexHelper vh,Vector2 a,Vector2 b,float w,Color c){var n=new Vector2(-(b-a).y,(b-a).x).normalized*w*.5f;Polygon(vh,new[]{a-n,a+n,b+n,b-n},c);}
-        static void Diamond(VertexHelper vh,Vector2 c,float s,Color tint)=>Polygon(vh,new[]{c+Vector2.left*s,c+Vector2.up*s,c+Vector2.right*s,c+Vector2.down*s},tint);
+        static void Line(VertexHelper vh,Vector2 a,Vector2 b,float w,Color c){var n=new Vector2(-(b-a).y,(b-a).x).normalized*w*.5f;Polygon(vh,a-n,a+n,b+n,b-n,c);}
+        static void Diamond(VertexHelper vh,Vector2 c,float s,Color tint)=>Polygon(vh,c+Vector2.left*s,c+Vector2.up*s,c+Vector2.right*s,c+Vector2.down*s,tint);
         static void Ring(VertexHelper vh,Vector2 c,float radius,float width,Color tint)=>Ellipse(vh,c,radius,1,width,tint,0,360);
         static void Ellipse(VertexHelper vh,Vector2 c,float radius,float sy,float width,Color tint,float angle,float span)
         {

@@ -19,10 +19,10 @@ namespace SkyPulse.Mobile
         public RelayMission(string id, string name, string briefing, float[] heights, float spacing, float exitY, bool shield)
         { Id=id; Name=name; Briefing=briefing; RelayY=heights; Spacing=spacing; ExitY=exitY; HasShield=shield; }
         public static readonly RelayMission[] All = {
-            new RelayMission("relay.tutorial", "01 · FIRST CIRCUIT", "Tap to fly. Gold cells supply Pulse charges. Align with the cyan window, then press PULSE while it is in range. Open both numbered shutters and fly through the exit.", new[]{0f, .8f}, 18f, 0f, true),
-            new RelayMission("relay.switchback", "02 · SWITCHBACK", "Route between three alternating relay windows. The lower cell is a safe refill; the high gold cell is optional. Activate each relay in order.", new[]{-1.5f, 1.5f, -.5f}, 19f, .5f, false),
-            new RelayMission("relay.highwire", "03 · HIGHWIRE", "Four relays form an ascending circuit. Collect optional cells for a higher medal, then descend to the final exit. One Aegis pickup is available.", new[]{-2f, -.5f, 1f, 2f}, 20f, 0f, true),
-            new RelayMission("relay.crossfeed", "04 · CROSSFEED", "Five alternating channels need a complete pulse circuit. Climb and descend between windows, choose optional high charge cells, then centre on the exit.", new[]{2f, -2f, 2f, -1f, 0f}, 22f, 0f, false)
+            new RelayMission("relay.tutorial", "01 · FIRST CIRCUIT", "Tap the flight area to flap. Collect a crystal to open its numbered gate automatically. Fly through both gates and the green exit.", new[]{0f, .6f}, 18f, 0f, true),
+            new RelayMission("relay.switchback", "02 · SWITCHBACK", "Follow three alternating crystal trails. Each crystal opens its matching gate; spare crystals improve your medal.", new[]{-1.1f, 1.1f, -.4f}, 20f, .4f, false),
+            new RelayMission("relay.highwire", "03 · HIGHWIRE", "Eight crystals guide you through four rising gates. Collect one per gate to open the route, then descend to the green exit.", new[]{-1.5f, -.4f, .7f, 1.5f}, 21f, 0f, true),
+            new RelayMission("relay.crossfeed", "04 · CROSSFEED", "Five alternating gates test your flight rhythm. Crystals open their matching gates automatically; follow the illuminated route to the exit.", new[]{1.5f, -1.5f, 1.5f, -.8f, 0f}, 22f, 0f, false)
         };
     }
 
@@ -33,38 +33,54 @@ namespace SkyPulse.Mobile
         public int Charges { get; private set; }
         public int NextRelay { get; private set; }
         public int Passed { get; private set; }
+        public int UnlockedGates { get; private set; }
+        public int LastUnlockedGate { get; private set; } = -1;
         public int Cells { get; private set; }
         public int HazardHits { get; private set; }
         public float Distance { get; private set; }
         public string Result { get; private set; } = "";
-        readonly HashSet<int> collected = new HashSet<int>();
-        public RelaySession(RelayMission mission) { Mission=mission ?? throw new ArgumentNullException(nameof(mission)); }
+        readonly bool[] collected;
+        readonly bool[] open;
+        public const float ApertureHalfHeight=2.25f;
+        public RelaySession(RelayMission mission) { Mission=mission ?? throw new ArgumentNullException(nameof(mission));open=new bool[mission.RelayCount];collected=new bool[mission.RelayCount*2]; }
         public void Pause(bool paused) { if(State==MissionSessionState.Playing && paused)State=MissionSessionState.Paused; else if(State==MissionSessionState.Paused && !paused)State=MissionSessionState.Playing; }
-        public bool Collect(int cellId) { if(State!=MissionSessionState.Playing || !collected.Add(cellId))return false; Charges++; Cells++; return true; }
-        public bool Pulse(float birdY)
+        public bool Collect(int cellId)
         {
-            if(State!=MissionSessionState.Playing || NextRelay>=Mission.RelayCount || Charges<=0)return false;
-            float ahead=Mission.RelayX(NextRelay)-Distance;
-            if(ahead<.6f || ahead>6f || Math.Abs(birdY-Mission.RelayY[NextRelay])>1.55f)return false;
-            Charges--; NextRelay++; return true;
+            if(State!=MissionSessionState.Playing || cellId<0 || cellId>=Mission.RelayCount*2 || collected[cellId])return false;
+            collected[cellId]=true;
+            Charges++;Cells++;LastUnlockedGate=-1;
+            int gate=cellId/2;
+            if(!open[gate])
+            {
+                // A cell belongs to one gate. Spare cells cannot silently open
+                // another gate, and logical passage never waits for the artwork.
+                open[gate]=true;Charges--;UnlockedGates++;LastUnlockedGate=gate;
+                while(NextRelay<open.Length && open[NextRelay])NextRelay++;
+            }
+            return true;
         }
-        public void Advance(float distance, float birdY)
+        public void Move(float distance)
         {
             if(State!=MissionSessionState.Playing)return;
             Distance+=Math.Max(0f,distance);
+        }
+        public void Advance(float distance,float birdY){Move(distance);ResolveCourse(birdY);}
+        public void ResolveCourse(float birdY,bool checkAlignment=true)
+        {
+            if(State!=MissionSessionState.Playing)return;
             while(Passed<Mission.RelayCount && Distance>Mission.RelayX(Passed)+.85f)
             {
-                if(NextRelay<=Passed) { Fail("RELAY "+(Passed+1)+" NOT ACTIVATED"); return; }
-                if(Math.Abs(birdY-Mission.RelayY[Passed])>1.65f) { Fail("MISSED RELAY "+(Passed+1)+" WINDOW"); return; }
+                if(!IsOpen(Passed)) { Fail("RELAY "+(Passed+1)+" NEEDS ITS CRYSTAL"); return; }
+                if(checkAlignment && Math.Abs(birdY-Mission.RelayY[Passed])>ApertureHalfHeight) { Fail("MISSED RELAY "+(Passed+1)+" WINDOW"); return; }
                 Passed++;
             }
             if(Distance>Mission.ExitX+.85f)
             {
-                if(Passed!=Mission.RelayCount || Math.Abs(birdY-Mission.ExitY)>1.65f) { Fail("MISSED EXIT"); return; }
+                if(Passed!=Mission.RelayCount || checkAlignment && Math.Abs(birdY-Mission.ExitY)>ApertureHalfHeight) { Fail("MISSED EXIT"); return; }
                 State=MissionSessionState.Succeeded; Result="CIRCUIT RESTORED";
             }
         }
-        public bool IsOpen(int index) => index<NextRelay;
+        public bool IsOpen(int index) => index>=0 && index<open.Length && open[index];
         public void Hazard(bool protectedHit) { if(State!=MissionSessionState.Playing)return; if(protectedHit)HazardHits++; else Fail("UNPROTECTED ENERGY SHUTTER"); }
         public void Fail(string reason) { if(State!=MissionSessionState.Playing)return; State=MissionSessionState.Failed; Result=reason; }
         public int Medal => State!=MissionSessionState.Succeeded ? 0 : HazardHits==0 && Cells>=Mission.RelayCount+2 ? 3 : HazardHits==0 ? 2 : 1;
@@ -86,7 +102,7 @@ namespace SkyPulse.Mobile
         { Id=id;Name=name;Briefing=briefing;Rows=rows;TraceLimit=budget;HackCharges=hacks;Par=par;PunishMistakes=punishMistakes; }
         public static readonly BlackoutPuzzle[] All = {
             new BlackoutPuzzle("blackout.tutorial","01 · PACKET RECOVERY","Tap an adjacent connected tile. Recover both DATA packets, then enter EXIT. Every move adds 1 TRACE. Walls cannot be crossed. Stay within 18 TRACE.",new[]{"S..#..",".#P#..","...#P.",".#....",".....E"},18,0,12),
-            new BlackoutPuzzle("blackout.firewall","02 · FIREWALL FORK","Every move adds 1 TRACE. Arm HACK, then tap an adjacent firewall: opening it costs 1 charge and 3 TRACE. Tap the opened tile again to move. Recover both packets. A longer safe route also exists.",new[]{"S.F.P.",".#.##.","...F..","P#.#..",".....E"},23,2,18),
+            new BlackoutPuzzle("blackout.firewall","02 · FIREWALL FORK","Every move adds 1 TRACE. Tap an adjacent firewall to auto-breach: opening it costs 1 charge and 3 TRACE. Tap the opened tile again to move. Recover both packets. A longer safe route also exists.",new[]{"S.F.P.",".#.##.","...F..","P#.#..",".....E"},23,2,18),
             new BlackoutPuzzle("blackout.bypass","03 · QUIET BYPASS","Recover three packets, then exit within 27 TRACE. Two charges can open shortcuts, but each hack adds 3 TRACE without moving. Plan before you spend.",new[]{"S..#P..",".#F#.#.","P..F...",".#.#F#.","...P..E"},27,2,22),
             new BlackoutPuzzle("blackout.darkweave","04 · DARK WEAVE","Three scattered packets share a six-row network. A single hack can shorten the route, but each move still costs trace. Recover all data within 31 TRACE.",new[]{"S..F..P",".##.#..","P...#..",".#F...#","..P.#..","......E"},31,1,25)
         };
