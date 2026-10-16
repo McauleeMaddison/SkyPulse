@@ -22,6 +22,7 @@ namespace SkyPulse.Mobile
         RectTransform blackoutDeck;
         readonly Vector2[] blackoutTrailBuffer=new Vector2[18];
         readonly List<SkyPulsePressTarget> blackoutPressTargets=new List<SkyPulsePressTarget>(49);
+        readonly List<SkyPulseButtonFeedback> blackoutPressFeedback=new List<SkyPulseButtonFeedback>(49);
         float blackoutActionElapsed,blackoutActionDuration,blackoutToastRemaining;
         Text blackoutCompletionToast;
         int blackoutSelectedFirewall=-1;
@@ -90,6 +91,7 @@ namespace SkyPulse.Mobile
                 var g=blackoutGraphics[i];if(g==null){blackoutGraphics.RemoveAt(i);continue;}
                 g.ReducedMotion=reduceMotionEnabled;g.MotionPaused=state==FlightState.Paused;
             }
+            for(int i=0;i<blackoutPressFeedback.Count;i++)blackoutPressFeedback[i].ReducedMotion=reduceMotionEnabled;
         }
         void ResetBlackoutEffects()
         {
@@ -151,10 +153,11 @@ namespace SkyPulse.Mobile
                 {
                     var hit=CreatePanel(blackoutScreen.transform,"Terminal node "+i,Vector2.zero,new Vector2(136,136),Color.clear);
                     var g=BlackoutGraphic(hit,"Reactive lattice chip",Vector2.zero,new Vector2(124,124),BlackoutSurface.Node);
-                    var label=CreateText(hit,"",new Vector2(0,-44),new Vector2(124,32),25,BlackoutMint,TextAnchor.MiddleCenter,FontStyle.Bold);label.raycastTarget=false;
+                    var label=CreateText(hit,"",new Vector2(0,-44),new Vector2(124,36),28,BlackoutMint,TextAnchor.MiddleCenter,FontStyle.Bold);label.raycastTarget=false;
+                    label.resizeTextForBestFit=true;label.resizeTextMinSize=24;label.resizeTextMaxSize=28;
                     var button=hit.gameObject.AddComponent<Button>();button.targetGraphic=hit.GetComponent<Image>();button.transition=Selectable.Transition.None;
                     var press=hit.gameObject.AddComponent<SkyPulsePressTarget>();press.Tile=i;press.Press=HandleBlackoutPress;press.Release=ReleaseGameplayPointer;
-                    hit.gameObject.AddComponent<SkyPulseButtonFeedback>();blackoutNodes.Add(g);blackoutNodeButtons.Add(button);blackoutNodeLabels.Add(label);blackoutPressTargets.Add(press);
+                    var feedback=hit.gameObject.AddComponent<SkyPulseButtonFeedback>();feedback.ReducedMotion=reduceMotionEnabled;blackoutPressFeedback.Add(feedback);blackoutNodes.Add(g);blackoutNodeButtons.Add(button);blackoutNodeLabels.Add(label);blackoutPressTargets.Add(press);
                 }
                 blackoutStatusText=MissionText(blackoutScreen.transform,"",-508,32,BlackoutIce,950,52);
                 blackoutPulseText=MissionText(blackoutScreen.transform,"",-562,28,BlackoutMint,950,48);blackoutPulseText.raycastTarget=false;
@@ -175,7 +178,7 @@ namespace SkyPulse.Mobile
                 bool used=i<blackoutTileCount;blackoutNodeButtons[i].gameObject.SetActive(used);if(!used)continue;
                 var pos=new Vector2((i%p.Width-(p.Width-1)*.5f)*stride,top-(i/p.Width)*vertical);blackoutPositions[i]=pos;
                 var hit=(RectTransform)blackoutNodeButtons[i].transform;hit.anchoredPosition=pos;hit.sizeDelta=new Vector2(stride,vertical);
-                blackoutNodes[i].rectTransform.sizeDelta=new Vector2(stride-12,vertical-12);blackoutNodeLabels[i].rectTransform.sizeDelta=new Vector2(stride-12,32);
+                blackoutNodes[i].rectTransform.sizeDelta=new Vector2(stride-12,vertical-12);blackoutNodeLabels[i].rectTransform.sizeDelta=new Vector2(stride-12,36);
                 blackoutPressTargets[i].Generation=blackoutGeneration;
                 if(p.Tile(i)=='#')continue;
                 if(i%p.Width<p.Width-1 && p.Tile(i+1)!='#'){blackoutEdgeA.Add(i);blackoutEdgeB.Add(i+1);}
@@ -192,12 +195,14 @@ namespace SkyPulse.Mobile
             var s=blackoutSession;var p=s.Puzzle;bool playing=state==FlightState.Playing && s.State==MissionSessionState.Playing;
             for(int i=0;i<blackoutTileCount;i++)
             {
-                char kind=p.Tile(i);bool recovered=s.Recovered.Contains(i),opened=s.Opened.Contains(i),cursor=s.Cursor==i && blackoutNetwork.Travel>=1;
+                // Logical position is readable on the same press; transport is
+                // decorative and must not hide the player's next valid moves.
+                char kind=p.Tile(i);bool recovered=s.Recovered.Contains(i),opened=s.Opened.Contains(i),cursor=s.Cursor==i;
                 var g=blackoutNodes[i];g.NodeKind=cursor?5:kind=='#'?1:kind=='P'?(recovered?6:2):kind=='F'?(opened?7:3):kind=='E'?4:kind=='T'?8:0;
                 if(!cursor && "CABKkLl".IndexOf(kind)>=0)g.NodeKind=kind=='C'?9:kind=='A'?10:kind=='B'?11:kind=='K'?(recovered?6:12):kind=='k'?(recovered?6:13):kind=='L'?14:15;
                 g.Powered=s.Powered(i);g.CircuitPhase=s.CircuitPhase;
                 g.Adjacent=s.Adjacent(i) && (kind!='#'||p.PunishMistakes);g.Selected=i==blackoutSelectedFirewall;g.Animate=cursor || kind=='P'&&!recovered || kind=='E' || kind=='T' || kind=='C' || "ABKkLl".IndexOf(kind)>=0;g.SetVerticesDirty();
-                blackoutNodeLabels[i].text=cursor?"YOU":kind=='P'?(recovered?"SECURED":"CORE"):kind=='F'?(opened?"OPEN":"BREACH"):kind=='E'?"UPLINK":kind=='T'?"+2":kind=='C'?"SWITCH":kind=='A'?(g.Powered?"MINT":"OFF"):kind=='B'?(g.Powered?"AMBER":"OFF"):kind=='K'?(recovered?"SAVED":"ICE"):kind=='k'?(recovered?"SAVED":"VIOLET"):kind=='L'||kind=='l'?(g.Powered?"OPEN":"LOCK"):"";
+                blackoutNodeLabels[i].text=cursor?"YOU":kind=='P'?(recovered?"SAVED":"CORE"):kind=='F'?(opened?"OPEN":"BREACH"):kind=='E'?"UPLINK":kind=='T'?"+2":kind=='C'?"SWITCH":kind=='A'?(g.Powered?"MINT":"OFF"):kind=='B'?(g.Powered?"AMBER":"OFF"):kind=='K'?(recovered?"SAVED":"ICE"):kind=='k'?(recovered?"SAVED":"VIOLET"):kind=='L'||kind=='l'?(g.Powered?"OPEN":"LOCK"):"";
                 blackoutNodeLabels[i].color=!g.Powered?Hex("#8f9aab"):kind=='T'?Hex("#ff8595"):kind=='k'||kind=='l'?Hex("#c6a1ff"):kind=='K'||kind=='L'?BlackoutIce:kind=='B'||kind=='F'&&!opened?Hex("#ffd08f"):BlackoutMint;
                 blackoutNodeButtons[i].interactable=playing && g.Adjacent;
             }

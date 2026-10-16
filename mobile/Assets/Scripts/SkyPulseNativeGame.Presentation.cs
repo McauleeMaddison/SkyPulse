@@ -18,6 +18,8 @@ namespace SkyPulse.Mobile
         private Text modeBadgeArrow, homeBestCaption;
         private SkyPulseCircuitGraphic homeProtocolHero;
         private Image homeRelayPortal;
+        private Image homeRelayCrystal;
+        private readonly List<SkyPulseButtonFeedback> protocolButtonFeedback=new List<SkyPulseButtonFeedback>();
         private SkyPulseCircuitGraphic homeAtmosphere;
         private Transform homeFlightDock;
         private const string RelayStationPath="SkyPulse/backgrounds/pulse-relay-station-v1";
@@ -29,6 +31,8 @@ namespace SkyPulse.Mobile
         private readonly List<SpriteRenderer> relayPortalHardware=new List<SpriteRenderer>();
         private readonly List<Transform> relayPortalOrbits=new List<Transform>();
         private readonly List<Transform> relayChargeArt=new List<Transform>();
+        private readonly List<SpriteRenderer> relayApproachGuides=new List<SpriteRenderer>(10),relayApproachSignals=new List<SpriteRenderer>(5);
+        private readonly List<SpriteRenderer> relayCrystalHighlights=new List<SpriteRenderer>(10),relayCrystalFlares=new List<SpriteRenderer>(10);
         private readonly List<float> relayOpeningTimes=new List<float>();
         private readonly List<SpriteRenderer> relayShutterArt=new List<SpriteRenderer>(),relayMembranes=new List<SpriteRenderer>(),relayCrystalGlints=new List<SpriteRenderer>(),relayCrystalBodies=new List<SpriteRenderer>();
         private readonly List<TextMesh> relayGateLabels=new List<TextMesh>();
@@ -120,6 +124,9 @@ namespace SkyPulse.Mobile
             homeRelayPortal=CreateImage(homeScreen.transform,"Relay hardware hero",new Vector2(138,355),new Vector2(320,480),Color.white);
             homeRelayPortal.sprite=LoadSprite(RelayPortalPath);homeRelayPortal.raycastTarget=false;
             homeRelayPortal.transform.SetSiblingIndex(menuHeroTransform.GetSiblingIndex());homeRelayPortal.gameObject.SetActive(false);
+            homeRelayCrystal=CreateImage(homeScreen.transform,"Relay spectral crystal",new Vector2(-270,445),new Vector2(56,96),Color.white);
+            homeRelayCrystal.sprite=LoadSprite(CrystalArtworkPath);homeRelayCrystal.preserveAspect=true;homeRelayCrystal.raycastTarget=false;
+            homeRelayCrystal.transform.SetSiblingIndex(menuHeroTransform.GetSiblingIndex());homeRelayCrystal.gameObject.SetActive(false);
             homeFlightDock=homeScreen.transform.Find("Home flight dock");
             foreach(var text in homeScreen.GetComponentsInChildren<Text>())if(text.text=="PERSONAL BEST")homeBestCaption=text;
         }
@@ -142,6 +149,7 @@ namespace SkyPulse.Mobile
             menuHeroTransform.gameObject.SetActive(homeProtocol!=SkyPulseMode.BlackoutProtocol);
             if(homeFlightDock!=null)homeFlightDock.gameObject.SetActive(homeProtocol==SkyPulseMode.EndlessRoute);
             if(homeRelayPortal!=null)homeRelayPortal.gameObject.SetActive(homeProtocol==SkyPulseMode.PulseRelay);
+            if(homeRelayCrystal!=null)homeRelayCrystal.gameObject.SetActive(homeProtocol==SkyPulseMode.PulseRelay);
             if(homeProtocolHero!=null){homeProtocolHero.gameObject.SetActive(homeProtocol==SkyPulseMode.PulseRelay);if(homeProtocolHero.Variant!=(int)homeProtocol){homeProtocolHero.Variant=(int)homeProtocol;homeProtocolHero.SetVerticesDirty();}}
             if(homeProtocol==SkyPulseMode.PulseRelay){menuHeroTransform.localScale=Vector3.one*.54f;menuHeroTransform.anchoredPosition=new Vector2(-105,355);menuEquippedText.text="PILOT · "+equippedSkin.Name;}
             else if(homeProtocol==SkyPulseMode.BlackoutProtocol)menuEquippedText.text="PACKETS · FIREWALLS · TRACE";
@@ -154,6 +162,14 @@ namespace SkyPulse.Mobile
             UpdateBlackoutPresentation();
             UpdateBlackoutActionAnimation(dt);
             if(!paused)relayUnlockFeedback=Mathf.Max(0,relayUnlockFeedback-dt);
+            for(int i=protocolButtonFeedback.Count-1;i>=0;i--)
+            {
+                var feedback=protocolButtonFeedback[i];
+                if(feedback==null){protocolButtonFeedback.RemoveAt(i);continue;}
+                feedback.ReducedMotion=reduceMotionEnabled;
+            }
+            if(homeRelayCrystal!=null && homeRelayCrystal.gameObject.activeInHierarchy)
+                homeRelayCrystal.rectTransform.anchoredPosition=new Vector2(-270,445+(reduceMotionEnabled||paused?0:Mathf.Sin(ambientTime*1.3f)*5));
 
             for(int i=protocolGraphics.Count-1;i>=0;i--)
             {
@@ -170,7 +186,7 @@ namespace SkyPulse.Mobile
             }
             if(activeMode==SkyPulseMode.PulseRelay && state==FlightState.Playing && !reduceMotionEnabled)protocolVisualTime+=dt;
         }
-        private void ClearProtocolWorldArt(){relayApertureGlow.Clear();relayPortalHardware.Clear();relayPortalOrbits.Clear();relayChargeArt.Clear();relayOpeningTimes.Clear();relayShutterArt.Clear();relayMembranes.Clear();relayCrystalGlints.Clear();relayCrystalBodies.Clear();relayGateLabels.Clear();relayScenery=null;protocolVisualTime=0;modeDropdownOpen=false;}
+        private void ClearProtocolWorldArt(){relayApertureGlow.Clear();relayPortalHardware.Clear();relayPortalOrbits.Clear();relayChargeArt.Clear();relayOpeningTimes.Clear();relayShutterArt.Clear();relayMembranes.Clear();relayCrystalGlints.Clear();relayCrystalBodies.Clear();relayCrystalHighlights.Clear();relayCrystalFlares.Clear();relayApproachGuides.Clear();relayApproachSignals.Clear();relayGateLabels.Clear();relayScenery=null;protocolVisualTime=0;modeDropdownOpen=false;}
         private void RemoveScreenPresentation(GameObject root)
         {
             protocolGraphics.RemoveAll(g=>g==null || (g.transform.IsChildOf(root.transform) && !g.transform.parent.name.EndsWith("backdrop")));
@@ -217,9 +233,9 @@ namespace SkyPulse.Mobile
         {
             var renderer=CreateRenderer(name,ProceduralPlateSprite(),colour,order,parent);SetSpriteBlock(renderer,at,size);return renderer;
         }
-        private void WorldLine(Transform parent,string name,Vector2 a,Vector2 b,float width,Color colour,int order)
+        private SpriteRenderer WorldLine(Transform parent,string name,Vector2 a,Vector2 b,float width,Color colour,int order)
         {
-            var renderer=CircuitSprite(parent,name,(a+b)*.5f,new Vector2((b-a).magnitude,width),colour,order);renderer.transform.localRotation=Quaternion.Euler(0,0,Mathf.Atan2((b-a).y,(b-a).x)*Mathf.Rad2Deg);
+            var renderer=CircuitSprite(parent,name,(a+b)*.5f,new Vector2((b-a).magnitude,width),colour,order);renderer.transform.localRotation=Quaternion.Euler(0,0,Mathf.Atan2((b-a).y,(b-a).x)*Mathf.Rad2Deg);return renderer;
         }
         private TextMesh WorldLabel(Transform parent,string text,Vector2 at,Color colour,float scale=.12f)
         {
@@ -239,6 +255,11 @@ namespace SkyPulse.Mobile
             for(int i=0;i<relaySession.Mission.RelayCount;i++)
             {
                 float y=relaySession.Mission.RelayY[i];var gate=new GameObject("Relay "+(i+1)).transform;gate.SetParent(missionWorld,false);relayShutters.Add(gate);
+                // Reused sprite material and fixed objects: these are approach
+                // lights only, never colliders or an additional charge path.
+                relayApproachGuides.Add(WorldLine(gate,"Crystal approach light",new Vector2(-5.4f,y-.32f),new Vector2(-2.9f,y+.32f),.014f,new Color(.32f,.83f,1,.16f),2));
+                relayApproachGuides.Add(WorldLine(gate,"Aperture approach light",new Vector2(-2.9f,y+.32f),new Vector2(0,y),.014f,new Color(.32f,.83f,1,.16f),2));
+                relayApproachSignals.Add(WorldGlow(gate,"Approach signal",new Vector2(-5.4f,y-.32f),new Vector2(.16f,.16f),new Color(.65f,.95f,1,.65f),3));
                 // Floating portal hardware, not Endless's ceiling/floor pipe silhouettes.
                 WorldLine(gate,"Energy plane",new Vector2(0,-9),new Vector2(0,9),.022f,new Color(.2f,.8f,1,.22f),2);
                 relayPortalHardware.Add(RelayPortalFrame(gate,y,new Color(.82f,.89f,.92f)));
@@ -270,13 +291,16 @@ namespace SkyPulse.Mobile
             var depth=CreateRenderer("Prism refracted depth",sprite,new Color(.12f,.20f,.48f,.65f),7,art);SetSpriteBlock(depth,new Vector2(.055f,-.04f),new Vector2(.63f,1.10f));
             var crystal=CreateRenderer("Premium spectral crystal",sprite,new Color(.88f,.98f,1,1),8,art);SetSpriteBlock(crystal,Vector2.zero,new Vector2(.61f,1.08f));relayCrystalBodies.Add(crystal);
             var glint=WorldGlow(art,"Moving facet reflection",new Vector2(-.08f,.28f),new Vector2(.16f,.22f),new Color(.8f,1,1,.8f),9);relayCrystalGlints.Add(glint);
+            var highlight=WorldGlow(art,"Polished crystal facet",new Vector2(-.10f,.03f),new Vector2(.065f,.72f),new Color(.75f,.94f,1,.42f),9);
+            highlight.transform.localRotation=Quaternion.Euler(0,0,-19);relayCrystalHighlights.Add(highlight);
+            var flare=WorldGlow(art,"Prism crown caustic",new Vector2(0,.43f),new Vector2(.36f,.085f),new Color(.76f,.94f,1,.50f),10);relayCrystalFlares.Add(flare);
             WorldLabel(cell,(id/2+1).ToString("00"),new Vector2(0,-.76f),Hex("#aeefff"),.065f);
             relayChargeArt.Add(art);relayCells.Add(cell);relayCellPositions.Add(at);
         }
         private void AnimateRelayArtwork()
         {
             float motion=reduceMotionEnabled?0:protocolVisualTime;
-            if(relayScenery!=null)relayScenery.transform.localPosition=new Vector2(Mathf.Sin(motion*.22f)*.10f,.12f+Mathf.Sin(motion*.3f)*.06f);
+            if(relayScenery!=null)relayScenery.transform.localPosition=new Vector2(reduceMotionEnabled?0:Mathf.Sin(relaySession.Distance*.018f)*-.22f+Mathf.Sin(motion*.22f)*.06f,.12f+Mathf.Sin(motion*.3f)*.06f);
             for(int i=0;i<relayShutters.Count;i++)
             {
                 bool open=relaySession.IsOpen(i);var gate=relayShutters[i];
@@ -286,8 +310,14 @@ namespace SkyPulse.Mobile
                 relayMembranes[i].color=new Color(.12f,.72f,.88f,.27f*(1-opening));
                 relayPortalHardware[i].color=Color.Lerp(new Color(.82f,.89f,.92f),Color.white,opening);
                 var orbit=relayPortalOrbits[i];for(int emitter=0;emitter<2;emitter++){float t=motion*.6f+emitter*Mathf.PI+i*.7f;orbit.GetChild(emitter).localPosition=new Vector2(Mathf.Cos(t)*1.04f,Mathf.Sin(t)*2.03f);}
-                relayApertureGlow[i].color=open?new Color(.14f,.9f,1,.13f):new Color(1,.6f,.15f,.20f+Mathf.Sin(motion*1.8f+i)*.03f);
+                float unlockLight=open&&!reduceMotionEnabled?Mathf.Pow(1-opening,2)*.30f:0;
+                relayApertureGlow[i].color=open?new Color(.14f,.9f,1,.13f+unlockLight):new Color(1,.6f,.15f,.20f+Mathf.Sin(motion*1.8f+i)*.03f);
                 relayGateLabels[i].color=open?Hex("#94ffe1"):Hex("#ffd078");
+                float approach=reduceMotionEnabled?.35f:Mathf.Repeat(motion*.32f+i*.19f,1);
+                var a=new Vector2(-5.4f,relaySession.Mission.RelayY[i]-.32f);var b=new Vector2(-2.9f,relaySession.Mission.RelayY[i]+.32f);var c=new Vector2(0,relaySession.Mission.RelayY[i]);
+                relayApproachSignals[i].transform.localPosition=approach<.5f?Vector2.Lerp(a,b,approach*2):Vector2.Lerp(b,c,(approach-.5f)*2);
+                relayApproachSignals[i].color=new Color(.65f,.95f,1,open?.10f:.55f);
+                var guideColour=new Color(.32f,.83f,1,open?.055f:.16f);relayApproachGuides[i*2].color=guideColour;relayApproachGuides[i*2+1].color=guideColour;
             }
             for(int i=0;i<relayChargeArt.Count;i++)
             {
@@ -297,6 +327,10 @@ namespace SkyPulse.Mobile
                 relayChargeArt[i].localPosition=new Vector2(0,Mathf.Sin(phase)*.045f);
                 relayCrystalGlints[i].transform.localPosition=new Vector2(-.12f+Mathf.Sin(phase)*.1f,.18f+Mathf.Cos(phase*.8f)*.17f);
                 relayCrystalGlints[i].color=new Color(.8f,1,1,.48f+Mathf.Sin(phase*.65f)*.18f);
+                float reflection=.5f+.5f*Mathf.Sin(phase*.8f);
+                relayCrystalBodies[i].color=Color.Lerp(new Color(.72f,.85f,1),Color.white,.55f+reflection*.25f);
+                relayCrystalHighlights[i].color=new Color(.75f,.94f,1,.22f+reflection*.28f);
+                relayCrystalFlares[i].color=new Color(.76f,.94f,1,.24f+reflection*.30f);
             }
         }
         private Text ProtocolStat(Transform parent,string name,string value,float x,float y,float width,int variant,Color accent)

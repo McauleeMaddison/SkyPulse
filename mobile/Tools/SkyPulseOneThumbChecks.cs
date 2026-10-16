@@ -76,6 +76,7 @@ public static class SkyPulseOneThumbChecks
         var s=(BlackoutSession)Get(game,"blackoutSession");var targets=(List<SkyPulsePressTarget>)Get(game,"blackoutPressTargets");
         var pointer=new PointerEventData(EventSystem.current){pointerId=38,button=PointerEventData.InputButton.Left};
         targets[1].OnPointerDown(pointer);Check(s.Cursor==1&&s.Trace==1,"Real pointer-down moves the puzzle immediately");
+        Check(((List<Text>)Get(game,"blackoutNodeLabels"))[1].text=="YOU" && ((List<SkyPulseBlackoutGraphic>)Get(game,"blackoutNodes"))[1].NodeKind==5,"Current-position marker updates on pointer-down before transport animation finishes");
         yield return null;targets[2].OnPointerDown(pointer);Check(s.Cursor==1&&s.Trace==1,"Held pointer cannot hit the next node");targets[1].OnPointerUp(pointer);
         yield return null;targets[2].OnPointerDown(pointer);Check(s.Cursor==2&&s.Trace==2,"Fresh released/repressed pointer advances during the effect");targets[2].OnPointerUp(pointer);
         int old=(int)Get(game,"blackoutGeneration");
@@ -93,6 +94,31 @@ public static class SkyPulseOneThumbChecks
         }
         Set(game,"reduceMotionEnabled",true);Call(game,"LaunchMission",SkyPulseMode.BlackoutProtocol,0);Call(game,"TouchBlackoutNode",1);
         Check(((SkyPulseBlackoutGraphic)Get(game,"blackoutNetwork")).Travel==1,"Reduced Motion moves instantly without an interaction delay");
+        Call(game,"UpdateProtocolPresentation",0f);
+        var reducedFeedback=targets[1].GetComponent<SkyPulseButtonFeedback>();reducedFeedback.OnPointerDown(pointer);Call(reducedFeedback,"Update");
+        Check(reducedFeedback.ReducedMotion && targets[1].transform.localScale==Vector3.one,"Reduced Motion preserves generous fixed puzzle hit targets without compression");reducedFeedback.OnPointerUp(pointer);
+        var quietObject=new GameObject("Reduced motion mesh QA",typeof(RectTransform),typeof(CanvasRenderer),typeof(SkyPulseBlackoutGraphic));
+        var quiet=quietObject.GetComponent<SkyPulseBlackoutGraphic>();quiet.Surface=BlackoutSurface.Network;quiet.ReducedMotion=true;quiet.ImpactKind=4;quiet.Animate=false;
+        var quietDraw=(Action<VertexHelper>)Delegate.CreateDelegate(typeof(Action<VertexHelper>),quiet,typeof(SkyPulseBlackoutGraphic).GetMethod("OnPopulateMesh",F,null,new[]{typeof(VertexHelper)},null));
+        using(var vh=new VertexHelper())
+        {
+            quiet.Impact=1;quietDraw(vh);var positions=new Vector3[vh.currentVertCount];var vertex=UIVertex.simpleVert;
+            for(int i=0;i<positions.Length;i++){vh.PopulateUIVertex(ref vertex,i);positions[i]=vertex.position;}
+            quiet.Impact=.25f;quietDraw(vh);bool fixedGeometry=positions.Length==vh.currentVertCount;
+            for(int i=0;i<positions.Length&&fixedGeometry;i++){vh.PopulateUIVertex(ref vertex,i);fixedGeometry=positions[i]==vertex.position;}
+            Check(fixedGeometry,"Reduced Motion feedback fades in place without expanding rings, particles or phase shockwaves");
+        }
+        UnityEngine.Object.Destroy(quietObject);
+        Set(game,"reduceMotionEnabled",false);Call(game,"LaunchMission",SkyPulseMode.PulseRelay,2);
+        var crystalHighlights=(List<SpriteRenderer>)Get(game,"relayCrystalHighlights");var guides=(List<SpriteRenderer>)Get(game,"relayApproachGuides");
+        Check(crystalHighlights.Count==8 && guides.Count==8,"Eight-crystal circuit has faceted highlights and a paired approach guide for every gate");
+        var animateRelay=(Action)Delegate.CreateDelegate(typeof(Action),game,typeof(SkyPulseNativeGame).GetMethod("AnimateRelayArtwork",F));
+        for(int i=0;i<3;i++)animateRelay();long relayBefore=GC.GetAllocatedBytesForCurrentThread();for(int i=0;i<120;i++)animateRelay();
+        Check(GC.GetAllocatedBytesForCurrentThread()==relayBefore,"Warmed Relay crystal and gate animation creates no managed allocations");
+        var spark=((List<SpriteRenderer>)Get(game,"relayApproachSignals"))[0];Call(game,"PauseFlight");Vector3 sparkBefore=spark.transform.localPosition;
+        Call(game,"UpdateProtocolPresentation",1f);Call(game,"UpdateRelayPresentation");Check(spark.transform.localPosition==sparkBefore,"Pause freezes Relay approach and crystal animation");Call(game,"ResumeFlight");
+        Set(game,"reduceMotionEnabled",true);Call(game,"UpdateProtocolPresentation",0f);Call(game,"UpdateRelayPresentation");sparkBefore=spark.transform.localPosition;
+        Set(game,"protocolVisualTime",99f);Call(game,"UpdateRelayPresentation");Check(spark.transform.localPosition==sparkBefore,"Reduced Motion keeps Relay guidance stationary while gates remain usable");
         foreach(var mode in new[]{SkyPulseMode.BlackoutProtocol,SkyPulseMode.PulseRelay,SkyPulseMode.EndlessRoute,SkyPulseMode.BlackoutProtocol,SkyPulseMode.EndlessRoute})
         {
             Call(game,"SetHomeProtocol",mode);Call(game,"ResetToMenu");var home=(GameObject)Get(game,"homeScreen");

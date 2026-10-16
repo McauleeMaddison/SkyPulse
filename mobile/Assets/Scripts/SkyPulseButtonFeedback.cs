@@ -7,6 +7,7 @@ namespace SkyPulse.Mobile
     /// <summary>Small, allocation-free press response for touch-first controls.</summary>
     public sealed class SkyPulseButtonFeedback : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler
     {
+        public bool ReducedMotion;
         private RectTransform target;
         private Vector3 restingScale;
         private float pressAmount;
@@ -30,6 +31,7 @@ namespace SkyPulse.Mobile
         private void Update()
         {
             if (target == null) return;
+            if (ReducedMotion) { target.localScale=restingScale; return; }
             var scale = Vector3.one * (1f - pressAmount * .045f);
             target.localScale = Vector3.Lerp(target.localScale, Vector3.Scale(restingScale, scale), 1f - Mathf.Exp(-Time.unscaledDeltaTime * 24f));
         }

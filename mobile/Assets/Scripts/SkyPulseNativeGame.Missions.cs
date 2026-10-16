@@ -94,6 +94,8 @@ namespace SkyPulse.Mobile
         private Button MissionButton(Transform root,string label,float x,float y,float width,Action action,Color? colour=null,float height=100)
         {
             var b=CreateNeonButton(root,label,new Vector2(x,y),new Vector2(width,height),colour??Hex("#45eaff"));
+            var feedback=b.GetComponent<SkyPulseButtonFeedback>();
+            if(feedback!=null){feedback.ReducedMotion=reduceMotionEnabled;protocolButtonFeedback.Add(feedback);}
             var t=b.GetComponentInChildren<Text>();t.resizeTextForBestFit=true;t.resizeTextMinSize=20;t.resizeTextMaxSize=28;
             PolishButton(b,colour.HasValue && colour.Value.g>.85f && colour.Value.r<.6f?2:1,colour??Hex("#45eaff"),label=="PLAY" || label.StartsWith("PULSE") || label.StartsWith("START"));
             b.onClick.AddListener(()=>action());return b;

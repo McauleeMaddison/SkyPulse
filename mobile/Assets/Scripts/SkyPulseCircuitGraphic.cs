@@ -92,7 +92,7 @@ namespace SkyPulse.Mobile
                 Glow(vh,c,230,A(Cyan,.16f));
                 // The detailed portal frame is a separate transparent sprite; ambient telemetry stays procedural.
                 for(int i=0;i<8;i++){float y=-160+i*45;Line(vh,new Vector2(0,y),new Vector2(45,y+18),1,A(Gold,.15f));}
-                Diamond(vh,new Vector2(-270,90+Mathf.Sin(Motion*Mathf.PI*2)*8),18,Gold);
+                // Home uses the same faceted crystal sprite as the flight course.
                 for(int i=0;i<3;i++)Quad(vh,new Rect(246,-30+i*26,30,6),A(Cyan,.7f));
             }
             else

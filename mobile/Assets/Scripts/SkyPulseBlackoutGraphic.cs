@@ -212,7 +212,14 @@ namespace SkyPulse.Mobile
             }
             if(Impact>0)
             {
-                float age=1-Impact;Color hue=ImpactKind==1?Amber:ImpactKind==2?Red:ImpactKind==3||ImpactKind==5?Ice:ImpactKind==6?Violet:ImpactKind==4?signal:Mint;Ring(vh,Target,20+age*75,2,A(hue,Impact*.65f));Glow(vh,Target,70,A(hue,Impact*.15f));
+                float age=1-Impact;Color hue=ImpactKind==1?Amber:ImpactKind==2?Red:ImpactKind==3||ImpactKind==5?Ice:ImpactKind==6?Violet:ImpactKind==4?signal:Mint;
+                if(ReducedMotion)
+                {
+                    // A stationary confirmation instead of expanding rings,
+                    // traveling particles or a full-board phase shockwave.
+                    Ring(vh,Target,29,2,A(hue,Impact*.65f));return;
+                }
+                Ring(vh,Target,20+age*75,2,A(hue,Impact*.65f));Glow(vh,Target,70,A(hue,Impact*.15f));
                 for(int i=0;i<12;i++){float t=i*Mathf.PI*2/12;var p=Target+new Vector2(Mathf.Cos(t),Mathf.Sin(t))*(18+age*70);Diamond(vh,p,2+Impact*2,A(hue,Impact));}
                 if(ImpactKind==4){Ring(vh,Target,25+age*380,2,A(signal,Impact*.4f));Ring(vh,Target,12+age*240,1,A(Ice,Impact*.26f));}
             }
