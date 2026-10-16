@@ -28,6 +28,7 @@ namespace SkyPulse.Mobile
         private bool relayShieldCollected, missionFinalized;
         private int selectedMission;
         private float missionUiTimer;
+        private RectTransform relayHudDock;
         private Text relayStatusText, relayHintText, blackoutStatusText, blackoutHintText, dailyResetText, dailyTotalText;
         private readonly List<Button> dailyClaimButtons=new List<Button>();
         private readonly List<Text> dailyProgressLabels=new List<Text>();
@@ -118,6 +119,8 @@ namespace SkyPulse.Mobile
             missionControlScreen=MissionScreen("Mission Control");
             blackoutScreen=MissionScreen("Blackout terminal",true);
             relayHudScreen=MissionScreen("Pulse Relay HUD",false,false);
+            var relayRoot=(RectTransform)relayHudScreen.transform;relayRoot.SetParent(safeAreaRoot,false);
+            relayRoot.anchorMin=Vector2.zero;relayRoot.anchorMax=Vector2.one;relayRoot.offsetMin=relayRoot.offsetMax=Vector2.zero;
             missionResultScreen=MissionScreen("Protocol result");
             SetupModeHomeControls();
         }
@@ -262,17 +265,30 @@ namespace SkyPulse.Mobile
         private void BuildRelayHud()
         {
             ClearScreen(relayHudScreen);relayHudScreen.SetActive(true);
-            var header=PremiumPanel(relayHudScreen.transform,"Relay flight deck",new Vector2(0,849),new Vector2(970,220),1,Hex("#45eaff"));
-            MissionText(header,"PULSE RELAY",62,40,Hex("#ffd078"));
-            MissionText(header,relaySession.Mission.Name,8,23,Hex("#bdebf0"));
-            relayChargeText=ProtocolStat(relayHudScreen.transform,"CRYSTALS", "0",-320,665,300,1,Hex("#77eaff"));
-            relayProgressText=ProtocolStat(relayHudScreen.transform,"GATES OPEN", "0",0,665,300,1,Hex("#45eaff"));
-            relayStatusText=ProtocolStat(relayHudScreen.transform,"PASSED", "0",320,665,300,1,Hex("#65ffad"));
-            MissionButton(header,"Ⅱ",410,28,100,PauseFlight,Hex("#8eeaff"),100);
-            relayHintText=MissionText(relayHudScreen.transform,"TWO MATCHING CRYSTALS OPEN EACH GATE",-800,25,Hex("#c4f4f5"),940,58);
+            var header=PremiumPanel(relayHudScreen.transform,"Relay flight deck",Vector2.zero,new Vector2(970,240),1,Hex("#45eaff"));
+            relayHudDock=header;header.anchorMin=header.anchorMax=new Vector2(.5f,1);header.pivot=new Vector2(.5f,1);header.anchoredPosition=new Vector2(0,-12);
+            var title=MissionText(header,"PULSE RELAY",80,30,Hex("#ffd078"),650,42);title.rectTransform.anchoredPosition=new Vector2(-110,80);
+            var mission=MissionText(header,relaySession.Mission.Name,43,20,Hex("#bdebf0"),700,32);mission.rectTransform.anchoredPosition=new Vector2(-75,43);
+            relayChargeText=RelayTopStat(header,"CRYSTALS",-310,Hex("#77eaff"));
+            relayProgressText=RelayTopStat(header,"GATES OPEN",0,Hex("#45eaff"));
+            relayStatusText=RelayTopStat(header,"PASSED",310,Hex("#65ffad"));
+            MissionButton(header,"Ⅱ",410,58,100,PauseFlight,Hex("#8eeaff"),100);
+            relayHintText=MissionText(header,"TWO MATCHING CRYSTALS OPEN EACH GATE",-91,21,Hex("#c4f4f5"),900,34);
+            FitRelayHudToSafeArea();
 
             relayDisplayedCells=relayDisplayedPassed=relayDisplayedOpen=-1;relayUnlockFeedback=0;
             UpdateRelayPresentation();
+        }
+        private Text RelayTopStat(Transform header,string label,float x,Color colour)
+        {
+            var caption=MissionText(header,label,2,22,colour,280,30);caption.rectTransform.anchoredPosition=new Vector2(x,2);
+            var value=MissionText(header,"0",-35,35,Hex("#e4fff5"),280,46);value.rectTransform.anchoredPosition=new Vector2(x,-35);return value;
+        }
+        private void FitRelayHudToSafeArea()
+        {
+            if(relayHudDock==null||interfaceContentRoot==null)return;
+            float scale=interfaceContentRoot.localScale.x;relayHudDock.localScale=Vector3.one*scale;
+            relayHudDock.anchoredPosition=new Vector2(0,-12*scale);
         }
         private void RelayUnlocked(int gate)
         {

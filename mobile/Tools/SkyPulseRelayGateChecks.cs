@@ -36,6 +36,10 @@ public static class SkyPulseRelayGateChecks
         canvas.renderMode=RenderMode.ScreenSpaceCamera;canvas.worldCamera=camera;canvas.planeDistance=1;
         var target=RenderTexture.GetTemporary(750,1334,24);camera.targetTexture=target;camera.rect=new Rect(0,0,1,1);
         Call(game,"RefreshViewportDecor");Set(game,"birdY",session.Mission.RelayY[0]);Set(game,"birdVelocity",0f);Call(game,"UpdateBird",0f);
+        var dock=(RectTransform)Get(game,"relayHudDock");var safe=(RectTransform)Get(game,"safeAreaRoot");
+        Vector3 top=safe.InverseTransformPoint(dock.TransformPoint(new Vector3(0,dock.rect.yMax,0)));
+        Check(top.y<=safe.rect.yMax && safe.rect.yMax-top.y<=25,"Information panel is anchored against the actual safe top edge");
+        Check(dock.parent.parent==safe,"Relay HUD does not inherit the vertically centred fitted menu canvas");
         string folder=Path.Combine(Environment.GetEnvironmentVariable("SKYPULSE_QA_OUTPUT"),"gate-volume");Directory.CreateDirectory(folder);
         // Use the real flap/physics/wing sequence, never a held-level bird.
         Call(game,"LaunchMission",SkyPulseMode.PulseRelay,2);session=(RelaySession)Get(game,"relaySession");

@@ -162,6 +162,7 @@ namespace SkyPulse.Mobile
         private void UpdateProtocolPresentation(float dt)
         {
             bool paused=state==FlightState.Paused;
+            FitRelayHudToSafeArea();
             UpdateBlackoutPresentation();
             UpdateBlackoutActionAnimation(dt);
             if(!paused)relayUnlockFeedback=Mathf.Max(0,relayUnlockFeedback-dt);

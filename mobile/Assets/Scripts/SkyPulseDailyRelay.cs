@@ -67,7 +67,7 @@ namespace SkyPulse.Mobile
             {
                 var random=new CourseRandom(day,i);var template=RelayMission.All[i];var heights=new float[template.RelayCount];float y=0;
                 for(int gate=0;gate<heights.Length;gate++)
-                {float target=random.Next()*3.3f-1.65f;y=Math.Max(y-1.9f,Math.Min(y+1.9f,target));heights[gate]=y;}
+                {float target=random.Next()*7.8f-4.8f;y=Math.Max(y-3.4f,Math.Min(y+3.4f,target));heights[gate]=y;}
                 float spacing=template.Spacing+random.Next()*1.8f,exit=random.Next()*1.4f-.7f;
                 int nameIndex=(int)(random.Next()*Names.Length);while(usedNames[nameIndex])nameIndex=(nameIndex+1)%Names.Length;usedNames[nameIndex]=true;
                 string name=(i+1).ToString("00")+" · "+Names[nameIndex];
