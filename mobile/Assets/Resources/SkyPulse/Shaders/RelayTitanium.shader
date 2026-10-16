@@ -3,6 +3,8 @@ Shader "SkyPulse/Relay Titanium"
     Properties
     {
         _Open ("Open", Float) = 0
+        _Charge ("Gate charge", Float) = 0
+        _Exposure ("Surface exposure", Float) = 1
         _Clock ("Presentation clock", Float) = 0
         _Pulse ("Unlock impulse", Float) = 0
         _Accent ("Open emitter colour", Color) = (.2,.86,1,1)
@@ -23,10 +25,14 @@ Shader "SkyPulse/Relay Titanium"
             #include "UnityCG.cginc"
             struct input { float4 vertex:POSITION; float3 normal:NORMAL; float4 colour:COLOR; float2 uv:TEXCOORD0; };
             struct varying { float4 position:SV_POSITION; float3 normal:TEXCOORD0; float3 world:TEXCOORD1; float4 colour:COLOR; float2 uv:TEXCOORD2; };
-            float _Open, _Clock, _Pulse; float4 _Accent;
+            float _Open, _Clock, _Pulse, _Charge, _Exposure; float4 _Accent;
             varying vert(input v)
             {
-                varying o; o.position=UnityObjectToClipPos(v.vertex);o.normal=UnityObjectToWorldNormal(v.normal);
+                varying o;
+                float moving=step(2.5,v.uv.y);
+                float3 radial=float3(.46*sin(v.uv.x),cos(v.uv.x),-.887919*sin(v.uv.x));
+                v.vertex.xyz+=radial*moving*_Open*saturate(1-_Pulse)*.24;
+                o.position=UnityObjectToClipPos(v.vertex);o.normal=UnityObjectToWorldNormal(v.normal);
                 o.world=mul(unity_ObjectToWorld,v.vertex).xyz;o.colour=v.colour;o.uv=v.uv;return o;
             }
             fixed4 frag(varying i):SV_Target
@@ -42,9 +48,10 @@ Shader "SkyPulse/Relay Titanium"
                 float skyReflection=pow(saturate(.5+.5*sin(reflected.y*6+reflected.x*2)),12);
                 float3 metal=i.colour.rgb*(diffuse+skyReflection*.38)*groove+float3(.74,.88,1)*spec+float3(.11,.27,.36)*rim;
                 float sweep=pow(saturate(cos(i.uv.x*2-_Clock*1.5)),14);
-                float3 emitter=lerp(float3(1,.44,.10),_Accent.rgb,_Open);
+                float charged=step(frac(i.uv.x/6.2831853),_Charge)*step(.01,_Charge);
+                float3 emitter=lerp(float3(1,.095,.08),_Accent.rgb,max(charged,_Open));
                 float3 light=emitter*(.8+sweep*.45+_Pulse*.85);
-                return fixed4(lerp(metal,light,i.colour.a),1);
+                return fixed4(lerp(metal,light,i.colour.a)*_Exposure,1);
             }
             ENDCG
         }

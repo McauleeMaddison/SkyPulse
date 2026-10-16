@@ -19,7 +19,8 @@ namespace SkyPulse.Mobile
         const int Segments = 96;
         static readonly Vector3 Across = new Vector3(.46f, 0, -.887919f);
         static readonly Vector3 Axis = new Vector3(.887919f, 0, .46f);
-        static readonly int OpenId = Shader.PropertyToID("_Open"), ClockId = Shader.PropertyToID("_Clock"), PulseId = Shader.PropertyToID("_Pulse"), AccentId = Shader.PropertyToID("_Accent");
+        static readonly int OpenId = Shader.PropertyToID("_Open"), ClockId = Shader.PropertyToID("_Clock"), PulseId = Shader.PropertyToID("_Pulse"), AccentId = Shader.PropertyToID("_Accent"),ChargeId=Shader.PropertyToID("_Charge");
+        public float ChargeFraction { get; private set; }
         Mesh rearMesh, frontMesh;
         Material metal;
 
@@ -81,11 +82,21 @@ namespace SkyPulse.Mobile
                     AddQuad(rear, front, at-tangent*.105f-radial*.035f, at+tangent*.105f-radial*.035f, at+tangent*.105f+radial*.035f, at-tangent*.105f+radial*.035f, Axis, new Color(.7f,.94f,1,1), angle);
                 }
             }
+            // Sliding locking shoes sit outside the authoritative aperture, so
+            // their decorative release can never delay an already unlocked pass.
+            for(int i=0;i<8;i++)
+            {
+                float a=(i+.5f)*Mathf.PI/4;var radial=Radial(a);var tangent=Across*Mathf.Cos(a)-Vector3.up*Mathf.Sin(a);
+                var at=radial*(InnerRadius+.13f)-Axis*.31f;
+                var buffer=at.z<0?front:rear;int begin=buffer.Uv.Count;
+                buffer.Quad(at-tangent*.11f-radial*.09f,at+tangent*.11f-radial*.09f,at+tangent*.11f+radial*.17f,at-tangent*.11f+radial*.17f,-Axis,new Color(.36f,.48f,.54f,0),a,-Axis);
+                for(int v=begin;v<buffer.Uv.Count;v++)buffer.Uv[v]=new Vector2(a,3);
+            }
             rearMesh = rear.Finish("Relay far shell and recessed bore"); frontMesh = front.Finish("Relay near collar and aperture lip");
             var shader = Resources.Load<Shader>("SkyPulse/Shaders/RelayTitanium");
             if (shader == null) throw new System.InvalidOperationException("Missing included Relay titanium shader");
             metal = new Material(shader) { name = "Relay titanium and embedded emitters" };
-            metal.SetColor(AccentId, exit ? new Color(.24f,1,.65f) : new Color(.2f,.86f,1));
+            metal.SetColor(AccentId, exit ? new Color(.24f,1,.65f) : new Color(.12f,.58f,1));
             RearSurface = Surface("Far shell · behind pilot", rearMesh, RearOrder);
             FrontSurface = Surface("Near lip · in front of pilot", frontMesh, FrontOrder);
             SetVisual(exit, 0, 0);
@@ -142,7 +153,12 @@ namespace SkyPulse.Mobile
         }
         public void SetVisual(bool open,float clock,float pulse)
         {
+            SetCharge(open?2:0,open,clock,pulse);
+        }
+        public void SetCharge(int crystals,bool open,float clock,float pulse)
+        {
             if(metal==null)return;
+            ChargeFraction=Mathf.Clamp01(crystals*.5f);metal.SetFloat(ChargeId,ChargeFraction);
             metal.SetFloat(OpenId,open?1:0);metal.SetFloat(ClockId,clock);metal.SetFloat(PulseId,pulse);
         }
         void OnDestroy()

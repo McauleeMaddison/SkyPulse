@@ -90,6 +90,23 @@ namespace SkyPulse.Mobile
             {
                 var c=new Vector2(138,0);
                 Glow(vh,c,230,A(Cyan,.16f));
+                // Orbital launch cradle: projected machined deck, docking rails
+                // and a live exhaust stream behind the selected pilot.
+                Polygon(vh,new Vector2(-350,-162),new Vector2(-252,-116),new Vector2(275,-116),new Vector2(365,-162),new Color(.055f,.12f,.16f,.95f));
+                Polygon(vh,new Vector2(-350,-162),new Vector2(-350,-181),new Vector2(365,-181),new Vector2(365,-162),new Color(.012f,.03f,.05f,.96f));
+                Line(vh,new Vector2(-327,-165),new Vector2(342,-165),2,A(Cyan,.7f));
+                for(int i=0;i<10;i++){float x=-290+i*64;Line(vh,new Vector2(x,-159),new Vector2(x+18,-123),1,A(Cyan,.17f));}
+                for(int side=-1;side<=1;side+=2)
+                {
+                    float x=side*320;Bevel(vh,new Rect(x-13,-140,26,104),5,new Color(.015f,.04f,.06f),new Color(.19f,.28f,.31f));
+                    Line(vh,new Vector2(x,-128),new Vector2(x,-48),3,A(Gold,.8f));
+                    Glow(vh,new Vector2(x,-48),27,A(Gold,.18f));
+                }
+                for(int i=0;i<6;i++)
+                {
+                    float f=Mathf.Repeat(Motion*4+i/6f,1);var p=new Vector2(-220-f*112,-5+Mathf.Sin(i*1.8f)*10);
+                    GlowLine(vh,p,p+Vector2.right*18,1,A(Cyan,(1-f)*.32f));
+                }
                 // The detailed portal frame is a separate transparent sprite; ambient telemetry stays procedural.
                 for(int i=0;i<8;i++){float y=-160+i*45;Line(vh,new Vector2(0,y),new Vector2(45,y+18),1,A(Gold,.15f));}
                 // Home uses the same faceted crystal sprite as the flight course.
@@ -124,8 +141,27 @@ namespace SkyPulse.Mobile
             }
             if(Variant==0)
             {
+                // Layered vista silhouettes and thin high-altitude cloud banks
+                // move at separate speeds while keeping the hero/text clear.
+                for(int layer=0;layer<2;layer++)for(int i=0;i<11;i++)
+                {
+                    float x=Mathf.Repeat(i*108+layer*45-Motion*(layer+1)*48+590,1180)-590;
+                    float height=24+Mathf.Sin(i*2.17f+layer)*14;
+                    Quad(vh,new Rect(x,120-layer*22,24+layer*8,height),new Color(.05f,.12f,.24f,layer==0?.15f:.23f));
+                    Line(vh,new Vector2(x+12,120-layer*22+height),new Vector2(x+12,142-layer*22+height),1,A(Cyan,.18f));
+                }
+                for(int i=0;i<3;i++)
+                {
+                    float x=Mathf.Repeat(i*410-Motion*65+640,1280)-640;
+                    Glow(vh,new Vector2(x,485+i*40),160,new Color(.36f,.69f,.92f,.028f));
+                }
                 float t=Motion;var star=Vector2.Lerp(new Vector2(-430,730),new Vector2(435,350),t);
                 GlowLine(vh,star-new Vector2(60,-27),star,1,A(Cyan,.14f*Mathf.Sin(t*Mathf.PI)));
+            }
+            if(Variant==2)
+            {
+                float y=Mathf.Lerp(145,590,Motion);Line(vh,new Vector2(-355,y),new Vector2(355,y),1,A(Green,.075f));
+                for(int i=0;i<4;i++){var at=new Vector2((i%2==0?-1:1)*370,210+(i/2)*250);Ring(vh,at,14,1,A(Green,.22f),0,360);Ring(vh,at,19,2,A(Green,.45f),Motion*360+i*90,70);}
             }
             Glow(vh,new Vector2(-480,390),290,A(Variant==2?Green:Cyan,.065f));
             Glow(vh,new Vector2(490,-420),260,A(Variant==1?Gold:Variant==2?Green:new Color(.7f,.3f,1),.045f));
@@ -231,6 +267,7 @@ namespace SkyPulse.Mobile
             n=vh.currentVertCount;var dark=Color.Lerp(colour,Color.black,.42f);Vert(vh,middle,dark);Vert(vh,c+new Vector2(0,-size),dark);Vert(vh,c+new Vector2(size,-size*.58f),dark);Vert(vh,right,dark);vh.AddTriangle(n,n+1,n+2);vh.AddTriangle(n,n+2,n+3);
         }
         private static void Diamond(VertexHelper vh,Vector2 c,float size,Color colour){int start=vh.currentVertCount;Vert(vh,c+Vector2.left*size,colour);Vert(vh,c+Vector2.up*size,colour);Vert(vh,c+Vector2.right*size,colour);Vert(vh,c+Vector2.down*size,colour);vh.AddTriangle(start,start+1,start+2);vh.AddTriangle(start,start+2,start+3);}
+        private static void Polygon(VertexHelper vh,Vector2 a,Vector2 b,Vector2 c,Vector2 d,Color colour){int n=vh.currentVertCount;Vert(vh,a,colour);Vert(vh,b,colour);Vert(vh,c,colour);Vert(vh,d,colour);vh.AddTriangle(n,n+1,n+2);vh.AddTriangle(n,n+2,n+3);}
         private static Vector2 Corner(Rect r,float cut,int i){switch(i){case 0:return new Vector2(r.xMin,r.yMin+cut);case 1:return new Vector2(r.xMin,r.yMax);case 2:return new Vector2(r.xMax-cut,r.yMax);case 3:return new Vector2(r.xMax,r.yMax-cut);case 4:return new Vector2(r.xMax,r.yMin);default:return new Vector2(r.xMin+cut,r.yMin);}}
         private static void Border(VertexHelper vh,Rect r,float cut,float width,Color colour){for(int i=0;i<6;i++)Line(vh,Corner(r,cut,i),Corner(r,cut,(i+1)%6),width,colour);}
         private static void Bevel(VertexHelper vh,Rect r,float cut,Color bottom,Color top)

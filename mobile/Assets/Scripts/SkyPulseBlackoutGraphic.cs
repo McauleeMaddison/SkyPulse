@@ -18,6 +18,28 @@ namespace SkyPulse.Mobile
         public int EdgeCount=-1,TrailCount=-1;
         public bool[] EdgePowered=new bool[0];
         public BlackoutPuzzle Miniature;
+        public Rect BoardBounds=new Rect(-470,-440,940,900);
+        public float EventEnergy;
+        struct Signal { public Vector2 From,To;public float Life;public int Kind; }
+        readonly Signal[] signals=new Signal[8];int signalAt;
+        readonly Vector2[] previousFrom=new Vector2[84],previousTo=new Vector2[84];
+        int previousEdges;float sectorReveal;
+        public float SectorReveal=>sectorReveal;
+        public void EmitSignal(Vector2 from,Vector2 to,int kind){signals[signalAt]=new Signal{From=from,To=to,Kind=kind,Life=.42f};signalAt=(signalAt+1)%signals.Length;SetVerticesDirty();}
+        public void BeginSectorTransition()
+        {
+            previousEdges=Mathf.Min(EdgeCount,previousFrom.Length);
+            for(int i=0;i<previousEdges;i++){previousFrom[i]=EdgeFrom[i];previousTo[i]=EdgeTo[i];}
+            for(int i=0;i<signals.Length;i++)signals[i].Life=0;
+            sectorReveal=1;SetVerticesDirty();
+        }
+        public void ClearEffects(){previousEdges=0;sectorReveal=0;for(int i=0;i<signals.Length;i++)signals[i].Life=0;SetVerticesDirty();}
+        public void TickEffects(float dt)
+        {
+            bool dirty=sectorReveal>0;sectorReveal=Mathf.Max(0,sectorReveal-dt/0.4f);
+            for(int i=0;i<signals.Length;i++)if(signals[i].Life>0){signals[i].Life=Mathf.Max(0,signals[i].Life-dt);dirty=true;}
+            if(dirty)SetVerticesDirty();
+        }
         public float Phase { get; private set; }
         float Clock=>ReducedMotion?0:Phase;
         static readonly Color Mint=new Color(.30f,1,.75f),Ice=new Color(.59f,.91f,1),Amber=new Color(1,.65f,.26f),Red=new Color(1,.33f,.37f),Violet=new Color(.72f,.53f,1);
@@ -25,6 +47,7 @@ namespace SkyPulse.Mobile
         void Update()
         {
             if(previousReduced!=ReducedMotion){previousReduced=ReducedMotion;SetVerticesDirty();}
+            if(!MotionPaused&&EventEnergy>0){EventEnergy=Mathf.Max(0,EventEnergy-Time.unscaledDeltaTime*3.6f);SetVerticesDirty();}
             if(!Animate || ReducedMotion || MotionPaused)return;
             Phase=Mathf.Repeat(Phase+Time.unscaledDeltaTime*.20f,1);SetVerticesDirty();
         }
@@ -107,6 +130,11 @@ namespace SkyPulse.Mobile
             Line(vh,new Vector2(r.xMin+28,r.yMin+11),new Vector2(r.xMax-28,r.yMin+11),1,A(Ice,.10f));
             Line(vh,new Vector2(r.xMin+20,r.yMax-2),new Vector2(r.xMax-20,r.yMax-2),2,A(Ice,.26f));
             Line(vh,new Vector2(r.xMin+20,r.yMax-7),new Vector2(r.xMin+r.width*.35f,r.yMax-7),2,A(Mint,.8f));
+            for(int i=0;i<8;i++)
+            {
+                float x=r.xMin+32+i*(r.width-64)/7;
+                Line(vh,new Vector2(x,r.yMin+4),new Vector2(x+5,r.yMin-7),1,A(Ice,.18f));
+            }
             for(int side=-1;side<=1;side+=2)
             {
                 float x=side*(r.width*.5f-14);Line(vh,new Vector2(x,r.yMin+28),new Vector2(x,r.yMin+r.height*.3f),1,A(Mint,.34f));
@@ -118,6 +146,7 @@ namespace SkyPulse.Mobile
             var c=r.center;float s=Mathf.Min(r.width,r.height);bool wall=NodeKind==1;
             Color accent=NodeKind==3||NodeKind==11?Amber:NodeKind==8?Red:NodeKind==5||NodeKind==12||NodeKind==14?Ice:NodeKind==13||NodeKind==15?Violet:Mint;
             var top=new Rect(c.x-s*.43f,c.y-s*.30f,s*.86f,s*.68f);
+            if(EventEnergy>0)Glow(vh,c,s*.58f,A(Ice,EventEnergy*.16f));
             Bevel(vh,new Rect(top.x+3,top.y-8,top.width,top.height),10,new Color(.001f,.006f,.012f),new Color(.016f,.025f,.037f));
             if(wall){Bevel(vh,top,10,new Color(.012f,.017f,.022f),new Color(.022f,.032f,.040f));for(int i=-2;i<=2;i++)Line(vh,c+new Vector2(-s*.24f,i*9),c+new Vector2(s*.24f,i*9),1,A(Ice,.08f));return;}
             if(Adjacent || Selected || NodeKind==5)Glow(vh,c,s*.55f,A(accent,Selected?.18f:Powered?.12f:.035f));
@@ -187,12 +216,30 @@ namespace SkyPulse.Mobile
                 Ellipse(vh,icon+new Vector2(0,s*.14f),s*.115f,1,2,A(accent,.9f),0,180);
                 if(!Powered){Ring(vh,icon,s*.032f,2,accent);Line(vh,icon,icon+Vector2.down*s*.07f,2,accent);}else Diamond(vh,icon,4,accent);
             }
-            else{Ring(vh,icon,s*.12f,1,A(Mint,NodeKind==7?.55f:.25f));Quad(vh,new Rect(icon.x-2,icon.y-2,4,4),A(Ice,.7f));}
+            else if(NodeKind==7)
+            {
+                for(int side=-1;side<=1;side+=2){var at=icon+new Vector2(side*s*.25f,0);Line(vh,at+Vector2.down*s*.14f,at+Vector2.up*s*.14f,3,A(Amber,.48f));Line(vh,at,at+Vector2.right*(-side*s*.07f),2,A(Ice,.5f));}
+                Line(vh,icon+new Vector2(-8,0),icon+new Vector2(-2,-6),2,Mint);Line(vh,icon+new Vector2(-2,-6),icon+new Vector2(9,7),2,Mint);
+            }
+            else{Ring(vh,icon,s*.12f,1,A(Mint,.25f));Quad(vh,new Rect(icon.x-2,icon.y-2,4,4),A(Ice,.7f));}
             if(Selected)for(int i=0;i<4;i++){float t=i*Mathf.PI*.5f;var p=c+new Vector2(Mathf.Cos(t),Mathf.Sin(t))*s*.48f;Diamond(vh,p,3,Amber);}
         }
         void Network(VertexHelper vh)
         {
             Color signal=HasPhaseRouting && CircuitPhase==1?Amber:Mint;
+            // A restrained security scan travels behind the physical chips and
+            // never changes an interactive tile's position or readability.
+            if(!ReducedMotion)
+            {
+                float scan=Mathf.Lerp(BoardBounds.yMin,BoardBounds.yMax,Clock);
+                Gradient(vh,new Rect(BoardBounds.xMin,scan-18,BoardBounds.width,18),A(Ice,0),A(Ice,.027f));
+                Line(vh,new Vector2(BoardBounds.xMin,scan),new Vector2(BoardBounds.xMax,scan),1,A(Ice,.13f));
+            }
+            if(sectorReveal>0)
+            {
+                for(int i=0;i<previousEdges;i++)Line(vh,previousFrom[i],previousTo[i],1,A(Ice,sectorReveal*.16f));
+                Border(vh,BoardBounds,12,1.5f,A(Mint,sectorReveal*.6f));
+            }
             int edges=EdgeCount<0?EdgeFrom.Length:EdgeCount;
             for(int i=0;i<edges;i++)
             {
@@ -209,6 +256,20 @@ namespace SkyPulse.Mobile
             {
                 var p=Vector2.Lerp(Origin,Target,Travel*Travel*(3-2*Travel));Glow(vh,p,40,A(Ice,.25f));Crystal(vh,p+new Vector2(0,6),17,Ice);
                 Line(vh,Origin,p,2,A(Ice,.7f));
+            }
+            for(int i=0;i<signals.Length;i++)
+            {
+                var s=signals[i];if(s.Life<=0)continue;float f=s.Life/.42f,age=1-f;
+                Color hue=s.Kind==1?Amber:s.Kind==2?Red:s.Kind==6?Violet:Ice;
+                var p=ReducedMotion?s.To:Vector2.Lerp(s.From,s.To,Mathf.SmoothStep(0,1,Mathf.Clamp01(age*3.5f)));
+                Glow(vh,p,22,A(hue,f*.18f));
+                if(ReducedMotion){Ring(vh,s.To,26,1,A(hue,f*.6f));continue;}
+                Line(vh,Vector2.Lerp(s.From,p,.55f),p,2,A(hue,f*.6f));
+                if(s.Kind==1)for(int shard=0;shard<6;shard++)
+                {
+                    float a=shard*Mathf.PI/3;var d=new Vector2(Mathf.Cos(a),Mathf.Sin(a));var at=s.To+d*(15+age*43);
+                    Polygon(vh,at-d*8,at+new Vector2(-d.y,d.x)*3,at+d*5,at-new Vector2(-d.y,d.x)*2,A(Amber,f*.65f));
+                }
             }
             if(Impact>0)
             {

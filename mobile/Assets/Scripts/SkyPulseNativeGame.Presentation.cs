@@ -33,6 +33,9 @@ namespace SkyPulse.Mobile
         private SkyPulseRelayDeck relayDeck;
         private readonly List<Transform> relayPortalOrbits=new List<Transform>();
         private readonly List<Transform> relayChargeArt=new List<Transform>();
+        private readonly List<SkyPulsePrism> relayPrisms=new List<SkyPulsePrism>(10);
+        private readonly List<SpriteRenderer> relayLasers=new List<SpriteRenderer>(15);
+        private readonly List<SpriteRenderer> relayLaserHalos=new List<SpriteRenderer>(15);
         private readonly List<SpriteRenderer> relayApproachGuides=new List<SpriteRenderer>(10),relayApproachSignals=new List<SpriteRenderer>(5);
         private readonly List<SpriteRenderer> relayCrystalHighlights=new List<SpriteRenderer>(10),relayCrystalFlares=new List<SpriteRenderer>(10);
         private readonly List<float> relayOpeningTimes=new List<float>();
@@ -165,6 +168,7 @@ namespace SkyPulse.Mobile
             FitRelayHudToSafeArea();
             UpdateBlackoutPresentation();
             UpdateBlackoutActionAnimation(dt);
+            UpdateCinematicHome();
             if(!paused)relayUnlockFeedback=Mathf.Max(0,relayUnlockFeedback-dt);
             for(int i=protocolButtonFeedback.Count-1;i>=0;i--)
             {
@@ -190,7 +194,7 @@ namespace SkyPulse.Mobile
             }
             if(activeMode==SkyPulseMode.PulseRelay && state==FlightState.Playing && !reduceMotionEnabled)protocolVisualTime+=dt;
         }
-        private void ClearProtocolWorldArt(){relayApertureGlow.Clear();relayPortalHardware.Clear();relayPortalOrbits.Clear();relayChargeArt.Clear();relayOpeningTimes.Clear();relayShutterArt.Clear();relayMembranes.Clear();relayCrystalGlints.Clear();relayCrystalBodies.Clear();relayCrystalHighlights.Clear();relayCrystalFlares.Clear();relayApproachGuides.Clear();relayApproachSignals.Clear();relayGateLabels.Clear();relayGateLabelCounts.Clear();relayExitHardware=null;relayDeck=null;relayScenery=null;protocolVisualTime=0;modeDropdownOpen=false;}
+        private void ClearProtocolWorldArt(){relayApertureGlow.Clear();relayPortalHardware.Clear();relayPortalOrbits.Clear();relayChargeArt.Clear();relayPrisms.Clear();relayLasers.Clear();relayLaserHalos.Clear();relayOpeningTimes.Clear();relayShutterArt.Clear();relayMembranes.Clear();relayCrystalGlints.Clear();relayCrystalBodies.Clear();relayCrystalHighlights.Clear();relayCrystalFlares.Clear();relayApproachGuides.Clear();relayApproachSignals.Clear();relayGateLabels.Clear();relayGateLabelCounts.Clear();relayExitHardware=null;relayDeck=null;relayEnvironment=null;relayScenery=null;protocolVisualTime=0;modeDropdownOpen=false;}
         private void RemoveScreenPresentation(GameObject root)
         {
             protocolGraphics.RemoveAll(g=>g==null || (g.transform.IsChildOf(root.transform) && !g.transform.parent.name.EndsWith("backdrop")));
@@ -254,6 +258,7 @@ namespace SkyPulse.Mobile
             CircuitSprite(missionWorld,"Station atmosphere veil",Vector2.zero,new Vector2(GetViewportWidth()+1,22),new Color(.005f,.035f,.065f,.24f),-30);
             WorldGlow(missionWorld,"Station atmosphere",new Vector2(1,2),new Vector2(20,26),new Color(.1f,.68f,.83f,.31f),-28);
             WorldGlow(missionWorld,"Gold horizon",new Vector2(0,-7),new Vector2(18,7),new Color(1,.6f,.12f,.16f),-27);
+            relayEnvironment=new GameObject("Living orbital station depth").AddComponent<SkyPulseRelayEnvironment>();relayEnvironment.transform.SetParent(missionWorld,false);relayEnvironment.Build(GetViewportWidth());
             for(int i=-3;i<=3;i++)WorldLine(missionWorld,"Perspective bus",new Vector2(i*3,-9),new Vector2(i*.65f,3),.008f,new Color(.1f,.6f,.7f,.07f),-24);
             var deck=new GameObject("Relay runway · ground collision edge").AddComponent<SkyPulseRelayDeck>();deck.transform.SetParent(missionWorld,false);deck.transform.localPosition=new Vector3(0,GroundY,0);deck.Build(GetViewportWidth()+4);relayDeck=deck;
             for(int i=0;i<relaySession.Mission.RelayCount;i++)
@@ -264,8 +269,14 @@ namespace SkyPulse.Mobile
                 relayPortalHardware.Add(RelayPortalFrame(gate,y));
                 var orbit=new GameObject("Portal emitter orbit").transform;orbit.SetParent(gate,false);orbit.localPosition=new Vector2(0,y);relayPortalOrbits.Add(orbit);
                 for(int emitter=0;emitter<2;emitter++)WorldGlow(orbit,"Emitter glint",Vector2.zero,new Vector2(.34f,.34f),new Color(.2f,.92f,1,.75f),7);
-                var membrane=CreateRenderer("Activation window",RelayFieldSprite(),new Color(.12f,.72f,.88f,.27f),4,gate);SetSpriteBlock(membrane,new Vector2(0,y),new Vector2(1.35f,RelaySession.ApertureHalfHeight*2));relayMembranes.Add(membrane);
-                relayShutterArt.Add(CircuitSprite(gate,"Energy shutter",new Vector2(0,y),new Vector2(.035f,RelaySession.ApertureHalfHeight*2),Hex("#ffd078"),5));
+                var membrane=CreateRenderer("Activation window",RelayFieldSprite(),new Color(1,.08f,.09f,.10f),4,gate);SetSpriteBlock(membrane,new Vector2(0,y),new Vector2(1.35f,RelaySession.ApertureHalfHeight*2));relayMembranes.Add(membrane);
+                relayShutterArt.Add(CircuitSprite(gate,"Energy shutter",new Vector2(0,y),new Vector2(.025f,RelaySession.ApertureHalfHeight*2),new Color(1,.12f,.14f,.5f),5));
+                for(int beam=0;beam<3;beam++)
+                {
+                    float h=(beam-1)*.85f,half=Mathf.Sqrt(SkyPulseRelayGate.InnerRadius*SkyPulseRelayGate.InnerRadius-h*h)*.46f;
+                    relayLasers.Add(WorldLine(gate,"Red security laser "+beam,new Vector2(-half,y+h),new Vector2(half,y+h),.024f,new Color(1,.16f,.18f,.85f),6));
+                    relayLaserHalos.Add(WorldGlow(gate,"Laser scattering "+beam,new Vector2(0,y+h),new Vector2(half*2+.08f,.15f),new Color(1,.09f,.12f,.24f),5));
+                }
                 var glow=WorldGlow(gate,"Aperture illumination",new Vector2(0,y),new Vector2(2.15f,3.5f),new Color(1,.6f,.15f,.22f),3);relayApertureGlow.Add(glow);relayOpeningTimes.Add(-1f);
                 relayGateLabels.Add(WorldLabel(gate,(i+1).ToString("00")+" · 0/2",new Vector2(0,y+2.85f),Hex("#ffd078"),.085f));relayGateLabelCounts.Add(0);
                 // Random daily positions remain ahead of their assigned gate,
@@ -286,9 +297,7 @@ namespace SkyPulse.Mobile
             var cell=new GameObject("Gate crystal "+id).transform;cell.SetParent(missionWorld,false);
             WorldGlow(cell,"Crystal spectral bloom",Vector2.zero,new Vector2(1.45f,2.05f),new Color(.22f,.78f,1,.24f),6);
             var art=new GameObject("Faceted gate prism").transform;art.SetParent(cell,false);
-            var sprite=LoadSprite(CrystalArtworkPath);
-            var depth=CreateRenderer("Prism refracted depth",sprite,new Color(.12f,.20f,.48f,.65f),7,art);SetSpriteBlock(depth,new Vector2(.055f,-.04f),new Vector2(.63f,1.10f));
-            var crystal=CreateRenderer("Premium spectral crystal",sprite,new Color(.88f,.98f,1,1),8,art);SetSpriteBlock(crystal,Vector2.zero,new Vector2(.61f,1.08f));relayCrystalBodies.Add(crystal);
+            var prism=art.gameObject.AddComponent<SkyPulsePrism>();prism.Build();relayPrisms.Add(prism);
             var glint=WorldGlow(art,"Moving facet reflection",new Vector2(-.08f,.28f),new Vector2(.16f,.22f),new Color(.8f,1,1,.8f),9);relayCrystalGlints.Add(glint);
             var highlight=WorldGlow(art,"Polished crystal facet",new Vector2(-.10f,.03f),new Vector2(.065f,.72f),new Color(.75f,.94f,1,.42f),9);
             highlight.transform.localRotation=Quaternion.Euler(0,0,-19);relayCrystalHighlights.Add(highlight);
@@ -305,30 +314,35 @@ namespace SkyPulse.Mobile
                 bool open=relaySession.IsOpen(i);var gate=relayShutters[i];
                 if(open && relayOpeningTimes[i]<0)relayOpeningTimes[i]=protocolVisualTime;
                 float opening=!open?0:reduceMotionEnabled?1:Mathf.Clamp01((protocolVisualTime-relayOpeningTimes[i])/.28f);
-                var shutter=relayShutterArt[i];SetSpriteBlock(shutter,new Vector2(0,relaySession.Mission.RelayY[i]),new Vector2(.035f,RelaySession.ApertureHalfHeight*2*(1-opening)));shutter.color=opening>=1?Color.clear:Hex("#ffd078");
-                relayMembranes[i].color=open?Color.clear:new Color(.12f,.72f,.88f,.20f);
+                var shutter=relayShutterArt[i];SetSpriteBlock(shutter,new Vector2(0,relaySession.Mission.RelayY[i]),new Vector2(.025f,RelaySession.ApertureHalfHeight*2*(1-opening)));shutter.color=opening>=1?Color.clear:new Color(1,.12f,.14f,.5f);
+                relayMembranes[i].color=open?Color.clear:new Color(1,.08f,.09f,.10f);
                 if(open)shutter.color=Color.clear;
-                relayPortalHardware[i].SetVisual(open,motion,open&&!reduceMotionEnabled?1-opening:0);
-                var orbit=relayPortalOrbits[i];for(int emitter=0;emitter<2;emitter++){float t=motion*.6f+emitter*Mathf.PI+i*.7f;orbit.GetChild(emitter).localPosition=new Vector2(Mathf.Cos(t)*1.04f,Mathf.Sin(t)*2.03f);}
+                for(int beam=0;beam<3;beam++)
+                {
+                    var hue=open?new Color(.12f,.66f,1,reduceMotionEnabled?0:(1-opening)*.28f):new Color(1,.12f,.15f,.78f);
+                    relayLasers[i*3+beam].color=hue;hue.a*=.32f;relayLaserHalos[i*3+beam].color=hue;
+                }
+                relayPortalHardware[i].SetCharge(relaySession.GateCrystals(i),open,motion,open&&!reduceMotionEnabled?1-opening:0);
+                var orbit=relayPortalOrbits[i];for(int emitter=0;emitter<2;emitter++){float t=motion*.6f+emitter*Mathf.PI+i*.7f;var tip=orbit.GetChild(emitter);tip.localPosition=new Vector2(Mathf.Cos(t)*1.04f,Mathf.Sin(t)*2.03f);tip.GetComponent<SpriteRenderer>().color=open?new Color(.15f,.65f,1,.65f):new Color(1,.12f,.15f,.55f);}
                 float unlockLight=open&&!reduceMotionEnabled?Mathf.Pow(1-opening,2)*.30f:0;
-                relayApertureGlow[i].color=open?new Color(.14f,.9f,1,.13f+unlockLight):new Color(1,.6f,.15f,.20f+Mathf.Sin(motion*1.8f+i)*.03f);
+                relayApertureGlow[i].color=open?new Color(.14f,.6f,1,.13f+unlockLight):new Color(1,.12f,.13f,.13f+Mathf.Sin(motion*1.8f+i)*.015f);
                 int count=relaySession.GateCrystals(i);
                 if(relayGateLabelCounts[i]!=count){relayGateLabelCounts[i]=count;relayGateLabels[i].text=(i+1).ToString("00")+" · "+count+"/2";}
                 relayGateLabels[i].color=open?Hex("#94ffe1"):Hex("#ffd078");
 
             }
             if(relayDeck!=null)relayDeck.SetVisual(reduceMotionEnabled?0:relaySession.Distance,motion);
+            if(relayEnvironment!=null)relayEnvironment.SetVisual(reduceMotionEnabled?0:relaySession.Distance,motion);
             if(relayExitHardware!=null)relayExitHardware.SetVisual(true,motion,0);
             for(int i=0;i<relayChargeArt.Count;i++)
             {
                 if(!relayCells[i].gameObject.activeSelf)continue;
                 float phase=motion*1.65f+i*.8f;
-                relayChargeArt[i].localRotation=Quaternion.Euler(0,Mathf.Sin(phase)*15,Mathf.Sin(phase*.7f)*6);
+                relayPrisms[i].SetVisual(motion,i*.8f);
                 relayChargeArt[i].localPosition=new Vector2(0,Mathf.Sin(phase)*.045f);
                 relayCrystalGlints[i].transform.localPosition=new Vector2(-.12f+Mathf.Sin(phase)*.1f,.18f+Mathf.Cos(phase*.8f)*.17f);
                 relayCrystalGlints[i].color=new Color(.8f,1,1,.48f+Mathf.Sin(phase*.65f)*.18f);
                 float reflection=.5f+.5f*Mathf.Sin(phase*.8f);
-                relayCrystalBodies[i].color=Color.Lerp(new Color(.72f,.85f,1),Color.white,.55f+reflection*.25f);
                 relayCrystalHighlights[i].color=new Color(.75f,.94f,1,.22f+reflection*.28f);
                 relayCrystalFlares[i].color=new Color(.76f,.94f,1,.24f+reflection*.30f);
             }

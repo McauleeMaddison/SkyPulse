@@ -52,7 +52,7 @@ public static class SkyPulseRelayGateChecks
                 if((float)Get(game,"birdY")<y-.55f && (float)Get(game,"birdVelocity")<0){Call(game,"Flap");taps++;}
                 Call(game,"SimulateRelay",1f/120f);Call(game,"UpdateGameplayWingState",1f/120f);
             }
-            Call(game,"UpdateBirdWingMotion");Call(game,"UpdateProtocolPresentation",1f/30);Call(game,"UpdateRelayPresentation");
+            Call(game,"UpdateBirdWingMotion");Call(game,"UpdateProtocolPresentation",1f/30);Call(game,"UpdateRelayPresentation");Call(game,"UpdateCinematicPresentation",1f/30);
             wingSprites.Add(((SpriteRenderer)Get(game,"birdRenderer")).sprite);
             Canvas.ForceUpdateCanvases();Call(game,"ApplySafeArea");Call(game,"FitInterfaceToSafeArea");Canvas.ForceUpdateCanvases();camera.Render();
             Save(target,Path.Combine(folder,frame.ToString("000")+".png"));

@@ -97,7 +97,7 @@ namespace SkyPulse.Mobile
         {
             blackoutGeneration++;FenceGameplayBoundary();blackoutSelectedFirewall=-1;
             blackoutActionElapsed=blackoutActionDuration=blackoutToastRemaining=0;blackoutTrailCount=0;
-            if(blackoutNetwork!=null){blackoutNetwork.Travel=1;blackoutNetwork.Impact=0;}
+            if(blackoutNetwork!=null){blackoutNetwork.Travel=1;blackoutNetwork.Impact=0;blackoutNetwork.ClearEffects();}
             if(blackoutPulseText!=null)blackoutPulseText.text="";
         }
         void OpenBlackoutSectors()
@@ -171,6 +171,7 @@ namespace SkyPulse.Mobile
             blackoutTileCount=p.Width*p.Height;
             float stride=Mathf.Min(164,960f/p.Width),vertical=136,top=24+(p.Height-1)*vertical*.5f;
             blackoutDeck.sizeDelta=new Vector2(p.Width*stride+28,p.Height*vertical+28);var deckGraphic=blackoutDeck.GetComponentInChildren<SkyPulseBlackoutGraphic>();deckGraphic.rectTransform.sizeDelta=blackoutDeck.sizeDelta;deckGraphic.SetVerticesDirty();
+            blackoutNetwork.BoardBounds=new Rect(-p.Width*stride*.5f,24-p.Height*vertical*.5f,p.Width*stride,p.Height*vertical);
             blackoutSectorText.text="SECTOR "+(selectedMission+1).ToString("00")+" / 08 · "+p.Name;
             blackoutEdgeA.Clear();blackoutEdgeB.Clear();
             for(int i=0;i<49;i++)
@@ -249,6 +250,7 @@ namespace SkyPulse.Mobile
             blackoutNetwork.Origin=visual;blackoutNetwork.Target=blackoutPositions[tile];blackoutNetwork.Travel=breach||rejected||reduceMotionEnabled?1:0;blackoutNetwork.Impact=1;
             bool switched=phase!=session.CircuitPhase,keyRecovered=keys!=session.CipherKeys;
             blackoutNetwork.ImpactKind=rejected?2:breach?1:session.Puzzle.Tile(tile)=='T'?2:session.Packets>cores?3:switched?4:keyRecovered?(session.Puzzle.Tile(tile)=='k'?6:5):0;
+            blackoutNetwork.EmitSignal(visual,blackoutPositions[tile],blackoutNetwork.ImpactKind);blackoutNodes[tile].EventEnergy=1;
             blackoutPulseText.text=rejected?(breach?"BREACH FAILED · "+(charges>session.Charges?"-1 CHARGE / ":"")+"+3 TRACE":"MOVE BLOCKED · +1 TRACE"):breach?"FIREWALL OPEN · TAP TO ENTER":session.Packets>cores?"CORE SECURED":switched?(session.CircuitPhase==0?"MINT":"AMBER")+" CIRCUIT ONLINE":keyRecovered?"CIPHER KEY SECURED":session.Puzzle.Tile(tile)=='T'?"SECURITY NODE · +2 TRACE":"";
             blackoutPulseText.color=rejected?Hex("#ff8595"):breach||switched&&session.CircuitPhase==1?Hex("#ffd08f"):BlackoutIce;
             blackoutActionElapsed=0;blackoutActionDuration=reduceMotionEnabled?.24f:.28f;
@@ -262,6 +264,7 @@ namespace SkyPulse.Mobile
         void UpdateBlackoutActionAnimation(float dt)
         {
             if(state!=FlightState.Playing || blackoutSession==null || blackoutNetwork==null)return;
+            blackoutNetwork.TickEffects(dt);
             if(blackoutToastRemaining>0){blackoutToastRemaining=Mathf.Max(0,blackoutToastRemaining-dt);if(blackoutToastRemaining==0)blackoutCompletionToast.text="";}
             if(blackoutActionElapsed>=blackoutActionDuration)return;
             blackoutActionElapsed=Mathf.Min(blackoutActionDuration,blackoutActionElapsed+dt);
@@ -273,7 +276,7 @@ namespace SkyPulse.Mobile
         }
         void ActivateNextBlackoutPuzzle(int completed)
         {
-            selectedMission=completed+1;blackoutSession=new BlackoutSession(SkyPulseBlackoutCampaign.Stages[selectedMission]);missionFinalized=false;
+            blackoutNetwork.BeginSectorTransition();selectedMission=completed+1;blackoutSession=new BlackoutSession(SkyPulseBlackoutCampaign.Stages[selectedMission]);missionFinalized=false;
             BuildBlackoutLab();blackoutCompletionToast.text="SECTOR "+(completed+1).ToString("00")+" SECURED · NEXT SECTOR READY";blackoutToastRemaining=1.1f;
         }
         void BuildBlackoutResult(bool won,string reason,int medal)

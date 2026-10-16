@@ -73,7 +73,7 @@ public static class SkyPulsePresentationChecks
                     Call(game,"UpdateGameplayWingState",.1f);Call(game,"UpdateBirdWingMotion");Call(game,"UpdateRelayPresentation");
                 }
                 if(scene=="blackout-puzzle" && frame==18){Call(game,"TouchBlackoutNode",1);}
-                Set(game,"ambientTime",(float)Get(game,"ambientTime")+.1f);Call(game,"UpdateMenuBird",.1f);Call(game,"UpdateProtocolPresentation",.1f);
+                Set(game,"ambientTime",(float)Get(game,"ambientTime")+.1f);Call(game,"UpdateMenuBird",.1f);Call(game,"UpdateProtocolPresentation",.1f);Call(game,"UpdateCinematicPresentation",.1f);
                 yield return new WaitForSecondsRealtime(.1f);
                 Canvas.ForceUpdateCanvases();Call(game,"ApplySafeArea");Call(game,"FitInterfaceToSafeArea");Canvas.ForceUpdateCanvases();camera.Render();
                 RenderTexture.active=rt;var texture=new Texture2D(captureWidth,captureHeight,TextureFormat.RGB24,false);texture.ReadPixels(new Rect(0,0,captureWidth,captureHeight),0,0);texture.Apply();File.WriteAllBytes(Path.Combine(output,frame.ToString("000")+".png"),texture.EncodeToPNG());UnityEngine.Object.Destroy(texture);RenderTexture.active=null;
