@@ -1,0 +1,51 @@
+{
+  "candidate": "1.0.0 (13)",
+  "compiledSourceCommit": "8bff40379f5a6f139ac88419313095a3b2c9b6de",
+  "requiredPassMarkers": [
+    "SKYPULSE_DAILY_ROUTE_PURE_PASS",
+    "SKYPULSE_DAILY_ROUTE_LIVE_PASS",
+    "SKYPULSE_ONE_THUMB_PURE_PASS",
+    "SKYPULSE_ONE_THUMB_LIVE_PASS",
+    "SKYPULSE_BLACKOUT_PURE_PASS",
+    "SKYPULSE_BLACKOUT_LIVE_PASS",
+    "SKYPULSE_BETA_CHECKS_PASS",
+    "SKYPULSE_RELEASE_EDGE_PASS",
+    "SKYPULSE_MISSION_PURE_PASS",
+    "SKYPULSE_MISSION_INTEGRATION_PASS",
+    "SKYPULSE_MISSION_LEGACY_PASS",
+    "SKYPULSE_MISSION_CAPTURES_PASS",
+    "SKYPULSE_PRESENTATION_CAPTURES_PASS",
+    "SKYPULSE_WORLD_CHECKS_PASS",
+    "SKYPULSE_RELAY_MESH_PASS"
+  ],
+  "unityProcessExitCode": 0,
+  "runtimeSourceSha256": {
+    "Assets/Scripts/SkyPulseBlackoutCampaign.cs": "0fee019dd768ca3784096e67d4f7af41276a3c6092df4cbdb0e611a3f6881f1d",
+    "Assets/Scripts/SkyPulseBlackoutGraphic.cs": "72e626ae0f34666f24526c00d086c55f8801c560a84ee2e46e022ab4915a00b6",
+    "Assets/Scripts/SkyPulseBootstrap.cs": "ece7b674b01bc9b2a7df94a5842ef056d3cf4e30df2d0b63a042f7ac7f799f3c",
+    "Assets/Scripts/SkyPulseButtonFeedback.cs": "238b727fea1bdf14f0202a167e859e80aaf4cdce54c3bd48405bca297635849e",
+    "Assets/Scripts/SkyPulseCircuitGraphic.cs": "cae0cfb3d75489dabffa4717912ec27738cc2c08e892f30a4123afdc35de7c82",
+    "Assets/Scripts/SkyPulseDailyMissions.cs": "78aa663da106b4611a0fc39ce487da02d3742c22be8d4c4359575083443a8425",
+    "Assets/Scripts/SkyPulseDailyRelay.cs": "79b6972357445163e5c131d20c4d3c74c8724b8e9478665ff869d71ad59e9ac0",
+    "Assets/Scripts/SkyPulseInputFence.cs": "ccf585a47e7bb3d401c4358d792209b548185f755b27b494a368ce7838ec7b25",
+    "Assets/Scripts/SkyPulseMissionModels.cs": "6fa927c9e3779f8ffd8cb8882be9e5891fecf77a67c43e1be8eba66ca7a5af70",
+    "Assets/Scripts/SkyPulseNativeGame.Blackout.cs": "939fd93bd41da08bc153611529d7377a4dac9f2487e69c2ec5d76da5f6fced19",
+    "Assets/Scripts/SkyPulseNativeGame.Controls.cs": "9f4eada7d96423a28b73796b44e35a69b58075370de03abc8eb6217a1d38cd39",
+    "Assets/Scripts/SkyPulseNativeGame.Missions.cs": "94e2788ed4c37e98385cd87476767914635c43805aa8b386698a7e220b4775ac",
+    "Assets/Scripts/SkyPulseNativeGame.Presentation.cs": "26d9ab94561184e88a7697042a4947b0592850a5eeea99356b69ba0fe53dac33",
+    "Assets/Scripts/SkyPulseNativeGame.cs": "56310277adc5149803fc75c99328ed7d09dc08fabd71540c9486988a9c9fdb58",
+    "Assets/Scripts/SkyPulsePressTarget.cs": "c796bcf41af73bb8198709a13d6b43605fe38a9636cd9645e28616e64831d73d",
+    "Assets/Scripts/SkyPulsePublicLinks.cs": "8427bb1103414ea4610f23293834270c4f230b9335ebd550f79c6d80e198b3b0",
+    "Assets/Scripts/SkyPulseRelayGate.cs": "b61cd2e1d6d9cd70750b748d327900f39f08ddabe0d7f36806a08c0edd233c60",
+    "Assets/Scripts/SkyPulseRoundStartSurface.cs": "379650ff3d28470bf3eae7abbdb0eada594ce98b865ba97d1149265fa68e4671",
+    "Assets/Scripts/SkyPulseTechConnection.cs": "d68ac7dba1b6c6136359719bbb1c932b2a9eac9f9eea106306aa2366e130ab0f",
+    "Assets/Scripts/SkyPulseUiGlyph.cs": "85498185a92fdd6c546a0ef1d4a78bf22b40b0e26a9fc755f62da870feac7bc6"
+  },
+  "shaderSourceSha256": {
+    "Assets/Resources/SkyPulse/Shaders/RelayTitanium.shader": "1e67191f4cadfcc9d7b683a37b522b926408ef9be26405822397f3a7ea45c653"
+  },
+  "unityLogSha256": "2464a9640028dd052672c3b90a9bc008de6ff8cf6dab4a55bc53260476ed3b0f",
+  "physicalDeviceGameplay": "Pending for build 13; no owner pass claimed",
+  "publicAppReview": "On hold",
+  "knownEditorIssue": "Unity Search startup indexing exception; required gameplay checks and process exit passed"
+}

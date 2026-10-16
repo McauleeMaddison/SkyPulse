@@ -1,0 +1,22 @@
+SkyPulse Arcade — current private candidate 1.0.0 (12)
+
+REVIEW HOLD
+The developer has withdrawn public submission while awaiting Apple's specific similarity comparison and clarification of the terminated-account reference. This saved draft does not request review. Build 12 private-candidate notes were prepared locally; the public draft remained on build 11. The product copy describes build 12; physical-device validation and matching current screenshots/video remain required before future submission.
+
+CURRENT WALKTHROUGH
+1. Home starts on Endless Route. Its top-left badge opens the three free modes. Each Home has its own animated environment, progress and relevant controls. Blackout has its sector map and field guide, without Bird Hangar or Tech Tree.
+2. Endless Route: tap the playable area to flap, pass gates and collect crystals. Twelve environments change every 15 gates. Fifteen birds share flight handling; unlocks are cosmetic. Nine Tech Tree nodes have three levels each. The developer requested slightly wider pipe spacing and slightly smaller gaps for build 11.
+3. Pulse Relay: four named, bounded circuits refresh each UTC day, with two to five gates. Tap to flap. Faceted numbered crystals open only their matching gate automatically; the opening animation cannot delay passage. There are no FLAP/PULSE buttons. Today's routes and medals survive restarts. A successful mission offers Next Mission directly when another daily circuit remains.
+4. Blackout Protocol: eight increasingly hard authored sectors. Tap connected neighbours, recover every core and reach the uplink. Ice/violet keys and mint/amber phase routes add constraints. Tapping a closed firewall spends one breach charge and three trace; tap again to enter. Wrong moves and failed breaches cost trace. Exhaustion fails the sector. Completion saves once and activates the next sector immediately; held input cannot carry into it. The final sector uses the campaign result flow.
+5. Main Menu is available after results in all modes. Four daily tasks award five crystals each, at most 20 per UTC day, with separate claim recovery. Existing Endless saves and the earned-crystal economy remain compatible.
+
+BUILD 12 POLISH
+Relay uses matching Home/gameplay crystals with facet reflections, approach lighting and refined portal feedback. Blackout marks the current node immediately during rapid taps, uses larger labels and keeps Reduced Motion impact/press feedback stationary. No economy or save-key changes.
+
+VALIDATION
+Build 12 is signed and Testing in the existing SkyPulse Internal group. Fourteen automated Unity QA markers passed; recorded hashes link the nineteen runtime scripts to the tested/exported source. Archive identity, privacy manifest, bundled branded links and current metadata checks passed. Fresh physical build 12 gameplay/performance validation remains pending. Existing build 7 screenshots/video are historical and must be replaced before public submission.
+
+DEVELOPMENT AND ARTWORK
+Mcaulee Maddison created this project with AI coding assistance. He confirms ARTA and ChatGPT artwork, a lifetime ARTA purchase, and references from his own images/generated outputs. Published output terms support use subject to their conditions; provider assignment/use permissions are not a claim of exclusive copyright. All 145 Unity source images have current hashes and origin evidence entries. Specific built-in image-tool records remain separate from broad ARTA statements. Five sound effects are synthesized from retained source without input samples. Unity components retain their respective rights.
+
+The owner states no prior submission/supply through another developer account, publisher, contractor or purchased template. The local audit identified no imported game template or unrelated identity. Apple's private comparator has not been identified; this audit does not declare its allegation resolved.

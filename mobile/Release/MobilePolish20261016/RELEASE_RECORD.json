@@ -1,0 +1,53 @@
+{
+  "candidate": "SkyPulse 1.0.0 (12)",
+  "compiledSourceCommit": "d4d41177aefbc33127b8233cf034666307e3f781",
+  "branch": "main",
+  "allRuntimeScriptsMatchPassedQA": 19,
+  "candidateSourceEntries": 378,
+  "automatedRequiredPassMarkers": 14,
+  "archive": {
+    "path": "/private/tmp/skypulse-testflight-12-20261016/SkyPulse-1.0.0-12.xcarchive",
+    "status": "ARCHIVE SUCCEEDED",
+    "version": "1.0.0",
+    "build": "12",
+    "bundleId": "com.mcauleemaddison.skypulse",
+    "deviceFamilies": [
+      1,
+      2
+    ],
+    "strictCodeSignatureVerified": true,
+    "appExecutableSha256": "ee5a9dbe1030c116a1251fc2061da8739756d4df0ee62228b1974214c3e45624"
+  },
+  "testFlight": {
+    "uploaded": true,
+    "status": "Testing",
+    "externalReviewSubmitted": false,
+    "processed": true,
+    "testerNotesSaved": true,
+    "notesReloadMatched": true,
+    "buildId": "8973426f-d110-4372-80e8-4e133a95d771",
+    "group": "SkyPulse Internal",
+    "existingTesters": 1,
+    "verifiedDate": "2026-10-16"
+  },
+  "physicalDeviceGameplay": "Owner deferred complete build 12 check; later gate-appearance recording received, its installed build number was not visible",
+  "publicReviewSubmitted": false,
+  "publicDraft": "Build 11 selected; unsubmitted and on hold",
+  "artworkLedger": "mobile/Release/IdentityRights20261013/ARTWORK_LEDGER.json",
+  "newRasterAssets": 0,
+  "economyAndSaveKeysChanged": false,
+  "warnings": [
+    "Vendor UnityRuntime.framework dSYM UUID 392D7A7F-6A4F-3A7A-8788-4089FA96FF38 is missing from the archive and was not found in the installed editor. Upload succeeded; engine crash symbolication is limited."
+  ],
+  "retainedSymbols": [
+    "SkyPulse.app.dSYM",
+    "UnityFramework.framework.dSYM"
+  ],
+  "durableArchive": "artifacts/mobile-polish-20261016/SkyPulse-1.0.0-12.xcarchive.zip",
+  "evidenceSha256": {
+    "unity-export.log": "7a33423f732130d15d8aba8ecbc5537d94324abb0a901f589debe7eac631bfa1",
+    "xcode-archive.log": "0ea738555457f759ef307d215b9264ff3bec2cd8a1e370b8baf756f415a95f58",
+    "xcode-upload.log": "56b0e273c71ecf5df6d570f97ad1432305c8d8e0940be70be9c52ec0a3e9615d",
+    "SkyPulse-1.0.0-12.xcarchive.zip": "121036cee9fd24644a7233fff45ec0f6ccc5eb4776267fc572e5add83de3ca8d"
+  }
+}

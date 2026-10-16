@@ -1,0 +1,19 @@
+SkyPulse Arcade — private candidate 1.0.0 (14)
+
+REVIEW HOLD
+The developer has withdrawn public submission while awaiting Apple's specific similarity comparison and clarification of the terminated-account reference. This prepared draft does not request review. Current physical-device validation and matching screenshots/video are still required before a separately authorized public submission.
+
+WALKTHROUGH
+1. Home starts on Endless Route. The top-left badge opens three free modes. Their Homes have distinct scenery, animation, progress and relevant actions. Blackout has its sector map and field guide, without Bird Hangar or Tech Tree.
+2. Endless Route: tap to flap, pass gates and collect crystals. Twelve worlds change every 15 gates. Fifteen birds share handling; unlocks are cosmetic. Nine Tech Tree nodes each have three levels. The build 11 owner-requested spacing/gap tuning is retained.
+3. Pulse Relay: four daily finite circuits, with two to five gates, refresh each UTC day. Tap freely to flap. Both randomly placed numbered crystals are required for their matching gate. 0/2 and 1/2 stay locked; 2/2 opens immediately, before same-frame impact checks. Shields cannot bypass missing crystals. No FLAP/PULSE buttons. The day’s random layout and medals survive relaunch. Smaller hollow 3D hoops render far hardware behind the pilot and near lips in front. The visible runway edge matches ground collision. A clear offers Next Mission when another daily circuit remains.
+4. Blackout: eight increasingly hard authored sectors. Tap connected neighbours, recover cores and reach the uplink. Ice/violet keys and mint/amber phase routes constrain the puzzle. A closed firewall tap spends one breach charge and three trace; tap again to enter. Wrong moves/failed breaches spend resources; exhaustion fails. Each clear saves once and activates the next board immediately. Held/queued input is fenced; the final sector uses the campaign result flow.
+5. Main Menu is available after each mode’s results. Four daily tasks each award five crystals, at most 20 daily-task crystals per UTC day, with claim recovery. Existing save keys and earned-crystal economy remain compatible. Reduced Motion and haptics settings are available. No login, ads, analytics or real-money purchases.
+
+VALIDATION
+The full isolated Unity run passed 15 required markers. A separate supplement confirms zero/one crystal cannot pass a gate even under shield immunity at 30/60/120 FPS. Same-frame final pickup, UI separation, retries, rendered pilot occlusion, visible-ground failure, wing animation, progression and legacy saves pass. Hashes link 21 runtime scripts and two shaders to tested source. Native signing/upload and physical device status are recorded in the release record; no device pass is implied. Existing build 7 media is historical.
+
+DEVELOPMENT AND ARTWORK
+Mcaulee Maddison develops this project with AI coding assistance. He confirms ARTA/ChatGPT artwork, lifetime ARTA access and references from his own images/generated outputs. The ledger covers all 145 source images; provider output permissions do not establish exclusive copyright. New mesh/shader code introduces no external model or image. Five sounds are synthesized from retained source. Unity components retain their rights.
+
+The owner states no other developer account, publisher, contractor, prior supply/submission or purchased template. The local audit identified no imported game template or unrelated identity. Apple’s private comparator is unidentified; this work does not declare the allegation resolved.

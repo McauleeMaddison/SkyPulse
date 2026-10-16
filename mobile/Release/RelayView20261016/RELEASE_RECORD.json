@@ -1,0 +1,83 @@
+{
+  "candidate": "SkyPulse 1.0.0 (15)",
+  "compiledSourceCommit": "52a81042d75a025cffad303bb31e0c73e989cc32",
+  "branch": "main",
+  "allRuntimeScriptsMatchPassedQA": 21,
+  "candidateSourceEntries": 387,
+  "automatedRequiredPassMarkers": 15,
+  "lockSupplementPassed": true,
+  "archive": {
+    "status": "ARCHIVE SUCCEEDED",
+    "path": "/private/tmp/skypulse-testflight-15-20261016/SkyPulse-1.0.0-15.xcarchive",
+    "version": "1.0.0",
+    "build": "15",
+    "bundleId": "com.mcauleemaddison.skypulse",
+    "deviceFamilies": [
+      1,
+      2
+    ],
+    "strictCodeSignatureVerified": true,
+    "appExecutableSha256": "6aff680a28f19f8261b3fcfbd5c9beb2ddc4fe9f3b9fe2207d72f7e4e1f2fab6"
+  },
+  "testFlight": {
+    "uploaded": true,
+    "status": "Testing in SkyPulse Internal; processed and one internal invitation verified",
+    "externalReviewSubmitted": false,
+    "testerNotesSaved": true,
+    "buildId": "8e28d5ba-56fd-4c00-9e44-4d675a4cc305",
+    "groupId": "c9cd5539-95d2-42b6-9e32-a9682a8d3402",
+    "testerNotesVerifiedAfterReload": true,
+    "proof": "testflight-build15-testing.png",
+    "notesProof": "testflight-notes-saved.png"
+  },
+  "physicalDeviceGameplay": "Pending for build 15",
+  "publicReviewSubmitted": false,
+  "publicDraft": {
+    "build": "15",
+    "status": "Prepare for Submission",
+    "savedAndVerifiedAfterNavigation": true,
+    "descriptionMatchesPreparedCopy": true,
+    "reviewNotesMatchPreparedCopy": true,
+    "reviewSubmitted": false,
+    "historicalReviewAttachment": "SkyPulse-build7-review.mp4 (retained; current device footage pending)",
+    "proof": "public-draft-build15-saved.png",
+    "gameCenterFlag": "Existing unsupported flag was still checked on a fresh load. Disabling was attempted, but the Apple control remained loading; successful removal is not verified. Recheck before any public review."
+  },
+  "appPreview": "Edit brief prepared; fresh build 15 device footage required. Unity MP4/GIF are internal development previews only.",
+  "newRasterAssets": 0,
+  "economyAndSaveKeysChanged": false,
+  "dailyRandomPlacement": "Day-seeded random crystals and broader random gate-height range; stable across retries/relaunches; no forced direction pattern",
+  "requiredCrystalsPerGate": 2,
+  "apertureHeightWorldUnits": 3.7,
+  "groundCollisionHeightWorldUnits": -8.45,
+  "agreement": "Owner reports updated Apple Developer agreement accepted; Apps warning subsequently absent",
+  "durableArchive": "artifacts/relay-volume-20261016/SkyPulse-1.0.0-15.xcarchive.zip",
+  "gateCentreRangeWorldUnits": [
+    -4.8,
+    3.0
+  ],
+  "hud": "Compact panel anchored at actual safe top edge",
+  "previewVideo": {
+    "path": "relay-free-flight-preview.mp4",
+    "durationSeconds": 14,
+    "fps": 30,
+    "width": 750,
+    "height": 1334,
+    "decodedFramesChecked": 12,
+    "kind": "Unity development render; not a device capture or store App Preview"
+  },
+  "evidenceSha256": {
+    "unity-export-15.log": "1df1774e7393d7909bf4462cb162cd0a5b8a3dfb99ed1e6407b8316618e70488",
+    "xcode-archive-15.log": "70d240025fa8620fdbd65bf039f11f431d483f5b109f03ed1fd0e2421c08be7b",
+    "codesign-verify-15.log": "e71fb40b7c347a6a79bb0eefa1e3e59f8e69e5b4f0c2662de25c6c3dd10cd9f1",
+    "SkyPulse-1.0.0-15.xcarchive.zip": "8f20ea113a81fe4fb3b9ea2c4f70d04f09f28fc0098c5b0417438ddc4430c93f",
+    "xcode-upload-15.log": "b3c4e06dc878cdf68c02674949942012942de98f2d459470d266720246ad525e"
+  },
+  "warnings": [
+    "Vendor UnityRuntime.framework dSYM UUID 392D7A7F-6A4F-3A7A-8788-4089FA96FF38 missing. Upload succeeded; engine crash symbolication remains limited."
+  ],
+  "retainedSymbols": [
+    "SkyPulse.app.dSYM",
+    "UnityFramework.framework.dSYM"
+  ]
+}

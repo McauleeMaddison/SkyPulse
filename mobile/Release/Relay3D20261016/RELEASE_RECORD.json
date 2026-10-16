@@ -1,0 +1,49 @@
+{
+  "candidate": "SkyPulse 1.0.0 (13)",
+  "compiledSourceCommit": "8bff40379f5a6f139ac88419313095a3b2c9b6de",
+  "allRuntimeScriptsMatchPassedQA": 20,
+  "candidateSourceEntries": 383,
+  "automatedRequiredPassMarkers": 15,
+  "archive": {
+    "status": "ARCHIVE SUCCEEDED",
+    "path": "/private/tmp/skypulse-testflight-13-20261016/SkyPulse-1.0.0-13.xcarchive",
+    "version": "1.0.0",
+    "build": "13",
+    "bundleId": "com.mcauleemaddison.skypulse",
+    "deviceFamilies": [
+      1,
+      2
+    ],
+    "strictCodeSignatureVerified": true,
+    "appExecutableSha256": "758646eaf1da1d198e133cb07d1b012a9df99befbf512082fb9ea8b700ccdea8"
+  },
+  "testFlight": {
+    "uploaded": true,
+    "processed": true,
+    "status": "Processed; assigned SkyPulse Internal, one invitation",
+    "buildId": "c001cae4-df21-48c9-9a97-c8d7b59e867d",
+    "testerNotesSaved": false,
+    "externalReviewSubmitted": false
+  },
+  "physicalDeviceGameplay": "Pending for build 13",
+  "publicReviewSubmitted": false,
+  "publicDraft": "Last inspected: build 11, Prepare for Submission; on hold",
+  "appPreview": "Edit brief prepared; fresh build 13 device footage required",
+  "newRasterAssets": 0,
+  "newAuthoredCodeAssets": [
+    "SkyPulseRelayGate.cs",
+    "RelayTitanium.shader"
+  ],
+  "economyAndSaveKeysChanged": false,
+  "durableArchive": "artifacts/relay-volume-20261016/SkyPulse-1.0.0-13.xcarchive.zip",
+  "supersededBy": "Build 14 source corrects scale/ground and applies the owner-requested random crystal-pair requirement",
+  "warnings": [
+    "Vendor UnityRuntime dSYM UUID 392D7A7F-6A4F-3A7A-8788-4089FA96FF38 missing; upload succeeded"
+  ],
+  "evidenceSha256": {
+    "unity-export.log": "4d127bc4eaf2d4b42f3abd076d807edf871bbae1981f5546486450bbc4417963",
+    "xcode-archive.log": "7b8e808ea620abf931d68bc2d2b3379e85bc07d1d4281d65b505a7e92a645722",
+    "xcode-upload.log": "9c4573e355a5db566092188924dd8033df4f0ecef07b9477345acc0b196543a6",
+    "SkyPulse-1.0.0-13.xcarchive.zip": "f17e894d5d6fa104695238b1ca82783b3ce7eceab0074b5c934d8be59ed4271a"
+  }
+}

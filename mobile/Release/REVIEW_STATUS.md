@@ -1,3 +1,13 @@
+## Current private candidate — 16 October 2026
+
+**Build 15 preserves free tap-to-flap flight and adds random matching crystal pairs.** Each gate requires 2/2; missing crystals cannot be bypassed with Aegis. Smaller hollow 3D hoops have near/far pilot occlusion, refined metal/light detail, and a visible runway aligned with the unchanged ground collision height. Gate heights vary randomly across more of the usable view, and the compact HUD sits against the actual safe top edge. No imposed climb/dive route pattern remains. Fifteen Unity QA markers plus the lock/shield supplement and native archive/signature checks pass. Build 15 is processed and Testing in SkyPulse Internal; physical build 15 gameplay/performance is pending. See [release guide](RelayView20261016/README.md) and [delivery record](RelayView20261016/RELEASE_RECORD.json).
+
+Builds 13 and 14 are uploaded/processed and assigned to SkyPulse Internal, but are superseded by build 15. Build 12 was uploaded/Testing with 14 markers and matching notes; the owner deferred its full check. A later defect recording did not show its installed build number. Preserve each release's own source/native evidence; none establishes a build 15 device pass.
+
+**Public App Review stays on hold.** The public draft was saved and independently verified on 16 October: build 15 selected, Prepare for Submission, current description/reviewer notes matched, old build 7 review attachment retained. No Add for Review/Submit action or Apple message was taken. Current build 15 copy is saved and an App Preview edit brief is prepared; fresh device footage is required. Apple’s unidentified comparator remains unresolved. The owner accepted the updated Developer Program agreement; the Apps notice subsequently cleared. An existing unsupported Game Center listing flag was found; its disable control stalled, so removal remains unverified and must be rechecked before public review.
+
+---
+
 ## Current identity, artwork and draft selection — 13 October 2026
 
 **Build 11 is selected and saved in the public draft**, replacing build 9 at the owner's request. English (U.K.) subtitle, promotional text, description, keywords and reviewer notes describe build 11, identify Mcaulee Maddison, and were verified after navigation/reload. The version remains **Prepare for Submission**; no Add for Review/Submit action was taken. Build 11 is also Testing in SkyPulse Internal. Historical uploads remain Apple's build history.

@@ -1,0 +1,12 @@
+SkyPulse 1.0.0 (13) — volumetric Pulse Relay gates
+
+Relay's gameplay gates and green exit now use genuine hollow 3D mesh hardware: bevelled titanium, recessed inner walls, raised collars, fasteners and animated embedded lighting. The bird enters the opening, then passes behind the near rim. The energy window disappears immediately on unlock. The tested portrait width, tap controls, flight forces, gate coordinates/collision aperture, charge accounting, sounds and economy are preserved.
+
+Please check on iPhone/iPad:
+1. Fly through several open hoops: the bird should visibly pass inside the hole and behind the near rim, then emerge. Check both high and low approaches. Look for clipping, flicker, pink materials or excessive covering of the pilot.
+2. One deliberate playable-area tap produces one flap. Pause/menu taps must not flap. Crystals open only their numbered gate immediately, including tight approaches. Retry resets gates and charge.
+3. Compare Reduced Motion and normal animation: lighting should be still under Reduced Motion. Pause/resume should preserve the gate state.
+4. Check sustained FPS, heat and stutter on your phone. New hardware is built at course setup and reused during flight, with measured zero managed allocations in its warmed animation loop; Editor/native compilation does not certify device performance.
+5. Blackout retains its immediate YOU marker, rapid-tap controls, resource failure, automatic sector progression, pause/retry and saved progress. Endless handling/spacing remain as in build 11/12.
+
+Automated Unity checks passed all 15 required markers, including actual rendered pilot occlusion and 30/60/120 FPS gate/gameplay regression. Physical build 13 validation is pending. Public App Review has not been requested.

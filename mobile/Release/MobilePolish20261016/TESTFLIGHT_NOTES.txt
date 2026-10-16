@@ -1,0 +1,9 @@
+SkyPulse 1.0.0 (12) — mobile gameplay and presentation polish
+
+PULSE RELAY: Tap the playable area to flap. Pause and interactive menus do not flap. Collect faceted numbered crystals to open only their matching gates automatically; there are no FLAP/PULSE buttons. Final-crystal collection is resolved before same-frame gate collision. Crystal reflections, crown highlights, animated approach lights, portal illumination and station parallax have been refined. The Home crystal matches gameplay. Four circuits refresh each UTC day, with direct Next Mission after clears.
+
+BLACKOUT PROTOCOL: Tap connected neighbours immediately. Tap a closed firewall to spend one breach charge and three trace, then tap again to enter. Recover every core and reach the uplink; blocked moves spend trace. Eight sectors progress immediately on completion, with a brief non-blocking confirmation over the next active board. Held or stale input cannot carry into the next puzzle. Reduced Motion now uses stationary impact feedback and fixed touch targets. Node labels are larger. Blackout Home has its sector map and guide, without Bird Hangar or Tech Tree.
+
+PLEASE TEST ON IPHONE: short deliberate flight taps, pause/menu touch separation, gate collection/unlock/passage, crystal clarity and sound; Blackout fast taps, trace/charge failure, retry, automatic next sector, final campaign result, pause/resume and saved progress after relaunch. Compare Reduced Motion on/off and haptics on/off. Check comfortable one-thumb reach, portrait safe areas, sustained frame rate and any heat/stutter.
+
+Existing earned-crystal economy, player saves and Endless handling are retained. Automated Unity checks cover 30/60/120 FPS simulation inputs and animation timing, not a physical-device performance guarantee. Public App Review remains on hold.

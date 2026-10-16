@@ -1,0 +1,14 @@
+SkyPulse 1.0.0 (15) — random crystal pairs, smaller 3D hoops and visible ground
+
+Pulse Relay remains free tap-to-flap flight. Both matching numbered crystals are required for each gate: 0/2 and 1/2 stay locked; 2/2 opens immediately. Crystals are randomly placed ahead of their gate. Daily layouts remain stable across retries/relaunches and refresh each UTC day. There is no imposed climb/dive pattern or connecting guide path. Gates vary randomly across more of the playable height; the compact counts/hint/pause panel sits at the real top safe edge. Gate labels and the flight hint show the remaining requirement. Shields cannot bypass a locked gate.
+
+Hoops have genuine hollow 3D mesh hardware: smaller opening, bevelled metal, curved housings, recessed bore, raised collars and moving inset lights. The bird enters the hole, passes behind the near rim and emerges. The runway's bright edge marks the actual ground collision height. Bird handling, screen width, sounds, saves, wallet and other modes remain preserved.
+
+Please test on iPhone/iPad:
+1. Follow the randomly positioned crystals with normal taps. Intentionally miss one: the gate must remain locked and end the run on impact. Collect both on retry: it must open without a PULSE button or animation delay.
+2. Confirm the bird flaps and clearly flies inside the hoop. Check high/low approaches, clipping/flicker, material appearance and the visible runway. Falling onto it should fail without Aegis protection.
+3. Pause/menu taps must not flap; retry must reset pairs and charges. Compare Reduced Motion/haptics and check retained progress after relaunch.
+4. Check sustained FPS, heat and stutter. Geometry is created at course setup and reused during flight; automated allocation/Editor/native compilation checks are not a phone performance pass.
+5. Blackout retains immediate YOU feedback, rapid-tap controls, resource failure, automatic sector progression, pause/retry and saved progress. Endless retains its existing handling and spacing.
+
+Full Unity QA passed all 15 required markers plus a shield/locked-gate supplement at 30/60/120 FPS. Physical build 15 validation is pending. Public App Review has not been requested.

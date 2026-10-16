@@ -1,0 +1,30 @@
+{
+  "baseline": "Build 11 QA source",
+  "changedRuntimeFiles": [
+    "Assets/Scripts/SkyPulseBlackoutGraphic.cs",
+    "Assets/Scripts/SkyPulseButtonFeedback.cs",
+    "Assets/Scripts/SkyPulseCircuitGraphic.cs",
+    "Assets/Scripts/SkyPulseNativeGame.Blackout.cs",
+    "Assets/Scripts/SkyPulseNativeGame.Missions.cs",
+    "Assets/Scripts/SkyPulseNativeGame.Presentation.cs"
+  ],
+  "unchangedRuntimeFiles": [
+    "Assets/Scripts/SkyPulseBlackoutCampaign.cs",
+    "Assets/Scripts/SkyPulseBootstrap.cs",
+    "Assets/Scripts/SkyPulseDailyMissions.cs",
+    "Assets/Scripts/SkyPulseDailyRelay.cs",
+    "Assets/Scripts/SkyPulseInputFence.cs",
+    "Assets/Scripts/SkyPulseMissionModels.cs",
+    "Assets/Scripts/SkyPulseNativeGame.Controls.cs",
+    "Assets/Scripts/SkyPulseNativeGame.cs",
+    "Assets/Scripts/SkyPulsePressTarget.cs",
+    "Assets/Scripts/SkyPulsePublicLinks.cs",
+    "Assets/Scripts/SkyPulseRoundStartSurface.cs",
+    "Assets/Scripts/SkyPulseTechConnection.cs",
+    "Assets/Scripts/SkyPulseUiGlyph.cs"
+  ],
+  "mainEndlessAndEconomySourceIdentical": true,
+  "missionModelsAndSaveServicesIdentical": true,
+  "inputFencesAndPointerHandlersIdentical": true,
+  "modeSpecificInputCollisionAndProgressionRevalidatedByFullUnitySuite": true
+}
