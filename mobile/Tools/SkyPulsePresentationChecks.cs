@@ -82,7 +82,7 @@ public static class SkyPulsePresentationChecks
         Call(game,"LaunchMission",SkyPulseMode.PulseRelay,0);Call(game,"UpdateProtocolPresentation",.1f);
         foreach(Transform gate in (System.Collections.IEnumerable)Get(game,"relayShutters"))
         {
-            var hardware=gate.Find("Machined relay portal");Check(hardware!=null && hardware.GetComponent<SpriteRenderer>().sprite.texture.name=="pulse-relay-gate-v2","Relay uses detailed portal texture");
+            var hardware=gate.Find("Volumetric relay assembly");Check(hardware!=null && hardware.GetComponent<SkyPulseRelayGate>()!=null,"Relay uses genuine hollow 3D mesh hardware");
             Check(gate.Find("Port collar")==null && gate.Find("Portal metal rim")==null,"Relay has no reused Endless collar or segmented block rim");
             Check(gate.GetComponentsInChildren<Collider2D>().Length==0,"Presentation does not add collision shapes");
         }
