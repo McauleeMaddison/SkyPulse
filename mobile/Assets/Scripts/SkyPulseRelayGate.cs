@@ -53,25 +53,31 @@ namespace SkyPulse.Mobile
             var rear = new Geometry(); var front = new Geometry();
             // Bevelled titanium shell, a physically recessed bore and two raised
             // collars. The bore's minimum height is exactly the gameplay opening.
-            var section = new[] { new Vector2(-.25f,-.25f), new Vector2(-.19f,-.37f), new Vector2(.12f,-.37f), new Vector2(.25f,-.24f), new Vector2(.25f,.24f), new Vector2(.12f,.37f), new Vector2(-.19f,.37f), new Vector2(-.25f,.25f) };
-            Ring(rear, front, 2.5f, 0, section, false, false);
-            Ring(rear, front, 2.51f, -.39f, RoundSection(.072f,.055f,8), false, true);
-            Ring(rear, front, 2.51f, .39f, RoundSection(.072f,.055f,8), false, true);
-            Ring(rear, front, 2.37f, -.405f, RoundSection(.022f,.025f,6), true, false);
-            Ring(rear, front, 2.37f, .405f, RoundSection(.022f,.025f,6), true, false);
-            Ring(rear, front, 2.66f, -.405f, RoundSection(.012f,.022f,6), true, false);
-            Ring(rear, front, 2.66f, .405f, RoundSection(.012f,.022f,6), true, false);
+            float radius=InnerRadius+.25f;
+            var section = new[] { new Vector2(-.25f,-.13f), new Vector2(-.19f,-.22f), new Vector2(.12f,-.22f), new Vector2(.25f,-.12f), new Vector2(.25f,.12f), new Vector2(.12f,.22f), new Vector2(-.19f,.22f), new Vector2(-.25f,.13f) };
+            Ring(rear, front, radius, 0, section, false, false);
+            Ring(rear, front, radius+.01f, -.24f, RoundSection(.072f,.055f,8), false, true);
+            Ring(rear, front, radius+.01f, .24f, RoundSection(.072f,.055f,8), false, true);
+            Ring(rear, front, radius-.13f, -.26f, RoundSection(.022f,.025f,6), true, false);
+            Ring(rear, front, radius-.13f, .26f, RoundSection(.022f,.025f,6), true, false);
+            Ring(rear, front, radius+.16f, -.26f, RoundSection(.012f,.022f,6), true, false);
+            Ring(rear, front, radius+.16f, .26f, RoundSection(.012f,.022f,6), true, false);
+            // Six curved armour saddles break up the silhouette, exposing the
+            // continuous light conduit between champagne-titanium housings.
+            var armour=new[]{new Vector2(-.06f,-.22f),new Vector2(.02f,-.29f),new Vector2(.13f,-.19f),new Vector2(.13f,.19f),new Vector2(.02f,.29f),new Vector2(-.06f,.22f)};
+            for(int sector=0;sector<6;sector++)
+                Ring(rear,front,radius+.26f,0,armour,false,false,sector*Mathf.PI/3+.16f,.63f,new Color(.52f,.57f,.60f,0));
             // Recessed emitter cartridges and fastening heads give scale to the
             // continuous shell without a polygonal/block gate silhouette.
             for (int i = 0; i < 16; i++)
             {
                 float angle = (i + .5f) * Mathf.PI / 8;
                 Vector3 radial = Radial(angle), tangent = Across * Mathf.Cos(angle) - Vector3.up * Mathf.Sin(angle);
-                Vector3 centre = radial * 2.52f - Axis * .455f;
+                Vector3 centre = radial * (radius+.02f) - Axis * .30f;
                 Stud(rear, front, centre, tangent, radial, .048f, new Color(.46f,.57f,.63f,0));
                 if (i % 2 == 0)
                 {
-                    Vector3 at = radial * 2.50f - Axis * .46f;
+                    Vector3 at = radial * radius - Axis * .305f;
                     AddQuad(rear, front, at-tangent*.105f-radial*.035f, at+tangent*.105f-radial*.035f, at+tangent*.105f+radial*.035f, at-tangent*.105f+radial*.035f, Axis, new Color(.7f,.94f,1,1), angle);
                 }
             }
@@ -101,17 +107,19 @@ namespace SkyPulse.Mobile
             for(int i=0;i<sides;i++){float a=i*Mathf.PI*2/sides;points[i]=new Vector2(Mathf.Cos(a)*radial,Mathf.Sin(a)*depth);}
             return points;
         }
-        static void Ring(Geometry rear, Geometry front, float radius, float axial, Vector2[] section, bool luminous, bool collar)
+        static void Ring(Geometry rear, Geometry front, float radius, float axial, Vector2[] section, bool luminous, bool collar,float start=0,float span=Mathf.PI*2,Color? tint=null)
         {
-            for(int segment=0;segment<Segments;segment++)
+            int count=Mathf.Max(4,Mathf.CeilToInt(Segments*span/(Mathf.PI*2)));
+            for(int segment=0;segment<count;segment++)
             {
-                float a=segment*Mathf.PI*2/Segments,b=(segment+1)*Mathf.PI*2/Segments;
+                float a=start+segment*span/count,b=start+(segment+1)*span/count;
                 Vector3 ra=Radial(a),rb=Radial(b);
                 for(int j=0;j<section.Length;j++)
                 {
                     Vector2 p=section[j],q=section[(j+1)%section.Length],edge=q-p;
                     Vector3 normal=(ra*edge.y-Axis*edge.x).normalized,endNormal=(rb*edge.y-Axis*edge.x).normalized;
                     Color colour=luminous?new Color(.65f,.94f,1,1):collar?new Color(.43f,.53f,.59f,0):j==0||j==2||j==4||j==6?new Color(.38f,.47f,.52f,0):j==7?new Color(.055f,.10f,.14f,0):new Color(.13f,.20f,.25f,0);
+                    if(tint.HasValue)colour=Color.Lerp(tint.Value,colour,.28f);
                     AddQuad(rear,front,ra*(radius+p.x)+Axis*(axial+p.y),rb*(radius+p.x)+Axis*(axial+p.y),rb*(radius+q.x)+Axis*(axial+q.y),ra*(radius+q.x)+Axis*(axial+q.y),normal,colour,(a+b)*.5f,endNormal);
                 }
             }

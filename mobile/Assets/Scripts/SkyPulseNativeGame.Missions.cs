@@ -258,7 +258,7 @@ namespace SkyPulse.Mobile
         }
         private int relayDisplayedCells=-1,relayDisplayedPassed=-1,relayDisplayedOpen=-1;
         private float relayUnlockFeedback;
-        private string relayUnlockCaption="";
+        private string relayUnlockCaption="",relayFlightCaption="";
         private void BuildRelayHud()
         {
             ClearScreen(relayHudScreen);relayHudScreen.SetActive(true);
@@ -269,7 +269,7 @@ namespace SkyPulse.Mobile
             relayProgressText=ProtocolStat(relayHudScreen.transform,"GATES OPEN", "0",0,665,300,1,Hex("#45eaff"));
             relayStatusText=ProtocolStat(relayHudScreen.transform,"PASSED", "0",320,665,300,1,Hex("#65ffad"));
             MissionButton(header,"Ⅱ",410,28,100,PauseFlight,Hex("#8eeaff"),100);
-            relayHintText=MissionText(relayHudScreen.transform,"CRYSTALS OPEN THEIR MATCHING GATES",-800,25,Hex("#c4f4f5"),940,58);
+            relayHintText=MissionText(relayHudScreen.transform,"TWO MATCHING CRYSTALS OPEN EACH GATE",-800,25,Hex("#c4f4f5"),940,58);
 
             relayDisplayedCells=relayDisplayedPassed=relayDisplayedOpen=-1;relayUnlockFeedback=0;
             UpdateRelayPresentation();
@@ -283,10 +283,12 @@ namespace SkyPulse.Mobile
         private void UpdateRelayPresentation()
         {
             if(relaySession==null)return;
+            bool captionChanged=relayDisplayedCells!=relaySession.Cells||relayDisplayedPassed!=relaySession.Passed;
             if(relayDisplayedCells!=relaySession.Cells){relayDisplayedCells=relaySession.Cells;relayChargeText.text=relayDisplayedCells+" / "+(relaySession.Mission.RelayCount*2);}
             if(relayDisplayedOpen!=relaySession.UnlockedGates){relayDisplayedOpen=relaySession.UnlockedGates;relayProgressText.text=relayDisplayedOpen+" / "+relaySession.Mission.RelayCount;}
             if(relayDisplayedPassed!=relaySession.Passed){relayDisplayedPassed=relaySession.Passed;relayStatusText.text=relayDisplayedPassed+" / "+relaySession.Mission.RelayCount;}
-            string hint=relayUnlockFeedback>0?relayUnlockCaption:relaySession.Passed==relaySession.Mission.RelayCount?"REACH THE GREEN EXIT":"";
+            if(captionChanged)relayFlightCaption=relaySession.Passed==relaySession.Mission.RelayCount?"REACH THE GREEN EXIT":"GATE "+(relaySession.Passed+1).ToString("00")+" · "+relaySession.GateCrystals(relaySession.Passed)+" / 2 CRYSTALS";
+            string hint=relayUnlockFeedback>0?relayUnlockCaption:relayFlightCaption;
             if(relayHintText.gameObject.activeSelf!=(hint.Length>0))relayHintText.gameObject.SetActive(hint.Length>0);
             if(relayHintText.text!=hint)relayHintText.text=hint;
             for(int i=0;i<relayShutters.Count;i++)relayShutters[i].localPosition=new Vector3(BirdX+relaySession.Mission.RelayX(i)-relaySession.Distance,0,0);
@@ -334,9 +336,11 @@ namespace SkyPulse.Mobile
             for(int i=0;i<relayShutters.Count && relaySession.State==MissionSessionState.Playing;i++)
             {
                 float impact;
-                if(RelayPlaneContact(relaySession.Mission.RelayX(i),previousDistance,previousY,out impact) &&
-                   (!relaySession.IsOpen(i) || Mathf.Abs(impact-relaySession.Mission.RelayY[i])+BirdHitboxVerticalExtent()>RelaySession.ApertureHalfHeight) && shieldImmunityTimer<=0)
-                    relaySession.Hazard(UseShield());
+                if(RelayPlaneContact(relaySession.Mission.RelayX(i),previousDistance,previousY,out impact))
+                {
+                    if(!relaySession.IsOpen(i))relaySession.Fail("GATE "+(i+1).ToString("00")+" · BOTH CRYSTALS REQUIRED");
+                    else if(Mathf.Abs(impact-relaySession.Mission.RelayY[i])+BirdHitboxVerticalExtent()>RelaySession.ApertureHalfHeight && shieldImmunityTimer<=0)relaySession.Hazard(UseShield());
+                }
             }
             float exitY;
             if(relaySession.State==MissionSessionState.Playing && RelayPlaneContact(relaySession.Mission.ExitX,previousDistance,previousY,out exitY) && Mathf.Abs(exitY-relaySession.Mission.ExitY)+BirdHitboxVerticalExtent()>RelaySession.ApertureHalfHeight && shieldImmunityTimer<=0)relaySession.Hazard(UseShield());

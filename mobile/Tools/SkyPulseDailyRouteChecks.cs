@@ -27,7 +27,7 @@ public static class SkyPulseDailyRouteChecks
         public void SetInt(string k,int v)=>Ints[k]=v;
         public void Flush(){if(Fail)throw new System.IO.IOException("Injected daily save failure");Flushes++;}
     }
-    static string Fingerprint(RelayMission[] missions)=>string.Join("|",missions.Select(m=>m.Id+":"+m.Spacing.ToString("R")+":"+m.ExitY.ToString("R")+":"+string.Join(",",m.RelayY.Select(y=>y.ToString("R")))));
+    static string Fingerprint(RelayMission[] missions)=>string.Join("|",missions.Select(m=>m.Id+":"+m.Spacing.ToString("R")+":"+m.ExitY.ToString("R")+":"+string.Join(",",Enumerable.Range(0,m.RelayCount*2).Select(n=>m.CrystalX(n).ToString("R")+"/"+m.CrystalY(n).ToString("R")))+":"+string.Join(",",m.RelayY.Select(y=>y.ToString("R")))));
     public static void Pure()
     {
         var now=new DateTime(2026,10,13,23,59,59,DateTimeKind.Utc);var store=new Store();store.SetInt(SkyPulseDailyMissions.WalletKey,777);store.Set(SkyPulseModeProgress.RelayKey,"legacy medals");
@@ -50,8 +50,9 @@ public static class SkyPulseDailyRouteChecks
             for(int i=0;i<4;i++)
             {
                 var m=deck[i];Check(m.RelayCount==i+2&&m.RelayY.All(y=>Math.Abs(y)<=1.65001f)&&m.Spacing>=18&&m.Spacing<=24&&Math.Abs(m.ExitY)<=.70001f,"Generated course respects tested thumb reach and cadence");
+                for(int n=0;n<m.RelayCount*2;n++)Check(m.CrystalX(n)<m.RelayX(n/2)-2.8f && m.CrystalX(n)>m.RelayX(n/2)-7.6f && Math.Abs(m.CrystalY(n)-m.RelayY[n/2])<=.851f,"Random crystals remain reachable and ahead of their assigned gate");
                 for(int g=1;g<m.RelayCount;g++)Check(Math.Abs(m.RelayY[g]-m.RelayY[g-1])<=1.90001f,"Generated approach never jumps beyond reach bound");
-                var s=new RelaySession(m);for(int g=0;g<m.RelayCount;g++){s.Collect(g*2);s.Advance(m.RelayX(g)+1-s.Distance,m.RelayY[g]);}s.Advance(m.ExitX+1-s.Distance,m.ExitY);Check(s.State==MissionSessionState.Succeeded,"Every generated deck has valid gate/exit progression");
+                var s=new RelaySession(m);for(int g=0;g<m.RelayCount;g++){s.Collect(g*2);s.Collect(g*2+1);s.Advance(m.RelayX(g)+1-s.Distance,m.RelayY[g]);}s.Advance(m.ExitX+1-s.Distance,m.ExitY);Check(s.State==MissionSessionState.Succeeded,"Every generated deck has valid gate/exit progression");
             }
         }
         Debug.Log("SKYPULSE_DAILY_ROUTE_PURE_PASS");
@@ -63,7 +64,7 @@ public static class SkyPulseDailyRouteChecks
         Call(game,"LaunchMission",SkyPulseMode.PulseRelay,0);var relay=(RelaySession)Get(game,"relaySession");
         // Complete through the real session/course dispatch; the actual flap
         // pilot and pickup/collision paths remain covered at 30/60/120 FPS.
-        for(int i=0;i<relay.Mission.RelayCount;i++)relay.Collect(i*2);relay.Advance(relay.Mission.ExitX+1,relay.Mission.ExitY);Call(game,"FinalizeMission");
+        CompleteCourse(relay);Call(game,"FinalizeMission");
         var result=(GameObject)Get(game,"missionResultScreen");yield return null;Capture(game,"relay-next-result");
         var next=result.GetComponentsInChildren<Button>().Single(b=>b.GetComponentInChildren<Text>().text=="NEXT MISSION");next.onClick.Invoke();
         Check(Get(game,"state").ToString()=="Playing"&&(int)Get(game,"selectedMission")==1&&((RelaySession)Get(game,"relaySession")).Mission.Day==day,"Next Mission immediately starts the next daily circuit without Mission Control");
@@ -76,10 +77,15 @@ public static class SkyPulseDailyRouteChecks
         Call(game,"StartFlight");Set(game,"state",Enum.Parse(Get(game,"state").GetType(),"GameOver"));Call(game,"RefreshScreens");var endless=(GameObject)Get(game,"gameOverScreen");yield return null;Capture(game,"endless-result");
         endless.GetComponentsInChildren<Button>().Single(b=>b.GetComponentInChildren<Text>().text=="MAIN MENU").onClick.Invoke();
         Check(Get(game,"state").ToString()=="Menu"&&Get(game,"activeMode").ToString()=="EndlessRoute","Endless result has a direct Main Menu action");
-        Call(game,"LaunchMission",SkyPulseMode.PulseRelay,3);relay=(RelaySession)Get(game,"relaySession");for(int i=0;i<relay.Mission.RelayCount;i++)relay.Collect(i*2);relay.Advance(relay.Mission.ExitX+1,relay.Mission.ExitY);Call(game,"FinalizeMission");
+        Call(game,"LaunchMission",SkyPulseMode.PulseRelay,3);relay=(RelaySession)Get(game,"relaySession");CompleteCourse(relay);Call(game,"FinalizeMission");
         Check(!((GameObject)Get(game,"missionResultScreen")).GetComponentsInChildren<Button>().Any(b=>b.GetComponentInChildren<Text>().text=="NEXT MISSION"),"Final daily circuit does not offer an invalid fifth mission");
         Call(game,"ResetToMenu");yield return null;
         Debug.Log("SKYPULSE_DAILY_ROUTE_LIVE_PASS");
+    }
+    static void CompleteCourse(RelaySession relay)
+    {
+        for(int i=0;i<relay.Mission.RelayCount;i++){relay.Collect(i*2);relay.Collect(i*2+1);relay.Advance(relay.Mission.RelayX(i)+1-relay.Distance,relay.Mission.RelayY[i]);}
+        relay.Advance(relay.Mission.ExitX+1-relay.Distance,relay.Mission.ExitY);
     }
     static void Capture(SkyPulseNativeGame game,string name)
     {

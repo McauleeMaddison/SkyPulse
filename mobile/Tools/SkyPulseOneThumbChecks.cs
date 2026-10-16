@@ -26,11 +26,11 @@ public static class SkyPulseOneThumbChecks
         Check(f.Press(4,5,1.4f,true),"Next frame fresh press accepted");
         f.Release(4);Check(!f.Press(7,5,1.4f,true),"Two event sources in one frame cannot double-act");
         f.ReleaseAll();Check(f.Press(-1,8,2,false),"Real mouse works after touch suppression window");
-        var r=new RelaySession(RelayMission.All[2]);Check(r.Collect(4)&&r.IsOpen(2)&&!r.IsOpen(0)&&!r.IsOpen(1)&&r.Charges==0,"A crystal opens only its assigned gate, even out of order");
-        Check(r.Collect(5)&&r.Charges==1&&r.UnlockedGates==1&&r.LastUnlockedGate==-1,"Spare cell keeps one charge without opening another gate");
-        Check(!r.Collect(5)&&r.Charges==1&&r.Cells==2,"Duplicate crystal cannot spend or award again");
+        var r=new RelaySession(RelayMission.All[2]);Check(r.Collect(4)&&!r.IsOpen(2)&&r.Charges==1,"One crystal cannot open an assigned gate");
+        Check(r.Collect(5)&&r.IsOpen(2)&&!r.IsOpen(0)&&!r.IsOpen(1)&&r.Charges==0&&r.UnlockedGates==1,"A complete pair opens only its assigned gate, even out of order");
+        Check(!r.Collect(5)&&r.Charges==0&&r.Cells==2,"Duplicate crystal cannot spend or award again");
         r.Pause(true);Check(!r.Collect(0)&&r.Distance==0,"Paused relay rejects pickups");r.Pause(false);
-        Check(r.Collect(0)&&r.Charges==1&&r.IsOpen(0),"Next gate spends exactly its collected charge");
+        Check(r.Collect(0)&&!r.IsOpen(0)&&r.Collect(1)&&r.Charges==0&&r.IsOpen(0),"Next gate spends exactly its own two collected charges");
         r=new RelaySession(RelayMission.All[2]);Check(r.Charges==0&&r.Cells==0&&!r.IsOpen(2),"Retry creates clean gate accounting");
         Debug.Log("SKYPULSE_ONE_THUMB_PURE_PASS");
     }
@@ -42,17 +42,25 @@ public static class SkyPulseOneThumbChecks
         foreach(int fps in new[]{30,60,120})
         {
             Call(game,"LaunchMission",SkyPulseMode.PulseRelay,0);var r=(RelaySession)Get(game,"relaySession");
-            var cells=(List<Vector2>)Get(game,"relayCellPositions");cells[0]=new Vector2(12,r.Mission.RelayY[0]);r.Move(11.97f);
+            var cells=(List<Vector2>)Get(game,"relayCellPositions");cells[0]=new Vector2(12,r.Mission.RelayY[0]);r.Collect(1);r.Move(11.97f);
             Set(game,"birdY",r.Mission.RelayY[0]);Set(game,"birdVelocity",0f);Set(game,"shieldCharges",0);Set(game,"shieldImmunityTimer",0f);
             Call(game,"SimulateRelay",1f/fps);
-            Check(r.IsOpen(0)&&r.Cells==1&&r.HazardHits==0&&r.State==MissionSessionState.Playing,"Same-frame crystal + gate succeeds at "+fps+" FPS before opening animation");
+            Check(r.IsOpen(0)&&r.Cells==2&&r.HazardHits==0&&r.State==MissionSessionState.Playing,"Same-frame crystal + gate succeeds at "+fps+" FPS before opening animation");
             Check(((List<float>)Get(game,"relayOpeningTimes"))[0]==(float)Get(game,"protocolVisualTime"),"Logical opening is immediate at animation start");
+            foreach(int collected in new[]{0,1})
+            {
+                Call(game,"LaunchMission",SkyPulseMode.PulseRelay,0);r=(RelaySession)Get(game,"relaySession");cells=(List<Vector2>)Get(game,"relayCellPositions");
+                for(int n=0;n<cells.Count;n++)cells[n]=new Vector2(-100,0);
+                if(collected==1)r.Collect(0);r.Move(11.97f);Set(game,"birdY",r.Mission.RelayY[0]);Set(game,"birdVelocity",0f);Set(game,"shieldCharges",1);Set(game,"shieldImmunityTimer",1f);
+                Call(game,"SimulateRelay",1f/fps);
+                Check(r.State==MissionSessionState.Failed&&!r.IsOpen(0)&&r.Cells==collected,"A gate with "+collected+"/2 crystals cannot be passed, even under shield immunity, at "+fps+" FPS");
+            }
             for(int mission=0;mission<4;mission++)
             {
                 Call(game,"LaunchMission",SkyPulseMode.PulseRelay,mission);r=(RelaySession)Get(game,"relaySession");float accumulator=0;
                 for(int frame=0;frame<12000&&r.State==MissionSessionState.Playing;frame++)
                 {
-                    int gate=Math.Min(r.Passed,r.Mission.RelayCount-1);float target=r.Passed==r.Mission.RelayCount?r.Mission.ExitY:r.Mission.RelayY[gate];
+                    int gate=Math.Min(r.Passed,r.Mission.RelayCount-1);float target=SkyPulseMissionChecks.RelayTarget(game);
                     if((float)Get(game,"birdY")<target-.65f&&(float)Get(game,"birdVelocity")<0)Call(game,"Flap");
                     accumulator+=1f/fps;
                     while(accumulator>=1f/120f&&r.State==MissionSessionState.Playing){Call(game,"SimulateRelay",1f/120f);accumulator-=1f/120f;}
@@ -111,14 +119,14 @@ public static class SkyPulseOneThumbChecks
         UnityEngine.Object.Destroy(quietObject);
         Set(game,"reduceMotionEnabled",false);Call(game,"LaunchMission",SkyPulseMode.PulseRelay,2);
         var crystalHighlights=(List<SpriteRenderer>)Get(game,"relayCrystalHighlights");var guides=(List<SpriteRenderer>)Get(game,"relayApproachGuides");
-        Check(crystalHighlights.Count==8 && guides.Count==8,"Eight-crystal circuit has faceted highlights and a paired approach guide for every gate");
+        Check(crystalHighlights.Count==8 && guides.Count==0,"Eight random crystals retain premium highlights without an imposed guide path");
         var animateRelay=(Action)Delegate.CreateDelegate(typeof(Action),game,typeof(SkyPulseNativeGame).GetMethod("AnimateRelayArtwork",F));
         for(int i=0;i<3;i++)animateRelay();long relayBefore=GC.GetAllocatedBytesForCurrentThread();for(int i=0;i<120;i++)animateRelay();
         Check(GC.GetAllocatedBytesForCurrentThread()==relayBefore,"Warmed Relay crystal and gate animation creates no managed allocations");
-        var spark=((List<SpriteRenderer>)Get(game,"relayApproachSignals"))[0];Call(game,"PauseFlight");Vector3 sparkBefore=spark.transform.localPosition;
-        Call(game,"UpdateProtocolPresentation",1f);Call(game,"UpdateRelayPresentation");Check(spark.transform.localPosition==sparkBefore,"Pause freezes Relay approach and crystal animation");Call(game,"ResumeFlight");
+        var spark=((List<SpriteRenderer>)Get(game,"relayCrystalGlints"))[0];Call(game,"PauseFlight");Vector3 sparkBefore=spark.transform.localPosition;
+        Call(game,"UpdateProtocolPresentation",1f);Call(game,"UpdateRelayPresentation");Check(spark.transform.localPosition==sparkBefore,"Pause freezes Relay crystal animation");Call(game,"ResumeFlight");
         Set(game,"reduceMotionEnabled",true);Call(game,"UpdateProtocolPresentation",0f);Call(game,"UpdateRelayPresentation");sparkBefore=spark.transform.localPosition;
-        Set(game,"protocolVisualTime",99f);Call(game,"UpdateRelayPresentation");Check(spark.transform.localPosition==sparkBefore,"Reduced Motion keeps Relay guidance stationary while gates remain usable");
+        Set(game,"protocolVisualTime",99f);Call(game,"UpdateRelayPresentation");Check(spark.transform.localPosition==sparkBefore,"Reduced Motion keeps Relay crystal glints stationary while gates remain usable");
         foreach(var mode in new[]{SkyPulseMode.BlackoutProtocol,SkyPulseMode.PulseRelay,SkyPulseMode.EndlessRoute,SkyPulseMode.BlackoutProtocol,SkyPulseMode.EndlessRoute})
         {
             Call(game,"SetHomeProtocol",mode);Call(game,"ResetToMenu");var home=(GameObject)Get(game,"homeScreen");

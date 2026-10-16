@@ -71,7 +71,14 @@ namespace SkyPulse.Mobile
                 float spacing=template.Spacing+random.Next()*1.8f,exit=random.Next()*1.4f-.7f;
                 int nameIndex=(int)(random.Next()*Names.Length);while(usedNames[nameIndex])nameIndex=(nameIndex+1)%Names.Length;usedNames[nameIndex]=true;
                 string name=(i+1).ToString("00")+" · "+Names[nameIndex];
-                result[i]=new RelayMission("relay.daily."+day+"."+i,name,template.RelayCount+" GATES · "+(template.RelayCount*2)+" CRYSTALS\nCollect numbered crystals to open their matching gates, then reach the green exit.",heights,spacing,exit,template.HasShield,day);
+                var placement=new CourseRandom(day,i+12);var crystalX=new float[heights.Length*2];var crystalY=new float[heights.Length*2];
+                for(int gate=0;gate<heights.Length;gate++)for(int cell=0;cell<2;cell++)
+                {
+                    int id=gate*2+cell;float gateX=12f+gate*spacing;
+                    crystalX[id]=gateX-(cell==0?6.2f+placement.Next()*1.3f:2.9f+placement.Next()*.8f);
+                    crystalY[id]=heights[gate]+(placement.Next()*2-1)*.85f;
+                }
+                result[i]=new RelayMission("relay.daily."+day+"."+i,name,template.RelayCount+" GATES · "+(template.RelayCount*2)+" CRYSTALS\nCollect both randomly placed crystals for each numbered gate, then reach the green exit.",heights,spacing,exit,template.HasShield,day,crystalX,crystalY);
             }
             return result;
         }

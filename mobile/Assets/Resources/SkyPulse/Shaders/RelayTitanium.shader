@@ -34,11 +34,13 @@ Shader "SkyPulse/Relay Titanium"
                 float3 n=normalize(i.normal), view=normalize(_WorldSpaceCameraPos.xyz-i.world);
                 // Soft station key, cool rim and a narrow polished reflection.
                 float3 key=normalize(float3(-.55,.8,-.9)),fill=normalize(float3(.75,-.2,.4));
-                float diffuse=.28+.65*saturate(dot(n,key))+.24*saturate(dot(n,fill));
+                float diffuse=.40+.65*saturate(dot(n,key))+.24*saturate(dot(n,fill));
                 float spec=pow(saturate(dot(n,normalize(key+view))),74)*1.15;
                 float rim=pow(1-saturate(abs(dot(n,view))),3);
                 float groove=1-.10*pow(abs(sin(i.uv.x*48)),24);
-                float3 metal=i.colour.rgb*diffuse*groove+float3(.74,.88,1)*spec+float3(.11,.27,.36)*rim;
+                float3 reflected=reflect(-view,n);
+                float skyReflection=pow(saturate(.5+.5*sin(reflected.y*6+reflected.x*2)),12);
+                float3 metal=i.colour.rgb*(diffuse+skyReflection*.38)*groove+float3(.74,.88,1)*spec+float3(.11,.27,.36)*rim;
                 float sweep=pow(saturate(cos(i.uv.x*2-_Clock*1.5)),14);
                 float3 emitter=lerp(float3(1,.44,.10),_Accent.rgb,_Open);
                 float3 light=emitter*(.8+sweep*.45+_Pulse*.85);

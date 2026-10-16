@@ -53,10 +53,11 @@ public static class SkyPulseMissionChecks
         foreach(var mission in RelayMission.All)
         {
             var relay=new RelaySession(mission);Check(!relay.IsOpen(0),"Gate begins closed");
-            Check(relay.Collect(0) && relay.IsOpen(0) && relay.Charges==0 && relay.NextRelay==1,"Matching crystal opens immediately and spends one charge");
+            Check(relay.Collect(0) && !relay.IsOpen(0) && relay.Charges==1,"First matching crystal is insufficient");
+            Check(relay.Collect(1) && relay.IsOpen(0) && relay.Charges==0 && relay.NextRelay==1,"Second matching crystal opens immediately and spends exactly two charges");
             Check(!relay.Collect(0),"Charge cell cannot collect twice");
             relay.Advance(mission.RelayX(0)+1,mission.RelayY[0]);
-            for(int i=1;i<mission.RelayCount;i++){Check(relay.Collect(i*2) && relay.IsOpen(i),"Next gate opens from its own crystal");relay.Advance(mission.RelayX(i)+1-relay.Distance,mission.RelayY[i]);}
+            for(int i=1;i<mission.RelayCount;i++){Check(relay.Collect(i*2) && !relay.IsOpen(i) && relay.Collect(i*2+1) && relay.IsOpen(i),"Next gate opens only from its own complete pair");relay.Advance(mission.RelayX(i)+1-relay.Distance,mission.RelayY[i]);}
             relay.Advance(mission.ExitX+1-relay.Distance,mission.ExitY);Check(relay.State==MissionSessionState.Succeeded,"Every relay mission has a complete objective route");int cells=relay.Cells;relay.Collect(999);relay.Advance(20,0);Check(relay.Cells==cells,"Finalized relay ignores repeated events");
         }
         var missed=new RelaySession(RelayMission.All[0]);missed.Advance(14,0);Check(missed.State==MissionSessionState.Failed,"Missing required relay produces failure");
@@ -76,6 +77,12 @@ public static class SkyPulseMissionChecks
         Check(!firewall.Act(1,false) && firewall.Act(1,true) && firewall.Charges==0 && firewall.Trace==3 && firewall.Cursor==0,"Hack costs three trace and a charge without moving");
         Check(firewall.Act(1,false),"Opened firewall becomes a legal node");
         Debug.Log("SKYPULSE_MISSION_PURE_PASS");
+    }
+    public static float RelayTarget(SkyPulseNativeGame game)
+    {
+        var s=(RelaySession)Get(game,"relaySession");var used=(HashSet<int>)Get(game,"usedRelayCells");var positions=(List<Vector2>)Get(game,"relayCellPositions");
+        for(int i=s.Passed*2;i<Math.Min(positions.Count,s.Passed*2+2);i++)if(!used.Contains(i) && positions[i].x>=s.Distance-1.0f)return positions[i].y;
+        return s.Passed<s.Mission.RelayCount?s.Mission.RelayY[s.Passed]:s.Mission.ExitY;
     }
     sealed class SearchNode
     {
@@ -124,7 +131,7 @@ public static class SkyPulseMissionChecks
             for(int step=0;step<20000 && relay.State==MissionSessionState.Playing;step++)
             {
                 int gate=Math.Min(relay.Passed,relay.Mission.RelayCount-1);
-                float target=relay.Passed==relay.Mission.RelayCount?relay.Mission.ExitY:relay.Mission.RelayY[gate];
+                float target=RelayTarget(game);
                 float y=(float)Get(game,"birdY"),v=(float)Get(game,"birdVelocity");
                 if(y<target-.65f && v<0)Call(game,"Flap");
                 Call(game,"SimulateRelay",1f/120f);

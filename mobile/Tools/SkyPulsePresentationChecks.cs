@@ -86,7 +86,7 @@ public static class SkyPulsePresentationChecks
             Check(gate.Find("Port collar")==null && gate.Find("Portal metal rim")==null,"Relay has no reused Endless collar or segmented block rim");
             Check(gate.GetComponentsInChildren<Collider2D>().Length==0,"Presentation does not add collision shapes");
         }
-        var testRelay=(RelaySession)Get(game,"relaySession");Check(testRelay.Collect(0) && testRelay.IsOpen(0),"Crystal logically opens shutter before artwork");Call(game,"UpdateRelayPresentation");
+        var testRelay=(RelaySession)Get(game,"relaySession");Check(testRelay.Collect(0) && !testRelay.IsOpen(0) && testRelay.Collect(1) && testRelay.IsOpen(0),"Crystal logically opens shutter before artwork");Call(game,"UpdateRelayPresentation");
         var firstGate=((System.Collections.IList)Get(game,"relayShutters"))[0] as Transform;
         var shutter=firstGate.Find("Energy shutter").GetComponent<SpriteRenderer>();var previousShutterScale=shutter.transform.localScale;
         var glint=firstGate.Find("Portal emitter orbit").GetChild(0);var previousGlint=glint.localPosition;
@@ -106,7 +106,7 @@ public static class SkyPulsePresentationChecks
     }
     static void Pilot(SkyPulseNativeGame game)
     {
-        var relay=(RelaySession)Get(game,"relaySession");int gate=Math.Min(relay.Passed,relay.Mission.RelayCount-1);float target=relay.Passed==relay.Mission.RelayCount?relay.Mission.ExitY:relay.Mission.RelayY[gate];
+        var relay=(RelaySession)Get(game,"relaySession");int gate=Math.Min(relay.Passed,relay.Mission.RelayCount-1);float target=SkyPulseMissionChecks.RelayTarget(game);
         if((float)Get(game,"birdY")<target-.65f && (float)Get(game,"birdVelocity")<0)Call(game,"Flap");
     }
 }
