@@ -11,7 +11,7 @@ Source: `64c803157cb9da84a34fe0d997ade8f2e482a57c` on `main`. Unity 6000.6.0f1. 
 
 ## Actual Unity previews
 
-[Free-pan holographic tree, 12 seconds](holographic-tree-preview.mp4) · [Three-mode Home/gameplay walkthrough, 312 seconds](three-modes-3d-preview.mp4)
+[Free-pan holographic tree, 12 seconds](holographic-tree-preview.mp4) · [Three-mode Home/gameplay walkthrough, 39 seconds](three-modes-3d-preview.mp4)
 
 These are silent Editor development renders, not physical-device footage or App Store preview submissions. The tree video contains 360 unique frames at 30 FPS and visits both axes, the animated projector and smooth core return; the full walkthrough shows each Home and actual gameplay. No promotional mockup was substituted for gameplay.
 
