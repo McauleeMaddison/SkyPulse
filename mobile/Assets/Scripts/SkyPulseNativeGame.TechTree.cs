@@ -7,6 +7,7 @@ namespace SkyPulse.Mobile
     public sealed partial class SkyPulseNativeGame
     {
         SkyPulseTechTreeView holographicTree;
+        RectTransform techCoreControl;
         // Authored space, not a row/column grid: the three uninterrupted limbs
         // sweep through a shared free-pan field with room for their level fans.
         static readonly Vector2[] TechFamilyPositions = {
@@ -17,6 +18,9 @@ namespace SkyPulse.Mobile
 
         void ClearHolographicTree()
         {
+            var insignia = customizeScreen != null ? customizeScreen.transform.Find("Hangar flight insignia") : null;
+            if (insignia != null) insignia.gameObject.SetActive(true);
+            if (techCoreControl != null) { techCoreControl.gameObject.SetActive(false); Destroy(techCoreControl.gameObject); techCoreControl = null; }
             if (holographicTree == null) return;
             // Disable the isolated scene now; Destroy completes at frame end.
             holographicTree.gameObject.SetActive(false);
@@ -30,13 +34,13 @@ namespace SkyPulse.Mobile
             var roots = new List<HolographicRoot>(40);
             var families = new[] { "COLLECTION", "RECOVERY", "MASTERY" };
             var colours = new[] { Hex("#45eaff"), Hex("#7ee4dc"), Hex("#bbabff") };
-            var core = new Vector2(0, -160f);
+            var core = new Vector2(0, -250f);
             var installed = 0;
             var capacity = 0;
             foreach (var upgrade in Upgrades) { installed += GetUpgradeLevel(upgrade.Id); capacity += upgrade.MaxLevel; }
             roots.Add(new HolographicRoot { At = core, Colour = Hex("#a9f6ff"), Powered = true, Size = 57f });
-            TechLabel("SKYPULSE CORE", new Vector2(0, -42), new Vector2(580, 50), 33, Hex("#effcff"));
-            TechLabel($"{installed} / {capacity} LEVELS INSTALLED", new Vector2(215, -225), new Vector2(390, 38), 25, Hex("#9cb8ce"));
+            TechLabel("SKYPULSE CORE", new Vector2(0, -42), new Vector2(580, 54), 40, Hex("#effcff"));
+            TechLabel($"{installed} / {capacity} LEVELS INSTALLED", new Vector2(0, -92), new Vector2(580, 42), 29, Hex("#9cb8ce"));
 
             for (int family = 0; family < families.Length; family++)
             {
@@ -54,8 +58,8 @@ namespace SkyPulse.Mobile
                     bool unlocked = IsUpgradePrerequisiteMet(upgrade);
                     branches.Add(new HolographicBranch { From = previous, To = at, Colour = colour, Powered = unlocked, Trunk = true });
                     roots.Add(new HolographicRoot { At = at, Colour = colour, Powered = unlocked, Size = 32f });
-                    CreateTechTouch(upgrade.Name + " family root", at + new Vector2(100, 0), new Vector2(420, 180), () => InspectTechNode(upgrade));
-                    TechLabel(upgrade.Name.Replace(" ", "\n"), at + new Vector2(180, -12), new Vector2(276, 76), 31, unlocked ? Hex("#effaff") : Hex("#94a8c2"));
+                    CreateTechTouch(upgrade.Name + " family root", at + new Vector2(100, 0), new Vector2(420, 180), () => InspectTechNode(upgrade), at);
+                    TechLabel(System.Globalization.CultureInfo.InvariantCulture.TextInfo.ToTitleCase(upgrade.Name.ToLowerInvariant()).Replace(" ", "\n"), at + new Vector2(180, -12), new Vector2(276, 94), 38, unlocked ? Hex("#effaff") : Hex("#94a8c2"));
                     for (int index = 0; index < upgrade.MaxLevel; index++)
                     {
                         int selected = index;
@@ -66,8 +70,8 @@ namespace SkyPulse.Mobile
                         roots.Add(new HolographicRoot { At = leaf, Colour = colour, Powered = index < level, Size = index == level && unlocked ? 22f : 14f });
                         CreateTechTouch(upgrade.Id + " level " + (index + 1), leaf, new Vector2(200, 190), () => InspectTechLevel(upgrade, selected));
                         string status = index < level ? "INSTALLED" : index == level && unlocked ? upgrade.PriceAtLevel(index) + " ✦" : "LOCKED";
-                        TechLabel("LEVEL " + (index + 1), leaf + new Vector2(0, -42), new Vector2(200, 34), 25, index <= level && unlocked ? colour : Hex("#94a8c2"));
-                        TechLabel(status, leaf + new Vector2(0, -76), new Vector2(200, 30), 23, index < level ? colour : Hex("#b2c4d8"));
+                        TechLabel("LEVEL " + (index + 1), leaf + new Vector2(index == 2 ? -130 : 0, -42), new Vector2(220, 40), 34, index <= level && unlocked ? colour : Hex("#94a8c2"));
+                        TechLabel(status, leaf + new Vector2(index == 2 ? -130 : 0, -84), new Vector2(220, 38), 32, index < level ? colour : Hex("#b2c4d8"));
                     }
                     previous = at;
                 }
@@ -76,6 +80,8 @@ namespace SkyPulse.Mobile
             customizeContent.sizeDelta = new Vector2(2300, 3600);
             customizeScroll.horizontal = customizeScroll.vertical = true;
             customizeScroll.movementType = ScrollRect.MovementType.Clamped;
+            customizeScroll.inertia = true;
+            customizeScroll.decelerationRate = .055f;
             customizeContent.anchoredPosition = Vector2.zero;
             var scene = new GameObject("Holographic upgrade tree", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage), typeof(SkyPulseTechTreeView));
             scene.transform.SetParent(customizeScroll.viewport, false);
@@ -88,6 +94,11 @@ namespace SkyPulse.Mobile
             holographicTree = scene.GetComponent<SkyPulseTechTreeView>();
             holographicTree.ReducedMotion = reduceMotionEnabled;
             holographicTree.Build(raw, customizeContent, customizeScroll.viewport, branches, roots);
+            var pan = customizeScroll.viewport.GetComponent<SkyPulseTreePanInput>();
+            if (pan == null) pan = customizeScroll.viewport.gameObject.AddComponent<SkyPulseTreePanInput>();
+            pan.View = holographicTree;
+            foreach (var touch in customizeContent.GetComponentsInChildren<SkyPulseTreeTouchFeedback>()) touch.View = holographicTree;
+            CreateTechCoreControl();
         }
 
         Text TechLabel(string copy, Vector2 position, Vector2 size, int fontSize, Color colour)
@@ -95,11 +106,12 @@ namespace SkyPulse.Mobile
             var label = CreateText(customizeContent, copy, position, size, fontSize, colour, TextAnchor.MiddleCenter, FontStyle.Bold);
             label.rectTransform.anchorMin = label.rectTransform.anchorMax = new Vector2(.5f, 1f);
             label.raycastTarget = false;
-            AddOutline(label.gameObject, new Color(.002f, .008f, .018f, .96f), 1.8f);
+            var shadow = label.GetComponent<Shadow>();
+            if (shadow != null) { shadow.effectDistance = new Vector2(.35f,-.35f); shadow.effectColor = new Color(0,.01f,.03f,.8f); }
             return label;
         }
 
-        void CreateTechTouch(string name, Vector2 position, Vector2 size, UnityEngine.Events.UnityAction action)
+        void CreateTechTouch(string name, Vector2 position, Vector2 size, UnityEngine.Events.UnityAction action, Vector2? highlight = null)
         {
             var area = CreateImage(customizeContent, name, position, size, Color.clear);
             area.rectTransform.anchorMin = area.rectTransform.anchorMax = new Vector2(.5f, 1f);
@@ -111,6 +123,24 @@ namespace SkyPulse.Mobile
             button.transition = Selectable.Transition.None;
             button.navigation = new Navigation { mode = Navigation.Mode.None };
             button.onClick.AddListener(action);
+            var feedback = area.gameObject.AddComponent<SkyPulseTreeTouchFeedback>();
+            feedback.TreePoint = highlight ?? position;
+        }
+
+        void CreateTechCoreControl()
+        {
+            var insignia = customizeScreen.transform.Find("Hangar flight insignia");
+            if (insignia != null) insignia.gameObject.SetActive(false);
+            var control = CreateImage(customizeScreen.transform, "Return to tree core", Vector2.zero, new Vector2(190, 168), Color.clear);
+            techCoreControl = control.rectTransform;
+            techCoreControl.anchorMin = techCoreControl.anchorMax = new Vector2(.5f, .5f);
+            techCoreControl.anchoredPosition = new Vector2(0, 756);
+            var button = control.gameObject.AddComponent<Button>(); button.targetGraphic = control;
+            button.transition = Selectable.Transition.None;
+            button.navigation = new Navigation { mode = Navigation.Mode.None };
+            button.onClick.AddListener(() => { if (holographicTree != null) holographicTree.FocusCore(); });
+            CreateUiGlyph(techCoreControl, "Core locator", new Vector2(0, 46), new Vector2(52, 52), Hex("#b3f8ff"), SkyPulseUiGlyph.Kind.CircuitHex);
+            CreateText(techCoreControl, "CORE", new Vector2(0,10), new Vector2(190, 28), 24, Hex("#d9faff"), TextAnchor.MiddleCenter, FontStyle.Bold);
         }
 
         void InspectTechLevel(Upgrade upgrade, int index)

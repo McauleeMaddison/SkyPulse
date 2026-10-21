@@ -5444,7 +5444,12 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
                 customizeScroll.movementType = ScrollRect.MovementType.Elastic;
                 customizeScroll.scrollSensitivity = 80f;
             }
-            for (var index = customizeContent.childCount - 1; index >= 0; index -= 1) Destroy(customizeContent.GetChild(index).gameObject);
+            for (var index = customizeContent.childCount - 1; index >= 0; index -= 1)
+            {
+                var previous = customizeContent.GetChild(index).gameObject;
+                previous.SetActive(false); // Retired hit targets cannot survive the rebuild frame.
+                Destroy(previous);
+            }
 
             RefreshCollectionNavigation();
             switch (cosmeticCategory)
@@ -5511,7 +5516,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
                 customizeScroll.verticalScrollbar = tech || track == null ? null : track.GetComponent<Scrollbar>();
                 customizeScroll.scrollSensitivity = tech ? 0f : 80f;
             }
-            var accent = tech ? Hex("#ffc34d") : Hex("#45eaff");
+            var accent = tech ? Hex("#72ecff") : Hex("#45eaff");
             var owned = 0;
             foreach (var skin in Skins) if (IsSkinOwned(skin)) owned++;
             if (customizeSubtitle != null)

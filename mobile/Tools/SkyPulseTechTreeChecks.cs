@@ -27,8 +27,42 @@ public static class SkyPulseTechTreeChecks
         Check(scroll.horizontal&&scroll.vertical&&content.rect.width>scroll.viewport.rect.width&&content.rect.height>scroll.viewport.rect.height,"The tree supports one-finger/mouse panning on both axes");
         Check(scroll.verticalScrollbar==null&&!scroll.viewport.Find("Collection scroll track").gameObject.activeSelf&&scroll.scrollSensitivity==0,"No visible scrollbar or mouse-wheel scrolling remains in the free-pan tree");
         var beforeWheel=content.anchoredPosition;scroll.OnScroll(new PointerEventData(EventSystem.current){scrollDelta=new Vector2(0,10)});Check(content.anchoredPosition==beforeWheel,"Mouse wheel cannot move the drag-only tree");
+        Check(tree.SculptureCount==10,"The core and all nine upgrade roots have animated 3D optical sculptures");
+        var projector=tree.TreeCamera.transform.parent.Find("Living SkyPulse core projector");
+        var rotating=projector.Find("Levitating upgrade prism");var fixedPoint=projector.localPosition;var oldRotation=rotating.localRotation;tree.Tick(.2f);
+        Check(Quaternion.Angle(oldRotation,rotating.localRotation)>.1f&&projector.localPosition==fixedPoint,"The 3D projector animates while its connected branch root remains fixed");
+        Quaternion referencePose=Quaternion.identity;
+        foreach(int fps in new[]{30,60,120})
+        {
+            Set(tree,"clock",0f);for(int i=0;i<fps;i++)tree.Tick(1f/fps);
+            if(fps==30)referencePose=rotating.localRotation;
+            Check(Quaternion.Angle(referencePose,rotating.localRotation)<.05f,"Projector animation is frame-rate independent at "+fps+" FPS");
+        }
+        tree.Press(Vector2.zero);tree.ReducedMotion=true;tree.Tick(1);tree.ReducedMotion=false;tree.Tick(0);
+        Check((float)Get(tree,"pressAge")>=1f,"Reduced Motion does not queue a stale press animation for later");
+        var coreControl=(RectTransform)Get(game,"techCoreControl");
+        Check(coreControl.rect.width>=168&&coreControl.rect.height>=168&&coreControl.GetComponent<Button>()!=null,"Core locator has a generous fixed touch target");
+        Check(coreControl.parent==((GameObject)Get(game,"customizeScreen")).transform,"Core locator lives in the fixed header and cannot cover the tree's level labels");
+        foreach(int fps in new[]{30,60,120})
+        {
+            content.anchoredPosition=new Vector2(300,900);scroll.velocity=new Vector2(20,30);tree.FocusCore();
+            Check(scroll.velocity==Vector2.zero,"Return-to-core clears inertia at "+fps+" FPS");
+            for(int frame=0;frame<fps;frame++)tree.Tick(1f/fps);
+            Check(content.anchoredPosition==Vector2.zero&&!tree.IsFocusing,"Smooth core return settles exactly at "+fps+" FPS");
+        }
+        content.anchoredPosition=new Vector2(300,900);tree.FocusCore();tree.Tick(.1f);
+        var pan=scroll.viewport.GetComponent<SkyPulseTreePanInput>();
+        pan.OnPointerDown(new PointerEventData(EventSystem.current){button=PointerEventData.InputButton.Left});
+        var interrupted=content.anchoredPosition;tree.Tick(.1f);
+        Check(!tree.IsFocusing&&content.anchoredPosition==interrupted,"Fresh finger/mouse input interrupts core return immediately");
+        tree.ReducedMotion=true;coreControl.GetComponent<Button>().onClick.Invoke();
+        Check(content.anchoredPosition==Vector2.zero&&!tree.IsFocusing,"Reduced Motion returns to core instantly");tree.ReducedMotion=false;
+        var touch=content.GetComponentsInChildren<SkyPulseTreeTouchFeedback>()[0];int originalBalance=(int)Get(game,"crystals");
+        touch.OnPointerDown(new PointerEventData(EventSystem.current){button=PointerEventData.InputButton.Left});
+        Check((int)Get(game,"crystals")==originalBalance&&!((GameObject)Get(game,"purchaseModal")).activeSelf,"Immediate visual press feedback cannot purchase an upgrade");
+        pan.OnBeginDrag(new PointerEventData(EventSystem.current));
         Check(tree.BranchCount==39&&tree.SocketCount==37,"One core feeds three trunks, nine families and all 27 upgrade levels");
-        var reachable=new HashSet<Vector2>{new Vector2(0,-160)};
+        var reachable=new HashSet<Vector2>{new Vector2(0,-250)};
         for(int pass=0;pass<40;pass++)foreach(var b in tree.Branches)if(reachable.Contains(b.From))reachable.Add(b.To);
         Check(tree.Roots.All(r=>reachable.Contains(r.At)),"Every family and level remains connected to the single core");
         Check(content.GetComponentsInChildren<Button>().Length==36&&!content.GetComponentsInChildren<Image>().Any(i=>i.color.a>.001f),"No separate opaque upgrade cards; fixed generous touch areas overlay the continuous tree");
@@ -54,14 +88,19 @@ public static class SkyPulseTechTreeChecks
         Check(!UnityEngine.Object.FindObjectsByType<Camera>(FindObjectsSortMode.None).Any(c=>c.name=="Holographic viewport camera"&&c.isActiveAndEnabled),"No orphan tree camera renders in the Hangar");
         Call(game,"OpenUpgrades");yield return null;
         tree=(SkyPulseTechTreeView)Get(game,"holographicTree");content=(RectTransform)Get(game,"customizeContent");
+        coreControl=(RectTransform)Get(game,"techCoreControl");
         Check(content.anchoredPosition==Vector2.zero,"Reopening the tree starts at the common core");
         var camera=(Camera)Get(game,"flightCamera");var canvas=((GameObject)Get(game,"uiRoot")).GetComponent<Canvas>();canvas.renderMode=RenderMode.ScreenSpaceCamera;canvas.worldCamera=camera;canvas.planeDistance=1;
         string folder=Path.Combine(Environment.GetEnvironmentVariable("SKYPULSE_QA_OUTPUT"),"holographic-tree");Directory.CreateDirectory(folder);
         var rt=RenderTexture.GetTemporary(750,1334,24);camera.targetTexture=rt;
-        for(int frame=0;frame<90;frame++)
+        for(int frame=0;frame<120;frame++)
         {
-            // A continuous two-axis pan, beginning at the core and visiting all lanes.
-            float t=frame/89f;content.anchoredPosition=new Vector2(Mathf.Sin(t*Mathf.PI*2)*640,Mathf.SmoothStep(0,2150,t));
+            // Show the live projector, direct two-axis exploration and non-blocking return.
+            if(frame<30)content.anchoredPosition=Vector2.zero;
+            if(frame==8)tree.Press(new Vector2(0,-250));
+            if(frame>=30&&frame<90){float t=(frame-30)/59f;content.anchoredPosition=new Vector2(Mathf.Sin(t*Mathf.PI*2)*640,Mathf.SmoothStep(0,2150,t));}
+            if(frame==90)coreControl=((RectTransform)Get(game,"techCoreControl"));
+            if(frame==90)coreControl.GetComponent<Button>().onClick.Invoke();
             tree.Tick(1f/10);Canvas.ForceUpdateCanvases();tree.Render();camera.Render();
             RenderTexture.active=rt;var image=new Texture2D(750,1334,TextureFormat.RGB24,false);image.ReadPixels(new Rect(0,0,750,1334),0,0);image.Apply();File.WriteAllBytes(Path.Combine(folder,frame.ToString("000")+".png"),image.EncodeToPNG());UnityEngine.Object.Destroy(image);RenderTexture.active=null;
             yield return null;
