@@ -1,0 +1,69 @@
+{
+  "candidate": "SkyPulse 1.0.0 (17)",
+  "compiledSourceCommit": "4f9398363507801874df507b225b0deef55b5c8b",
+  "branch": "main",
+  "allRuntimeScriptsMatchPassedQA": 30,
+  "candidateSourceEntries": 415,
+  "automatedRequiredPassMarkers": 19,
+  "localIosExport": {
+    "status": "SKYPULSE_IOS_EXPORT_PASS",
+    "path": "/private/tmp/skypulse-17-tree-20261021/iOS",
+    "sourceManifestMatchesWorkingTree": true,
+    "sourceCommit": "4f9398363507801874df507b225b0deef55b5c8b",
+    "supersedesEarlierExport": "/private/tmp/skypulse-17-20261021/iOS"
+  },
+  "archive": {
+    "status": "Not archived for build 17"
+  },
+  "testFlight": {
+    "uploaded": false,
+    "latestUploadedBuild": "15",
+    "latestKnownStatus": "Testing in SkyPulse Internal",
+    "externalReviewSubmitted": false
+  },
+  "physicalDeviceGameplay": "Pending for build 17 on iPhone and iPad",
+  "publicReviewSubmitted": false,
+  "publicDraft": {
+    "selectedBuild": "15 (retained; not this local candidate)",
+    "copyCandidate": "17",
+    "status": "Prepare for Submission",
+    "descriptionAndReviewNotesSavedAndVerified": true,
+    "subtitle": "Flight & Signal Heist Puzzles",
+    "categories": [
+      "Games",
+      "Action",
+      "Puzzle"
+    ],
+    "gameCenterFlag": "Unchecked on signed-in inspection, 21 October 2026",
+    "historicalReviewAttachment": "SkyPulse-build7-review.mp4 retained. Current device media required before review.",
+    "proof": "public-draft-saved.png",
+    "copyVerifiedAfterReload": true
+  },
+  "appPreview": "Both MP4s are silent Unity development renders, not device footage or an App Store preview upload. Fresh physical-device recordings and editing remain required.",
+  "newExternalAssets": 0,
+  "artworkLedger": "mobile/Release/IdentityRights20261013/ARTWORK_LEDGER.json",
+  "rightsAndSimilarity": "Owner reports ARTA/ChatGPT generation and own references. No exclusive rights or unidentified Apple comparator resolution is certified.",
+  "economyAndSaveCompatibility": "Existing wallet, upgrades, prices, prerequisites and Endless keys retained. New optical puzzle uses its own versioned save with access-only migration of old Blackout achievements.",
+  "evidenceSha256": {
+    "unity-export-17-tree.log": "a895e120dc5a62c0da30dd380fef38d44e027d6f8c8c33449dc27932898390ca",
+    "unity.log": "668198dd130529e5218f283ea202c3b9bca2c302e2168d4b693de0e233f08b6f",
+    "holographic-tree-preview.mp4": "b70b0fc35e1b604e203d91dba27a5ffd8bcd5675c3e65f325f10b6c52a261fb7",
+    "three-modes-3d-preview.mp4": "7b2e9855ad333935d5e454e78bf6fb5367f1a0ffa0a5f0237998b107bd4f057b"
+  },
+  "previewVideos": {
+    "holographic-tree-preview.mp4": {
+      "seconds": 9,
+      "decodedFrames": 270,
+      "width": 750,
+      "height": 1334,
+      "fps": 30
+    },
+    "three-modes-3d-preview.mp4": {
+      "seconds": 39,
+      "decodedFrames": 1170,
+      "width": 750,
+      "height": 1334,
+      "fps": 30
+    }
+  }
+}

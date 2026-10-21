@@ -5,13 +5,13 @@
   "bundleId": "com.mcauleemaddison.skypulse",
   "appleTeamId": "TX54JLQ8VF",
   "version": "1.0.0",
-  "build": "15",
-  "runtimeSourceCommit": "52a81042d75a025cffad303bb31e0c73e989cc32",
-  "metadata": "mobile/Release/RelayView20261016/metadata.json",
-  "qaRecord": "mobile/Release/RelayView20261016/QA_RECORD.json",
-  "sourceManifest": "mobile/Release/RelayView20261016/SOURCE_MANIFEST.json",
-  "releaseRecord": "mobile/Release/RelayView20261016/RELEASE_RECORD.json",
+  "build": "17",
+  "runtimeSourceCommit": "4f9398363507801874df507b225b0deef55b5c8b",
+  "metadata": "mobile/Release/SignalHeist20261021/metadata.json",
+  "qaRecord": "mobile/Release/SignalHeist20261021/QA_RECORD.json",
+  "sourceManifest": "mobile/Release/SignalHeist20261021/SOURCE_MANIFEST.json",
+  "releaseRecord": "mobile/Release/SignalHeist20261021/RELEASE_RECORD.json",
   "artworkLedger": "mobile/Release/IdentityRights20261013/ARTWORK_LEDGER.json",
-  "testFlightStatus": "Build 15 processed and Testing in SkyPulse Internal; tester notes saved and verified",
-  "publicAppReview": "On hold pending Apple's clarification and renewed owner authorization"
+  "testFlightStatus": "Local build 17 not uploaded; latest uploaded build 15 remains Testing in SkyPulse Internal",
+  "publicAppReview": "On hold pending Apple's clarification, current device/media validation and renewed owner authorization"
 }

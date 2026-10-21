@@ -1,0 +1,64 @@
+A	mobile/Assets/Resources/SkyPulse/Shaders/FlightLight.shader
+A	mobile/Assets/Resources/SkyPulse/Shaders/FlightLight.shader.meta
+A	mobile/Assets/Resources/SkyPulse/Shaders/HeistOptics.shader
+A	mobile/Assets/Resources/SkyPulse/Shaders/HeistOptics.shader.meta
+A	mobile/Assets/Resources/SkyPulse/Shaders/HolographicTree.shader
+A	mobile/Assets/Resources/SkyPulse/Shaders/HolographicTree.shader.meta
+A	mobile/Assets/Resources/SkyPulse/Shaders/MechanicalBird.shader
+A	mobile/Assets/Resources/SkyPulse/Shaders/MechanicalBird.shader.meta
+A	mobile/Assets/Resources/SkyPulse/Shaders/Prism.shader
+A	mobile/Assets/Resources/SkyPulse/Shaders/Prism.shader.meta
+M	mobile/Assets/Resources/SkyPulse/Shaders/RelayTitanium.shader
+A	mobile/Assets/Scripts/SkyPulseBirdRig.cs
+A	mobile/Assets/Scripts/SkyPulseBirdRig.cs.meta
+M	mobile/Assets/Scripts/SkyPulseBlackoutCampaign.cs
+M	mobile/Assets/Scripts/SkyPulseBlackoutGraphic.cs
+M	mobile/Assets/Scripts/SkyPulseButtonFeedback.cs
+M	mobile/Assets/Scripts/SkyPulseCircuitGraphic.cs
+M	mobile/Assets/Scripts/SkyPulseDailyMissions.cs
+A	mobile/Assets/Scripts/SkyPulseDepthStage.cs
+A	mobile/Assets/Scripts/SkyPulseDepthStage.cs.meta
+A	mobile/Assets/Scripts/SkyPulseFlightEffects.cs
+A	mobile/Assets/Scripts/SkyPulseFlightEffects.cs.meta
+A	mobile/Assets/Scripts/SkyPulseHeistBoard.cs
+A	mobile/Assets/Scripts/SkyPulseHeistBoard.cs.meta
+M	mobile/Assets/Scripts/SkyPulseMissionModels.cs
+M	mobile/Assets/Scripts/SkyPulseNativeGame.Blackout.cs
+A	mobile/Assets/Scripts/SkyPulseNativeGame.Cinematic.cs
+A	mobile/Assets/Scripts/SkyPulseNativeGame.Cinematic.cs.meta
+M	mobile/Assets/Scripts/SkyPulseNativeGame.Controls.cs
+A	mobile/Assets/Scripts/SkyPulseNativeGame.Depth.cs
+A	mobile/Assets/Scripts/SkyPulseNativeGame.Depth.cs.meta
+M	mobile/Assets/Scripts/SkyPulseNativeGame.Missions.cs
+M	mobile/Assets/Scripts/SkyPulseNativeGame.Presentation.cs
+A	mobile/Assets/Scripts/SkyPulseNativeGame.TechTree.cs
+A	mobile/Assets/Scripts/SkyPulseNativeGame.TechTree.cs.meta
+M	mobile/Assets/Scripts/SkyPulseNativeGame.cs
+A	mobile/Assets/Scripts/SkyPulsePrism.cs
+A	mobile/Assets/Scripts/SkyPulsePrism.cs.meta
+A	mobile/Assets/Scripts/SkyPulseRelayEnvironment.cs
+A	mobile/Assets/Scripts/SkyPulseRelayEnvironment.cs.meta
+M	mobile/Assets/Scripts/SkyPulseRelayGate.cs
+D	mobile/Assets/Scripts/SkyPulseTechConnection.cs
+A	mobile/Assets/Scripts/SkyPulseTechTreeView.cs
+R100	mobile/Assets/Scripts/SkyPulseTechConnection.cs.meta	mobile/Assets/Scripts/SkyPulseTechTreeView.cs.meta
+M	mobile/ProjectSettings/ProjectSettings.asset
+M	mobile/Tools/SkyPulseBlackoutChecks.cs
+A	mobile/Tools/SkyPulseCinematicChecks.cs
+M	mobile/Tools/SkyPulseDailyRouteChecks.cs
+A	mobile/Tools/SkyPulseDepthChecks.cs
+M	mobile/Tools/SkyPulseMissionChecks.cs
+M	mobile/Tools/SkyPulseOneThumbChecks.cs
+M	mobile/Tools/SkyPulsePresentationChecks.cs
+M	mobile/Tools/SkyPulseRelayGateChecks.cs
+A	mobile/Tools/SkyPulseTechTreeChecks.cs
+M	mobile/Tools/check_release_metadata.py
+M	mobile/Tools/run_modes_qa.py
+M	mobile/Tools/test_release_metadata.py
+M	mobile/Tools/verify_endless_preservation.py
+
+Release records added/updated in the final delivery commit:
+ M README.md
+ M mobile/Release/CURRENT_RELEASE.json
+ M mobile/Release/REVIEW_STATUS.md
+?? mobile/Release/SignalHeist20261021/

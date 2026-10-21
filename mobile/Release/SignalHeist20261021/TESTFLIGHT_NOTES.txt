@@ -1,0 +1,18 @@
+SkyPulse Arcade 1.0.0 (17) — Signal Heist
+
+BLACKOUT IS NOW A SIGNAL-ROUTING HEIST
+Tap silver mirror prisms and crystal splitters to rotate them. Route the live laser through EVERY core and the uplink at the same time. Power relays A/B to open matching shutters. A rotation costs 1 trace, or 3 while a red sensor is lit. Spend the budget without extracting and retry. Eight authored vaults increase from 2 to 16 minimum turns. Clears activate the next vault immediately. The old tile-walking game is removed.
+
+ALL THREE MODES HAVE DEPTH
+Endless adds cylindrical gate meshes, Relay retains its hollow titanium hoops, and Blackout has an angled 3D optical console. Each Home has its own rendered 3D stage; the enclosing black panel is removed. Controls press visually without shrinking their hit rectangles. Illustrated character/world artwork is retained.
+
+PULSE RELAY VISUALS
+First crystal charges half the hoop; the second turns red lasers blue and unlocks immediately. Hollow mesh hoops, eight faceted crystal meshes in the four-gate circuit, moving station machinery, reactive engine trails and articulated bird artwork. Original tap-to-flap controls, shared width and Endless handling are retained.
+
+PLEASE TEST ON YOUR PHONE
+Rotate rapidly, pause/resume, background/reopen an unfinished vault, exhaust trace and retry, finish vault one and check the next is already playable, then finish all eight. Check Reduced Motion, sound/haptics and readability. In Relay verify 0/2 and 1/2 gates stay locked, 2/2 opens automatically and ground collision remains visible. Check all three mode Homes and Main Menu after results.
+
+Unity automated checks and native delivery status are in the release record. Physical-device performance and feel still need your feedback. Public App Review is on hold; this is private testing only.
+
+TECH TREE
+Open Endless Route → Tech Tree. Drag left/right/up/down to explore one connected volumetric hologram. Tap a family or one of its three level branches. Existing prices and prerequisites remain unchanged. Confirm both-axis position survives a purchase, locked/installed leaves cannot spend crystals, and returning to Hangar restores normal paging. Test on phone and iPad, including Reduced Motion.
