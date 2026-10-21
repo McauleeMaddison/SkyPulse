@@ -19,6 +19,7 @@ namespace SkyPulse.Mobile
         void LateUpdate(){UpdateCinematicPresentation(Mathf.Min(Time.unscaledDeltaTime,MaximumSimulationCatchup));}
         void UpdateCinematicPresentation(float dt)
         {
+            UpdateDepthPresentation(dt);
             if(birdRenderer==null||equippedSkin==null)return;
             if(cinematicBird==null){cinematicBird=birdRenderer.gameObject.AddComponent<SkyPulseBirdRig>();cinematicBird.Bind(birdRenderer);}
             if(cinematicPreparedFrames!=flapFrameBirdSprites){cinematicPreparedFrames=flapFrameBirdSprites;cinematicBird.PrepareFrames(cinematicPreparedFrames);}
@@ -63,8 +64,7 @@ namespace SkyPulse.Mobile
                 float t=reduceMotionEnabled?0:ambientTime;
                 menuHeroTransform.localScale=Vector3.one*.54f;
                 menuHeroTransform.anchoredPosition=new Vector2(-105+Mathf.Sin(t*.8f)*3,355+Mathf.Sin(t*1.4f)*5);
-                homeRelayPortal.rectTransform.localRotation=Quaternion.Euler(0,Mathf.Sin(t*.35f)*3,0);
-                homeRelayCrystal.rectTransform.localRotation=Quaternion.Euler(0,Mathf.Sin(t*.7f)*12,Mathf.Sin(t*.8f)*4);
+
             }
         }
     }

@@ -29,6 +29,8 @@ Shader "SkyPulse/Mechanical Bird"
                 float flex=sin(_Rig.x*7-p.x*5)*.012+_Rig.y*.018;
                 v.vertex.y+=(tail*(sin(_Rig.x*8-p.x*6)*.018-_Rig.z*.016)+wing*flex)*_Rig.w/_RigBounds.w;
                 v.vertex.x+=tail*wing*sin(_Rig.x*6)*.007*_Rig.w/_RigBounds.z;
+                float bodyDepth=sqrt(saturate(1-dot((p-float2(.57,.46))*float2(1.8,2.4),(p-float2(.57,.46))*float2(1.8,2.4))));
+                v.vertex.z-=(bodyDepth*.035+wing*flex*1.5*_Rig.w)/_RigBounds.z;
                 o.pos=UnityObjectToClipPos(v.vertex);o.uv=v.uv;o.body=p;o.color=v.color*_Color;return o;
             }
             fixed4 frag(vary i):SV_Target

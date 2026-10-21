@@ -1,39 +1,28 @@
-using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace SkyPulse.Mobile
 {
-    /// <summary>Small, allocation-free press response for touch-first controls.</summary>
+    // The visual face presses into its frame. The original hierarchy and fixed
+    // touch rectangle remain intact; no layout or gameplay input is animated.
     public sealed class SkyPulseButtonFeedback : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler
     {
         public bool ReducedMotion;
-        private RectTransform target;
-        private Vector3 restingScale;
-        private float pressAmount;
-
-        private void Awake()
+        RectTransform face;float pressed,depth;
+        void Prepare()
         {
-            target = transform as RectTransform;
-            restingScale = target != null ? target.localScale : Vector3.one;
+            var button=GetComponent<Button>();if(button==null||button.targetGraphic==null)return;
+            var candidate=button.targetGraphic.rectTransform;face=candidate!=transform?candidate:null;
         }
-
-        private void OnEnable()
+        void OnEnable(){pressed=depth=0;if(face!=null){face.localScale=Vector3.one;face.localRotation=Quaternion.identity;face.anchoredPosition=Vector2.zero;}}
+        public void OnPointerDown(PointerEventData data)=>pressed=1;
+        public void OnPointerUp(PointerEventData data)=>pressed=0;
+        public void OnPointerExit(PointerEventData data)=>pressed=0;
+        void Update()
         {
-            pressAmount = 0f;
-            if (target != null) target.localScale = restingScale;
-        }
-
-        public void OnPointerDown(PointerEventData eventData) => pressAmount = 1f;
-        public void OnPointerUp(PointerEventData eventData) => pressAmount = 0f;
-        public void OnPointerExit(PointerEventData eventData) => pressAmount = 0f;
-
-        private void Update()
-        {
-            if (target == null) return;
-            if (ReducedMotion) { target.localScale=restingScale; return; }
-            var scale = Vector3.one * (1f - pressAmount * .045f);
-            target.localScale = Vector3.Lerp(target.localScale, Vector3.Scale(restingScale, scale), 1f - Mathf.Exp(-Time.unscaledDeltaTime * 24f));
+            Prepare();if(face==null)return;depth=ReducedMotion?0:Mathf.Lerp(depth,pressed,1-Mathf.Exp(-Time.unscaledDeltaTime*28));
+            face.localScale=Vector3.one*(1-depth*.014f);face.localRotation=Quaternion.Euler(depth*3,0,0);face.anchoredPosition=new Vector2(0,-depth*3);
         }
     }
 }

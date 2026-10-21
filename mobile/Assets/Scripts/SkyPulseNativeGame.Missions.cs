@@ -11,7 +11,6 @@ namespace SkyPulse.Mobile
         private RelaySession relaySession;
         private BlackoutSession blackoutSession;
         private SkyPulseDailyMissions dailyMissions;
-        private SkyPulseModeProgress missionProgress;
         private SkyPulseDailyRelay dailyRelay;
         private IMissionStore missionStore;
         private SkyPulseMode homeProtocol;
@@ -29,7 +28,7 @@ namespace SkyPulse.Mobile
         private int selectedMission;
         private float missionUiTimer;
         private RectTransform relayHudDock;
-        private Text relayStatusText, relayHintText, blackoutStatusText, blackoutHintText, dailyResetText, dailyTotalText;
+        private Text relayStatusText, relayHintText, blackoutStatusText, dailyResetText, dailyTotalText;
         private readonly List<Button> dailyClaimButtons=new List<Button>();
         private readonly List<Text> dailyProgressLabels=new List<Text>();
         private readonly List<RectTransform> dailyProgressBars=new List<RectTransform>();
@@ -44,7 +43,6 @@ namespace SkyPulse.Mobile
             homeProtocol=SkyPulseMode.EndlessRoute;
             missionStore=new PlayerPrefsMissionStore();
             dailyMissions=new SkyPulseDailyMissions(missionStore,()=>DateTime.UtcNow);
-            missionProgress=new SkyPulseModeProgress(missionStore);
             dailyRelay=new SkyPulseDailyRelay(missionStore,()=>DateTime.UtcNow);
             blackoutCampaign=new BlackoutCampaignProgress(missionStore);
         }
@@ -179,7 +177,7 @@ namespace SkyPulse.Mobile
             difficultyText.horizontalOverflow=terminal?HorizontalWrapMode.Wrap:HorizontalWrapMode.Overflow;
             difficultyText.verticalOverflow=terminal?VerticalWrapMode.Truncate:VerticalWrapMode.Overflow;
             menuTitleText.color=homeProtocol==SkyPulseMode.BlackoutProtocol?Hex("#65ff9d"):homeProtocol==SkyPulseMode.PulseRelay?Hex("#ffc34d"):Hex("#d8fbff");
-            if(homeProtocolCaption!=null)homeProtocolCaption.text=homeProtocol==SkyPulseMode.BlackoutProtocol?"BLACKOUT PROTOCOL · RECOVER THE DATA":homeProtocol==SkyPulseMode.PulseRelay?"PULSE RELAY · RESTORE THE CIRCUIT":"BUILD YOUR FLOCK · POWER YOUR NEXT FLIGHT";
+            if(homeProtocolCaption!=null)homeProtocolCaption.text=homeProtocol==SkyPulseMode.BlackoutProtocol?"BLACKOUT PROTOCOL · SIGNAL HEIST":homeProtocol==SkyPulseMode.PulseRelay?"PULSE RELAY · RESTORE THE CIRCUIT":"BUILD YOUR FLOCK · POWER YOUR NEXT FLIGHT";
             ApplyPremiumHomeTheme();
         }
         private void PrepareEndlessMode() { SetHomeProtocol(SkyPulseMode.EndlessRoute);ResetToMenu(); }
@@ -189,7 +187,7 @@ namespace SkyPulse.Mobile
         }
         private void OpenMissionSelection(SkyPulseMode mode)
         {
-            if(mode==SkyPulseMode.BlackoutProtocol){OpenBlackoutSectors();return;}
+            if(mode==SkyPulseMode.BlackoutProtocol){OpenBlackoutVaults();return;}
             CheckDailyPeriod();SetHomeProtocol(mode);
             ResetToMenu();homeScreen.SetActive(false);activeMode=mode;
             ClearScreen(missionSelectionScreen);missionSelectionScreen.SetActive(true);
@@ -201,9 +199,9 @@ namespace SkyPulse.Mobile
             {
                 int index=i;float y=555-i*340;
                 var card=PremiumPanel(missionSelectionScreen.transform,"Mission "+i,new Vector2(0,y),new Vector2(940,310),(int)mode,colour);
-                string name=mode==SkyPulseMode.PulseRelay?dailyRelay.Missions[i].Name:BlackoutPuzzle.All[i].Name;
-                string briefing=mode==SkyPulseMode.PulseRelay?dailyRelay.Missions[i].Briefing:BlackoutPuzzle.All[i].Briefing;
-                int medal=(mode==SkyPulseMode.PulseRelay?dailyRelay.Data.medals:missionProgress.Blackout.medals)[i];
+                string name=dailyRelay.Missions[i].Name;
+                string briefing=dailyRelay.Missions[i].Briefing;
+                int medal=dailyRelay.Data.medals[i];
                 MissionText(card,name,117,30,colour,850,48);
                 var brief=CreateText(card,briefing,new Vector2(0,25),new Vector2(850,114),24,Hex("#c6dded"),TextAnchor.MiddleCenter,FontStyle.Normal);
                 brief.horizontalOverflow=HorizontalWrapMode.Wrap;brief.verticalOverflow=VerticalWrapMode.Truncate;
@@ -232,7 +230,7 @@ namespace SkyPulse.Mobile
             else
             {
                 shieldImmunityTimer=0f;shieldHitStopTimer=0f;
-                state=FlightState.Playing;bird.gameObject.SetActive(false);blackoutSession=new BlackoutSession(SkyPulseBlackoutCampaign.Stages[index]);
+                state=FlightState.Playing;bird.gameObject.SetActive(false);blackoutSession=blackoutCampaign.Start(index);
                 HideOriginalWorld(false);BuildBlackoutBoard();
             }
             RefreshScreens();

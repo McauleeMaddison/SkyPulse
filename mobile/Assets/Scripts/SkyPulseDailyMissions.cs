@@ -28,7 +28,7 @@ namespace SkyPulse.Mobile
         public const string SaveKey="skypulse.daily.v1", BackupKey="skypulse.daily.v1.backup", WalletKey="skypulse.native.crystals";
         public static readonly string[] Ids={"daily.endless.gates","daily.relay.activate","daily.blackout.intro","daily.flight.crystals"};
         public static readonly int[] Targets={10,3,1,10};
-        public static readonly string[] Objectives={"Pass 10 Endless gates","Open 3 Relay gates","Clear Blackout sector 01","Collect 10 flight pickup crystals"};
+        public static readonly string[] Objectives={"Pass 10 Endless gates","Open 3 Relay gates","Extract Blackout vault 01","Collect 10 flight pickup crystals"};
         public static readonly string[] Modes={"ENDLESS ROUTE","PULSE RELAY","BLACKOUT PROTOCOL","ENDLESS ROUTE"};
         readonly IMissionStore store;
         readonly Func<DateTime> clock;
@@ -90,27 +90,6 @@ namespace SkyPulse.Mobile
             if(wallet>int.MaxValue-5)throw new InvalidOperationException("Wallet cannot accept reward");
             Data.claimed[index]=true;Data.pending=index;Data.walletAfter=wallet+5;
             Persist();RecoverPending();return true;
-        }
-    }
-    [Serializable] public sealed class ModeCompletionSave { public int version=1; public int[] medals=new int[4]; }
-    public sealed class SkyPulseModeProgress
-    {
-        readonly IMissionStore store;
-        public const string RelayKey="skypulse.relay.v1", BlackoutKey="skypulse.blackout.v1";
-        public ModeCompletionSave Relay { get; private set; }
-        public ModeCompletionSave Blackout { get; private set; }
-        public SkyPulseModeProgress(IMissionStore store) { this.store=store;Relay=Load(RelayKey);Blackout=Load(BlackoutKey); }
-        ModeCompletionSave Load(string key)
-        {
-            try { var s=JsonUtility.FromJson<ModeCompletionSave>(store.Get(key,""));if(s!=null && s.version==1 && s.medals!=null && (s.medals.Length==3 || s.medals.Length==4)){if(s.medals.Length==3)Array.Resize(ref s.medals,4);for(int i=0;i<4;i++)s.medals[i]=Math.Max(0,Math.Min(3,s.medals[i]));return s;} }catch{}
-            return new ModeCompletionSave();
-        }
-        public void Complete(SkyPulseMode mode,int mission,int medal)
-        {
-            if(mode==SkyPulseMode.EndlessRoute || mission<0 || mission>=4 || medal<1)return;
-            var save=mode==SkyPulseMode.PulseRelay?Relay:Blackout;
-            save.medals[mission]=Math.Max(save.medals[mission],Math.Min(3,medal));
-            store.Set(mode==SkyPulseMode.PulseRelay?RelayKey:BlackoutKey,JsonUtility.ToJson(save));store.Flush();
         }
     }
 }

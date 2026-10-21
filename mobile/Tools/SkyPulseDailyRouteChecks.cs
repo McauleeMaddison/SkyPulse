@@ -30,7 +30,7 @@ public static class SkyPulseDailyRouteChecks
     static string Fingerprint(RelayMission[] missions)=>string.Join("|",missions.Select(m=>m.Id+":"+m.Spacing.ToString("R")+":"+m.ExitY.ToString("R")+":"+string.Join(",",Enumerable.Range(0,m.RelayCount*2).Select(n=>m.CrystalX(n).ToString("R")+"/"+m.CrystalY(n).ToString("R")))+":"+string.Join(",",m.RelayY.Select(y=>y.ToString("R")))));
     public static void Pure()
     {
-        var now=new DateTime(2026,10,13,23,59,59,DateTimeKind.Utc);var store=new Store();store.SetInt(SkyPulseDailyMissions.WalletKey,777);store.Set(SkyPulseModeProgress.RelayKey,"legacy medals");
+        var now=new DateTime(2026,10,13,23,59,59,DateTimeKind.Utc);var store=new Store();store.SetInt(SkyPulseDailyMissions.WalletKey,777);store.Set("skypulse.relay.v1","legacy medals");
         var day=SkyPulseDailyMissions.Day(now);var daily=new SkyPulseDailyRelay(store,()=>now);string layout=Fingerprint(daily.Missions);
         daily.Complete(day,0,3);int flush=store.Flushes;daily.Complete(day,0,3);
         Check(store.Flushes==flush&&daily.Data.medals[0]==3,"Repeated daily completion saves once");
@@ -40,7 +40,7 @@ public static class SkyPulseDailyRouteChecks
         now=now.AddDays(-2);Check(!daily.EnsurePeriod()&&daily.Data.day==day+1,"Clock rollback cannot reroll or reopen old daily progress");
         now=now.AddDays(3);store.Fail=true;bool failed=false;try{daily.EnsurePeriod();}catch(System.IO.IOException){failed=true;}
         Check(failed&&daily.Data.day==day+1,"Failed refresh persistence keeps the current playable deck");store.Fail=false;daily.EnsurePeriod();
-        Check(store.GetInt(SkyPulseDailyMissions.WalletKey,0)==777&&store.Get(SkyPulseModeProgress.RelayKey,"")=="legacy medals","Daily medals never debit wallet or rewrite legacy circuit medals");
+        Check(store.GetInt(SkyPulseDailyMissions.WalletKey,0)==777&&store.Get("skypulse.relay.v1","")=="legacy medals","Daily medals never debit wallet or rewrite legacy circuit medals");
         string previous="";
         for(int d=0;d<366;d++)
         {
@@ -70,8 +70,9 @@ public static class SkyPulseDailyRouteChecks
         Check(Get(game,"state").ToString()=="Playing"&&(int)Get(game,"selectedMission")==1&&((RelaySession)Get(game,"relaySession")).Mission.Day==day,"Next Mission immediately starts the next daily circuit without Mission Control");
         Call(game,"FinishRelayFailure","QA INTERRUPT");result=(GameObject)Get(game,"missionResultScreen");result.GetComponentsInChildren<Button>().Single(b=>b.GetComponentInChildren<Text>().text=="MAIN MENU").onClick.Invoke();
         Check(Get(game,"state").ToString()=="Menu"&&Get(game,"homeProtocol").ToString()=="PulseRelay","Relay result Main Menu restores its selected Home");
-        Call(game,"LaunchMission",SkyPulseMode.BlackoutProtocol,0);var s=(BlackoutSession)Get(game,"blackoutSession");s.Act(1,false);
-        Set(game,"blackoutSession",new BlackoutSession(new BlackoutPuzzle("qa-fail","QA","",new[]{"SFPE"},3,0,3,true)));Call(game,"BuildBlackoutLab");Call(game,"TouchBlackoutNode",1);result=(GameObject)Get(game,"missionResultScreen");
+        Call(game,"LaunchMission",SkyPulseMode.BlackoutProtocol,0);var s=(BlackoutSession)Get(game,"blackoutSession");
+        int prism=Enumerable.Range(0,s.Puzzle.Count).First(s.Puzzle.Rotatable);
+        while(s.State==MissionSessionState.Playing)Call(game,"TouchBlackoutNode",prism);result=(GameObject)Get(game,"missionResultScreen");
         yield return null;Capture(game,"blackout-result");
         result.GetComponentsInChildren<Button>().Single(b=>b.GetComponentInChildren<Text>().text=="MAIN MENU").onClick.Invoke();Check(Get(game,"state").ToString()=="Menu"&&Get(game,"homeProtocol").ToString()=="BlackoutProtocol","Blackout result Main Menu restores its selected Home");
         Call(game,"StartFlight");Set(game,"state",Enum.Parse(Get(game,"state").GetType(),"GameOver"));Call(game,"RefreshScreens");var endless=(GameObject)Get(game,"gameOverScreen");yield return null;Capture(game,"endless-result");

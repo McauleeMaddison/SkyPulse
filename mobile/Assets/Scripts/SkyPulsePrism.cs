@@ -37,6 +37,33 @@ namespace SkyPulse.Mobile
             }
         }
         static Vector3 Ring(float a,float b,float r,float s)=>new Vector3(Mathf.Cos(a)*(r+Mathf.Cos(b)*s),Mathf.Sin(a)*(r+Mathf.Cos(b)*s),Mathf.Sin(b)*s);
+        public void Profile(Vector2[] profile)
+        {
+            for(int i=0;i<64;i++)for(int j=1;j<profile.Length;j++)
+            {
+                float a=i*Mathf.PI/32,c=(i+1)*Mathf.PI/32;var p=profile[j-1];var q=profile[j];
+                Quad(new Vector3(Mathf.Cos(a)*p.x,Mathf.Sin(a)*p.x,p.y),new Vector3(Mathf.Cos(c)*p.x,Mathf.Sin(c)*p.x,p.y),new Vector3(Mathf.Cos(c)*q.x,Mathf.Sin(c)*q.x,q.y),new Vector3(Mathf.Cos(a)*q.x,Mathf.Sin(a)*q.x,q.y),new Color(1,1,1,0));
+            }
+        }
+        public void ExtrudePrism(Vector2[] shape,float front,float back)
+        {
+            Vector3 centre=new Vector3(0,0,front);for(int i=0;i<shape.Length;i++)
+            {
+                var a=shape[i];var c=shape[(i+1)%shape.Length];Face(centre,new Vector3(c.x,c.y,front),new Vector3(a.x,a.y,front),new Color(1,1,1,.1f));
+                Quad(new Vector3(a.x,a.y,front),new Vector3(c.x,c.y,front),new Vector3(c.x,c.y,back),new Vector3(a.x,a.y,back),new Color(.75f,.9f,1,.25f));
+            }
+        }
+        public void BevelBox(float width,float height,float depth)
+        {
+            float x=width*.5f,y=height*.5f,cut=Mathf.Min(.07f,height*.19f);var edge=new[]{new Vector2(-x+cut,-y),new Vector2(x-cut,-y),new Vector2(x,-y+cut),new Vector2(x,y-cut),new Vector2(x-cut,y),new Vector2(-x+cut,y),new Vector2(-x,y-cut),new Vector2(-x,-y+cut)};
+            for(int i=0;i<8;i++)
+            {
+                var a=edge[i];var c=edge[(i+1)%8];var p=a*.92f;var q=c*.92f;
+                Face(new Vector3(0,0,-depth),new Vector3(q.x,q.y,-depth),new Vector3(p.x,p.y,-depth),new Color(1,1,1,0));
+                Quad(new Vector3(p.x,p.y,-depth),new Vector3(q.x,q.y,-depth),new Vector3(c.x,c.y,-depth*.65f),new Vector3(a.x,a.y,-depth*.65f),new Color(.9f,.95f,1,0));
+                Quad(new Vector3(a.x,a.y,-depth*.65f),new Vector3(c.x,c.y,-depth*.65f),new Vector3(c.x,c.y,0),new Vector3(a.x,a.y,0),new Color(.45f,.6f,.7f,0));
+            }
+        }
         public Mesh Finish(string name){var m=new Mesh{name=name};m.SetVertices(v);m.SetNormals(n);m.SetColors(c);m.SetTriangles(t,0);m.RecalculateBounds();m.UploadMeshData(true);return m;}
         public static MeshRenderer Surface(Transform parent,string name,Mesh mesh,Material material,int order)
         {

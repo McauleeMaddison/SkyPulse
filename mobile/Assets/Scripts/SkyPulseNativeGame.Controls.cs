@@ -88,7 +88,11 @@ namespace SkyPulse.Mobile
         }
         int HomeNextMission()
         {
-            if(homeProtocol==SkyPulseMode.BlackoutProtocol)return blackoutCampaign.Data.medals[7]>0?0:blackoutCampaign.Unlocked;
+            if(homeProtocol==SkyPulseMode.BlackoutProtocol)
+            {
+                int active=blackoutCampaign.Data.active;if(blackoutCampaign.CanPlay(active))return active;
+                for(int i=0;i<8;i++)if(blackoutCampaign.Data.medals[i]==0)return i;return 0;
+            }
             for(int i=0;i<RelayMission.All.Length;i++)if(dailyRelay.Data.medals[i]==0)return i;
             return 0;
         }
@@ -108,14 +112,14 @@ namespace SkyPulse.Mobile
             if(endless){menuModeDetailText.rectTransform.anchoredPosition=new Vector2(0,-491);menuRouteText.rectTransform.anchoredPosition=new Vector2(0,-540);homeActivityCopy.text="FLIGHT · CIRCUITS · PUZZLES";return;}
             int next=HomeNextMission(),completed=0,total=relay?4:8;
             foreach(int medal in relay?dailyRelay.Data.medals:blackoutCampaign.Data.medals)if(medal>0)completed++;
-            homeBestCaption.text=relay?"TODAY CLEARED":"SECTORS CLEARED";menuBestText.text=completed+" / "+total;
-            homeLaunchButton.GetComponentInChildren<Text>().text=relay?"FLY CIRCUIT "+(next+1).ToString("00"):"ENTER SECTOR "+(next+1).ToString("00");
-            modeHomeMap.GetComponentInChildren<Text>().text=relay?"CIRCUIT MAP":"SECTOR MAP";
-            homeActivityCopy.text=relay?"TAP TO FLY · CRYSTALS OPEN GATES":"ONE THUMB · RECOVER THE CORE";
+            homeBestCaption.text=relay?"TODAY CLEARED":"VAULTS EXTRACTED";menuBestText.text=completed+" / "+total;
+            homeLaunchButton.GetComponentInChildren<Text>().text=relay?"FLY CIRCUIT "+(next+1).ToString("00"):"ENTER VAULT "+(next+1).ToString("00");
+            modeHomeMap.GetComponentInChildren<Text>().text=relay?"CIRCUIT MAP":"VAULT MAP";
+            homeActivityCopy.text=relay?"TAP TO FLY · CRYSTALS OPEN GATES":"ROTATE PRISMS · ROUTE THE LIGHT";
             menuModeDetailText.rectTransform.anchoredPosition=relay?new Vector2(0,-640):new Vector2(0,-478);
             menuRouteText.rectTransform.anchoredPosition=relay?new Vector2(0,-745):new Vector2(0,-540);
             if(relay){menuModeDetailText.text="SPECTRAL CRYSTALS · AUTOMATIC GATES";menuRouteText.text="NEXT · "+dailyRelay.Missions[next].Name;}
-            else{menuModeDetailText.text="CIPHER KEYS · PHASE ROUTING · TRACE";menuRouteText.text="NEXT · "+SkyPulseBlackoutCampaign.Stages[next].Name;}
+            else{menuModeDetailText.text="LIVE ENERGY · RELAYS · TRACE";menuRouteText.text="NEXT · "+SkyPulseBlackoutCampaign.Stages[next].Name;}
         }
         void OpenModeGuide()
         {
@@ -123,11 +127,11 @@ namespace SkyPulse.Mobile
             bool relay=homeProtocol==SkyPulseMode.PulseRelay;var accent=ProtocolAccent(homeProtocol);
             MissionText(modeGuideScreen.transform,relay?"PULSE RELAY":"BLACKOUT PROTOCOL",835,46,accent);
             var card=PremiumPanel(modeGuideScreen.transform,"Thumb controls",new Vector2(0,105),new Vector2(930,1190),relay?1:2,accent);
-            MissionText(card,relay?"TAP THE FLIGHT AREA":"TAP A CONNECTED NEIGHBOUR",460,32,accent,870,100);
-            MissionText(card,relay?"Each fresh tap flaps your bird. Pause and menus never flap.":"Your core moves immediately. Its trail follows smoothly; you can make the next move at once.",300,29,null,820,150);
-            MissionText(card,relay?"Collect both randomly placed crystals for each numbered gate. It opens automatically at 2/2; missing crystals leave it locked.":"Firewalls auto-breach on the first tap: one charge and three trace. Tap again to enter. Keys open their matching locks.",70,29,null,820,200);
-            MissionText(card,relay?"Follow the crystal trail through each aperture, then fly through the green exit.":"Mint and amber routes depend on circuit phase. Enter a SWITCH to change phase. Collect every CORE, then reach UPLINK.",-180,29,null,820,190);
-            MissionText(card,relay?"Four new circuits each UTC day. Today’s medals are saved until refresh. Your equipped bird is cosmetic; Tech Tree does not alter Relay.":"A blocked move adds one trace. A failed firewall breach adds three. Exhausted trace loses the sector. Each clear activates the next sector immediately.",-415,27,accent,820,180);
+            MissionText(card,relay?"TAP THE FLIGHT AREA":"ROTATE THE LIGHT",460,32,accent,870,100);
+            MissionText(card,relay?"Each fresh tap flaps your bird. Pause and menus never flap.":"Tap a silver prism to turn its mirror. The live beam changes immediately. Power every CORE and the UPLINK together.",300,29,null,820,150);
+            MissionText(card,relay?"Collect both randomly placed crystals for each numbered gate. It opens automatically at 2/2; missing crystals leave it locked.":"Crystal splitters send light forward and left. Turn the amber input arrow to face the incoming beam.",70,29,null,820,200);
+            MissionText(card,relay?"Follow the crystal trail through each aperture, then fly through the green exit.":"Power RELAY A or B to open its matching shutter. Relays must stay powered; disconnected shutters close again.",-180,29,null,820,190);
+            MissionText(card,relay?"Four new circuits each UTC day. Today’s medals are saved until refresh. Your equipped bird is cosmetic; Tech Tree does not alter Relay.":"Each rotation spends 1 trace; a lit red sensor raises the cost to 3. Run out before extraction and restart. Cleared vaults advance immediately.",-415,27,accent,820,180);
             MissionButton(modeGuideScreen.transform,"BACK",0,-785,850,()=>modeGuideScreen.SetActive(false),accent,112);
         }
     }

@@ -31,6 +31,8 @@ def validate_copy(meta, contract, current=False):
         for mode in ['ENDLESS ROUTE', 'PULSE RELAY', 'BLACKOUT PROTOCOL']:
             assert mode in meta['description'], 'Current mode missing: ' + mode
         assert 'four fresh daily circuits' in meta['description'] and 'eight increasingly demanding' in meta['description'], 'Stale Relay/Blackout copy'
+        assert 'Signal Heist' in meta['description'] and 'rotate mirrors' in meta['description'], 'Retired Blackout puzzle copy'
+        assert not re.search(r'connected neighbours|auto-breach|cipher keys|phase switches', meta['description'], re.I), 'Retired tile-walking instructions'
         assert not re.search(r'(press|tap|use).{0,15}(PULSE button|FLAP button)', meta['description'], re.I), 'Retired gameplay button instructions'
     return limits
 

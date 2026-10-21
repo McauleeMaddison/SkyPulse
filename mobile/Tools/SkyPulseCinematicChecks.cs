@@ -32,15 +32,15 @@ public static class SkyPulseCinematicChecks
         Call(game,"PauseFlight");float clock=(float)Get(game,"cinematicClock");present(1);Check((float)Get(game,"cinematicClock")==clock,"Pause freezes bird rig, engine ribbon and passage effects");Call(game,"ResumeFlight");
         Set(game,"reduceMotionEnabled",true);Call(game,"UpdateProtocolPresentation",0f);Call(game,"UpdateRelayPresentation");Check(lasers[0].color.a==0,"Reduced Motion clears unlocked beams immediately without a crossing effect");
         Call(game,"LaunchMission",SkyPulseMode.BlackoutProtocol,0);
-        var network=(SkyPulseBlackoutGraphic)Get(game,"blackoutNetwork");network.BeginSectorTransition();
-        var board=(BlackoutSession)Get(game,"blackoutSession");int cursor=board.Cursor,trace=board.Trace;
-        for(int i=0;i<20;i++)network.EmitSignal(Vector2.zero,new Vector2(i,4),1);
-        Check(board.Cursor==cursor&&board.Trace==trace,"Pooled security signals and sector transition have no gameplay side effects");
-        for(int i=0;i<5;i++)network.TickEffects(1f/60);before=GC.GetAllocatedBytesForCurrentThread();for(int i=0;i<120;i++){network.EmitSignal(Vector2.zero,Vector2.one,1);network.TickEffects(1f/60);}
-        Check(GC.GetAllocatedBytesForCurrentThread()==before,"Rapid pooled puzzle signals allocate no managed memory");
+        var network=(SkyPulseHeistBoard)Get(game,"blackoutBoard");var board=(BlackoutSession)Get(game,"blackoutSession");
+        int trace=board.Trace;network.Reveal=1;
+        for(int i=0;i<5;i++)network.Tick(1f/60);before=GC.GetAllocatedBytesForCurrentThread();for(int i=0;i<120;i++)network.Tick(1f/60);
+        long allocated=GC.GetAllocatedBytesForCurrentThread()-before;
+        Check(board.Trace==trace&&network.Circuit==board,"Live beam presentation never mutates the simulation");
+        Check(allocated==0,"Warmed signal animation allocates no managed memory");
         foreach(int fps in new[]{30,60,120})
         {
-            network.BeginSectorTransition();for(int f=0;f<fps;f++)network.TickEffects(1f/fps);Check(network.SectorReveal==0,"Nonblocking sector transition settles consistently at "+fps+" FPS");
+            network.Reveal=1;for(int f=0;f<fps;f++)network.Tick(1f/fps);Check(network.Reveal==0,"Nonblocking vault reveal settles at "+fps+" FPS");
         }
         Call(game,"ResetToMenu");yield return null;Check(environment==null&&firstPrism==null,"Course cleanup releases owned scenery/crystal resources");
         Debug.Log("SKYPULSE_CINEMATIC_PASS");

@@ -29,6 +29,9 @@ class CurrentReleaseCopyTests(unittest.TestCase):
     def test_retired_pulse_button(self):
         self.rejects('description', self.current['description'] + '\nPress the PULSE button to unlock gates.')
 
+    def test_retired_blackout_copy(self):
+        self.rejects('description', self.current['description'] + ' Tap connected neighbours and auto-breach.')
+
     def test_wrong_creator(self):
         self.rejects('copyright', '2026 Another Developer')
 

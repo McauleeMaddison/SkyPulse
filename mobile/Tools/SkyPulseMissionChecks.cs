@@ -62,20 +62,6 @@ public static class SkyPulseMissionChecks
         }
         var missed=new RelaySession(RelayMission.All[0]);missed.Advance(14,0);Check(missed.State==MissionSessionState.Failed,"Missing required relay produces failure");
         var hit=new RelaySession(RelayMission.All[0]);hit.Hazard(false);Check(hit.State==MissionSessionState.Failed,"Unprotected hazard fails");
-        foreach(var puzzle in BlackoutPuzzle.All)
-        {
-            var solution=Solve(puzzle);Check(solution!=null,"Authored puzzle is solvable within trace/hack budget: "+puzzle.Id);
-            var game=new BlackoutSession(puzzle);int before=game.Trace;Check(!game.Act(puzzle.Width*puzzle.Height-1,false) && game.Trace==before,"Illegal nonadjacent moves do not spend trace");
-            game.Pause(true);Check(!game.Act(1,false),"Paused puzzle cannot move");game.Pause(false);
-            foreach(var action in solution)Check(game.Act(action.Item1,action.Item2),"Winning solution action is legal");
-            Check(game.State==MissionSessionState.Succeeded && game.Packets==game.RequiredPackets,"Winning puzzle actually recovers all packets and exits");
-            Check(game.Medal>=3,"Puzzle gold par is achievable");Check(!game.Act(0,false),"Finalized puzzle rejects repeat input");
-        }
-        var limited=new BlackoutSession(new BlackoutPuzzle("qa","qa","qa",new[]{"S.PE"},1,0,1));limited.Act(1,false);limited.Act(2,false);
-        Check(limited.State==MissionSessionState.Failed,"Trace overflow fails before success");
-        var firewall=new BlackoutSession(new BlackoutPuzzle("qa","qa","qa",new[]{"SFPE"},9,1,9));
-        Check(!firewall.Act(1,false) && firewall.Act(1,true) && firewall.Charges==0 && firewall.Trace==3 && firewall.Cursor==0,"Hack costs three trace and a charge without moving");
-        Check(firewall.Act(1,false),"Opened firewall becomes a legal node");
         Debug.Log("SKYPULSE_MISSION_PURE_PASS");
     }
     public static float RelayTarget(SkyPulseNativeGame game)
@@ -84,40 +70,33 @@ public static class SkyPulseMissionChecks
         for(int i=s.Passed*2;i<Math.Min(positions.Count,s.Passed*2+2);i++)if(!used.Contains(i) && positions[i].x>=s.Distance-1.0f)return positions[i].y;
         return s.Passed<s.Mission.RelayCount?s.Mission.RelayY[s.Passed]:s.Mission.ExitY;
     }
-    sealed class SearchNode
+    static readonly Dictionary<BlackoutPuzzle,List<int>> solutions=new Dictionary<BlackoutPuzzle,List<int>>();
+    // QA-only exhaustive orientation search. No solver or answer table ships.
+    public static List<int> Solve(BlackoutPuzzle puzzle)
     {
-        public int Position,Packets,Open,Hacks,Trace,Phase,Keys;
-        public List<Tuple<int,bool>> Path=new List<Tuple<int,bool>>();
-        public string Key=>Position+":"+Packets+":"+Open+":"+Hacks+":"+Phase+":"+Keys;
-    }
-    public static List<Tuple<int,bool>> Solve(BlackoutPuzzle puzzle)
-    {
-        var packets=new Dictionary<int,int>();var firewalls=new Dictionary<int,int>();
-        for(int i=0;i<puzzle.Width*puzzle.Height;i++){if(puzzle.Tile(i)=='P')packets[i]=1<<packets.Count;if(puzzle.Tile(i)=='F')firewalls[i]=1<<firewalls.Count;}
-        int goal=(1<<packets.Count)-1;
-        // Integral bounded trace costs allow a bucketed Dijkstra queue. Avoid
-        // sorting the whole frontier for every key/phase state in larger sectors.
-        var queue=new List<SearchNode>[puzzle.TraceLimit+1];for(int i=0;i<queue.Length;i++)queue[i]=new List<SearchNode>();
-        queue[0].Add(new SearchNode{Position=puzzle.Start,Hacks=puzzle.HackCharges});int cost=0;
-        var best=new Dictionary<string,int>();
-        while(cost<queue.Length)
+        if(solutions.TryGetValue(puzzle,out var cached))return cached;
+        var tiles=Enumerable.Range(0,puzzle.Count).Where(puzzle.Rotatable).ToArray();
+        int combinations=1;foreach(int t in tiles)combinations*=puzzle.Orientations(t);
+        int best=int.MaxValue;int[] goal=null;var probe=new BlackoutSession(puzzle);
+        for(int state=0;state<combinations;state++)
         {
-            if(queue[cost].Count==0){cost++;continue;}
-            var n=queue[cost][queue[cost].Count-1];queue[cost].RemoveAt(queue[cost].Count-1);
-            if(best.TryGetValue(n.Key,out int prior) && prior<n.Trace)continue;
-            if(puzzle.Tile(n.Position)=='E' && n.Packets==goal)return n.Path;
-            foreach(int shift in new[]{-1,1,-puzzle.Width,puzzle.Width})
-            {
-                int tile=n.Position+shift;if(tile<0 || tile>=puzzle.Width*puzzle.Height || Math.Abs(tile%puzzle.Width-n.Position%puzzle.Width)+Math.Abs(tile/puzzle.Width-n.Position/puzzle.Width)!=1 || puzzle.Tile(tile)=='#')continue;
-                char kind=puzzle.Tile(tile);
-                if(kind=='A' && n.Phase!=0 || kind=='B' && n.Phase!=1 || kind=='L' && (n.Keys&1)==0 || kind=='l' && (n.Keys&2)==0)continue;
-                bool hack=puzzle.Tile(tile)=='F' && (n.Open&firewalls[tile])==0;if(hack && n.Hacks<=0)continue;
-                var next=new SearchNode{Position=hack?n.Position:tile,Packets=n.Packets|(packets.TryGetValue(tile,out int flag)&&!hack?flag:0),Open=n.Open|(hack?firewalls[tile]:0),Hacks=n.Hacks-(hack?1:0),Trace=n.Trace+(hack?3:kind=='T'?2:1),Phase=kind=='C'&&!hack?1-n.Phase:n.Phase,Keys=n.Keys|(kind=='K'?1:kind=='k'?2:0),Path=new List<Tuple<int,bool>>(n.Path)};
-                if(next.Trace>puzzle.TraceLimit || best.TryGetValue(next.Key,out int old)&&old<=next.Trace)continue;
-                next.Path.Add(Tuple.Create(tile,hack));best[next.Key]=next.Trace;queue[next.Trace].Add(next);
-            }
+            int code=state,cost=0;
+            foreach(int t in tiles){int n=puzzle.Orientations(t);int r=code%n;code/=n;probe.Rotations[t]=r;cost+=(r-puzzle.Initial[t]+n)%n;}
+            if(cost>=best)continue;probe.Recalculate();
+            if(probe.CoresPowered==puzzle.CoreCount&&probe.UplinkPowered){best=cost;goal=(int[])probe.Rotations.Clone();}
         }
-        return null;
+        if(goal==null)return null;
+        var initial=new BlackoutSession(puzzle);int entry=-1;
+        for(int i=0;i<initial.BeamCount;i++){int tile=initial.Beams[i].To;if(puzzle.Rotatable(tile)){entry=tile;break;}}
+        var path=new List<int>();
+        // Configure downstream optics with the entry diverted, then connect the
+        // source last. This also tests that the runtime never latches dark relays.
+        foreach(int t in tiles.Where(t=>t!=entry).Concat(new[]{entry}))
+        {
+            if(t<0)continue;int n=puzzle.Orientations(t),turns=(goal[t]-puzzle.Initial[t]+n)%n;
+            for(int i=0;i<turns;i++)path.Add(t);
+        }
+        solutions[puzzle]=path;return path;
     }
     public static void IntegrationChecks(SkyPulseNativeGame game)
     {
@@ -144,13 +123,13 @@ public static class SkyPulseMissionChecks
         for(int i=0;i<50;i++)Call(game,"Update");Check((float)Get(game,"birdY")==birdY && blackout.Trace==0,"Puzzle never simulates flight or processes background taps");
         Call(game,"OnApplicationPause",true);Check(blackout.State==MissionSessionState.Paused,"Focus-loss pause freezes puzzle");
         Call(game,"OnApplicationPause",false);Check(blackout.State==MissionSessionState.Paused,"Returning from background waits for resume");Call(game,"ResumeFlight");
-        foreach(var action in Solve(blackout.Puzzle)){Call(game,"TouchBlackoutNode",action.Item1);}
+        foreach(var action in Solve(blackout.Puzzle)){Call(game,"TouchBlackoutNode",action);}
         Call(game,"FinalizeMission");Check((int)Get(game,"best")==originalBest && (int)Get(game,"crystals")==wallet,"Puzzle result does not change Endless score or wallet");
         Call(game,"LaunchMission",SkyPulseMode.BlackoutProtocol,0);
-        var medalFault=new Store { FailAt=1 };
+        var medalFault=new Store { FailAt=3 };
         Set(game,"blackoutCampaign",new BlackoutCampaignProgress(medalFault));
         blackout=(BlackoutSession)Get(game,"blackoutSession");
-        foreach(var action in Solve(blackout.Puzzle)){Call(game,"TouchBlackoutNode",action.Item1);}
+        foreach(var action in Solve(blackout.Puzzle)){Call(game,"TouchBlackoutNode",action);}
         Check(Get(game,"state").ToString()=="GameOver" && ((GameObject)Get(game,"missionResultScreen")).activeSelf && ((GameObject)Get(game,"missionResultScreen")).GetComponentsInChildren<Text>().Any(t=>t.text.Contains("SAVE FAILED")),"Medal-save interruption still shows a completed result and a truthful save failure");
         Call(game,"InitializeMissionServices");
         Call(game,"OpenMissionControl");var daily=(SkyPulseDailyMissions)Get(game,"dailyMissions");
@@ -208,7 +187,8 @@ public static class SkyPulseMissionChecks
     public static IEnumerator Captures(SkyPulseNativeGame game)
     {
         Call(game,"InitializeMissionServices");
-        ((BlackoutCampaignProgress)Get(game,"blackoutCampaign")).Complete(0,3,7);
+        var captureCampaign=(BlackoutCampaignProgress)Get(game,"blackoutCampaign");
+        for(int i=0;i<8;i++)captureCampaign.Complete(i,3,SkyPulseBlackoutCampaign.MinimumTrace[i]);
         string folder=Environment.GetEnvironmentVariable("SKYPULSE_QA_OUTPUT");var camera=(Camera)Get(game,"flightCamera");
         var canvas=((GameObject)Get(game,"uiRoot")).GetComponent<Canvas>();canvas.renderMode=RenderMode.ScreenSpaceCamera;canvas.worldCamera=camera;canvas.planeDistance=1;
         foreach(var size in new[]{new Vector2Int(750,1334),new Vector2Int(1320,2868),new Vector2Int(1640,2360)})
@@ -222,8 +202,7 @@ public static class SkyPulseMissionChecks
                     Call(game,"SetHomeProtocol",screen=="home-relay"?SkyPulseMode.PulseRelay:screen=="home-blackout"?SkyPulseMode.BlackoutProtocol:SkyPulseMode.EndlessRoute);Call(game,"ResetToMenu");
                     Check(((Image)Get(game,"homeProtocolBackdrop")).gameObject.activeSelf==(screen!="home-endless"),"Home theme follows selected protocol");
                     Check(((RectTransform)Get(game,"menuHeroTransform")).gameObject.activeSelf==(screen!="home-blackout"),"Blackout uses data core instead of bird hero");
-                    Check(((SkyPulseCircuitGraphic)Get(game,"homeProtocolHero")).gameObject.activeSelf==(screen=="home-relay"),"Relay owns its portal hero");
-                    Check(((SkyPulseBlackoutGraphic)Get(game,"blackoutHomeCore")).gameObject.activeSelf==(screen=="home-blackout"),"Blackout owns its suspended core hero");
+                    Check(((SkyPulseDepthStage)Get(game,"homeDepth")).Mode==(screen=="home-relay"?SkyPulseMode.PulseRelay:screen=="home-blackout"?SkyPulseMode.BlackoutProtocol:SkyPulseMode.EndlessRoute),"Each Home uses its own real 3D stage");
                     if(screen=="home-blackout")
                     {
                         var protocol=(Text)Get(game,"difficultyText");
@@ -248,10 +227,10 @@ public static class SkyPulseMissionChecks
                 {
                     Call(game,"LaunchMission",SkyPulseMode.BlackoutProtocol,1);
                     var puzzle=(BlackoutSession)Get(game,"blackoutSession");
-                    foreach(var action in Solve(puzzle.Puzzle).Take(8)){Call(game,"TouchBlackoutNode",action.Item1);}
+                    foreach(var action in Solve(puzzle.Puzzle).Take(2)){Call(game,"TouchBlackoutNode",action);}
                 }
                 if(screen=="mission-control")Call(game,"OpenMissionControl");
-                yield return null;Canvas.ForceUpdateCanvases();Call(game,"ApplySafeArea");Call(game,"FitInterfaceToSafeArea");Canvas.ForceUpdateCanvases();camera.Render();
+                yield return null;Canvas.ForceUpdateCanvases();Call(game,"ApplySafeArea");Call(game,"FitInterfaceToSafeArea");Canvas.ForceUpdateCanvases();foreach(var stage in UnityEngine.Object.FindObjectsByType<SkyPulseHeistBoard>(FindObjectsSortMode.None))stage.Render();foreach(var depth in UnityEngine.Object.FindObjectsByType<SkyPulseDepthStage>(FindObjectsSortMode.None))depth.Render();camera.Render();
                 Check(camera.rect==expectedViewport && Mathf.Abs(2f*camera.orthographicSize*camera.aspect-expectedCameraWidth)<.001f,"Shared Endless camera width: "+screen+" at "+size.x);
                 Check(((RectTransform)Get(game,"interfaceContentRoot")).rect.width==expectedContentWidth,"Shared Endless interface width: "+screen);
                 if(screen=="home-relay" || screen=="home-blackout")

@@ -82,44 +82,34 @@ public static class SkyPulseOneThumbChecks
         Call(game,"PauseFlight");Check(!(bool)Call(game,"SubmitRelayPress",20,Time.frameCount+5,22f,true,centre),"Paused gameplay ignores touches");Call(game,"ResumeFlight");
         Call(game,"LaunchMission",SkyPulseMode.BlackoutProtocol,0);yield return null;
         var s=(BlackoutSession)Get(game,"blackoutSession");var targets=(List<SkyPulsePressTarget>)Get(game,"blackoutPressTargets");
+        int prism=SkyPulseMissionChecks.Solve(s.Puzzle)[0];
         var pointer=new PointerEventData(EventSystem.current){pointerId=38,button=PointerEventData.InputButton.Left};
-        targets[1].OnPointerDown(pointer);Check(s.Cursor==1&&s.Trace==1,"Real pointer-down moves the puzzle immediately");
-        Check(((List<Text>)Get(game,"blackoutNodeLabels"))[1].text=="YOU" && ((List<SkyPulseBlackoutGraphic>)Get(game,"blackoutNodes"))[1].NodeKind==5,"Current-position marker updates on pointer-down before transport animation finishes");
-        yield return null;targets[2].OnPointerDown(pointer);Check(s.Cursor==1&&s.Trace==1,"Held pointer cannot hit the next node");targets[1].OnPointerUp(pointer);
-        yield return null;targets[2].OnPointerDown(pointer);Check(s.Cursor==2&&s.Trace==2,"Fresh released/repressed pointer advances during the effect");targets[2].OnPointerUp(pointer);
-        int old=(int)Get(game,"blackoutGeneration");
-        Call(game,"LaunchMission",SkyPulseMode.BlackoutProtocol,0);s=(BlackoutSession)Get(game,"blackoutSession");
-        foreach(var a in SkyPulseMissionChecks.Solve(s.Puzzle))Call(game,"TouchBlackoutNode",a.Item1);
-        var next=(BlackoutSession)Get(game,"blackoutSession");Check(s.State==MissionSessionState.Succeeded&&next!=s&&next.Trace==0,"Next puzzle activates in the same completion call");
-        Call(game,"HandleBlackoutPress",1,old,40);Check(next.Trace==0,"Stale previous-puzzle generation cannot act");
-        Call(game,"HandleBlackoutPress",1,(int)Get(game,"blackoutGeneration"),40);Check(next.Trace==0,"Queued completion-frame press cannot enter next puzzle");
-        Check(targets.All(t=>t.GetComponent<Button>().onClick.GetPersistentEventCount()==0),"Movement is not queued in click-on-release callbacks");
+        targets[prism].OnPointerDown(pointer);Check(s.Trace==1&&s.Rotations[prism]!=s.Puzzle.Initial[prism],"Real pointer-down rotates the optic immediately");
+        Check(((SkyPulseHeistBoard)Get(game,"blackoutBoard")).Circuit.Rotations[prism]==s.Rotations[prism],"Visual rotation target updates before animation finishes");
+        yield return null;targets[prism].OnPointerDown(pointer);Check(s.Trace==1,"Held pointer cannot rotate twice");targets[prism].OnPointerUp(pointer);
+        yield return null;targets[prism].OnPointerDown(pointer);Check(s.Trace==2,"Fresh released/repressed pointer responds during the effect");targets[prism].OnPointerUp(pointer);
+        int old=(int)Get(game,"blackoutGeneration");Call(game,"RestartBlackoutVault");s=(BlackoutSession)Get(game,"blackoutSession");
+        foreach(var a in SkyPulseMissionChecks.Solve(s.Puzzle))Call(game,"TouchBlackoutNode",a);
+        var next=(BlackoutSession)Get(game,"blackoutSession");Check(s.State==MissionSessionState.Succeeded&&next!=s&&next.Trace==0,"Next vault activates in the completion call");
+        int nextPrism=SkyPulseMissionChecks.Solve(next.Puzzle)[0];
+        Call(game,"HandleBlackoutPress",nextPrism,old,40);Check(next.Trace==0,"Stale previous-vault generation cannot act");
+        Call(game,"HandleBlackoutPress",nextPrism,(int)Get(game,"blackoutGeneration"),40);Check(next.Trace==0,"Queued completion-frame press cannot enter next vault");
+        Check(targets.All(t=>t.GetComponent<Button>().onClick.GetPersistentEventCount()==0),"Rotations are not queued in click-on-release callbacks");
         foreach(int fps in new[]{30,60,120})
         {
-            Call(game,"LaunchMission",SkyPulseMode.BlackoutProtocol,0);Call(game,"TouchBlackoutNode",1);
-            for(int frame=0;frame<fps;frame++)Call(game,"UpdateProtocolPresentation",1f/fps);
-            Check(((SkyPulseBlackoutGraphic)Get(game,"blackoutNetwork")).Travel==1,"Smooth transport completes at "+fps+" FPS");
+            Call(game,"LaunchMission",SkyPulseMode.BlackoutProtocol,0);Call(game,"RestartBlackoutVault");s=(BlackoutSession)Get(game,"blackoutSession");Call(game,"TouchBlackoutNode",SkyPulseMissionChecks.Solve(s.Puzzle)[0]);
+            var optic=(SkyPulseHeistBoard)Get(game,"blackoutBoard");
+            for(int frame=0;frame<fps;frame++)optic.Tick(1f/fps);
+            Check(Mathf.Abs(Mathf.DeltaAngle(optic.VisualAngle(prism),s.Rotations[prism]*90))<.01f&&s.Trace==1,"Rotation settles without extra turns at "+fps+" FPS: angle="+optic.VisualAngle(prism)+" target="+s.Rotations[prism]+" trace="+s.Trace+" paused="+optic.MotionPaused);
         }
-        Set(game,"reduceMotionEnabled",true);Call(game,"LaunchMission",SkyPulseMode.BlackoutProtocol,0);Call(game,"TouchBlackoutNode",1);
-        Check(((SkyPulseBlackoutGraphic)Get(game,"blackoutNetwork")).Travel==1,"Reduced Motion moves instantly without an interaction delay");
-        Call(game,"UpdateProtocolPresentation",0f);
-        var reducedFeedback=targets[1].GetComponent<SkyPulseButtonFeedback>();reducedFeedback.OnPointerDown(pointer);Call(reducedFeedback,"Update");
-        Check(reducedFeedback.ReducedMotion && targets[1].transform.localScale==Vector3.one,"Reduced Motion preserves generous fixed puzzle hit targets without compression");reducedFeedback.OnPointerUp(pointer);
-        var quietObject=new GameObject("Reduced motion mesh QA",typeof(RectTransform),typeof(CanvasRenderer),typeof(SkyPulseBlackoutGraphic));
-        var quiet=quietObject.GetComponent<SkyPulseBlackoutGraphic>();quiet.Surface=BlackoutSurface.Network;quiet.ReducedMotion=true;quiet.ImpactKind=4;quiet.Animate=false;
-        var quietDraw=(Action<VertexHelper>)Delegate.CreateDelegate(typeof(Action<VertexHelper>),quiet,typeof(SkyPulseBlackoutGraphic).GetMethod("OnPopulateMesh",F,null,new[]{typeof(VertexHelper)},null));
-        using(var vh=new VertexHelper())
-        {
-            quiet.Impact=1;quietDraw(vh);var positions=new Vector3[vh.currentVertCount];var vertex=UIVertex.simpleVert;
-            for(int i=0;i<positions.Length;i++){vh.PopulateUIVertex(ref vertex,i);positions[i]=vertex.position;}
-            quiet.Impact=.25f;quietDraw(vh);bool fixedGeometry=positions.Length==vh.currentVertCount;
-            for(int i=0;i<positions.Length&&fixedGeometry;i++){vh.PopulateUIVertex(ref vertex,i);fixedGeometry=positions[i]==vertex.position;}
-            Check(fixedGeometry,"Reduced Motion feedback fades in place without expanding rings, particles or phase shockwaves");
-        }
-        UnityEngine.Object.Destroy(quietObject);
+        Set(game,"reduceMotionEnabled",true);Call(game,"UpdateProtocolPresentation",0f);
+        Check(targets[prism].transform.localScale==Vector3.one,"3D feedback leaves puzzle touch targets fixed");
+        var network=(SkyPulseHeistBoard)Get(game,"blackoutBoard");network.ReducedMotion=true;network.Reveal=0;
+        network.Tick(0);var points=(Vector3[])Get(network,"beamVertices");var positions=(Vector3[])points.Clone();network.Tick(.4f);
+        Check(positions.SequenceEqual(points),"Reduced Motion keeps real 3D beam geometry stationary");
         Set(game,"reduceMotionEnabled",false);Call(game,"LaunchMission",SkyPulseMode.PulseRelay,2);
-        var crystalHighlights=(List<SpriteRenderer>)Get(game,"relayCrystalHighlights");var guides=(List<SpriteRenderer>)Get(game,"relayApproachGuides");
-        Check(crystalHighlights.Count==8 && guides.Count==0,"Eight random crystals retain premium highlights without an imposed guide path");
+        var crystalHighlights=(List<SpriteRenderer>)Get(game,"relayCrystalHighlights");
+        Check(crystalHighlights.Count==8,"Eight random crystals retain premium highlights without an imposed guide path");
         var animateRelay=(Action)Delegate.CreateDelegate(typeof(Action),game,typeof(SkyPulseNativeGame).GetMethod("AnimateRelayArtwork",F));
         for(int i=0;i<3;i++)animateRelay();long relayBefore=GC.GetAllocatedBytesForCurrentThread();for(int i=0;i<120;i++)animateRelay();
         Check(GC.GetAllocatedBytesForCurrentThread()==relayBefore,"Warmed Relay crystal and gate animation creates no managed allocations");
