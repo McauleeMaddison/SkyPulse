@@ -31,6 +31,7 @@ namespace SkyPulse.Mobile
             {
                 if(resultDepth==null){resultDepth=DepthStage(gameOverScreen.transform,SkyPulseMode.EndlessRoute,new Vector2(0,375),new Vector2(880,528));resultDepth.transform.SetSiblingIndex(2);}resultDepth.ReducedMotion=reduceMotionEnabled;
             }
+            if(holographicTree!=null)holographicTree.ReducedMotion=reduceMotionEnabled;
             if(pipePool[0]==null)return;
             if(routeMetal==null)BuildEndlessDepth();
             bool show=activeMode==SkyPulseMode.EndlessRoute&&(state==FlightState.Playing||state==FlightState.Impact||state==FlightState.GameOver||state==FlightState.Paused);

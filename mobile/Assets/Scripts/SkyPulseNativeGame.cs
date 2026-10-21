@@ -5393,7 +5393,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
 
         private void StartRoundFromCustomize()
         {
-            if (state != FlightState.Customize) return;
+            if (state != FlightState.Customize || cosmeticCategory == CosmeticCategory.Upgrades) return;
             if (purchaseModal != null && purchaseModal.activeSelf) return;
             if (unlockRevealModal != null && unlockRevealModal.activeSelf) return;
             StartFlight();
@@ -5431,12 +5431,17 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
         private void RebuildCustomizeGrid()
         {
             if (customizeContent == null) return;
+            ClearHolographicTree();
+            customizeContent.anchorMin = new Vector2(0f, 1f);
+            customizeContent.anchorMax = new Vector2(1f, 1f);
+            customizeContent.anchoredPosition = Vector2.zero;
             // A fling in the previous tab must not move the newly opened list.
             if (customizeScroll != null)
             {
                 customizeScroll.StopMovement();
                 customizeScroll.vertical = cosmeticCategory != CosmeticCategory.Birds;
                 customizeScroll.horizontal = false;
+                customizeScroll.movementType = ScrollRect.MovementType.Elastic;
             }
             for (var index = customizeContent.childCount - 1; index >= 0; index -= 1) Destroy(customizeContent.GetChild(index).gameObject);
 
@@ -5492,7 +5497,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
                 if (viewportImage != null)
                 {
                     viewportImage.color = tech
-                        ? new Color(.015f, .027f, .067f, .87f)
+                        ? new Color(.006f, .016f, .037f, .94f)
                         : new Color(.003f, .008f, .024f, .12f);
                 }
             }
@@ -5500,7 +5505,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             var owned = 0;
             foreach (var skin in Skins) if (IsSkinOwned(skin)) owned++;
             if (customizeSubtitle != null)
-                customizeSubtitle.text = tech ? "EARN CRYSTALS · POWER YOUR COLLECTION" : $"{owned} / {Skins.Length} BIRDS UNLOCKED · FIND YOUR SIGNATURE";
+                customizeSubtitle.text = tech ? "DRAG TO EXPLORE · TAP A LEVEL TO INSPECT" : $"{owned} / {Skins.Length} BIRDS UNLOCKED · FIND YOUR SIGNATURE";
             for (var index = 0; index < collectionTabs.Count; index++)
             {
                 var selected = tech ? index == 1 : index == 0;
@@ -5510,140 +5515,6 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
                 if (label != null) label.color = selected ? Hex("#f4fbff") : Hex("#8da5c4");
                 collectionTabRails[index].color = new Color(accent.r, accent.g, accent.b, selected ? 1f : .08f);
             }
-        }
-
-        private void BuildTechTree()
-        {
-            var installed = 0;
-            var capacity = 0;
-            foreach (var upgrade in Upgrades) { installed += GetUpgradeLevel(upgrade.Id); capacity += upgrade.MaxLevel; }
-            var branches = new[] { "COLLECTION", "RECOVERY", "MASTERY" };
-            var colours = new[] { Hex("#45eaff"), Hex("#ffc34d"), Hex("#ed69ff") };
-
-            // Connections are rendered first so the glass nodes sit above their light.
-            // Each lane reflects its real prerequisite chain; the decorative root
-            // does not introduce a new purchasable upgrade or a cross-branch gate.
-            for (var branchIndex = 0; branchIndex < branches.Length; branchIndex++)
-            {
-                var x = (branchIndex - 1) * 310f;
-                var colour = colours[branchIndex];
-                CreateTechPath(new Vector2(0f, -177f), new Vector2(x, -295f), colour, true);
-                foreach (var upgrade in Upgrades)
-                {
-                    if (upgrade.Branch != branches[branchIndex] || upgrade.Tier <= 1) continue;
-                    var y = -430f - (upgrade.Tier - 1) * 330f;
-                    CreateTechPath(new Vector2(x, y + 195f), new Vector2(x, y + 135f), colour, IsUpgradePrerequisiteMet(upgrade));
-                }
-            }
-
-            var core = CreateLuminousPanel(customizeContent, "Tech network core", new Vector2(0f, -100f), new Vector2(412f, 154f), Hex("#081c34"), Hex("#45eaff"));
-            core.anchorMin = core.anchorMax = new Vector2(.5f, 1f);
-            core.GetComponent<Image>().raycastTarget = false;
-            CreateUiGlyph(core, "Core wings", new Vector2(0f, 36f), new Vector2(122f, 56f), Hex("#73f3ff"), SkyPulseUiGlyph.Kind.WingMark).Animate = true;
-            CreateText(core, "SKYPULSE CORE", new Vector2(0f, -14f), new Vector2(370f, 39f), 30, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            CreateText(core, $"{installed} / {capacity} LEVELS INSTALLED", new Vector2(0f, -52f), new Vector2(370f, 32f), 24, Hex("#9bdded"), TextAnchor.MiddleCenter, FontStyle.Bold);
-
-            for (var branchIndex = 0; branchIndex < branches.Length; branchIndex++)
-            {
-                var x = (branchIndex - 1) * 310f;
-                var colour = colours[branchIndex];
-                var progress = 0;
-                var branchCapacity = 0;
-                foreach (var upgrade in Upgrades)
-                    if (upgrade.Branch == branches[branchIndex]) { progress += GetUpgradeLevel(upgrade.Id); branchCapacity += upgrade.MaxLevel; }
-                var labelPlate = CreatePanel(customizeContent, branches[branchIndex] + " branch label", new Vector2(x, -257f), new Vector2(272f, 44f), Hex("#061327"));
-                labelPlate.anchorMin = labelPlate.anchorMax = new Vector2(.5f, 1f);
-                labelPlate.GetComponent<Image>().raycastTarget = false;
-                CreateText(labelPlate, $"{branches[branchIndex]}  {progress}/{branchCapacity}", Vector2.zero, new Vector2(272f, 40f), 24, colour, TextAnchor.MiddleCenter, FontStyle.Bold);
-                foreach (var upgrade in Upgrades)
-                    if (upgrade.Branch == branches[branchIndex])
-                        CreateTechMapNode(upgrade, new Vector2(x, -430f - (upgrade.Tier - 1) * 330f), colour);
-            }
-            CreateTopAnchoredText("TAP TO EXPLORE · LEVEL 2 POWERS THE NEXT NODE", -1260f, 24, Hex("#aac3df"), FontStyle.Bold);
-            customizeContent.sizeDelta = new Vector2(0f, 1300f);
-            customizeContent.anchoredPosition = Vector2.zero;
-        }
-
-        private void CreateTechPath(Vector2 from, Vector2 to, Color colour, bool powered)
-        {
-            var pathObject = new GameObject(powered ? "Powered tech path" : "Dormant tech path", typeof(RectTransform), typeof(CanvasRenderer), typeof(SkyPulseTechConnection));
-            pathObject.transform.SetParent(customizeContent, false);
-            var rect = pathObject.GetComponent<RectTransform>();
-            rect.anchorMin = rect.anchorMax = new Vector2(.5f, 1f);
-            rect.sizeDelta = new Vector2(Mathf.Abs(to.x - from.x) + 32f, Mathf.Abs(to.y - from.y) + 32f);
-            rect.anchoredPosition = (from + to) * .5f;
-            var path = pathObject.GetComponent<SkyPulseTechConnection>();
-            path.StartPoint = from - rect.anchoredPosition;
-            path.EndPoint = to - rect.anchoredPosition;
-            path.Powered = powered;
-            path.color = colour;
-            path.raycastTarget = false;
-        }
-
-        private void CreateTechMapNode(Upgrade upgrade, Vector2 position, Color colour)
-        {
-            var level = GetUpgradeLevel(upgrade.Id);
-            var maxed = level >= upgrade.MaxLevel;
-            var unlocked = IsUpgradePrerequisiteMet(upgrade);
-            var affordable = unlocked && !maxed && crystals >= upgrade.PriceAtLevel(level);
-            var frameColour = new Color(colour.r, colour.g, colour.b, unlocked ? 1f : .45f);
-            var node = CreateLuminousPanel(customizeContent, $"{upgrade.Name} tech node", position, new Vector2(274f, 270f),
-                Color.Lerp(Hex("#071022"), colour, unlocked ? .11f : .018f), frameColour);
-            node.anchorMin = node.anchorMax = new Vector2(.5f, 1f);
-            var button = node.gameObject.AddComponent<Button>();
-            button.targetGraphic = node.GetComponent<Image>();
-            button.onClick.AddListener(() => InspectTechNode(upgrade));
-            node.gameObject.AddComponent<SkyPulseButtonFeedback>();
-            var emblemColour = new Color(colour.r, colour.g, colour.b, unlocked ? .95f : .36f);
-            CreateUiGlyph(node, "Tech socket", new Vector2(0f, 72f), new Vector2(97f, 91f), emblemColour, SkyPulseUiGlyph.Kind.CircuitHex);
-            if (!unlocked)
-            {
-                CreateTechLockEmblem(node, new Vector2(0f, 72f), Hex("#a4aecd"));
-            }
-            else if (upgrade.Branch == "COLLECTION")
-            {
-                var icon = CreateImage(node, "Crystal collection emblem", new Vector2(0f, 72f), new Vector2(60f, 79f), Color.white);
-                icon.sprite = LoadSprite(CrystalArtworkPath) ?? softCircleSprite;
-                icon.preserveAspect = true;
-                icon.raycastTarget = false;
-            }
-            else
-            {
-                var kind = upgrade.Branch == "RECOVERY" ? SkyPulseUiGlyph.Kind.RecoveryCore : SkyPulseUiGlyph.Kind.WingMark;
-                var size = upgrade.Branch == "RECOVERY" ? new Vector2(62f, 62f) : new Vector2(68f, 52f);
-                CreateUiGlyph(node, upgrade.Branch + " tech emblem", new Vector2(0f, 72f), size, colour, kind);
-            }
-            var title = CreateText(node, upgrade.Name.Replace(" ", "\n"), new Vector2(0f, -5f), new Vector2(252f, 68f), 28,
-                unlocked ? Hex("#f4fbff") : Hex("#b3bdd8"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            title.horizontalOverflow = HorizontalWrapMode.Wrap;
-            for (var index = 0; index < upgrade.MaxLevel; index++)
-            {
-                var filled = index < level;
-                var pip = CreateLuminousPanel(node, $"Tech level pip {index + 1}", new Vector2((index - 1) * 55f, -58f), new Vector2(43f, 11f),
-                    filled ? colour : Hex("#182a43"), new Color(colour.r, colour.g, colour.b, filled ? .95f : .22f));
-                pip.GetComponent<Image>().raycastTarget = false;
-            }
-            CreateText(node, $"LV {level} / {upgrade.MaxLevel}", new Vector2(0f, -84f), new Vector2(242f, 30f), 24,
-                maxed ? colour : Hex("#bdcce1"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            var status = maxed ? "FULLY POWERED" : !unlocked ? $"NEEDS LV {upgrade.PrerequisiteLevel} ABOVE" : affordable ? $"UPGRADE · {upgrade.PriceAtLevel(level)} ✦" : $"{upgrade.PriceAtLevel(level)} ✦";
-            CreateText(node, status, new Vector2(0f, -114f), new Vector2(254f, 30f), 23,
-                maxed || affordable ? colour : Hex("#9eafc8"), TextAnchor.MiddleCenter, FontStyle.Bold);
-        }
-
-        private void CreateTechLockEmblem(Transform parent, Vector2 position, Color colour)
-        {
-            // A geometric lock stays legible on devices without a padlock font glyph.
-            var lockRoot = new GameObject("Locked tech emblem", typeof(RectTransform));
-            lockRoot.transform.SetParent(parent, false);
-            var rect = lockRoot.GetComponent<RectTransform>();
-            rect.anchorMin = rect.anchorMax = new Vector2(.5f, .5f);
-            rect.anchoredPosition = position;
-            rect.sizeDelta = new Vector2(56f, 64f);
-            CreateImage(rect, "Lock left shackle", new Vector2(-16f, 14f), new Vector2(6f, 26f), colour).raycastTarget = false;
-            CreateImage(rect, "Lock right shackle", new Vector2(16f, 14f), new Vector2(6f, 26f), colour).raycastTarget = false;
-            CreatePanel(rect, "Lock shackle top", new Vector2(0f, 26f), new Vector2(38f, 7f), colour).GetComponent<Image>().raycastTarget = false;
-            CreatePanel(rect, "Lock body", new Vector2(0f, -8f), new Vector2(49f, 36f), colour).GetComponent<Image>().raycastTarget = false;
-            CreateImage(rect, "Lock keyway", new Vector2(0f, -8f), new Vector2(6f, 13f), Hex("#14203d")).raycastTarget = false;
         }
 
         private void InspectTechNode(Upgrade upgrade)
@@ -7506,7 +7377,8 @@ hangarInformationCanvas != null)
             if (keepTreePosition)
             {
                 var maxScroll = Mathf.Max(0f, customizeContent.sizeDelta.y - customizeScroll.viewport.rect.height);
-                customizeContent.anchoredPosition = new Vector2(0f, Mathf.Clamp(treePosition.y, 0f, maxScroll));
+                var maxPan = Mathf.Max(0f, (customizeContent.rect.width - customizeScroll.viewport.rect.width) * .5f);
+                customizeContent.anchoredPosition = new Vector2(Mathf.Clamp(treePosition.x, -maxPan, maxPan), Mathf.Clamp(treePosition.y, 0f, maxScroll));
             }
             if (unlockedSkin != null)
             {

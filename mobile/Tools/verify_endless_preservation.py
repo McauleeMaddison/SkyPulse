@@ -32,7 +32,7 @@ for name in methods:
 # These original methods gain only dispatch/progress/explicit-source hooks.
 hooks={
 'SaveProgress':[('            if (!RecoverWalletTransaction()) return;\n','')],
-'ConfirmPurchase':[('            if (!RecoverWalletTransaction()) return;\n','')],
+'ConfirmPurchase':[('            if (!RecoverWalletTransaction()) return;\n',''), ('                var maxPan = Mathf.Max(0f, (customizeContent.rect.width - customizeScroll.viewport.rect.width) * .5f);\n                customizeContent.anchoredPosition = new Vector2(Mathf.Clamp(treePosition.x, -maxPan, maxPan), Mathf.Clamp(treePosition.y, 0f, maxScroll));', '                customizeContent.anchoredPosition = new Vector2(0f, Mathf.Clamp(treePosition.y, 0f, maxScroll));')],
 'UpdatePipes':[('                    RecordDailyEvent(DailyGameplayEvent.EndlessGate);\n','')],
 'CollectCrystalPickup':[('            RecordDailyEvent(DailyGameplayEvent.CrystalPickup, crystalValue);\n','')],
 'EndFlight':[('            if (activeMode == SkyPulseMode.PulseRelay) { FinishRelayFailure(lastCrashReason); return; }\n','')],
@@ -55,4 +55,4 @@ def catalogue(source,name):
     raise AssertionError(name)
 for name in ['Skins','Worlds','Upgrades']:
     assert catalogue(old,name)==catalogue(new,name),'Stable catalogue changed: '+name
-print(json.dumps({'baseline':BASELINE,'protectedMethodCount':len(methods),'exactBodyHashes':checks,'integrationHookMethods':list(hooks),'allOtherEndlessConstantsUnchanged':True,'ownerAuthorizedTuning':{'pipeSpacingWorldUnitsBefore':5.265,'pipeSpacingWorldUnitsAfter':5.589,'openingHeightChangeWorldUnits':-.18,'date':'2026-10-13'}},indent=2))
+print(json.dumps({'baseline':BASELINE,'protectedMethodCount':len(methods),'exactBodyHashes':checks,'ownerAuthorizedTreePanPositionPreservation':True,'integrationHookMethods':list(hooks),'allOtherEndlessConstantsUnchanged':True,'ownerAuthorizedTuning':{'pipeSpacingWorldUnitsBefore':5.265,'pipeSpacingWorldUnitsAfter':5.589,'openingHeightChangeWorldUnits':-.18,'date':'2026-10-13'}},indent=2))
