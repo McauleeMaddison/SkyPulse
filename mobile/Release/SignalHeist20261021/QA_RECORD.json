@@ -1,6 +1,6 @@
 {
   "candidate": "1.0.0 (17)",
-  "compiledSourceCommit": "4f9398363507801874df507b225b0deef55b5c8b",
+  "compiledSourceCommit": "fe482217ebac1984b064dfd9644880c9b6a185e6",
   "requiredPassMarkers": [
     "SKYPULSE_TECH_TREE_PASS",
     "SKYPULSE_DEPTH_PASS",
@@ -44,8 +44,8 @@
     "Assets/Scripts/SkyPulseNativeGame.Depth.cs": "1deefd6f0a93e63fe7c1ef1f01b9092e02f079d524ecb4465682320560794b9e",
     "Assets/Scripts/SkyPulseNativeGame.Missions.cs": "f81da406730fd0c33a84035a42bfb1c60538a5608ec42af24e4b7a89e0c8a10a",
     "Assets/Scripts/SkyPulseNativeGame.Presentation.cs": "024cf563bb79614b5f1b4260eb791dfa561ae5e42ae71e1ebc6517a052e15750",
-    "Assets/Scripts/SkyPulseNativeGame.TechTree.cs": "0b4ba6bacad53d7d9a07972571dab495c9222be80d587cd99e8c0991c04f0467",
-    "Assets/Scripts/SkyPulseNativeGame.cs": "739ed81cf37b9615723e9d0d27ad5fa69b0c18c08a80ef441f42692527cc9155",
+    "Assets/Scripts/SkyPulseNativeGame.TechTree.cs": "dfc308f1508c0ad4d6bfc87d1906e7f89ec10afcc23f14a3bfbf611085cc1a98",
+    "Assets/Scripts/SkyPulseNativeGame.cs": "9ec11fa8db696236177b3e4c1be1432703c956fdb86998fb3faf9a3308ebae4c",
     "Assets/Scripts/SkyPulsePressTarget.cs": "c796bcf41af73bb8198709a13d6b43605fe38a9636cd9645e28616e64831d73d",
     "Assets/Scripts/SkyPulsePrism.cs": "ed71b97ee7a9df40708827510a1825459edac18ee41cf1f2ac14acc63d3f811f",
     "Assets/Scripts/SkyPulsePublicLinks.cs": "8427bb1103414ea4610f23293834270c4f230b9335ebd550f79c6d80e198b3b0",
@@ -53,21 +53,21 @@
     "Assets/Scripts/SkyPulseRelayEnvironment.cs": "85e59d8253c72982ae8525b2d15f2424d336bc7a997ff3fcdfbde6b3dbe2c462",
     "Assets/Scripts/SkyPulseRelayGate.cs": "745e48b7500df3581847860531d88dfd16427491242ab42a68d131365d4b2598",
     "Assets/Scripts/SkyPulseRoundStartSurface.cs": "379650ff3d28470bf3eae7abbdb0eada594ce98b865ba97d1149265fa68e4671",
-    "Assets/Scripts/SkyPulseTechTreeView.cs": "11be6216b3d177ced84163fdb977c923af9d725a815e52cd351726171c785226",
+    "Assets/Scripts/SkyPulseTechTreeView.cs": "0276110da80d35a9efb61b0501ab5d32da756fdd4804160ab736818fa4aaece0",
     "Assets/Scripts/SkyPulseUiGlyph.cs": "85498185a92fdd6c546a0ef1d4a78bf22b40b0e26a9fc755f62da870feac7bc6"
   },
   "shaderSourceSha256": {
     "Assets/Resources/SkyPulse/Shaders/FlightLight.shader": "19f5bbb0bcef2aae4c64b8ca5c9148ca5367929625615aeffca79c63864430bb",
     "Assets/Resources/SkyPulse/Shaders/HeistOptics.shader": "30eeff5f4c288759a17c8b58d16539d06101fd7457f5f6e6b1411c69d5530b00",
-    "Assets/Resources/SkyPulse/Shaders/HolographicTree.shader": "e703a3eea3bd126c2171c647947bf0dc30325824a1ca60606e37da021cf822e1",
+    "Assets/Resources/SkyPulse/Shaders/HolographicTree.shader": "d10195ed31e2586de07d26c49019aeea520b68f56de6d8b3dc3a3a5eb8ae0887",
     "Assets/Resources/SkyPulse/Shaders/MechanicalBird.shader": "d85ab22ebf38a9ff1573db4dbc768a56901b431c2113018977b57d8108757d13",
     "Assets/Resources/SkyPulse/Shaders/Prism.shader": "eb30c40bd235c49b6e719e35562a832eaa35b256b62d7096318c91c108478597",
     "Assets/Resources/SkyPulse/Shaders/RelayRunway.shader": "abba68e8c771ccb84b9d1c9d40331c0922b828f9e1645b3949d6419c26c91078",
     "Assets/Resources/SkyPulse/Shaders/RelayTitanium.shader": "9bd37433cedaec73541e7223c0100acfff90bc7fae1bf031d6f9d757830d8ca7"
   },
-  "unityLogSha256": "668198dd130529e5218f283ea202c3b9bca2c302e2168d4b693de0e233f08b6f",
-  "qaEvidencePath": "artifacts/signal-heist-20261021/qa-hologram-final",
-  "isolatedProject": "/var/folders/ff/j4_1x4b13lddw8n7x11k6vy00000gn/T/skypulse-modes-qa-084n_u_m",
+  "unityLogSha256": "427d9473fed0ca9588266dee22fa52ed9fd1de9e4bde45c59a27a5d64513e9ef",
+  "qaEvidencePath": "artifacts/signal-heist-20261021/qa-drag-only-final",
+  "isolatedProject": "/var/folders/ff/j4_1x4b13lddw8n7x11k6vy00000gn/T/skypulse-modes-qa-8eq0ov3a",
   "physicalDeviceGameplay": "Pending for build 17 on iPhone and iPad",
   "native": "Fresh iOS IL2CPP export passed; source manifest matches. No build 17 signed archive or upload performed.",
   "warnings": [
@@ -80,6 +80,7 @@
     "Three isolated Home stages; no black backplate; original Endless flight dimensions/handling retained; geometry matches colliders.",
     "Free-pan holographic tree: actual ScrollRect drag events, single connected root, 39 branches/37 junctions, fixed touch targets, next-level/locked/installed purchase behavior, both-axis purchase-position retention, blank tap guard, Hangar cleanup.",
     "Reduced Motion/pause, frame-independent puzzle animation and zero managed allocations in warmed measured presentation loops.",
-    "640/750/1320-pixel phone and 1640-pixel iPad portrait layout captures; simulated safe areas. These are Editor renders, not device captures."
+    "640/750/1320-pixel phone and 1640-pixel iPad portrait layout captures; simulated safe areas. These are Editor renders, not device captures.",
+    "Drag-only spectral revision: scrollbar hidden/unbound, wheel input has no effect, both-axis pointer drag retained; curved shared-ring mesh and faceted lenses replace rigid rods/circular cages; transparent viewport removes black backing."
   ]
 }

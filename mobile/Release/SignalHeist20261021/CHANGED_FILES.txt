@@ -1,3 +1,4 @@
+M	README.md
 A	mobile/Assets/Resources/SkyPulse/Shaders/FlightLight.shader
 A	mobile/Assets/Resources/SkyPulse/Shaders/FlightLight.shader.meta
 A	mobile/Assets/Resources/SkyPulse/Shaders/HeistOptics.shader
@@ -43,6 +44,23 @@ D	mobile/Assets/Scripts/SkyPulseTechConnection.cs
 A	mobile/Assets/Scripts/SkyPulseTechTreeView.cs
 R100	mobile/Assets/Scripts/SkyPulseTechConnection.cs.meta	mobile/Assets/Scripts/SkyPulseTechTreeView.cs.meta
 M	mobile/ProjectSettings/ProjectSettings.asset
+M	mobile/Release/CURRENT_RELEASE.json
+M	mobile/Release/REVIEW_STATUS.md
+A	mobile/Release/SignalHeist20261021/BUILD_INFO.json
+A	mobile/Release/SignalHeist20261021/CHANGED_FILES.txt
+A	mobile/Release/SignalHeist20261021/METADATA_CHECKS.json
+A	mobile/Release/SignalHeist20261021/QA_RECORD.json
+A	mobile/Release/SignalHeist20261021/README.md
+A	mobile/Release/SignalHeist20261021/RELEASE_RECORD.json
+A	mobile/Release/SignalHeist20261021/REVIEW_NOTES.txt
+A	mobile/Release/SignalHeist20261021/SOURCE_MANIFEST.json
+A	mobile/Release/SignalHeist20261021/TESTFLIGHT_NOTES.txt
+A	mobile/Release/SignalHeist20261021/app-information-saved.png
+A	mobile/Release/SignalHeist20261021/holographic-tree-preview.mp4
+A	mobile/Release/SignalHeist20261021/holographic-tree.png
+A	mobile/Release/SignalHeist20261021/metadata.json
+A	mobile/Release/SignalHeist20261021/public-draft-saved.png
+A	mobile/Release/SignalHeist20261021/three-modes-3d-preview.mp4
 M	mobile/Tools/SkyPulseBlackoutChecks.cs
 A	mobile/Tools/SkyPulseCinematicChecks.cs
 M	mobile/Tools/SkyPulseDailyRouteChecks.cs
@@ -57,8 +75,4 @@ M	mobile/Tools/run_modes_qa.py
 M	mobile/Tools/test_release_metadata.py
 M	mobile/Tools/verify_endless_preservation.py
 
-Release records added/updated in the final delivery commit:
- M README.md
- M mobile/Release/CURRENT_RELEASE.json
- M mobile/Release/REVIEW_STATUS.md
-?? mobile/Release/SignalHeist20261021/
+Final release-record/preview refresh accompanies this revision.

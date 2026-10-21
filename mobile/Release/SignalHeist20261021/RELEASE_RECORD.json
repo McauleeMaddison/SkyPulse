@@ -1,16 +1,20 @@
 {
   "candidate": "SkyPulse 1.0.0 (17)",
-  "compiledSourceCommit": "4f9398363507801874df507b225b0deef55b5c8b",
+  "compiledSourceCommit": "fe482217ebac1984b064dfd9644880c9b6a185e6",
   "branch": "main",
   "allRuntimeScriptsMatchPassedQA": 30,
   "candidateSourceEntries": 415,
   "automatedRequiredPassMarkers": 19,
   "localIosExport": {
     "status": "SKYPULSE_IOS_EXPORT_PASS",
-    "path": "/private/tmp/skypulse-17-tree-20261021/iOS",
+    "path": "/private/tmp/skypulse-17-spectral-20261021/iOS",
     "sourceManifestMatchesWorkingTree": true,
-    "sourceCommit": "4f9398363507801874df507b225b0deef55b5c8b",
-    "supersedesEarlierExport": "/private/tmp/skypulse-17-20261021/iOS"
+    "sourceCommit": "fe482217ebac1984b064dfd9644880c9b6a185e6",
+    "supersedesEarlierExport": "/private/tmp/skypulse-17-20261021/iOS",
+    "supersedesEarlierExports": [
+      "/private/tmp/skypulse-17-20261021/iOS",
+      "/private/tmp/skypulse-17-tree-20261021/iOS"
+    ]
   },
   "archive": {
     "status": "Not archived for build 17"
@@ -45,10 +49,10 @@
   "rightsAndSimilarity": "Owner reports ARTA/ChatGPT generation and own references. No exclusive rights or unidentified Apple comparator resolution is certified.",
   "economyAndSaveCompatibility": "Existing wallet, upgrades, prices, prerequisites and Endless keys retained. New optical puzzle uses its own versioned save with access-only migration of old Blackout achievements.",
   "evidenceSha256": {
-    "unity-export-17-tree.log": "a895e120dc5a62c0da30dd380fef38d44e027d6f8c8c33449dc27932898390ca",
-    "unity.log": "668198dd130529e5218f283ea202c3b9bca2c302e2168d4b693de0e233f08b6f",
-    "holographic-tree-preview.mp4": "b70b0fc35e1b604e203d91dba27a5ffd8bcd5675c3e65f325f10b6c52a261fb7",
-    "three-modes-3d-preview.mp4": "7b2e9855ad333935d5e454e78bf6fb5367f1a0ffa0a5f0237998b107bd4f057b"
+    "unity.log": "427d9473fed0ca9588266dee22fa52ed9fd1de9e4bde45c59a27a5d64513e9ef",
+    "holographic-tree-preview.mp4": "d660e8c63f59fb0f514ed5e5b97c5e7b772f8dd6d112d036e6ee0a8cbf4af37e",
+    "three-modes-3d-preview.mp4": "7b2e9855ad333935d5e454e78bf6fb5367f1a0ffa0a5f0237998b107bd4f057b",
+    "unity-export-17-spectral.log": "537c177c25f2e59d050ec81d9fd3e307b459bc12c6fd6f2fb531c8e72091de80"
   },
   "previewVideos": {
     "holographic-tree-preview.mp4": {
@@ -65,5 +69,12 @@
       "height": 1334,
       "fps": 30
     }
+  },
+  "techTree": {
+    "input": "Direct mouse or one-finger drag on both axes; no visible scrollbar or mouse-wheel navigation",
+    "presentation": "Continuous curved spectral filaments and faceted glass lenses over a transparent starfield",
+    "connectedBranches": 39,
+    "junctionsIncludingCore": 37,
+    "economyChanged": false
   }
 }
