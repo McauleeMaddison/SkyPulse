@@ -25,8 +25,10 @@ public static class SkyPulseTechTreeChecks
         var content=(RectTransform)Get(game,"customizeContent");var scroll=(ScrollRect)Get(game,"customizeScroll");var tree=(SkyPulseTechTreeView)Get(game,"holographicTree");
         Call(game,"StartRoundFromCustomize");Check(((GameObject)Get(game,"customizeScreen")).activeInHierarchy,"Blank tree taps do not launch an accidental flight");
         Check(scroll.horizontal&&scroll.vertical&&content.rect.width>scroll.viewport.rect.width&&content.rect.height>scroll.viewport.rect.height,"The tree supports one-finger/mouse panning on both axes");
+        Check(scroll.verticalScrollbar==null&&!scroll.viewport.Find("Collection scroll track").gameObject.activeSelf&&scroll.scrollSensitivity==0,"No visible scrollbar or mouse-wheel scrolling remains in the free-pan tree");
+        var beforeWheel=content.anchoredPosition;scroll.OnScroll(new PointerEventData(EventSystem.current){scrollDelta=new Vector2(0,10)});Check(content.anchoredPosition==beforeWheel,"Mouse wheel cannot move the drag-only tree");
         Check(tree.BranchCount==39&&tree.SocketCount==37,"One core feeds three trunks, nine families and all 27 upgrade levels");
-        var reachable=new HashSet<Vector2>{new Vector2(0,-140)};
+        var reachable=new HashSet<Vector2>{new Vector2(0,-160)};
         for(int pass=0;pass<40;pass++)foreach(var b in tree.Branches)if(reachable.Contains(b.From))reachable.Add(b.To);
         Check(tree.Roots.All(r=>reachable.Contains(r.At)),"Every family and level remains connected to the single core");
         Check(content.GetComponentsInChildren<Button>().Length==36&&!content.GetComponentsInChildren<Image>().Any(i=>i.color.a>.001f),"No separate opaque upgrade cards; fixed generous touch areas overlay the continuous tree");
@@ -59,7 +61,7 @@ public static class SkyPulseTechTreeChecks
         for(int frame=0;frame<90;frame++)
         {
             // A continuous two-axis pan, beginning at the core and visiting all lanes.
-            float t=frame/89f;content.anchoredPosition=new Vector2(Mathf.Sin(t*Mathf.PI*2)*460,Mathf.SmoothStep(0,1900,t));
+            float t=frame/89f;content.anchoredPosition=new Vector2(Mathf.Sin(t*Mathf.PI*2)*640,Mathf.SmoothStep(0,2150,t));
             tree.Tick(1f/10);Canvas.ForceUpdateCanvases();tree.Render();camera.Render();
             RenderTexture.active=rt;var image=new Texture2D(750,1334,TextureFormat.RGB24,false);image.ReadPixels(new Rect(0,0,750,1334),0,0);image.Apply();File.WriteAllBytes(Path.Combine(folder,frame.ToString("000")+".png"),image.EncodeToPNG());UnityEngine.Object.Destroy(image);RenderTexture.active=null;
             yield return null;

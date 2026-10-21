@@ -7,8 +7,13 @@ namespace SkyPulse.Mobile
     public sealed partial class SkyPulseNativeGame
     {
         SkyPulseTechTreeView holographicTree;
-        const float TechTierStride = 910f;
-        const float TechFirstRootY = -560f;
+        // Authored space, not a row/column grid: the three uninterrupted limbs
+        // sweep through a shared free-pan field with room for their level fans.
+        static readonly Vector2[] TechFamilyPositions = {
+            new Vector2(-520,-780), new Vector2(-680,-1630), new Vector2(-470,-2460),
+            new Vector2(80,-700), new Vector2(-90,-1570), new Vector2(70,-2480),
+            new Vector2(650,-830), new Vector2(490,-1660), new Vector2(680,-2500)
+        };
 
         void ClearHolographicTree()
         {
@@ -24,8 +29,8 @@ namespace SkyPulse.Mobile
             var branches = new List<HolographicBranch>(39);
             var roots = new List<HolographicRoot>(40);
             var families = new[] { "COLLECTION", "RECOVERY", "MASTERY" };
-            var colours = new[] { Hex("#45eaff"), Hex("#ffc34d"), Hex("#ed69ff") };
-            var core = new Vector2(0, -140f);
+            var colours = new[] { Hex("#45eaff"), Hex("#7ee4dc"), Hex("#bbabff") };
+            var core = new Vector2(0, -160f);
             var installed = 0;
             var capacity = 0;
             foreach (var upgrade in Upgrades) { installed += GetUpgradeLevel(upgrade.Id); capacity += upgrade.MaxLevel; }
@@ -35,40 +40,40 @@ namespace SkyPulse.Mobile
 
             for (int family = 0; family < families.Length; family++)
             {
-                float x = (family - 1) * 580f;
+                float x = (family - 1) * 560f;
                 var colour = colours[family];
-                var fork = new Vector2(x, -370);
-                branches.Add(new HolographicBranch { From = core, To = fork, Colour = colour, Powered = true });
-                TechLabel(families[family], new Vector2(x, -400), new Vector2(280, 40), 27, colour);
+                var fork = new Vector2(x, family == 1 ? -490 : -450);
+                branches.Add(new HolographicBranch { From = core, To = fork, Colour = colour, Powered = true, Trunk = true });
+                TechLabel(families[family], new Vector2(x + 100, family == 1 ? -520 : -480), new Vector2(280, 40), 27, colour);
                 var previous = fork;
                 foreach (var upgrade in Upgrades)
                 {
                     if (upgrade.Branch != families[family]) continue;
-                    var at = new Vector2(x, TechFirstRootY - (upgrade.Tier - 1) * TechTierStride);
+                    var at = TechFamilyPositions[family * 3 + upgrade.Tier - 1];
                     int level = GetUpgradeLevel(upgrade.Id);
                     bool unlocked = IsUpgradePrerequisiteMet(upgrade);
-                    branches.Add(new HolographicBranch { From = previous, To = at, Colour = colour, Powered = unlocked });
+                    branches.Add(new HolographicBranch { From = previous, To = at, Colour = colour, Powered = unlocked, Trunk = true });
                     roots.Add(new HolographicRoot { At = at, Colour = colour, Powered = unlocked, Size = 32f });
                     CreateTechTouch(upgrade.Name + " family root", at + new Vector2(100, 0), new Vector2(420, 180), () => InspectTechNode(upgrade));
                     TechLabel(upgrade.Name.Replace(" ", "\n"), at + new Vector2(180, -12), new Vector2(276, 76), 31, unlocked ? Hex("#effaff") : Hex("#94a8c2"));
                     for (int index = 0; index < upgrade.MaxLevel; index++)
                     {
                         int selected = index;
-                        var leaf = at + new Vector2(index == 0 ? -100 : index == 1 ? 100 : 0, -240f - index * 210f);
+                        var leaf = at + new Vector2(index == 0 ? -225 : index == 1 ? 205 : -160, -240f - index * 185f);
                         // Every level grows from its family's root. The prerequisite
                         // chain continues along the same uninterrupted main trunk.
                         branches.Add(new HolographicBranch { From = at, To = leaf, Colour = colour, Powered = unlocked && index <= level });
                         roots.Add(new HolographicRoot { At = leaf, Colour = colour, Powered = index < level, Size = index == level && unlocked ? 22f : 14f });
                         CreateTechTouch(upgrade.Id + " level " + (index + 1), leaf, new Vector2(200, 190), () => InspectTechLevel(upgrade, selected));
                         string status = index < level ? "INSTALLED" : index == level && unlocked ? upgrade.PriceAtLevel(index) + " ✦" : "LOCKED";
-                        TechLabel("LEVEL " + (index + 1), leaf + (index == 2 ? new Vector2(125, 0) : new Vector2(0, -42)), new Vector2(200, 34), 25, index <= level && unlocked ? colour : Hex("#94a8c2"));
-                        TechLabel(status, leaf + (index == 2 ? new Vector2(125, -34) : new Vector2(0, -76)), new Vector2(200, 30), 23, index < level ? colour : Hex("#b2c4d8"));
+                        TechLabel("LEVEL " + (index + 1), leaf + new Vector2(0, -42), new Vector2(200, 34), 25, index <= level && unlocked ? colour : Hex("#94a8c2"));
+                        TechLabel(status, leaf + new Vector2(0, -76), new Vector2(200, 30), 23, index < level ? colour : Hex("#b2c4d8"));
                     }
                     previous = at;
                 }
             }
             customizeContent.anchorMin = customizeContent.anchorMax = new Vector2(.5f, 1f);
-            customizeContent.sizeDelta = new Vector2(1900, 3310);
+            customizeContent.sizeDelta = new Vector2(2300, 3600);
             customizeScroll.horizontal = customizeScroll.vertical = true;
             customizeScroll.movementType = ScrollRect.MovementType.Clamped;
             customizeContent.anchoredPosition = Vector2.zero;

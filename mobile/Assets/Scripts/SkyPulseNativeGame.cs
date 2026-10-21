@@ -5442,6 +5442,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
                 customizeScroll.vertical = cosmeticCategory != CosmeticCategory.Birds;
                 customizeScroll.horizontal = false;
                 customizeScroll.movementType = ScrollRect.MovementType.Elastic;
+                customizeScroll.scrollSensitivity = 80f;
             }
             for (var index = customizeContent.childCount - 1; index >= 0; index -= 1) Destroy(customizeContent.GetChild(index).gameObject);
 
@@ -5497,9 +5498,18 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
                 if (viewportImage != null)
                 {
                     viewportImage.color = tech
-                        ? new Color(.006f, .016f, .037f, .94f)
+                        ? new Color(.006f, .016f, .037f, .16f)
                         : new Color(.003f, .008f, .024f, .12f);
                 }
+            }
+            if (customizeScroll != null)
+            {
+                var track = customizeScroll.viewport.Find("Collection scroll track");
+                // Tech Tree is direct-pan only. Retain the Hangar/collection's own
+                // navigation without showing or listening to a tree scrollbar.
+                if (track != null) track.gameObject.SetActive(!tech);
+                customizeScroll.verticalScrollbar = tech || track == null ? null : track.GetComponent<Scrollbar>();
+                customizeScroll.scrollSensitivity = tech ? 0f : 80f;
             }
             var accent = tech ? Hex("#ffc34d") : Hex("#45eaff");
             var owned = 0;
