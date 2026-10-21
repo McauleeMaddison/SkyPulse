@@ -26,6 +26,7 @@ namespace SkyPulse.Mobile
         }
         void UpdateDepthPresentation(float dt)
         {
+            UpdateProgressionPresentation(dt);
             if(homeScreen!=null&&homeScreen.activeInHierarchy){EnsureHomeDepth();homeDepth.ReducedMotion=reduceMotionEnabled;}
             if(gameOverScreen!=null&&gameOverScreen.activeInHierarchy&&activeMode==SkyPulseMode.EndlessRoute)
             {

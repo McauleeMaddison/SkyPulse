@@ -34,13 +34,51 @@ public static class SkyPulseBirdProgressionChecks
         foreach(var label in screen.GetComponentsInChildren<Text>())
             Check(label.resizeTextForBestFit||label.preferredHeight<=label.rectTransform.rect.height+2,"Progression text fits: "+label.text.Replace('\n',' '));
         var buttons=screen.GetComponentsInChildren<Button>();
-        Check(buttons.All(b=>((RectTransform)b.transform).rect.height>=152),"Progression controls retain 45-point targets on a small portrait phone");
+        Check(buttons.All(b=>((RectTransform)b.transform).rect.height>=152),"Progression controls retain at least 152 authored UI units; physical comfort remains a device check");
         for(int i=0;i<buttons.Length;i++)for(int j=i+1;j<buttons.Length;j++)
         {
             var a=(RectTransform)buttons[i].transform;var b=(RectTransform)buttons[j].transform;
             if(a.parent!=b.parent)continue;
             Check(!new Rect(a.anchoredPosition-a.sizeDelta*.5f,a.sizeDelta).Overlaps(new Rect(b.anchoredPosition-b.sizeDelta*.5f,b.sizeDelta)),"Progression buttons do not overlap");
         }
+    }
+    static void StudioChecks(SkyPulseNativeGame game,int pilots)
+    {
+        var studio=(SkyPulseProgressionStage)Get(game,"birdProgressionStage");
+        Check(studio!=null&&studio.PilotCount==pilots,"One studio renders the expected animated bird portraits");
+        var bird=studio.StageCamera.transform.parent.GetComponentsInChildren<SpriteRenderer>()[0];
+        // Registered sprite canvases can contain transparent padding outside the
+        // visible bird. Mesh bounds test the opaque pedestals/light guides;
+        // authored wing registration has its own 90-frame preservation check.
+        foreach(var renderer in studio.StageCamera.transform.parent.GetComponentsInChildren<MeshRenderer>())
+        {
+            var bounds=renderer.bounds;
+            for(int corner=0;corner<8;corner++)
+            {
+                var sign=new Vector3((corner&1)==0?-1:1,(corner&2)==0?-1:1,(corner&4)==0?-1:1);
+                var point=studio.StageCamera.WorldToViewportPoint(bounds.center+Vector3.Scale(bounds.extents,sign));
+                Check(point.x>=0&&point.x<=1&&point.y>=0&&point.y<=1,"Studio mesh stays within its portrait render viewport: "+renderer.name);
+            }
+        }
+        Vector3 position=Vector3.zero;Quaternion rotation=Quaternion.identity;Sprite pose=null;
+        foreach(int fps in new[]{30,60,120})
+        {
+            Set(studio,"clock",0f);studio.ReducedMotion=false;
+            for(int i=0;i<fps;i++)studio.Tick(1f/fps);
+            if(fps==30){position=bird.transform.localPosition;rotation=bird.transform.localRotation;pose=bird.sprite;}
+            Check(Vector3.Distance(position,bird.transform.localPosition)<.0001f&&Quaternion.Angle(rotation,bird.transform.localRotation)<.01f&&pose==bird.sprite,"Registered portrait motion matches at "+fps+" FPS");
+        }
+        studio.ReducedMotion=true;studio.Tick(0);position=bird.transform.localPosition;rotation=bird.transform.localRotation;pose=bird.sprite;
+        studio.Tick(1);Check(position==bird.transform.localPosition&&rotation==bird.transform.localRotation&&pose==bird.sprite,"Reduced Motion freezes the bird pose, dock and bob without blocking input");
+        studio.ReducedMotion=false;studio.MotionPaused=true;float clock=studio.AnimationClock;studio.Tick(2);
+        Check(clock==studio.AnimationClock,"Paused progression studio does not advance");studio.MotionPaused=false;
+        for(int i=0;i<30;i++)studio.Tick(1f/60);
+        long before=GC.GetAllocatedBytesForCurrentThread();for(int i=0;i<240;i++)studio.Tick(1f/60);
+        Check(GC.GetAllocatedBytesForCurrentThread()-before==0,"Warmed progression studio animation allocates no managed memory");
+        var screen=(GameObject)Get(game,"birdProgressionScreen");
+        var primary=screen.GetComponentsInChildren<Button>().Single(b=>b.GetComponentInChildren<Text>().text.StartsWith(pilots==1?"TRAIN ·":"BREED ·"));
+        var hit=(RectTransform)primary.transform;var at=hit.anchoredPosition;studio.Tick(.5f);
+        Check(hit.anchoredPosition==at,"Decorative animation never moves the purchase hit rectangle");
     }
     public static void Pure()
     {
@@ -99,7 +137,7 @@ public static class SkyPulseBirdProgressionChecks
         var p=(SkyPulseBirdProgression)Get(game,"birdProgression");Check(p.Data.core==2&&(int)Get(game,"crystals")==19600&&!screen.activeSelf,"Real Core button purchases once, closes and updates wallet/tree");
         tree=(SkyPulseTechTreeView)Get(game,"holographicTree");Check(tree.CoreRank==2&&tree.Roots[0].Colour==SkyPulseBirdProgression.CoreColours[1],"Core level updates the actual core material colour and halo style");
         Call(game,"OpenHangar");Call(game,"OpenBirdTraining",skins.GetValue(0));yield return null;
-        PanelChecks(screen);
+        PanelChecks(screen);StudioChecks(game,1);
         screen.GetComponentsInChildren<Button>().Single(b=>b.GetComponentInChildren<Text>().text.StartsWith("TRAIN ·")).onClick.Invoke();yield return null;
         Check(p.Genome(ids[0]).level==2&&(int)Get(game,"crystals")==19480,"Training is wired to the live Hangar and wallet");
         Call(game,"BeginBirdProgressionRun");int pickupBonus=0;for(int i=0;i<100;i++)pickupBonus+=(int)Call(game,"BirdPickupBonus");
@@ -111,7 +149,9 @@ public static class SkyPulseBirdProgressionChecks
         Check(reward==4&&afterReward==19484&&(int)Get(game,"crystals")==afterReward,"Trained bird traits credit the real result wallet exactly once");
         store.SetInt(SkyPulseDailyMissions.WalletKey,afterReward);levels.Clear();foreach(var pair in oldLevels)levels[pair.Key]=pair.Value;foreach(var id in oldTechOwned)techOwned.Add(id);
         Call(game,"OpenBreeding",skins.GetValue(0));yield return null;
-        PanelChecks(screen);Call(game,"OpenParentPicker",true);yield return null;PanelChecks(screen);
+        PanelChecks(screen);StudioChecks(game,3);var oldStudio=(SkyPulseProgressionStage)Get(game,"birdProgressionStage");
+        Call(game,"OpenParentPicker",true);Check(!oldStudio.StageCamera.gameObject.activeInHierarchy,"Changing panels immediately disables the old studio camera");yield return null;PanelChecks(screen);
+        Check(oldStudio==null,"Retired progression studio and its native resources are destroyed on the next frame");
         screen.GetComponentsInChildren<Button>().Single(b=>b.GetComponentInChildren<Text>().text=="BACK").onClick.Invoke();yield return null;
         Check(screen.GetComponentsInChildren<Text>().Any(t=>t.text=="LINEAGE LAB"),"Parent picker Back restores the exact breeding preview");
         screen.GetComponentsInChildren<Button>().Single(b=>b.GetComponentInChildren<Text>().text.StartsWith("BREED ·")).onClick.Invoke();yield return null;
