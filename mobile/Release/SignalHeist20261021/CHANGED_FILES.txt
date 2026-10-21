@@ -12,6 +12,8 @@ A	mobile/Assets/Resources/SkyPulse/Shaders/Prism.shader.meta
 M	mobile/Assets/Resources/SkyPulse/Shaders/RelayTitanium.shader
 A	mobile/Assets/Resources/SkyPulse/Shaders/TechTreeField.shader
 A	mobile/Assets/Resources/SkyPulse/Shaders/TechTreeField.shader.meta
+A	mobile/Assets/Scripts/SkyPulseBirdProgression.cs
+A	mobile/Assets/Scripts/SkyPulseBirdProgression.cs.meta
 A	mobile/Assets/Scripts/SkyPulseBirdRig.cs
 A	mobile/Assets/Scripts/SkyPulseBirdRig.cs.meta
 M	mobile/Assets/Scripts/SkyPulseBlackoutCampaign.cs
@@ -26,6 +28,8 @@ A	mobile/Assets/Scripts/SkyPulseFlightEffects.cs.meta
 A	mobile/Assets/Scripts/SkyPulseHeistBoard.cs
 A	mobile/Assets/Scripts/SkyPulseHeistBoard.cs.meta
 M	mobile/Assets/Scripts/SkyPulseMissionModels.cs
+A	mobile/Assets/Scripts/SkyPulseNativeGame.BirdProgression.cs
+A	mobile/Assets/Scripts/SkyPulseNativeGame.BirdProgression.cs.meta
 M	mobile/Assets/Scripts/SkyPulseNativeGame.Blackout.cs
 A	mobile/Assets/Scripts/SkyPulseNativeGame.Cinematic.cs
 A	mobile/Assets/Scripts/SkyPulseNativeGame.Cinematic.cs.meta
@@ -67,6 +71,7 @@ A	mobile/Release/SignalHeist20261021/holographic-tree.png
 A	mobile/Release/SignalHeist20261021/metadata.json
 A	mobile/Release/SignalHeist20261021/public-draft-saved.png
 A	mobile/Release/SignalHeist20261021/three-modes-3d-preview.mp4
+A	mobile/Tools/SkyPulseBirdProgressionChecks.cs
 M	mobile/Tools/SkyPulseBlackoutChecks.cs
 A	mobile/Tools/SkyPulseCinematicChecks.cs
 M	mobile/Tools/SkyPulseDailyRouteChecks.cs
@@ -81,4 +86,4 @@ M	mobile/Tools/run_modes_qa.py
 M	mobile/Tools/test_release_metadata.py
 M	mobile/Tools/verify_endless_preservation.py
 
-Release records, exact-source export evidence and the 15-second actual Unity preview accompany this Tech Tree finish.
+Core/bird progression guide, locally prepared listing copy, exact-source export evidence and the 20-second Unity walkthrough accompany this expansion.

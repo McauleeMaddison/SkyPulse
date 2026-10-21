@@ -18,12 +18,12 @@
       "unit": "characters"
     },
     "description": {
-      "length": 2927,
+      "length": 3660,
       "limit": 4000,
       "unit": "characters"
     },
     "keywords": {
-      "length": 72,
+      "length": 81,
       "limit": 100,
       "unit": "UTF-8 bytes"
     }
@@ -32,10 +32,10 @@
     "No global duplication/comparator test or rights certification.",
     "Later source, policy and live listing changes require renewed checks."
   ],
-  "runtimeMatchesRecordedQA": 32,
-  "sourceManifestMatchesCandidate": 421,
+  "runtimeMatchesRecordedQA": 34,
+  "sourceManifestMatchesCandidate": 425,
   "build": "17",
-  "uniqueUnityGuids": 219,
+  "uniqueUnityGuids": 221,
   "canonicalRuntimeLinks": true,
   "identityRetained": true,
   "advertisingAnalyticsPurchasingPackages": false,

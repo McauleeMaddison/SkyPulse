@@ -110,7 +110,7 @@
         },
         {
             "path": "Assets/Resources/SkyPulse/Shaders/HolographicTree.shader",
-            "sha256": "ae370669ce8a116efa09c456b605b2b04b480906362c0fabd5fecb34046a0cf7"
+            "sha256": "acbc56a23c5d8654d28ea332cc089c1c543231da35d68ff5cf474d6c7dba1ce1"
         },
         {
             "path": "Assets/Resources/SkyPulse/Shaders/HolographicTree.shader.meta",
@@ -1405,6 +1405,14 @@
             "sha256": "25b4d1a1bef77ee0fae9ef6d7a48df624f0b53c837df527c641a4dbe1fb63604"
         },
         {
+            "path": "Assets/Scripts/SkyPulseBirdProgression.cs",
+            "sha256": "af6f9a0238a144a88b0a5e32a03e15b532499c83de5545ac718cf44c497940c3"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseBirdProgression.cs.meta",
+            "sha256": "66904742a4d81fbdabc2b957c22060fe1e8b79c0e7aedaf41b53da60816da0ee"
+        },
+        {
             "path": "Assets/Scripts/SkyPulseBirdRig.cs",
             "sha256": "34d222c47cad692e1fd83a6c76004aee08f587dc0b79f97704c7dd144ce3ff73"
         },
@@ -1509,6 +1517,14 @@
             "sha256": "5a7bbf2377fe79a43154512431f0ecba882124b6839c32b7fa7241456a8f3167"
         },
         {
+            "path": "Assets/Scripts/SkyPulseNativeGame.BirdProgression.cs",
+            "sha256": "b58dc966b441a4deaee30b90c0154303a2e851f59d5a3e3d29c44fd79e7b398e"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseNativeGame.BirdProgression.cs.meta",
+            "sha256": "7fbc6197145331357d865525311bc9bd32fa1bcdc4a3efaa201f634d5e560c58"
+        },
+        {
             "path": "Assets/Scripts/SkyPulseNativeGame.Blackout.cs",
             "sha256": "6d6da25b1cff7aaf544167fc6647b77b628d6dea98a56f404500a6b1df65897d"
         },
@@ -1542,7 +1558,7 @@
         },
         {
             "path": "Assets/Scripts/SkyPulseNativeGame.Missions.cs",
-            "sha256": "f81da406730fd0c33a84035a42bfb1c60538a5608ec42af24e4b7a89e0c8a10a"
+            "sha256": "476e96fec1be2ee57759a70fc8889929be2834ddd3094eb5b491dea85a52909a"
         },
         {
             "path": "Assets/Scripts/SkyPulseNativeGame.Missions.cs.meta",
@@ -1558,7 +1574,7 @@
         },
         {
             "path": "Assets/Scripts/SkyPulseNativeGame.TechTree.cs",
-            "sha256": "4e857151e551bf60da87469101d3e7e76733dfe7405f9e0d350b859447a79b67"
+            "sha256": "8ea2357d8fdcd2680c2398b8a6efef10d2b9aa5497a415f9f9f9961c23fa5428"
         },
         {
             "path": "Assets/Scripts/SkyPulseNativeGame.TechTree.cs.meta",
@@ -1566,7 +1582,7 @@
         },
         {
             "path": "Assets/Scripts/SkyPulseNativeGame.cs",
-            "sha256": "192c1437d9abb3b5a59a4017cb5a2a0fde32a699bf58f95d3da8825d9ad1adf0"
+            "sha256": "71c617ec1ceea3d6468f11d86ec580c9b81df0d7fab0c3d79b6315bae0146caf"
         },
         {
             "path": "Assets/Scripts/SkyPulseNativeGame.cs.meta",
@@ -1630,7 +1646,7 @@
         },
         {
             "path": "Assets/Scripts/SkyPulseTechTreeView.cs",
-            "sha256": "1dfded852096a8a8f7f3a4397184ecc175eead6d528940105b5faee4e556d604"
+            "sha256": "757aae181173a744dd7e9efee9df58b6105f7e636f3925312744770b508af633"
         },
         {
             "path": "Assets/Scripts/SkyPulseTechTreeView.cs.meta",

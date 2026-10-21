@@ -1,20 +1,21 @@
 {
   "candidate": "SkyPulse 1.0.0 (17)",
-  "compiledSourceCommit": "c1c014c3e2b61e355aebd5e96c48444c45583b0c",
+  "compiledSourceCommit": "ca704ba539d986c7fd4b6ea87006e49185af7098",
   "branch": "main",
-  "allRuntimeScriptsMatchPassedQA": 32,
-  "candidateSourceEntries": 421,
-  "automatedRequiredPassMarkers": 19,
+  "allRuntimeScriptsMatchPassedQA": 34,
+  "candidateSourceEntries": 425,
+  "automatedRequiredPassMarkers": 21,
   "localIosExport": {
     "status": "SKYPULSE_IOS_EXPORT_PASS",
-    "path": "/private/tmp/skypulse-17-finish-20261021/iOS",
+    "path": "/private/tmp/skypulse-17-lineage-20261021/iOS",
     "sourceManifestMatchesWorkingTree": true,
-    "sourceCommit": "c1c014c3e2b61e355aebd5e96c48444c45583b0c",
+    "sourceCommit": "ca704ba539d986c7fd4b6ea87006e49185af7098",
     "supersedesEarlierExports": [
       "/private/tmp/skypulse-17-20261021/iOS",
       "/private/tmp/skypulse-17-tree-20261021/iOS",
       "/private/tmp/skypulse-17-spectral-20261021/iOS",
-      "/private/tmp/skypulse-17-projector-20261021/iOS"
+      "/private/tmp/skypulse-17-projector-20261021/iOS",
+      "/private/tmp/skypulse-17-finish-20261021/iOS"
     ]
   },
   "archive": {
@@ -30,9 +31,9 @@
   "publicReviewSubmitted": false,
   "publicDraft": {
     "selectedBuild": "15 (retained; not this local candidate)",
-    "copyCandidate": "17",
+    "copyCandidate": "17 before Core, training and breeding expansion",
     "status": "Prepare for Submission",
-    "descriptionAndReviewNotesSavedAndVerified": true,
+    "descriptionAndReviewNotesSavedAndVerified": false,
     "subtitle": "Flight & Signal Heist Puzzles",
     "categories": [
       "Games",
@@ -42,35 +43,38 @@
     "gameCenterFlag": "Unchecked on signed-in inspection, 21 October 2026",
     "historicalReviewAttachment": "SkyPulse-build7-review.mp4 retained. Current device media required before review.",
     "proof": "public-draft-saved.png",
-    "copyVerifiedAfterReload": true
+    "copyVerifiedAfterReload": false,
+    "lastVerifiedEarlierCopy": "Earlier Signal Heist/Tech Tree copy was saved/read back on 21 October; the newer Core/bird metadata files are prepared locally and have not been saved to App Store Connect."
   },
-  "appPreview": "Both MP4s are silent Unity development renders, not device footage or an App Store preview upload. Fresh physical-device recordings and editing remain required.",
+  "appPreview": "The 20-second Core/training/breeding video is a current exact-source silent Unity render. The older 39-second three-mode video is retained for the earlier Home/gameplay presentation. Neither is physical-device footage or an App Store preview upload.",
   "newExternalAssets": 0,
   "artworkLedger": "mobile/Release/IdentityRights20261013/ARTWORK_LEDGER.json",
   "rightsAndSimilarity": "Owner reports ARTA/ChatGPT generation and own references. No exclusive rights or unidentified Apple comparator resolution is certified.",
-  "economyAndSaveCompatibility": "Existing wallet, upgrades, prices, prerequisites and Endless keys retained. New optical puzzle uses its own versioned save with access-only migration of old Blackout achievements.",
+  "economyAndSaveCompatibility": "Existing wallet/ownership/upgrade identifiers and original family prices remain. Adds owner-requested Core/training/breeding costs and equipped-bird Endless currency rewards, with versioned lineage data and replayable debit recovery. Flight handling, gate score, Relay charge and Blackout rules are unchanged.",
   "evidenceSha256": {
-    "unity-export-17.log": "371a9ca09fb3b1b802644c171eaa078e1ae4e6e37ea717586b88c638ff611b42",
-    "unity.log": "2a538bc23516748e047b20ef4fcce412e8ba965c0398992968d6dbc73e889099",
-    "preview-unity.log": "37471603e30d0236b42b0c021c424dee72139ffbdbfd37165b0d268272f47a91",
-    "holographic-tree-preview.mp4": "7af8d69bc611d3c027b1dc8d58a1330b892825fccffda1d07169f8c4ac507c3b",
+    "unity-export-17.log": "e66357a8a4f3415e19646bb08beead10e15e2e84fbd2aafb80c18da1883994f6",
+    "unity.log": "d9f45001dec5e6626a191ccf7f9476297acd2fe58d65d6a040ad642726cbaca9",
+    "preview-unity.log": "92e7bb3456dbb08a9f876c9fd6b61159c68a7429f92c89ec71be260aa42f24bf",
+    "holographic-tree-preview.mp4": "81ced2853b206a37631f6688a303cf3f55ddc9c22103fc71310981b232f7e4ea",
     "three-modes-3d-preview.mp4": "7b2e9855ad333935d5e454e78bf6fb5367f1a0ffa0a5f0237998b107bd4f057b"
   },
   "previewVideos": {
     "holographic-tree-preview.mp4": {
-      "seconds": 15,
-      "decodedFrames": 450,
+      "seconds": 20,
+      "decodedFrames": 600,
       "width": 750,
       "height": 1334,
       "fps": 30,
-      "uniqueFrames": 450
+      "uniqueFrames": 441,
+      "content": "Core evolution, actual training/breeding and equipped offspring, all five Core stages"
     },
     "three-modes-3d-preview.mp4": {
       "seconds": 39,
       "decodedFrames": 1170,
       "width": 750,
       "height": 1334,
-      "fps": 30
+      "fps": 30,
+      "note": "Earlier unchanged mode-presentation walkthrough; predates Core/bird progression UI."
     }
   },
   "techTree": {
@@ -78,7 +82,7 @@
     "presentation": "Thicker shaded glass branches carrying a narrow light vein; ten calmly animated optical sculptures, a full-bleed navy atmosphere, softened field edges and refined header/upgrade inspector",
     "connectedBranches": 39,
     "junctionsIncludingCore": 37,
-    "economyChanged": false,
+    "economyChanged": true,
     "navigation": "Expansive asymmetric connected map retained. Direct two-axis drag, no wheel/bar; fixed CORE control returns smoothly and interrupts on fresh input.",
     "motionValidationFps": [
       30,
@@ -87,6 +91,33 @@
     ],
     "sculptures": 10,
     "fieldTypography": "Compact 01/02/03 level labels; only next eligible prices appear on the map; exact state/effects/prerequisites remain in the inspector",
-    "touchTargets": "36 generous stationary family/level targets, pairwise disjoint; fixed header and authoritative Button/ScrollRect paths retained"
+    "touchTargets": "37 pairwise-disjoint generous core/family/level targets plus fixed header controls",
+    "legacyFamilyPricesChanged": false,
+    "coreLevels": 5
+  },
+  "birdProgression": {
+    "founders": 15,
+    "traits": [
+      "Collector",
+      "Salvager",
+      "Precision",
+      "Voyager",
+      "Recovery"
+    ],
+    "coreNames": [
+      "Ion",
+      "Jade",
+      "Prism",
+      "Solar",
+      "Nova"
+    ],
+    "maxTraining": 5,
+    "maxOffspring": 20,
+    "breedingUnlockCore": 2,
+    "parentsConsumed": false,
+    "randomOutcome": false,
+    "rewardScope": "Endless currency only; shared tested flight/score/collision retained",
+    "guide": "BIRD_PROGRESSION.md",
+    "physicalValidation": "Pending"
   }
 }
