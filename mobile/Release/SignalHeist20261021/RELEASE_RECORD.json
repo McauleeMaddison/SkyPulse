@@ -1,22 +1,23 @@
 {
   "candidate": "SkyPulse 1.0.0 (17)",
-  "compiledSourceCommit": "6401ed966708af8dfe86fd23966fbe705b4ddf77",
+  "compiledSourceCommit": "0f56968df6d0af05e493cc8d5caa445b87fefaf1",
   "branch": "main",
   "allRuntimeScriptsMatchPassedQA": 36,
   "candidateSourceEntries": 429,
   "automatedRequiredPassMarkers": 21,
   "localIosExport": {
     "status": "SKYPULSE_IOS_EXPORT_PASS",
-    "path": "/private/tmp/skypulse-17-progression-polish-20261021/iOS-verified",
+    "path": "/private/tmp/skypulse-17-core-value-20261021/iOS",
     "sourceManifestMatchesWorkingTree": true,
-    "sourceCommit": "6401ed966708af8dfe86fd23966fbe705b4ddf77",
+    "sourceCommit": "0f56968df6d0af05e493cc8d5caa445b87fefaf1",
     "supersedesEarlierExports": [
       "/private/tmp/skypulse-17-20261021/iOS",
       "/private/tmp/skypulse-17-tree-20261021/iOS",
       "/private/tmp/skypulse-17-spectral-20261021/iOS",
       "/private/tmp/skypulse-17-projector-20261021/iOS",
       "/private/tmp/skypulse-17-finish-20261021/iOS",
-      "/private/tmp/skypulse-17-lineage-20261021/iOS"
+      "/private/tmp/skypulse-17-lineage-20261021/iOS",
+      "/private/tmp/skypulse-17-progression-polish-20261021/iOS-verified"
     ]
   },
   "archive": {
@@ -51,16 +52,16 @@
   "newExternalAssets": 0,
   "artworkLedger": "mobile/Release/IdentityRights20261013/ARTWORK_LEDGER.json",
   "rightsAndSimilarity": "Owner reports ARTA/ChatGPT generation and own references. No exclusive rights or unidentified Apple comparator resolution is certified.",
-  "economyAndSaveCompatibility": "Existing wallet/ownership/upgrade identifiers and original family prices remain. Adds owner-requested Core/training/breeding costs and equipped-bird Endless currency rewards, with versioned lineage data and replayable debit recovery. Flight handling, gate score, Relay charge and Blackout rules are unchanged.",
+  "economyAndSaveCompatibility": "Base catalogue prices/effects/prerequisites and legacy identifiers remain. Owner-requested Core savings reduce Tech Tree, training and breeding payable costs by 0/5/10/15/20 percent. Core evolution and founder unlock prices stay listed; prior purchases are retained without refunds. Bird journals recover absolute debits; stale quotes cannot spend. Flight handling, score, Relay charge and Blackout are unchanged.",
   "evidenceSha256": {
-    "unity-export-17.log": "00526fe0ebc38edefe077bdc34016c3dda22c7e9b91add39652a064ca97c042e",
-    "unity.log": "0729c5be450dc7aac3c75b130fb2cd43513979ca2a233169c14ece15a7209dce",
-    "preview-unity.log": "d95b2e95cfa03710105b130a29f73b74577c23891945e0484f4f8e1fceffe2f8",
-    "holographic-tree-preview.mp4": "9e02124626ea6198604ab185129bb1afc35124514825ddd498426ba0036e070d",
+    "unity-export-17.log": "f1c4d856b1b973bd595dbd0dd03eb413c3093879517ec611baa68b77f05a78d3",
+    "unity.log": "8f120c1da7ce1f21b841fce8da0ac1040ee3978e7a11ad9baf63fed9921321dd",
+    "preview-unity.log": "474f63e7508ac9831c5fae511171719c58652acd6339ad51c2e5c85d09ae77dc",
+    "holographic-tree-preview.mp4": "d282fb6495c380ac03efd74390a9e6241044d51d5cf56f7b201db97a6a8f181e",
     "three-modes-3d-preview.mp4": "7b2e9855ad333935d5e454e78bf6fb5367f1a0ffa0a5f0237998b107bd4f057b",
-    "core-evolution.png": "18958c687d24787cd024e1492b38667018f987c4a385bf4b5994628a3e50ceb6",
-    "bird-training.png": "cef1fa679fa7394fdceb85ce056983a7f79e728d4a5cfc389a4fd7fc0933f79c",
-    "lineage-lab.png": "19d1f12db2bbb6e6400ae2a3900a4a04ba957b5310e3740f2de4332e7564e798"
+    "core-evolution.png": "73060401f37e6596928cecfc8a67415fd1e768a4365a76eb26eb1042f8ecdbb9",
+    "bird-training.png": "8f53412b271bdf1f457e804b9581d9e20826c703f55546015a7cae3e18011316",
+    "lineage-lab.png": "108ccaf591353611c0a8c3a77feb11b57f3b1dcff967ccfde0441e6bdd1be135"
   },
   "previewVideos": {
     "holographic-tree-preview.mp4": {
@@ -96,8 +97,10 @@
     "sculptures": 10,
     "fieldTypography": "Compact 01/02/03 level labels; only next eligible prices appear on the map; exact state/effects/prerequisites remain in the inspector",
     "touchTargets": "37 pairwise-disjoint generous core/family/level targets plus fixed header controls",
-    "legacyFamilyPricesChanged": false,
-    "coreLevels": 5
+    "legacyFamilyPricesChanged": true,
+    "coreLevels": 5,
+    "baseCataloguePricesChanged": false,
+    "payablePricesUseCoreDiscount": true
   },
   "birdProgression": {
     "founders": 15,
@@ -142,5 +145,32 @@
       "bird-training.png",
       "lineage-lab.png"
     ]
+  },
+  "coreValue": {
+    "discountPercentByCore": [
+      0,
+      5,
+      10,
+      15,
+      20
+    ],
+    "appliesTo": [
+      "Tech Tree upgrade purchases",
+      "Bird training",
+      "Breeding"
+    ],
+    "calculation": "Once from base price, payable cost rounded up to whole crystals",
+    "coreEvolutionPrices": [
+      400,
+      900,
+      1800,
+      3200
+    ],
+    "founderUnlockPricesChanged": false,
+    "existingPurchaseRefunds": false,
+    "quotes": "Changed Core/level/payable price requires fresh confirmation before debit",
+    "breedingBenefit": "Choose inherited reward combinations; Core 3+ and trained parents enable higher grades that improve equal-level Endless rewards",
+    "saveMigration": "Existing version-one Core rank determines savings; no new key or currency reset",
+    "physicalEconomyPacing": "Pending"
   }
 }

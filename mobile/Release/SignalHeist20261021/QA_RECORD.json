@@ -1,6 +1,6 @@
 {
   "candidate": "1.0.0 (17)",
-  "compiledSourceCommit": "6401ed966708af8dfe86fd23966fbe705b4ddf77",
+  "compiledSourceCommit": "0f56968df6d0af05e493cc8d5caa445b87fefaf1",
   "requiredPassMarkers": [
     "SKYPULSE_BIRD_PROGRESSION_PURE_PASS",
     "SKYPULSE_BIRD_PROGRESSION_LIVE_PASS",
@@ -27,7 +27,7 @@
   "unityProcessExitCode": 0,
   "unityVersion": "6000.6.0f1",
   "runtimeSourceSha256": {
-    "Assets/Scripts/SkyPulseBirdProgression.cs": "af6f9a0238a144a88b0a5e32a03e15b532499c83de5545ac718cf44c497940c3",
+    "Assets/Scripts/SkyPulseBirdProgression.cs": "7e58b3f0480fa44fdbf4d89fbb73497de2baf8e1694ace4b1c2e404fdb12adcf",
     "Assets/Scripts/SkyPulseBirdRig.cs": "34d222c47cad692e1fd83a6c76004aee08f587dc0b79f97704c7dd144ce3ff73",
     "Assets/Scripts/SkyPulseBlackoutCampaign.cs": "cee6f09a35ff32687a245142b91b68c82d0eec80119dc1aadac747348312687c",
     "Assets/Scripts/SkyPulseBlackoutGraphic.cs": "356b565e022cb186785270a6e2cd33a502a9f376285ed0cee816993c64a1befa",
@@ -41,15 +41,15 @@
     "Assets/Scripts/SkyPulseHeistBoard.cs": "d0717326503928ca7578734e9471053bc93ed79a81803c5bd0457166131e7642",
     "Assets/Scripts/SkyPulseInputFence.cs": "ccf585a47e7bb3d401c4358d792209b548185f755b27b494a368ce7838ec7b25",
     "Assets/Scripts/SkyPulseMissionModels.cs": "2966173db2cd29644df19e99126a13d93f528897bf7153a0ff80938efc874605",
-    "Assets/Scripts/SkyPulseNativeGame.BirdProgression.cs": "445dde8cc2667a829c732f8879a9a6c20c7ab3bfef6dd4582b52ff288b6cfa37",
+    "Assets/Scripts/SkyPulseNativeGame.BirdProgression.cs": "fd0b6d92c28b04e28a554c7fb6240e7c1d9366408bb73e31651ae181e89e66dd",
     "Assets/Scripts/SkyPulseNativeGame.Blackout.cs": "6d6da25b1cff7aaf544167fc6647b77b628d6dea98a56f404500a6b1df65897d",
     "Assets/Scripts/SkyPulseNativeGame.Cinematic.cs": "ec03fc871b4171519dc93d48c7ed7fab8f5fe6f545747fbbfc796ca358206969",
     "Assets/Scripts/SkyPulseNativeGame.Controls.cs": "e952966ad00f418b6f80a86e485dbaee1755521043bc44ab09b11c8bcdd65070",
     "Assets/Scripts/SkyPulseNativeGame.Depth.cs": "3ce23f89172188ce1ca69a13b2c7dd33e4481b9cbca8bdbfccb57885398c0dcf",
     "Assets/Scripts/SkyPulseNativeGame.Missions.cs": "476e96fec1be2ee57759a70fc8889929be2834ddd3094eb5b491dea85a52909a",
     "Assets/Scripts/SkyPulseNativeGame.Presentation.cs": "024cf563bb79614b5f1b4260eb791dfa561ae5e42ae71e1ebc6517a052e15750",
-    "Assets/Scripts/SkyPulseNativeGame.TechTree.cs": "8ea2357d8fdcd2680c2398b8a6efef10d2b9aa5497a415f9f9f9961c23fa5428",
-    "Assets/Scripts/SkyPulseNativeGame.cs": "71c617ec1ceea3d6468f11d86ec580c9b81df0d7fab0c3d79b6315bae0146caf",
+    "Assets/Scripts/SkyPulseNativeGame.TechTree.cs": "058371bfe0fe39485b403acebab1d0c48a53758bd7f5e42ffb27a8df9e63e090",
+    "Assets/Scripts/SkyPulseNativeGame.cs": "9e94b3c2f6ce6e6615159554cdf9840a93579f481aa0e86735dbc9ec4c68dac7",
     "Assets/Scripts/SkyPulsePressTarget.cs": "c796bcf41af73bb8198709a13d6b43605fe38a9636cd9645e28616e64831d73d",
     "Assets/Scripts/SkyPulsePrism.cs": "ed71b97ee7a9df40708827510a1825459edac18ee41cf1f2ac14acc63d3f811f",
     "Assets/Scripts/SkyPulseProgressionStage.cs": "eb94617d7268e57be922e91ec5389d740c1530c8978a8bd9fed5f285bee71db8",
@@ -74,9 +74,9 @@
     "Assets/Resources/SkyPulse/Shaders/RelayTitanium.shader": "9bd37433cedaec73541e7223c0100acfff90bc7fae1bf031d6f9d757830d8ca7",
     "Assets/Resources/SkyPulse/Shaders/TechTreeField.shader": "9f76c0d9ffb0e1636816694b3eaaa62fa30e31708690e4d7a7f33fddc177e846"
   },
-  "unityLogSha256": "0729c5be450dc7aac3c75b130fb2cd43513979ca2a233169c14ece15a7209dce",
-  "qaEvidencePath": "artifacts/progression-polish-20261021",
-  "isolatedProject": "/var/folders/ff/j4_1x4b13lddw8n7x11k6vy00000gn/T/skypulse-modes-qa-07t8ts4y",
+  "unityLogSha256": "8f120c1da7ce1f21b841fce8da0ac1040ee3978e7a11ad9baf63fed9921321dd",
+  "qaEvidencePath": "artifacts/core-value-20261021",
+  "isolatedProject": "/var/folders/ff/j4_1x4b13lddw8n7x11k6vy00000gn/T/skypulse-modes-qa-1moniwp_",
   "physicalDeviceGameplay": "Pending for build 17 on iPhone and iPad",
   "native": "Fresh iOS IL2CPP export passed; source manifest matches. No build 17 signed archive or upload performed.",
   "warnings": [
@@ -98,6 +98,8 @@
     "Actual trained Finch: 8 bonus crystals over 100 physical-pickup bonus calls; retry resets fractional carry. Its four-percent salvage reward credits 4 crystals for a 100-crystal run through the real once-only result-wallet path.",
     "All five Core halo poses match at simulated 30/60/120 FPS, respect Reduced Motion and use separate main-tree/inspector camera stages. Legacy flight physics, score and family catalogues remain protected; approved additions are reward hooks and resolving saved offspring IDs.",
     "Progression visual finish: single isolated 3D bird studio per panel, registered animated poses, inset titanium pedestals, readable exact trait comparisons and parent/offspring presentation. Opaque mesh bounds fit the render viewport; all active text fits and authored purchase/navigation hit targets remain >=152 units and non-overlapping.",
-    "Studio poses match at simulated 30/60/120 FPS, Reduced Motion freezes decoration, pause freezes the clock and the warmed 240-tick loop allocates zero managed bytes. Purchase hit rectangles stay stationary. Switching panels immediately deactivates the previous studio camera and destroys its native resources on the next frame. Actual final source was rendered and visually inspected; this is not device performance verification."
+    "Studio poses match at simulated 30/60/120 FPS, Reduced Motion freezes decoration, pause freezes the clock and the warmed 240-tick loop allocates zero managed bytes. Purchase hit rectangles stay stationary. Switching panels immediately deactivates the previous studio camera and destroys its native resources on the next frame. Actual final source was rendered and visually inspected; this is not device performance verification.",
+    "Core value: 0/5/10/15/20 percent discounts are applied once from base catalogue costs to Tech Tree, training and breeding; whole-crystal rounding and integer boundaries pass. Real map/confirmation/debit agree at all five ranks with exact-balance affordability; duplicate confirmations do not spend twice. A changed Core refreshes the quote without spending until fresh confirmation.",
+    "Discounted training/breeding reject one-crystal-short balances and accept exact balances. Discounted training journals recover the original debit across four interrupted write boundaries and reload. Higher-grade offspring from trained parents demonstrably improve collection strength and actual milestone rewards at equal training level. Legacy controls, base catalogues, effects, save keys and flight/score rules remain protected."
   ]
 }

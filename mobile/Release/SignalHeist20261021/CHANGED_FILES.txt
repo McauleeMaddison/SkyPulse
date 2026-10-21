@@ -71,8 +71,11 @@ A	mobile/Release/SignalHeist20261021/REVIEW_NOTES.txt
 A	mobile/Release/SignalHeist20261021/SOURCE_MANIFEST.json
 A	mobile/Release/SignalHeist20261021/TESTFLIGHT_NOTES.txt
 A	mobile/Release/SignalHeist20261021/app-information-saved.png
+A	mobile/Release/SignalHeist20261021/bird-training.png
+A	mobile/Release/SignalHeist20261021/core-evolution.png
 A	mobile/Release/SignalHeist20261021/holographic-tree-preview.mp4
 A	mobile/Release/SignalHeist20261021/holographic-tree.png
+A	mobile/Release/SignalHeist20261021/lineage-lab.png
 A	mobile/Release/SignalHeist20261021/metadata.json
 A	mobile/Release/SignalHeist20261021/public-draft-saved.png
 A	mobile/Release/SignalHeist20261021/three-modes-3d-preview.mp4
@@ -91,4 +94,4 @@ M	mobile/Tools/run_modes_qa.py
 M	mobile/Tools/test_release_metadata.py
 M	mobile/Tools/verify_endless_preservation.py
 
-Progression visual guide, exact-source native export, current stills and the 20-second Unity walkthrough accompany this source. Public review and physical device validation remain on hold.
+Core savings, inherited reward benefits, exact-price transaction tests, revised local store copy, exact-source native export and the updated 20-second Unity walkthrough accompany this source. Public review and physical device validation remain on hold.
