@@ -32,10 +32,10 @@
     "No global duplication/comparator test or rights certification.",
     "Later source, policy and live listing changes require renewed checks."
   ],
-  "runtimeMatchesRecordedQA": 34,
-  "sourceManifestMatchesCandidate": 425,
+  "runtimeMatchesRecordedQA": 36,
+  "sourceManifestMatchesCandidate": 429,
   "build": "17",
-  "uniqueUnityGuids": 221,
+  "uniqueUnityGuids": 223,
   "canonicalRuntimeLinks": true,
   "identityRetained": true,
   "advertisingAnalyticsPurchasingPackages": false,

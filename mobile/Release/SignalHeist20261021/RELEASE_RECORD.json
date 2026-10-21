@@ -1,21 +1,22 @@
 {
   "candidate": "SkyPulse 1.0.0 (17)",
-  "compiledSourceCommit": "ca704ba539d986c7fd4b6ea87006e49185af7098",
+  "compiledSourceCommit": "6401ed966708af8dfe86fd23966fbe705b4ddf77",
   "branch": "main",
-  "allRuntimeScriptsMatchPassedQA": 34,
-  "candidateSourceEntries": 425,
+  "allRuntimeScriptsMatchPassedQA": 36,
+  "candidateSourceEntries": 429,
   "automatedRequiredPassMarkers": 21,
   "localIosExport": {
     "status": "SKYPULSE_IOS_EXPORT_PASS",
-    "path": "/private/tmp/skypulse-17-lineage-20261021/iOS",
+    "path": "/private/tmp/skypulse-17-progression-polish-20261021/iOS-verified",
     "sourceManifestMatchesWorkingTree": true,
-    "sourceCommit": "ca704ba539d986c7fd4b6ea87006e49185af7098",
+    "sourceCommit": "6401ed966708af8dfe86fd23966fbe705b4ddf77",
     "supersedesEarlierExports": [
       "/private/tmp/skypulse-17-20261021/iOS",
       "/private/tmp/skypulse-17-tree-20261021/iOS",
       "/private/tmp/skypulse-17-spectral-20261021/iOS",
       "/private/tmp/skypulse-17-projector-20261021/iOS",
-      "/private/tmp/skypulse-17-finish-20261021/iOS"
+      "/private/tmp/skypulse-17-finish-20261021/iOS",
+      "/private/tmp/skypulse-17-lineage-20261021/iOS"
     ]
   },
   "archive": {
@@ -52,11 +53,14 @@
   "rightsAndSimilarity": "Owner reports ARTA/ChatGPT generation and own references. No exclusive rights or unidentified Apple comparator resolution is certified.",
   "economyAndSaveCompatibility": "Existing wallet/ownership/upgrade identifiers and original family prices remain. Adds owner-requested Core/training/breeding costs and equipped-bird Endless currency rewards, with versioned lineage data and replayable debit recovery. Flight handling, gate score, Relay charge and Blackout rules are unchanged.",
   "evidenceSha256": {
-    "unity-export-17.log": "e66357a8a4f3415e19646bb08beead10e15e2e84fbd2aafb80c18da1883994f6",
-    "unity.log": "d9f45001dec5e6626a191ccf7f9476297acd2fe58d65d6a040ad642726cbaca9",
-    "preview-unity.log": "92e7bb3456dbb08a9f876c9fd6b61159c68a7429f92c89ec71be260aa42f24bf",
-    "holographic-tree-preview.mp4": "81ced2853b206a37631f6688a303cf3f55ddc9c22103fc71310981b232f7e4ea",
-    "three-modes-3d-preview.mp4": "7b2e9855ad333935d5e454e78bf6fb5367f1a0ffa0a5f0237998b107bd4f057b"
+    "unity-export-17.log": "00526fe0ebc38edefe077bdc34016c3dda22c7e9b91add39652a064ca97c042e",
+    "unity.log": "0729c5be450dc7aac3c75b130fb2cd43513979ca2a233169c14ece15a7209dce",
+    "preview-unity.log": "d95b2e95cfa03710105b130a29f73b74577c23891945e0484f4f8e1fceffe2f8",
+    "holographic-tree-preview.mp4": "9e02124626ea6198604ab185129bb1afc35124514825ddd498426ba0036e070d",
+    "three-modes-3d-preview.mp4": "7b2e9855ad333935d5e454e78bf6fb5367f1a0ffa0a5f0237998b107bd4f057b",
+    "core-evolution.png": "18958c687d24787cd024e1492b38667018f987c4a385bf4b5994628a3e50ceb6",
+    "bird-training.png": "cef1fa679fa7394fdceb85ce056983a7f79e728d4a5cfc389a4fd7fc0933f79c",
+    "lineage-lab.png": "19d1f12db2bbb6e6400ae2a3900a4a04ba957b5310e3740f2de4332e7564e798"
   },
   "previewVideos": {
     "holographic-tree-preview.mp4": {
@@ -65,8 +69,8 @@
       "width": 750,
       "height": 1334,
       "fps": 30,
-      "uniqueFrames": 441,
-      "content": "Core evolution, actual training/breeding and equipped offspring, all five Core stages"
+      "uniqueFrames": 600,
+      "content": "Refined Core evolution, animated 3D bird docks, exact training comparisons, parent-to-offspring signals and real breeding/equipment actions"
     },
     "three-modes-3d-preview.mp4": {
       "seconds": 39,
@@ -119,5 +123,24 @@
     "rewardScope": "Endless currency only; shared tested flight/score/collision retained",
     "guide": "BIRD_PROGRESSION.md",
     "physicalValidation": "Pending"
+  },
+  "presentationPolish": {
+    "scope": [
+      "Core evolution inspector",
+      "Bird training inspector",
+      "Lineage lab",
+      "Parent picker"
+    ],
+    "controls": "Stationary purchase/navigation/parent targets; no interaction blocked by decoration",
+    "geometry": "Lathed titanium pedestals, recessed light rims and connecting inheritance paths",
+    "characters": "Existing registered illustrated bird frames with mechanical-bird rig; no new raster/model/font/audio asset",
+    "motion": "Frame-rate-independent wing cycles, restrained bob/bank, travelling inheritance signals; Reduced Motion freezes decoration",
+    "economyOrFlightChanges": false,
+    "deviceValidation": "Pending",
+    "stills": [
+      "core-evolution.png",
+      "bird-training.png",
+      "lineage-lab.png"
+    ]
   }
 }

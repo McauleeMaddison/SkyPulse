@@ -1,6 +1,6 @@
 {
   "candidate": "1.0.0 (17)",
-  "compiledSourceCommit": "ca704ba539d986c7fd4b6ea87006e49185af7098",
+  "compiledSourceCommit": "6401ed966708af8dfe86fd23966fbe705b4ddf77",
   "requiredPassMarkers": [
     "SKYPULSE_BIRD_PROGRESSION_PURE_PASS",
     "SKYPULSE_BIRD_PROGRESSION_LIVE_PASS",
@@ -41,17 +41,19 @@
     "Assets/Scripts/SkyPulseHeistBoard.cs": "d0717326503928ca7578734e9471053bc93ed79a81803c5bd0457166131e7642",
     "Assets/Scripts/SkyPulseInputFence.cs": "ccf585a47e7bb3d401c4358d792209b548185f755b27b494a368ce7838ec7b25",
     "Assets/Scripts/SkyPulseMissionModels.cs": "2966173db2cd29644df19e99126a13d93f528897bf7153a0ff80938efc874605",
-    "Assets/Scripts/SkyPulseNativeGame.BirdProgression.cs": "b58dc966b441a4deaee30b90c0154303a2e851f59d5a3e3d29c44fd79e7b398e",
+    "Assets/Scripts/SkyPulseNativeGame.BirdProgression.cs": "445dde8cc2667a829c732f8879a9a6c20c7ab3bfef6dd4582b52ff288b6cfa37",
     "Assets/Scripts/SkyPulseNativeGame.Blackout.cs": "6d6da25b1cff7aaf544167fc6647b77b628d6dea98a56f404500a6b1df65897d",
     "Assets/Scripts/SkyPulseNativeGame.Cinematic.cs": "ec03fc871b4171519dc93d48c7ed7fab8f5fe6f545747fbbfc796ca358206969",
     "Assets/Scripts/SkyPulseNativeGame.Controls.cs": "e952966ad00f418b6f80a86e485dbaee1755521043bc44ab09b11c8bcdd65070",
-    "Assets/Scripts/SkyPulseNativeGame.Depth.cs": "cd217df779419e23b33f9de5df958030295e7b82d2ba95dd6033f9c6ce1d005d",
+    "Assets/Scripts/SkyPulseNativeGame.Depth.cs": "3ce23f89172188ce1ca69a13b2c7dd33e4481b9cbca8bdbfccb57885398c0dcf",
     "Assets/Scripts/SkyPulseNativeGame.Missions.cs": "476e96fec1be2ee57759a70fc8889929be2834ddd3094eb5b491dea85a52909a",
     "Assets/Scripts/SkyPulseNativeGame.Presentation.cs": "024cf563bb79614b5f1b4260eb791dfa561ae5e42ae71e1ebc6517a052e15750",
     "Assets/Scripts/SkyPulseNativeGame.TechTree.cs": "8ea2357d8fdcd2680c2398b8a6efef10d2b9aa5497a415f9f9f9961c23fa5428",
     "Assets/Scripts/SkyPulseNativeGame.cs": "71c617ec1ceea3d6468f11d86ec580c9b81df0d7fab0c3d79b6315bae0146caf",
     "Assets/Scripts/SkyPulsePressTarget.cs": "c796bcf41af73bb8198709a13d6b43605fe38a9636cd9645e28616e64831d73d",
     "Assets/Scripts/SkyPulsePrism.cs": "ed71b97ee7a9df40708827510a1825459edac18ee41cf1f2ac14acc63d3f811f",
+    "Assets/Scripts/SkyPulseProgressionStage.cs": "eb94617d7268e57be922e91ec5389d740c1530c8978a8bd9fed5f285bee71db8",
+    "Assets/Scripts/SkyPulseProgressionSurface.cs": "b31ab664b7e628486335d3c287a638033ece93af04def1d599386e73f1c224e6",
     "Assets/Scripts/SkyPulsePublicLinks.cs": "8427bb1103414ea4610f23293834270c4f230b9335ebd550f79c6d80e198b3b0",
     "Assets/Scripts/SkyPulseRelayDeck.cs": "49e1a08623dbe93f51f7deeadb6430d44da161700d7750b4d626b6560a1ee0c1",
     "Assets/Scripts/SkyPulseRelayEnvironment.cs": "85e59d8253c72982ae8525b2d15f2424d336bc7a997ff3fcdfbde6b3dbe2c462",
@@ -72,9 +74,9 @@
     "Assets/Resources/SkyPulse/Shaders/RelayTitanium.shader": "9bd37433cedaec73541e7223c0100acfff90bc7fae1bf031d6f9d757830d8ca7",
     "Assets/Resources/SkyPulse/Shaders/TechTreeField.shader": "9f76c0d9ffb0e1636816694b3eaaa62fa30e31708690e4d7a7f33fddc177e846"
   },
-  "unityLogSha256": "d9f45001dec5e6626a191ccf7f9476297acd2fe58d65d6a040ad642726cbaca9",
-  "qaEvidencePath": "artifacts/core-bird-progression-20261021",
-  "isolatedProject": "/var/folders/ff/j4_1x4b13lddw8n7x11k6vy00000gn/T/skypulse-modes-qa-th_8jard",
+  "unityLogSha256": "0729c5be450dc7aac3c75b130fb2cd43513979ca2a233169c14ece15a7209dce",
+  "qaEvidencePath": "artifacts/progression-polish-20261021",
+  "isolatedProject": "/var/folders/ff/j4_1x4b13lddw8n7x11k6vy00000gn/T/skypulse-modes-qa-07t8ts4y",
   "physicalDeviceGameplay": "Pending for build 17 on iPhone and iPad",
   "native": "Fresh iOS IL2CPP export passed; source manifest matches. No build 17 signed archive or upload performed.",
   "warnings": [
@@ -94,6 +96,8 @@
     "Core/bird expansion: 15 distinct founder trait pairs, exact training/Core prices, capped training/genes/offspring/generation, deterministic preview, retained parents, duplicate-genome/stale-revision rejection, corrupt-primary backup recovery and interrupted debits at four write boundaries.",
     "Real UI Core/training/breeding actions update wallet and roster; offspring artwork/equipment survives load. Old UI-panel callbacks cannot spend. Parent picker Back preserves the breeding view. Modal taps cannot launch flight. New button rectangles are >=152 authored UI units and pairwise disjoint; physical comfort remains pending.",
     "Actual trained Finch: 8 bonus crystals over 100 physical-pickup bonus calls; retry resets fractional carry. Its four-percent salvage reward credits 4 crystals for a 100-crystal run through the real once-only result-wallet path.",
-    "All five Core halo poses match at simulated 30/60/120 FPS, respect Reduced Motion and use separate main-tree/inspector camera stages. Legacy flight physics, score and family catalogues remain protected; approved additions are reward hooks and resolving saved offspring IDs."
+    "All five Core halo poses match at simulated 30/60/120 FPS, respect Reduced Motion and use separate main-tree/inspector camera stages. Legacy flight physics, score and family catalogues remain protected; approved additions are reward hooks and resolving saved offspring IDs.",
+    "Progression visual finish: single isolated 3D bird studio per panel, registered animated poses, inset titanium pedestals, readable exact trait comparisons and parent/offspring presentation. Opaque mesh bounds fit the render viewport; all active text fits and authored purchase/navigation hit targets remain >=152 units and non-overlapping.",
+    "Studio poses match at simulated 30/60/120 FPS, Reduced Motion freezes decoration, pause freezes the clock and the warmed 240-tick loop allocates zero managed bytes. Purchase hit rectangles stay stationary. Switching panels immediately deactivates the previous studio camera and destroys its native resources on the next frame. Actual final source was rendered and visually inspected; this is not device performance verification."
   ]
 }

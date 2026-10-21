@@ -43,6 +43,10 @@ A	mobile/Assets/Scripts/SkyPulseNativeGame.TechTree.cs.meta
 M	mobile/Assets/Scripts/SkyPulseNativeGame.cs
 A	mobile/Assets/Scripts/SkyPulsePrism.cs
 A	mobile/Assets/Scripts/SkyPulsePrism.cs.meta
+A	mobile/Assets/Scripts/SkyPulseProgressionStage.cs
+A	mobile/Assets/Scripts/SkyPulseProgressionStage.cs.meta
+A	mobile/Assets/Scripts/SkyPulseProgressionSurface.cs
+A	mobile/Assets/Scripts/SkyPulseProgressionSurface.cs.meta
 A	mobile/Assets/Scripts/SkyPulseRelayEnvironment.cs
 A	mobile/Assets/Scripts/SkyPulseRelayEnvironment.cs.meta
 M	mobile/Assets/Scripts/SkyPulseRelayGate.cs
@@ -56,6 +60,7 @@ A	mobile/Assets/Scripts/SkyPulseTreeTouchFeedback.cs.meta
 M	mobile/ProjectSettings/ProjectSettings.asset
 M	mobile/Release/CURRENT_RELEASE.json
 M	mobile/Release/REVIEW_STATUS.md
+A	mobile/Release/SignalHeist20261021/BIRD_PROGRESSION.md
 A	mobile/Release/SignalHeist20261021/BUILD_INFO.json
 A	mobile/Release/SignalHeist20261021/CHANGED_FILES.txt
 A	mobile/Release/SignalHeist20261021/METADATA_CHECKS.json
@@ -86,4 +91,4 @@ M	mobile/Tools/run_modes_qa.py
 M	mobile/Tools/test_release_metadata.py
 M	mobile/Tools/verify_endless_preservation.py
 
-Core/bird progression guide, locally prepared listing copy, exact-source export evidence and the 20-second Unity walkthrough accompany this expansion.
+Progression visual guide, exact-source native export, current stills and the 20-second Unity walkthrough accompany this source. Public review and physical device validation remain on hold.

@@ -1518,7 +1518,7 @@
         },
         {
             "path": "Assets/Scripts/SkyPulseNativeGame.BirdProgression.cs",
-            "sha256": "b58dc966b441a4deaee30b90c0154303a2e851f59d5a3e3d29c44fd79e7b398e"
+            "sha256": "445dde8cc2667a829c732f8879a9a6c20c7ab3bfef6dd4582b52ff288b6cfa37"
         },
         {
             "path": "Assets/Scripts/SkyPulseNativeGame.BirdProgression.cs.meta",
@@ -1550,7 +1550,7 @@
         },
         {
             "path": "Assets/Scripts/SkyPulseNativeGame.Depth.cs",
-            "sha256": "cd217df779419e23b33f9de5df958030295e7b82d2ba95dd6033f9c6ce1d005d"
+            "sha256": "3ce23f89172188ce1ca69a13b2c7dd33e4481b9cbca8bdbfccb57885398c0dcf"
         },
         {
             "path": "Assets/Scripts/SkyPulseNativeGame.Depth.cs.meta",
@@ -1603,6 +1603,22 @@
         {
             "path": "Assets/Scripts/SkyPulsePrism.cs.meta",
             "sha256": "1fe1108062ab3835a8bc6ab4743d2f0e104256fa8b8d9aaae134219da21e3168"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseProgressionStage.cs",
+            "sha256": "eb94617d7268e57be922e91ec5389d740c1530c8978a8bd9fed5f285bee71db8"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseProgressionStage.cs.meta",
+            "sha256": "882386610d7485262828d595869971e6e7bd52b2ab264f98bceb5d13ec41ee01"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseProgressionSurface.cs",
+            "sha256": "b31ab664b7e628486335d3c287a638033ece93af04def1d599386e73f1c224e6"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseProgressionSurface.cs.meta",
+            "sha256": "29905d56eb213d5443d253c6e4d482f78f84170fa1cb50acdab4a64200adca31"
         },
         {
             "path": "Assets/Scripts/SkyPulsePublicLinks.cs",

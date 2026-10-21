@@ -1,6 +1,6 @@
 # SkyPulse 1.0.0 (17) — local Signal Heist and depth candidate
 
-Source: `ca704ba539d986c7fd4b6ea87006e49185af7098` on `main`. Unity 6000.6.0f1. Public review stays on hold. This local candidate is not uploaded to TestFlight; build 15 remains the latest uploaded build.
+Source: `6401ed966708af8dfe86fd23966fbe705b4ddf77` on `main`. Unity 6000.6.0f1. Public review stays on hold. This local candidate is not uploaded to TestFlight; build 15 remains the latest uploaded build.
 
 ## What changed
 
@@ -8,6 +8,7 @@ Source: `ca704ba539d986c7fd4b6ea87006e49185af7098` on `main`. Unity 6000.6.0f1. 
 - **Three-mode depth:** separate rendered 3D Home displays, smooth fixed-target button feedback, mechanical gate bodies in Endless, hollow crystal-unlocked hoops in Relay and a raised optical console in Blackout. The enclosing Home backplate is removed. Illustrated world/bird assets are retained; this is a depth composition, not a claim that all raster artwork became fully modeled characters.
 - **Connected Tech Tree:** the expansive, asymmetric family tree remains one connected graph with 39 branches and 37 junctions. Thicker shaded glass conductors carry a narrow moving light vein; the core has one restrained orbit and nine optical family prisms move subtly. A full-bleed midnight atmosphere, softened field edges, calmer header controls and compact level labels replace competing decoration. Only next eligible prices appear on the map; tapping any family/level shows its exact effect and state in the refined inspector. All 37 core/family/level touch targets are generous and non-overlapping. Drag on both axes without a wheel or scrollbar. CORE returns smoothly and any fresh touch interrupts it. The nine family prices/prerequisites/effects and original save identifiers are unchanged; purchases retain both pan coordinates. Hangar restores its own chrome/viewport. Reduced Motion freezes decorative motion without blocking input.
 - **Core and birds:** five upgradeable Core ranks change colour/halo and raise bird training/lineage caps. The 15 founders have distinct pairs of Endless reward traits. Train owned birds, choose two parents, preview the exact inherited traits and fixed cost, then equip/train the saved offspring. Parents remain; duplicate owned genomes and stale confirmations cannot spend twice. [Player rules, prices and verification](BIRD_PROGRESSION.md).
+- **Progression presentation:** Core evolution has a larger optical preview, a five-rank track and concise benefit comparisons. Training and lineage use animated registered bird artwork over real titanium pedestals, with quiet glass surfaces, exact trait rows, parent identity cards and travelling inheritance signals. Purchase/navigation targets remain fixed; Reduced Motion freezes decoration. This visual pass changes no economy or gameplay rule. [Core](core-evolution.png) · [Training](bird-training.png) · [Lineage](lineage-lab.png).
 - **Cleanup:** removed the retired Blackout walker, its renderer paths, old Home hero branches, unused legacy mode-progress class and disconnected upgrade-card connection renderer. The game still has one shipping implementation per mode. QA tools remain outside shipping Assets.
 
 ## Actual Unity previews
@@ -20,7 +21,7 @@ These are silent Editor development renders, not physical-device footage or App 
 
 `QA_RECORD.json` hashes every runtime script and shader. All **21 required pass markers** were present in the final isolated run with exit 0. Checks include all eight puzzles and increasing solution costs, saved attempts/retries/final result, immediate progression with stale-input fencing, exactly-once rewards, Relay 0/2–2/2 and same-frame collection/collision at simulated 30/60/120 FPS, real two-axis drag events, connected tree topology, purchase guards, save/economy compatibility, safe-area layout, Reduced Motion and warmed allocation measurements.
 
-`SOURCE_MANIFEST.json` has 425 entries. Each matches the fresh local iOS IL2CPP export at `/private/tmp/skypulse-17-lineage-20261021/iOS`; `BUILD_INFO.json` identifies the exact commit. Earlier `/private/tmp/skypulse-17-20261021/iOS`, `/private/tmp/skypulse-17-tree-20261021/iOS`, `/private/tmp/skypulse-17-spectral-20261021/iOS`, `/private/tmp/skypulse-17-projector-20261021/iOS` and `/private/tmp/skypulse-17-finish-20261021/iOS` exports are superseded. No signed build 17 archive or upload was performed. A Unity Editor Search startup exception is retained in the log as a vendor warning; intentional medal-save failure injection also logs an expected IOException.
+`SOURCE_MANIFEST.json` has 429 entries. Each matches the fresh local iOS IL2CPP export at `/private/tmp/skypulse-17-progression-polish-20261021/iOS-verified`; `BUILD_INFO.json` identifies the exact commit. Earlier `/private/tmp/skypulse-17-20261021/iOS`, `/private/tmp/skypulse-17-tree-20261021/iOS`, `/private/tmp/skypulse-17-spectral-20261021/iOS`, `/private/tmp/skypulse-17-projector-20261021/iOS` `/private/tmp/skypulse-17-finish-20261021/iOS` and `/private/tmp/skypulse-17-lineage-20261021/iOS` exports are superseded. No signed build 17 archive or upload was performed. A Unity Editor Search startup exception is retained in the log as a vendor warning; intentional medal-save failure injection also logs an expected IOException.
 
 Re-run from the repository root:
 
@@ -45,6 +46,7 @@ No external artwork/model/font/audio was added. The existing 145-image rights le
 
 ## Source map
 
+- `SkyPulseProgressionStage.cs` and `SkyPulseProgressionSurface.cs`: reusable isolated bird studio and static bevelled glass UI, updated through the native progression partial.
 - `SkyPulseBirdProgression.cs` and `SkyPulseNativeGame.BirdProgression.cs`: trait/inheritance model, saved debit recovery, dynamic offspring roster and Core/training/breeding UI. `SkyPulseBirdProgressionChecks.cs` stays in Tools and is not shipped.
 
 - `mobile/Assets/Scripts/SkyPulseBlackoutCampaign.cs`, `SkyPulseNativeGame.Blackout.cs`, `SkyPulseHeistBoard.cs` and `SkyPulseBlackoutGraphic.cs`: optical puzzle state, interactions, progression and 3D board presentation.

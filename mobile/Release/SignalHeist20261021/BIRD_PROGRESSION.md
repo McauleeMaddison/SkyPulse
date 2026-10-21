@@ -50,4 +50,14 @@ Automated checks cover all founder combinations, actual training/result rewards,
 
 Still required: physical iPhone/iPad controls, readability, save/reopen, a longer progression playthrough to assess reward balance, and sustained CPU/GPU/memory/thermal profiling. Editor checks are not a physical-device pass.
 
+## Presentation refinement
+
+Core evolution, training and breeding now share bevelled satin-glass surfaces, quieter secondary controls and an accent-coloured purchase action. Core evolution has a larger live optical preview, a five-rank colour track and compact comparisons for training, lineage bays and gene grade. Training displays both current and next reward values in separate readable rows, with direct access to the Core when capped.
+
+Training and lineage use a single isolated 3D studio per open panel. Registered wing frames and the existing mechanical-bird shader animate above lathed titanium pedestals with recessed light rims. The birds remain authored illustrated characters; the pedestals and connecting display are geometry. Paired moving signals flow from the parent cards towards the offspring without crossing the parent names. The parent picker shows portraits, levels and existing traits. Both parents and the exact inherited combination remain visible before purchase.
+
+Decorative motion never moves a touch rectangle or delays an action. Panel emphasis fades in over 0.18 seconds while controls remain available. Reduced Motion makes this immediate and freezes the bird, pedestal and signal motion. Animated display poses match at simulated 30/60/120 FPS; the measured warmed studio loop allocates no managed memory. Display cameras are disabled immediately when replacing a panel and resources are destroyed on the following frame. Mesh-framing checks and actual Unity-rendered image inspection cover the pedestals; the separate 90-frame registration check covers the authored wing frames. These are Editor checks, not device frame-rate certification.
+
+This visual pass changes no trait calculation, price, inheritance rule, save key, flight force or score. Shipping presentation lives in `SkyPulseNativeGame.BirdProgression.cs`, `SkyPulseProgressionStage.cs` and `SkyPulseProgressionSurface.cs`, with the presentation update called from `SkyPulseNativeGame.Depth.cs`. Focused checks remain outside shipping Assets in `Tools/SkyPulseBirdProgressionChecks.cs`.
+
 The revised description and reviewer notes are prepared locally. The earlier saved App Store Connect copy predates this expansion and must be updated before a later separately authorized review submission.
