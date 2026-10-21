@@ -1,6 +1,6 @@
 # Core, training and inherited bird traits
 
-This local build-17 expansion gives the existing 15 founder birds distinct reward combinations and adds saved offspring to the same Hangar carousel. It is not uploaded or physically device-tested. Public App Review remains on hold.
+This local build-17 expansion gives the existing 15 founder birds distinct reward combinations and adds saved offspring to the same Hangar carousel. Build 17 is available in the existing internal TestFlight group; physical gameplay and economy pacing remain unverified. Public App Review remains on hold.
 
 ## Core evolution
 

@@ -1,27 +1,17 @@
-SkyPulse Arcade 1.0.0 (17) — Signal Heist
+SkyPulse 1.0.0 (17) — Core evolution, bird traits, breeding and Signal Heist
 
-BLACKOUT IS NOW A SIGNAL-ROUTING HEIST
-Tap silver mirror prisms and crystal splitters to rotate them. Route the live laser through EVERY core and the uplink at the same time. Power relays A/B to open matching shutters. A rotation costs 1 trace, or 3 while a red sensor is lit. Spend the budget without extracting and retry. Eight authored vaults increase from 2 to 16 minimum turns. Clears activate the next vault immediately. The old tile-walking game is removed.
+Install as an update and check that your existing crystals, birds, best score and Tech Tree progress remain available.
 
-ALL THREE MODES HAVE DEPTH
-Endless adds cylindrical gate meshes, Relay retains its hollow titanium hoops, and Blackout has an angled 3D optical console. Each Home has its own rendered 3D stage; the enclosing black panel is removed. Controls press visually without shrinking their hit rectangles. Illustrated character/world artwork is retained.
+CORE & UPGRADES
+In Endless Route → Tech Tree, tap the central Core. Ion/Jade/Prism/Solar/Nova have distinct colours and halo motion. Jade/Prism/Solar/Nova reduce Tech Tree, bird-training and breeding prices by 5/10/15/20%. Check the base cost, savings, final price and exact wallet debit. Core evolution and founder unlock prices stay as listed. Drag the connected tree in both directions; CORE returns to its origin. Check purchases retain both pan coordinates.
 
-PULSE RELAY VISUALS
-First crystal charges half the hoop; the second turns red lasers blue and unlocks immediately. Hollow mesh hoops, eight faceted crystal meshes in the four-gate circuit, moving station machinery, reactive engine trails and articulated bird artwork. Original tap-to-flap controls, shared width and Endless handling are retained.
+HANGAR & LINEAGE
+The 15 founders have different Endless reward-trait pairs. Train an owned bird and compare the exact current/next effects. Core level 2 unlocks breeding: choose two owned parents, inspect inherited traits and discounted cost, then breed/equip/train the offspring. Both parents remain owned. At Core 3+, parents trained to level 3 can pass stronger inherited grades. Check reward conditions, parent-picker Back, duplicate purchase protection and saved progress after closing/reopening. Birds share the same flight controls and collision rules.
 
-PLEASE TEST ON YOUR PHONE
-Rotate rapidly, pause/resume, background/reopen an unfinished vault, exhaust trace and retry, finish vault one and check the next is already playable, then finish all eight. Check Reduced Motion, sound/haptics and readability. In Relay verify 0/2 and 1/2 gates stay locked, 2/2 opens automatically and ground collision remains visible. Check all three mode Homes and Main Menu after results.
+THREE MODES
+Endless Route: tap to flap, pass gates, collect crystals, retry or return Home. Pulse Relay: collect both matching randomly placed crystals to unlock each hollow hoop automatically; check the red-to-blue lasers, wing motion, ground collision, pause/retry and Next Mission. Blackout Protocol is now Signal Heist: tap mirrors/splitters to route energy through all cores and the uplink; each rotation spends trace. Check immediate puzzle progression, eight-vault difficulty, failure/retry, pause and saved unfinished attempts.
 
-Unity automated checks and native delivery status are in the release record. Physical-device performance and feel still need your feedback. Public App Review is on hold; this is private testing only.
+PRESENTATION
+Check all three Home screens, the 3D holographic tree, animated bird pedestals and inheritance signals. Test small-screen readability, one-thumb controls, sound/haptics and Reduced Motion. Report the mode/screen, action, expected and actual result, whether retry changes it, plus any frame drops, heat, freeze or crash.
 
-TECH TREE FINISH — LOCAL CANDIDATE, NOT UPLOADED
-Open Endless Route → Tech Tree. The expansive connected map remains; drag on both axes with no scrollbar/wheel. Check thicker shaded glass branches, the narrow energy flow, quieter prisms/core orbit, softened field edges, compact labels and next-eligible prices. Tap roots/levels and inspect the new panel. Check targets near neighbouring branches, drag cancellation, exact prices/prerequisites, installed/future levels, and both-axis position after buying. CORE should return smoothly and stop on fresh input. Reduced Motion should be steady and return instantly. Returning to Hangar must restore its original controls/backdrop. Test on phone and iPad; these build 17 device checks and performance profiling remain pending.
-
-CORE / BIRD PROGRESSION — LOCAL UPDATE
-Tap the central Core in Tech Tree to preview and buy Ion → Jade → Prism → Solar → Nova ranks. Confirm each colour/halo, training cap, inherited-grade limit and lineage bay count. In Hangar, compare each founder's two Endless reward traits, train an owned bird and verify the displayed next-level effects. Core level 2 opens breeding: choose two different owned parents, preview traits/cost, breed and find the offspring in the carousel. Both parents remain owned. Train/equip offspring and restart the app to check persistence. Identical owned genomes and stale confirmations must not spend again. Check small-phone controls, Reduced Motion, parent picker Back, currency display and actual collection/perfect-pass/distance/recovery rewards. Flight controls, gate score, Relay charge requirements and Blackout remain unchanged. This source has not been uploaded or tested on physical devices.
-
-PROGRESSION VISUAL FINISH — LOCAL ONLY
-Check the larger Core preview/rank track, animated bird pedestals, parent-to-offspring signals, exact training comparisons and refreshed parent list. Names and pedestals should remain fully visible; purchase and Back targets must stay fixed while artwork moves. Reduced Motion should freeze decoration immediately. Check real phone/iPad readability, one-thumb selection, camera/memory cleanup across repeated panel changes and sustained GPU/frame time. No rules, prices or saves were changed by this visual pass. These notes are prepared locally and have not been saved to App Store Connect.
-
-CORE VALUE — LOCAL ONLY
-Jade / Prism / Solar / Nova reduce Tech Tree, bird training and breeding costs by 5 / 10 / 15 / 20 percent from their base prices. Check the Core savings preview, map price, confirmation, exact wallet debit and save/reopen. Prices round up to whole crystals and never compound from an already discounted quote. Core evolution and founder unlock costs remain as listed. In Lineage Lab, each trait now explains when it rewards the player. At Core 3+, level-3 trained parents can pass stronger grades; compare equal-level offspring rewards. Physical economy pacing remains unverified. These local notes have not been saved in App Store Connect.
+This is private TestFlight testing. Public App Review remains on hold. Automated Unity checks and native archive validation passed; physical gameplay and sustained performance still need testing.

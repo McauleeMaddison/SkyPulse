@@ -21,15 +21,33 @@
     ]
   },
   "archive": {
-    "status": "Not archived for build 17"
+    "bundleId": "com.mcauleemaddison.skypulse",
+    "version": "1.0.0",
+    "build": "17",
+    "deviceFamilies": [
+      1,
+      2
+    ],
+    "minimumOS": "15.0",
+    "appExecutableSha256": "cf6a54b1eaa637dc82970b3b392e13fa6b2367320ab5a870fe58130dbb2581ee",
+    "status": "ARCHIVE SUCCEEDED",
+    "path": "/private/tmp/skypulse-testflight-17-20261021/SkyPulse-1.0.0-17.xcarchive",
+    "strictCodeSignatureVerified": true
   },
   "testFlight": {
-    "uploaded": false,
-    "latestUploadedBuild": "15",
+    "uploaded": true,
+    "latestUploadedBuild": "17",
+    "status": "Testing in SkyPulse Internal; processed and existing internal tester verified",
     "latestKnownStatus": "Testing in SkyPulse Internal",
-    "externalReviewSubmitted": false
+    "externalReviewSubmitted": false,
+    "testerNotesSaved": true,
+    "testerNotesVerifiedAfterReload": true,
+    "buildId": "1e24db59-0230-4756-9cfe-ed5d79a2eaf4",
+    "groupId": "c9cd5539-95d2-42b6-9e32-a9682a8d3402",
+    "proof": "testflight-build17-testing.png",
+    "notesProof": "testflight-notes17-saved.png"
   },
-  "physicalDeviceGameplay": "Pending for build 17 on iPhone and iPad",
+  "physicalDeviceGameplay": "Pending for build 17 on iPhone and iPad; TestFlight availability is not a device gameplay pass",
   "publicReviewSubmitted": false,
   "publicDraft": {
     "selectedBuild": "15 (retained; not this local candidate)",
@@ -61,7 +79,11 @@
     "three-modes-3d-preview.mp4": "7b2e9855ad333935d5e454e78bf6fb5367f1a0ffa0a5f0237998b107bd4f057b",
     "core-evolution.png": "73060401f37e6596928cecfc8a67415fd1e768a4365a76eb26eb1042f8ecdbb9",
     "bird-training.png": "8f53412b271bdf1f457e804b9581d9e20826c703f55546015a7cae3e18011316",
-    "lineage-lab.png": "108ccaf591353611c0a8c3a77feb11b57f3b1dcff967ccfde0441e6bdd1be135"
+    "lineage-lab.png": "108ccaf591353611c0a8c3a77feb11b57f3b1dcff967ccfde0441e6bdd1be135",
+    "xcode-archive-17.log": "36b1db1ed67736b644499da58c0dd354dc38b5a195b0e17bb924ca250686742c",
+    "xcode-upload-17.log": "b12e74cbd0926dbb41895b62485288087900268c903f2cf5d045c92e01b79106",
+    "codesign-verify-17.log": "ea9ca493e93d57b89e9895bf578ba30b95e3f076be86d5ecaa0ff337798e86b4",
+    "SkyPulse-1.0.0-17.xcarchive.zip": "160fece0fb847e8569a430ebaad66806f6543ab71686ed16edbe976f94223489"
   },
   "previewVideos": {
     "holographic-tree-preview.mp4": {
@@ -172,5 +194,13 @@
     "breedingBenefit": "Choose inherited reward combinations; Core 3+ and trained parents enable higher grades that improve equal-level Endless rewards",
     "saveMigration": "Existing version-one Core rank determines savings; no new key or currency reset",
     "physicalEconomyPacing": "Pending"
-  }
+  },
+  "durableArchive": "artifacts/testflight-17-20261021/SkyPulse-1.0.0-17.xcarchive.zip",
+  "warnings": [
+    "Upload Symbols Failed for UnityRuntime.framework UUID 392D7A7F-6A4F-3A7A-8788-4089FA96FF38. Archive log identifies this as an empty stub synthesized by Xcode when embedding Unity’s static runtime framework. Matching app and UnityFramework dSYMs are retained. Upload succeeded; warning remains. See SYMBOLS_NOTE.md."
+  ],
+  "retainedSymbols": [
+    "SkyPulse.app.dSYM",
+    "UnityFramework.framework.dSYM"
+  ]
 }

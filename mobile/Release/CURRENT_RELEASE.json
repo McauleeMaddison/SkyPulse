@@ -12,6 +12,6 @@
   "sourceManifest": "mobile/Release/SignalHeist20261021/SOURCE_MANIFEST.json",
   "releaseRecord": "mobile/Release/SignalHeist20261021/RELEASE_RECORD.json",
   "artworkLedger": "mobile/Release/IdentityRights20261013/ARTWORK_LEDGER.json",
-  "testFlightStatus": "Local build 17 not uploaded; latest uploaded build 15 remains Testing in SkyPulse Internal",
+  "testFlightStatus": "Build 17 processed and Testing in SkyPulse Internal; existing internal tester access verified",
   "publicAppReview": "On hold pending Apple's clarification, current device/media validation and renewed owner authorization"
 }

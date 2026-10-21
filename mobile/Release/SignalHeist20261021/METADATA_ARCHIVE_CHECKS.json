@@ -1,0 +1,54 @@
+{
+  "metadataPath": "mobile/Release/SignalHeist20261021/metadata.json",
+  "currentReleaseContract": true,
+  "limits": {
+    "name": {
+      "length": 15,
+      "limit": 30,
+      "unit": "characters"
+    },
+    "subtitle": {
+      "length": 29,
+      "limit": 30,
+      "unit": "characters"
+    },
+    "promotionalText": {
+      "length": 142,
+      "limit": 170,
+      "unit": "characters"
+    },
+    "description": {
+      "length": 3815,
+      "limit": 4000,
+      "unit": "characters"
+    },
+    "keywords": {
+      "length": 81,
+      "limit": 100,
+      "unit": "UTF-8 bytes"
+    }
+  },
+  "limitations": [
+    "No global duplication/comparator test or rights certification.",
+    "Later source, policy and live listing changes require renewed checks."
+  ],
+  "privacyUrl": {
+    "url": "https://skypulse.macwebstudio.com/privacy",
+    "http": 200,
+    "contactPresent": true
+  },
+  "supportUrl": {
+    "url": "https://skypulse.macwebstudio.com/support",
+    "http": 200,
+    "contactPresent": true
+  },
+  "runtimeMatchesRecordedQA": 36,
+  "sourceManifestMatchesCandidate": 429,
+  "build": "17",
+  "uniqueUnityGuids": 223,
+  "canonicalRuntimeLinks": true,
+  "identityRetained": true,
+  "advertisingAnalyticsPurchasingPackages": false,
+  "archiveIdentityPrivacyAndPackagedLinks": true,
+  "passed": true
+}

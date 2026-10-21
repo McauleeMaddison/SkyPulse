@@ -78,7 +78,7 @@
   "qaEvidencePath": "artifacts/core-value-20261021",
   "isolatedProject": "/var/folders/ff/j4_1x4b13lddw8n7x11k6vy00000gn/T/skypulse-modes-qa-1moniwp_",
   "physicalDeviceGameplay": "Pending for build 17 on iPhone and iPad",
-  "native": "Fresh iOS IL2CPP export passed; source manifest matches. No build 17 signed archive or upload performed.",
+  "native": "Fresh exact-source iOS IL2CPP export, signed Xcode archive, strict signature/packaged metadata checks and TestFlight upload passed. Build 17 is processed and Testing in SkyPulse Internal. Physical gameplay/performance remain pending; UnityRuntime empty-stub dSYM warning is retained; see SYMBOLS_NOTE.md.",
   "warnings": [
     "Unity Editor Search startup ArgumentOutOfRangeException; vendor stack retained in full log. No gameplay exception occurred. Intentional medal-save IOException injection verified recovery."
   ],
