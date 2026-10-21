@@ -33,9 +33,9 @@
     "Later source, policy and live listing changes require renewed checks."
   ],
   "runtimeMatchesRecordedQA": 32,
-  "sourceManifestMatchesCandidate": 419,
+  "sourceManifestMatchesCandidate": 421,
   "build": "17",
-  "uniqueUnityGuids": 218,
+  "uniqueUnityGuids": 219,
   "canonicalRuntimeLinks": true,
   "identityRetained": true,
   "advertisingAnalyticsPurchasingPackages": false,

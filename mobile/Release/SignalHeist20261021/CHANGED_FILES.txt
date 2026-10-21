@@ -10,6 +10,8 @@ A	mobile/Assets/Resources/SkyPulse/Shaders/MechanicalBird.shader.meta
 A	mobile/Assets/Resources/SkyPulse/Shaders/Prism.shader
 A	mobile/Assets/Resources/SkyPulse/Shaders/Prism.shader.meta
 M	mobile/Assets/Resources/SkyPulse/Shaders/RelayTitanium.shader
+A	mobile/Assets/Resources/SkyPulse/Shaders/TechTreeField.shader
+A	mobile/Assets/Resources/SkyPulse/Shaders/TechTreeField.shader.meta
 A	mobile/Assets/Scripts/SkyPulseBirdRig.cs
 A	mobile/Assets/Scripts/SkyPulseBirdRig.cs.meta
 M	mobile/Assets/Scripts/SkyPulseBlackoutCampaign.cs
@@ -79,4 +81,4 @@ M	mobile/Tools/run_modes_qa.py
 M	mobile/Tools/test_release_metadata.py
 M	mobile/Tools/verify_endless_preservation.py
 
-Final release records and 30 FPS preview accompany the premium projector revision.
+Release records, exact-source export evidence and the 15-second actual Unity preview accompany this Tech Tree finish.
