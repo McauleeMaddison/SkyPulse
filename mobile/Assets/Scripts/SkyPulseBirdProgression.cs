@@ -34,6 +34,18 @@ namespace SkyPulse.Mobile
         public static readonly string[] CoreNames={"ION","JADE","PRISM","SOLAR","NOVA"};
         public static readonly Color[] CoreColours={new Color(.36f,.88f,1),new Color(.35f,1,.70f),new Color(.70f,.48f,1),new Color(1,.72f,.30f),new Color(1,.54f,.80f)};
         public int CorePrice => Data.core<5?CorePrices[Data.core-1]:0;
+        public int UpgradeDiscountPercent => DiscountPercentForCore(Data.core);
+        public static int DiscountPercentForCore(int core)=>Math.Max(0,Math.Min(MaxCore,core)-1)*5;
+        public static int PriceAfterCoreDiscount(int basePrice,int core)
+        {
+            // Round the payable cost up to a whole crystal. Compute from the
+            // catalogue price once, never from an already-discounted quote.
+            if(basePrice<=0)return 0;
+            return (int)(((long)basePrice*(100-DiscountPercentForCore(core))+99)/100);
+        }
+        public int DiscountedPrice(int basePrice)=>PriceAfterCoreDiscount(basePrice,Data.core);
+        public int TrainingCost(BirdGenome bird)=>bird!=null&&bird.level>=1&&bird.level<MaxTraining?DiscountedPrice(TrainingPrices[bird.level-1]):0;
+        public int BreedingCost(BirdGenome bird)=>DiscountedPrice(BreedingPrice(bird));
         public SkyPulseBirdProgression(IMissionStore store,string[] founders)
         {
             this.store=store;this.founders=founders;
@@ -134,7 +146,7 @@ namespace SkyPulse.Mobile
             if(revision!=Data.revision||bird==null||!owned(id)||bird.level>=TrainingCap)return false;
             var next=CopySave();var trained=next.birds.Find(b=>b.id==id);
             if(trained==null){trained=Copy(bird);next.birds.Add(trained);}trained.level++;
-            return Commit(next,TrainingPrices[bird.level-1],revision);
+            return Commit(next,TrainingCost(bird),revision);
         }
         public BirdGenome Preview(string first,string second)
         {
@@ -164,7 +176,7 @@ namespace SkyPulse.Mobile
         {
             RecoverPending();if(revision!=Data.revision||BreedingBlock(first,second,owned)!="")return false;
             var bird=Preview(first,second);var next=CopySave();next.sequence++;next.birds.Add(bird);
-            return Commit(next,BreedingPrice(bird),revision);
+            return Commit(next,BreedingCost(bird),revision);
         }
     }
 }

@@ -23,6 +23,18 @@ namespace SkyPulse.Mobile
         string breedingParentA,breedingParentB;
         BirdGenome flightBirdGenome;
         float birdCollectionCarry;
+        int quotedUpgradePrice=-1,quotedUpgradeLevel=-1,quotedUpgradeCore=-1;
+        int UpgradeCrystalPrice(Upgrade upgrade,int level)=>birdProgression.DiscountedPrice(upgrade.PriceAtLevel(level));
+        void QuoteUpgrade(Upgrade upgrade,int level)
+        {
+            quotedUpgradePrice=UpgradeCrystalPrice(upgrade,level);quotedUpgradeLevel=level;quotedUpgradeCore=birdProgression.Data.core;
+        }
+        bool UpgradeQuoteCurrent(Upgrade upgrade)=>quotedUpgradeLevel==GetUpgradeLevel(upgrade.Id)&&quotedUpgradeCore==birdProgression.Data.core&&quotedUpgradePrice==UpgradeCrystalPrice(upgrade,quotedUpgradeLevel);
+        string CorePriceDescription(int basePrice)
+        {
+            int discount=birdProgression.UpgradeDiscountPercent;
+            return discount==0?"ION CORE · BASE PRICE "+basePrice+" ✦":"BASE "+basePrice+" ✦ · CORE −"+discount+"% · SAVE "+(basePrice-birdProgression.DiscountedPrice(basePrice))+" ✦";
+        }
         void InitializeBirdProgression()
         {
             var ids=new string[Skins.Length];for(int i=0;i<ids.Length;i++)ids[i]=Skins[i].Id;
@@ -167,7 +179,8 @@ namespace SkyPulse.Mobile
             CoreBenefit(0,"LINEAGE",(rank<2?0:rank*4)+" → "+next*4,"Offspring bays");
             int grade=next>=5?3:next>=3?2:1;
             CoreBenefit(280,"INHERITANCE","G"+grade,rank<2?"Breeding unlocks":"Maximum trait grade");
-            ProgressionText(birdProgressionBody,rank<5?"Evolve your Core. Build a stronger lineage.":"Your Core has reached its highest evolution.",-308,27,75,Hex("#b7cfda"));
+            int currentDiscount=birdProgression.UpgradeDiscountPercent,nextDiscount=SkyPulseBirdProgression.DiscountPercentForCore(next);
+            ProgressionText(birdProgressionBody,(rank<5?"UPGRADE SAVINGS · "+currentDiscount+"% → "+nextDiscount+"%":"UPGRADE SAVINGS · "+currentDiscount+"%")+"\nTech Tree · Bird training · Breeding",-308,26,95,Hex("#d2e5ed"));
             var button=ProgressionButton(birdProgressionBody,rank<5?"UPGRADE · "+birdProgression.CorePrice+" ✦":"MAXIMUM CORE",new Vector2(0,-445),new Vector2(820,152),()=>CommitBirdProgression(()=>birdProgression.UpgradeCore(revision)));
             button.interactable=rank<5&&crystals>=birdProgression.CorePrice;birdProgressionNotice.text="BALANCE · "+crystals+" ✦";
         }
@@ -224,9 +237,11 @@ namespace SkyPulse.Mobile
             var trained=JsonUtility.FromJson<BirdGenome>(JsonUtility.ToJson(bird));if(can)trained.level++;
             TraitComparison(bird,trained,bird.primary,-33);TraitComparison(bird,trained,bird.secondary,-179);
             ProgressionText(birdProgressionBody,can?"Next level · stronger rewards in Endless Route":bird.level==5?"Both traits are fully trained":"Evolve your Core to unlock further training",-307,26,68,Hex("#b2cbd7"));
-            var button=ProgressionButton(birdProgressionBody,can?"TRAIN · "+SkyPulseBirdProgression.TrainingPrices[bird.level-1]+" ✦":bird.level>=5?"FULLY TRAINED":"VIEW CORE",new Vector2(0,-445),new Vector2(820,152),()=>{if(can)CommitBirdProgression(()=>birdProgression.Train(skin.Id,revision,OwnBirdId));else OpenCoreProgression();});
-            button.interactable=can?crystals>=SkyPulseBirdProgression.TrainingPrices[bird.level-1]:IsSkinOwned(skin)&&bird.level<5;
+            int price=birdProgression.TrainingCost(bird);
+            var button=ProgressionButton(birdProgressionBody,can?"TRAIN · "+price+" ✦":bird.level>=5?"FULLY TRAINED":"VIEW CORE",new Vector2(0,-445),new Vector2(820,152),()=>{if(can)CommitBirdProgression(()=>birdProgression.Train(skin.Id,revision,OwnBirdId));else OpenCoreProgression();});
+            button.interactable=can?crystals>=price:IsSkinOwned(skin)&&bird.level<5;
             birdProgressionNotice.text=!can&&bird.level<5?"CORE LEVEL "+(birdProgression.Data.core+1)+" UNLOCKS THE NEXT LEVEL":"BALANCE · "+crystals+" ✦";
+            if(can)birdProgressionNotice.text+="\n"+CorePriceDescription(SkyPulseBirdProgression.TrainingPrices[bird.level-1]);
         }
         List<Skin> OwnedBirdRoster(){var list=new List<Skin>();foreach(var b in BirdRoster)if(IsSkinOwned(b))list.Add(b);return list;}
         void OpenBreeding(Skin first)
@@ -246,7 +261,7 @@ namespace SkyPulse.Mobile
                 ProgressionStudio(new Vector2(0,270),new Vector2(820,660),new[]{ProgressionPortrait(FindBird(firstId),new Vector2(-210,175),new Vector2(250,140)),ProgressionPortrait(FindBird(secondId),new Vector2(210,175),new Vector2(250,140)),ProgressionPortrait(skin,new Vector2(0,-110),new Vector2(375,200))},true);
                 ProgressionText(birdProgressionBody,"OFFSPRING   /   GENERATION "+preview.generation,-59,23,50,Hex("#c6d6ff"));
                 InheritedTrait(preview,true,-210);InheritedTrait(preview,false,210);
-                ProgressionText(birdProgressionBody,"Parent A's silhouette. Traits from both parents.\nExact inheritance · no random outcome.",-291,27,92,Hex("#b8cbd7"));
+                ProgressionText(birdProgressionBody,"Combine reward traits for your style of play.\n"+(birdProgression.Data.core<3?"Core 3 unlocks stronger inherited grades.":"Level 3+ parents can pass stronger grades."),-297,26,88,Hex("#b8cbd7"));
             }
             else
             {
@@ -256,17 +271,18 @@ namespace SkyPulse.Mobile
             // Labels and fixed touch targets stay above the shared transparent
             // render target; the recessed card backgrounds remain behind it.
             parentAControl.transform.SetAsLastSibling();parentBControl.transform.SetAsLastSibling();
-            var create=ProgressionButton(birdProgressionBody,preview!=null?"BREED · "+SkyPulseBirdProgression.BreedingPrice(preview)+" ✦":"CHOOSE TWO PARENTS",new Vector2(0,-445),new Vector2(820,152),()=>CommitBirdProgression(()=>birdProgression.Breed(firstId,secondId,revision,OwnBirdId),preview?.id));
-            create.interactable=block==""&&crystals>=SkyPulseBirdProgression.BreedingPrice(preview);
-            birdProgressionNotice.text=block!=""?block:"BALANCE · "+crystals+" ✦   /   "+birdProgression.OffspringCount+" OF "+birdProgression.BreedingCapacity+" LINEAGE BAYS";
+            var create=ProgressionButton(birdProgressionBody,preview!=null?"BREED · "+birdProgression.BreedingCost(preview)+" ✦":"CHOOSE TWO PARENTS",new Vector2(0,-445),new Vector2(820,152),()=>CommitBirdProgression(()=>birdProgression.Breed(firstId,secondId,revision,OwnBirdId),preview?.id));
+            create.interactable=block==""&&crystals>=birdProgression.BreedingCost(preview);
+            birdProgressionNotice.text=block!=""?block:"BALANCE · "+crystals+" ✦   /   "+birdProgression.OffspringCount+" OF "+birdProgression.BreedingCapacity+" BAYS\n"+CorePriceDescription(SkyPulseBirdProgression.BreedingPrice(preview));
         }
         void InheritedTrait(BirdGenome bird,bool first,float x)
         {
             var trait=(BirdTrait)(first?bird.primary:bird.secondary);int grade=first?bird.primaryGrade:bird.secondaryGrade;
-            var row=ProgressionSurface(birdProgressionBody,"Inherited trait · "+trait,new Vector2(x,-164),new Vector2(400,130),SkyPulseProgressionSurface.Finish.Inset).transform;
+            var row=ProgressionSurface(birdProgressionBody,"Inherited trait · "+trait,new Vector2(x,-168),new Vector2(400,156),SkyPulseProgressionSurface.Finish.Inset).transform;
             var colour=SkyPulseBirdProgression.CoreColours[(int)trait];
-            ProgressionLabel(row,trait.ToString().ToUpperInvariant()+"  /  G"+grade,new Vector2(0,29),new Vector2(370,38),25,Hex("#b6cbd7"),TextAnchor.MiddleCenter);
-            ProgressionLabel(row,TraitValue(trait,SkyPulseBirdProgression.Points(bird,trait)),new Vector2(0,-20),new Vector2(370,58),35,colour,TextAnchor.MiddleCenter).fontStyle=FontStyle.Bold;
+            ProgressionLabel(row,trait.ToString().ToUpperInvariant()+"  /  G"+grade,new Vector2(0,46),new Vector2(370,38),24,Hex("#b6cbd7"),TextAnchor.MiddleCenter);
+            ProgressionLabel(row,TraitValue(trait,SkyPulseBirdProgression.Points(bird,trait)),new Vector2(0,-3),new Vector2(370,58),34,colour,TextAnchor.MiddleCenter).fontStyle=FontStyle.Bold;
+            ProgressionLabel(row,TraitContext(trait),new Vector2(0,-54),new Vector2(370,38),23,Hex("#c2d5e0"),TextAnchor.MiddleCenter);
         }
         Button ParentPortrait(bool first,string id)
         {

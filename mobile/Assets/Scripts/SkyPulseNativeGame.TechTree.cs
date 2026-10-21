@@ -44,7 +44,7 @@ namespace SkyPulse.Mobile
             TechLabel("SKYPULSE CORE", new Vector2(0, -48), new Vector2(580, 54), 34, Hex("#effcff"));
             TechLabel($"{installed} / {capacity} INSTALLED", new Vector2(0, -94), new Vector2(580, 36), 25, Hex("#91a9be"));
             TechLabel(SkyPulseBirdProgression.CoreNames[birdProgression.Data.core-1]+" · CORE "+birdProgression.Data.core+" / 5",new Vector2(0,-141),new Vector2(580,34),25,SkyPulseBirdProgression.CoreColours[birdProgression.Data.core-1]);
-            TechLabel(birdProgression.Data.core<5?"TAP CORE TO EVOLVE":"TAP FOR CORE DETAILS",new Vector2(0,-370),new Vector2(400,32),23,Hex("#8fbdcc"));
+            TechLabel("CORE SAVINGS · "+birdProgression.UpgradeDiscountPercent+"% · "+(birdProgression.Data.core<5?"TAP TO EVOLVE":"DETAILS"),new Vector2(0,-370),new Vector2(580,32),23,Hex("#a9c8d8"));
 
             for (int family = 0; family < families.Length; family++)
             {
@@ -81,7 +81,7 @@ namespace SkyPulse.Mobile
                         // Keep the map calm; exact effects, prerequisites and every
                         // level's state remain available in the tap inspector.
                         if (index == level && unlocked)
-                            TechLabel(upgrade.PriceAtLevel(index) + " ✦", leaf + new Vector2(side * 80, -34), new Vector2(120, 30), 24, Hex("#d1e4ec"));
+                            TechLabel(UpgradeCrystalPrice(upgrade,index) + " ✦", leaf + new Vector2(side * 80, -34), new Vector2(120, 30), 24, Hex("#d1e4ec"));
                     }
                     previous = at;
                 }

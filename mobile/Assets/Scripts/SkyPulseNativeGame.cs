@@ -7289,14 +7289,17 @@ hangarInformationCanvas != null)
 
         private void SelectUpgrade(Upgrade upgrade)
         {
+            if (!RecoverWalletTransaction()) return;
             if (upgrade == null || !IsUpgradePrerequisiteMet(upgrade)) return;
             var level = GetUpgradeLevel(upgrade.Id);
             if (level >= upgrade.MaxLevel) return;
             pendingUpgrade = upgrade;
             pendingSkin = null;
             pendingPurchase = PendingPurchase.Upgrade;
-            OpenPurchaseModal($"{upgrade.Name}  ·  L{level + 1}", upgrade.EffectAtLevel(level), upgrade.PriceAtLevel(level), upgrade.Accent, GetUpgradeArtwork(upgrade) ?? softCircleSprite);
+            QuoteUpgrade(upgrade,level);
+            OpenPurchaseModal($"{upgrade.Name}  ·  L{level + 1}", upgrade.EffectAtLevel(level), quotedUpgradePrice, upgrade.Accent, GetUpgradeArtwork(upgrade) ?? softCircleSprite);
             SetPurchaseUpgradeArtwork(upgrade);
+            purchaseBalanceText.text += "\n" + CorePriceDescription(upgrade.PriceAtLevel(level));
         }
 
         private void OpenPurchaseModal(Skin skin)
@@ -7349,6 +7352,7 @@ hangarInformationCanvas != null)
             pendingSkin = null;
             pendingUpgrade = null;
             pendingPurchase = PendingPurchase.None;
+            quotedUpgradePrice=quotedUpgradeLevel=quotedUpgradeCore=-1;
         }
 
         private void ConfirmPurchase()
@@ -7360,10 +7364,15 @@ hangarInformationCanvas != null)
                 ClosePurchaseModal();
                 return;
             }
+            if (pendingPurchase == PendingPurchase.Upgrade && !UpgradeQuoteCurrent(pendingUpgrade))
+            {
+                SelectUpgrade(pendingUpgrade);
+                return;
+            }
             if (purchaseConfirmButton != null) purchaseConfirmButton.interactable = false;
             var price = pendingPurchase == PendingPurchase.Skin && pendingSkin != null ? pendingSkin.Price
                 : pendingPurchase == PendingPurchase.Upgrade && pendingUpgrade != null
-                    ? pendingUpgrade.PriceAtLevel(GetUpgradeLevel(pendingUpgrade.Id)) : -1;
+                    ? UpgradeCrystalPrice(pendingUpgrade,GetUpgradeLevel(pendingUpgrade.Id)) : -1;
             if (price < 0 || crystals < price)
             {
                 if (purchaseConfirmButton != null) purchaseConfirmButton.interactable = crystals >= Mathf.Max(0, price);

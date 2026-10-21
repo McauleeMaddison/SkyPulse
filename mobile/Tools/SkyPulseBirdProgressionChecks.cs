@@ -97,7 +97,7 @@ public static class SkyPulseBirdProgressionChecks
         Check(!p.Breed(ids[0],ids[0],rev,Owned)&&!p.Breed(ids[0],ids[1],rev,id=>id==ids[0]),"Breeding requires two different owned parents");
         Check(p.Breed(ids[0],ids[1],rev,Owned),"A valid fixed-price preview can be bred");var child=p.Genome(preview.id);
         Check(child.primary==preview.primary&&child.secondary==preview.secondary&&child.primaryGrade==preview.primaryGrade&&child.appearance==preview.appearance&&child.generation==1&&child.level==1,"Offspring exactly matches its preview, keeps parent identity and starts at training one");
-        Check(p.Genome(ids[0]).level==3&&p.Genome(ids[1])!=null&&store.GetInt(SkyPulseDailyMissions.WalletKey,0)==before-SkyPulseBirdProgression.BreedingPrice(preview),"Both parents remain; breeding debits once");
+        Check(p.Genome(ids[0]).level==3&&p.Genome(ids[1])!=null&&store.GetInt(SkyPulseDailyMissions.WalletKey,0)==before-p.BreedingCost(preview),"Both parents remain; discounted breeding debits once");
         Check(!p.Breed(ids[0],ids[1],rev,Owned)&&!p.Breed(ids[0],ids[1],p.Data.revision,Owned),"Queued confirmation and an identical owned genome cannot charge twice");
         var loaded=new SkyPulseBirdProgression(store,ids);Check(loaded.Data.core==2&&loaded.Genome(child.id).parentA==ids[0]&&loaded.Genome(ids[0]).level==3,"Core, founder training and offspring survive restart");
         while(p.Data.core<5)Check(p.UpgradeCore(p.Data.revision),"Core rank progression");
@@ -115,6 +115,35 @@ public static class SkyPulseBirdProgressionChecks
         var poor=new Store();poor.SetInt(SkyPulseDailyMissions.WalletKey,1);var locked=new SkyPulseBirdProgression(poor,ids);
         Check(!locked.UpgradeCore(0)&&!locked.Train(ids[0],0,Owned)&&locked.Data.revision==0,"Insufficient currency leaves progression untouched");
         store.Set(SkyPulseBirdProgression.SaveKey,"broken JSON");loaded=new SkyPulseBirdProgression(store,ids);Check(loaded.Data.core==5,"Corrupt primary save recovers a completed backup");
+        int[] techCosts={150,143,135,128,120},trainCosts={120,114,108,102,96},breedCosts={300,285,270,255,240};
+        for(int rank=1;rank<=5;rank++)
+        {
+            var prices=new SkyPulseBirdProgression(new Store(),ids);prices.Data.core=rank;
+            Check(prices.UpgradeDiscountPercent==(rank-1)*5&&prices.DiscountedPrice(150)==techCosts[rank-1]&&prices.TrainingCost(prices.Genome(ids[0]))==trainCosts[rank-1]&&prices.BreedingCost(prices.Preview(ids[0],ids[1]))==breedCosts[rank-1],"Core "+rank+" reduces actual Tech Tree, training and breeding prices from their base costs");
+            Check(prices.DiscountedPrice(1)==1&&prices.DiscountedPrice(0)==0&&prices.DiscountedPrice(int.MaxValue)>0,"Whole-crystal rounding, zero and integer-overflow boundaries are safe at Core "+rank);
+        }
+        Check(SkyPulseBirdProgression.PriceAfterCoreDiscount(101,2)==96&&SkyPulseBirdProgression.PriceAfterCoreDiscount(399,5)==320,"Non-divisible prices round the payable cost up once");
+        var exact=new Store();exact.SetInt(SkyPulseDailyMissions.WalletKey,113);var efficient=new SkyPulseBirdProgression(exact,ids);efficient.Data.core=2;
+        Check(!efficient.Train(ids[0],0,Owned),"One crystal below the discounted training quote cannot purchase");exact.SetInt(SkyPulseDailyMissions.WalletKey,114);
+        Check(efficient.Train(ids[0],0,Owned)&&exact.GetInt(SkyPulseDailyMissions.WalletKey,-1)==0&&!efficient.Train(ids[0],0,Owned),"Exact discounted training balance succeeds once");
+        efficient=new SkyPulseBirdProgression(exact,ids);Check(efficient.Data.core==2&&efficient.UpgradeDiscountPercent==5&&efficient.CorePrice==900,"Core savings survive restart; Core evolution itself keeps its stated investment price");
+        var breedingWallet=new Store();breedingWallet.SetInt(SkyPulseDailyMissions.WalletKey,239);var breeding=new SkyPulseBirdProgression(breedingWallet,ids);breeding.Data.core=5;
+        Check(!breeding.Breed(ids[0],ids[1],0,Owned),"One crystal below the discounted breeding quote cannot purchase");breedingWallet.SetInt(SkyPulseDailyMissions.WalletKey,240);
+        Check(breeding.Breed(ids[0],ids[1],0,Owned)&&breedingWallet.GetInt(SkyPulseDailyMissions.WalletKey,-1)==0&&!breeding.Breed(ids[0],ids[1],0,Owned),"Exact discounted breeding balance succeeds once");
+        foreach(int failure in new[]{1,2,3,4})
+        {
+            var disk=new Store();disk.SetInt(SkyPulseDailyMissions.WalletKey,1000);disk.Flush();disk.calls=0;disk.failAt=failure;
+            var model=new SkyPulseBirdProgression(disk,ids);model.Data.core=2;try{model.Train(ids[0],0,Owned);}catch(IOException){}
+            disk.failAt=-1;model.RecoverPending();disk.Crash();model=new SkyPulseBirdProgression(disk,ids);model.RecoverPending();
+            Check(model.Data.core==2&&model.Genome(ids[0]).level==2&&disk.GetInt(SkyPulseDailyMissions.WalletKey,0)==886,"Interrupted discounted training recovers its original 114-crystal debit at write "+failure);
+        }
+        var genes=new Store();genes.SetInt(SkyPulseDailyMissions.WalletKey,20000);var lineage=new SkyPulseBirdProgression(genes,ids);lineage.Data.core=3;
+        foreach(var parent in new[]{ids[0],ids[1]})for(int level=1;level<3;level++)Check(lineage.Train(parent,lineage.Data.revision,Owned),"Train a parent for a stronger inherited grade");
+        var stronger=lineage.Preview(ids[0],ids[1]);Check(stronger.primaryGrade==2&&stronger.secondaryGrade==2,"Core 3 and trained parents produce stronger inherited traits");
+        Check(lineage.Breed(ids[0],ids[1],lineage.Data.revision,Owned),"Stronger offspring can be bred at its exact discounted price");
+        for(int level=1;level<3;level++)Check(lineage.Train(stronger.id,lineage.Data.revision,Owned),"Inherited bird supports real training");
+        stronger=lineage.Genome(stronger.id);var founderGrade=new BirdGenome{primary=stronger.primary,secondary=stronger.secondary,level=stronger.level};
+        Check(SkyPulseBirdProgression.Points(stronger,BirdTrait.Collector)>SkyPulseBirdProgression.Points(founderGrade,BirdTrait.Collector)&&SkyPulseBirdProgression.ResultBonus(stronger,100,10,4)>SkyPulseBirdProgression.ResultBonus(founderGrade,100,10,4),"Higher inherited grades improve both actual collection strength and milestone rewards at equal training level");
         Debug.Log("SKYPULSE_BIRD_PROGRESSION_PURE_PASS");
     }
     public static IEnumerator Live(SkyPulseNativeGame game)
@@ -139,22 +168,25 @@ public static class SkyPulseBirdProgressionChecks
         Call(game,"OpenHangar");Call(game,"OpenBirdTraining",skins.GetValue(0));yield return null;
         PanelChecks(screen);StudioChecks(game,1);
         screen.GetComponentsInChildren<Button>().Single(b=>b.GetComponentInChildren<Text>().text.StartsWith("TRAIN ·")).onClick.Invoke();yield return null;
-        Check(p.Genome(ids[0]).level==2&&(int)Get(game,"crystals")==19480,"Training is wired to the live Hangar and wallet");
+        Check(p.Genome(ids[0]).level==2&&(int)Get(game,"crystals")==19486,"Training charges the displayed 114 crystals after the Core 2 discount");
         Call(game,"BeginBirdProgressionRun");int pickupBonus=0;for(int i=0;i<100;i++)pickupBonus+=(int)Call(game,"BirdPickupBonus");
         Check(pickupBonus==8,"Training produces the exact live eight-percent pickup bonus across 100 physical pickups");Call(game,"BeginBirdProgressionRun");Check((float)Get(game,"birdCollectionCarry")==0,"Retry resets bird fractional collection carry");
         var levels=(Dictionary<string,int>)Get(game,"upgradeLevels");var oldLevels=new Dictionary<string,int>(levels);levels.Clear();
         var techOwned=(HashSet<string>)Get(game,"ownedUpgradeIds");var oldTechOwned=new HashSet<string>(techOwned);techOwned.Clear();
         Set(game,"runCrystalsCollected",100);Set(game,"score",10);Set(game,"perfectPasses",0);Set(game,"newBest",false);Set(game,"resultCrystalBonusApplied",false);
         int reward=(int)Call(game,"ApplyResultTechBonuses"),afterReward=(int)Get(game,"crystals");Call(game,"ApplyResultTechBonuses");
-        Check(reward==4&&afterReward==19484&&(int)Get(game,"crystals")==afterReward,"Trained bird traits credit the real result wallet exactly once");
+        Check(reward==4&&afterReward==19490&&(int)Get(game,"crystals")==afterReward,"Trained bird traits credit the real result wallet exactly once");
         store.SetInt(SkyPulseDailyMissions.WalletKey,afterReward);levels.Clear();foreach(var pair in oldLevels)levels[pair.Key]=pair.Value;foreach(var id in oldTechOwned)techOwned.Add(id);
+        yield return DiscountedTechChecks(game,p,store);
         Call(game,"OpenBreeding",skins.GetValue(0));yield return null;
         PanelChecks(screen);StudioChecks(game,3);var oldStudio=(SkyPulseProgressionStage)Get(game,"birdProgressionStage");
         Call(game,"OpenParentPicker",true);Check(!oldStudio.StageCamera.gameObject.activeInHierarchy,"Changing panels immediately disables the old studio camera");yield return null;PanelChecks(screen);
         Check(oldStudio==null,"Retired progression studio and its native resources are destroyed on the next frame");
         screen.GetComponentsInChildren<Button>().Single(b=>b.GetComponentInChildren<Text>().text=="BACK").onClick.Invoke();yield return null;
         Check(screen.GetComponentsInChildren<Text>().Any(t=>t.text=="LINEAGE LAB"),"Parent picker Back restores the exact breeding preview");
-        screen.GetComponentsInChildren<Button>().Single(b=>b.GetComponentInChildren<Text>().text.StartsWith("BREED ·")).onClick.Invoke();yield return null;
+        var breedButton=screen.GetComponentsInChildren<Button>().Single(b=>b.GetComponentInChildren<Text>().text.StartsWith("BREED ·"));
+        Check(breedButton.GetComponentInChildren<Text>().text=="BREED · 285 ✦","Lineage preview shows the Core 2 discounted breeding cost");
+        breedButton.onClick.Invoke();yield return null;
         var roster=(Array)Get(game,"birdRoster");Check(roster.Length==16&&p.OffspringCount==1&&((string)Get(Get(game,"equippedSkin"),"Id")).StartsWith("lineage."),"Bred offspring enters the real carousel and can be equipped");
         Call(game,"InitializeBirdProgression");Call(game,"LoadProgress");Check(((string)Get(Get(game,"equippedSkin"),"Id")).StartsWith("lineage."),"Equipped offspring and its inherited artwork survive load");
         Call(game,"OpenCoreProgression");Call(game,"StartRoundFromCustomize");Check(Get(game,"state").ToString()=="Customize","Progression modal cannot leak a background tap into flight");
@@ -168,5 +200,31 @@ public static class SkyPulseBirdProgressionChecks
         }
         Call(game,"CloseBirdProgression");Set(game,"missionStore",oldStore);Set(game,"dailyMissions",oldDaily);Set(game,"birdProgression",oldProgress);owned.Clear();foreach(var id in previousOwned)owned.Add(id);Set(game,"equippedSkin",oldSkin);Set(game,"crystals",oldWallet);Call(game,"RebuildBirdRoster");Set(game,"flightBirdGenome",null);Call(game,"SaveProgress");Call(game,"ResetToMenu");
         Debug.Log("SKYPULSE_BIRD_PROGRESSION_LIVE_PASS");
+    }
+    static IEnumerator DiscountedTechChecks(SkyPulseNativeGame game,SkyPulseBirdProgression p,Store store)
+    {
+        int oldCore=p.Data.core,oldWallet=(int)Get(game,"crystals");
+        var levels=(Dictionary<string,int>)Get(game,"upgradeLevels");var saved=new Dictionary<string,int>(levels);
+        var owned=(HashSet<string>)Get(game,"ownedUpgradeIds");var savedOwned=new HashSet<string>(owned);
+        var upgrades=(Array)typeof(SkyPulseNativeGame).GetField("Upgrades",BindingFlags.Static|BindingFlags.NonPublic).GetValue(null);var first=upgrades.GetValue(0);
+        int[] costs={150,143,135,128,120};
+        foreach(int rank in Enumerable.Range(1,5))
+        {
+            p.Data.core=rank;levels.Clear();owned.Clear();store.SetInt(SkyPulseDailyMissions.WalletKey,costs[rank-1]);Set(game,"crystals",costs[rank-1]);
+            Call(game,"OpenUpgrades");yield return null;
+            var content=(RectTransform)Get(game,"customizeContent");
+            Check(content.GetComponentsInChildren<Text>().Any(t=>t.text==costs[rank-1]+" ✦"),"Core "+rank+" tree map shows its actual discounted purchase price");
+            Call(game,"SelectUpgrade",first);
+            Check(((Text)Get(game,"purchaseConfirmText")).text=="CONFIRM · "+costs[rank-1]+" ✦"&&((Button)Get(game,"purchaseConfirmButton")).interactable,"Core "+rank+" inspector matches the map and accepts the exact discounted balance");
+            Call(game,"ConfirmPurchase");Call(game,"ConfirmPurchase");yield return null;
+            Check((int)Get(game,"crystals")==0&&levels["crystal_resonator"]==1,"Core "+rank+" real Tech Tree purchase debits its displayed price once");
+        }
+        levels.Clear();owned.Clear();p.Data.core=2;store.SetInt(SkyPulseDailyMissions.WalletKey,10000);Set(game,"crystals",10000);Call(game,"SelectUpgrade",first);
+        p.Data.core=3;Call(game,"ConfirmPurchase");
+        Check((int)Get(game,"crystals")==10000&&levels.Count==0&&((Text)Get(game,"purchaseConfirmText")).text=="CONFIRM · 135 ✦","A changed Core refreshes a stale Tech Tree quote without spending");
+        Call(game,"ConfirmPurchase");Call(game,"ConfirmPurchase");
+        Check((int)Get(game,"crystals")==9865&&levels["crystal_resonator"]==1,"A fresh confirmation charges the updated quote once");
+        p.Data.core=oldCore;levels.Clear();foreach(var pair in saved)levels[pair.Key]=pair.Value;owned.Clear();foreach(var id in savedOwned)owned.Add(id);
+        store.SetInt(SkyPulseDailyMissions.WalletKey,oldWallet);Set(game,"crystals",oldWallet);Call(game,"OpenHangar");yield return null;
     }
 }
