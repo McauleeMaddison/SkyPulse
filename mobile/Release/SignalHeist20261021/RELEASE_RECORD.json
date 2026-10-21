@@ -1,19 +1,19 @@
 {
   "candidate": "SkyPulse 1.0.0 (17)",
-  "compiledSourceCommit": "fe482217ebac1984b064dfd9644880c9b6a185e6",
+  "compiledSourceCommit": "64c803157cb9da84a34fe0d997ade8f2e482a57c",
   "branch": "main",
-  "allRuntimeScriptsMatchPassedQA": 30,
-  "candidateSourceEntries": 415,
+  "allRuntimeScriptsMatchPassedQA": 32,
+  "candidateSourceEntries": 419,
   "automatedRequiredPassMarkers": 19,
   "localIosExport": {
     "status": "SKYPULSE_IOS_EXPORT_PASS",
-    "path": "/private/tmp/skypulse-17-spectral-20261021/iOS",
+    "path": "/private/tmp/skypulse-17-projector-20261021/iOS",
     "sourceManifestMatchesWorkingTree": true,
-    "sourceCommit": "fe482217ebac1984b064dfd9644880c9b6a185e6",
-    "supersedesEarlierExport": "/private/tmp/skypulse-17-20261021/iOS",
+    "sourceCommit": "64c803157cb9da84a34fe0d997ade8f2e482a57c",
     "supersedesEarlierExports": [
       "/private/tmp/skypulse-17-20261021/iOS",
-      "/private/tmp/skypulse-17-tree-20261021/iOS"
+      "/private/tmp/skypulse-17-tree-20261021/iOS",
+      "/private/tmp/skypulse-17-spectral-20261021/iOS"
     ]
   },
   "archive": {
@@ -49,18 +49,20 @@
   "rightsAndSimilarity": "Owner reports ARTA/ChatGPT generation and own references. No exclusive rights or unidentified Apple comparator resolution is certified.",
   "economyAndSaveCompatibility": "Existing wallet, upgrades, prices, prerequisites and Endless keys retained. New optical puzzle uses its own versioned save with access-only migration of old Blackout achievements.",
   "evidenceSha256": {
-    "unity.log": "427d9473fed0ca9588266dee22fa52ed9fd1de9e4bde45c59a27a5d64513e9ef",
-    "holographic-tree-preview.mp4": "d660e8c63f59fb0f514ed5e5b97c5e7b772f8dd6d112d036e6ee0a8cbf4af37e",
-    "three-modes-3d-preview.mp4": "7b2e9855ad333935d5e454e78bf6fb5367f1a0ffa0a5f0237998b107bd4f057b",
-    "unity-export-17-spectral.log": "537c177c25f2e59d050ec81d9fd3e307b459bc12c6fd6f2fb531c8e72091de80"
+    "unity-export-17.log": "94bb23b60d63b2925b6dafa4e2fb11c6b6821ff26e87216284fc14340451f80f",
+    "unity.log": "eef48e16760edcaad73f6fc7f3b1f053161fd0d10759cf282d66f1233e573f42",
+    "preview-unity.log": "343e70ec9d618e3ddc33414289f3527148b76512d21e0b6af8051704a538fb91",
+    "holographic-tree-preview.mp4": "2174c62747e94764713d579dd8224b9642cf9a3d8b2cfe9fe994158b961f7076",
+    "three-modes-3d-preview.mp4": "7b2e9855ad333935d5e454e78bf6fb5367f1a0ffa0a5f0237998b107bd4f057b"
   },
   "previewVideos": {
     "holographic-tree-preview.mp4": {
-      "seconds": 9,
-      "decodedFrames": 270,
+      "seconds": 12,
+      "decodedFrames": 360,
       "width": 750,
       "height": 1334,
-      "fps": 30
+      "fps": 30,
+      "uniqueFrames": 360
     },
     "three-modes-3d-preview.mp4": {
       "seconds": 39,
@@ -72,9 +74,17 @@
   },
   "techTree": {
     "input": "Direct mouse or one-finger drag on both axes; no visible scrollbar or mouse-wheel navigation",
-    "presentation": "Continuous curved spectral filaments and faceted glass lenses over a transparent starfield",
+    "presentation": "Living 3D crystal projector with counter-rotating gyroscopes, nine levitating upgrade prisms, continuous spectral filaments and touch ripples over the transparent starfield",
     "connectedBranches": 39,
     "junctionsIncludingCore": 37,
-    "economyChanged": false
+    "economyChanged": false,
+    "navigation": "Direct two-axis drag; fixed-header Core control returns smoothly and interrupts on fresh touch/drag",
+    "motionValidationFps": [
+      30,
+      60,
+      120
+    ],
+    "sculptures": 10,
+    "fieldTypography": "Larger titles, level labels and prices; restrained single shadows"
   }
 }

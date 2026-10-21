@@ -1,25 +1,25 @@
 # SkyPulse 1.0.0 (17) — local Signal Heist and depth candidate
 
-Source: `fe482217ebac1984b064dfd9644880c9b6a185e6` on `main`. Unity 6000.6.0f1. Public review stays on hold. This local candidate is not uploaded to TestFlight; build 15 remains the latest uploaded build.
+Source: `64c803157cb9da84a34fe0d997ade8f2e482a57c` on `main`. Unity 6000.6.0f1. Public review stays on hold. This local candidate is not uploaded to TestFlight; build 15 remains the latest uploaded build.
 
 ## What changed
 
 - **Blackout Protocol / Signal Heist:** eight optical puzzles replace the tile-walking game. Tap glass mirrors and splitters to route energy through every core to the uplink. Live relays open matching shutters. Every rotation spends trace; a lit sensor increases its cost. Extracting a vault saves once and immediately activates the next. Failed attempts restart; unfinished configurations resume. Prior achievements preserve access without granting medals for the new layouts.
 - **Three-mode depth:** separate rendered 3D Home displays, smooth fixed-target button feedback, mechanical gate bodies in Endless, hollow crystal-unlocked hoops in Relay and a raised optical console in Blackout. The enclosing Home backplate is removed. Illustrated world/bird assets are retained; this is a depth composition, not a claim that all raster artwork became fully modeled characters.
-- **Connected Tech Tree:** one volumetric holographic core feeds three uninterrupted trunks and nine upgrade families, each with three level branches. Drag left/right/up/down with a mouse or one finger. The tree has no visible scrollbar or wheel navigation. Sweeping shared-ring filaments, moving spectral energy and faceted glass lenses replace rigid rods and circular cages; the starfield remains visible through the view. Tap a root or level to inspect. Only the next eligible level can be purchased. Prices, prerequisites, effects, economy and save identifiers remain unchanged. The view retains both pan coordinates after a purchase. Empty-space taps cannot launch a flight; Hangar restores its original controls.
+- **Connected Tech Tree:** one volumetric holographic core feeds three uninterrupted trunks and nine upgrade families, each with three level branches. Drag left/right/up/down with a mouse or one finger. The tree has no visible scrollbar or wheel navigation. Sweeping shared-ring filaments, moving spectral energy and faceted glass lenses replace rigid rods and circular cages; the starfield remains visible through the view. Tap a root or level to inspect. A living 3D crystal projector with counter-rotating light gyroscopes feeds nine levitating optical upgrade prisms. Dual energy flows and immediate press ripples animate the connected branches. The fixed-header **CORE** control returns the view smoothly; any new touch/drag interrupts it. Reduced Motion uses a steady pose and immediate core return. Larger field typography improves phone readability. Only the next eligible level can be purchased. Prices, prerequisites, effects, economy and save identifiers remain unchanged. The view retains both pan coordinates after a purchase. Empty-space taps cannot launch a flight; Hangar restores its original controls.
 - **Cleanup:** removed the retired Blackout walker, its renderer paths, old Home hero branches, unused legacy mode-progress class and disconnected upgrade-card connection renderer. The game still has one shipping implementation per mode. QA tools remain outside shipping Assets.
 
 ## Actual Unity previews
 
-[Free-pan holographic tree, 9 seconds](holographic-tree-preview.mp4) · [Three-mode Home/gameplay walkthrough, 39 seconds](three-modes-3d-preview.mp4)
+[Free-pan holographic tree, 12 seconds](holographic-tree-preview.mp4) · [Three-mode Home/gameplay walkthrough, 312 seconds](three-modes-3d-preview.mp4)
 
-These are silent Editor development renders, not physical-device footage or App Store preview submissions. The tree video visits both axes; the full walkthrough shows each Home and actual gameplay. No promotional mockup was substituted for gameplay.
+These are silent Editor development renders, not physical-device footage or App Store preview submissions. The tree video contains 360 unique frames at 30 FPS and visits both axes, the animated projector and smooth core return; the full walkthrough shows each Home and actual gameplay. No promotional mockup was substituted for gameplay.
 
 ## Verification
 
 `QA_RECORD.json` hashes every runtime script and shader. All **19 required pass markers** were present in the final isolated run with exit 0. Checks include all eight puzzles and increasing solution costs, saved attempts/retries/final result, immediate progression with stale-input fencing, exactly-once rewards, Relay 0/2–2/2 and same-frame collection/collision at simulated 30/60/120 FPS, real two-axis drag events, connected tree topology, purchase guards, save/economy compatibility, safe-area layout, Reduced Motion and warmed allocation measurements.
 
-`SOURCE_MANIFEST.json` has 415 entries. Each matches the fresh local iOS IL2CPP export at `/private/tmp/skypulse-17-spectral-20261021/iOS`; `BUILD_INFO.json` identifies the exact commit. Both earlier `/private/tmp/skypulse-17-20261021/iOS` and `/private/tmp/skypulse-17-tree-20261021/iOS` exports are superseded. No signed build 17 archive or upload was performed. A Unity Editor Search startup exception is retained in the log as a vendor warning; intentional medal-save failure injection also logs an expected IOException.
+`SOURCE_MANIFEST.json` has 419 entries. Each matches the fresh local iOS IL2CPP export at `/private/tmp/skypulse-17-projector-20261021/iOS`; `BUILD_INFO.json` identifies the exact commit. Earlier `/private/tmp/skypulse-17-20261021/iOS`, `/private/tmp/skypulse-17-tree-20261021/iOS` and `/private/tmp/skypulse-17-spectral-20261021/iOS` exports are superseded. No signed build 17 archive or upload was performed. A Unity Editor Search startup exception is retained in the log as a vendor warning; intentional medal-save failure injection also logs an expected IOException.
 
 Re-run from the repository root:
 
@@ -45,7 +45,7 @@ No external artwork/model/font/audio was added. The existing 145-image rights le
 ## Source map
 
 - `mobile/Assets/Scripts/SkyPulseBlackoutCampaign.cs`, `SkyPulseNativeGame.Blackout.cs`, `SkyPulseHeistBoard.cs` and `SkyPulseBlackoutGraphic.cs`: optical puzzle state, interactions, progression and 3D board presentation.
-- `mobile/Assets/Scripts/SkyPulseNativeGame.TechTree.cs`, `SkyPulseTechTreeView.cs`, `SkyPulseNativeGame.cs` and `Resources/SkyPulse/Shaders/HolographicTree.shader`: connected tree, two-axis controls, view alignment, level inspection and purchase integration. The retired `SkyPulseTechConnection.cs` is removed.
+- `mobile/Assets/Scripts/SkyPulseNativeGame.TechTree.cs`, `SkyPulseTechTreeView.cs`, `SkyPulseTreePanInput.cs`, `SkyPulseTreeTouchFeedback.cs`, `SkyPulseNativeGame.cs` and `Resources/SkyPulse/Shaders/HolographicTree.shader`: connected tree, two-axis controls, view alignment, level inspection and purchase integration. The retired `SkyPulseTechConnection.cs` is removed.
 - `mobile/Assets/Scripts/SkyPulseDepthStage.cs`, `SkyPulseNativeGame.Depth.cs`, `SkyPulseNativeGame.Cinematic.cs`, `SkyPulseButtonFeedback.cs` and the optical/bird shaders: three-mode depth, Home controls and geometry. Existing flight collision logic remains authoritative.
 - `mobile/Tools/SkyPulse*Checks.cs`, `run_modes_qa.py`, `verify_endless_preservation.py` and release-metadata checks: isolated regression coverage and validation.
 - `mobile/Release/SignalHeist20261021/`, `CURRENT_RELEASE.json`, `REVIEW_STATUS.md` and root `README.md`: current metadata, evidence, previews and explicit review/device holds.

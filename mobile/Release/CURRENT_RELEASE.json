@@ -6,7 +6,7 @@
   "appleTeamId": "TX54JLQ8VF",
   "version": "1.0.0",
   "build": "17",
-  "runtimeSourceCommit": "fe482217ebac1984b064dfd9644880c9b6a185e6",
+  "runtimeSourceCommit": "64c803157cb9da84a34fe0d997ade8f2e482a57c",
   "metadata": "mobile/Release/SignalHeist20261021/metadata.json",
   "qaRecord": "mobile/Release/SignalHeist20261021/QA_RECORD.json",
   "sourceManifest": "mobile/Release/SignalHeist20261021/SOURCE_MANIFEST.json",

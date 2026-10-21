@@ -43,6 +43,10 @@ M	mobile/Assets/Scripts/SkyPulseRelayGate.cs
 D	mobile/Assets/Scripts/SkyPulseTechConnection.cs
 A	mobile/Assets/Scripts/SkyPulseTechTreeView.cs
 R100	mobile/Assets/Scripts/SkyPulseTechConnection.cs.meta	mobile/Assets/Scripts/SkyPulseTechTreeView.cs.meta
+A	mobile/Assets/Scripts/SkyPulseTreePanInput.cs
+A	mobile/Assets/Scripts/SkyPulseTreePanInput.cs.meta
+A	mobile/Assets/Scripts/SkyPulseTreeTouchFeedback.cs
+A	mobile/Assets/Scripts/SkyPulseTreeTouchFeedback.cs.meta
 M	mobile/ProjectSettings/ProjectSettings.asset
 M	mobile/Release/CURRENT_RELEASE.json
 M	mobile/Release/REVIEW_STATUS.md
@@ -75,4 +79,4 @@ M	mobile/Tools/run_modes_qa.py
 M	mobile/Tools/test_release_metadata.py
 M	mobile/Tools/verify_endless_preservation.py
 
-Final release-record/preview refresh accompanies this revision.
+Final release records and 30 FPS preview accompany the premium projector revision.
