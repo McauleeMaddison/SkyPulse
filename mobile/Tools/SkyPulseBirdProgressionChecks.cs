@@ -1,0 +1,132 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.IO;
+using UnityEngine;
+using UnityEngine.UI;
+using SkyPulse.Mobile;
+public static class SkyPulseBirdProgressionChecks
+{
+    const BindingFlags F=BindingFlags.Instance|BindingFlags.NonPublic|BindingFlags.Public;
+    static object Get(object o,string n)=>o.GetType().GetField(n,F).GetValue(o);
+    static void Set(object o,string n,object v)=>o.GetType().GetField(n,F).SetValue(o,v);
+    static object Call(object o,string n,params object[] a)=>o.GetType().GetMethod(n,F).Invoke(o,a);
+    static void Check(bool ok,string message){if(!ok)throw new Exception(message);Debug.Log("BIRD_CHECK: "+message);}
+    sealed class Store:IMissionStore
+    {
+        public Dictionary<string,string> text=new Dictionary<string,string>(),durableText=new Dictionary<string,string>();
+        public Dictionary<string,int> ints=new Dictionary<string,int>(),durableInts=new Dictionary<string,int>();
+        public int calls,failAt=-1;
+        public string Get(string k,string d)=>text.TryGetValue(k,out var v)?v:d;
+        public int GetInt(string k,int d)=>ints.TryGetValue(k,out var v)?v:d;
+        public void Set(string k,string v)=>text[k]=v;
+        public void SetInt(string k,int v)=>ints[k]=v;
+        public void Flush(){if(++calls==failAt)throw new IOException("Injected bird save failure");durableText=new Dictionary<string,string>(text);durableInts=new Dictionary<string,int>(ints);}
+        public void Crash(){text=new Dictionary<string,string>(durableText);ints=new Dictionary<string,int>(durableInts);failAt=-1;}
+    }
+    static string[] Founders()=>Enumerable.Range(0,15).Select(i=>"bird"+i).ToArray();
+    static bool Owned(string id)=>true;
+    static void PanelChecks(GameObject screen)
+    {
+        Canvas.ForceUpdateCanvases();
+        foreach(var label in screen.GetComponentsInChildren<Text>())
+            Check(label.resizeTextForBestFit||label.preferredHeight<=label.rectTransform.rect.height+2,"Progression text fits: "+label.text.Replace('\n',' '));
+        var buttons=screen.GetComponentsInChildren<Button>();
+        Check(buttons.All(b=>((RectTransform)b.transform).rect.height>=152),"Progression controls retain 45-point targets on a small portrait phone");
+        for(int i=0;i<buttons.Length;i++)for(int j=i+1;j<buttons.Length;j++)
+        {
+            var a=(RectTransform)buttons[i].transform;var b=(RectTransform)buttons[j].transform;
+            if(a.parent!=b.parent)continue;
+            Check(!new Rect(a.anchoredPosition-a.sizeDelta*.5f,a.sizeDelta).Overlaps(new Rect(b.anchoredPosition-b.sizeDelta*.5f,b.sizeDelta)),"Progression buttons do not overlap");
+        }
+    }
+    public static void Pure()
+    {
+        var ids=Founders();var store=new Store();store.SetInt(SkyPulseDailyMissions.WalletKey,20000);store.Flush();var p=new SkyPulseBirdProgression(store,ids);
+        Check(p.Data.core==1&&p.TrainingCap==2&&p.OffspringCount==0,"Legacy saves start with a free level-one Core and retain their wallet");
+        Check(ids.Select(id=>p.Genome(id).primary+":"+p.Genome(id).secondary).Distinct().Count()==15,"All 15 founder birds have distinct trait combinations");
+        Check(p.Train(ids[0],0,Owned)&&p.Genome(ids[0]).level==2&&store.GetInt(SkyPulseDailyMissions.WalletKey,0)==19880,"Training debits the exact displayed price and raises both traits");
+        Check(!p.Train(ids[0],0,Owned)&&!p.Train(ids[0],p.Data.revision,Owned),"Stale training clicks and the Core cap cannot charge again");
+        Check(!p.Train(ids[1],p.Data.revision,id=>false),"Unowned birds cannot be trained");
+        int before=store.GetInt(SkyPulseDailyMissions.WalletKey,0);int rev=p.Data.revision;var preview=p.Preview(ids[0],ids[1]);
+        Check(preview!=null&&store.GetInt(SkyPulseDailyMissions.WalletKey,0)==before&&rev==p.Data.revision,"Breeding previews never debit, reroll or save");
+        Check(!p.Breed(ids[0],ids[1],rev,Owned),"Level-one Core cannot bypass breeding unlock");
+        Check(p.UpgradeCore(rev)&&p.Data.core==2&&!p.UpgradeCore(rev),"Core upgrade applies once and raises capacity/training cap");
+        Check(p.Train(ids[0],p.Data.revision,Owned)&&p.Genome(ids[0]).level==3,"Core level two enables training level three");
+        preview=p.Preview(ids[0],ids[1]);rev=p.Data.revision;before=store.GetInt(SkyPulseDailyMissions.WalletKey,0);
+        Check(!p.Breed(ids[0],ids[0],rev,Owned)&&!p.Breed(ids[0],ids[1],rev,id=>id==ids[0]),"Breeding requires two different owned parents");
+        Check(p.Breed(ids[0],ids[1],rev,Owned),"A valid fixed-price preview can be bred");var child=p.Genome(preview.id);
+        Check(child.primary==preview.primary&&child.secondary==preview.secondary&&child.primaryGrade==preview.primaryGrade&&child.appearance==preview.appearance&&child.generation==1&&child.level==1,"Offspring exactly matches its preview, keeps parent identity and starts at training one");
+        Check(p.Genome(ids[0]).level==3&&p.Genome(ids[1])!=null&&store.GetInt(SkyPulseDailyMissions.WalletKey,0)==before-SkyPulseBirdProgression.BreedingPrice(preview),"Both parents remain; breeding debits once");
+        Check(!p.Breed(ids[0],ids[1],rev,Owned)&&!p.Breed(ids[0],ids[1],p.Data.revision,Owned),"Queued confirmation and an identical owned genome cannot charge twice");
+        var loaded=new SkyPulseBirdProgression(store,ids);Check(loaded.Data.core==2&&loaded.Genome(child.id).parentA==ids[0]&&loaded.Genome(ids[0]).level==3,"Core, founder training and offspring survive restart");
+        while(p.Data.core<5)Check(p.UpgradeCore(p.Data.revision),"Core rank progression");
+        Check(!p.UpgradeCore(p.Data.revision)&&p.TrainingCap==5&&p.BreedingCapacity==20,"Maximum Core does not overspend and bounds collection size");
+        var dna=new BirdGenome{primary=(int)BirdTrait.Voyager,secondary=(int)BirdTrait.Recovery,level=3};
+        Check(SkyPulseBirdProgression.ResultBonus(dna,0,4,0)==0&&SkyPulseBirdProgression.ResultBonus(dna,0,10,0)==11,"Bird rewards use actual Endless milestones and cannot farm immediate retries");
+        foreach(int failure in new[]{1,2,3,4})
+        {
+            var disk=new Store();disk.SetInt(SkyPulseDailyMissions.WalletKey,1000);disk.Flush();disk.calls=0;disk.failAt=failure;
+            var model=new SkyPulseBirdProgression(disk,ids);try{model.UpgradeCore(0);}catch(IOException){}
+            disk.failAt=-1;model.RecoverPending();int wallet=disk.GetInt(SkyPulseDailyMissions.WalletKey,0);
+            Check(wallet==600&&model.Data.core==2&&!model.UpgradeCore(0),"Interrupted debit recovers exactly once at write "+failure);
+            disk.Crash();model=new SkyPulseBirdProgression(disk,ids);model.RecoverPending();Check(disk.GetInt(SkyPulseDailyMissions.WalletKey,0)==600&&model.Data.core==2,"Restart preserves completed debit at write "+failure);
+        }
+        var poor=new Store();poor.SetInt(SkyPulseDailyMissions.WalletKey,1);var locked=new SkyPulseBirdProgression(poor,ids);
+        Check(!locked.UpgradeCore(0)&&!locked.Train(ids[0],0,Owned)&&locked.Data.revision==0,"Insufficient currency leaves progression untouched");
+        store.Set(SkyPulseBirdProgression.SaveKey,"broken JSON");loaded=new SkyPulseBirdProgression(store,ids);Check(loaded.Data.core==5,"Corrupt primary save recovers a completed backup");
+        Debug.Log("SKYPULSE_BIRD_PROGRESSION_PURE_PASS");
+    }
+    public static IEnumerator Live(SkyPulseNativeGame game)
+    {
+        game.enabled=false;Call(game,"ResetToMenu");
+        var oldStore=Get(game,"missionStore");var oldDaily=Get(game,"dailyMissions");var oldProgress=Get(game,"birdProgression");var oldSkin=Get(game,"equippedSkin");int oldWallet=(int)Get(game,"crystals");
+        var skins=(Array)typeof(SkyPulseNativeGame).GetField("Skins",BindingFlags.Static|BindingFlags.NonPublic).GetValue(null);
+        var ids=skins.Cast<object>().Select(s=>(string)Get(s,"Id")).ToArray();var store=new Store();store.SetInt(SkyPulseDailyMissions.WalletKey,20000);
+        Set(game,"missionStore",store);Set(game,"dailyMissions",new SkyPulseDailyMissions(store,()=>new DateTime(2026,10,21,0,0,0,DateTimeKind.Utc)));Set(game,"birdProgression",new SkyPulseBirdProgression(store,ids));Set(game,"crystals",20000);
+        var owned=(HashSet<string>)Get(game,"ownedSkinIds");var previousOwned=new HashSet<string>(owned);owned.Add(ids[0]);owned.Add(ids[1]);Call(game,"RebuildBirdRoster");
+        Call(game,"OpenUpgrades");yield return null;var tree=(SkyPulseTechTreeView)Get(game,"holographicTree");Call(game,"OpenCoreProgression");yield return null;
+        var preview=(SkyPulseTechTreeView)Get(game,"coreProgressionPreview");
+        Check(preview.TreeCamera.transform.parent.position!=tree.TreeCamera.transform.parent.position,"Core inspector and main tree use separate isolated render stages");
+        var screen=(GameObject)Get(game,"birdProgressionScreen");PanelChecks(screen);
+        var stale=screen.GetComponentsInChildren<Button>().Single(b=>b.GetComponentInChildren<Text>().text.StartsWith("UPGRADE ·"));
+        Call(game,"OpenBirdTraining",skins.GetValue(0));stale.onClick.Invoke();
+        Check(((SkyPulseBirdProgression)Get(game,"birdProgression")).Data.core==1&&(int)Get(game,"crystals")==20000,"A callback from an earlier panel cannot spend currency on a new panel");
+        Call(game,"OpenCoreProgression");yield return null;
+        screen.GetComponentsInChildren<Button>().Single(b=>b.GetComponentInChildren<Text>().text.StartsWith("UPGRADE ·")).onClick.Invoke();yield return null;
+        var p=(SkyPulseBirdProgression)Get(game,"birdProgression");Check(p.Data.core==2&&(int)Get(game,"crystals")==19600&&!screen.activeSelf,"Real Core button purchases once, closes and updates wallet/tree");
+        tree=(SkyPulseTechTreeView)Get(game,"holographicTree");Check(tree.CoreRank==2&&tree.Roots[0].Colour==SkyPulseBirdProgression.CoreColours[1],"Core level updates the actual core material colour and halo style");
+        Call(game,"OpenHangar");Call(game,"OpenBirdTraining",skins.GetValue(0));yield return null;
+        PanelChecks(screen);
+        screen.GetComponentsInChildren<Button>().Single(b=>b.GetComponentInChildren<Text>().text.StartsWith("TRAIN ·")).onClick.Invoke();yield return null;
+        Check(p.Genome(ids[0]).level==2&&(int)Get(game,"crystals")==19480,"Training is wired to the live Hangar and wallet");
+        Call(game,"BeginBirdProgressionRun");int pickupBonus=0;for(int i=0;i<100;i++)pickupBonus+=(int)Call(game,"BirdPickupBonus");
+        Check(pickupBonus==8,"Training produces the exact live eight-percent pickup bonus across 100 physical pickups");Call(game,"BeginBirdProgressionRun");Check((float)Get(game,"birdCollectionCarry")==0,"Retry resets bird fractional collection carry");
+        var levels=(Dictionary<string,int>)Get(game,"upgradeLevels");var oldLevels=new Dictionary<string,int>(levels);levels.Clear();
+        var techOwned=(HashSet<string>)Get(game,"ownedUpgradeIds");var oldTechOwned=new HashSet<string>(techOwned);techOwned.Clear();
+        Set(game,"runCrystalsCollected",100);Set(game,"score",10);Set(game,"perfectPasses",0);Set(game,"newBest",false);Set(game,"resultCrystalBonusApplied",false);
+        int reward=(int)Call(game,"ApplyResultTechBonuses"),afterReward=(int)Get(game,"crystals");Call(game,"ApplyResultTechBonuses");
+        Check(reward==4&&afterReward==19484&&(int)Get(game,"crystals")==afterReward,"Trained bird traits credit the real result wallet exactly once");
+        store.SetInt(SkyPulseDailyMissions.WalletKey,afterReward);levels.Clear();foreach(var pair in oldLevels)levels[pair.Key]=pair.Value;foreach(var id in oldTechOwned)techOwned.Add(id);
+        Call(game,"OpenBreeding",skins.GetValue(0));yield return null;
+        PanelChecks(screen);Call(game,"OpenParentPicker",true);yield return null;PanelChecks(screen);
+        screen.GetComponentsInChildren<Button>().Single(b=>b.GetComponentInChildren<Text>().text=="BACK").onClick.Invoke();yield return null;
+        Check(screen.GetComponentsInChildren<Text>().Any(t=>t.text=="LINEAGE LAB"),"Parent picker Back restores the exact breeding preview");
+        screen.GetComponentsInChildren<Button>().Single(b=>b.GetComponentInChildren<Text>().text.StartsWith("BREED ·")).onClick.Invoke();yield return null;
+        var roster=(Array)Get(game,"birdRoster");Check(roster.Length==16&&p.OffspringCount==1&&((string)Get(Get(game,"equippedSkin"),"Id")).StartsWith("lineage."),"Bred offspring enters the real carousel and can be equipped");
+        Call(game,"InitializeBirdProgression");Call(game,"LoadProgress");Check(((string)Get(Get(game,"equippedSkin"),"Id")).StartsWith("lineage."),"Equipped offspring and its inherited artwork survive load");
+        Call(game,"OpenCoreProgression");Call(game,"StartRoundFromCustomize");Check(Get(game,"state").ToString()=="Customize","Progression modal cannot leak a background tap into flight");
+        // Exercise all five real halo styles at frame-rate-independent clocks and Reduced Motion.
+        foreach(int rank in Enumerable.Range(1,5))
+        {
+            p=(SkyPulseBirdProgression)Get(game,"birdProgression");p.Data.core=rank;Call(game,"CloseBirdProgression");Call(game,"OpenUpgrades");yield return null;tree=(SkyPulseTechTreeView)Get(game,"holographicTree");
+            Quaternion pose=Quaternion.identity;var halo=tree.TreeCamera.transform.parent.Find("Living SkyPulse core projector").Find("Core level halo");
+            foreach(int fps in new[]{30,60,120}){Set(tree,"clock",0f);for(int i=0;i<fps;i++)tree.Tick(1f/fps);if(fps==30)pose=halo.localRotation;Check(Quaternion.Angle(pose,halo.localRotation)<.05f,"Core "+rank+" halo matches at "+fps+" FPS");}
+            tree.ReducedMotion=true;tree.Tick(0);pose=halo.localRotation;tree.Tick(1);Check(Quaternion.Angle(pose,halo.localRotation)<.01f,"Reduced Motion freezes Core "+rank+" halo");
+        }
+        Call(game,"CloseBirdProgression");Set(game,"missionStore",oldStore);Set(game,"dailyMissions",oldDaily);Set(game,"birdProgression",oldProgress);owned.Clear();foreach(var id in previousOwned)owned.Add(id);Set(game,"equippedSkin",oldSkin);Set(game,"crystals",oldWallet);Call(game,"RebuildBirdRoster");Set(game,"flightBirdGenome",null);Call(game,"SaveProgress");Call(game,"ResetToMenu");
+        Debug.Log("SKYPULSE_BIRD_PROGRESSION_LIVE_PASS");
+    }
+}

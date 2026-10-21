@@ -48,7 +48,7 @@ namespace SkyPulse.Mobile
         }
         private void CheckDailyPeriod()
         {
-            if(dailyMissions==null)return;
+            if(dailyMissions==null || !RecoverWalletTransaction())return;
             try {
                 dailyMissions.EnsurePeriod();crystals=missionStore.GetInt(SkyPulseDailyMissions.WalletKey,crystals);
                 if(dailyRelay!=null && dailyRelay.EnsurePeriod())
@@ -67,6 +67,7 @@ namespace SkyPulse.Mobile
         }
         private void CreditWallet(int amount,WalletRewardSource source,int dailyIndex=-1)
         {
+            if(!RecoverWalletTransaction())throw new InvalidOperationException("Wallet recovery is pending");
             if(dailyMissions!=null)dailyMissions.EnsurePeriod();
             if(source==WalletRewardSource.DailyMission)
             {
@@ -81,9 +82,13 @@ namespace SkyPulse.Mobile
         }
         private bool RecoverWalletTransaction()
         {
-            if(dailyMissions==null || dailyMissions.Data.pending<0)return true;
-            try { dailyMissions.RecoverPending();crystals=missionStore.GetInt(SkyPulseDailyMissions.WalletKey,crystals);return true; }
-            catch(Exception e) { Debug.LogWarning("SkyPulse wallet save is waiting for recovery: "+e.GetType().Name);return false; }
+            try
+            {
+                if(dailyMissions!=null&&dailyMissions.Data.pending>=0){dailyMissions.RecoverPending();crystals=missionStore.GetInt(SkyPulseDailyMissions.WalletKey,crystals);}
+                if(birdProgression!=null&&birdProgression.Data.pending){birdProgression.RecoverPending();RebuildBirdRoster();crystals=missionStore.GetInt(SkyPulseDailyMissions.WalletKey,crystals);}
+                return true;
+            }
+            catch(Exception e) {Debug.LogWarning("SkyPulse wallet save is waiting for recovery: "+e.GetType().Name);return false;}
         }
         private Text MissionText(Transform root,string label,float y,int size=28,Color? colour=null,float width=900f,float height=64f)
         {
@@ -213,6 +218,7 @@ namespace SkyPulse.Mobile
         }
         private void LaunchMission(SkyPulseMode mode,int index)
         {
+            if(!RecoverWalletTransaction())return;
             CheckDailyPeriod();
             if(mode==SkyPulseMode.PulseRelay && (index<0 || index>=dailyRelay.Missions.Length))return;
             if(mode==SkyPulseMode.BlackoutProtocol && !blackoutCampaign.CanPlay(index))return;

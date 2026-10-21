@@ -1153,6 +1153,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             Time.maximumDeltaTime = MaximumSimulationCatchup;
 
             InitializeMissionServices();
+            InitializeBirdProgression();
             LoadProgress();
             ValidateBirdRewardPoseContracts();
             ValidateTechTreeContracts();
@@ -1992,7 +1993,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
                 CreateText(card, details[index], new Vector2(68f, y - 23f), new Vector2(650f, 42f), 27, Hex("#d2def0"), TextAnchor.MiddleLeft, FontStyle.Normal);
             }
             CreateText(card, "EVERY RUN BUILDS YOUR COLLECTION", new Vector2(0f, -479f), new Vector2(850f, 46f), 28, Hex("#ffc34d"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            var progression = CreateText(card, "Spend earned crystals in Bird Hangar on 15 cosmetic birds, or in the Tech Tree on Collection, Recovery and Mastery. All birds share the same handling.", new Vector2(0f, -573f), new Vector2(822f, 116f), 27, Hex("#d2def0"), TextAnchor.MiddleCenter, FontStyle.Normal);
+            var progression = CreateText(card, "Train 15 founder birds and breed inherited reward traits. Evolve the SkyPulse Core to raise training limits. Bird traits reward Endless play; every bird retains the same flight handling.", new Vector2(0f, -573f), new Vector2(822f, 116f), 27, Hex("#d2def0"), TextAnchor.MiddleCenter, FontStyle.Normal);
             progression.horizontalOverflow = HorizontalWrapMode.Wrap;
             var close = CreateNeonButton(card, "BACK TO HOME", new Vector2(0f, -750f), new Vector2(600f, 110f), Hex("#45eaff"));
             close.onClick.AddListener(() => root.SetActive(false));
@@ -3365,7 +3366,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             // Currency is banked on contact—even a failed run keeps the find.
             // Prism Conduit adds value through a fractional carry so +5/+10/+15%
             // remains mathematically fair even though the wallet stores whole crystals.
-            var crystalValue = CrystalPickupValue(1);
+            var crystalValue = CrystalPickupValue(1) + BirdPickupBonus();
             BankCollectedCrystals(crystalValue);
             RecordDailyEvent(DailyGameplayEvent.CrystalPickup, crystalValue);
             ShowCrystalBurst(crystalValue);
@@ -3666,6 +3667,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
 
         private void StartFlight()
         {
+            if (!RecoverWalletTransaction()) return;
             PrepareEndlessMode();
             BeginFlight();
         }
@@ -3748,6 +3750,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
 
         private void ResetToMenu()
         {
+            CloseBirdProgression();
             ClearMissionSession();
             ClearCrystalPickupBursts();
             ResetWorldTransition();
@@ -5396,6 +5399,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             if (state != FlightState.Customize || cosmeticCategory == CosmeticCategory.Upgrades) return;
             if (purchaseModal != null && purchaseModal.activeSelf) return;
             if (unlockRevealModal != null && unlockRevealModal.activeSelf) return;
+            if (birdProgressionScreen != null && birdProgressionScreen.activeSelf) return;
             StartFlight();
         }
 
@@ -5519,9 +5523,9 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             }
             var accent = tech ? Hex("#72ecff") : Hex("#45eaff");
             var owned = 0;
-            foreach (var skin in Skins) if (IsSkinOwned(skin)) owned++;
+            foreach (var skin in BirdRoster) if (IsSkinOwned(skin)) owned++;
             if (customizeSubtitle != null)
-                customizeSubtitle.text = tech ? "DRAG TO EXPLORE · TAP A LEVEL TO INSPECT" : $"{owned} / {Skins.Length} BIRDS UNLOCKED · FIND YOUR SIGNATURE";
+                customizeSubtitle.text = tech ? "DRAG TO EXPLORE · TAP A LEVEL TO INSPECT" : $"{owned} / {BirdRoster.Length} BIRDS · TRAIN & BREED";
             for (var index = 0; index < collectionTabs.Count; index++)
             {
                 var selected = tech ? index == 1 : index == 0;
@@ -5583,14 +5587,14 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
         }
         private void BuildBirdHangarPage()
         {
-            if (Skins == null || Skins.Length == 0) return;
+            if (BirdRoster == null || BirdRoster.Length == 0) return;
 
             hangarPageIndex = Mathf.Clamp(
                 hangarPageIndex,
                 0,
-                Skins.Length - 1);
+                BirdRoster.Length - 1);
 
-            var skin = Skins[hangarPageIndex];
+            var skin = BirdRoster[hangarPageIndex];
             var owned = IsSkinOwned(skin);
             var equipped =
                 equippedSkin != null &&
@@ -5601,10 +5605,10 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
 
             var previousIndex = hangarPageIndex - 1;
             if (previousIndex < 0)
-                previousIndex = Skins.Length - 1;
+                previousIndex = BirdRoster.Length - 1;
 
             var nextIndex = hangarPageIndex + 1;
-            if (nextIndex >= Skins.Length)
+            if (nextIndex >= BirdRoster.Length)
                 nextIndex = 0;
 
             customizeContent.sizeDelta =
@@ -5644,7 +5648,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             // Page number.
             hangarPageIndicatorText = CreateText(
                 hangarPageRoot,
-                $"BAY {hangarPageIndex + 1:00}  /  {Skins.Length:00}",
+                $"BAY {hangarPageIndex + 1:00}  /  {BirdRoster.Length:00}",
                 new Vector2(0f, 502f),
                 new Vector2(500f, 38f),
                 23,
@@ -5685,14 +5689,14 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             // Previous bird first, so it renders behind centre.
             hangarPreviousBirdRoot = CreateHangarCarouselBird(
             hangarCarouselTrack,
-            Skins[previousIndex],
+            BirdRoster[previousIndex],
             -HangarCarouselSpacing,
             false,
             ShowPreviousHangarBird);
 
             hangarNextBirdRoot = CreateHangarCarouselBird(
                 hangarCarouselTrack,
-                Skins[nextIndex],
+                BirdRoster[nextIndex],
                 HangarCarouselSpacing,
                 false,
                 ShowNextHangarBird);
@@ -5804,7 +5808,7 @@ hangarPreviousBirdRoot != null
 
             var description = CreateText(
                 informationGlass,
-                "A cosmetic flight signature for your collection.",
+                "LEVEL "+BirdLevel(skin)+" · "+(BredBird(skin)?"BRED LINEAGE":"FOUNDER BIRD"),
                 new Vector2(0f, 82f),
                 new Vector2(660f, 44f),
                 21,
@@ -5816,10 +5820,11 @@ hangarPreviousBirdRoot != null
             description.resizeTextMinSize = 17;
             description.resizeTextMaxSize = 21;
 
-            // Birds are cosmetic: avoid suggesting that price buys better physics.
-            CreateText(informationGlass, "SHARED HANDLING · EVERY BIRD", new Vector2(0f, 10f), new Vector2(690f, 42f), 25, Hex("#d2def0"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            // Reward specialisations vary; tested flight handling stays shared.
+            var traits=CreateText(informationGlass, BirdTraitSummary(skin), new Vector2(0f, 10f), new Vector2(690f, 42f), 25, Hex("#d2def0"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            traits.resizeTextForBestFit=true;traits.resizeTextMinSize=20;traits.resizeTextMaxSize=25;
             CreateText(informationGlass, $"YOUR CRYSTALS · {crystals:N0}", new Vector2(0f, -48f), new Vector2(690f, 42f), 27, accent, TextAnchor.MiddleCenter, FontStyle.Bold);
-            var unlockProgress = owned ? "OWNED · READY FOR YOUR NEXT FLIGHT"
+            var unlockProgress = owned ? "ENDLESS REWARD TRAITS · SHARED FLIGHT CONTROLS"
                 : crystals >= skin.Price ? "READY TO UNLOCK WITH EARNED CRYSTALS"
                 : $"EARN {skin.Price - crystals:N0} MORE CRYSTALS TO UNLOCK";
             CreateText(informationGlass, unlockProgress, new Vector2(0f, -106f), new Vector2(710f, 42f), 23, Hex("#adc6dd"), TextAnchor.MiddleCenter, FontStyle.Normal);
@@ -5853,6 +5858,8 @@ hangarPreviousBirdRoot != null
                 actionButton.onClick.AddListener(
                     () => SelectSkin(skin));
             }
+            var train=ProgressionButton(hangarPageRoot,"TRAIN BIRD",new Vector2(-205,-550),new Vector2(380,96),()=>OpenBirdTraining(skin));train.interactable=owned;
+            var breed=ProgressionButton(hangarPageRoot,"BREED",new Vector2(205,-550),new Vector2(380,96),()=>OpenBreeding(skin));breed.interactable=owned;
         }
 
         private void AddHangarSwipeEvent(
@@ -6316,9 +6323,9 @@ hangarInformationCanvas != null)
                 hangarPageIndex += pageDirection;
 
                 if (hangarPageIndex < 0)
-                    hangarPageIndex = Skins.Length - 1;
+                    hangarPageIndex = BirdRoster.Length - 1;
 
-                if (hangarPageIndex >= Skins.Length)
+                if (hangarPageIndex >= BirdRoster.Length)
                     hangarPageIndex = 0;
 
                 // New information panel will fade back in.
@@ -6837,23 +6844,23 @@ hangarInformationCanvas != null)
 
         private void ShowPreviousHangarBird()
         {
-            if (Skins == null || Skins.Length == 0) return;
+            if (BirdRoster == null || BirdRoster.Length == 0) return;
 
             hangarPageIndex--;
 
             if (hangarPageIndex < 0)
-                hangarPageIndex = Skins.Length - 1;
+                hangarPageIndex = BirdRoster.Length - 1;
 
             RebuildCustomizeGrid();
         }
 
         private void ShowNextHangarBird()
         {
-            if (Skins == null || Skins.Length == 0) return;
+            if (BirdRoster == null || BirdRoster.Length == 0) return;
 
             hangarPageIndex++;
 
-            if (hangarPageIndex >= Skins.Length)
+            if (hangarPageIndex >= BirdRoster.Length)
                 hangarPageIndex = 0;
 
             RebuildCustomizeGrid();
@@ -7201,6 +7208,7 @@ hangarInformationCanvas != null)
 
         private void BeginProgressionRun()
         {
+            BeginBirdProgressionRun();
             runCrystalsCollected = 0;
             runCrystalBonus = 0;
             prismConduitCarry = 0f;
@@ -7230,7 +7238,7 @@ hangarInformationCanvas != null)
                 : 0;
             var recoveryBonus = RecoveryCacheBonus();
             var archiveBonus = newBest ? ArchiveEngineBestBonus() : 0;
-            runCrystalBonus = salvageBonus + apexBonus + recoveryBonus + archiveBonus;
+            runCrystalBonus = salvageBonus + apexBonus + recoveryBonus + archiveBonus + BirdRunBonus();
 
             if (runCrystalBonus > 0)
             {
@@ -8025,11 +8033,11 @@ hangarInformationCanvas != null)
                     : $"{Worlds.Length} WORLDS REACHED · CHASE YOUR NEXT BEST";
             }
             var owned = 0;
-            foreach (var skin in Skins) if (IsSkinOwned(skin)) owned++;
+            foreach (var skin in BirdRoster) if (IsSkinOwned(skin)) owned++;
             var installed = 0;
             var capacity = 0;
             foreach (var upgrade in Upgrades) { installed += GetUpgradeLevel(upgrade.Id); capacity += upgrade.MaxLevel; }
-            if (menuHangarProgressText != null) menuHangarProgressText.text = $"{owned} / {Skins.Length} BIRDS OWNED";
+            if (menuHangarProgressText != null) menuHangarProgressText.text = $"{owned} / {BirdRoster.Length} BIRDS OWNED";
             if (menuTechProgressText != null) menuTechProgressText.text = $"{installed} / {capacity} TECH LEVELS";
             if (hudModeText != null)
             {
@@ -8138,7 +8146,7 @@ hangarInformationCanvas != null)
             hapticsEnabled = PlayerPrefs.GetInt("skypulse.native.haptics", 1) == 1;
             farthestWorldIndex = Mathf.Clamp(PlayerPrefs.GetInt("skypulse.native.farthest-world", 0), 0, Worlds.Length - 1);
             var savedSkinId = MigrateRosterSkinId(PlayerPrefs.GetString("skypulse.native.skin", "neon_finch"));
-            equippedSkin = FindById(Skins, savedSkinId) ?? Skins[0];
+            equippedSkin = FindBird(savedSkinId) ?? Skins[0];
             equippedWorld = FindById(Worlds, PlayerPrefs.GetString("skypulse.native.world", "neon_city")) ?? Worlds[0];
             equippedTrail = GetTrailForSkin(equippedSkin);
             equippedPipe = FindById(PipeStyles, PlayerPrefs.GetString("skypulse.native.pipe", "ion")) ?? PipeStyles[0];

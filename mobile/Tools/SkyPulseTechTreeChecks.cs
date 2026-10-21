@@ -65,7 +65,7 @@ public static class SkyPulseTechTreeChecks
         var reachable=new HashSet<Vector2>{new Vector2(0,-250)};
         for(int pass=0;pass<40;pass++)foreach(var b in tree.Branches)if(reachable.Contains(b.From))reachable.Add(b.To);
         Check(tree.Roots.All(r=>reachable.Contains(r.At)),"Every family and level remains connected to the single core");
-        Check(content.GetComponentsInChildren<Button>().Length==36&&!content.GetComponentsInChildren<Image>().Any(i=>i.color.a>.001f),"No separate opaque upgrade cards; fixed generous touch areas overlay the continuous tree");
+        Check(content.GetComponentsInChildren<Button>().Length==37&&!content.GetComponentsInChildren<Image>().Any(i=>i.color.a>.001f),"No separate opaque upgrade cards; fixed generous touch areas overlay the continuous tree");
         Check(content.GetComponentsInChildren<Button>().All(b=>((RectTransform)b.transform).rect.width>=200&&((RectTransform)b.transform).rect.height>=180),"Every root/level has a generous stationary touch target");
         var targets=content.GetComponentsInChildren<Button>();
         for(int i=0;i<targets.Length;i++)for(int j=i+1;j<targets.Length;j++)
@@ -74,7 +74,7 @@ public static class SkyPulseTechTreeChecks
             if(new Rect(a.anchoredPosition-a.sizeDelta*.5f,a.sizeDelta).Overlaps(new Rect(b.anchoredPosition-b.sizeDelta*.5f,b.sizeDelta)))
                 throw new Exception("Tree touch targets overlap: "+a.name+" and "+b.name);
         }
-        Check(true,"All 36 family/level touch targets are disjoint, including neighbouring limbs");
+        Check(true,"All 37 core/family/level touch targets are disjoint, including neighbouring limbs");
         var veil=((GameObject)Get(game,"customizeScreen")).transform.Find("Customize veil").GetComponent<Image>();
         Check(veil.material.GetFloat("_Backdrop")==1&&veil.color==Color.white&&scroll.viewport.rect.height==1450,"Tree uses a full-bleed quiet atmosphere and expanded exploration field");
         Check(Resources.Load<Shader>("SkyPulse/Shaders/TechTreeField").isSupported,"Tree atmosphere and edge-compositing shader compiles on Metal");

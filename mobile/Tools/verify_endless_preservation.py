@@ -27,6 +27,8 @@ for name in methods:
         expected=a[0]
         for x,y in [('.32f','.31f'),('.282f','.272f'),('.28f','.27f'),('.277f','.267f'),('.265f','.255f'),('.26f','.25f'),('.257f','.247f'),('.245f','.235f'),('.24f','.23f')]:expected=expected.replace(x,y)
         assert b==[expected],'Unexpected change beyond owner-authorized aperture tuning'
+    elif name=='LoadProgress':
+        assert a==[b[0].replace('FindBird(savedSkinId)', 'FindById(Skins, savedSkinId)')], 'Unexpected save change beyond bred-roster resolution'
     else: assert a==b,'Protected Endless method changed: '+name
     checks[name]=hashlib.sha256('\n'.join(b).encode()).hexdigest()
 # These original methods gain only dispatch/progress/explicit-source hooks.
@@ -34,10 +36,11 @@ hooks={
 'SaveProgress':[('            if (!RecoverWalletTransaction()) return;\n','')],
 'ConfirmPurchase':[('            if (!RecoverWalletTransaction()) return;\n',''), ('                var maxPan = Mathf.Max(0f, (customizeContent.rect.width - customizeScroll.viewport.rect.width) * .5f);\n                customizeContent.anchoredPosition = new Vector2(Mathf.Clamp(treePosition.x, -maxPan, maxPan), Mathf.Clamp(treePosition.y, 0f, maxScroll));', '                customizeContent.anchoredPosition = new Vector2(0f, Mathf.Clamp(treePosition.y, 0f, maxScroll));')],
 'UpdatePipes':[('                    RecordDailyEvent(DailyGameplayEvent.EndlessGate);\n','')],
-'CollectCrystalPickup':[('            RecordDailyEvent(DailyGameplayEvent.CrystalPickup, crystalValue);\n','')],
+'BeginProgressionRun':[('            BeginBirdProgressionRun();\n','')],
+'CollectCrystalPickup':[(' + BirdPickupBonus()', ''),('            RecordDailyEvent(DailyGameplayEvent.CrystalPickup, crystalValue);\n','')],
 'EndFlight':[('            if (activeMode == SkyPulseMode.PulseRelay) { FinishRelayFailure(lastCrashReason); return; }\n','')],
 'BankCollectedCrystals':[('            CreditWallet(amount, WalletRewardSource.FlightPickup);','            crystals += amount;\n            runCrystalsCollected += amount;')],
-'ApplyResultTechBonuses':[('                CreditWallet(runCrystalBonus, WalletRewardSource.FlightTechBonus);','                crystals += runCrystalBonus;')]
+'ApplyResultTechBonuses':[(' + BirdRunBonus()', ''),('                CreditWallet(runCrystalBonus, WalletRewardSource.FlightTechBonus);','                crystals += runCrystalBonus;')]
 }
 for name,replacements in hooks.items():
     normalized=bodies(new,name)[0]
@@ -55,4 +58,4 @@ def catalogue(source,name):
     raise AssertionError(name)
 for name in ['Skins','Worlds','Upgrades']:
     assert catalogue(old,name)==catalogue(new,name),'Stable catalogue changed: '+name
-print(json.dumps({'baseline':BASELINE,'protectedMethodCount':len(methods),'exactBodyHashes':checks,'ownerAuthorizedTreePanPositionPreservation':True,'integrationHookMethods':list(hooks),'allOtherEndlessConstantsUnchanged':True,'ownerAuthorizedTuning':{'pipeSpacingWorldUnitsBefore':5.265,'pipeSpacingWorldUnitsAfter':5.589,'openingHeightChangeWorldUnits':-.18,'date':'2026-10-13'}},indent=2))
+print(json.dumps({'baseline':BASELINE,'protectedMethodCount':len(methods),'exactBodyHashes':checks,'ownerAuthorizedTreePanPositionPreservation':True,'ownerAuthorizedBirdProgression':{'founderResolverSupportsSavedOffspring':True,'birdRewardHooksOnly':True,'flightPhysicsAndScoreRulesUnchanged':True},'integrationHookMethods':list(hooks),'allOtherEndlessConstantsUnchanged':True,'ownerAuthorizedTuning':{'pipeSpacingWorldUnitsBefore':5.265,'pipeSpacingWorldUnitsAfter':5.589,'openingHeightChangeWorldUnits':-.18,'date':'2026-10-13'}},indent=2))

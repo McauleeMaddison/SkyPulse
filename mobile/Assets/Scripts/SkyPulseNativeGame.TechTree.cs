@@ -39,9 +39,12 @@ namespace SkyPulse.Mobile
             var installed = 0;
             var capacity = 0;
             foreach (var upgrade in Upgrades) { installed += GetUpgradeLevel(upgrade.Id); capacity += upgrade.MaxLevel; }
-            roots.Add(new HolographicRoot { At = core, Colour = Hex("#a9f6ff"), Powered = true, Size = 57f });
+            roots.Add(new HolographicRoot { At = core, Colour = SkyPulseBirdProgression.CoreColours[birdProgression.Data.core-1], Powered = true, Size = 57f });
+            CreateTechTouch("SkyPulse Core upgrade",core,new Vector2(260,260),OpenCoreProgression);
             TechLabel("SKYPULSE CORE", new Vector2(0, -48), new Vector2(580, 54), 34, Hex("#effcff"));
             TechLabel($"{installed} / {capacity} INSTALLED", new Vector2(0, -94), new Vector2(580, 36), 25, Hex("#91a9be"));
+            TechLabel(SkyPulseBirdProgression.CoreNames[birdProgression.Data.core-1]+" · CORE "+birdProgression.Data.core+" / 5",new Vector2(0,-141),new Vector2(580,34),25,SkyPulseBirdProgression.CoreColours[birdProgression.Data.core-1]);
+            TechLabel(birdProgression.Data.core<5?"TAP CORE TO EVOLVE":"TAP FOR CORE DETAILS",new Vector2(0,-370),new Vector2(400,32),23,Hex("#8fbdcc"));
 
             for (int family = 0; family < families.Length; family++)
             {
@@ -101,6 +104,7 @@ namespace SkyPulse.Mobile
             raw.rectTransform.offsetMin = raw.rectTransform.offsetMax = Vector2.zero;
             Canvas.ForceUpdateCanvases();
             holographicTree = scene.GetComponent<SkyPulseTechTreeView>();
+            holographicTree.CoreRank = birdProgression.Data.core;
             holographicTree.ReducedMotion = reduceMotionEnabled;
             holographicTree.Build(raw, customizeContent, customizeScroll.viewport, branches, roots);
             var pan = customizeScroll.viewport.GetComponent<SkyPulseTreePanInput>();

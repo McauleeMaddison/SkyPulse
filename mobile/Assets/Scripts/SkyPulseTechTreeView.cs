@@ -27,14 +27,17 @@ namespace SkyPulse.Mobile
         static readonly int ClockId = Shader.PropertyToID("_Clock"), PressId = Shader.PropertyToID("_Press"), RevealId = Shader.PropertyToID("_Reveal");
         sealed class Sculpture
         {
-            public Transform Group, Crystal, Inner, Orbit;
+            public Transform Group, Crystal, Inner, Orbit, SecondOrbit;
             public Vector3 Point;
             public float Size, Phase;
             public bool IsCore;
         }
         readonly List<Sculpture> sculptures = new List<Sculpture>(10);
         readonly List<Mesh> sculptureMeshes = new List<Mesh>(4);
-        Material crystalMaterial, projectorMaterial;
+        static readonly HashSet<int> occupiedStages = new HashSet<int>();
+        int stageSlot;
+        Material crystalMaterial, projectorMaterial, coreHaloMaterial;
+        public int CoreRank = 1;
         Mesh crystalMesh, orbitMesh, frameMesh;
         ScrollRect scroll;
         Vector2 focusFrom, pressPoint;
@@ -64,7 +67,9 @@ namespace SkyPulse.Mobile
             BranchCount = branches.Count; SocketCount = roots.Count;
             Branches = branches.ToArray(); Roots = roots.ToArray();
             stage = new GameObject("Continuous holographic upgrade tree").transform;
-            stage.position = new Vector3(5000, 5000, 0);
+            while (!occupiedStages.Add(stageSlot)) stageSlot++;
+            stage.position = new Vector3(5000 + stageSlot * 64, 5000, 0);
+            CoreRank = Mathf.Clamp(CoreRank, 1, 5);
             var cameraObject = new GameObject("Holographic viewport camera", typeof(Camera));
             cameraObject.transform.SetParent(stage, false);
             treeCamera = cameraObject.GetComponent<Camera>();
@@ -168,6 +173,8 @@ namespace SkyPulse.Mobile
             crystalMaterial.SetFloat("_Glass", 1); crystalMaterial.SetFloat("_Roughness", .14f); crystalMaterial.SetFloat("_ZWrite", 0);
             projectorMaterial = new Material(Resources.Load<Shader>("SkyPulse/Shaders/HeistOptics")) { name = "Tree projector platinum" };
             projectorMaterial.SetColor("_BaseColor", new Color(.09f,.16f,.21f)); projectorMaterial.SetFloat("_Roughness", .21f);
+            coreHaloMaterial = new Material(material) {name="Core level halo"};
+            coreHaloMaterial.SetColor("_Tint",SkyPulseBirdProgression.CoreColours[CoreRank-1]);
             var builder = new SkyPulseMeshBuilder();
             for (int i = 0; i < 8; i++)
             {
@@ -209,14 +216,19 @@ namespace SkyPulse.Mobile
                 properties.SetFloat("_Energy",root.Powered?.29f:.11f); crystal.SetPropertyBlock(properties);
                 var inner = SkyPulseMeshBuilder.Surface(group,"Luminous inner lattice",crystalMesh,material,4).transform;
                 inner.localScale = new Vector3(.3f,.52f,.3f);
-                Transform orbit = null;
+                Transform orbit = null, secondOrbit = null;
                 if (isCore)
                 {
-                    orbit = SkyPulseMeshBuilder.Surface(group,"Counter-rotating core gyroscope",orbitMesh,material,2).transform;
+                    orbit = SkyPulseMeshBuilder.Surface(group,"Core level halo",orbitMesh,coreHaloMaterial,2).transform;
+                    if (CoreRank >= 3)
+                    {
+                        secondOrbit=SkyPulseMeshBuilder.Surface(group,"Secondary core halo",orbitMesh,coreHaloMaterial,2).transform;
+                        secondOrbit.localScale=Vector3.one*1.14f;
+                    }
                     var frame = SkyPulseMeshBuilder.Surface(group,"Open core projector",frameMesh,projectorMaterial,0).transform;
                     frame.localPosition = new Vector3(0,-.7f,.1f); frame.localRotation = Quaternion.Euler(67,0,0); frame.localScale = new Vector3(.82f,.82f,.82f);
                 }
-                sculptures.Add(new Sculpture { Group=group, Crystal=crystal.transform, Inner=inner, Orbit=orbit, Point=group.localPosition, Size=size, Phase=roots.IndexOf(root)*.73f, IsCore=isCore });
+                sculptures.Add(new Sculpture { Group=group, Crystal=crystal.transform, Inner=inner, Orbit=orbit, SecondOrbit=secondOrbit, Point=group.localPosition, Size=size, Phase=roots.IndexOf(root)*.73f, IsCore=isCore });
             }
             foreach (var item in stage.GetComponentsInChildren<Transform>()) item.gameObject.layer=31;
         }
@@ -259,6 +271,7 @@ namespace SkyPulse.Mobile
             material.SetFloat(ClockId,time);
             material.SetFloat(RevealId,ReducedMotion?1:.65f+.35f*Mathf.SmoothStep(0,1,revealTime/.6f));
             material.SetVector(PressId,new Vector4(pressPoint.x,pressPoint.y,pressAge,ReducedMotion?0:1));
+            if(coreHaloMaterial!=null)coreHaloMaterial.SetFloat(ClockId,time*(.7f+CoreRank*.2f));
             for (int i=0;i<sculptures.Count;i++)
             {
                 var root=sculptures[i]; float t=time+root.Phase;
@@ -267,7 +280,13 @@ namespace SkyPulse.Mobile
                 root.Crystal.localRotation=Quaternion.Euler(8+Mathf.Sin(t*.32f)*1.4f,35+(root.IsCore?t*6:Mathf.Sin(t*.27f)*7),Mathf.Sin(t*.36f)*1.2f);
                 root.Crystal.localPosition=new Vector3(0,Mathf.Sin(t*.7f)*.018f,0);
                 root.Inner.localRotation=Quaternion.Euler(-12,-t*10,9);
-                if (root.Orbit!=null) root.Orbit.localRotation=Quaternion.Euler(64,t*4,16);
+                if (root.Orbit!=null)
+                {
+                    float precession=CoreRank>=2?Mathf.Sin(t*.45f)*9:0;
+                    root.Orbit.localRotation=Quaternion.Euler(64+precession,t*(3+CoreRank*2),16);
+                    root.Orbit.localScale=Vector3.one*(1+(CoreRank>=4?Mathf.Sin(t*.8f)*.025f:0));
+                }
+                if(root.SecondOrbit!=null)root.SecondOrbit.localRotation=Quaternion.Euler(38,-t*(CoreRank>=5?18:9),-22+(CoreRank>=5?Mathf.Sin(t*.5f)*8:0));
             }
         }
         public void Render() { Tick(0); if (treeCamera != null && isActiveAndEnabled) treeCamera.Render(); }
@@ -279,6 +298,8 @@ namespace SkyPulse.Mobile
             if (texture != null) { texture.Release(); Destroy(texture); }
             if (mesh != null) Destroy(mesh); if (material != null) Destroy(material);
             if (fieldMaterial != null) Destroy(fieldMaterial);
+            if(coreHaloMaterial!=null)Destroy(coreHaloMaterial);
+            occupiedStages.Remove(stageSlot);
             foreach (var owned in sculptureMeshes) Destroy(owned);
             if (crystalMaterial != null) Destroy(crystalMaterial); if (projectorMaterial != null) Destroy(projectorMaterial);
         }

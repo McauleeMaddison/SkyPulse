@@ -1,6 +1,6 @@
 Shader "SkyPulse/Holographic Tree"
 {
-    Properties { _Clock("Clock", Float) = 0 _Reveal("Reveal", Float) = 1 _Press("Press", Vector) = (0,0,10,0) }
+    Properties { _Clock("Clock", Float) = 0 _Reveal("Reveal", Float) = 1 _Press("Press", Vector) = (0,0,10,0) _Tint("Tint",Color)=(1,1,1,1) }
     SubShader
     {
         Tags { "Queue"="Transparent" "RenderType"="Transparent" }
@@ -13,7 +13,7 @@ Shader "SkyPulse/Holographic Tree"
             #include "UnityCG.cginc"
             struct app { float4 vertex:POSITION; float3 normal:NORMAL; float2 uv:TEXCOORD0; fixed4 color:COLOR; };
             struct vary { float4 pos:SV_POSITION; float3 normal:TEXCOORD0; float3 world:TEXCOORD1; float2 uv:TEXCOORD2; float3 local:TEXCOORD3; fixed4 color:COLOR; };
-            float _Clock, _Reveal; float4 _Press;
+            float _Clock, _Reveal; float4 _Press; fixed4 _Tint;
             vary vert(app v)
             {
                 vary o; o.pos=UnityObjectToClipPos(v.vertex); o.normal=UnityObjectToWorldNormal(v.normal);
@@ -34,7 +34,7 @@ Shader "SkyPulse/Holographic Tree"
                 float3 glass=i.color.rgb*(diffuse+edge*.30)+float3(.67,.88,1)*spec*.72;
                 float3 energy=lerp(i.color.rgb,float3(.82,.97,1),.2+moving*.5)*( .78+moving*.7+touch*.55 );
                 float3 tint=lerp(energy,glass,body)+i.color.rgb*touch*.35;
-                return fixed4(tint, i.color.a*_Reveal);
+                return fixed4(tint*_Tint.rgb, i.color.a*_Reveal*_Tint.a);
             }
             ENDCG
         }
