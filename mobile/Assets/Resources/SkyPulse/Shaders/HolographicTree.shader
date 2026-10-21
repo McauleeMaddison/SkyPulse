@@ -6,7 +6,7 @@ Shader "SkyPulse/Holographic Tree"
         Tags { "Queue"="Transparent" "RenderType"="Transparent" }
         Pass
         {
-            Cull Off ZWrite Off Blend SrcAlpha One, One OneMinusSrcAlpha
+            Cull Back ZWrite Off Blend SrcAlpha OneMinusSrcAlpha, One OneMinusSrcAlpha
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
@@ -22,15 +22,19 @@ Shader "SkyPulse/Holographic Tree"
             fixed4 frag(vary i):SV_Target
             {
                 float3 n=normalize(i.normal), v=normalize(_WorldSpaceCameraPos.xyz-i.world);
-                float edge=pow(1-abs(dot(n,v)),.65);
-                float moving=pow(saturate(1-abs(frac(i.uv.x-_Clock*.19)-.5)*13),4);
-                moving+=pow(saturate(1-abs(frac(i.uv.x+_Clock*.11+.23)-.5)*23),4)*.23;
+                if (dot(n,v)<0) n=-n;
+                float edge=pow(1-saturate(dot(n,v)),2);
+                float moving=pow(saturate(1-abs(frac(i.uv.x-_Clock*.10)-.5)*18),4);
                 float radius=distance(i.local.xy,_Press.xy);
                 float touch=pow(saturate(1-abs(radius-_Press.z*5)*4),3)*saturate(1-_Press.z*1.7)*_Press.w;
-                float scan=.96+.04*sin(i.world.y*55+_Clock*.3);
-                float facet=.8+.3*saturate(dot(n,normalize(float3(-.4,.6,-1))));
-                float3 spectral=lerp(i.color.rgb, float3(.78,.96,1), saturate(edge*.25+moving*.2+touch*.5));
-                return fixed4(spectral*(.6+edge*.65+moving*.6+touch*1.8)*facet, i.color.a*scan*(.75+edge*.25)*_Reveal);
+                float3 light=normalize(float3(-.5,.75,-1));
+                float diffuse=.16+.52*saturate(dot(n,light));
+                float spec=pow(saturate(dot(n,normalize(light+v))),62);
+                float body=step(1.5,i.uv.y)*(1-step(3.5,i.uv.y));
+                float3 glass=i.color.rgb*(diffuse+edge*.30)+float3(.67,.88,1)*spec*.72;
+                float3 energy=lerp(i.color.rgb,float3(.82,.97,1),.2+moving*.5)*( .78+moving*.7+touch*.55 );
+                float3 tint=lerp(energy,glass,body)+i.color.rgb*touch*.35;
+                return fixed4(tint, i.color.a*_Reveal);
             }
             ENDCG
         }

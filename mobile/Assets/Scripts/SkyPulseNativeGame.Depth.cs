@@ -73,6 +73,7 @@ namespace SkyPulse.Mobile
         }
         void OnDestroy()
         {
+            if(techBackdropMaterial!=null)Destroy(techBackdropMaterial);
             if(routeBodyMesh!=null)Destroy(routeBodyMesh);if(routeCapMesh!=null)Destroy(routeCapMesh);if(routeMetal!=null)Destroy(routeMetal);
         }
     }

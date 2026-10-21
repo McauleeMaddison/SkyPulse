@@ -67,6 +67,17 @@ public static class SkyPulseTechTreeChecks
         Check(tree.Roots.All(r=>reachable.Contains(r.At)),"Every family and level remains connected to the single core");
         Check(content.GetComponentsInChildren<Button>().Length==36&&!content.GetComponentsInChildren<Image>().Any(i=>i.color.a>.001f),"No separate opaque upgrade cards; fixed generous touch areas overlay the continuous tree");
         Check(content.GetComponentsInChildren<Button>().All(b=>((RectTransform)b.transform).rect.width>=200&&((RectTransform)b.transform).rect.height>=180),"Every root/level has a generous stationary touch target");
+        var targets=content.GetComponentsInChildren<Button>();
+        for(int i=0;i<targets.Length;i++)for(int j=i+1;j<targets.Length;j++)
+        {
+            var a=(RectTransform)targets[i].transform;var b=(RectTransform)targets[j].transform;
+            if(new Rect(a.anchoredPosition-a.sizeDelta*.5f,a.sizeDelta).Overlaps(new Rect(b.anchoredPosition-b.sizeDelta*.5f,b.sizeDelta)))
+                throw new Exception("Tree touch targets overlap: "+a.name+" and "+b.name);
+        }
+        Check(true,"All 36 family/level touch targets are disjoint, including neighbouring limbs");
+        var veil=((GameObject)Get(game,"customizeScreen")).transform.Find("Customize veil").GetComponent<Image>();
+        Check(veil.material.GetFloat("_Backdrop")==1&&veil.color==Color.white&&scroll.viewport.rect.height==1450,"Tree uses a full-bleed quiet atmosphere and expanded exploration field");
+        Check(Resources.Load<Shader>("SkyPulse/Shaders/TechTreeField").isSupported,"Tree atmosphere and edge-compositing shader compiles on Metal");
         Check(Resources.Load<Shader>("SkyPulse/Shaders/HolographicTree").isSupported,"Volumetric hologram shader compiles on Metal");
         var uiCanvas=((GameObject)Get(game,"uiRoot")).GetComponent<Canvas>();var eventCamera=uiCanvas.renderMode==RenderMode.ScreenSpaceOverlay?null:uiCanvas.worldCamera;
         var start=RectTransformUtility.WorldToScreenPoint(eventCamera,scroll.viewport.position);
@@ -76,7 +87,10 @@ public static class SkyPulseTechTreeChecks
         content.anchoredPosition=new Vector2(300,900);tree.Tick(0);
         Check(Mathf.Abs(tree.TreeCamera.transform.localPosition.x+3)<.001f&&Mathf.Abs(tree.TreeCamera.transform.localPosition.y+(scroll.viewport.rect.height*.5f+900)*.01f)<.001f,"3D fibres remain aligned with labels when panning both axes");
         var upgrades=(Array)typeof(SkyPulseNativeGame).GetField("Upgrades",BindingFlags.Static|BindingFlags.NonPublic).GetValue(null);var first=upgrades.GetValue(0);
-        Call(game,"InspectTechLevel",first,2);Call(game,"ConfirmPurchase");Check((int)Get(game,"crystals")==5000&&levels.Count==0,"A locked future level cannot charge the wallet");Call(game,"ClosePurchaseModal");
+        Call(game,"InspectTechLevel",first,2);
+        var inspector=((GameObject)Get(game,"purchaseModal")).transform.Find("Purchase card");
+        Check(!inspector.Find("Acquisition dock").gameObject.activeSelf&&!inspector.GetComponent<Outline>().enabled,"Upgrade inspector removes the Hangar dock decorations without replacing purchase logic");
+        Call(game,"ConfirmPurchase");Check((int)Get(game,"crystals")==5000&&levels.Count==0,"A locked future level cannot charge the wallet");Call(game,"ClosePurchaseModal");
         Call(game,"InspectTechLevel",first,0);Call(game,"ConfirmPurchase");yield return null;
         Check(levels["crystal_resonator"]==1&&(int)Get(game,"crystals")==4850,"Next-level leaf uses the existing exact price and transaction");
         Check(Vector2.Distance(content.anchoredPosition,new Vector2(300,900))<.1f,"Purchasing retains both pan coordinates");
@@ -85,6 +99,7 @@ public static class SkyPulseTechTreeChecks
         tree=(SkyPulseTechTreeView)Get(game,"holographicTree");tree.ReducedMotion=true;float clock=tree.AnimationClock;tree.Tick(1);Check(tree.AnimationClock==clock,"Reduced Motion freezes holographic flow without blocking input");tree.ReducedMotion=false;tree.MotionPaused=true;tree.Tick(1);Check(tree.AnimationClock==clock,"Paused hologram does not advance");tree.MotionPaused=false;
         for(int i=0;i<20;i++)tree.Tick(1f/60);long before=GC.GetAllocatedBytesForCurrentThread();for(int i=0;i<120;i++)tree.Tick(1f/60);Check(GC.GetAllocatedBytesForCurrentThread()-before==0,"Warmed holographic animation and camera tracking allocate zero managed bytes");
         Call(game,"OpenHangar");yield return null;Check(Get(game,"holographicTree")==null&&!scroll.horizontal&&!scroll.vertical,"Hangar restores its original paging and releases the tree");
+        Check(veil.material.shader.name!="SkyPulse/Tech Tree Field"&&scroll.viewport.sizeDelta==new Vector2(950,1280),"Hangar restores its own backdrop and viewport dimensions");
         Check(!UnityEngine.Object.FindObjectsByType<Camera>(FindObjectsSortMode.None).Any(c=>c.name=="Holographic viewport camera"&&c.isActiveAndEnabled),"No orphan tree camera renders in the Hangar");
         Call(game,"OpenUpgrades");yield return null;
         tree=(SkyPulseTechTreeView)Get(game,"holographicTree");content=(RectTransform)Get(game,"customizeContent");

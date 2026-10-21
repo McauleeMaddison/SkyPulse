@@ -8,6 +8,7 @@ namespace SkyPulse.Mobile
     {
         SkyPulseTechTreeView holographicTree;
         RectTransform techCoreControl;
+        Material techBackdropMaterial;
         // Authored space, not a row/column grid: the three uninterrupted limbs
         // sweep through a shared free-pan field with room for their level fans.
         static readonly Vector2[] TechFamilyPositions = {
@@ -39,8 +40,8 @@ namespace SkyPulse.Mobile
             var capacity = 0;
             foreach (var upgrade in Upgrades) { installed += GetUpgradeLevel(upgrade.Id); capacity += upgrade.MaxLevel; }
             roots.Add(new HolographicRoot { At = core, Colour = Hex("#a9f6ff"), Powered = true, Size = 57f });
-            TechLabel("SKYPULSE CORE", new Vector2(0, -42), new Vector2(580, 54), 40, Hex("#effcff"));
-            TechLabel($"{installed} / {capacity} LEVELS INSTALLED", new Vector2(0, -92), new Vector2(580, 42), 29, Hex("#9cb8ce"));
+            TechLabel("SKYPULSE CORE", new Vector2(0, -48), new Vector2(580, 54), 34, Hex("#effcff"));
+            TechLabel($"{installed} / {capacity} INSTALLED", new Vector2(0, -94), new Vector2(580, 36), 25, Hex("#91a9be"));
 
             for (int family = 0; family < families.Length; family++)
             {
@@ -59,19 +60,25 @@ namespace SkyPulse.Mobile
                     branches.Add(new HolographicBranch { From = previous, To = at, Colour = colour, Powered = unlocked, Trunk = true });
                     roots.Add(new HolographicRoot { At = at, Colour = colour, Powered = unlocked, Size = 32f });
                     CreateTechTouch(upgrade.Name + " family root", at + new Vector2(100, 0), new Vector2(420, 180), () => InspectTechNode(upgrade), at);
-                    TechLabel(System.Globalization.CultureInfo.InvariantCulture.TextInfo.ToTitleCase(upgrade.Name.ToLowerInvariant()).Replace(" ", "\n"), at + new Vector2(180, -12), new Vector2(276, 94), 38, unlocked ? Hex("#effaff") : Hex("#94a8c2"));
+                    TechLabel(System.Globalization.CultureInfo.InvariantCulture.TextInfo.ToTitleCase(upgrade.Name.ToLowerInvariant()).Replace(" ", "\n"), at + new Vector2(180, -8), new Vector2(250, 86), 33, unlocked ? Hex("#effaff") : Hex("#8193a8"));
+                    TechLabel($"{level} / {upgrade.MaxLevel}", at + new Vector2(180, -65), new Vector2(250, 30), 23, unlocked ? colour : Hex("#63748c"));
                     for (int index = 0; index < upgrade.MaxLevel; index++)
                     {
                         int selected = index;
-                        var leaf = at + new Vector2(index == 0 ? -225 : index == 1 ? 205 : -160, -240f - index * 185f);
+                        // Stagger the fans without overlapping another family's hit
+                        // area. The whole asymmetric, connected map stays free-pan.
+                        var leaf = at + new Vector2(index == 0 ? -130 : index == 1 ? 120 : -160, -290f - index * 165f);
                         // Every level grows from its family's root. The prerequisite
                         // chain continues along the same uninterrupted main trunk.
                         branches.Add(new HolographicBranch { From = at, To = leaf, Colour = colour, Powered = unlocked && index <= level });
-                        roots.Add(new HolographicRoot { At = leaf, Colour = colour, Powered = index < level, Size = index == level && unlocked ? 22f : 14f });
-                        CreateTechTouch(upgrade.Id + " level " + (index + 1), leaf, new Vector2(200, 190), () => InspectTechLevel(upgrade, selected));
-                        string status = index < level ? "INSTALLED" : index == level && unlocked ? upgrade.PriceAtLevel(index) + " ✦" : "LOCKED";
-                        TechLabel("LEVEL " + (index + 1), leaf + new Vector2(index == 2 ? -130 : 0, -42), new Vector2(220, 40), 34, index <= level && unlocked ? colour : Hex("#94a8c2"));
-                        TechLabel(status, leaf + new Vector2(index == 2 ? -130 : 0, -84), new Vector2(220, 38), 32, index < level ? colour : Hex("#b2c4d8"));
+                        roots.Add(new HolographicRoot { At = leaf, Colour = colour, Powered = index <= level && unlocked, Size = index == level && unlocked ? 26f : 18f });
+                        float side = index == 1 ? 1 : -1;
+                        CreateTechTouch(upgrade.Id + " level " + (index + 1), leaf + new Vector2(side * 40, 0), new Vector2(200, 180), () => InspectTechLevel(upgrade, selected), leaf);
+                        TechLabel("0" + (index + 1), leaf + new Vector2(side * 80, 0), new Vector2(110, 36), 29, index <= level && unlocked ? colour : Hex("#77899e"));
+                        // Keep the map calm; exact effects, prerequisites and every
+                        // level's state remain available in the tap inspector.
+                        if (index == level && unlocked)
+                            TechLabel(upgrade.PriceAtLevel(index) + " ✦", leaf + new Vector2(side * 80, -34), new Vector2(120, 30), 24, Hex("#d1e4ec"));
                     }
                     previous = at;
                 }
@@ -82,6 +89,8 @@ namespace SkyPulse.Mobile
             customizeScroll.movementType = ScrollRect.MovementType.Clamped;
             customizeScroll.inertia = true;
             customizeScroll.decelerationRate = .055f;
+            customizeScroll.viewport.sizeDelta = new Vector2(1000, 1450);
+            customizeScroll.viewport.anchoredPosition = new Vector2(0, -235);
             customizeContent.anchoredPosition = Vector2.zero;
             var scene = new GameObject("Holographic upgrade tree", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage), typeof(SkyPulseTechTreeView));
             scene.transform.SetParent(customizeScroll.viewport, false);
@@ -107,8 +116,96 @@ namespace SkyPulse.Mobile
             label.rectTransform.anchorMin = label.rectTransform.anchorMax = new Vector2(.5f, 1f);
             label.raycastTarget = false;
             var shadow = label.GetComponent<Shadow>();
-            if (shadow != null) { shadow.effectDistance = new Vector2(.35f,-.35f); shadow.effectColor = new Color(0,.01f,.03f,.8f); }
+            if (shadow != null) shadow.enabled = false;
             return label;
+        }
+
+        void RefreshTechTreeChrome(bool tech)
+        {
+            var veil = customizeScreen.transform.Find("Customize veil").GetComponent<Image>();
+            if (tech && techBackdropMaterial == null)
+            {
+                techBackdropMaterial = new Material(Resources.Load<Shader>("SkyPulse/Shaders/TechTreeField")) { name = "SkyPulse tree atmosphere" };
+                techBackdropMaterial.SetFloat("_Backdrop", 1);
+            }
+            veil.material = tech ? techBackdropMaterial : null;
+            veil.color = tech ? Color.white : new Color(.006f, .012f, .036f, .74f);
+            customizeScroll.viewport.GetComponent<RectMask2D>().softness = tech ? new Vector2Int(24,24) : Vector2Int.zero;
+            customizeTitle.fontSize = tech ? 46 : 52;
+            customizeTitle.fontStyle = tech ? FontStyle.Normal : FontStyle.Bold;
+            customizeTitle.GetComponent<Shadow>().enabled = !tech;
+            customizeSubtitle.fontSize = tech ? 24 : 27;
+            customizeSubtitle.GetComponent<Shadow>().enabled = !tech;
+            if (!tech)
+            {
+                customizeScroll.viewport.sizeDelta = new Vector2(950, 1280);
+                customizeScroll.viewport.anchoredPosition = new Vector2(0, -152);
+            }
+            foreach (var tab in collectionTabs)
+            {
+                // Keep the established controls and targets; replace their
+                // chamfered neon trim only while viewing the tree.
+                var shell = tab.GetComponent<Image>(); shell.color = tech ? Color.clear : Hex("#090e1e");
+                var outline = tab.GetComponent<Outline>(); if (outline != null) outline.enabled = !tech;
+                var face = (Image)tab.targetGraphic;
+                face.sprite = tech ? roundedPanelSprite : interfacePanelSprite;
+                tab.GetComponent<SkyPulseButtonFeedback>().ReducedMotion = reduceMotionEnabled;
+                var keyline = tab.transform.Find("Flight control keyline");
+                if (keyline != null) keyline.gameObject.SetActive(!tech);
+                var text = tab.GetComponentInChildren<Text>();
+                text.fontSize = tech ? 27 : 22;
+                var shadow = text.GetComponent<Shadow>(); if (shadow != null) shadow.enabled = !tech;
+            }
+            var menu = customizeScreen.transform.Find("Button · ‹  MENU");
+            var menuShell = menu.GetComponent<Image>(); menuShell.color = tech ? Color.clear : Hex("#090e1e");
+            menu.GetComponent<Outline>().enabled = !tech;
+            ((Image)menu.GetComponent<Button>().targetGraphic).sprite = tech ? roundedPanelSprite : interfacePanelSprite;
+            menu.Find("Flight control keyline").gameObject.SetActive(!tech);
+            menu.GetComponent<SkyPulseButtonFeedback>().ReducedMotion = reduceMotionEnabled;
+            var menuLabel = menu.GetComponentInChildren<Text>(); menuLabel.fontSize = tech ? 27 : 22; menuLabel.GetComponent<Shadow>().enabled = !tech;
+            var chip = customizeCrystalText.transform.parent;
+            chip.GetComponent<Image>().sprite = tech ? roundedPanelSprite : interfacePanelSprite;
+            chip.GetComponent<Outline>().enabled = !tech;
+            chip.Find("Flight telemetry keyline").gameObject.SetActive(!tech);
+        }
+
+        void StyleTechInspector(bool tech)
+        {
+            var card = purchaseModal.transform.Find("Purchase card");
+            purchaseModal.transform.Find("Purchase dim").GetComponent<Image>().color = tech ? new Color(.008f,.018f,.034f,.84f) : new Color(.008f,.004f,.04f,.86f);
+            var image = card.GetComponent<Image>(); image.sprite = tech ? roundedPanelSprite : interfacePanelSprite;
+            image.color = tech ? Hex("#0b1c2b") : Hex("#08132a");
+            var outline = card.GetComponent<Outline>(); if (outline != null) outline.enabled = !tech;
+            card.Find("Acquisition wing").gameObject.SetActive(!tech);
+            card.Find("Acquisition dock").gameObject.SetActive(!tech);
+            card.Find("Acquisition runway").gameObject.SetActive(!tech);
+            purchaseHalo.gameObject.SetActive(!tech);
+            // A quiet, clearly ordered inspector, still using the original
+            // guarded purchase button and wallet transaction.
+            purchaseTitleText.rectTransform.anchoredPosition = new Vector2(0, tech ? 294 : 278);
+            purchaseTitleText.resizeTextMaxSize = tech ? 38 : 35;
+            purchaseDetailText.rectTransform.anchoredPosition = new Vector2(0, tech ? -30 : -38);
+            purchaseDetailText.rectTransform.sizeDelta = new Vector2(740, tech ? 144 : 100);
+            purchaseDetailText.resizeTextMaxSize = tech ? 29 : 24;
+            purchaseDetailText.resizeTextMinSize = tech ? 25 : 21;
+            purchaseBalanceText.fontSize = tech ? 25 : 19;
+            purchaseBalanceText.fontStyle = tech ? FontStyle.Normal : FontStyle.Bold;
+            purchaseBalanceText.rectTransform.anchoredPosition = new Vector2(0, tech ? -156 : -120);
+            purchaseBalanceText.rectTransform.sizeDelta = new Vector2(760, tech ? 88 : 52);
+            foreach (var button in card.GetComponentsInChildren<Button>())
+            {
+                button.GetComponent<Image>().sprite = tech ? roundedPanelSprite : interfacePanelSprite;
+                var edge = button.GetComponent<Outline>(); if (edge != null) edge.enabled = !tech;
+                ((Image)button.targetGraphic).sprite = tech ? roundedPanelSprite : interfacePanelSprite;
+                button.transform.Find("Flight control keyline").gameObject.SetActive(!tech);
+                button.GetComponent<SkyPulseButtonFeedback>().ReducedMotion = reduceMotionEnabled;
+                var label = button.GetComponentInChildren<Text>(); label.fontSize = tech ? 27 : 22;
+                var shadow = label.GetComponent<Shadow>(); if (shadow != null) shadow.enabled = !tech;
+            }
+            foreach (var label in new[] { purchaseTitleText, purchaseDetailText, purchaseBalanceText })
+            { var shadow = label.GetComponent<Shadow>(); if (shadow != null) shadow.enabled = !tech; }
+            purchaseConfirmText.resizeTextMaxSize = tech ? 27 : 22;
+            card.Find("Button · CANCEL").GetComponentInChildren<Text>().text = tech ? "BACK" : "CANCEL";
         }
 
         void CreateTechTouch(string name, Vector2 position, Vector2 size, UnityEngine.Events.UnityAction action, Vector2? highlight = null)

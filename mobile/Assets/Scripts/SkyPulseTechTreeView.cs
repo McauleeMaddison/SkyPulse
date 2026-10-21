@@ -45,7 +45,7 @@ namespace SkyPulse.Mobile
         Transform stage;
         Camera treeCamera;
         RenderTexture texture;
-        Material material;
+        Material material, fieldMaterial;
         Mesh mesh;
         RectTransform content, viewport;
         float clock;
@@ -75,6 +75,8 @@ namespace SkyPulse.Mobile
             texture = new RenderTexture(1024, height, 24, RenderTextureFormat.ARGB32)
             { name = "Free-pan holographic tree", antiAliasing = 4 };
             texture.Create(); treeCamera.targetTexture = texture; view.texture = texture; view.raycastTarget = false;
+            fieldMaterial = new Material(Resources.Load<Shader>("SkyPulse/Shaders/TechTreeField")) { name = "Tree viewport feathering" };
+            view.material = fieldMaterial;
             material = new Material(Resources.Load<Shader>("SkyPulse/Shaders/HolographicTree"))
             { name = "Spectral glass and flowing energy filaments" };
 
@@ -87,12 +89,15 @@ namespace SkyPulse.Mobile
                 float bend = branch.Trunk ? Mathf.Min(1.7f, gap * .25f) : Mathf.Sign(spread) * Mathf.Min(1.5f, gap * .35f);
                 var a = from + new Vector3(branch.Trunk ? 0 : bend, -gap * .38f, .32f);
                 var b = to + new Vector3(branch.Trunk ? 0 : -spread * .16f, gap * .27f, -.22f);
-                // Continuous shared rings and derivative normals eliminate the
-                // old faceted pipe joints. Outer fibres are restrained additive haze.
-                Tube(from, a, b, to, branch.Trunk ? .043f : .029f, branch.Colour,
-                    branch.Powered ? .86f : .56f, vertices, normals, colours, uv, triangles);
-                Tube(from, a, b, to, branch.Trunk ? .17f : .12f, branch.Colour,
-                    branch.Powered ? .12f : .065f, vertices, normals, colours, uv, triangles);
+                // A substantial shaded glass conductor carries a narrow light
+                // vein on its front face. Shared rings keep every curve seamless.
+                Tube(from, a, b, to, branch.Trunk ? .105f : .072f, branch.Colour,
+                    branch.Powered ? .94f : .58f, vertices, normals, colours, uv, triangles, 2);
+                var front = new Vector3(0, 0, -.10f);
+                Tube(from+front, a+front, b+front, to+front, branch.Trunk ? .024f : .016f, branch.Colour,
+                    branch.Powered ? .92f : .25f, vertices, normals, colours, uv, triangles);
+                Tube(from, a, b, to, branch.Trunk ? .18f : .13f, branch.Colour,
+                    branch.Powered ? .055f : .025f, vertices, normals, colours, uv, triangles, 4);
             }
             foreach (var root in roots)
             {
@@ -106,23 +111,12 @@ namespace SkyPulse.Mobile
                     float a = i * Mathf.PI / 4, b = (i + 1) * Mathf.PI / 4;
                     var p = centre + new Vector3(Mathf.Cos(a) * radius, Mathf.Sin(a) * radius, 0);
                     var q = centre + new Vector3(Mathf.Cos(b) * radius, Mathf.Sin(b) * radius, 0);
-                    Face(centre + Vector3.back * radius * 1.5f, p, q, root.Colour,
+                    Face(centre + Vector3.back * radius * 1.5f, q, p, root.Colour,
                         root.Powered ? .72f : .44f, vertices, normals, colours, uv, triangles);
-                    Face(centre + Vector3.forward * radius, q, p, root.Colour,
+                    Face(centre + Vector3.forward * radius, p, q, root.Colour,
                         .14f, vertices, normals, colours, uv, triangles);
                 }
             }
-            // A quiet, sparse projected lattice supplies perspective/depth without
-            // enclosing the field in an opaque black rectangle.
-            for (int y = 0; y < 36; y++)
-            {
-                float row = -y;
-                Line(new Vector3(-12, row, 1.6f), new Vector3(12, row - .7f, 2.3f), .007f,
-                    new Color(.22f, .53f, .68f, .022f), vertices, normals, colours, uv, triangles);
-            }
-            for (int x = -12; x <= 12; x++)
-                Line(new Vector3(x, 0, 1.6f), new Vector3(x + 1.8f, -36, 2.3f), .007f,
-                    new Color(.22f, .53f, .68f, .022f), vertices, normals, colours, uv, triangles);
             mesh = new Mesh { name = "Unbroken spectral tree", indexFormat = UnityEngine.Rendering.IndexFormat.UInt32 };
             mesh.SetVertices(vertices); mesh.SetNormals(normals); mesh.SetColors(colours);
             mesh.SetUVs(0, uv); mesh.SetTriangles(triangles, 0); mesh.RecalculateBounds(); mesh.UploadMeshData(true);
@@ -138,7 +132,7 @@ namespace SkyPulse.Mobile
         { float u = 1 - t; return (3*u*u*(a-p) + 6*u*t*(b-a) + 3*t*t*(q-b)).normalized; }
 
         static void Tube(Vector3 from, Vector3 a, Vector3 b, Vector3 to, float radius, Color colour, float alpha,
-            List<Vector3> v, List<Vector3> n, List<Color> c, List<Vector2> uv, List<int> triangles)
+            List<Vector3> v, List<Vector3> n, List<Color> c, List<Vector2> uv, List<int> triangles, float layer = 0)
         {
             int start = v.Count; colour.a = alpha;
             for (int step = 0; step <= CurveSteps; step++)
@@ -153,20 +147,13 @@ namespace SkyPulse.Mobile
                     float angle = i * Mathf.PI * 2 / TubeSides;
                     var normal = Mathf.Cos(angle) * side + Mathf.Sin(angle) * up;
                     v.Add(point + normal * radius); n.Add(normal); c.Add(colour);
-                    uv.Add(new Vector2(t, i / (float)TubeSides));
+                    uv.Add(new Vector2(t, layer + i / (float)TubeSides));
                     if (step == 0 || i == 0) continue;
                     int next = start + step * (TubeSides + 1) + i, previous = next - TubeSides - 1;
                     triangles.Add(previous - 1); triangles.Add(previous); triangles.Add(next);
                     triangles.Add(previous - 1); triangles.Add(next); triangles.Add(next - 1);
                 }
             }
-        }
-        static void Line(Vector3 a, Vector3 b, float width, Color tint,
-            List<Vector3> v, List<Vector3> n, List<Color> c, List<Vector2> uv, List<int> triangles)
-        {
-            var side = Vector3.Cross(b-a, Vector3.forward).normalized * width;
-            Face(a-side, a+side, b+side, tint, tint.a, v, n, c, uv, triangles);
-            Face(a-side, b+side, b-side, tint, tint.a, v, n, c, uv, triangles);
         }
         static void Face(Vector3 a, Vector3 b, Vector3 d, Color colour, float alpha,
             List<Vector3> v, List<Vector3> n, List<Color> c, List<Vector2> uv, List<int> triangles)
@@ -228,8 +215,6 @@ namespace SkyPulse.Mobile
                     orbit = SkyPulseMeshBuilder.Surface(group,"Counter-rotating core gyroscope",orbitMesh,material,2).transform;
                     var frame = SkyPulseMeshBuilder.Surface(group,"Open core projector",frameMesh,projectorMaterial,0).transform;
                     frame.localPosition = new Vector3(0,-.7f,.1f); frame.localRotation = Quaternion.Euler(67,0,0); frame.localScale = new Vector3(.82f,.82f,.82f);
-                    var second = SkyPulseMeshBuilder.Surface(orbit,"Inner orthogonal light guide",orbitMesh,material,1).transform;
-                    second.localRotation = Quaternion.Euler(74,32,0); second.localScale = Vector3.one*.76f;
                 }
                 sculptures.Add(new Sculpture { Group=group, Crystal=crystal.transform, Inner=inner, Orbit=orbit, Point=group.localPosition, Size=size, Phase=roots.IndexOf(root)*.73f, IsCore=isCore });
             }
@@ -279,10 +264,10 @@ namespace SkyPulse.Mobile
                 var root=sculptures[i]; float t=time+root.Phase;
                 float response=ReducedMotion?0:Mathf.Max(0,1-pressAge*2)*Mathf.Max(0,1-Vector2.Distance((Vector2)root.Point,pressPoint)/1.2f);
                 root.Group.localScale=Vector3.one*(root.Size*(1+response*.045f));
-                root.Crystal.localRotation=Quaternion.Euler(8+Mathf.Sin(t*.42f)*3,35+t*(root.IsCore?16:11),Mathf.Sin(t*.51f)*3);
-                root.Crystal.localPosition=new Vector3(0,Mathf.Sin(t*.9f)*.027f,0);
-                root.Inner.localRotation=Quaternion.Euler(-12,-t*29,9);
-                if (root.Orbit!=null) root.Orbit.localRotation=Quaternion.Euler(56+Mathf.Sin(t*.33f)*8,t*9,20+t*8);
+                root.Crystal.localRotation=Quaternion.Euler(8+Mathf.Sin(t*.32f)*1.4f,35+(root.IsCore?t*6:Mathf.Sin(t*.27f)*7),Mathf.Sin(t*.36f)*1.2f);
+                root.Crystal.localPosition=new Vector3(0,Mathf.Sin(t*.7f)*.018f,0);
+                root.Inner.localRotation=Quaternion.Euler(-12,-t*10,9);
+                if (root.Orbit!=null) root.Orbit.localRotation=Quaternion.Euler(64,t*4,16);
             }
         }
         public void Render() { Tick(0); if (treeCamera != null && isActiveAndEnabled) treeCamera.Render(); }
@@ -293,6 +278,7 @@ namespace SkyPulse.Mobile
             if (stage != null) Destroy(stage.gameObject);
             if (texture != null) { texture.Release(); Destroy(texture); }
             if (mesh != null) Destroy(mesh); if (material != null) Destroy(material);
+            if (fieldMaterial != null) Destroy(fieldMaterial);
             foreach (var owned in sculptureMeshes) Destroy(owned);
             if (crystalMaterial != null) Destroy(crystalMaterial); if (projectorMaterial != null) Destroy(projectorMaterial);
         }

@@ -5497,13 +5497,14 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
         private void RefreshCollectionNavigation()
         {
             var tech = cosmeticCategory == CosmeticCategory.Upgrades;
+            RefreshTechTreeChrome(tech);
             if (customizeScroll != null && customizeScroll.viewport != null)
             {
                 var viewportImage = customizeScroll.viewport.GetComponent<Image>();
                 if (viewportImage != null)
                 {
                     viewportImage.color = tech
-                        ? new Color(.006f, .016f, .037f, .16f)
+                        ? Color.clear
                         : new Color(.003f, .008f, .024f, .12f);
                 }
             }
@@ -5525,7 +5526,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             {
                 var selected = tech ? index == 1 : index == 0;
                 var tab = collectionTabs[index];
-                tab.targetGraphic.color = selected ? Color.Lerp(Hex("#081428"), accent, .25f) : Hex("#071022");
+                tab.targetGraphic.color = selected ? Color.Lerp(Hex("#081428"), accent, tech ? .14f : .25f) : Hex("#071022");
                 var label = tab.GetComponentInChildren<Text>();
                 if (label != null) label.color = selected ? Hex("#f4fbff") : Hex("#8da5c4");
                 collectionTabRails[index].color = new Color(accent.r, accent.g, accent.b, selected ? 1f : .08f);
@@ -7300,6 +7301,7 @@ hangarInformationCanvas != null)
 
         private void OpenPurchaseModal(string itemName, string detail, int price, Color accent, Sprite preview)
         {
+            StyleTechInspector(false);
             purchaseUpgradeGlyph.gameObject.SetActive(false);
             purchasePreviewImage.enabled = true;
             purchasePreviewImage.rectTransform.sizeDelta = new Vector2(465f, 248f);
@@ -7319,6 +7321,7 @@ hangarInformationCanvas != null)
 
         private void SetPurchaseUpgradeArtwork(Upgrade upgrade)
         {
+            StyleTechInspector(true);
             if (upgrade.Branch == "COLLECTION")
             {
                 purchasePreviewImage.sprite = LoadSprite(CrystalArtworkPath);
