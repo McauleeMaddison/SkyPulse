@@ -3715,6 +3715,8 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
         private void BeginFlight()
         {
             ResetFlightEnvironment();
+            scoreBurstTimer = 0f;
+            if (scoreBurstText != null) scoreBurstText.gameObject.SetActive(false);
             ClearCrystalPickupBursts();
             ClosePurchaseModal();
             state = FlightState.Playing;

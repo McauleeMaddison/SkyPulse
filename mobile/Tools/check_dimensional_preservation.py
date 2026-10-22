@@ -32,11 +32,12 @@ for filename,names in {
     for name in names:
         before,after=body(a,name),body(b,name);assert before==after,'Protected method changed: '+name;report['unchangedMethods'][name]=digest(after.encode())
 path='mobile/Assets/Scripts/SkyPulseNativeGame.cs';a=old(path).decode();b=(ROOT/path).read_text()
-assert body(a,'BeginFlight')==body(b,'BeginFlight').replace('            ResetFlightEnvironment();\n',''),'BeginFlight changed beyond presentation reset'
+begin=body(b,'BeginFlight').replace('            ResetFlightEnvironment();\n','').replace('            scoreBurstTimer = 0f;\n            if (scoreBurstText != null) scoreBurstText.gameObject.SetActive(false);\n','')
+assert body(a,'BeginFlight')==begin,'BeginFlight changed beyond scenery and stale-feedback presentation resets'
 assert body(a,'LoadProgress')==body(b,'LoadProgress').replace('            if(audioSource!=null){audioSource.mute=!soundEnabled;if(!soundEnabled)StopGameSounds();}\n',''),'LoadProgress changed beyond applying saved audio preference'
 guids={}
 for path in (ROOT/'mobile/Assets').rglob('*.meta'):
     match=re.search(r'^guid: ([a-f0-9]{32})$',path.read_text(),re.M);assert match,'Invalid Unity metadata '+str(path)
     assert match[1] not in guids,'Duplicate Unity GUID';guids[match[1]]=path.relative_to(ROOT).as_posix()
-report.update(uniqueUnityGuids=len(guids),presentationOnlyFlightHook=True,savedAudioPreferenceHook=True,passed=True)
+report.update(uniqueUnityGuids=len(guids),presentationOnlyFlightHook=True,newRunFeedbackReset=True,savedAudioPreferenceHook=True,passed=True)
 print(json.dumps(report,indent=2))

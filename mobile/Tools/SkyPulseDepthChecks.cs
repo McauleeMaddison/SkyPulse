@@ -16,6 +16,11 @@ public static class SkyPulseDepthChecks
     public static IEnumerator Live(SkyPulseNativeGame game)
     {
         Call(game,"StartFlight");Call(game,"UpdateDepthPresentation",0f);Physics2D.SyncTransforms();
+        Call(game,"BeginWorldTransition",1);
+        Check(((Text)Get(game,"scoreBurstText")).gameObject.activeSelf,"World-entry feedback is visible before retry");
+        Call(game,"RestartFlight");
+        Check((float)Get(game,"scoreBurstTimer")==0&&!((Text)Get(game,"scoreBurstText")).gameObject.activeSelf,"Retry clears old world/reward feedback immediately");
+        Call(game,"UpdateDepthPresentation",0f);Physics2D.SyncTransforms();
         var shaft=(Material)Get(game,"routeMetal");var collar=(Material)Get(game,"routeCapMetal");
         Check(shaft.shader.isSupported&&shaft.shader.name=="SkyPulse/Original Endless Neon Metal","Original neon art is rendered on the real collision-matched 3D geometry");
         Check(shaft.mainTexture==((Sprite)Get(game,"pipeBodySprite")).texture&&collar.mainTexture==((Sprite)Get(game,"pipeCapSprite")).texture,"Endless uses the original shaft and collar textures, not replacement pipe artwork");
