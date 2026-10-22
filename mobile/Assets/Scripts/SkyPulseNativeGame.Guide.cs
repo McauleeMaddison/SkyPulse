@@ -103,7 +103,7 @@ namespace SkyPulse.Mobile
                     GuideStep(2, "LOWER FUTURE UNLOCK COSTS", "Each completed training level adds 2% off future founder-bird unlocks, capped at 20% across the flock. Traits improve Endless rewards; flight handling stays the same.");
                     break;
                 case 4:
-                    GuideStep(0, "CHOOSE TWO OWNED PARENTS", "Open Breed from Bird Hangar and choose two different owned birds. You keep both parents. Parent order chooses the appearance and which reward traits are inherited.");
+                    GuideStep(0, "CHOOSE TWO OWNED PARENTS", "At Core level 2, open Breed in Bird Hangar and choose two different owned birds. You keep both parents. Parent order chooses the appearance and which reward traits are inherited.");
                     GuideStep(1, "PREVIEW YOUR OFFSPRING", "Check its appearance, inherited traits and exact crystal cost before confirming. Parents trained to level 3 or above can pass stronger grades when the Core allows them.");
                     GuideStep(2, "ADD A LASTING FLOCK MEMBER", "Confirm once to unlock and equip the offspring. It stays in your Hangar and can be trained. Duplicate owned combinations are blocked; evolve the Core for more lineage bays.");
                     break;
