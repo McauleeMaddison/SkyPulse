@@ -13,7 +13,7 @@ namespace SkyPulse.Mobile
         sealed class Module
         {
             public Transform Root,Rotor,Mirror,Splitter,Core,Lens,LeftDoor,RightDoor,Sensor;
-            public MeshRenderer Ring,Glass,Base,Collar;
+            public MeshRenderer Ring,Glass,Base,Collar,LensRenderer,MirrorRenderer,SplitterRenderer;
             public float Angle,Power,Hit,Door;
             public int Target;
             public char Kind;
@@ -24,8 +24,8 @@ namespace SkyPulse.Mobile
         readonly List<Mesh> meshes=new List<Mesh>();readonly List<Material> materials=new List<Material>();
         MaterialPropertyBlock properties;
         static readonly int EnergyId=Shader.PropertyToID("_Energy"),GlowId=Shader.PropertyToID("_GlowColor");
-        Transform scene,console;Camera opticalCamera;RenderTexture texture;Mesh beamMesh;Material metal,accent,glass,dark,light,whiteGlass;
-        Mesh baseMesh,ringMesh,mirrorMesh,splitterMesh,coreMesh,lensMesh,doorMesh,sensorMesh;
+        Transform scene,console;Camera opticalCamera;RenderTexture texture;Mesh beamMesh;Material metal,accent,glass,dark,light,whiteGlass,contact;
+        Mesh baseMesh,ringMesh,mirrorMesh,splitterMesh,coreMesh,lensMesh,doorMesh,sensorMesh,contactMesh;
         int beamUsed;float clock;
         public bool ReducedMotion,MotionPaused;
         public BlackoutSession Circuit {get;private set;}
@@ -49,18 +49,20 @@ namespace SkyPulse.Mobile
             metal=Material("Brushed titanium",new Color(.105f,.17f,.205f),.27f);accent=Material("Satin nickel accents",new Color(.20f,.30f,.34f),.24f);dark=Material("Graphite ceramic",new Color(.014f,.028f,.039f),.65f);
             glass=Material("Optical cyan glass",new Color(.12f,.64f,.79f,.75f),.08f,true);whiteGlass=Material("Silver mirror coating",new Color(.48f,.72f,.79f),.04f,true);
             light=new Material(Resources.Load<Shader>("SkyPulse/Shaders/FlightLight")){name="Heist optical fibre"};materials.Add(light);
-            console=new GameObject("Angled physical optical desk").transform;console.SetParent(scene,false);console.localRotation=Quaternion.Euler(10,-7,0);
+            console=new GameObject("Angled physical optical desk").transform;console.SetParent(scene,false);console.localRotation=Quaternion.Euler(20,-10,0);
+            contact=Material("Soft optical contact shadow",new Color(0,0,0,.35f),1);contact.SetFloat("_ContactShadow",1);contact.SetFloat("_ZWrite",0);contact.renderQueue=2990;
             BuildMeshes();
             for(int i=0;i<49;i++)
             {
                 var m=new Module();m.Root=new GameObject("Optical module "+i).transform;m.Root.SetParent(console,false);
+                var shadow=Part(m.Root,"Soft floating contact",contactMesh,contact);shadow.transform.localPosition=new Vector3(.04f,-.08f,.18f);
                 m.Base=Part(m.Root,"Ceramic socket",baseMesh,dark);m.Collar=Part(m.Root,"Machined lens collar",ringMesh,metal);m.Collar.transform.localPosition=new Vector3(0,0,-.12f);
                 m.Ring=Part(m.Root,"Inner live circuit",ringMesh,accent);m.Ring.transform.localScale=Vector3.one*.82f;m.Ring.transform.localPosition=new Vector3(0,0,-.18f);
                 m.Rotor=new GameObject("Optical rotor").transform;m.Rotor.SetParent(m.Root,false);
-                m.Mirror=Part(m.Rotor,"Silver glass mirror",mirrorMesh,whiteGlass).transform;m.Mirror.localRotation=Quaternion.Euler(0,0,45);
-                m.Splitter=Part(m.Rotor,"Triangular beam splitter",splitterMesh,glass).transform;
+                m.MirrorRenderer=Part(m.Rotor,"Silver glass mirror",mirrorMesh,whiteGlass);m.Mirror=m.MirrorRenderer.transform;m.Mirror.localRotation=Quaternion.Euler(0,0,45);
+                m.SplitterRenderer=Part(m.Rotor,"Triangular beam splitter",splitterMesh,glass);m.Splitter=m.SplitterRenderer.transform;
                 m.Core=Part(m.Root,"Suspended six-sided data crystal",coreMesh,glass).transform;m.Core.localPosition=new Vector3(0,0,-.30f);m.Glass=m.Core.GetComponent<MeshRenderer>();
-                m.Lens=Part(m.Root,"Uplink lens",lensMesh,whiteGlass).transform;m.Lens.localPosition=new Vector3(0,0,-.20f);
+                m.LensRenderer=Part(m.Root,"Uplink lens",lensMesh,whiteGlass);m.Lens=m.LensRenderer.transform;m.Lens.localPosition=new Vector3(0,0,-.20f);
                 m.LeftDoor=Part(m.Root,"Left shutter blade",doorMesh,metal).transform;m.RightDoor=Part(m.Root,"Right shutter blade",doorMesh,metal).transform;
                 m.Sensor=Part(m.Root,"Security scanner",sensorMesh,accent).transform;
                 modules[i]=m;
@@ -77,12 +79,13 @@ namespace SkyPulse.Mobile
         Mesh Keep(SkyPulseMeshBuilder builder,string name){var mesh=builder.Finish(name);meshes.Add(mesh);return mesh;}
         void BuildMeshes()
         {
-            var b=new SkyPulseMeshBuilder();b.Profile(new[]{new Vector2(0,.13f),new Vector2(.48f,.13f),new Vector2(.55f,.04f),new Vector2(.55f,-.02f),new Vector2(.48f,-.10f),new Vector2(0,-.10f)});baseMesh=Keep(b,"Chamfered ceramic optical socket");
-            b=new SkyPulseMeshBuilder();b.Torus(.49f,.035f,64,new Color(1,1,1,0));for(int i=0;i<4;i++){float a=i*Mathf.PI/2+Mathf.PI/4;b.Box(new Vector3(Mathf.Cos(a)*.40f,Mathf.Sin(a)*.40f,-.08f),new Vector3(.05f,.05f,.04f),new Color(.7f,.8f,.9f,0));}ringMesh=Keep(b,"Precision lens collar and captive screws");
-            b=new SkyPulseMeshBuilder();b.BevelBox(.78f,.13f,.23f);mirrorMesh=Keep(b,"Bevelled glass mirror volume");
+            var b=new SkyPulseMeshBuilder();b.Quad(new Vector3(-.8f,-.8f,0),new Vector3(-.8f,.8f,0),new Vector3(.8f,.8f,0),new Vector3(.8f,-.8f,0),Color.white);contactMesh=Keep(b,"Feathered optical contact plane");
+            b=new SkyPulseMeshBuilder();b.Profile(new[]{new Vector2(0,.10f),new Vector2(.44f,.10f),new Vector2(.49f,.045f),new Vector2(.49f,0),new Vector2(.44f,-.06f),new Vector2(0,-.06f)});baseMesh=Keep(b,"Low-profile ceramic optical socket");
+            b=new SkyPulseMeshBuilder();for(int i=0;i<3;i++)b.RingArc(.47f,.016f,24,i*120+7,106,new Color(.8f,.92f,1,0));ringMesh=Keep(b,"Three open precision light arcs");
+            b=new SkyPulseMeshBuilder();b.BevelBox(.88f,.16f,.27f);for(int side=-1;side<=1;side+=2)b.Box(new Vector3(side*.37f,0,-.12f),new Vector3(.065f,.24f,.16f),new Color(.26f,.39f,.46f,.4f));mirrorMesh=Keep(b,"Suspended silver mirror with titanium end clamps");
             b=new SkyPulseMeshBuilder();b.ExtrudePrism(new[]{new Vector2(-.29f,-.23f),new Vector2(-.29f,.23f),new Vector2(.31f,0)},-.43f,-.10f);splitterMesh=Keep(b,"Triangular optical splitter volume");
             b=new SkyPulseMeshBuilder();for(int i=0;i<6;i++){float a=i*Mathf.PI/3,c=(i+1)*Mathf.PI/3;var p=new Vector3(Mathf.Cos(a)*.24f,Mathf.Sin(a)*.24f,0);var q=new Vector3(Mathf.Cos(c)*.24f,Mathf.Sin(c)*.24f,0);b.Face(new Vector3(.025f,.03f,-.43f),q,p,new Color(1,1,1,.3f));b.Face(new Vector3(0,0,.19f),p,q,new Color(.55f,.75f,.9f,.6f));}coreMesh=Keep(b,"Six-sided faceted data crystal");
-            b=new SkyPulseMeshBuilder();b.Profile(new[]{new Vector2(0,-.18f),new Vector2(.24f,-.12f),new Vector2(.33f,-.04f),new Vector2(.35f,.04f),new Vector2(.22f,.10f),new Vector2(0,.10f)});lensMesh=Keep(b,"Ground optical uplink lens");
+            b=new SkyPulseMeshBuilder();b.Torus(.29f,.018f,48,new Color(.5f,.8f,1,.4f));var lens=new Vector2[6];for(int i=0;i<6;i++)lens[i]=new Vector2(Mathf.Cos(i*Mathf.PI/3),Mathf.Sin(i*Mathf.PI/3))*.205f;b.ExtrudePrism(lens,-.29f,.08f);lensMesh=Keep(b,"Faceted uplink receiver and suspended light guide");
             b=new SkyPulseMeshBuilder();b.Box(Vector3.zero,new Vector3(.34f,.67f,.18f),new Color(1,1,1,0));for(int i=-2;i<=2;i++)b.Box(new Vector3(0,i*.10f,-.10f),new Vector3(.28f,.018f,.02f),new Color(.7f,.8f,.9f,1));doorMesh=Keep(b,"Vented interlocking relay shutter");
             b=new SkyPulseMeshBuilder();b.Torus(.22f,.04f,48,new Color(1,1,1,1));b.Box(new Vector3(0,.025f,-.10f),new Vector3(.035f,.19f,.06f),new Color(1,1,1,1));b.Box(new Vector3(0,-.13f,-.10f),new Vector3(.035f,.035f,.06f),new Color(1,1,1,1));sensorMesh=Keep(b,"Machined security warning lens");
         }
@@ -119,6 +122,7 @@ namespace SkyPulse.Mobile
                 float target=visible.Powered[i]?1:0;m.Power=ReducedMotion?target:Mathf.Lerp(m.Power,target,powerSmooth);m.Hit=Mathf.Max(0,m.Hit-dt*4);
                 m.Rotor.localRotation=Quaternion.Euler(0,0,m.Angle);m.Rotor.localScale=Vector3.one*(1+(ReducedMotion?0:Mathf.Sin(m.Hit*Mathf.PI)*.035f));
                 var hue=i==PreviewTile?new Color(.7f,.85f,1):Tint(m.Kind);properties.Clear();properties.SetColor(GlowId,hue);properties.SetFloat(EnergyId,.06f+m.Power*.45f+(ReducedMotion?0:m.Hit*.15f)+(i==PreviewTile?.35f:0));m.Ring.SetPropertyBlock(properties);m.Glass.SetPropertyBlock(properties);
+                m.LensRenderer.SetPropertyBlock(properties);m.MirrorRenderer.SetPropertyBlock(properties);m.SplitterRenderer.SetPropertyBlock(properties);
                 if(m.Kind=='C'||m.Kind=='R'||m.Kind=='Q')
                 {
                     m.Core.localRotation=Quaternion.Euler(ReducedMotion?14:14+Mathf.Sin(clock*.9f+i)*7,ReducedMotion?-16:-16+Mathf.Sin(clock*.7f+i)*10,ReducedMotion?0:Mathf.Sin(clock*.5f+i)*8);

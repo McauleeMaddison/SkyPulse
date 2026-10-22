@@ -79,13 +79,16 @@ namespace SkyPulse.Mobile
                         CreateTechTouch(upgrade.Id + " level " + (index + 1), leaf + new Vector2(side * 40, 0), new Vector2(200, 180), () => InspectTechLevel(upgrade, selected), leaf);
                         bool next=index==level&&unlocked,done=index<level;
                         var labelAt=leaf+new Vector2(side*46,-8);
-                        var plaque=ProtocolGraphic(customizeContent,"Connected level touch · "+upgrade.Id+" · "+(index+1),labelAt+Vector2.down*18,new Vector2(196,112),0,SkyPulseSurface.Panel,colour);
-                        plaque.SoftGlass=true;plaque.rectTransform.anchorMin=plaque.rectTransform.anchorMax=new Vector2(.5f,1);plaque.color=done||next?colour:Hex("#62778d");
+                        if(next)
+                        {
+                            var plaque=ProgressionSurface(customizeContent,"Next-level glass · "+upgrade.Id,labelAt+Vector2.down*18,new Vector2(198,94),SkyPulseProgressionSurface.Finish.Quiet);
+                            plaque.Capsule=true;plaque.Accent=colour;plaque.rectTransform.anchorMin=plaque.rectTransform.anchorMax=new Vector2(.5f,1);
+                        }
                         TechLabel("LEVEL "+(index+1),labelAt,new Vector2(188,42),30,next?Hex("#f4fcff"):done?colour:Hex("#8293a8"));
                         TechLabel(done?"INSTALLED":next?"NEXT · "+UpgradeCrystalPrice(upgrade,index)+" ✦":"LOCKED",labelAt+new Vector2(0,-42),new Vector2(194,34),23,next?colour:done?Hex("#aac6d3"):Hex("#718398"));
                         if(next)
                         {
-                            var marker=CreateUiGlyph(customizeContent,"Next available · "+upgrade.Id,leaf+new Vector2(side*46,38),new Vector2(44,20),colour,SkyPulseUiGlyph.Kind.WingMark);
+                            var marker=CreateUiGlyph(customizeContent,"Next available · "+upgrade.Id,leaf+new Vector2(side*46,43),new Vector2(22,22),colour,SkyPulseUiGlyph.Kind.CircuitHex);
                             marker.rectTransform.anchorMin=marker.rectTransform.anchorMax=new Vector2(.5f,1);marker.raycastTarget=false;
                         }
                     }

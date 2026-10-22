@@ -101,6 +101,12 @@ public static class SkyPulsePlayerExperienceChecks
         }
         Check(campaign.Data.medals[0]>0&&(int)Get(game,"selectedMission")==1,"Planned extraction restores a saved system and activates the next vault immediately");
         Check(((Text)Get(game,"blackoutCompletionToast")).text.Contains("ONLINE")||((Text)Get(game,"blackoutCompletionToast")).text==SkyPulseBlackoutCampaign.Objective(1),"Completion connects to a persistent network objective");
+        for(int i=0;i<5;i++)campaign.Complete(i,3,SkyPulseBlackoutCampaign.MinimumTrace[i]);
+        Call(game,"LaunchMission",SkyPulseMode.BlackoutProtocol,5);Call(game,"RestartBlackoutVault");var advanced=(BlackoutSession)Get(game,"blackoutSession");var solution=SkyPulseMissionChecks.Solve(advanced.Puzzle);
+        foreach(int tile in solution.Take(solution.Count-1))Call(game,"TouchBlackoutNode",tile);
+        int beforePlan=advanced.Trace;Call(game,"ToggleBlackoutPreview");Call(game,"PreviewBlackoutNode",solution[solution.Count-1]);
+        yield return new WaitForSecondsRealtime(.25f);Fit(game);Save(camera,rt,Path.Combine(folder,"signal-heist-advanced-plan.png"));
+        Check(advanced.Trace==beforePlan&&((SkyPulseHeistBoard)Get(game,"blackoutBoard")).Preview.State==MissionSessionState.Succeeded,"Advanced restoration preview shows a real solvable network without spending the final move");
         Call(game,"ResetToMenu");Set(game,"blackoutCampaign",oldCampaign);Call(game,"InitializeMissionServices");
         camera.targetTexture=null;RenderTexture.ReleaseTemporary(rt);Debug.Log("SKYPULSE_PLAYER_EXPERIENCE_PASS");
     }
@@ -110,7 +116,8 @@ public static class SkyPulsePlayerExperienceChecks
 public static class SkyPulsePlayerExperienceTargeted
 {
     static SkyPulsePlayerExperienceTargeted(){EditorApplication.update+=Tick;}
-    public static void Run(){if(Application.companyName!="SkyPulseQA20261006")throw new Exception("Disposable QA required");SessionState.SetBool("SkyPulseExperienceTargeted",true);EditorApplication.EnterPlaymode();}
+    public static void Run(){if(Application.companyName!="SkyPulseQA20261006")throw new Exception("Disposable QA required");PlayerPrefs.DeleteAll();PlayerPrefs.Save();SessionState.SetBool("SkyPulseExperienceTargeted",true);EditorApplication.EnterPlaymode();}
+    public static void Capture(){SessionState.SetBool("SkyPulseExperienceCaptureOnly",true);Run();}
     static void Tick()
     {
         if(!SessionState.GetBool("SkyPulseExperienceTargeted",false)||!EditorApplication.isPlaying)return;
@@ -119,6 +126,13 @@ public static class SkyPulsePlayerExperienceTargeted
     static IEnumerator Execute()
     {
         var game=UnityEngine.Object.FindAnyObjectByType<SkyPulseNativeGame>();if(game==null)game=new GameObject("QA game").AddComponent<SkyPulseNativeGame>();game.enabled=false;
-        yield return SkyPulseDepthChecks.Live(game);yield return SkyPulsePlayerExperienceChecks.Live(game);Debug.Log("SKYPULSE_EXPERIENCE_TARGETED_PASS");EditorApplication.Exit(0);
+        bool capture=SessionState.GetBool("SkyPulseExperienceCaptureOnly",false);SessionState.SetBool("SkyPulseExperienceCaptureOnly",false);
+        if(!capture)
+        {
+            SkyPulseBlackoutChecks.Pure();
+            yield return SkyPulseDepthChecks.Live(game);yield return SkyPulseTechTreeChecks.Live(game);yield return SkyPulseBirdProgressionChecks.Live(game);
+            yield return SkyPulseBlackoutChecks.Live(game);yield return SkyPulseCinematicChecks.Live(game);yield return SkyPulseBlackoutChecks.Captures(game);
+        }
+        yield return SkyPulsePlayerExperienceChecks.Live(game);Debug.Log("SKYPULSE_EXPERIENCE_TARGETED_PASS");EditorApplication.Exit(0);
     }
 }

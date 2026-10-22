@@ -41,6 +41,14 @@ namespace SkyPulse.Mobile
                 Quad(Ring(a,u,radius,thickness),Ring(b,u,radius,thickness),Ring(b,w,radius,thickness),Ring(a,w,radius,thickness),colour);
             }
         }
+        public void RingArc(float radius,float thickness,int segments,float start,float sweep,Color colour)
+        {
+            for(int i=0;i<segments;i++)for(int j=0;j<6;j++)
+            {
+                float a=(start+sweep*i/segments)*Mathf.Deg2Rad,b=(start+sweep*(i+1)/segments)*Mathf.Deg2Rad,u=j*Mathf.PI/3,w=(j+1)*Mathf.PI/3;
+                Quad(Ring(a,u,radius,thickness),Ring(b,u,radius,thickness),Ring(b,w,radius,thickness),Ring(a,w,radius,thickness),colour);
+            }
+        }
         static Vector3 Ring(float a,float b,float r,float s)=>new Vector3(Mathf.Cos(a)*(r+Mathf.Cos(b)*s),Mathf.Sin(a)*(r+Mathf.Cos(b)*s),Mathf.Sin(b)*s);
         public void Profile(Vector2[] profile)
         {

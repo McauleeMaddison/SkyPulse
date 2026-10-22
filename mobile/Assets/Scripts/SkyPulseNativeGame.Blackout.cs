@@ -44,12 +44,12 @@ namespace SkyPulse.Mobile
         RectTransform BlackoutPanel(Transform parent,string name,Vector2 at,Vector2 size)
         {
             var panel=CreatePanel(parent,name,at,size,Color.clear);panel.GetComponent<Image>().raycastTarget=false;
-            var face=ProgressionSurface(panel,"Satin optical instrument",Vector2.zero,size,SkyPulseProgressionSurface.Finish.Inset);face.Accent=BlackoutMint;return panel;
+            var face=ProgressionSurface(panel,"Quiet optical instrument",Vector2.zero,size,SkyPulseProgressionSurface.Finish.Quiet);face.Accent=BlackoutMint;return panel;
         }
         Button BlackoutButton(Transform parent,string label,float x,float y,float width,Action action,float height=110)
         {
             var b=MissionButton(parent,label,x,y,width,action,BlackoutMint,height);if(b.targetGraphic!=null)b.targetGraphic.gameObject.SetActive(false);
-            var g=ProgressionSurface(b.transform,"Satin optical control",Vector2.zero,new Vector2(width,height),SkyPulseProgressionSurface.Finish.Inset);g.Accent=BlackoutMint;g.transform.SetAsFirstSibling();b.targetGraphic=g;
+            var g=ProgressionSurface(b.transform,"Optical glass capsule",Vector2.zero,new Vector2(width-10,Mathf.Min(100,height*.7f)),SkyPulseProgressionSurface.Finish.Inset);g.Capsule=true;g.Accent=BlackoutMint;g.transform.SetAsFirstSibling();b.targetGraphic=g;
             var text=b.GetComponentInChildren<Text>();var shadow=text.GetComponent<Shadow>();if(shadow!=null)shadow.enabled=false;return b;
         }
         Text BlackoutReadout(Transform parent,string caption,float x,Color hue)
@@ -122,7 +122,7 @@ namespace SkyPulse.Mobile
                 var title=MissionText(header,"SIGNAL HEIST",47,39,BlackoutIce,730,50);title.rectTransform.anchoredPosition+=Vector2.left*110;
                 blackoutVaultText=MissionText(header,"",-5,26,BlackoutMint,730,38);blackoutVaultText.rectTransform.anchoredPosition+=Vector2.left*110;
                 blackoutCompletionToast=MissionText(header,"",-49,24,BlackoutIce,730,35);blackoutCompletionToast.rectTransform.anchoredPosition+=Vector2.left*110;
-                blackoutPlanButton=BlackoutButton(header,"PLAN\nMOVE",405,0,180,ToggleBlackoutPreview,150);
+                blackoutPlanButton=BlackoutButton(header,"Plan",405,0,180,ToggleBlackoutPreview,150);
                 var telemetry=BlackoutPanel(root,"Optical telemetry",new Vector2(0,610),new Vector2(1010,112));
                 blackoutDataText=BlackoutReadout(telemetry,"Cores lit",-338,BlackoutMint);blackoutTraceText=BlackoutReadout(telemetry,"Trace left",0,BlackoutIce);blackoutUplinkText=BlackoutReadout(telemetry,"Uplink",338,Hex("#ffc478"));
                 blackoutTraceGauge=BlackoutGraphic(root,"Trace budget rail",new Vector2(0,539),new Vector2(1010,8),BlackoutSurface.Trace,false);
@@ -188,7 +188,7 @@ namespace SkyPulse.Mobile
         void RefreshBlackoutPreviewControls()
         {
             if(blackoutPlanButton==null)return;bool selected=blackoutPlanning&&blackoutPreviewTile>=0;
-            blackoutPlanButton.GetComponentInChildren<Text>().text=blackoutPlanning?"LIVE\nVIEW":"PLAN\nMOVE";
+            blackoutPlanButton.GetComponentInChildren<Text>().text=blackoutPlanning?"Close plan":"Plan";
             blackoutCommitButton.gameObject.SetActive(blackoutPlanning);
             blackoutRestartButton.gameObject.SetActive(!blackoutPlanning);
             blackoutCommitButton.interactable=selected&&state==FlightState.Playing;
