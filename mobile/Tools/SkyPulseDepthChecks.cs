@@ -15,6 +15,9 @@ public static class SkyPulseDepthChecks
     public static IEnumerator Live(SkyPulseNativeGame game)
     {
         Call(game,"StartFlight");Call(game,"UpdateDepthPresentation",0f);Physics2D.SyncTransforms();
+        var shaft=(Material)Get(game,"routeMetal");var collar=(Material)Get(game,"routeCapMetal");
+        Check(shaft.shader.isSupported&&shaft.shader.name=="SkyPulse/Original Endless Neon Metal","Original neon art is rendered on the real collision-matched 3D geometry");
+        Check(shaft.mainTexture==((Sprite)Get(game,"pipeBodySprite")).texture&&collar.mainTexture==((Sprite)Get(game,"pipeCapSprite")).texture,"Endless uses the original shaft and collar textures, not replacement pipe artwork");
         foreach(var pair in (Array)Get(game,"pipePool"))foreach(string side in new[]{"Top","Bottom"})
         {
             var s=Get(pair,side);var body=(BoxCollider2D)Get(s,"BodyCollider");var cap=(BoxCollider2D)Get(s,"CapCollider");
@@ -32,6 +35,7 @@ public static class SkyPulseDepthChecks
             Check(stage.StageCamera.backgroundColor.a==0&&home.GetComponentsInChildren<RawImage>().Any(r=>r.texture==stage.StageCamera.targetTexture&&r.material.shader.name=="SkyPulse/Tech Tree Field"),"Offscreen Home has transparent clear and premultiplied UI compositing");
             var badge=((Text)Get(game,"difficultyText")).rectTransform.parent as RectTransform;Check(badge.rect.width>=340,"Full mode name fits the mode badge");
             foreach(var label in home.GetComponentsInChildren<Text>())Check(!System.Text.RegularExpressions.Regex.IsMatch(label.text,@"\b(placeholder|lorem ipsum|coming soon|todo)\b",System.Text.RegularExpressions.RegexOptions.IgnoreCase),"Home contains finished player-facing copy");
+            Check(!((Text)Get(game,"homeProtocolCaption")).gameObject.activeInHierarchy&&!((Text)Get(game,"homeActivityCopy")).gameObject.activeInHierarchy&&!((Text)Get(game,"menuModeDetailText")).gameObject.activeInHierarchy,"Home removes repeated marketing and instruction strips: "+mode);
         }
         Check(Resources.Load<Shader>("SkyPulse/Shaders/HeistOptics").isSupported,"3D optical materials compile on Metal");Call(game,"ResetToMenu");Debug.Log("SKYPULSE_DEPTH_PASS");
     }

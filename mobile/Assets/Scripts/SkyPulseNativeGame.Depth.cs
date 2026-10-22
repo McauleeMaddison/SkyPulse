@@ -12,7 +12,7 @@ namespace SkyPulse.Mobile
             public PipeSurface Surface;public Transform Body,Cap;public MeshRenderer BodyRenderer,CapRenderer;public SpriteRenderer[] Retired;
         }
         readonly List<RouteDepth> routeDepth=new List<RouteDepth>(8);
-        Mesh routeBodyMesh,routeCapMesh;Material routeMetal;
+        Mesh routeBodyMesh,routeCapMesh;Material routeMetal,routeCapMetal;
         SkyPulseDepthStage DepthStage(Transform parent,SkyPulseMode mode,Vector2 position,Vector2 size)
         {
             var g=new GameObject("SkyPulse 3D stage",typeof(RectTransform),typeof(CanvasRenderer),typeof(RawImage),typeof(SkyPulseDepthStage));g.transform.SetParent(parent,false);
@@ -33,7 +33,8 @@ namespace SkyPulse.Mobile
             if(holographicTree!=null)holographicTree.ReducedMotion=reduceMotionEnabled;
             if(pipePool[0]==null)return;
             if(routeMetal==null)BuildEndlessDepth();
-            var sceneTint=SceneLightTint();routeMetal.SetColor("_LightTint",sceneTint);routeMetal.SetColor("_GlowColor",sceneTint);
+            var sceneTint=SceneLightTint();routeMetal.SetColor("_LightTint",sceneTint);routeCapMetal.SetColor("_LightTint",sceneTint);
+            float lightClock=reduceMotionEnabled?0:cinematicClock;routeMetal.SetFloat("_Clock",lightClock);routeCapMetal.SetFloat("_Clock",lightClock);
             bool show=activeMode==SkyPulseMode.EndlessRoute&&(state==FlightState.Playing||state==FlightState.Impact||state==FlightState.GameOver||state==FlightState.Paused);
             for(int i=0;i<routeDepth.Count;i++)
             {
@@ -48,13 +49,22 @@ namespace SkyPulse.Mobile
         }
         void BuildEndlessDepth()
         {
-            routeMetal=new Material(Resources.Load<Shader>("SkyPulse/Shaders/HeistOptics")){name="Endless polished titanium gates"};routeMetal.SetColor("_BaseColor",new Color(.19f,.32f,.43f));routeMetal.SetFloat("_Roughness",.22f);routeMetal.SetColor("_GlowColor",new Color(.15f,.65f,1));routeMetal.SetFloat("_Energy",.07f);routeMetal.SetFloat("_PanelMode",1);
+            routeMetal=OriginalRouteMaterial(pipeBodySprite,"Original neon shaft on 3D metal");
+            routeCapMetal=OriginalRouteMaterial(pipeCapSprite,"Original neon collar on 3D metal");
             routeBodyMesh=RouteCylinder(false);routeCapMesh=RouteCylinder(true);
+            var properties=new MaterialPropertyBlock();
             foreach(var pair in pipePool)foreach(var s in new[]{pair.Top,pair.Bottom})
             {
-                var body=SkyPulseMeshBuilder.Surface(pair.Root.transform,"3D extruded gate column",routeBodyMesh,routeMetal,5);var cap=SkyPulseMeshBuilder.Surface(pair.Root.transform,"3D bevelled gate collar",routeCapMesh,routeMetal,11);
+                var body=SkyPulseMeshBuilder.Surface(pair.Root.transform,"3D extruded gate column",routeBodyMesh,routeMetal,5);var cap=SkyPulseMeshBuilder.Surface(pair.Root.transform,"3D bevelled gate collar",routeCapMesh,routeCapMetal,11);
+                properties.SetFloat("_ArtFlip",s==pair.Top?1:0);body.SetPropertyBlock(properties);cap.SetPropertyBlock(properties);
                 routeDepth.Add(new RouteDepth{Surface=s,Body=body.transform,Cap=cap.transform,BodyRenderer=body,CapRenderer=cap,Retired=new[]{s.Artwork,s.Outer,s.Panel,s.Shade,s.RailLeft,s.RailRight,s.Core,s.CorePulse,s.Highlight,s.Energy,s.Scan,s.Beacon,s.CapOuter,s.CapAccent,s.CapPanel,s.CapEnergy}});
             }
+        }
+        Material OriginalRouteMaterial(Sprite artwork,string label)
+        {
+            var material=new Material(Resources.Load<Shader>("SkyPulse/Shaders/EndlessRouteMetal")){name=label};
+            var rect=artwork.rect;var texture=artwork.texture;
+            material.mainTexture=texture;material.SetVector("_ArtRect",new Vector4(rect.x/texture.width,rect.y/texture.height,rect.width/texture.width,rect.height/texture.height));return material;
         }
         Mesh RouteCylinder(bool cap)
         {
@@ -76,7 +86,9 @@ namespace SkyPulse.Mobile
         void OnDestroy()
         {
             if(techBackdropMaterial!=null)Destroy(techBackdropMaterial);
+            if(techTypographyMaterial!=null)Destroy(techTypographyMaterial);
             if(routeBodyMesh!=null)Destroy(routeBodyMesh);if(routeCapMesh!=null)Destroy(routeCapMesh);if(routeMetal!=null)Destroy(routeMetal);
+            if(routeCapMetal!=null)Destroy(routeCapMetal);
         }
     }
 }

@@ -7,7 +7,7 @@ namespace SkyPulse.Mobile
     /// <summary>SkyPulse's wing, docking and circuit geometry, drawn directly on the UI canvas.</summary>
     public sealed class SkyPulseUiGlyph : MaskableGraphic
     {
-        public enum Kind { WingMark, DockRing, CircuitHex, Horizon, DockPlatform, RecoveryCore }
+        public enum Kind { WingMark, DockRing, CircuitHex, Horizon, DockPlatform, RecoveryCore, UpgradePoint }
         public Kind Shape;
         public int Variant;
         public bool Animate;
@@ -27,6 +27,11 @@ namespace SkyPulse.Mobile
             mesh.Clear();
             switch (Shape)
             {
+                case Kind.UpgradePoint:
+                    Arc(mesh,.44f,20,160,2,.8f);Arc(mesh,.44f,200,340,2,.8f);
+                    Line(mesh,new Vector2(-.17f,0),new Vector2(.17f,0),2.6f,1);
+                    Line(mesh,new Vector2(0,-.17f),new Vector2(0,.17f),2.6f,1);
+                    break;
                 case Kind.DockPlatform:
                     DrawDockPlatform(mesh);
                     break;

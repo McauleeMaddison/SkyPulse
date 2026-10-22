@@ -63,6 +63,16 @@ public static class SkyPulseTechTreeChecks
         pan.OnBeginDrag(new PointerEventData(EventSystem.current));
         Check(tree.BranchCount==39&&tree.SocketCount==37,"One core feeds three trunks, nine families and all 27 upgrade levels");
         Check(content.GetComponentsInChildren<Text>().Count(t=>t.text.StartsWith("LEVEL "))==27&&content.GetComponentsInChildren<Text>().Any(t=>t.text.StartsWith("NEXT · "))&&content.GetComponentsInChildren<Text>().Any(t=>t.text=="LOCKED"),"Every upgrade point has a prominent level label and an explicit next/locked state");
+        var lettering=content.GetComponentsInChildren<SkyPulseHolographicText>();
+        Check(lettering.Length==content.GetComponentsInChildren<Text>().Length&&lettering.All(t=>t.GetComponent<Text>().material==tree.TypographyMaterial),"All tree lettering shares one optical material instead of duplicated glow text");
+        Check(Resources.Load<Shader>("SkyPulse/Shaders/HolographicText").isSupported&&tree.TypographyMaterial.shader.name=="SkyPulse/Holographic Lettering","Holographic font shader compiles with the font atlas and UI clipping");
+        Check(content.GetComponentsInChildren<Text>().Count(t=>t.text=="VIEW UPGRADE ›")==3&&content.GetComponentsInChildren<SkyPulseUiGlyph>().Count(g=>g.Shape==SkyPulseUiGlyph.Kind.UpgradePoint)==3,"Each initially available family has exactly one purchase-inspection cue");
+        foreach(var label in lettering.Where(l=>l.GetComponent<Text>().text.StartsWith("LEVEL ")||l.GetComponent<Text>().text=="VIEW UPGRADE ›"))
+        {
+            var text=label.GetComponent<Text>();Check(text.preferredWidth<=text.rectTransform.rect.width+1,"Minimal level/action lettering fits without horizontal overflow");
+        }
+        foreach(int fps in new[]{30,60,120}){Set(tree,"clock",0f);for(int i=0;i<fps;i++)tree.Tick(1f/fps);Check(Mathf.Abs(tree.TypographyMaterial.GetFloat("_Clock")-1)<.001f,"Lettering light clock is frame independent at "+fps+" FPS");}
+        tree.ReducedMotion=true;tree.Tick(1);Check(tree.TypographyMaterial.GetFloat("_Motion")==0,"Reduced Motion retains the static glossy finish and stops the light sweep");tree.ReducedMotion=false;
         var reachable=new HashSet<Vector2>{new Vector2(0,-250)};
         for(int pass=0;pass<40;pass++)foreach(var b in tree.Branches)if(reachable.Contains(b.From))reachable.Add(b.To);
         Check(tree.Roots.All(r=>reachable.Contains(r.At)),"Every family and level remains connected to the single core");
@@ -92,7 +102,7 @@ public static class SkyPulseTechTreeChecks
         var inspector=((GameObject)Get(game,"purchaseModal")).transform.Find("Purchase card");
         Check(!inspector.Find("Acquisition dock").gameObject.activeSelf&&!inspector.GetComponent<Outline>().enabled,"Upgrade inspector removes the Hangar dock decorations without replacing purchase logic");
         Call(game,"ConfirmPurchase");Check((int)Get(game,"crystals")==5000&&levels.Count==0,"A locked future level cannot charge the wallet");Call(game,"ClosePurchaseModal");
-        Call(game,"InspectTechLevel",first,0);Call(game,"ConfirmPurchase");yield return null;
+        Call(game,"InspectTechLevel",first,0);SkyPulsePlayerExperienceChecks.CaptureUi(game,"tech-upgrade-inspector");Call(game,"ConfirmPurchase");yield return null;
         Check(levels["crystal_resonator"]==1&&(int)Get(game,"crystals")==4850,"Next-level leaf uses the existing exact price and transaction");
         Check(Vector2.Distance(content.anchoredPosition,new Vector2(300,900))<.1f,"Purchasing retains both pan coordinates");
         Call(game,"InspectTechLevel",first,0);Call(game,"ConfirmPurchase");Check(levels["crystal_resonator"]==1&&(int)Get(game,"crystals")==4850,"Installed leaf cannot repurchase or grant a level");Call(game,"ClosePurchaseModal");

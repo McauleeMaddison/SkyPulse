@@ -85,6 +85,7 @@ namespace SkyPulse.Mobile
             var hit=CreateImage(parent,"Progression control · "+text,at,size,new Color(1,1,1,.001f));hit.raycastTarget=true;
             bool primary=text.StartsWith("UPGRADE ·",StringComparison.Ordinal)||text.StartsWith("TRAIN ·",StringComparison.Ordinal)||text.StartsWith("BREED ·",StringComparison.Ordinal)||text=="VIEW CORE";
             var face=ProgressionSurface(hit.transform,"Control face",Vector2.zero,size-new Vector2(2,12),primary?SkyPulseProgressionSurface.Finish.Action:text=="BACK"?SkyPulseProgressionSurface.Finish.Quiet:SkyPulseProgressionSurface.Finish.Inset);
+            face.Capsule=true;
             var label=ProgressionText(hit.transform,text,0,32,110,primary?Hex("#061b25"):Hex("#d5e8f0"));label.rectTransform.sizeDelta=new Vector2(size.x-48,110);label.fontStyle=FontStyle.Bold;
             label.resizeTextForBestFit=true;label.resizeTextMinSize=26;label.resizeTextMaxSize=32;
             var b=hit.gameObject.AddComponent<Button>();b.targetGraphic=face;
@@ -184,7 +185,7 @@ namespace SkyPulse.Mobile
             int currentDiscount=birdProgression.UpgradeDiscountPercent,nextDiscount=SkyPulseBirdProgression.DiscountPercentForCore(next);
             ProgressionText(birdProgressionBody,(rank<5?"UPGRADE SAVINGS · "+currentDiscount+"% → "+nextDiscount+"%":"UPGRADE SAVINGS · "+currentDiscount+"%")+"\nTech Tree · Bird training · Breeding",-308,26,95,Hex("#d2e5ed"));
             var button=ProgressionButton(birdProgressionBody,rank<5?"UPGRADE · "+birdProgression.CorePrice+" ✦":"MAXIMUM CORE",new Vector2(0,-445),new Vector2(820,152),()=>CommitBirdProgression(()=>birdProgression.UpgradeCore(revision)));
-            button.interactable=rank<5&&crystals>=birdProgression.CorePrice;birdProgressionNotice.text="BALANCE · "+crystals+" ✦";
+            button.interactable=rank<5&&crystals>=birdProgression.CorePrice;birdProgressionNotice.text=ProgressionBalance(rank<5?birdProgression.CorePrice:0);
         }
         void CoreBenefit(float x,string heading,string value,string detail)
         {
@@ -232,19 +233,23 @@ namespace SkyPulse.Mobile
             ProgressionStudio(new Vector2(0,340),new Vector2(820,420),new[]{ProgressionPortrait(skin,new Vector2(0,35),new Vector2(495,275))});
             for(int i=0;i<5;i++)
             {
-                var bar=CreateImage(birdProgressionBody,"Bird training level "+(i+1),new Vector2((i-2)*166,116),new Vector2(145,4),i<bird.level?skin.Accent:Hex("#2d414f"));bar.raycastTarget=false;
+                bool next=i==bird.level&&i<birdProgression.TrainingCap;
+                var colour=i<bird.level?skin.Accent:next?Hex("#effcff"):Hex("#526e82");
+                var bar=CreateImage(birdProgressionBody,"Bird training level "+(i+1),new Vector2((i-2)*166,116),new Vector2(145,next?5:3),colour);bar.raycastTarget=false;
+                ProgressionLabel(birdProgressionBody,(i+1).ToString(),new Vector2((i-2)*166,143),new Vector2(145,34),22,colour,TextAnchor.MiddleCenter);
             }
-            ProgressionText(birdProgressionBody,"LEVEL "+bird.level+"  /  "+birdProgression.TrainingCap+" AVAILABLE",74,22,48,Hex("#aec9d7"));
             bool can=IsSkinOwned(skin)&&bird.level<birdProgression.TrainingCap;
+            ProgressionText(birdProgressionBody,"LEVEL "+bird.level+(can?" → "+(bird.level+1):"")+"   /   CORE LIMIT "+birdProgression.TrainingCap,74,22,48,Hex("#aec9d7"));
             var trained=JsonUtility.FromJson<BirdGenome>(JsonUtility.ToJson(bird));if(can)trained.level++;
             TraitComparison(bird,trained,bird.primary,-33);TraitComparison(bird,trained,bird.secondary,-179);
             ProgressionText(birdProgressionBody,can?"Next level · stronger rewards in Endless Route":bird.level==5?"Both traits are fully trained":"Evolve your Core to unlock further training",-307,26,68,Hex("#b2cbd7"));
             int price=birdProgression.TrainingCost(bird);
             var button=ProgressionButton(birdProgressionBody,can?"TRAIN · "+price+" ✦":bird.level>=5?"FULLY TRAINED":"VIEW CORE",new Vector2(0,-445),new Vector2(820,152),()=>{if(can)CommitBirdProgression(()=>birdProgression.Train(skin.Id,revision,OwnBirdId));else OpenCoreProgression();});
             button.interactable=can?crystals>=price:IsSkinOwned(skin)&&bird.level<5;
-            birdProgressionNotice.text=!can&&bird.level<5?"CORE LEVEL "+(birdProgression.Data.core+1)+" UNLOCKS THE NEXT LEVEL":"BALANCE · "+crystals+" ✦";
+            birdProgressionNotice.text=!can&&bird.level<5?"CORE LEVEL "+(birdProgression.Data.core+1)+" UNLOCKS THE NEXT LEVEL":ProgressionBalance(can?price:0);
             if(can)birdProgressionNotice.text+="\n"+CorePriceDescription(SkyPulseBirdProgression.TrainingPrices[bird.level-1]);
         }
+        string ProgressionBalance(int price)=>crystals<price?"NEED "+(price-crystals)+" MORE ✦   /   BALANCE "+crystals+" ✦":"BALANCE · "+crystals+" ✦";
         List<Skin> OwnedBirdRoster(){var list=new List<Skin>();foreach(var b in BirdRoster)if(IsSkinOwned(b))list.Add(b);return list;}
         void OpenBreeding(Skin first)
         {
@@ -275,14 +280,14 @@ namespace SkyPulse.Mobile
             parentAControl.transform.SetAsLastSibling();parentBControl.transform.SetAsLastSibling();
             var create=ProgressionButton(birdProgressionBody,preview!=null?"BREED · "+birdProgression.BreedingCost(preview)+" ✦":"CHOOSE TWO PARENTS",new Vector2(0,-445),new Vector2(820,152),()=>CommitBirdProgression(()=>birdProgression.Breed(firstId,secondId,revision,OwnBirdId),preview?.id));
             create.interactable=block==""&&crystals>=birdProgression.BreedingCost(preview);
-            birdProgressionNotice.text=block!=""?block:"BALANCE · "+crystals+" ✦   /   "+birdProgression.OffspringCount+" OF "+birdProgression.BreedingCapacity+" BAYS\n"+CorePriceDescription(SkyPulseBirdProgression.BreedingPrice(preview));
+            birdProgressionNotice.text=block!=""?block:ProgressionBalance(birdProgression.BreedingCost(preview))+"   /   "+birdProgression.OffspringCount+" OF "+birdProgression.BreedingCapacity+" BAYS\n"+CorePriceDescription(SkyPulseBirdProgression.BreedingPrice(preview));
         }
         void InheritedTrait(BirdGenome bird,bool first,float x)
         {
             var trait=(BirdTrait)(first?bird.primary:bird.secondary);int grade=first?bird.primaryGrade:bird.secondaryGrade;
             var row=ProgressionSurface(birdProgressionBody,"Inherited trait · "+trait,new Vector2(x,-168),new Vector2(400,156),SkyPulseProgressionSurface.Finish.Inset).transform;
             var colour=SkyPulseBirdProgression.CoreColours[(int)trait];
-            ProgressionLabel(row,trait.ToString().ToUpperInvariant()+"  /  G"+grade,new Vector2(0,46),new Vector2(370,38),24,Hex("#b6cbd7"),TextAnchor.MiddleCenter);
+            ProgressionLabel(row,trait.ToString().ToUpperInvariant()+" · "+(first?"A":"B")+" / G"+grade,new Vector2(0,46),new Vector2(370,38),24,Hex("#b6cbd7"),TextAnchor.MiddleCenter);
             ProgressionLabel(row,TraitValue(trait,SkyPulseBirdProgression.Points(bird,trait)),new Vector2(0,-3),new Vector2(370,58),34,colour,TextAnchor.MiddleCenter).fontStyle=FontStyle.Bold;
             ProgressionLabel(row,TraitContext(trait),new Vector2(0,-54),new Vector2(370,38),23,Hex("#c2d5e0"),TextAnchor.MiddleCenter);
         }
@@ -292,6 +297,7 @@ namespace SkyPulse.Mobile
             ProgressionSurface(birdProgressionBody,"Recessed parent studio",new Vector2(x,416),new Vector2(400,320),SkyPulseProgressionSurface.Finish.Inset);
             var button=ProgressionButton(birdProgressionBody,(first?"PARENT A":"PARENT B")+" · CHANGE",new Vector2(x,416),new Vector2(400,320),()=>OpenParentPicker(first));
             ((SkyPulseProgressionSurface)button.targetGraphic).Style=SkyPulseProgressionSurface.Finish.Overlay;
+            ((SkyPulseProgressionSurface)button.targetGraphic).Capsule=false;
             var caption=button.GetComponentInChildren<Text>();caption.rectTransform.anchoredPosition=new Vector2(0,124);caption.fontSize=23;caption.resizeTextMaxSize=23;caption.resizeTextMinSize=23;caption.rectTransform.sizeDelta=new Vector2(370,46);caption.fontStyle=FontStyle.Normal;caption.color=Hex("#c7d4ef");
             var label=ProgressionLabel(button.transform,skin?.Name??"NOT SELECTED",new Vector2(0,-120),new Vector2(370,44),25,Hex("#e5f0f8"),TextAnchor.MiddleCenter);
             label.resizeTextForBestFit=true;label.resizeTextMinSize=19;label.resizeTextMaxSize=23;

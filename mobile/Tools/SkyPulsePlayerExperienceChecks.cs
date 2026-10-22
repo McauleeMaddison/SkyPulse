@@ -36,9 +36,17 @@ public static class SkyPulsePlayerExperienceChecks
         foreach(var b in UnityEngine.Object.FindObjectsByType<SkyPulseHeistBoard>(FindObjectsSortMode.None))b.Render();
         foreach(var s in UnityEngine.Object.FindObjectsByType<SkyPulseDepthStage>(FindObjectsSortMode.None))s.Render();
         foreach(var t in UnityEngine.Object.FindObjectsByType<SkyPulseTechTreeView>(FindObjectsSortMode.None))t.Render();
+        foreach(var s in UnityEngine.Object.FindObjectsByType<SkyPulseProgressionStage>(FindObjectsSortMode.None))s.Render();
         camera.Render();var previous=RenderTexture.active;RenderTexture.active=rt;
         var image=new Texture2D(rt.width,rt.height,TextureFormat.RGB24,false);image.ReadPixels(new Rect(0,0,rt.width,rt.height),0,0);image.Apply();
         File.WriteAllBytes(file,image.EncodeToPNG());UnityEngine.Object.Destroy(image);RenderTexture.active=previous;
+    }
+    public static void CaptureUi(SkyPulseNativeGame game,string name)
+    {
+        var camera=(Camera)Get(game,"flightCamera");var before=camera.targetTexture;
+        var canvas=((GameObject)Get(game,"uiRoot")).GetComponent<Canvas>();canvas.renderMode=RenderMode.ScreenSpaceCamera;canvas.worldCamera=camera;canvas.planeDistance=1;
+        string folder=Path.Combine(Environment.GetEnvironmentVariable("SKYPULSE_QA_OUTPUT"),"player-experience");Directory.CreateDirectory(folder);
+        var rt=RenderTexture.GetTemporary(750,1334,24);camera.targetTexture=rt;Fit(game);Save(camera,rt,Path.Combine(folder,name+".png"));camera.targetTexture=before;RenderTexture.ReleaseTemporary(rt);
     }
     public static IEnumerator Live(SkyPulseNativeGame game)
     {
@@ -69,6 +77,16 @@ public static class SkyPulsePlayerExperienceChecks
             if((float)Get(game,"birdY")<target-.65f&&(float)Get(game,"birdVelocity")<0)Call(game,"Flap");
             Call(game,"SimulateFlight",1f/60);Call(game,"UpdateGameplayWingState",1f/60);Call(game,"UpdateBirdWingMotion");Call(game,"UpdateCinematicPresentation",1f/60);
         }
+        // A deterministic visible gate also catches materials which compile but
+        // accidentally cull every front face. This changes only the QA fixture.
+        var visibleGate=((Array)Get(game,"pipePool")).GetValue(0);float gateX=(float)Call(game,"GetViewportWidth")*.26f;
+        Set(visibleGate,"X",gateX);Set(visibleGate,"GapCenter",0f);((GameObject)Get(visibleGate,"Root")).transform.localPosition=new Vector3(gateX,0,0);Call(game,"LayoutPipePair",visibleGate);Call(game,"UpdateDepthPresentation",0f);
+        var gateMeshes=((GameObject)Get(visibleGate,"Root")).GetComponentsInChildren<MeshRenderer>();
+        var collar=gateMeshes.First(r=>r.name=="3D bevelled gate collar");var pixel=camera.WorldToViewportPoint(collar.bounds.center);Check(pixel.x>0&&pixel.x<1&&pixel.y>0&&pixel.y<1,"Original-theme collar is within the QA camera view");
+        var read=new Texture2D(1,1,TextureFormat.RGB24,false);camera.Render();RenderTexture.active=rt;read.ReadPixels(new Rect((int)(pixel.x*rt.width),(int)(pixel.y*rt.height),1,1),0,0);read.Apply();var lit=read.GetPixel(0,0);
+        foreach(var renderer in gateMeshes)renderer.enabled=false;camera.Render();RenderTexture.active=rt;read.ReadPixels(new Rect((int)(pixel.x*rt.width),(int)(pixel.y*rt.height),1,1),0,0);read.Apply();var clear=read.GetPixel(0,0);
+        Check(Vector3.Distance(new Vector3(lit.r,lit.g,lit.b),new Vector3(clear.r,clear.g,clear.b))>.05f,"Original neon 3D collar produces visible pixels rather than a culled/invisible surface");
+        foreach(var renderer in gateMeshes)renderer.enabled=true;UnityEngine.Object.Destroy(read);RenderTexture.active=null;
         Call(game,"UpdateScoreBurst",10f);Fit(game);Save(camera,rt,Path.Combine(folder,"endless-pipe-lighting.png"));Call(game,"StartFlight");
         var pickup=((Array)Get(game,"crystalPickupPool")).GetValue(0);int wallet=(int)Get(game,"crystals");
         for(int i=0;i<100;i++)Call(game,"CollectCrystalPickup",pickup);
@@ -79,6 +97,8 @@ public static class SkyPulsePlayerExperienceChecks
         Call(game,"RefreshProgressionResultLabels");Check((int)Get(game,"crystals")==paid,"Repainting the reward report never credits again");
         Call(game,"EndFlight");Set(game,"impactFrameTimer",0f);Set(game,"impactTumbleTimer",0f);Call(game,"Update");Fit(game);Save(camera,rt,Path.Combine(folder,"bird-trait-rewards.png"));
         Call(game,"ResetToMenu");Call(game,"OpenUpgrades");yield return null;Fit(game);Save(camera,rt,Path.Combine(folder,"tech-next-levels.png"));
+        var treeContent=(RectTransform)Get(game,"customizeContent");treeContent.anchoredPosition=new Vector2(520,560);
+        ((ScrollRect)Get(game,"customizeScroll")).StopMovement();Fit(game);Save(camera,rt,Path.Combine(folder,"tech-collection-focus.png"));
         var oldCampaign=Get(game,"blackoutCampaign");var campaign=new BlackoutCampaignProgress(new Store());Set(game,"blackoutCampaign",campaign);
         Call(game,"LaunchMission",SkyPulseMode.BlackoutProtocol,0);Call(game,"RestartBlackoutVault");
         var session=(BlackoutSession)Get(game,"blackoutSession");string saveBefore=JsonUtility.ToJson(campaign.Data);

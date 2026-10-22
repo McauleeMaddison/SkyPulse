@@ -9,6 +9,7 @@ namespace SkyPulse.Mobile
         SkyPulseTechTreeView holographicTree;
         RectTransform techCoreControl;
         Material techBackdropMaterial;
+        Material techTypographyMaterial;
         // Authored space, not a row/column grid: the three uninterrupted limbs
         // sweep through a shared free-pan field with room for their level fans.
         static readonly Vector2[] TechFamilyPositions = {
@@ -78,17 +79,20 @@ namespace SkyPulse.Mobile
                         float side = index == 1 ? 1 : -1;
                         CreateTechTouch(upgrade.Id + " level " + (index + 1), leaf + new Vector2(side * 40, 0), new Vector2(200, 180), () => InspectTechLevel(upgrade, selected), leaf);
                         bool next=index==level&&unlocked,done=index<level;
-                        var labelAt=leaf+new Vector2(side*46,-8);
+                        var labelAt=leaf+new Vector2(side*40,-3);
                         if(next)
                         {
-                            var plaque=ProgressionSurface(customizeContent,"Next-level glass · "+upgrade.Id,labelAt+Vector2.down*18,new Vector2(198,94),SkyPulseProgressionSurface.Finish.Quiet);
+                            var plaque=ProgressionSurface(customizeContent,"Next-level glass · "+upgrade.Id,labelAt+Vector2.down*24,new Vector2(198,130),SkyPulseProgressionSurface.Finish.Quiet);
                             plaque.Capsule=true;plaque.Accent=colour;plaque.rectTransform.anchorMin=plaque.rectTransform.anchorMax=new Vector2(.5f,1);
                         }
-                        TechLabel("LEVEL "+(index+1),labelAt,new Vector2(188,42),30,next?Hex("#f4fcff"):done?colour:Hex("#8293a8"));
-                        TechLabel(done?"INSTALLED":next?"NEXT · "+UpgradeCrystalPrice(upgrade,index)+" ✦":"LOCKED",labelAt+new Vector2(0,-42),new Vector2(194,34),23,next?colour:done?Hex("#aac6d3"):Hex("#718398"));
+                        var rank=TechLabel("LEVEL "+(index+1),labelAt,new Vector2(188,42),31,next?Hex("#f4fcff"):done?colour:Hex("#94a7bc"));
+                        rank.GetComponent<SkyPulseHolographicText>().Emphasis=next?1:done?.5f:0;
+                        rank.gameObject.name=upgrade.Name+" · level "+(index+1)+" label";
+                        TechLabel(done?"INSTALLED":next?"NEXT · "+UpgradeCrystalPrice(upgrade,index)+" ✦":"LOCKED",labelAt+new Vector2(0,-38),new Vector2(194,32),22,next?colour:done?Hex("#aac6d3"):Hex("#8295aa"));
                         if(next)
                         {
-                            var marker=CreateUiGlyph(customizeContent,"Next available · "+upgrade.Id,leaf+new Vector2(side*46,43),new Vector2(22,22),colour,SkyPulseUiGlyph.Kind.CircuitHex);
+                            TechLabel("VIEW UPGRADE ›",labelAt+new Vector2(0,-67),new Vector2(194,26),19,Hex("#c8e5ef"));
+                            var marker=CreateUiGlyph(customizeContent,"Next available · "+upgrade.Id,leaf+new Vector2(side*40,61),new Vector2(36,36),colour,SkyPulseUiGlyph.Kind.UpgradePoint);
                             marker.rectTransform.anchorMin=marker.rectTransform.anchorMax=new Vector2(.5f,1);marker.raycastTarget=false;
                         }
                     }
@@ -113,6 +117,7 @@ namespace SkyPulse.Mobile
             raw.rectTransform.offsetMin = raw.rectTransform.offsetMax = Vector2.zero;
             Canvas.ForceUpdateCanvases();
             holographicTree = scene.GetComponent<SkyPulseTechTreeView>();
+            holographicTree.TypographyMaterial=techTypographyMaterial;
             holographicTree.CoreRank = birdProgression.Data.core;
             holographicTree.ReducedMotion = reduceMotionEnabled;
             holographicTree.Build(raw, customizeContent, customizeScroll.viewport, branches, roots);
@@ -130,6 +135,10 @@ namespace SkyPulse.Mobile
             label.raycastTarget = false;
             var shadow = label.GetComponent<Shadow>();
             if (shadow != null) shadow.enabled = false;
+            if(techTypographyMaterial==null)techTypographyMaterial=new Material(Resources.Load<Shader>("SkyPulse/Shaders/HolographicText")){name="SkyPulse spectral lettering"};
+            var canvas=label.canvas;if(canvas!=null)canvas.additionalShaderChannels|=AdditionalCanvasShaderChannels.TexCoord1;
+            label.material=techTypographyMaterial;
+            label.gameObject.AddComponent<SkyPulseHolographicText>();
             return label;
         }
 
@@ -261,7 +270,7 @@ namespace SkyPulse.Mobile
             // is purchasable, through the existing wallet transaction path.
             pendingPurchase = PendingPurchase.None; pendingUpgrade = null; pendingSkin = null;
             OpenPurchaseModal(upgrade.Name, "", 0, upgrade.Accent, GetUpgradeArtwork(upgrade) ?? softCircleSprite);
-            purchaseTitleText.text = upgrade.Name + "  ·  L" + (index + 1);
+            purchaseTitleText.text = upgrade.Name + "  ·  LEVEL " + (index + 1);
             purchaseDetailText.text = upgrade.EffectAtLevel(index);
             purchaseConfirmButton.interactable = false;
             purchaseConfirmText.text = index < level ? "INSTALLED" : "LOCKED";

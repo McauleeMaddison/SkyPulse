@@ -106,10 +106,14 @@ namespace SkyPulse.Mobile
             menuHangarProgressText.rectTransform.anchoredPosition=endless?new Vector2(-187,-436):new Vector2(0,-589);
             menuCrystalText.transform.parent.gameObject.SetActive(endless||relay);
             modeHomeMap.gameObject.SetActive(!endless);modeHomeGuide.gameObject.SetActive(!endless);
-            menuRouteText.gameObject.SetActive(!relay);menuModeDetailText.gameObject.SetActive(!relay);
+            // Instructions live in the guide. Home keeps identity, progress and
+            // actions, with one objective only where the campaign needs it.
+            homeActivityCopy.gameObject.SetActive(false);
+            if(homeProtocolCaption!=null)homeProtocolCaption.gameObject.SetActive(false);
+            menuRouteText.gameObject.SetActive(!endless&&!relay);menuModeDetailText.gameObject.SetActive(false);
             foreach(var glyph in homeLaunchButton.GetComponentsInChildren<SkyPulseUiGlyph>(true))glyph.gameObject.SetActive(endless||relay);
             foreach(var button in new[]{modeHomeMap,modeHomeGuide}){var surface=button.targetGraphic as SkyPulseCircuitGraphic;surface.Variant=(int)homeProtocol;surface.color=ProtocolAccent(homeProtocol);surface.SetVerticesDirty();}
-            if(endless){menuModeDetailText.rectTransform.anchoredPosition=new Vector2(0,-491);menuRouteText.rectTransform.anchoredPosition=new Vector2(0,-540);homeActivityCopy.text="FLIGHT · CIRCUITS · PUZZLES";return;}
+            if(endless)return;
             int next=HomeNextMission(),completed=0,total=relay?4:8;
             foreach(int medal in relay?dailyRelay.Data.medals:blackoutCampaign.Data.medals)if(medal>0)completed++;
             homeBestCaption.text=relay?"TODAY CLEARED":"SYSTEMS RESTORED";menuBestText.text=completed+" / "+total;
@@ -119,7 +123,7 @@ namespace SkyPulse.Mobile
             menuModeDetailText.rectTransform.anchoredPosition=relay?new Vector2(0,-640):new Vector2(0,-478);
             menuRouteText.rectTransform.anchoredPosition=relay?new Vector2(0,-745):new Vector2(0,-540);
             if(relay){menuModeDetailText.text="SPECTRAL CRYSTALS · AUTOMATIC GATES";menuRouteText.text="NEXT · "+dailyRelay.Missions[next].Name;}
-            else{menuModeDetailText.text="BRING THE CITY BACK ONLINE";menuRouteText.text=completed==8?"NETWORK RESTORED · REPLAY ANY VAULT":SkyPulseBlackoutCampaign.Objective(next).ToUpperInvariant();}
+            else{menuEquippedText.text="SIGNAL HEIST";menuRouteText.text=completed==8?"NETWORK RESTORED · REPLAY ANY VAULT":SkyPulseBlackoutCampaign.Objective(next).ToUpperInvariant();}
         }
         void OpenModeGuide()
         {

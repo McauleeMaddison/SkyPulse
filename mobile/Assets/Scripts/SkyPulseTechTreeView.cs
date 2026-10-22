@@ -53,6 +53,7 @@ namespace SkyPulse.Mobile
         RectTransform content, viewport;
         float clock;
         public bool ReducedMotion, MotionPaused;
+        public Material TypographyMaterial;
         public int BranchCount { get; private set; }
         public int SocketCount { get; private set; }
         public Camera TreeCamera => treeCamera;
@@ -268,6 +269,7 @@ namespace SkyPulse.Mobile
             treeCamera.aspect = viewport.rect.width/Mathf.Max(1,viewport.rect.height);
             treeCamera.transform.localPosition = new Vector3(-content.anchoredPosition.x*.01f,-(viewport.rect.height*.5f+content.anchoredPosition.y)*.01f,-20);
             float time=ReducedMotion?0:clock;
+            if(TypographyMaterial!=null){TypographyMaterial.SetFloat(ClockId,time);TypographyMaterial.SetFloat("_Motion",ReducedMotion?0:1);}
             material.SetFloat(ClockId,time);
             material.SetFloat(RevealId,ReducedMotion?1:.65f+.35f*Mathf.SmoothStep(0,1,revealTime/.6f));
             material.SetVector(PressId,new Vector4(pressPoint.x,pressPoint.y,pressAge,ReducedMotion?0:1));

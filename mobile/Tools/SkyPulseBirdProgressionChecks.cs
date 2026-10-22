@@ -167,6 +167,9 @@ public static class SkyPulseBirdProgressionChecks
         tree=(SkyPulseTechTreeView)Get(game,"holographicTree");Check(tree.CoreRank==2&&tree.Roots[0].Colour==SkyPulseBirdProgression.CoreColours[1],"Core level updates the actual core material colour and halo style");
         Call(game,"OpenHangar");Call(game,"OpenBirdTraining",skins.GetValue(0));yield return null;
         PanelChecks(screen);StudioChecks(game,1);
+        SkyPulsePlayerExperienceChecks.CaptureUi(game,"bird-training");
+        Check(screen.GetComponentsInChildren<Text>().Any(t=>t.text=="LEVEL 1 → 2   /   CORE LIMIT 3"),"Training states the exact level being purchased and current Core limit");
+        Check((string)Call(game,"ProgressionBalance",20000)=="NEED 400 MORE ✦   /   BALANCE 19600 ✦","Insufficient-crystal copy gives the exact shortfall");
         screen.GetComponentsInChildren<Button>().Single(b=>b.GetComponentInChildren<Text>().text.StartsWith("TRAIN ·")).onClick.Invoke();yield return null;
         Check(p.Genome(ids[0]).level==2&&(int)Get(game,"crystals")==19486,"Training charges the displayed 114 crystals after the Core 2 discount");
         Call(game,"BeginBirdProgressionRun");int pickupBonus=0;for(int i=0;i<100;i++)pickupBonus+=(int)Call(game,"BirdPickupBonus");
@@ -182,6 +185,8 @@ public static class SkyPulseBirdProgressionChecks
         yield return DiscountedTechChecks(game,p,store);
         Call(game,"OpenBreeding",skins.GetValue(0));yield return null;
         PanelChecks(screen);StudioChecks(game,3);var oldStudio=(SkyPulseProgressionStage)Get(game,"birdProgressionStage");
+        SkyPulsePlayerExperienceChecks.CaptureUi(game,"bird-lineage");
+        Check(screen.GetComponentsInChildren<Text>().Any(t=>t.text.Contains("· A / G1"))&&screen.GetComponentsInChildren<Text>().Any(t=>t.text.Contains("· B / G1")),"Inheritance preview identifies the parent source and grade for both reward traits");
         Call(game,"OpenParentPicker",true);Check(!oldStudio.StageCamera.gameObject.activeInHierarchy,"Changing panels immediately disables the old studio camera");yield return null;PanelChecks(screen);
         Check(oldStudio==null,"Retired progression studio and its native resources are destroyed on the next frame");
         screen.GetComponentsInChildren<Button>().Single(b=>b.GetComponentInChildren<Text>().text=="BACK").onClick.Invoke();yield return null;

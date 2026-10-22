@@ -7307,7 +7307,7 @@ hangarInformationCanvas != null)
             pendingSkin = null;
             pendingPurchase = PendingPurchase.Upgrade;
             QuoteUpgrade(upgrade,level);
-            OpenPurchaseModal($"{upgrade.Name}  ·  L{level + 1}", upgrade.EffectAtLevel(level), quotedUpgradePrice, upgrade.Accent, GetUpgradeArtwork(upgrade) ?? softCircleSprite);
+            OpenPurchaseModal($"{upgrade.Name}  ·  LEVEL {level + 1}", upgrade.EffectAtLevel(level), quotedUpgradePrice, upgrade.Accent, GetUpgradeArtwork(upgrade) ?? softCircleSprite);
             SetPurchaseUpgradeArtwork(upgrade);
             purchaseBalanceText.text += "\n" + CorePriceDescription(upgrade.PriceAtLevel(level));
         }
