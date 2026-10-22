@@ -1,0 +1,41 @@
+{
+  "projectId": "appgprj_6a9eb032fc0c81918e77b1bc278ab197",
+  "siteVersion": 5,
+  "sourceCommit": "1f0c5f117f62a4f51e113818790c92e5dfc38e19",
+  "deploymentId": "appgdep_6ad9d2d76438819193196d515d629eea",
+  "deploymentStatus": "succeeded",
+  "brandedUrl": "https://skypulse.macwebstudio.com",
+  "providerUrl": "https://skypulse-game.mcaulee19.chatgpt.site",
+  "audience": "public, unchanged",
+  "build": "Production static export passed",
+  "typescript": "tsc --noEmit passed",
+  "localChecks": "All four routes, referenced local links/assets and contact information passed",
+  "publicBrowserChecks": {
+    "support": "Updated support page and expanded training answer verified",
+    "privacy": "22 October policy and lineage/Core/daily data wording verified",
+    "guide": "All modes, Core/training/breeding and twelve world milestones verified; final Core level 2 breeding clarification verified after reload"
+  },
+  "browserScreenshots": [
+    "site-support.png",
+    "site-privacy.png",
+    "site-guide.png"
+  ],
+  "limitations": [
+    "Direct Python and web-tool requests received Cloudflare 1010 bot rejection; ordinary browser navigation to the branded pages succeeded.",
+    "Local preview tab lost its connection during a rebuild; the published branded page was opened and retained as the deliverable.",
+    "No App Store submission or build upload."
+  ],
+  "sourceHashes": {
+    "app/globals.css": "08988b04f6c53c15cbfb8e0c550e769de09cff1ab04306b032a6963b651ed2e9",
+    "app/guide/page.tsx": "d19673278e5ed6803ad57d40e3bd7826f637e7c6dd1b49bfe9eff496d4b7f1f3",
+    "app/layout.tsx": "1a05c40cfb9808ec2cbd6e822408afb6907261d5407e6f6bdb9060b617c76851",
+    "app/page.tsx": "de4fa3448a977494eebe9b29bd62dd6272aabcf824ef158344a7322a93da3555",
+    "app/privacy/page.tsx": "359f4d3ecfecf8172a9286168a8c58ae37fc2262852c6039441e7d2be7b6751b",
+    "app/support/page.tsx": "3972cb205c22dc3ce7e4b4d4a06bec73bb814beb20fdfd56887e9d59ae33ebf5"
+  },
+  "githubBackup": {
+    "repository": "https://github.com/McauleeMaddison/public-site",
+    "branch": "main",
+    "commit": "d6c160362e2e7ee00963e27e7e024df6391f2209"
+  }
+}

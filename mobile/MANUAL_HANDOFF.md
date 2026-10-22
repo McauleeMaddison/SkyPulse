@@ -8,10 +8,13 @@ scene is `mobile/Assets/Scenes/SkyPulse.unity`. Start with the
 
 ## Current state — 22 October 2026
 
-- Runtime source: `edb1fba86ab6d0c8743ecd9d1c4b152e1c55818c`.
+- Runtime source: `3bb62d2e9a83ffaaeb34187df80110a0f6418809`.
 - Current local candidate: **1.0.0 (18)**. Last uploaded TestFlight build: **17**.
-- The latest pass fixes the shaft/collar visual join and replaces the white
-  exhaust bar with a banked, soft tapered plume and continuous trail.
+- Current polish includes clean pipe joins, a soft banked trail, fades for departing
+  3D pipes, shared world-light transitions and expanded How to Play topics.
+- All twelve backgrounds and 36 transition sequences passed in Editor checks.
+- Candidate App Store draft text is saved; build 15 and old media remain selected.
+  Website support/privacy/guide pages are published and backed up separately.
 - [Current release guide](Release/HolographicPolish20261022/README.md),
   [release contract](Release/CURRENT_RELEASE.json) and
   [verification record](Release/HolographicPolish20261022/QA_RECORD.json) identify

@@ -33,3 +33,11 @@ mobile/Tools/run_modes_qa.py
 mobile/Release/HolographicPolish20261022/FLIGHT_TRAIL_POLISH.md
 mobile/Release/HolographicPolish20261022/endless-flight-preview.mp4
 mobile/Release/HolographicPolish20261022/endless-flight-frame.png
+mobile/Assets/Scripts/SkyPulseNativeGame.Guide.cs
+mobile/Assets/Scripts/SkyPulseNativeGame.Guide.cs.meta
+mobile/Tools/SkyPulseGuideWorldChecks.cs
+mobile/Release/HolographicPolish20261022/GUIDE_WORLD_UPDATE.md
+mobile/Release/HolographicPolish20261022/WEBSITE_UPDATE.json
+mobile/Release/HolographicPolish20261022/APP_STORE_DRAFT_CHECKS.json
+mobile/MANUAL_HANDOFF.md
+mobile/Release/REVIEW_STATUS.md

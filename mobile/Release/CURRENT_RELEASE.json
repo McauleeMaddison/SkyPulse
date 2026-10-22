@@ -6,12 +6,13 @@
   "appleTeamId": "TX54JLQ8VF",
   "version": "1.0.0",
   "build": "18",
-  "runtimeSourceCommit": "edb1fba86ab6d0c8743ecd9d1c4b152e1c55818c",
+  "runtimeSourceCommit": "3bb62d2e9a83ffaaeb34187df80110a0f6418809",
   "metadata": "mobile/Release/HolographicPolish20261022/metadata.json",
   "qaRecord": "mobile/Release/HolographicPolish20261022/QA_RECORD.json",
   "sourceManifest": "mobile/Release/HolographicPolish20261022/SOURCE_MANIFEST.json",
   "releaseRecord": "mobile/Release/HolographicPolish20261022/RELEASE_RECORD.json",
   "artworkLedger": "mobile/Release/IdentityRights20261013/ARTWORK_LEDGER.json",
   "testFlightStatus": "Local build 18 is not uploaded; build 17 remains Testing in SkyPulse Internal",
-  "publicAppReview": "On hold pending Apple's clarification, current device/media validation and renewed owner authorization"
+  "publicAppReview": "On hold pending Apple's clarification, current device/media validation and renewed owner authorization",
+  "appStoreDraftStatus": "Candidate text saved and verified; historical build 15 selected, current media/device validation and local build 18 upload/selection remain pending"
 }

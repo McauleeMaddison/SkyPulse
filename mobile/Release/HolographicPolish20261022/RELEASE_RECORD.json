@@ -1,13 +1,13 @@
 {
   "candidate": "SkyPulse 1.0.0 (18)",
-  "compiledSourceCommit": "edb1fba86ab6d0c8743ecd9d1c4b152e1c55818c",
+  "compiledSourceCommit": "3bb62d2e9a83ffaaeb34187df80110a0f6418809",
   "branch": "main",
   "localIosExport": {
     "status": "SKYPULSE_IOS_EXPORT_PASS",
-    "path": "/private/tmp/skypulse-18-holographic-20261022/iOS-flight-trail",
+    "path": "/private/tmp/skypulse-18-holographic-20261022/iOS-guide-release",
     "sourceManifestMatchesWorkingTree": true,
-    "sourceEntries": 439,
-    "sourceCommit": "edb1fba86ab6d0c8743ecd9d1c4b152e1c55818c"
+    "sourceEntries": 441,
+    "sourceCommit": "3bb62d2e9a83ffaaeb34187df80110a0f6418809"
   },
   "archive": {
     "status": "Not archived for build 18"
@@ -18,7 +18,7 @@
     "latestKnownStatus": "Testing in SkyPulse Internal"
   },
   "publicReviewSubmitted": false,
-  "appStoreConnectCopy": "Prepared locally; no live listing edit or review submission in this task",
+  "appStoreConnectCopy": "English (U.K.) candidate description, promotion, keywords and reviewer notes saved and verified after navigation. Name/subtitle/category/identity and branded privacy URL checked. Status Prepare for Submission. Historical build 15 and media remain; local build 18 is unuploaded.",
   "physicalDeviceGameplay": "Pending for build 18",
   "newExternalAssets": 0,
   "economy": "Owner-requested new bird-unlock saving: 2% per completed training level, capped at 20%; rounded up once from base price. Core discounts remain separate. Breeding creates one permanent lineage offspring, retains parents and blocks duplicate owned combinations.",
@@ -61,21 +61,24 @@
     }
   ],
   "evidenceSha256": {
-    "SOURCE_MANIFEST.json": "95cce90e1467a80d40b852dea1a6c233243f11e28b22bc76a3cf24d9acec3ca4",
-    "BUILD_INFO.json": "b2672cf9498e53610f0157115adef3eb516559bc41afac177fbadf71315c760a",
+    "SOURCE_MANIFEST.json": "bbe8f40d944eb9488c157e4f0b4251795b0a211f3185150fd57d3978e008cf1a",
+    "BUILD_INFO.json": "05d6b74af89b598c028b7a530f769ee87baba53909339a6baac914ac5b3c6554",
     "REFACTOR_CHECKS.json": "03c845f28a2ed98dd1db7505363867befb72c281f2616aab05ff8e6bfb780bd3",
     "FLIGHT_TRAIL_POLISH.md": "a8964b271619863f9b5cd171289347df276b7fc749b1b3788fab4ee7d6ac6e0b",
-    "endless-flight-frame.png": "4a8c16f0fb7e7099aadcb320002dbeca2df9bc2b7ad6a8eea5543b860c3f0b01"
+    "endless-flight-frame.png": "4a8c16f0fb7e7099aadcb320002dbeca2df9bc2b7ad6a8eea5543b860c3f0b01",
+    "APP_STORE_DRAFT_CHECKS.json": "e6e28555459b438e481ca12c0852d74623595970ee5b8ae3952ce252f2c9da03",
+    "WEBSITE_UPDATE.json": "04eae147b245ff7770b4921069b5c4972366c9fce51d12231b06e52245635df3",
+    "GUIDE_WORLD_UPDATE.md": "19e9b9895b3076aab8772700fe8e9f20b9c1059b87dbb59b116d717f3ee5188c"
   },
   "editingGuide": "mobile/EDITING_GUIDE.md",
   "metadataValidation": {
     "status": "Passed",
     "unitTests": 11,
-    "descriptionCharacters": 3965,
-    "keywordUtf8Bytes": 81,
-    "reportSha256": "7b6ed5095025cebae0df8cecff48488b05f2ec526cc6620d1d1e6b6bf4f9e445",
+    "descriptionCharacters": 3902,
+    "keywordUtf8Bytes": 99,
+    "reportSha256": "0792bd7c2110a2483474cf215375a55dcff6a50927eb4ab3ee53e5b3b4e4d655",
     "scope": "Current local copy/identity/source checks; branded-link verification retained separately from the preceding release record; no Apple private-comparison clearance",
-    "sourceRevalidatedForCommit": "edb1fba86ab6d0c8743ecd9d1c4b152e1c55818c",
+    "sourceRevalidatedForCommit": "3bb62d2e9a83ffaaeb34187df80110a0f6418809",
     "brandedLinksPreviousVerification": {
       "recordCommit": "7a2bca5553d92e8534361e93797c6497052801af",
       "support": {
@@ -89,8 +92,12 @@
         "contactPresent": true
       },
       "urlsChangedInThisVisualFix": false
-    }
+    },
+    "brandedLinksCurrentVerification": "Published support/privacy/guide viewed in ordinary browser; direct automated requests got Cloudflare 1010, not counted as HTTP passes. See WEBSITE_UPDATE.json."
   },
   "pipeCapContourFix": "PIPE_CAP_FIX.md",
-  "flightTrailPolish": "FLIGHT_TRAIL_POLISH.md"
+  "flightTrailPolish": "FLIGHT_TRAIL_POLISH.md",
+  "guideWorldUpdate": "GUIDE_WORLD_UPDATE.md",
+  "appStoreDraftVerification": "APP_STORE_DRAFT_CHECKS.json",
+  "websiteUpdate": "WEBSITE_UPDATE.json"
 }

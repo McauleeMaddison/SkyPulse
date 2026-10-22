@@ -1,3 +1,13 @@
+## Current guide, website and draft update — 22 October 2026
+
+Local build 18 now includes expanded How to Play, Core/training/breeding instructions and a departure fade for 3D pipes. All 12 textures, 36 transitions at 30/60/120 FPS, guide layouts and focused presentation/input checks pass; the exact-source iOS export matches 441 entries. Device validation remains pending.
+
+The English (U.K.) description, promotional text, keywords and reviewer notes are saved and verified after reopening App Store Connect. Name/subtitle, bundle identity, Games/Action/Puzzle categories and the branded privacy URL were checked. App Privacy still declares Data Not Collected. The draft remains Prepare for Submission; build 15 and historical media remain selected. Build 18 is local and unuploaded; build 17 remains the last known TestFlight build. No Add for Review/Submit action was taken.
+
+The public support, privacy and new player guide are published at https://skypulse.macwebstudio.com, retaining the public audience. See HolographicPolish20261022/WEBSITE_UPDATE.json and APP_STORE_DRAFT_CHECKS.json. Apple's private similarity comparison remains unresolved. Public submission stays on hold pending clarification, current candidate/media validation and renewed owner authorization.
+
+---
+
 ## Current local candidate — 22 October 2026
 
 Build 18 refines Homes, world-lit pipe/bird materials, bird-reward reporting, minimal Tech Tree level labels and Signal Heist optics/controls. Optional Plan evaluates a real rotation without spending, shows its beam/cost and retains immediate normal taps and puzzle progression. Existing medals now represent eight restored network systems; prices, rewards, puzzle budgets/solutions, save keys and tested flight handling remain unchanged.

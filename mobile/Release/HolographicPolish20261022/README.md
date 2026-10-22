@@ -2,6 +2,10 @@
 
 Local iPhone/iPad candidate. **Not uploaded or physically device-tested. Build 17 remains the last uploaded TestFlight build. Public App Review remains on hold.** See `RELEASE_RECORD.json` for the final compiled source and export evidence.
 
+## Latest guide, world and website update
+
+HOW TO PLAY now covers Tech, Core evolution, training and breeding as well as mode-specific controls. All 12 backgrounds and 36 transition sequences pass at 30/60/120 FPS. The newer opaque 3D pipes now fade with departing scenery, while world lighting blends with the backdrop. [Details and current limits](GUIDE_WORLD_UPDATE.md). The public support/privacy/player-guide site is published on the branded domain. Candidate listing text is saved in App Store Connect; its binary/media remain historical and review remains on hold.
+
 ## Latest flight polish
 
 The shaft now stops inside the collar shoulder, removing its visual overlap into the lip while retaining every collision dimension. The rectangular engine bar has been replaced by a soft tapered plume and continuous banked trail. See [the implementation and checks](FLIGHT_TRAIL_POLISH.md). The original transparent-corner correction is retained; [its earlier evidence](PIPE_CAP_FIX.md) is separate.
@@ -37,7 +41,7 @@ Start with [the editing guide](../../EDITING_GUIDE.md). `SkyPulseNativeGame.cs` 
 
 `QA_RECORD.json` distinguishes the 22-group complete run after the gameplay/economy changes from the scoped rerun after source organisation. The current trail/shaft changes additionally pass the focused trail geometry, cap-contour/depth, cinematic and one-thumb suite plus an actual flight recording. Their scope and source are recorded separately from earlier comprehensive checks. Checks cover real purchases, quote refreshes, insufficient/exact balances, Core savings, inherited offspring, journal recovery, reloads, touch separation, Relay auto-unlock, immediate puzzle progression, original flight behaviour, UI bounds, shaders, Reduced Motion and 30/60/120 FPS animation clocks. A rendered-pixel check catches invisible pipe faces even when a shader compiles successfully.
 
-The final iOS IL2CPP export is recorded in `BUILD_INFO.json` and `SOURCE_MANIFEST.json`; every source entry is compared with the repository. This task does not create a signed archive, upload a build, update the live App Store Connect listing or submit App Review. The earlier build 17 symbol-packaging warning remains documented in `../SignalHeist20261021/SYMBOLS_NOTE.md`; a local export does not establish that the archive warning is removed.
+The final iOS IL2CPP export is recorded in `BUILD_INFO.json` and `SOURCE_MANIFEST.json`; every source entry is compared with the repository. No signed archive, build upload or App Review submission was made. The candidate App Store Connect draft text was updated and verified separately; historical build 15 and media remain selected pending a tested candidate. The earlier build 17 symbol-packaging warning remains documented in `../SignalHeist20261021/SYMBOLS_NOTE.md`; a local export does not establish that the archive warning is removed.
 
 Physical phone/tablet checks remain: legibility in daylight and at low brightness, animated rail intensity, one-thumb navigation, training/unlock/breeding flows, update/save retention, sustained frame times, memory and thermals. Editor checks do not certify physical 60 FPS or App Review acceptance.
 

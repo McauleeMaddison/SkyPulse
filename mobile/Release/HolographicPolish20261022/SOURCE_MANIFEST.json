@@ -94,7 +94,7 @@
         },
         {
             "path": "Assets/Resources/SkyPulse/Shaders/EndlessRouteMetal.shader",
-            "sha256": "8709521af9c8b74616b5c53a6594787807df56c300426573838d34bfe00c84bf"
+            "sha256": "4e6b68148b519dcbc47d60480ea47e7f0ebb730da9c8984ea20b2b9902285b40"
         },
         {
             "path": "Assets/Resources/SkyPulse/Shaders/EndlessRouteMetal.shader.meta",
@@ -1558,7 +1558,7 @@
         },
         {
             "path": "Assets/Scripts/SkyPulseNativeGame.Cinematic.cs",
-            "sha256": "51fa757dc239df66b31bd1a7eaab1906dfd50a08e7c7c7c2fb3f64f9bfdad73a"
+            "sha256": "42216900add6153e6585c13aaba75cffac81a03369f8b437c105430140261bc8"
         },
         {
             "path": "Assets/Scripts/SkyPulseNativeGame.Cinematic.cs.meta",
@@ -1566,7 +1566,7 @@
         },
         {
             "path": "Assets/Scripts/SkyPulseNativeGame.Controls.cs",
-            "sha256": "044b0db4552c9746a534c1d02b466d8c1b6183b559fa0065cd867b06d44b44e2"
+            "sha256": "4919bad6e2b55e3872e6128f043a59f98d48a9275548e0e42e942026b116d6a1"
         },
         {
             "path": "Assets/Scripts/SkyPulseNativeGame.Controls.cs.meta",
@@ -1574,11 +1574,19 @@
         },
         {
             "path": "Assets/Scripts/SkyPulseNativeGame.Depth.cs",
-            "sha256": "f94917da49b0900900ef52e73159b0c63af537ed6fc6723b5918c2f42fe8b893"
+            "sha256": "7f55cc79a41b61333d84a65a2cc8e946f2bfc9f88df09b70dca228f6a73809fc"
         },
         {
             "path": "Assets/Scripts/SkyPulseNativeGame.Depth.cs.meta",
             "sha256": "679c621c18400744ac69c474bb8f56acbdfa3caf0e5ffcb4b5c9821b02f0823d"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseNativeGame.Guide.cs",
+            "sha256": "f664766d08520bc88247e6cf2b5373dbfe5e14796c95dba3cfc9f1de1a7921b1"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseNativeGame.Guide.cs.meta",
+            "sha256": "c25b2a04f036ef41ae3106d3d37831e898d9e450e2d58625a9b0f8dee527a838"
         },
         {
             "path": "Assets/Scripts/SkyPulseNativeGame.Hangar.cs",
@@ -1590,7 +1598,7 @@
         },
         {
             "path": "Assets/Scripts/SkyPulseNativeGame.Missions.cs",
-            "sha256": "476e96fec1be2ee57759a70fc8889929be2834ddd3094eb5b491dea85a52909a"
+            "sha256": "2c8a017cc0e841f801cf1e19a41dc89c2c4948100baaa8dee67828c1bee010de"
         },
         {
             "path": "Assets/Scripts/SkyPulseNativeGame.Missions.cs.meta",
@@ -1622,7 +1630,7 @@
         },
         {
             "path": "Assets/Scripts/SkyPulseNativeGame.cs",
-            "sha256": "0839d856c1b85921e6732305b3a66dfbabbdd0978b80df80a0735c80200682c9"
+            "sha256": "d1cc02746abb51fe71d9ad8ca482fbf1235e045cb417957cc905c134c9210223"
         },
         {
             "path": "Assets/Scripts/SkyPulseNativeGame.cs.meta",

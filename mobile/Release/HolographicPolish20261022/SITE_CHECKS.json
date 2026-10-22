@@ -1,0 +1,26 @@
+{
+  "/": {
+    "http": 200,
+    "title": "SkyPulse \u2014 Official Player Hub",
+    "localAssetsAndLinks": true,
+    "contactPresent": true
+  },
+  "/support": {
+    "http": 200,
+    "title": "Player support | SkyPulse",
+    "localAssetsAndLinks": true,
+    "contactPresent": true
+  },
+  "/privacy": {
+    "http": 200,
+    "title": "Privacy policy | SkyPulse",
+    "localAssetsAndLinks": true,
+    "contactPresent": true
+  },
+  "/guide": {
+    "http": 200,
+    "title": "Player guide | SkyPulse",
+    "localAssetsAndLinks": true,
+    "contactPresent": true
+  }
+}

@@ -1,6 +1,6 @@
 {
   "candidate": "1.0.0 (18)",
-  "compiledSourceCommit": "edb1fba86ab6d0c8743ecd9d1c4b152e1c55818c",
+  "compiledSourceCommit": "3bb62d2e9a83ffaaeb34187df80110a0f6418809",
   "unityVersion": "6000.6.0f1",
   "runtimeSourceSha256": {
     "Assets/Scripts/SkyPulseBirdProgression.cs": "1a1c01342e7b24452835109d624ac88d1d392067284ac0cd9be358a68465ccc0",
@@ -20,15 +20,16 @@
     "Assets/Scripts/SkyPulseMissionModels.cs": "2966173db2cd29644df19e99126a13d93f528897bf7153a0ff80938efc874605",
     "Assets/Scripts/SkyPulseNativeGame.BirdProgression.cs": "1f69852413054c30072410832ca9f688f4095fd3c37a5cff288d330e3337b871",
     "Assets/Scripts/SkyPulseNativeGame.Blackout.cs": "ac5172d15b33e7b13b9c44649dcf83b61514adfe6b6431b7be28fee128d330f3",
-    "Assets/Scripts/SkyPulseNativeGame.Cinematic.cs": "51fa757dc239df66b31bd1a7eaab1906dfd50a08e7c7c7c2fb3f64f9bfdad73a",
-    "Assets/Scripts/SkyPulseNativeGame.Controls.cs": "044b0db4552c9746a534c1d02b466d8c1b6183b559fa0065cd867b06d44b44e2",
-    "Assets/Scripts/SkyPulseNativeGame.Depth.cs": "f94917da49b0900900ef52e73159b0c63af537ed6fc6723b5918c2f42fe8b893",
+    "Assets/Scripts/SkyPulseNativeGame.Cinematic.cs": "42216900add6153e6585c13aaba75cffac81a03369f8b437c105430140261bc8",
+    "Assets/Scripts/SkyPulseNativeGame.Controls.cs": "4919bad6e2b55e3872e6128f043a59f98d48a9275548e0e42e942026b116d6a1",
+    "Assets/Scripts/SkyPulseNativeGame.Depth.cs": "7f55cc79a41b61333d84a65a2cc8e946f2bfc9f88df09b70dca228f6a73809fc",
+    "Assets/Scripts/SkyPulseNativeGame.Guide.cs": "f664766d08520bc88247e6cf2b5373dbfe5e14796c95dba3cfc9f1de1a7921b1",
     "Assets/Scripts/SkyPulseNativeGame.Hangar.cs": "2ef1db7ae03b6b0c003258c2aba91f2b5cd2b142233f4595ac7b777e92cc7ef1",
-    "Assets/Scripts/SkyPulseNativeGame.Missions.cs": "476e96fec1be2ee57759a70fc8889929be2834ddd3094eb5b491dea85a52909a",
+    "Assets/Scripts/SkyPulseNativeGame.Missions.cs": "2c8a017cc0e841f801cf1e19a41dc89c2c4948100baaa8dee67828c1bee010de",
     "Assets/Scripts/SkyPulseNativeGame.PipeVisuals.cs": "220ad836e8fd35437db921692adc9c131b63e01ad052ce956fce25cd6237a8b3",
     "Assets/Scripts/SkyPulseNativeGame.Presentation.cs": "e8402a8420a81e993dce60287e9a8b700052df9492867f01662cf0b83f464222",
     "Assets/Scripts/SkyPulseNativeGame.TechTree.cs": "536affe3244aea498e88e969ca013ae1b91afb3b687aa7bce7cdd2ca2118d4d2",
-    "Assets/Scripts/SkyPulseNativeGame.cs": "0839d856c1b85921e6732305b3a66dfbabbdd0978b80df80a0735c80200682c9",
+    "Assets/Scripts/SkyPulseNativeGame.cs": "d1cc02746abb51fe71d9ad8ca482fbf1235e045cb417957cc905c134c9210223",
     "Assets/Scripts/SkyPulsePressTarget.cs": "c796bcf41af73bb8198709a13d6b43605fe38a9636cd9645e28616e64831d73d",
     "Assets/Scripts/SkyPulsePrism.cs": "68e619ebc3729f03a8dadba7b2e20f8095a53a245895b234ecb49d8d06a12021",
     "Assets/Scripts/SkyPulseProgressionStage.cs": "eb94617d7268e57be922e91ec5389d740c1530c8978a8bd9fed5f285bee71db8",
@@ -44,7 +45,7 @@
     "Assets/Scripts/SkyPulseUiGlyph.cs": "53e22a71da5f9f651c61afa05a4201579be880be620e74f294358d19a7928088"
   },
   "shaderSourceSha256": {
-    "Assets/Resources/SkyPulse/Shaders/EndlessRouteMetal.shader": "8709521af9c8b74616b5c53a6594787807df56c300426573838d34bfe00c84bf",
+    "Assets/Resources/SkyPulse/Shaders/EndlessRouteMetal.shader": "4e6b68148b519dcbc47d60480ea47e7f0ebb730da9c8984ea20b2b9902285b40",
     "Assets/Resources/SkyPulse/Shaders/FlightLight.shader": "e56ee5daceea1445c278bb3413c602fd854702c727070db13e7a9acb2d90230e",
     "Assets/Resources/SkyPulse/Shaders/HeistOptics.shader": "180d649d67ba1e59ff83d4531849634a53912c8c10a3495b83a6f3c6b361898a",
     "Assets/Resources/SkyPulse/Shaders/HolographicText.shader": "b20e1139f13665eb7d62c7a85168928c357d3075128045a457c247be4c9e1e56",
@@ -82,15 +83,15 @@
   ],
   "baselineStatus": "22-group complete pass after LED/progression changes, before code-only source organisation",
   "finalSourceRequiredPassMarkers": [
-    "SKYPULSE_TRAIL_GEOMETRY_PASS",
+    "SKYPULSE_GUIDE_WORLD_PASS",
     "SKYPULSE_CAP_CONTOUR_PASS",
+    "SKYPULSE_ROUTE_FADE_PASS",
     "SKYPULSE_DEPTH_PASS",
     "SKYPULSE_CINEMATIC_PASS",
     "SKYPULSE_ONE_THUMB_LIVE_PASS",
-    "SKYPULSE_FLIGHT_GAMEPLAY_CAPTURE_PASS",
-    "SKYPULSE_FLIGHT_POLISH_PASS"
+    "SKYPULSE_GUIDE_TARGETED_PASS"
   ],
-  "finalSourceStatus": "Focused trail geometry/frame-rate/reset, cap contour and shaft shoulder bounds, three Homes, cinematic pause/zero-GC/Relay unlock/Heist presentation, one-thumb integration and actual flight recording pass. Earlier comprehensive results retain their own source commits.",
+  "finalSourceStatus": "All twelve authored backdrops, 36 actual transition-update sequences at 30/60/120 FPS, guide text/layout/navigation and current depth/cinematic/one-thumb checks passed. Runtime hashes match the disposable QA project. Earlier comprehensive checks retain their own source commits.",
   "unityProcessExitCodes": {
     "full": 0,
     "finalRuntimeScoped": 0,
@@ -101,7 +102,9 @@
     "pipeCapVideoEncode": 0,
     "flightPolish": 0,
     "flightIosExport": 0,
-    "flightVideoEncode": 0
+    "flightVideoEncode": 0,
+    "guideWorlds": 0,
+    "guideWorldsIosExport": 0
   },
   "evidence": {
     "fullBeforeSourceOrganisation": {
@@ -151,10 +154,18 @@
     "flightVideoEncode": {
       "path": "artifacts/flight-trail-polish-20261022/encode-preview.log",
       "sha256": "ae6b264fe317eff1289cfa84812edddda67a3ccaca536f3872dfc93056a63eca"
+    },
+    "guideWorlds": {
+      "path": "artifacts/guide-worlds-20261022/unity-release.log",
+      "sha256": "91dd0a1e9adb970a8264311c1d3b0a846d108f7ee0b87d3ed15cda6a7a2cd3e8"
+    },
+    "guideWorldsIosExport": {
+      "path": "artifacts/guide-worlds-20261022/unity-ios-export-final.log",
+      "sha256": "33a40c09fba468f01cd0ad3bf70b59211eb0a38c925a180049ac74cebceb9cb5"
     }
   },
   "physicalDeviceGameplay": "Pending for build 18 on iPhone and iPad",
-  "native": "Final exact-commit iOS IL2CPP export passed after trail/shoulder polish; all 439 manifest entries match. No signed archive or upload.",
+  "native": "Exact-source iOS IL2CPP export passed with all 441 source hashes matching; no signed archive or build upload.",
   "warnings": [
     "Unity Editor Search startup ArgumentOutOfRangeException is retained in logs; stack is Editor indexing, not shipping gameplay. Full suite intentionally injects persistence errors to test recovery.",
     "Initial capture-only attempt paused the offscreen stage by disabling its component. Final tree clip keeps the stage active and pauses between captured frames; corrected frames were inspected."
@@ -172,7 +183,8 @@
     "Original shaft/collar GPU textures on matching 3D geometry; visible-pixel regression check; LED clock equals elapsed time at 30/60/120 FPS and freezes under Reduced Motion.",
     "18 exact method bodies moved to named partials, six unreferenced private helpers/four constants removed; original MonoBehaviour GUID and save schema retained.",
     "Negative opaque-corner control plus 216 transparent-corner/depth samples across upper/lower caps and three LED phases; opaque centre checks prevent hiding the whole mesh.",
-    "Current source: shared-edge tapered ribbon, soft material opt-in, transparent tip, stable Reduced Motion and retry reset; history compared at 30/60/120 FPS. Shaft ends at far shoulder while collar bounds retain the physical gap. Warmed presentation allocates no managed memory. Actual 12-second normal-tap Editor simulation shows six wing poses, 19 taps and six earned points."
+    "Current source: shared-edge tapered ribbon, soft material opt-in, transparent tip, stable Reduced Motion and retry reset; history compared at 30/60/120 FPS. Shaft ends at far shoulder while collar bounds retain the physical gap. Warmed presentation allocates no managed memory. Actual 12-second normal-tap Editor simulation shows six wing poses, 19 taps and six earned points.",
+    "Current guide/world pass: all twelve textures, 36 transitions at 30/60/120 FPS, depth-safe 3D pipe fade, continuous shared lighting, guide text fit at phone/iPad sizes, no-spend navigation and real model-aligned Core/training/breeding instructions."
   ],
   "previousSourceVerification": {
     "sourceCommit": "ac5fffe5fad2bcebd01a6ed2af51e140fffa3d23",
@@ -212,6 +224,19 @@
         "SKYPULSE_PIPE_PREVIEW_PASS"
       ],
       "status": "Focused pipe-cap contour/depth, collider/animation, Home and player-experience checks pass on the final source. Earlier comprehensive and nine-group source checks remain identified separately."
+    },
+    {
+      "sourceCommit": "edb1fba86ab6d0c8743ecd9d1c4b152e1c55818c",
+      "requiredPassMarkers": [
+        "SKYPULSE_TRAIL_GEOMETRY_PASS",
+        "SKYPULSE_CAP_CONTOUR_PASS",
+        "SKYPULSE_DEPTH_PASS",
+        "SKYPULSE_CINEMATIC_PASS",
+        "SKYPULSE_ONE_THUMB_LIVE_PASS",
+        "SKYPULSE_FLIGHT_GAMEPLAY_CAPTURE_PASS",
+        "SKYPULSE_FLIGHT_POLISH_PASS"
+      ],
+      "status": "Focused trail geometry/frame-rate/reset, cap contour and shaft shoulder bounds, three Homes, cinematic pause/zero-GC/Relay unlock/Heist presentation, one-thumb integration and actual flight recording pass. Earlier comprehensive results retain their own source commits."
     }
   ],
   "flightPolish": {
@@ -236,5 +261,48 @@
       "path": "artifacts/flight-trail-polish-20261022/captures/flight-gameplay/CAPTURE.txt",
       "sha256": "51a398aee16748e26eaefcc5c0a718860d40ea8d30a0948ea9c2414849ae773b"
     }
+  },
+  "guideWorlds": {
+    "worldTextures": 12,
+    "transitions": 36,
+    "fps": [
+      30,
+      60,
+      120
+    ],
+    "guideViewportSizes": [
+      [
+        640,
+        1136
+      ],
+      [
+        1320,
+        2868
+      ],
+      [
+        1640,
+        2360
+      ]
+    ],
+    "guideTopics": "5 Endless pages plus four-page route map, 2 Relay pages, 1 Signal Heist page",
+    "worldChecks": [
+      "Distinct real textures",
+      "15-gate milestones and 180/360 wrap",
+      "Monotonic backdrop alpha over opaque old layer",
+      "Final image continuity",
+      "3D departure coverage and restoration",
+      "Recovery, pause/retry and discovery persistence"
+    ],
+    "gpuFadeChecks": "Real shared collar at 1/.75/.5/.25/0 coverage, including no colour/depth writes at zero",
+    "guideChecks": [
+      "No truncated text",
+      "Actual Home entry points",
+      "Page selection",
+      "Reset world map to first page",
+      "No wallet spend",
+      "Core/training/breeding benefits and mode-specific controls"
+    ],
+    "initialAttempt": "New test fixture used an API removed in Unity 6000.6; replaced with reference-based texture uniqueness before successful final runs",
+    "physicalDevice": "Pending"
   }
 }
