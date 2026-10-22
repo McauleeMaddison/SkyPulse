@@ -1,6 +1,6 @@
 # SkyPulse Arcade
 
-> **Current local candidate: build 18.** Open 3D Homes replace dark support slabs; pipe and bird lighting share the world palette. Tech Tree levels have clear Installed/Next/Locked labels, Core/training/breeding have visible progression benefits, and Signal Heist has eight saved restoration objectives with non-spending beam/cost planning. The latest pass cleans up pipe shoulder joins and replaces the rectangular exhaust with a soft tapered flight trail. [Current release guide and moving Unity preview](mobile/Release/HolographicPolish20261022/README.md). Final-source scoped Unity checks and the exact-commit iOS IL2CPP export passed. Physical testing remains pending. Build 17 remains available in internal TestFlight; build 18 is not uploaded.
+> **Installed local reference: build 18, source `f71eb7d` (22 October).** [Current Relay and Signal Heist previews](mobile/Development/PhoneReference20261022/README.md) are actual Unity renders matched to the installed candidate's source manifest. The old 12 October prototype image has been archived. [Newer pipe, LED, scenery and retry-feedback repairs](mobile/Development/PipeFinish20261022/README.md) remain on the upgrade branch and have not been installed on the phone. Device acceptance remains open. Build 17 was last verified in internal TestFlight; local build 18 has not been uploaded.
 
 For manual work in Unity and VS Code, start with the [handoff guide and checklist prompt](mobile/MANUAL_HANDOFF.md) and [editing map](mobile/EDITING_GUIDE.md).
 

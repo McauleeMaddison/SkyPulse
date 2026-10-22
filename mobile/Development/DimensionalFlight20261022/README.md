@@ -1,5 +1,12 @@
 # Dimensional flight upgrade — 22 October 2026
 
+Follow-up: [small-screen touch comfort and local device candidate](../TouchComfort20261022/README.md).
+The source-specific evidence below remains a record of the earlier runtime commit.
+
+For the current installed candidate's Relay and Signal Heist, use the
+[dated Build 18 reference](../PhoneReference20261022/README.md). The 12 October
+prototype preview with FLAP/PULSE controls is historical and has been archived.
+
 Development branch: `codex/dimensional-flight-20261022`.
 Runtime implementation: `8d0dce7bc31c87da7c9600fdd0f544d1c0436d1e`.
 Protected starting/main commit: `a343aef23503603e85d0018e663d0d3ebf4b616a`.

@@ -1,0 +1,43 @@
+{
+  "sourceCommit": "f71eb7d8014fd6e7386811b9d60a88ad1ab6bddc",
+  "matchesInstalledCandidateManifest": true,
+  "manifestEntriesChecked": 452,
+  "companyAndProductChangedForIsolatedSave": true,
+  "historicalPreview": "artifacts/modes-update-20261012/previews/new-gameplay-preview.png",
+  "historicalPreviewDate": "2026-10-12",
+  "historicalPreviewDoesNotRepresentCurrentGame": true,
+  "historicalPreviewArchive": "artifacts/modes-update-20261012/previews/archive/new-gameplay-preview-ARCHIVED-2026-10-12.png",
+  "historicalPreviewSha256": "b3eba56b3b614ab4be0a3cf64fe1a9ea2c00343f82e2773d3c32c115a5da8d6e",
+  "blackoutCaptureTiming": "Editor QA only: 270 frames at 30 fps per 9-second example; no runtime edits",
+  "stalePreviewAliasReplacedWithCurrentCard": true,
+  "captureChecksPassed": [
+    "SKYPULSE_PRESENTATION_CAPTURES_PASS",
+    "SKYPULSE_RELAY_MESH_PASS",
+    "SKYPULSE_HEIST_CAPTURE_PASS",
+    "SKYPULSE_PHONE_REFERENCE_PASS"
+  ],
+  "unityExitCode": 0,
+  "media": {
+    "Pulse-Relay-Build-18.mp4": "fd3c027c7d1fa07c3d47ab29cf68a942c058386ae1a60c781038136d5bd42134",
+    "Signal-Heist-Build-18.mp4": "80aaf955fb0ecdab52e38241e1054456319b87434854bf92ed29e4c02f0ba08e",
+    "Signal-Heist-Build-18.png": "2215c22f567230cc2e9c1791d602ca284c7fbdf73e0983edb95161486b9811c3",
+    "Current-Build-18-Relay-and-Signal-Heist.png": "e0fdfaa15ae3efbdaaa167a1af4f11e341df49e5b2b9cc3f40be350854835c05",
+    "Pulse-Relay-Build-18.png": "7038cd524325d5ded30fc31da2f982a38fde697732e3f27c1adb174c0fb28c15",
+    "Signal-Heist-Build-18.decoded.png": "0ef2a8d1e13d1afe821ae5f2bbd264e68f8638e98782abf8afe9ae3ba745a429",
+    "Pulse-Relay-Build-18.decoded.png": "6877a57dae06fec1ac5995f9d42fd23c55ccadf33f83dd0f00db0e6bec0636c3"
+  },
+  "videos": {
+    "Pulse-Relay-Build-18.mp4": {
+      "frames": 420,
+      "seconds": 14,
+      "fps": 30,
+      "decodedSuccessfully": true
+    },
+    "Signal-Heist-Build-18.mp4": {
+      "frames": 270,
+      "seconds": 9,
+      "fps": 30,
+      "decodedSuccessfully": true
+    }
+  }
+}

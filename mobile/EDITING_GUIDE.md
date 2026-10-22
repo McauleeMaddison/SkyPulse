@@ -102,8 +102,8 @@ avoid per-frame allocations. Plume length/width are presentation values only.
 existing Signal Heist fibres keep their finish. Reduced Motion removes the
 history/sparks and leaves a compact, static, feathered plume.
 
-In `SkyPulseNativeGame.Depth.cs`, the visible shaft ends 0.04 world units inside
-the collar's far shoulder. Collision shapes still overlap for reliable gameplay;
+In `SkyPulseNativeGame.Depth.cs`, the visible shaft seats 28% of the collar height inside
+the far shoulder, bridging its curved alpha outline. Collision shapes still overlap for reliable gameplay;
 do not trim those colliders when adjusting the visible join. The original collar
 cutout and cyan/pink LED material remain in use.
 
@@ -118,3 +118,13 @@ Power-ups control. Keep help copy aligned with the actual cost/reward functions.
 matching the departing sprite pool. `SceneLightTint` blends the shared bird/pipe
 light across the same transition. Do not change the original flight geometry or
 world milestone rules when adjusting these presentation values.
+
+## Small-screen touch targets
+
+`SetComfortHitTarget` in `SkyPulseNativeGame.Controls.cs` gives isolated HUD pause
+icons and the Home mode badge an invisible 176-unit touch area without enlarging
+their visible artwork. It uses the existing Unity UI raycaster, so Relay excludes
+the complete target from tap-to-flap. Do not apply this indiscriminately to dense
+controls: expanded targets must not overlap. The mode list and shared Pause rows
+instead reserve explicit layout space. Their actual raycasts and safe-area bounds
+are covered by `Tools/SkyPulseTouchComfortChecks.cs` in the disposable QA product.
