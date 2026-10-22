@@ -75,11 +75,16 @@ namespace SkyPulse.Mobile
         RectTransform homeHangar;
         GameObject homeTech,homeWorldGuide,modeGuideScreen;
         Text homeActivityCopy;
+        RectTransform homePrivacy,homeTasks;
+        Text homeArcade;
         void SetupModeHomeControls()
         {
             homeHangar=homeScreen.transform.Find("Button · BIRD HANGAR") as RectTransform;
             homeTech=homeScreen.transform.Find("Button · TECH TREE").gameObject;
             homeWorldGuide=homeScreen.transform.Find("Button · WORLDS & POWER-UPS").gameObject;
+            homePrivacy=homeScreen.transform.Find("Button · PRIVACY") as RectTransform;
+            homeTasks=homeScreen.transform.Find("Button · MISSION CONTROL") as RectTransform;
+            foreach(var label in homeScreen.GetComponentsInChildren<Text>())if(label.text=="A  R  C  A  D  E")homeArcade=label;
             foreach(var label in homeScreen.GetComponentsInChildren<Text>())if(label.text=="FLIGHT · CIRCUITS · PUZZLES")homeActivityCopy=label;
             modeHomeMap=MissionButton(homeScreen.transform,"CIRCUIT MAP",0,-355,720,()=>OpenMissionSelection(homeProtocol),Hex("#45eaff"),112);
             modeHomeGuide=MissionButton(homeScreen.transform,"HOW TO PLAY",0,-694,660,OpenModeGuide,Hex("#8fa7c4"),96);
@@ -113,6 +118,7 @@ namespace SkyPulse.Mobile
             menuRouteText.gameObject.SetActive(!endless&&!relay);menuModeDetailText.gameObject.SetActive(false);
             foreach(var glyph in homeLaunchButton.GetComponentsInChildren<SkyPulseUiGlyph>(true))glyph.gameObject.SetActive(endless||relay);
             foreach(var button in new[]{modeHomeMap,modeHomeGuide}){var surface=button.targetGraphic as SkyPulseCircuitGraphic;surface.Variant=(int)homeProtocol;surface.color=ProtocolAccent(homeProtocol);surface.SetVerticesDirty();}
+            ApplyRelayHomeRefinement(relay);
             if(endless)return;
             int next=HomeNextMission(),completed=0,total=relay?4:8;
             foreach(int medal in relay?dailyRelay.Data.medals:blackoutCampaign.Data.medals)if(medal>0)completed++;
@@ -125,5 +131,37 @@ namespace SkyPulse.Mobile
             if(relay){menuModeDetailText.text="SPECTRAL CRYSTALS · AUTOMATIC GATES";menuRouteText.text="NEXT · "+dailyRelay.Missions[next].Name;}
             else{menuEquippedText.text="SIGNAL HEIST";menuRouteText.text=completed==8?"NETWORK RESTORED · REPLAY ANY VAULT":SkyPulseBlackoutCampaign.Objective(next).ToUpperInvariant();}
         }
+        // One launch action, one secondary row, quiet footer. Changes are restored
+        // explicitly when switching modes; the tested Endless Home stays intact.
+        void ApplyRelayHomeRefinement(bool relay)
+        {
+            var launch=(RectTransform)homeLaunchButton.transform;
+            launch.anchoredPosition=new Vector2(0,relay?-220:-165);launch.sizeDelta=new Vector2(620,relay?136:104);
+            homeLaunchButton.GetComponentInChildren<Text>().fontSize=relay?32:40;
+            homeHangar.anchoredPosition=relay?new Vector2(0,-440):homeHangar.anchoredPosition;
+            homeHangar.sizeDelta=new Vector2(relay?228:346,relay?144:112);
+            homeHangar.GetComponentInChildren<Text>().text=relay?"YOUR BIRD":"BIRD HANGAR";
+            menuHangarProgressText.gameObject.SetActive(homeProtocol==SkyPulseMode.EndlessRoute);
+            menuCrystalText.transform.parent.gameObject.SetActive(homeProtocol==SkyPulseMode.EndlessRoute);
+            SetHomeRect(modeHomeMap,relay?new Vector2(-250,-440):new Vector2(0,-355),relay?new Vector2(228,144):new Vector2(720,112));
+            SetHomeRect(modeHomeGuide,relay?new Vector2(250,-440):new Vector2(0,-694),relay?new Vector2(228,144):new Vector2(660,96));
+            if(homePrivacy!=null){homePrivacy.anchoredPosition=relay?new Vector2(180,-730):new Vector2(0,-822);homePrivacy.sizeDelta=relay?new Vector2(280,116):new Vector2(280,96);}
+            if(homeTasks!=null){homeTasks.anchoredPosition=relay?new Vector2(-180,-730):new Vector2(0,-950);homeTasks.sizeDelta=relay?new Vector2(320,116):new Vector2(720,100);}
+            menuTitleText.fontSize=relay?72:100;menuTitleText.rectTransform.anchoredPosition=new Vector2(0,relay?800:835);
+            if(homeArcade!=null){homeArcade.fontSize=relay?24:37;homeArcade.rectTransform.anchoredPosition=new Vector2(0,relay?734:753);}
+            menuEquippedText.fontSize=relay?23:30;menuEquippedText.gameObject.SetActive(!relay);
+            var best=(RectTransform)homeBestCaption.transform.parent;best.anchoredPosition=new Vector2(0,relay?-68:-35);
+            foreach(string name in new[]{"Brand wing port","Brand wing starboard","Title energy rule","Flight deck"}){var decor=homeScreen.transform.Find(name);if(decor!=null)decor.gameObject.SetActive(!relay);}
+            // The 3D hoop supplies depth; remove the competing 2D radar rings.
+            if(homeProtocolGraphic!=null)homeProtocolGraphic.gameObject.SetActive(!relay);
+            foreach(var face in homeScreen.GetComponentsInChildren<SkyPulseCircuitGraphic>(true))
+                if(face.Surface==SkyPulseSurface.Panel){face.Hologram=relay;face.SetVerticesDirty();}
+            foreach(var button in homeScreen.GetComponentsInChildren<Button>(true))
+            {
+                var face=button.targetGraphic as SkyPulseCircuitGraphic;
+                if(face!=null){face.rectTransform.sizeDelta=((RectTransform)button.transform).sizeDelta;face.SetVerticesDirty();}
+            }
+        }
+        static void SetHomeRect(Button button,Vector2 at,Vector2 size){var rect=(RectTransform)button.transform;rect.anchoredPosition=at;rect.sizeDelta=size;}
     }
 }

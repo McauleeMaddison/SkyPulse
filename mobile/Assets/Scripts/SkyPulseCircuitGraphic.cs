@@ -11,6 +11,7 @@ namespace SkyPulse.Mobile
     {
         public int Variant;
         public SkyPulseSurface Surface;
+        public bool Hologram;
         public bool Ambient, ReducedMotion, MotionPaused, Primary, CinematicUnderlay, SoftGlass;
         private float phase;
         private bool previousReduced;
@@ -130,6 +131,13 @@ namespace SkyPulse.Mobile
         private void Panel(VertexHelper vh,Rect r)
         {
             Color accent=color;accent.a=1;
+            if(Hologram)
+            {
+                Bevel(vh,r,18,new Color(.015f,.055f,.09f,Primary?.78f:.18f),new Color(.07f,.20f,.26f,Primary?.88f:.28f));
+                Border(vh,r,18,.9f,A(accent,Primary?.72f:.22f));
+                Line(vh,new Vector2(r.xMin+24,r.yMax),new Vector2(r.xMax-24,r.yMax),1,A(Color.Lerp(accent,Color.white,.5f),Primary?.7f:.25f));
+                return;
+            }
             if(SoftGlass)
             {
                 // Translucent satin controls have a single fine edge; no black

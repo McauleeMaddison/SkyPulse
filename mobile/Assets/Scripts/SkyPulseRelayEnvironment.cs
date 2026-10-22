@@ -11,9 +11,15 @@ namespace SkyPulse.Mobile
         {
             width=viewWidth+8;
             var rail=new SkyPulseMeshBuilder();
-            rail.Box(Vector3.zero,new Vector3(.11f,22,.17f),new Color(.08f,.17f,.20f,0));
-            rail.Box(new Vector3(.09f,0,-.11f),new Vector3(.022f,22,.02f),new Color(.25f,.8f,1,1));
-            for(int j=-4;j<=4;j++)rail.Box(new Vector3(.12f,j*2.4f,0),new Vector3(.33f,.12f,.28f),new Color(.18f,.25f,.28f,0));
+            // Curved ribs and recessed light conductors replace flat scaffolding.
+            // All six instances share this one mesh and material.
+            rail.RingArc(7.2f,.10f,40,-73,146,new Color(.08f,.17f,.20f,0));
+            rail.RingArc(7.06f,.018f,40,-73,146,new Color(.25f,.8f,1,1));
+            for(int j=-3;j<=3;j++)
+            {
+                float a=j*.31f;var at=new Vector3(Mathf.Cos(a)*7.2f,Mathf.Sin(a)*7.2f,0);
+                rail.Box(at,new Vector3(.22f,.08f,.25f),new Color(.18f,.25f,.28f,0));
+            }
             railMesh=rail.Finish("Orbital rib, braces and inset conductor");
             var turbine=new SkyPulseMeshBuilder();turbine.Torus(1.25f,.08f,48,new Color(.12f,.23f,.27f,0));
             turbine.Torus(1.05f,.025f,48,new Color(.35f,.7f,.8f,1));
@@ -28,10 +34,17 @@ namespace SkyPulse.Mobile
         }
         public void SetVisual(float distance,float clock)
         {
-            for(int i=0;i<rails.Length;i++){int layer=i/2;float x=Mathf.Repeat(i%2*width*.5f-distance*(.06f+layer*.09f)+width*.5f,width)-width*.5f;rails[i].localPosition=new Vector3(x,0,4-layer);}
+            for(int i=0;i<rails.Length;i++)
+            {
+                int layer=i/2;float side=i%2==0?-1:1,scale=.40f+layer*.12f;
+                float edge=(width-8)*.5f+2+layer*.6f;
+                float x=side*(edge+Mathf.Sin(distance*(.02f+layer*.01f)+i)*.15f);
+                rails[i].localPosition=new Vector3(x,0,4-layer);
+                rails[i].localScale=new Vector3(-side*scale,scale,scale);
+            }
             for(int i=0;i<2;i++)
             {
-                turbines[i].localPosition=new Vector3((i==0?-1:1)*width*.27f-distance*.018f,i==0?5.1f:-5.6f,6);turbines[i].localRotation=Quaternion.Euler(0,i==0?24:-30,clock*(i==0?7:-5));
+                turbines[i].localPosition=new Vector3(Mathf.Repeat((i==0?-1:1)*width*.27f-distance*.018f+width*.5f,width)-width*.5f,i==0?5.1f:-5.6f,6);turbines[i].localRotation=Quaternion.Euler(0,i==0?24:-30,clock*(i==0?7:-5));
                 drones[i].localPosition=new Vector3(Mathf.Repeat(clock*(i==0?.32f:-.23f)+i*width*.6f+width*.5f,width)-width*.5f,i==0?4.7f+Mathf.Sin(clock*.36f)*.35f:-6.1f+Mathf.Sin(clock*.3f)*.3f,3);
                 drones[i].localRotation=Quaternion.Euler(12,Mathf.Sin(clock*.21f+i)*14,Mathf.Sin(clock*.32f+i)*4);
             }

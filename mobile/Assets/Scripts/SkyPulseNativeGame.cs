@@ -3713,6 +3713,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
 
         private void BeginFlight()
         {
+            ResetFlightEnvironment();
             ClearCrystalPickupBursts();
             ClosePurchaseModal();
             state = FlightState.Playing;
@@ -5703,6 +5704,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
         private void LoadProgress()
         {
             soundEnabled = PlayerPrefs.GetInt("skypulse.native.sound", 1) == 1;
+            if(audioSource!=null){audioSource.mute=!soundEnabled;if(!soundEnabled)StopGameSounds();}
             best = PlayerPrefs.GetInt("skypulse.native.best", 0);
             crystals = PlayerPrefs.GetInt("skypulse.native.crystals", 0);
             flightCoachStage = Mathf.Clamp(PlayerPrefs.GetInt("skypulse.native.flight-coach-stage", 0), 0, 2);

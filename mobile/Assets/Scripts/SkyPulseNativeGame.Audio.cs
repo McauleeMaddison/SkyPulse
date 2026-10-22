@@ -29,11 +29,13 @@ namespace SkyPulse.Mobile
             crystalSound = Resources.Load<AudioClip>("SkyPulse/audio/crystal");
             crashSound = Resources.Load<AudioClip>("SkyPulse/audio/crash");
             unlockSound = Resources.Load<AudioClip>("SkyPulse/audio/unlock");
-            prismSound = Resources.Load<AudioClip>("SkyPulse/audio/prism");
-            sensorSound = Resources.Load<AudioClip>("SkyPulse/audio/sensor");
+            prismSound = LoadAudioCue("prism",scoreSound);
+            sensorSound = LoadAudioCue("sensor",crashSound);
             effectClips[0]=flapSound; effectClips[1]=scoreSound; effectClips[2]=crystalSound;
             effectClips[3]=crashSound; effectClips[4]=unlockSound;
             effectClips[5]=prismSound; effectClips[6]=sensorSound;
+            relayPassAudio=gameObject.AddComponent<AudioSource>();
+            relayPassAudio.playOnAwake=false;relayPassAudio.spatialBlend=0;relayPassAudio.dopplerLevel=0;relayPassAudio.pitch=1.14f;
             foreach (var clip in effectClips) if (clip != null) clip.LoadAudioData();
             for (int i=0; i<effectVoices.Length; i++)
             {
@@ -43,6 +45,8 @@ namespace SkyPulse.Mobile
                 effectVoices[i]=voice;
             }
         }
+
+        static AudioClip LoadAudioCue(string id,AudioClip fallback)=>Resources.Load<AudioClip>("SkyPulse/audio/"+id)??fallback;
 
         private void Play(AudioClip clip)
         {

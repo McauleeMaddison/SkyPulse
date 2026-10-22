@@ -171,7 +171,7 @@ namespace SkyPulse.Mobile
             homeProtocolGraphic.color=Color.white;
             homeProtocolGraphic.CinematicUnderlay=homeProtocol!=SkyPulseMode.EndlessRoute;
             homeProtocolGraphic.enabled=homeProtocol!=SkyPulseMode.BlackoutProtocol;
-            homeProtocolBackdrop.sprite=homeProtocol==SkyPulseMode.PulseRelay?LoadSprite(RelayStationPath):LoadSprite(BlackoutCorePath);homeProtocolBackdrop.color=Color.white;
+            homeProtocolBackdrop.sprite=homeProtocol==SkyPulseMode.PulseRelay?LoadSprite(RelayStationPath):LoadSprite(BlackoutCorePath);homeProtocolBackdrop.color=homeProtocol==SkyPulseMode.PulseRelay?new Color(.42f,.51f,.57f,1):Color.white;
             homeProtocolGraphic.ReducedMotion=reduceMotionEnabled;homeProtocolGraphic.SetVerticesDirty();
             difficultyText.text=homeProtocol==SkyPulseMode.BlackoutProtocol?"BLACKOUT PROTOCOL":homeProtocol==SkyPulseMode.PulseRelay?"PULSE RELAY":"ENDLESS ROUTE";
             bool terminal=homeProtocol==SkyPulseMode.BlackoutProtocol;
@@ -269,7 +269,7 @@ namespace SkyPulse.Mobile
         private void BuildRelayHud()
         {
             ClearScreen(relayHudScreen);relayHudScreen.SetActive(true);
-            var header=PremiumPanel(relayHudScreen.transform,"Relay flight deck",Vector2.zero,new Vector2(970,240),1,Hex("#45eaff"));
+            var header=PremiumPanel(relayHudScreen.transform,"Relay flight deck",Vector2.zero,new Vector2(970,206),1,Hex("#45eaff"));
             relayHudDock=header;header.anchorMin=header.anchorMax=new Vector2(.5f,1);header.pivot=new Vector2(.5f,1);header.anchoredPosition=new Vector2(0,-12);
             var title=MissionText(header,"PULSE RELAY",80,30,Hex("#ffd078"),650,42);title.rectTransform.anchoredPosition=new Vector2(-110,80);
             var mission=MissionText(header,relaySession.Mission.Name,43,20,Hex("#bdebf0"),700,32);mission.rectTransform.anchoredPosition=new Vector2(-75,43);
@@ -277,7 +277,10 @@ namespace SkyPulse.Mobile
             relayProgressText=RelayTopStat(header,"GATES OPEN",0,Hex("#45eaff"));
             relayStatusText=RelayTopStat(header,"PASSED",310,Hex("#65ffad"));
             MissionButton(header,"Ⅱ",410,58,100,PauseFlight,Hex("#8eeaff"),100);
-            relayHintText=MissionText(header,"TWO MATCHING CRYSTALS OPEN EACH GATE",-91,21,Hex("#c4f4f5"),900,34);
+            relayHintText=MissionText(header,"",-77,23,Hex("#c4f4f5"),900,34);
+            foreach(var face in header.GetComponentsInChildren<SkyPulseCircuitGraphic>()){face.Hologram=true;face.Ambient=false;face.SetVerticesDirty();}
+            mission.gameObject.SetActive(false); // The circuit name is already on its launch/map.
+            title.rectTransform.anchoredPosition=new Vector2(-110,67);
             FitRelayHudToSafeArea();
 
             relayDisplayedCells=relayDisplayedPassed=relayDisplayedOpen=-1;relayUnlockFeedback=0;

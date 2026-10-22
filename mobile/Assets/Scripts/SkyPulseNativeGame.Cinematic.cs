@@ -29,6 +29,7 @@ namespace SkyPulse.Mobile
         void UpdateCinematicPresentation(float dt)
         {
             UpdateDepthPresentation(dt);
+            UpdateFlightEnvironment(dt);
             if(birdRenderer==null||equippedSkin==null)return;
             if(cinematicBird==null){cinematicBird=birdRenderer.gameObject.AddComponent<SkyPulseBirdRig>();cinematicBird.Bind(birdRenderer);}
             if(cinematicPreparedFrames!=flapFrameBirdSprites){cinematicPreparedFrames=flapFrameBirdSprites;cinematicBird.PrepareFrames(cinematicPreparedFrames);}
@@ -63,11 +64,11 @@ namespace SkyPulse.Mobile
         void PlayRelayPass(Vector3 at)
         {
             if(scoreSound==null||audioSource==null||!soundEnabled||audioSource.mute)return;
-            if(relayPassAudio==null){relayPassAudio=gameObject.AddComponent<AudioSource>();relayPassAudio.playOnAwake=false;relayPassAudio.spatialBlend=0;relayPassAudio.pitch=1.14f;}
+            if(relayPassAudio==null)return;
             relayPassAudio.volume=audioSource.volume*.28f;relayPassAudio.mute=audioSource.mute;
             // Controlled stereo positioning is stable with the orthographic camera;
             // distance attenuation must not make high/low gates inaudible.
-            relayPassAudio.panStereo=Mathf.Clamp(at.x/(GetViewportWidth()*.5f),-.5f,.5f);relayPassAudio.PlayOneShot(scoreSound);
+            relayPassAudio.panStereo=Mathf.Clamp(at.x/(GetViewportWidth()*.5f),-.5f,.5f);relayPassAudio.clip=scoreSound;relayPassAudio.Play();
         }
         void UpdateCinematicHome()
         {

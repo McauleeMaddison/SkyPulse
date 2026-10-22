@@ -26,6 +26,9 @@ component on the scene; do not attach each partial file separately.
 | Original 3D pipe material and light packets | `SkyPulseNativeGame.Depth.cs`, `Resources/SkyPulse/Shaders/EndlessRouteMetal.shader` |
 | Original pipe artwork placement / collider anchors | `SkyPulseNativeGame.PipeVisuals.cs` |
 | Tapered exhaust, soft trail and passage sparks | `SkyPulseFlightEffects.cs`, `SkyPulseNativeGame.Cinematic.cs` |
+| Pooled 3D scenery during Endless flight | `SkyPulseFlightEnvironment.cs`, `SkyPulseNativeGame.Environment.cs`, `Resources/SkyPulse/Shaders/FlightArchitecture.shader` |
+| Relay station ribs, turbines and drones | `SkyPulseRelayEnvironment.cs` |
+| Six audio voices, optional cue fallbacks and saved sound switch | `SkyPulseNativeGame.Audio.cs` |
 | How to Play topics and route-map entry | `SkyPulseNativeGame.Guide.cs` |
 | Three Home layouts and mode input | `SkyPulseNativeGame.Controls.cs`, `.Presentation.cs` |
 | Relay gate rules | `SkyPulseMissionModels.cs` → `RelaySession` |
