@@ -41,15 +41,16 @@ namespace SkyPulse.Mobile
             for(int i=0;i<routeDepth.Count;i++)
             {
                 var visual=routeDepth[i];var surface=visual.Surface;visual.Body.gameObject.SetActive(show);visual.Cap.gameObject.SetActive(show);if(!show)continue;
-                // Colliders intentionally overlap. The visible shaft must stop
-                // inside the far shoulder, rather than entering the open lip.
-                // Read collision shapes only: never change the tested opening.
+                // The collar's alpha silhouette curves upward at its shoulders.
+                // A fixed .04 overlap left daylight beside the shaft. Seat the
+                // shaft inside the solid lower wall, short of the open lip.
+                // This reads collision shapes; it never changes them.
                 var body=surface.BodyCollider;var cap=surface.CapCollider;
                 var bodyCentre=body.transform.localPosition+new Vector3(body.offset.x,body.offset.y,.10f);
                 var capCentre=cap.transform.localPosition+new Vector3(cap.offset.x,cap.offset.y,.10f);
                 float direction=bodyCentre.y>capCentre.y?1:-1;
                 float farEnd=bodyCentre.y+direction*body.size.y*.5f;
-                float shoulder=capCentre.y+direction*(cap.size.y*.5f-.04f);
+                float shoulder=capCentre.y+direction*cap.size.y*.22f;
                 bodyCentre.y=(farEnd+shoulder)*.5f;
                 visual.Body.localPosition=bodyCentre;visual.Body.localScale=new Vector3(body.size.x,Mathf.Max(.01f,Mathf.Abs(farEnd-shoulder)),body.size.x);
                 visual.Cap.localPosition=capCentre;visual.Cap.localScale=new Vector3(cap.size.x,cap.size.y,cap.size.x);

@@ -34,6 +34,7 @@ public static class SkyPulseDimensionalChecks
         yield return Audio(game);
         yield return SkyPulseTouchComfortChecks.Live(game);
         yield return Environment(game);
+        yield return SkyPulsePipeFinishChecks.Live(game);
         SkyPulseMissionChecks.IntegrationChecks(game);
         yield return SkyPulseOneThumbChecks.Live(game);
         yield return SkyPulseDailyRouteChecks.Live(game);
@@ -45,6 +46,7 @@ public static class SkyPulseDimensionalChecks
         yield return SkyPulseCinematicChecks.Live(game);
         yield return SkyPulseRelayGateChecks.Live(game);
         yield return SkyPulsePresentationChecks.Captures(game);
+        if(System.Environment.GetEnvironmentVariable("SKYPULSE_CAPTURE_ENDLESS")=="1")yield return SkyPulseFlightPolishChecks.Capture(game);
         Debug.Log("SKYPULSE_DIMENSIONAL_PASS");EditorApplication.Exit(0);
     }
     static IEnumerator Audio(SkyPulseNativeGame game)

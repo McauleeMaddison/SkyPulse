@@ -35,7 +35,7 @@ public static class SkyPulseDepthChecks
             float far=column.bounds.center.y+direction*column.bounds.extents.y;
             float near=column.bounds.center.y-direction*column.bounds.extents.y;
             Check(Mathf.Abs(far-(body.bounds.center.y+direction*body.bounds.extents.y))<.001f,"Shaft retains its original far end");
-            Check(Mathf.Abs(near-(cap.bounds.center.y+direction*(cap.bounds.extents.y-.04f)))<.001f,"Visible shaft ends inside the collar shoulder, away from the open lip");
+            Check(Mathf.Abs(near-(cap.bounds.center.y+direction*cap.bounds.size.y*.22f))<.001f,"Visible shaft seats inside the curved solid collar wall, away from the open lip");
             Check(matching.Any(r=>Mathf.Abs(r.bounds.center.y-cap.bounds.center.y)<.001f&&Mathf.Abs(r.bounds.size.y-cap.bounds.size.y)<.001f),"3D collar matches the physical gap edge");
         }
         CapSilhouette(game,shaft,collar);

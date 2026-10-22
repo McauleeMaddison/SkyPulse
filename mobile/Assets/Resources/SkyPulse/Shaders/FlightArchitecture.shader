@@ -28,13 +28,13 @@ Shader "SkyPulse/Flight Architecture"
                 float2 p=floor(i.pos.xy);float threshold=frac(dot(p,float2(.75487766,.56984029)));
                 clip(_Visibility-threshold-.00001);
                 float3 n=normalize(i.normal),v=normalize(_WorldSpaceCameraPos.xyz-i.world),key=normalize(float3(-.55,.8,-.9));
-                float diffuse=.60+.66*saturate(dot(n,key));
-                float spec=pow(saturate(dot(n,normalize(key+v))),36)*.32;
-                float rim=pow(1-abs(dot(n,v)),3)*.10;
-                float3 metal=i.color.rgb*diffuse*lerp(float3(.75,.84,.94),_Tint.rgb,.35)+spec+_Tint.rgb*rim;
+                float diffuse=.42+.78*saturate(dot(n,key));
+                float spec=pow(saturate(dot(n,normalize(key+v))),64)*.18;
+                float rim=pow(1-abs(dot(n,v)),4)*.045;
+                float3 metal=i.color.rgb*diffuse*lerp(float3(.75,.84,.94),_Tint.rgb,.24)+spec*float3(.68,.83,1)+_Tint.rgb*rim;
                 float pulse=.83+.10*sin(_Clock*.55+i.world.y*.8);
                 float3 lit=lerp(metal,_Tint.rgb*pulse,i.color.a);
-                float mist=saturate((i.world.z-3)*.038);
+                float mist=saturate((i.world.z-3)*.044);
                 return fixed4(lerp(lit,_Haze.rgb,mist),1);
             }
             ENDCG
