@@ -1,0 +1,14 @@
+{
+    "version": "1.0.0",
+    "build": "18",
+    "bundleId": "com.mcauleemaddison.skypulse",
+    "unityVersion": "6000.6.0f1",
+    "sdk": "iphoneos",
+    "targetDevice": "iPhoneAndiPad",
+    "createdUtc": "2026-10-22T07:06:55.7776920Z",
+    "gameplaySourceSha256": "0839d856c1b85921e6732305b3a66dfbabbdd0978b80df80a0735c80200682c9",
+    "iconSha256": "6cbc6acd07a0f1de1b07ff757e010abdf9c1b5d1befe8a61e3c6d4b6d22b0887",
+    "publicLinksSha256": "7723d668b279f7826a962b3cfb386f47eea2ce6b1fed090d53ebb7eb0493a476",
+    "sourceCommit": "ac5fffe5fad2bcebd01a6ed2af51e140fffa3d23",
+    "sourceManifestSha256": "ac2bf8f3108e490abf81f9bc227ec3cc0f19ceb5145582a0f35961fab35be8ad"
+}

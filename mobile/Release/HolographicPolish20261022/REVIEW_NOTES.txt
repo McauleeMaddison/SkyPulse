@@ -1,0 +1,9 @@
+SkyPulse Arcade 1.0.0 (18) — local preparation only; public review held.
+
+This candidate refines the connected 3D Tech Tree with explicit levels, minimal holographic labels and clear inspection/purchase cues; simplifies all three Homes; and restores the original cyan/magenta pipe artwork on real 3D geometry with animated LED inlays.
+
+Bird training improves existing Endless reward traits and now permanently reduces future founder-bird unlock prices by 2% per completed training level, capped at 20%. The training panel previews the exact next-bird price. Hangar and confirmation prices agree; stale quotes refresh without spending. Core savings on Tech upgrades, training and breeding remain separate. Breeding retains both parents and unlocks/equips the exact previewed lineage offspring, presented through the bird-unlock reveal.
+
+Existing save keys/version, catalogue identities, flight width/handling/spacing and collisions, Relay auto-unlock, Signal Heist solutions/budgets and immediate intermediate progression are retained. Source organisation creates no additional game component.
+
+No account, advertising or real-money purchases. Physical device validation of this candidate is still required. App Store Connect has not been changed by this task. The owner requires public review to stay on hold pending Apple's clarification of its unidentified similarity allegation. Do not submit automatically.

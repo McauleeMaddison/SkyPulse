@@ -1,0 +1,147 @@
+{
+  "candidate": "1.0.0 (18)",
+  "compiledSourceCommit": "ac5fffe5fad2bcebd01a6ed2af51e140fffa3d23",
+  "unityVersion": "6000.6.0f1",
+  "runtimeSourceSha256": {
+    "Assets/Scripts/SkyPulseBirdProgression.cs": "1a1c01342e7b24452835109d624ac88d1d392067284ac0cd9be358a68465ccc0",
+    "Assets/Scripts/SkyPulseBirdRig.cs": "34d222c47cad692e1fd83a6c76004aee08f587dc0b79f97704c7dd144ce3ff73",
+    "Assets/Scripts/SkyPulseBlackoutCampaign.cs": "37e6fdc0b2dce5c978a0cb1d075e53bfae1f48dfb4a76e4685e17408f815d083",
+    "Assets/Scripts/SkyPulseBlackoutGraphic.cs": "356b565e022cb186785270a6e2cd33a502a9f376285ed0cee816993c64a1befa",
+    "Assets/Scripts/SkyPulseBootstrap.cs": "ece7b674b01bc9b2a7df94a5842ef056d3cf4e30df2d0b63a042f7ac7f799f3c",
+    "Assets/Scripts/SkyPulseButtonFeedback.cs": "d61cfd21b8b37a1cc73217e5a1ac8aaed9b1843f0fb8deaebc76108f9f8cd6df",
+    "Assets/Scripts/SkyPulseCircuitGraphic.cs": "6f03b32c5bd96cc0f09b9376911ccd2456e87cd7fb77d0877268e8116d8b4b2b",
+    "Assets/Scripts/SkyPulseDailyMissions.cs": "10157b808de4de3ee309b00a019ee43b4faeb11be50f8276f46d2c105b7ea8be",
+    "Assets/Scripts/SkyPulseDailyRelay.cs": "ad7eb4a45b75de015cb1c3ecbd4dc5169765a9293613ada55042f23d9eebf2e2",
+    "Assets/Scripts/SkyPulseDepthStage.cs": "b707f7f666d297213823f406cca93db9ed61c95b1ad0dee84e8932d804cff5a2",
+    "Assets/Scripts/SkyPulseFlightEffects.cs": "074abb9f8164391cabaccaab2ce907eb0fcf8ea47854bd8e2df8c6d6f2153120",
+    "Assets/Scripts/SkyPulseHeistBoard.cs": "6da33a1a25d73f229d183312de000e7512a90a955f9533b336d87eae2794dd3d",
+    "Assets/Scripts/SkyPulseHolographicText.cs": "9e95ba55720431817ede483d700b561e410d23b5e63a63072956b226b3d2296e",
+    "Assets/Scripts/SkyPulseInputFence.cs": "ccf585a47e7bb3d401c4358d792209b548185f755b27b494a368ce7838ec7b25",
+    "Assets/Scripts/SkyPulseMissionModels.cs": "2966173db2cd29644df19e99126a13d93f528897bf7153a0ff80938efc874605",
+    "Assets/Scripts/SkyPulseNativeGame.BirdProgression.cs": "1f69852413054c30072410832ca9f688f4095fd3c37a5cff288d330e3337b871",
+    "Assets/Scripts/SkyPulseNativeGame.Blackout.cs": "ac5172d15b33e7b13b9c44649dcf83b61514adfe6b6431b7be28fee128d330f3",
+    "Assets/Scripts/SkyPulseNativeGame.Cinematic.cs": "defe3d1539fced7a9c32a3d4d93dea4526eb8a511c919946a19eb43224932665",
+    "Assets/Scripts/SkyPulseNativeGame.Controls.cs": "044b0db4552c9746a534c1d02b466d8c1b6183b559fa0065cd867b06d44b44e2",
+    "Assets/Scripts/SkyPulseNativeGame.Depth.cs": "5f8987c52edc1383c45ea233e812bfc0efb9b9502ed3e7d7d6c2dc2cb733766f",
+    "Assets/Scripts/SkyPulseNativeGame.Hangar.cs": "2ef1db7ae03b6b0c003258c2aba91f2b5cd2b142233f4595ac7b777e92cc7ef1",
+    "Assets/Scripts/SkyPulseNativeGame.Missions.cs": "476e96fec1be2ee57759a70fc8889929be2834ddd3094eb5b491dea85a52909a",
+    "Assets/Scripts/SkyPulseNativeGame.PipeVisuals.cs": "220ad836e8fd35437db921692adc9c131b63e01ad052ce956fce25cd6237a8b3",
+    "Assets/Scripts/SkyPulseNativeGame.Presentation.cs": "e8402a8420a81e993dce60287e9a8b700052df9492867f01662cf0b83f464222",
+    "Assets/Scripts/SkyPulseNativeGame.TechTree.cs": "536affe3244aea498e88e969ca013ae1b91afb3b687aa7bce7cdd2ca2118d4d2",
+    "Assets/Scripts/SkyPulseNativeGame.cs": "0839d856c1b85921e6732305b3a66dfbabbdd0978b80df80a0735c80200682c9",
+    "Assets/Scripts/SkyPulsePressTarget.cs": "c796bcf41af73bb8198709a13d6b43605fe38a9636cd9645e28616e64831d73d",
+    "Assets/Scripts/SkyPulsePrism.cs": "68e619ebc3729f03a8dadba7b2e20f8095a53a245895b234ecb49d8d06a12021",
+    "Assets/Scripts/SkyPulseProgressionStage.cs": "eb94617d7268e57be922e91ec5389d740c1530c8978a8bd9fed5f285bee71db8",
+    "Assets/Scripts/SkyPulseProgressionSurface.cs": "fae7611677b1df140d690e8941ed54bb4073f7b339b62aca8c984be069f3adbe",
+    "Assets/Scripts/SkyPulsePublicLinks.cs": "8427bb1103414ea4610f23293834270c4f230b9335ebd550f79c6d80e198b3b0",
+    "Assets/Scripts/SkyPulseRelayDeck.cs": "49e1a08623dbe93f51f7deeadb6430d44da161700d7750b4d626b6560a1ee0c1",
+    "Assets/Scripts/SkyPulseRelayEnvironment.cs": "85e59d8253c72982ae8525b2d15f2424d336bc7a997ff3fcdfbde6b3dbe2c462",
+    "Assets/Scripts/SkyPulseRelayGate.cs": "745e48b7500df3581847860531d88dfd16427491242ab42a68d131365d4b2598",
+    "Assets/Scripts/SkyPulseRoundStartSurface.cs": "379650ff3d28470bf3eae7abbdb0eada594ce98b865ba97d1149265fa68e4671",
+    "Assets/Scripts/SkyPulseTechTreeView.cs": "266add12b5db099ccd4a35d8c26bf010db3a0b80a48472e7b183fc066a860f8b",
+    "Assets/Scripts/SkyPulseTreePanInput.cs": "f41ebf56abc259d66d777f919cf6308c35839171b132bb0e8abc6d18e00a22db",
+    "Assets/Scripts/SkyPulseTreeTouchFeedback.cs": "a8a0c101b3f285cea358677bb62297a6c391801f9c1aa8da449582c65df292ca",
+    "Assets/Scripts/SkyPulseUiGlyph.cs": "53e22a71da5f9f651c61afa05a4201579be880be620e74f294358d19a7928088"
+  },
+  "shaderSourceSha256": {
+    "Assets/Resources/SkyPulse/Shaders/EndlessRouteMetal.shader": "3ccc4613cf7e98a7eceac0f686688b97d4d35e7f21e8339b5bc27de5e658c22d",
+    "Assets/Resources/SkyPulse/Shaders/FlightLight.shader": "19f5bbb0bcef2aae4c64b8ca5c9148ca5367929625615aeffca79c63864430bb",
+    "Assets/Resources/SkyPulse/Shaders/HeistOptics.shader": "180d649d67ba1e59ff83d4531849634a53912c8c10a3495b83a6f3c6b361898a",
+    "Assets/Resources/SkyPulse/Shaders/HolographicText.shader": "b20e1139f13665eb7d62c7a85168928c357d3075128045a457c247be4c9e1e56",
+    "Assets/Resources/SkyPulse/Shaders/HolographicTree.shader": "a0a2b17d67ec35578e1a0e7b250ba44f44f8ef82cf198e64eb00ad723b027154",
+    "Assets/Resources/SkyPulse/Shaders/MechanicalBird.shader": "464ba1e6945601efbf3baedb05d4452a0c02897eeb244c44865e854793e7f9c4",
+    "Assets/Resources/SkyPulse/Shaders/Prism.shader": "eb30c40bd235c49b6e719e35562a832eaa35b256b62d7096318c91c108478597",
+    "Assets/Resources/SkyPulse/Shaders/RelayRunway.shader": "abba68e8c771ccb84b9d1c9d40331c0922b828f9e1645b3949d6419c26c91078",
+    "Assets/Resources/SkyPulse/Shaders/RelayTitanium.shader": "9bd37433cedaec73541e7223c0100acfff90bc7fae1bf031d6f9d757830d8ca7",
+    "Assets/Resources/SkyPulse/Shaders/TechTreeField.shader": "9f76c0d9ffb0e1636816694b3eaaa62fa30e31708690e4d7a7f33fddc177e846"
+  },
+  "baselineSourceCommit": "63622477f0eaa7e4d9d68b94b255baec4c32cb53",
+  "baselineRequiredPassMarkers": [
+    "SKYPULSE_BIRD_PROGRESSION_PURE_PASS",
+    "SKYPULSE_BIRD_PROGRESSION_LIVE_PASS",
+    "SKYPULSE_TECH_TREE_PASS",
+    "SKYPULSE_DEPTH_PASS",
+    "SKYPULSE_HEIST_CAPTURE_PASS",
+    "SKYPULSE_CINEMATIC_PASS",
+    "SKYPULSE_RELAY_MESH_PASS",
+    "SKYPULSE_DAILY_ROUTE_PURE_PASS",
+    "SKYPULSE_DAILY_ROUTE_LIVE_PASS",
+    "SKYPULSE_ONE_THUMB_PURE_PASS",
+    "SKYPULSE_ONE_THUMB_LIVE_PASS",
+    "SKYPULSE_BLACKOUT_PURE_PASS",
+    "SKYPULSE_BLACKOUT_LIVE_PASS",
+    "SKYPULSE_BETA_CHECKS_PASS",
+    "SKYPULSE_RELEASE_EDGE_PASS",
+    "SKYPULSE_MISSION_PURE_PASS",
+    "SKYPULSE_MISSION_INTEGRATION_PASS",
+    "SKYPULSE_MISSION_LEGACY_PASS",
+    "SKYPULSE_MISSION_CAPTURES_PASS",
+    "SKYPULSE_PRESENTATION_CAPTURES_PASS",
+    "SKYPULSE_WORLD_CHECKS_PASS",
+    "SKYPULSE_PLAYER_EXPERIENCE_PASS"
+  ],
+  "baselineStatus": "22-group complete pass after LED/progression changes, before code-only source organisation",
+  "finalSourceRequiredPassMarkers": [
+    "SKYPULSE_BLACKOUT_PURE_PASS",
+    "SKYPULSE_DEPTH_PASS",
+    "SKYPULSE_TECH_TREE_PASS",
+    "SKYPULSE_BIRD_PROGRESSION_LIVE_PASS",
+    "SKYPULSE_BLACKOUT_LIVE_PASS",
+    "SKYPULSE_CINEMATIC_PASS",
+    "SKYPULSE_HEIST_CAPTURE_PASS",
+    "SKYPULSE_PLAYER_EXPERIENCE_PASS",
+    "SKYPULSE_EXPERIENCE_TARGETED_PASS"
+  ],
+  "finalSourceStatus": "All nine scoped marker groups passed after source organisation; an additional tree-only test/capture passed after correcting capture-stage alignment",
+  "unityProcessExitCodes": {
+    "full": 0,
+    "finalRuntimeScoped": 0,
+    "alignedTreeCapture": 0,
+    "iosExport": 0
+  },
+  "evidence": {
+    "fullBeforeSourceOrganisation": {
+      "path": "artifacts/holographic-polish-20261022/led-progression-qa/unity.log",
+      "sha256": "75d626e923a42231d5cc71fc7f4308b3b9661ad16d26078a2582e8d6847083a5"
+    },
+    "finalRuntimeScoped": {
+      "path": "artifacts/holographic-polish-20261022/organised-source.log",
+      "sha256": "afeb6c0ea88072b3ae0df82cfd27844ed32a28ea034282d41f3b39d3cf526ee8"
+    },
+    "alignedTreeCapture": {
+      "path": "artifacts/holographic-polish-20261022/aligned-tree-preview.log",
+      "sha256": "e78804fdfd33ed97c43ca9b139f1b1936d8942aec52044d7224d605e3070fc02"
+    },
+    "finalIosExport": {
+      "path": "artifacts/holographic-polish-20261022/unity-ios-export-18-organised.log",
+      "sha256": "22a74eeaae4a3c0509f27a6a2037e8014955c2b0046f2b3235aa662118bdca03"
+    },
+    "treeEncode": {
+      "path": "artifacts/holographic-polish-20261022/encode-tree-aligned.log",
+      "sha256": "4e258856cca618dfe8ee4cd8cc5c650019b839ccfb184dfccb4bb632ed59554d"
+    },
+    "ledEncode": {
+      "path": "artifacts/holographic-polish-20261022/encode-led-final.log",
+      "sha256": "8dfc1ad82e40039ad9c304bee1032e5b1727f7cf29655259674dfd79e53f4c39"
+    }
+  },
+  "physicalDeviceGameplay": "Pending for build 18 on iPhone and iPad",
+  "native": "Final exact-commit iOS IL2CPP export passed; 439 manifest entries match the repository; no signed archive or upload",
+  "warnings": [
+    "Unity Editor Search startup ArgumentOutOfRangeException is retained in logs; stack is Editor indexing, not shipping gameplay. Full suite intentionally injects persistence errors to test recovery.",
+    "Initial capture-only attempt paused the offscreen stage by disabling its component. Final tree clip keeps the stage active and pauses between captured frames; corrected frames were inspected."
+  ],
+  "coverage": [
+    "Actual preview optics and post-move sensor costs agree with committed moves; live session arrays, trace, wallet and saved attempts are untouched by planning. Pausing/restarting clears previews; duplicate confirmation spends once.",
+    "All eight vaults remain solvable with unchanged budgets/par, saved medals and attempts, immediate intermediate progression, stale-input fences and final result.",
+    "Real 100-pickup path reconciles physical pickups, bird and Tech subtotals with exact wallet deltas; repaint cannot credit twice.",
+    "All three Home targets have transparent corners and premultiplied UI compositing, with no support slab or duplicate dock.",
+    "All 27 level labels explicitly state Installed/Next/Locked, with authoritative Core-discounted prices, 37 disjoint unchanged hit targets, direct two-axis drag, and no wheel/bar navigation.",
+    "Final optical/core/tree materials compile on Metal; frame-independent motion, pause and Reduced Motion remain valid, with zero managed allocations in the warmed measured tree/flight/beam loops.",
+    "Final active puzzle targets meet the 44-point layout check at 640, 1320 and 1640-pixel viewports. Real touch comfort, device brightness, thermals, memory and sustained frame times remain unverified.",
+    "The advanced preview follows a real solution through all but its last turn and shows a winning network using the non-spending preview API.",
+    "Actual discounted bird-unlock UI, insufficient/exact balance, stale quote refresh, duplicate purchase guard, 2-percent-per-trained-level cap/rounding/restore and bred unlock reveal.",
+    "Original shaft/collar GPU textures on matching 3D geometry; visible-pixel regression check; LED clock equals elapsed time at 30/60/120 FPS and freezes under Reduced Motion.",
+    "18 exact method bodies moved to named partials, six unreferenced private helpers/four constants removed; original MonoBehaviour GUID and save schema retained."
+  ]
+}

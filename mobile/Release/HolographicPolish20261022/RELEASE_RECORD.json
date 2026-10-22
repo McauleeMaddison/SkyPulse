@@ -1,0 +1,65 @@
+{
+  "candidate": "SkyPulse 1.0.0 (18)",
+  "compiledSourceCommit": "ac5fffe5fad2bcebd01a6ed2af51e140fffa3d23",
+  "branch": "main",
+  "localIosExport": {
+    "status": "SKYPULSE_IOS_EXPORT_PASS",
+    "path": "/private/tmp/skypulse-18-holographic-20261022/iOS-organised",
+    "sourceManifestMatchesWorkingTree": true,
+    "sourceEntries": 439,
+    "sourceCommit": "ac5fffe5fad2bcebd01a6ed2af51e140fffa3d23"
+  },
+  "archive": {
+    "status": "Not archived for build 18"
+  },
+  "testFlight": {
+    "uploaded": false,
+    "latestUploadedBuild": "17",
+    "latestKnownStatus": "Testing in SkyPulse Internal"
+  },
+  "publicReviewSubmitted": false,
+  "appStoreConnectCopy": "Prepared locally; no live listing edit or review submission in this task",
+  "physicalDeviceGameplay": "Pending for build 18",
+  "newExternalAssets": 0,
+  "economy": "Owner-requested new bird-unlock saving: 2% per completed training level, capped at 20%; rounded up once from base price. Core discounts remain separate. Breeding creates one permanent lineage offspring, retains parents and blocks duplicate owned combinations.",
+  "saveCompatibility": "Existing version 1 bird genomes derive unlock saving; no keys, IDs, app/company identity, original script GUID or flight geometry changed",
+  "artworkLedger": "mobile/Release/IdentityRights20261013/ARTWORK_LEDGER.json",
+  "rightsAndSimilarity": "No new external image/model/font/audio; no exclusive-rights or private-comparator certification",
+  "previews": [
+    {
+      "file": "tech-tree-preview.mp4",
+      "seconds": 8,
+      "decodedFrames": 240,
+      "fps": 30,
+      "width": 750,
+      "height": 1334,
+      "physicalDeviceFootage": false,
+      "sha256": "34f2c304095d8882717d718aa62b8c2f0f49aa264262aba5db0e123a0a440985"
+    },
+    {
+      "file": "endless-led-preview.mp4",
+      "seconds": 4,
+      "decodedFrames": 120,
+      "fps": 30,
+      "width": 750,
+      "height": 1334,
+      "physicalDeviceFootage": false,
+      "sha256": "b5187c3641f4698533c9a7e42205b93632b84766065d381acdeda7fb0ac4e2f3"
+    }
+  ],
+  "evidenceSha256": {
+    "SOURCE_MANIFEST.json": "ac2bf8f3108e490abf81f9bc227ec3cc0f19ceb5145582a0f35961fab35be8ad",
+    "BUILD_INFO.json": "e689b575eae82366fae5a5fb97ef7e0d12e564571eeae4738f2893e28bd100d0",
+    "REFACTOR_CHECKS.json": "03c845f28a2ed98dd1db7505363867befb72c281f2616aab05ff8e6bfb780bd3"
+  },
+  "editingGuide": "mobile/EDITING_GUIDE.md",
+  "metadataValidation": {
+    "status": "Passed",
+    "unitTests": 11,
+    "descriptionCharacters": 3965,
+    "keywordUtf8Bytes": 81,
+    "brandedSupportAndPrivacyHttp": 200,
+    "reportSha256": "250c52d1dcb654855dbcccd81c3369d84d0647943a7d6b55f8566fd9af3a7184",
+    "scope": "Local copy/identity/build/source consistency and live branded-link checks; no Apple private-comparison clearance"
+  }
+}

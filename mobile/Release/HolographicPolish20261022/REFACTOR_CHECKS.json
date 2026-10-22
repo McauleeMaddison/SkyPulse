@@ -1,0 +1,107 @@
+{
+  "mainLinesBefore": 9014,
+  "mainLinesAfter": 6560,
+  "removedUnreferencedPrivateHelpers": [
+    "CreateTopAnchoredText",
+    "SetBirdHangarContentHeight",
+    "CreateHangarStatRow",
+    "CreateHangarRatingRow",
+    "CreateBirdHangarCard",
+    "CreateBirdHangarDetailPanel"
+  ],
+  "removedUnusedConstants": 4,
+  "movedMethods": [
+    {
+      "method": "BuildBirdHangarPage",
+      "file": "SkyPulseNativeGame.Hangar.cs",
+      "bodySha256": "a5cf3267960077f052792f6ab3d4b8ad60384ac9a7bae9e9fdf4a6303d36f8be"
+    },
+    {
+      "method": "AddHangarSwipeEvent",
+      "file": "SkyPulseNativeGame.Hangar.cs",
+      "bodySha256": "1544a949b5790c375b48ff0c3171ec1db692047400499f7efb9f22fefaad22eb"
+    },
+    {
+      "method": "OnHangarBeginDrag",
+      "file": "SkyPulseNativeGame.Hangar.cs",
+      "bodySha256": "aa9bd7a19e95c7930212ae22b0faa2bc736f7cedff6a61c416a1287d12012b80"
+    },
+    {
+      "method": "OnHangarDrag",
+      "file": "SkyPulseNativeGame.Hangar.cs",
+      "bodySha256": "ab4ae81a08321824cf0afe0f9a68e4e4ef075a20b3ed169bb66588fcba33c7f5"
+    },
+    {
+      "method": "OnHangarEndDrag",
+      "file": "SkyPulseNativeGame.Hangar.cs",
+      "bodySha256": "cfcf851a54ed1d142bb103266309d47f5f7ce456586ee5bab2e5994b9cef36b7"
+    },
+    {
+      "method": "UpdateHangarHeroPresentation",
+      "file": "SkyPulseNativeGame.Hangar.cs",
+      "bodySha256": "18def64cc7ed0178719068dbadbfa43ac2aa0ac5d15b919c9fcdba42cfb7182b"
+    },
+    {
+      "method": "UpdateHangarDragPresentation",
+      "file": "SkyPulseNativeGame.Hangar.cs",
+      "bodySha256": "b69f7effd7944db7b11a62898120266c06ebea42d6a530f9ff62f6cd36e112c2"
+    },
+    {
+      "method": "AnimateHangarSwipe",
+      "file": "SkyPulseNativeGame.Hangar.cs",
+      "bodySha256": "87d5b156376a4d511143ccbd428a23202278401bae8c42322c89887d783918ba"
+    },
+    {
+      "method": "CreateHangarGlassPanel",
+      "file": "SkyPulseNativeGame.Hangar.cs",
+      "bodySha256": "89dab731203460eb7a7b0d6a4023c26d0565b11329eb6328d88f5cc77e82bf9d"
+    },
+    {
+      "method": "CreateHangarCarouselBird",
+      "file": "SkyPulseNativeGame.Hangar.cs",
+      "bodySha256": "e9eb814fc2c868abf6a2f1bc5188d1fe64a8e2118d5e5781a49f46ec9f390f40"
+    },
+    {
+      "method": "ShowPreviousHangarBird",
+      "file": "SkyPulseNativeGame.Hangar.cs",
+      "bodySha256": "18ae70ed1c356ed37a446b0ab71f5ea47768a0544e0c19810481087fa0dedc60"
+    },
+    {
+      "method": "ShowNextHangarBird",
+      "file": "SkyPulseNativeGame.Hangar.cs",
+      "bodySha256": "5885708ad9cc246d116ab7cb8e58c7dacc0d00e8eb32434c917d51b774d7b733"
+    },
+    {
+      "method": "DockVariantFor",
+      "file": "SkyPulseNativeGame.Hangar.cs",
+      "bodySha256": "7cfcd10d4c243a815353d168bc0613049323d4c173f76b26de9259c4e0e55662"
+    },
+    {
+      "method": "AnimatePipeSurface",
+      "file": "SkyPulseNativeGame.PipeVisuals.cs",
+      "bodySha256": "8c715e66418cfcee6124b451329f194fdbcf5dc5d25ff926402f5d6a3cc7008d"
+    },
+    {
+      "method": "LayoutNeonPipeSurface",
+      "file": "SkyPulseNativeGame.PipeVisuals.cs",
+      "bodySha256": "7c73ec70122d1d139adefcdadfc2c94b97677493055f28787935bc9ba25d3214"
+    },
+    {
+      "method": "AnimateNeonPipeSurface",
+      "file": "SkyPulseNativeGame.PipeVisuals.cs",
+      "bodySha256": "373d32794ba82e9115513355304b0454456e7547adeb6fd219bfea95ddf98e03"
+    },
+    {
+      "method": "LayoutPipeSurface",
+      "file": "SkyPulseNativeGame.PipeVisuals.cs",
+      "bodySha256": "91bd93edaa1fe033d64afccf6092732d36a176787e227ea1f5084d29eb54184f"
+    },
+    {
+      "method": "LayoutPlumbingGate",
+      "file": "SkyPulseNativeGame.PipeVisuals.cs",
+      "bodySha256": "81779cfc052c3db4fd50ef3e09322aa681695703fcbda5dbf3c283f756cb96a7"
+    }
+  ],
+  "movement": "Exact method bodies; same partial MonoBehaviour and original script GUID.",
+  "exactMovedBodyChecks": "18/18 PASS"
+}

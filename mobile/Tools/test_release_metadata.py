@@ -35,6 +35,10 @@ class CurrentReleaseCopyTests(unittest.TestCase):
     def test_wrong_creator(self):
         self.rejects('copyright', '2026 Another Developer')
 
+    def test_stale_training_unlock_benefit(self):
+        for old,new in [('2% off future founder-bird unlocks', '5% off future founder-bird unlocks'), ('up to 20%', 'up to 50%')]:
+            self.rejects('description', self.current['description'].replace(old,new))
+
     def test_missing_mode(self):
         self.rejects('description', self.current['description'].replace('BLACKOUT PROTOCOL', 'PUZZLES'))
 
