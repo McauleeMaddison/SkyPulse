@@ -26,6 +26,7 @@ component on the scene; do not attach each partial file separately.
 | Original 3D pipe material and light packets | `SkyPulseNativeGame.Depth.cs`, `Resources/SkyPulse/Shaders/EndlessRouteMetal.shader` |
 | Original pipe artwork placement / collider anchors | `SkyPulseNativeGame.PipeVisuals.cs` |
 | Tapered exhaust, soft trail and passage sparks | `SkyPulseFlightEffects.cs`, `SkyPulseNativeGame.Cinematic.cs` |
+| How to Play topics and route-map entry | `SkyPulseNativeGame.Guide.cs` |
 | Three Home layouts and mode input | `SkyPulseNativeGame.Controls.cs`, `.Presentation.cs` |
 | Relay gate rules | `SkyPulseMissionModels.cs` → `RelaySession` |
 | Signal Heist puzzle rules / presentation | `SkyPulseBlackoutCampaign.cs`, `SkyPulseNativeGame.Blackout.cs`, `SkyPulseHeistBoard.cs` |
@@ -102,3 +103,15 @@ In `SkyPulseNativeGame.Depth.cs`, the visible shaft ends 0.04 world units inside
 the collar's far shoulder. Collision shapes still overlap for reliable gameplay;
 do not trim those colliders when adjusting the visible join. The original collar
 cutout and cyan/pink LED material remain in use.
+
+## How to Play and world crossfades
+
+`SkyPulseNativeGame.Guide.cs` owns the mode-specific guide and Endless topics for
+Tech, Core, training and breeding. The world map is reached from its Worlds &
+Power-ups control. Keep help copy aligned with the actual cost/reward functions.
+
+`EndlessRouteMetal.shader` uses `_Visibility` for depth-safe departure coverage.
+`UpdateDepthPresentation` derives it from the existing world-transition timer,
+matching the departing sprite pool. `SceneLightTint` blends the shared bird/pipe
+light across the same transition. Do not change the original flight geometry or
+world milestone rules when adjusting these presentation values.

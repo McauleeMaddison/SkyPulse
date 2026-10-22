@@ -36,6 +36,12 @@ public static class SkyPulseWorldExpansionChecks
             if (b.GetComponentInChildren<Text>().text == label) return b;
         throw new Exception("Missing button: " + label);
     }
+    static void OpenRouteGuide(SkyPulseNativeGame game)
+    {
+        Call(game,"SetHomeProtocol",SkyPulseMode.EndlessRoute);
+        Call(game,"OpenModeGuide");
+        FindButton((GameObject)Get(game,"modeGuideScreen"),"WORLDS &\nPOWER-UPS").onClick.Invoke();
+    }
     static void ValidateWorldExpansion(SkyPulseNativeGame game)
     {
         var type = typeof(SkyPulseNativeGame);
@@ -70,7 +76,7 @@ public static class SkyPulseWorldExpansionChecks
         Call(game, "ResetToMenu");
         Check(((Text)Get(game, "menuRouteText")).text.Contains("MIDNIGHT TIDE"), "Existing player gets next newly available milestone");
         var home = (GameObject)Get(game, "homeScreen"); var guide = (GameObject)Get(game, "flightGuideScreen");
-        FindButton(home, "WORLDS & POWER-UPS").onClick.Invoke();
+        OpenRouteGuide(game);
         var prev = FindButton(guide, "PREVIOUS"); var next = FindButton(guide, "NEXT");
         Check(!prev.interactable, "Guide starts with Previous disabled");
         for (int page = 0; page < 4; page++)
@@ -95,7 +101,7 @@ public static class SkyPulseWorldExpansionChecks
         var home = (GameObject)Get(game, "homeScreen");
         var guide = (GameObject)Get(game, "flightGuideScreen");
         Check(!guide.activeSelf, "Guide starts closed");
-        FindButton(home, "WORLDS & POWER-UPS").onClick.Invoke();
+        OpenRouteGuide(game);
         Check(guide.activeSelf, "Home opens route and pickup guide");
         Call(game, "Update");
         Check(Get(game, "state").ToString() == "Menu", "Guide keeps menu state");
@@ -134,7 +140,7 @@ public static class SkyPulseWorldExpansionChecks
                 guide.SetActive(false); Call(game, "ResetToMenu");
                 if (screen.StartsWith("guide"))
                 {
-                    FindButton(home, "WORLDS & POWER-UPS").onClick.Invoke();
+                    OpenRouteGuide(game);
                     var previous = FindButton(guide, "PREVIOUS");
                     while (previous.interactable) previous.onClick.Invoke();
                     int page = screen == "guide" ? 1 : int.Parse(screen.Substring(11));

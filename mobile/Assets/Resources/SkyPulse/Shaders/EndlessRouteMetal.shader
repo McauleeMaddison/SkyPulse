@@ -8,6 +8,7 @@ Shader "SkyPulse/Original Endless Neon Metal"
         _Cutout("Respect collar silhouette",Float)=0
         _LightTint("World key colour",Color)=(.8,.9,1,1)
         _Clock("Energy clock",Float)=0
+        _Visibility("World departure coverage",Range(0,1))=1
     }
     SubShader
     {
@@ -21,10 +22,16 @@ Shader "SkyPulse/Original Endless Neon Metal"
             #include "UnityCG.cginc"
             struct app { float4 vertex:POSITION;float3 normal:NORMAL; };
             struct vary { float4 pos:SV_POSITION;float3 local:TEXCOORD0;float3 normal:TEXCOORD1;float3 world:TEXCOORD2; };
-            sampler2D _MainTex;float4 _ArtRect;float _ArtFlip,_Clock,_Cutout;fixed4 _LightTint;
+            sampler2D _MainTex;float4 _ArtRect;float _ArtFlip,_Clock,_Cutout,_Visibility;fixed4 _LightTint;
             vary vert(app v){vary o;o.pos=UnityObjectToClipPos(v.vertex);o.local=v.vertex.xyz;o.normal=UnityObjectToWorldNormal(v.normal);o.world=mul(unity_ObjectToWorld,v.vertex).xyz;return o;}
             fixed4 frag(vary i):SV_Target
             {
+                // Stable screen-door coverage fades opaque depth-writing meshes
+                // with the old scenery, including on devices without MSAA.
+                float2 cell=fmod(floor(i.pos.xy),4);
+                float2 low=fmod(cell,2),high=floor(cell/2);
+                float threshold=(4*(2*low.x+3*low.y-4*low.x*low.y)+(2*high.x+3*high.y-4*high.x*high.y)+.5)/16;
+                clip(_Visibility-threshold);
                 float2 uv=float2(i.local.x+.5,lerp(i.local.y+.5,.5-i.local.y,_ArtFlip));
                 fixed4 art=tex2D(_MainTex,_ArtRect.xy+saturate(uv)*_ArtRect.zw);
                 // The collar is an elliptical cutout. Transparent source pixels

@@ -35,6 +35,8 @@ namespace SkyPulse.Mobile
             if(routeMetal==null)BuildEndlessDepth();
             var sceneTint=SceneLightTint();routeMetal.SetColor("_LightTint",sceneTint);routeCapMetal.SetColor("_LightTint",sceneTint);
             float lightClock=reduceMotionEnabled?0:cinematicClock;routeMetal.SetFloat("_Clock",lightClock);routeCapMetal.SetFloat("_Clock",lightClock);
+            float departure=worldTransitionTimer>0?1-Mathf.SmoothStep(0,1,(1-worldTransitionTimer/WorldTransitionSeconds)/.25f):1;
+            routeMetal.SetFloat("_Visibility",departure);routeCapMetal.SetFloat("_Visibility",departure);
             bool show=activeMode==SkyPulseMode.EndlessRoute&&(state==FlightState.Playing||state==FlightState.Impact||state==FlightState.GameOver||state==FlightState.Paused);
             for(int i=0;i<routeDepth.Count;i++)
             {

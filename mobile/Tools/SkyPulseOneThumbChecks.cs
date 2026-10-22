@@ -122,7 +122,8 @@ public static class SkyPulseOneThumbChecks
             Call(game,"SetHomeProtocol",mode);Call(game,"ResetToMenu");var home=(GameObject)Get(game,"homeScreen");
             Check(home.transform.Find("Button · TECH TREE").gameObject.activeSelf==(mode==SkyPulseMode.EndlessRoute),"Tech Tree appears only in relevant Home");
             Check(home.transform.Find("Button · BIRD HANGAR").gameObject.activeSelf==(mode!=SkyPulseMode.BlackoutProtocol),"Blackout Home has no Bird Hangar");
-            Check(home.transform.Find("Button · WORLDS & POWER-UPS").gameObject.activeSelf==(mode==SkyPulseMode.EndlessRoute),"World guide stays specific to Endless");
+            Check(((Button)Get(game,"modeHomeGuide")).gameObject.activeSelf,"How to Play is available for every mode");
+            Check(!home.transform.Find("Button · WORLDS & POWER-UPS").gameObject.activeSelf,"World map is reached through the Endless guide without a duplicate Home button");
         }
         // Warm mesh buffers, then measure the real procedural mesh method through
         // a cached delegate (no reflection invocation allocation in the interval).

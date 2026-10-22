@@ -17,7 +17,10 @@ namespace SkyPulse.Mobile
         {
             if(activeMode==SkyPulseMode.PulseRelay)return new Color(.62f,.86f,1);
             var world=routeWorld??equippedWorld;
-            return world==null?new Color(.7f,.85f,1):Color.Lerp(Color.white,world.Accent,.33f);
+            if(world==null)return new Color(.7f,.85f,1);
+            var accent=world.Accent;
+            if(worldTransitionTimer>0)accent=Color.Lerp(transitionRailStart,accent,Mathf.SmoothStep(0,1,1-worldTransitionTimer/WorldTransitionSeconds));
+            return Color.Lerp(Color.white,accent,.33f);
         }
 
         // Late presentation observes the final physics/pose of the rendered frame.

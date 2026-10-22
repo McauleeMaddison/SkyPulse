@@ -150,6 +150,7 @@ public static class SkyPulsePlayerExperienceTargeted
     public static void TreePreview(){SessionState.SetBool("SkyPulseExperienceTreeOnly",true);Run();}
     public static void PipePreview(){SessionState.SetBool("SkyPulseExperiencePipeOnly",true);Run();}
     public static void FlightPreview(){SessionState.SetBool("SkyPulseExperienceFlightOnly",true);Run();}
+    public static void GuidePreview(){SessionState.SetBool("SkyPulseExperienceGuideOnly",true);Run();}
     static void Tick()
     {
         if(!SessionState.GetBool("SkyPulseExperienceTargeted",false)||!EditorApplication.isPlaying)return;
@@ -158,6 +159,15 @@ public static class SkyPulsePlayerExperienceTargeted
     static IEnumerator Execute()
     {
         var game=UnityEngine.Object.FindAnyObjectByType<SkyPulseNativeGame>();if(game==null)game=new GameObject("QA game").AddComponent<SkyPulseNativeGame>();game.enabled=false;
+        if(SessionState.GetBool("SkyPulseExperienceGuideOnly",false))
+        {
+            SessionState.SetBool("SkyPulseExperienceGuideOnly",false);
+            yield return SkyPulseGuideWorldChecks.Live(game);
+            yield return SkyPulseDepthChecks.Live(game);
+            yield return SkyPulseCinematicChecks.Live(game);
+            yield return SkyPulseOneThumbChecks.Live(game);
+            Debug.Log("SKYPULSE_GUIDE_TARGETED_PASS");EditorApplication.Exit(0);yield break;
+        }
         if(SessionState.GetBool("SkyPulseExperienceFlightOnly",false))
         {
             SessionState.SetBool("SkyPulseExperienceFlightOnly",false);

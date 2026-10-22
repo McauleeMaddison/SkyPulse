@@ -1949,7 +1949,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             menuRouteText = CreateText(root.transform, "", new Vector2(0f, -540f), new Vector2(790f, 42f), 24, Hex("#c0d1e9"), TextAnchor.MiddleCenter, FontStyle.Normal);
             var guide = CreateNeonButton(root.transform, "WORLDS & POWER-UPS", new Vector2(0f, -694f), new Vector2(660f, 96f), Hex("#b17cff"));
             guide.GetComponentInChildren<Text>().fontSize = 28;
-            guide.onClick.AddListener(() => flightGuideScreen.SetActive(true));
+            guide.onClick.AddListener(OpenWorldGuide);
             var privacy = CreateNeonButton(root.transform, "PRIVACY", new Vector2(0f, -822f), new Vector2(280f, 96f), Hex("#8fa7c4"));
             privacy.GetComponentInChildren<Text>().fontSize = 26;
             privacy.onClick.AddListener(() => privacyScreen.SetActive(true));
@@ -2005,6 +2005,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             };
             previous.onClick.AddListener(() => { page = Mathf.Max(0, page - 1); refreshPage(); });
             next.onClick.AddListener(() => { page = Mathf.Min(pageCount - 1, page + 1); refreshPage(); });
+            resetWorldGuidePage = () => { page = 0; refreshPage(); };
             refreshPage();
             CreateText(card, "Next world every 15 gates · full route repeats", new Vector2(0f, 22f), new Vector2(850f, 36f), 23, Hex("#adc6dd"), TextAnchor.MiddleCenter, FontStyle.Normal);
             CreateText(card, "COLLECT POWER-UPS IN FLIGHT", new Vector2(0f, -30f), new Vector2(850f, 48f), 30, Hex("#ffc34d"), TextAnchor.MiddleCenter, FontStyle.Bold);

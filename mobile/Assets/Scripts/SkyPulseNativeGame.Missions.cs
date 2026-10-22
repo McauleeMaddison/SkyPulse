@@ -374,6 +374,7 @@ namespace SkyPulse.Mobile
             if(homeProtocolGraphic!=null)homeProtocolGraphic.ReducedMotion=reduceMotionEnabled;
             missionUiTimer+=dt;
             if(missionUiTimer>=1f){missionUiTimer=0;CheckDailyPeriod();if(missionControlScreen!=null && missionControlScreen.activeSelf)RefreshDailyCards();}
+            if(modeGuideScreen!=null && modeGuideScreen.activeSelf && Input.GetKeyDown(KeyCode.Escape)) {modeGuideScreen.SetActive(false);return true;}
             if(AuxiliaryScreenOpen)return true;
             if(activeMode==SkyPulseMode.EndlessRoute)return false;
             foreach(var item in hiddenModeRenderers)if(item.Key!=null)item.Key.enabled=false;

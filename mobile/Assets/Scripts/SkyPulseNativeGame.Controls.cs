@@ -100,12 +100,12 @@ namespace SkyPulse.Mobile
         {
             if(modeHomeMap==null)return;
             bool endless=homeProtocol==SkyPulseMode.EndlessRoute,relay=homeProtocol==SkyPulseMode.PulseRelay;
-            homeHangar.gameObject.SetActive(endless||relay);homeTech.SetActive(endless);homeWorldGuide.SetActive(endless);
+            homeHangar.gameObject.SetActive(endless||relay);homeTech.SetActive(endless);homeWorldGuide.SetActive(false);
             menuHangarProgressText.gameObject.SetActive(endless||relay);menuTechProgressText.gameObject.SetActive(endless);
             homeHangar.anchoredPosition=endless?new Vector2(-187,-355):new Vector2(0,-507);
             menuHangarProgressText.rectTransform.anchoredPosition=endless?new Vector2(-187,-436):new Vector2(0,-589);
             menuCrystalText.transform.parent.gameObject.SetActive(endless||relay);
-            modeHomeMap.gameObject.SetActive(!endless);modeHomeGuide.gameObject.SetActive(!endless);
+            modeHomeMap.gameObject.SetActive(!endless);modeHomeGuide.gameObject.SetActive(true);
             // Instructions live in the guide. Home keeps identity, progress and
             // actions, with one objective only where the campaign needs it.
             homeActivityCopy.gameObject.SetActive(false);
@@ -124,19 +124,6 @@ namespace SkyPulse.Mobile
             menuRouteText.rectTransform.anchoredPosition=relay?new Vector2(0,-745):new Vector2(0,-540);
             if(relay){menuModeDetailText.text="SPECTRAL CRYSTALS · AUTOMATIC GATES";menuRouteText.text="NEXT · "+dailyRelay.Missions[next].Name;}
             else{menuEquippedText.text="SIGNAL HEIST";menuRouteText.text=completed==8?"NETWORK RESTORED · REPLAY ANY VAULT":SkyPulseBlackoutCampaign.Objective(next).ToUpperInvariant();}
-        }
-        void OpenModeGuide()
-        {
-            ClearScreen(modeGuideScreen);modeGuideScreen.SetActive(true);modeGuideScreen.transform.SetAsLastSibling();
-            bool relay=homeProtocol==SkyPulseMode.PulseRelay;var accent=ProtocolAccent(homeProtocol);
-            MissionText(modeGuideScreen.transform,relay?"PULSE RELAY":"BLACKOUT PROTOCOL",835,46,accent);
-            var card=PremiumPanel(modeGuideScreen.transform,"Thumb controls",new Vector2(0,105),new Vector2(930,1190),relay?1:2,accent);
-            MissionText(card,relay?"TAP THE FLIGHT AREA":"ROTATE THE LIGHT",460,32,accent,870,100);
-            MissionText(card,relay?"Each fresh tap flaps your bird. Pause and menus never flap.":"Tap a silver prism to turn its mirror. The live beam changes immediately. Power every CORE and the UPLINK together.",300,29,null,820,150);
-            MissionText(card,relay?"Collect both randomly placed crystals for each numbered gate. It opens automatically at 2/2; missing crystals leave it locked.":"Crystal splitters send light forward and left. Turn the amber input arrow to face the incoming beam.",70,29,null,820,200);
-            MissionText(card,relay?"Follow the crystal trail through each aperture, then fly through the green exit.":"Power RELAY A or B to open its matching shutter. Relays must stay powered; disconnected shutters close again.",-180,29,null,820,190);
-            MissionText(card,relay?"Four new circuits each UTC day. Today’s medals are saved until refresh. Your equipped bird is cosmetic; Tech Tree does not alter Relay.":"Each rotation spends 1 trace; a lit red sensor raises the cost to 3. Run out before extraction and restart. Cleared vaults advance immediately.",-415,27,accent,820,180);
-            MissionButton(modeGuideScreen.transform,"BACK",0,-785,850,()=>modeGuideScreen.SetActive(false),accent,112);
         }
     }
 }

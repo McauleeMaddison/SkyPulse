@@ -16,6 +16,7 @@ p=qa/'ProjectSettings/ProjectSettings.asset';s=p.read_text().replace('companyNam
 for name in ['SkyPulseBetaChecks.cs','SkyPulseWorldExpansionChecks.cs','SkyPulseReleaseEdgeChecks.cs','SkyPulseMissionChecks.cs','SkyPulsePresentationChecks.cs','SkyPulseBlackoutChecks.cs','SkyPulseOneThumbChecks.cs','SkyPulseDailyRouteChecks.cs','SkyPulseRelayGateChecks.cs','SkyPulseCinematicChecks.cs','SkyPulseDepthChecks.cs','SkyPulseTechTreeChecks.cs','SkyPulseBirdProgressionChecks.cs','SkyPulsePlayerExperienceChecks.cs']:
     shutil.copy2(ROOT/'mobile/Tools'/name,qa/'Assets/Editor'/name)
 shutil.copy2(ROOT/'mobile/Tools/SkyPulseFlightPolishChecks.cs',qa/'Assets/Editor/SkyPulseFlightPolishChecks.cs')
+shutil.copy2(ROOT/'mobile/Tools/SkyPulseGuideWorldChecks.cs',qa/'Assets/Editor/SkyPulseGuideWorldChecks.cs')
 p=qa/'Assets/Editor/SkyPulseWorldExpansionChecks.cs'
 s=p.read_text().replace('        var game = UnityEngine.Object.FindAnyObjectByType<SkyPulseNativeGame>();','        SkyPulseFlightPolishChecks.Trail();\n        SkyPulseBirdProgressionChecks.Pure();\n        SkyPulseMissionChecks.PureChecks();\n        SkyPulseBlackoutChecks.Pure();\n        SkyPulseOneThumbChecks.Pure();\n        SkyPulseDailyRouteChecks.Pure();\n        var game = UnityEngine.Object.FindAnyObjectByType<SkyPulseNativeGame>();',1)
 s=s.replace('        ValidateWorldExpansion(game);','        ValidateWorldExpansion(game);\n        SkyPulseReleaseEdgeChecks.Run(game);\n        SkyPulseMissionChecks.IntegrationChecks(game);',1)

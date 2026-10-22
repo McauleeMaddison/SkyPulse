@@ -72,7 +72,7 @@ public static class SkyPulseDepthChecks
         var colours=new Color[4];var coords=new Vector2Int[4];
         try
         {
-            renderer.enabled=false;read();var centre=pixels.GetPixel(256,128);
+            renderer.enabled=false;read();var centre=pixels.GetPixel(256,128);var reference=pixels.GetPixels();
             for(int i=0;i<4;i++){var v=camera.WorldToViewportPoint(cap.transform.TransformPoint(points[i]));coords[i]=new Vector2Int(Mathf.RoundToInt(v.x*512),Mathf.RoundToInt(v.y*256));colours[i]=pixels.GetPixel(coords[i].x,coords[i].y);}
             renderer.enabled=true;collar.SetFloat("_Cutout",0);read();
             Check(Enumerable.Range(0,4).Any(i=>Vector3.Distance(Rgb(colours[i]),Rgb(pixels.GetPixel(coords[i].x,coords[i].y)))>.1f),"Negative control reproduces the original opaque black corners");
@@ -85,10 +85,21 @@ public static class SkyPulseDepthChecks
                 if(phase==0){var folder=Path.Combine(Environment.GetEnvironmentVariable("SKYPULSE_QA_OUTPUT"),"cap-contour");Directory.CreateDirectory(folder);File.WriteAllBytes(Path.Combine(folder,"collar-"+flip+".png"),pixels.EncodeToPNG());}
             }
             Debug.Log("SKYPULSE_CAP_CONTOUR_PASS");
+            int last=300;
+            foreach(float visibility in new[]{1f,.75f,.5f,.25f,0f})
+            {
+                collar.SetFloat("_Visibility",visibility);read();int covered=0;
+                for(int y=120;y<136;y++)for(int x=248;x<264;x++)
+                    if(Vector3.Distance(Rgb(reference[y*512+x]),Rgb(pixels.GetPixel(x,y)))>.05f)covered++;
+                Check(covered<=last,"Opaque 3D collar coverage decreases with world departure");last=covered;
+                if(visibility==.5f)Check(covered>80&&covered<180,"Half-faded real collar keeps partial coverage rather than popping off");
+                if(visibility==0)Check(covered==0,"Fully faded collar writes no colour or depth over later scenery");
+            }
+            Debug.Log("SKYPULSE_ROUTE_FADE_PASS");
         }
         finally
         {
-            collar.SetFloat("_Cutout",1);collar.SetFloat("_Clock",clock);RenderTexture.active=previous;camera.targetTexture=null;target.Release();UnityEngine.Object.Destroy(target);UnityEngine.Object.Destroy(pixels);UnityEngine.Object.Destroy(probeMaterial);UnityEngine.Object.Destroy(stage);
+            collar.SetFloat("_Cutout",1);collar.SetFloat("_Clock",clock);collar.SetFloat("_Visibility",1);RenderTexture.active=previous;camera.targetTexture=null;target.Release();UnityEngine.Object.Destroy(target);UnityEngine.Object.Destroy(pixels);UnityEngine.Object.Destroy(probeMaterial);UnityEngine.Object.Destroy(stage);
         }
     }
 }
