@@ -99,7 +99,7 @@ public static class SkyPulsePresentationChecks
         var reducedGlint=glint.localPosition;Call(game,"UpdateProtocolPresentation",1f);Call(game,"UpdateRelayPresentation");Check(glint.localPosition==reducedGlint,"Reduced Motion freezes premium portal glints");
         Check((float)Get(game,"protocolVisualTime")==time,"Reduced Motion freezes relay scenery and charge animation");
         Call(game,"ResetToMenu");Call(game,"OpenModeSelection");
-        Check(((RectTransform)Get(game,"modeDropdownClip")).rect.height==496,"Reduced Motion opens complete dropdown immediately");
+        Check(((RectTransform)Get(game,"modeDropdownClip")).rect.height==688,"Reduced Motion opens complete comfort-sized dropdown immediately");
         Call(game,"CloseProtocolDropdown");Check(!((GameObject)Get(game,"modeSelectionScreen")).activeSelf,"Reduced Motion dismisses dropdown immediately");
         Set(game,"reduceMotionEnabled",false);Call(game,"ResetToMenu");camera.targetTexture=null;RenderTexture.ReleaseTemporary(rt);
         Debug.Log("SKYPULSE_PRESENTATION_CAPTURES_PASS");

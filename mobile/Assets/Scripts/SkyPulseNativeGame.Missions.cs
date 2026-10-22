@@ -276,7 +276,8 @@ namespace SkyPulse.Mobile
             relayChargeText=RelayTopStat(header,"CRYSTALS",-310,Hex("#77eaff"));
             relayProgressText=RelayTopStat(header,"GATES OPEN",0,Hex("#45eaff"));
             relayStatusText=RelayTopStat(header,"PASSED",310,Hex("#65ffad"));
-            MissionButton(header,"Ⅱ",410,58,100,PauseFlight,Hex("#8eeaff"),100);
+            var pause=MissionButton(header,"Ⅱ",410,14,100,PauseFlight,Hex("#8eeaff"),100);
+            SetComfortHitTarget(pause);
             relayHintText=MissionText(header,"",-77,23,Hex("#c4f4f5"),900,34);
             foreach(var face in header.GetComponentsInChildren<SkyPulseCircuitGraphic>()){face.Hologram=true;face.Ambient=false;face.SetVerticesDirty();}
             mission.gameObject.SetActive(false); // The circuit name is already on its launch/map.

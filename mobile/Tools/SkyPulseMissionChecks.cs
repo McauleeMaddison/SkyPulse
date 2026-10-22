@@ -172,7 +172,7 @@ public static class SkyPulseMissionChecks
         Check(Get(game,"homeProtocol").ToString()=="EndlessRoute" && ((Text)Get(game,"difficultyText")).text=="ENDLESS ROUTE","New launch defaults to Endless while retaining player progression");
         Call(game,"SetHomeProtocol",SkyPulseMode.BlackoutProtocol);Call(game,"ApplyHomeProtocolTheme");
         Call(game,"OpenModeSelection");Call(game,"UpdateProtocolPresentation",.25f);
-        Check(((GameObject)Get(game,"homeScreen")).activeSelf && ((RectTransform)Get(game,"modeDropdownClip")).rect.height==496f,"Mode list expands beneath badge while Home remains visible");
+        Check(((GameObject)Get(game,"homeScreen")).activeSelf && ((RectTransform)Get(game,"modeDropdownClip")).rect.height==688f,"Comfort-sized mode list expands beneath badge while Home remains visible");
         Call(game,"SelectHomeProtocol",SkyPulseMode.PulseRelay);
         Check(!((GameObject)Get(game,"modeSelectionScreen")).activeSelf && Get(game,"homeProtocol").ToString()=="PulseRelay" && Get(game,"state").ToString()=="Menu","Selecting dropdown item changes Home without launching gameplay");
         Call(game,"LaunchHomeProtocol");Check(Get(game,"state").ToString()=="Playing" && Get(game,"activeMode").ToString()=="PulseRelay","Home Play launches the next Relay circuit directly");

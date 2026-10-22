@@ -12,6 +12,17 @@ namespace SkyPulse.Mobile
         PointerEventData gameplayPointer;
         EventSystem gameplayEventSystem;
         int blackoutGeneration;
+        // Authored at 1080 x 2040: 176 units remains about 49 pt on a
+        // 320 x 568 phone. Expand the hit area, not the visible HUD artwork.
+        // Use only on isolated controls; densely packed controls need layout space.
+        private static void SetComfortHitTarget(Button button)
+        {
+            var rect = (RectTransform)button.transform;
+            var hit = button.GetComponent<Image>();
+            var x = Mathf.Max(0f, (176f - rect.rect.width) * .5f);
+            var y = Mathf.Max(0f, (176f - rect.rect.height) * .5f);
+            hit.raycastPadding = new Vector4(-x, -y, -x, -y);
+        }
         void ReleaseGameplayPointer(int pointer){gameplayInput.Release(pointer);}
         void FenceGameplayBoundary(){gameplayInput.Boundary(Time.frameCount);}
         void UpdateGameplayPointerReleases()

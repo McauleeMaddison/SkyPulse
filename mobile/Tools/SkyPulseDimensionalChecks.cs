@@ -32,6 +32,7 @@ public static class SkyPulseDimensionalChecks
         var game=UnityEngine.Object.FindAnyObjectByType<SkyPulseNativeGame>();if(game==null)game=new GameObject("QA game").AddComponent<SkyPulseNativeGame>();game.enabled=false;
         Set(game,"hapticsEnabled",false);
         yield return Audio(game);
+        yield return SkyPulseTouchComfortChecks.Live(game);
         yield return Environment(game);
         SkyPulseMissionChecks.IntegrationChecks(game);
         yield return SkyPulseOneThumbChecks.Live(game);

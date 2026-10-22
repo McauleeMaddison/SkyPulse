@@ -12,6 +12,7 @@ namespace SkyPulse.Mobile
         private readonly List<SkyPulseCircuitGraphic> homeFrames=new List<SkyPulseCircuitGraphic>();
         private readonly List<SkyPulseCircuitGraphic> modeRowFrames=new List<SkyPulseCircuitGraphic>();
         private RectTransform modeDropdownClip;
+        private const float ModeDropdownHeight=688f;
         private CanvasGroup modeDropdownGroup;
         private bool modeDropdownOpen;
         private float modeDropdownReveal, protocolVisualTime;
@@ -75,27 +76,27 @@ namespace SkyPulse.Mobile
             var scrim=CreateFullPanel(modeSelectionScreen.transform,"Protocol dismiss layer",new Color(0,.01f,.02f,.48f));
             var dismiss=scrim.gameObject.AddComponent<Button>();dismiss.targetGraphic=scrim.GetComponent<Image>();dismiss.transition=Selectable.Transition.None;dismiss.onClick.AddListener(CloseProtocolDropdown);
             var obj=new GameObject("Badge anchored menu",typeof(RectTransform),typeof(RectMask2D),typeof(CanvasGroup));obj.transform.SetParent(modeSelectionScreen.transform,false);
-            modeDropdownClip=obj.GetComponent<RectTransform>();modeDropdownClip.pivot=new Vector2(.5f,1);modeDropdownClip.anchoredPosition=new Vector2(-135,898);modeDropdownClip.sizeDelta=new Vector2(620,496);
+            modeDropdownClip=obj.GetComponent<RectTransform>();modeDropdownClip.pivot=new Vector2(.5f,1);modeDropdownClip.anchoredPosition=new Vector2(-135,898);modeDropdownClip.sizeDelta=new Vector2(620,ModeDropdownHeight);
             modeDropdownGroup=obj.GetComponent<CanvasGroup>();
-            var content=new GameObject("Fixed dropdown content",typeof(RectTransform)).GetComponent<RectTransform>();content.SetParent(modeDropdownClip,false);content.anchorMin=content.anchorMax=new Vector2(.5f,1);content.pivot=new Vector2(.5f,1);content.sizeDelta=new Vector2(620,496);
-            PremiumPanel(content,"Dropdown frame",Vector2.zero,new Vector2(620,496),0,Hex("#8ed8ed"));
+            var content=new GameObject("Fixed dropdown content",typeof(RectTransform)).GetComponent<RectTransform>();content.SetParent(modeDropdownClip,false);content.anchorMin=content.anchorMax=new Vector2(.5f,1);content.pivot=new Vector2(.5f,1);content.sizeDelta=new Vector2(620,ModeDropdownHeight);
+            PremiumPanel(content,"Dropdown frame",Vector2.zero,new Vector2(620,ModeDropdownHeight),0,Hex("#8ed8ed"));
             // Content's own pivot is top-centred; its children are positioned around its centre.
-            var heading=CreateText(content,"GAME MODES",new Vector2(-175,207),new Vector2(220,32),22,Hex("#b4d0df"),TextAnchor.MiddleLeft,FontStyle.Bold);heading.raycastTarget=false;
-            CreateText(content,"ALL FREE",new Vector2(229,207),new Vector2(116,32),18,Hex("#65ffad"),TextAnchor.MiddleRight,FontStyle.Bold);
+            var heading=CreateText(content,"GAME MODES",new Vector2(-175,314),new Vector2(220,32),22,Hex("#b4d0df"),TextAnchor.MiddleLeft,FontStyle.Bold);heading.raycastTarget=false;
+            CreateText(content,"ALL FREE",new Vector2(229,314),new Vector2(116,32),18,Hex("#65ffad"),TextAnchor.MiddleRight,FontStyle.Bold);
             var names=new[]{"ENDLESS ROUTE","PULSE RELAY","BLACKOUT PROTOCOL"};var captions=new[]{"Classic flight through 12 worlds","Tap to fly. Crystals open gates.","Rotate prisms. Route live energy."};
             for(int i=0;i<3;i++)
             {
                 int index=i;var colour=ProtocolAccent((SkyPulseMode)i);
-                var row=MissionButton(content,"",0,123-i*136,580,()=>SelectHomeProtocol((SkyPulseMode)index),colour,112);
+                var row=MissionButton(content,"",0,200-i*196,580,()=>SelectHomeProtocol((SkyPulseMode)index),colour,176);
                 var frame=row.targetGraphic as SkyPulseCircuitGraphic;frame.Variant=i;modeRowFrames.Add(frame);
                 var defaultLabel=row.GetComponentInChildren<Text>();defaultLabel.text="";defaultLabel.enabled=false;
                 ProtocolGraphic(row.transform,"Mode insignia",new Vector2(-235,0),new Vector2(72,82),i,SkyPulseSurface.Emblem,Color.white,true);
-                var label=CreateText(row.transform,names[i],new Vector2(45,22),new Vector2(435,38),27,colour,TextAnchor.MiddleLeft,FontStyle.Bold);label.horizontalOverflow=HorizontalWrapMode.Wrap;
-                CreateText(row.transform,captions[i],new Vector2(45,-24),new Vector2(435,38),19,Hex("#b7cbd3"),TextAnchor.MiddleLeft,FontStyle.Normal);
+                var label=CreateText(row.transform,names[i],new Vector2(45,27),new Vector2(435,46),34,colour,TextAnchor.MiddleLeft,FontStyle.Bold);label.horizontalOverflow=HorizontalWrapMode.Wrap;
+                CreateText(row.transform,captions[i],new Vector2(45,-27),new Vector2(435,44),26,Hex("#b7cbd3"),TextAnchor.MiddleLeft,FontStyle.Normal);
             }
-            CreateText(content,"Choose your next challenge",new Vector2(0,-225),new Vector2(540,30),18,Hex("#8ea8b8"),TextAnchor.MiddleCenter,FontStyle.Normal);
             var badge=(RectTransform)difficultyText.transform.parent;var toggle=badge.gameObject.AddComponent<Button>();toggle.onClick.AddListener(()=>{if(modeDropdownOpen)CloseProtocolDropdown();else OpenModeSelection();});
             toggle.targetGraphic=badge.GetComponent<Image>();toggle.transition=Selectable.Transition.None;
+            SetComfortHitTarget(toggle);
             modeBadgeArrow=CreateText(badge,"▾",new Vector2(140,0),new Vector2(34,48),28,Hex("#b4e8f4"),TextAnchor.MiddleCenter,FontStyle.Bold);
             modeSelectionScreen.SetActive(false);
         }
@@ -136,7 +137,8 @@ namespace SkyPulse.Mobile
                 if(face.Surface==SkyPulseSurface.Panel){face.SoftGlass=true;face.Ambient=false;face.SetVerticesDirty();}
             if(homeAtmosphere!=null){homeAtmosphere.Variant=(int)homeProtocol;homeAtmosphere.SetVerticesDirty();}
             foreach(var frame in homeFrames){frame.Variant=(int)homeProtocol;frame.color=homeProtocol==SkyPulseMode.EndlessRoute?Hex("#45eaff"):accent;frame.SetVerticesDirty();}
-            difficultyText.color=accent;var badge=(RectTransform)difficultyText.transform.parent;badge.sizeDelta=new Vector2(340,68);badge.anchoredPosition=new Vector2(-285,950);
+            difficultyText.color=accent;var badge=(RectTransform)difficultyText.transform.parent;badge.sizeDelta=new Vector2(340,68);badge.anchoredPosition=new Vector2(-285,932);
+            SetComfortHitTarget(badge.GetComponent<Button>());
             difficultyText.rectTransform.sizeDelta=new Vector2(286,48);difficultyText.rectTransform.anchoredPosition=new Vector2(-17,0);difficultyText.horizontalOverflow=HorizontalWrapMode.Wrap;difficultyText.verticalOverflow=VerticalWrapMode.Truncate;
             if(modeBadgeArrow!=null)modeBadgeArrow.color=accent;
             if(homeLaunchButton!=null)homeLaunchButton.GetComponentInChildren<Text>().text="PLAY";
@@ -178,7 +180,7 @@ namespace SkyPulse.Mobile
             {
                 float target=modeDropdownOpen?1:0;
                 modeDropdownReveal=reduceMotionEnabled?target:Mathf.MoveTowards(modeDropdownReveal,target,dt*5f);
-                float eased=1-Mathf.Pow(1-modeDropdownReveal,3);modeDropdownClip.sizeDelta=new Vector2(620,496*eased);modeDropdownGroup.alpha=eased;
+                float eased=1-Mathf.Pow(1-modeDropdownReveal,3);modeDropdownClip.sizeDelta=new Vector2(620,ModeDropdownHeight*eased);modeDropdownGroup.alpha=eased;
                 modeDropdownGroup.interactable=modeDropdownOpen;modeDropdownGroup.blocksRaycasts=modeDropdownOpen;
                 if(modeDropdownReveal<=0 && !modeDropdownOpen)modeSelectionScreen.SetActive(false);
             }
