@@ -1,6 +1,7 @@
 // Disposable Editor checks for visual geometry, not a claim of phone performance.
 using System;
 using System.Collections;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
@@ -32,6 +33,7 @@ public static class SkyPulseDepthChecks
             Check(matching.Any(r=>Mathf.Abs(r.bounds.center.y-body.bounds.center.y)<.001f&&Mathf.Abs(r.bounds.size.y-body.bounds.size.y)<.001f),"Extruded body follows its own collider transform");
             Check(matching.Any(r=>Mathf.Abs(r.bounds.center.y-cap.bounds.center.y)<.001f&&Mathf.Abs(r.bounds.size.y-cap.bounds.size.y)<.001f),"3D collar matches the physical gap edge");
         }
+        CapSilhouette(game,shaft,collar);
         foreach(var mode in new[]{SkyPulseMode.EndlessRoute,SkyPulseMode.PulseRelay,SkyPulseMode.BlackoutProtocol})
         {
             Call(game,"SetHomeProtocol",mode);Call(game,"ResetToMenu");Call(game,"UpdateDepthPresentation",0f);yield return null;
@@ -45,5 +47,43 @@ public static class SkyPulseDepthChecks
             Check(!((Text)Get(game,"homeProtocolCaption")).gameObject.activeInHierarchy&&!((Text)Get(game,"homeActivityCopy")).gameObject.activeInHierarchy&&!((Text)Get(game,"menuModeDetailText")).gameObject.activeInHierarchy,"Home removes repeated marketing and instruction strips: "+mode);
         }
         Check(Resources.Load<Shader>("SkyPulse/Shaders/HeistOptics").isSupported,"3D optical materials compile on Metal");Call(game,"ResetToMenu");Debug.Log("SKYPULSE_DEPTH_PASS");
+    }
+    static Vector3 Rgb(Color c)=>new Vector3(c.r,c.g,c.b);
+    static void CapSilhouette(SkyPulseNativeGame game,Material shaft,Material collar)
+    {
+        Check(shaft.GetFloat("_Cutout")==0&&collar.GetFloat("_Cutout")==1,"Only the collar respects its elliptical artwork cutout; the solid shaft is preserved");
+        var stage=new GameObject("Isolated collar contour QA");stage.transform.position=new Vector3(16000,16000,0);
+        var cap=new GameObject("Original 3D collar",typeof(MeshFilter),typeof(MeshRenderer));cap.transform.SetParent(stage.transform,false);cap.layer=29;
+        cap.GetComponent<MeshFilter>().sharedMesh=(Mesh)Get(game,"routeCapMesh");var renderer=cap.GetComponent<MeshRenderer>();renderer.sharedMaterial=collar;cap.transform.localScale=new Vector3(2.06f,.62f,2.06f);
+        var probe=GameObject.CreatePrimitive(PrimitiveType.Quad);probe.name="Late-drawn scenery behind collar";probe.transform.SetParent(stage.transform,false);probe.layer=29;probe.transform.localPosition=new Vector3(0,0,1.5f);probe.transform.localScale=new Vector3(4,2,1);
+        var probeMaterial=new Material(Shader.Find("Unlit/Color")){color=new Color(.21f,.58f,.72f),renderQueue=2010};probe.GetComponent<MeshRenderer>().sharedMaterial=probeMaterial;
+        var cameraObject=new GameObject("Collar contour camera",typeof(Camera));cameraObject.transform.SetParent(stage.transform,false);cameraObject.transform.localPosition=new Vector3(0,0,-5);
+        var camera=cameraObject.GetComponent<Camera>();camera.enabled=false;camera.orthographic=true;camera.orthographicSize=1;camera.nearClipPlane=.1f;camera.farClipPlane=20;camera.cullingMask=1<<29;camera.clearFlags=CameraClearFlags.SolidColor;camera.backgroundColor=new Color(.005f,.008f,.02f);camera.allowMSAA=true;
+        var target=new RenderTexture(512,256,24,RenderTextureFormat.ARGB32){antiAliasing=4};target.Create();camera.targetTexture=target;
+        var pixels=new Texture2D(512,256,TextureFormat.RGB24,false);var block=new MaterialPropertyBlock();float clock=collar.GetFloat("_Clock");
+        var previous=RenderTexture.active;
+        Action read=()=>{camera.Render();RenderTexture.active=target;pixels.ReadPixels(new Rect(0,0,512,256),0,0);pixels.Apply();};
+        var points=new[]{new Vector3(-.45f,-.45f,0),new Vector3(.45f,-.45f,0),new Vector3(-.45f,.45f,0),new Vector3(.45f,.45f,0)};
+        var colours=new Color[4];var coords=new Vector2Int[4];
+        try
+        {
+            renderer.enabled=false;read();var centre=pixels.GetPixel(256,128);
+            for(int i=0;i<4;i++){var v=camera.WorldToViewportPoint(cap.transform.TransformPoint(points[i]));coords[i]=new Vector2Int(Mathf.RoundToInt(v.x*512),Mathf.RoundToInt(v.y*256));colours[i]=pixels.GetPixel(coords[i].x,coords[i].y);}
+            renderer.enabled=true;collar.SetFloat("_Cutout",0);read();
+            Check(Enumerable.Range(0,4).Any(i=>Vector3.Distance(Rgb(colours[i]),Rgb(pixels.GetPixel(coords[i].x,coords[i].y)))>.1f),"Negative control reproduces the original opaque black corners");
+            collar.SetFloat("_Cutout",1);
+            foreach(int flip in new[]{0,1})foreach(float phase in new[]{0f,.7f,1.8f})
+            {
+                block.SetFloat("_ArtFlip",flip);renderer.SetPropertyBlock(block);collar.SetFloat("_Clock",phase);read();
+                for(int i=0;i<4;i++)for(int y=-1;y<=1;y++)for(int x=-1;x<=1;x++)Check(Vector3.Distance(Rgb(colours[i]),Rgb(pixels.GetPixel(coords[i].x+x,coords[i].y+y)))<.025f,"Transparent collar corner preserves later-drawn scenery and depth · flip "+flip+" / phase "+phase);
+                Check(Vector3.Distance(Rgb(centre),Rgb(pixels.GetPixel(256,128)))>.1f,"Collar centre remains solid rather than hiding the whole mesh");
+                if(phase==0){var folder=Path.Combine(Environment.GetEnvironmentVariable("SKYPULSE_QA_OUTPUT"),"cap-contour");Directory.CreateDirectory(folder);File.WriteAllBytes(Path.Combine(folder,"collar-"+flip+".png"),pixels.EncodeToPNG());}
+            }
+            Debug.Log("SKYPULSE_CAP_CONTOUR_PASS");
+        }
+        finally
+        {
+            collar.SetFloat("_Cutout",1);collar.SetFloat("_Clock",clock);RenderTexture.active=previous;camera.targetTexture=null;target.Release();UnityEngine.Object.Destroy(target);UnityEngine.Object.Destroy(pixels);UnityEngine.Object.Destroy(probeMaterial);UnityEngine.Object.Destroy(stage);
+        }
     }
 }

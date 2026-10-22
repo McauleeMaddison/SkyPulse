@@ -50,7 +50,7 @@ namespace SkyPulse.Mobile
         void BuildEndlessDepth()
         {
             routeMetal=OriginalRouteMaterial(pipeBodySprite,"Original neon shaft on 3D metal");
-            routeCapMetal=OriginalRouteMaterial(pipeCapSprite,"Original neon collar on 3D metal");
+            routeCapMetal=OriginalRouteMaterial(pipeCapSprite,"Original neon collar on 3D metal",true);
             routeBodyMesh=RouteCylinder(false);routeCapMesh=RouteCylinder(true);
             var properties=new MaterialPropertyBlock();
             foreach(var pair in pipePool)foreach(var s in new[]{pair.Top,pair.Bottom})
@@ -60,9 +60,10 @@ namespace SkyPulse.Mobile
                 routeDepth.Add(new RouteDepth{Surface=s,Body=body.transform,Cap=cap.transform,BodyRenderer=body,CapRenderer=cap,Retired=new[]{s.Artwork,s.Outer,s.Panel,s.Shade,s.RailLeft,s.RailRight,s.Core,s.CorePulse,s.Highlight,s.Energy,s.Scan,s.Beacon,s.CapOuter,s.CapAccent,s.CapPanel,s.CapEnergy}});
             }
         }
-        Material OriginalRouteMaterial(Sprite artwork,string label)
+        Material OriginalRouteMaterial(Sprite artwork,string label,bool cutout=false)
         {
             var material=new Material(Resources.Load<Shader>("SkyPulse/Shaders/EndlessRouteMetal")){name=label};
+            material.SetFloat("_Cutout",cutout?1:0);
             var rect=artwork.rect;var texture=artwork.texture;
             material.mainTexture=texture;material.SetVector("_ArtRect",new Vector4(rect.x/texture.width,rect.y/texture.height,rect.width/texture.width,rect.height/texture.height));return material;
         }

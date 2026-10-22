@@ -148,6 +148,7 @@ public static class SkyPulsePlayerExperienceTargeted
     public static void Run(){if(Application.companyName!="SkyPulseQA20261006")throw new Exception("Disposable QA required");PlayerPrefs.DeleteAll();PlayerPrefs.Save();SessionState.SetBool("SkyPulseExperienceTargeted",true);EditorApplication.EnterPlaymode();}
     public static void Capture(){SessionState.SetBool("SkyPulseExperienceCaptureOnly",true);Run();}
     public static void TreePreview(){SessionState.SetBool("SkyPulseExperienceTreeOnly",true);Run();}
+    public static void PipePreview(){SessionState.SetBool("SkyPulseExperiencePipeOnly",true);Run();}
     static void Tick()
     {
         if(!SessionState.GetBool("SkyPulseExperienceTargeted",false)||!EditorApplication.isPlaying)return;
@@ -157,6 +158,7 @@ public static class SkyPulsePlayerExperienceTargeted
     {
         var game=UnityEngine.Object.FindAnyObjectByType<SkyPulseNativeGame>();if(game==null)game=new GameObject("QA game").AddComponent<SkyPulseNativeGame>();game.enabled=false;
         if(SessionState.GetBool("SkyPulseExperienceTreeOnly",false)){SessionState.SetBool("SkyPulseExperienceTreeOnly",false);yield return SkyPulseTechTreeChecks.Live(game);Debug.Log("SKYPULSE_TREE_PREVIEW_PASS");EditorApplication.Exit(0);yield break;}
+        if(SessionState.GetBool("SkyPulseExperiencePipeOnly",false)){SessionState.SetBool("SkyPulseExperiencePipeOnly",false);yield return SkyPulseDepthChecks.Live(game);yield return SkyPulsePlayerExperienceChecks.Live(game);Debug.Log("SKYPULSE_PIPE_PREVIEW_PASS");EditorApplication.Exit(0);yield break;}
         bool capture=SessionState.GetBool("SkyPulseExperienceCaptureOnly",false);SessionState.SetBool("SkyPulseExperienceCaptureOnly",false);
         if(!capture)
         {
