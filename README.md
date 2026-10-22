@@ -9,7 +9,7 @@ For manual work in Unity and VS Code, start with the [handoff guide and checklis
 ## Project layout
 
 - `mobile/Assets/Scripts/`: game loop, UI glyphs, button feedback, tap handling, bootstrap and public links.
-- `mobile/Assets/Resources/`: runtime artwork, five sound effects, bird registration data and privacy/support URLs.
+- `mobile/Assets/Resources/`: runtime artwork, seven authored sound effects, bird registration data and privacy/support URLs.
 - `mobile/Assets/Editor/`: art import tools, playtest checklist and iOS release/export setup.
 - `mobile/Assets/Scenes/`: the shipping `SkyPulse.unity` scene.
 - `mobile/Packages/` and `mobile/ProjectSettings/`: reproducible Unity configuration.
