@@ -1,6 +1,6 @@
 {
   "candidate": "1.0.0 (18)",
-  "compiledSourceCommit": "88225947fe8aca314c5246e8323a981ea41d0b98",
+  "compiledSourceCommit": "edb1fba86ab6d0c8743ecd9d1c4b152e1c55818c",
   "unityVersion": "6000.6.0f1",
   "runtimeSourceSha256": {
     "Assets/Scripts/SkyPulseBirdProgression.cs": "1a1c01342e7b24452835109d624ac88d1d392067284ac0cd9be358a68465ccc0",
@@ -13,16 +13,16 @@
     "Assets/Scripts/SkyPulseDailyMissions.cs": "10157b808de4de3ee309b00a019ee43b4faeb11be50f8276f46d2c105b7ea8be",
     "Assets/Scripts/SkyPulseDailyRelay.cs": "ad7eb4a45b75de015cb1c3ecbd4dc5169765a9293613ada55042f23d9eebf2e2",
     "Assets/Scripts/SkyPulseDepthStage.cs": "b707f7f666d297213823f406cca93db9ed61c95b1ad0dee84e8932d804cff5a2",
-    "Assets/Scripts/SkyPulseFlightEffects.cs": "074abb9f8164391cabaccaab2ce907eb0fcf8ea47854bd8e2df8c6d6f2153120",
+    "Assets/Scripts/SkyPulseFlightEffects.cs": "4b8bf951efd78b814939cfa73566285151c953132e18ae546a8a0948c491d197",
     "Assets/Scripts/SkyPulseHeistBoard.cs": "6da33a1a25d73f229d183312de000e7512a90a955f9533b336d87eae2794dd3d",
     "Assets/Scripts/SkyPulseHolographicText.cs": "9e95ba55720431817ede483d700b561e410d23b5e63a63072956b226b3d2296e",
     "Assets/Scripts/SkyPulseInputFence.cs": "ccf585a47e7bb3d401c4358d792209b548185f755b27b494a368ce7838ec7b25",
     "Assets/Scripts/SkyPulseMissionModels.cs": "2966173db2cd29644df19e99126a13d93f528897bf7153a0ff80938efc874605",
     "Assets/Scripts/SkyPulseNativeGame.BirdProgression.cs": "1f69852413054c30072410832ca9f688f4095fd3c37a5cff288d330e3337b871",
     "Assets/Scripts/SkyPulseNativeGame.Blackout.cs": "ac5172d15b33e7b13b9c44649dcf83b61514adfe6b6431b7be28fee128d330f3",
-    "Assets/Scripts/SkyPulseNativeGame.Cinematic.cs": "defe3d1539fced7a9c32a3d4d93dea4526eb8a511c919946a19eb43224932665",
+    "Assets/Scripts/SkyPulseNativeGame.Cinematic.cs": "51fa757dc239df66b31bd1a7eaab1906dfd50a08e7c7c7c2fb3f64f9bfdad73a",
     "Assets/Scripts/SkyPulseNativeGame.Controls.cs": "044b0db4552c9746a534c1d02b466d8c1b6183b559fa0065cd867b06d44b44e2",
-    "Assets/Scripts/SkyPulseNativeGame.Depth.cs": "ef979729cf8303faf8f8f5f5561a13d4607f3b1ea004addf3871e035267a9efb",
+    "Assets/Scripts/SkyPulseNativeGame.Depth.cs": "f94917da49b0900900ef52e73159b0c63af537ed6fc6723b5918c2f42fe8b893",
     "Assets/Scripts/SkyPulseNativeGame.Hangar.cs": "2ef1db7ae03b6b0c003258c2aba91f2b5cd2b142233f4595ac7b777e92cc7ef1",
     "Assets/Scripts/SkyPulseNativeGame.Missions.cs": "476e96fec1be2ee57759a70fc8889929be2834ddd3094eb5b491dea85a52909a",
     "Assets/Scripts/SkyPulseNativeGame.PipeVisuals.cs": "220ad836e8fd35437db921692adc9c131b63e01ad052ce956fce25cd6237a8b3",
@@ -45,7 +45,7 @@
   },
   "shaderSourceSha256": {
     "Assets/Resources/SkyPulse/Shaders/EndlessRouteMetal.shader": "8709521af9c8b74616b5c53a6594787807df56c300426573838d34bfe00c84bf",
-    "Assets/Resources/SkyPulse/Shaders/FlightLight.shader": "19f5bbb0bcef2aae4c64b8ca5c9148ca5367929625615aeffca79c63864430bb",
+    "Assets/Resources/SkyPulse/Shaders/FlightLight.shader": "e56ee5daceea1445c278bb3413c602fd854702c727070db13e7a9acb2d90230e",
     "Assets/Resources/SkyPulse/Shaders/HeistOptics.shader": "180d649d67ba1e59ff83d4531849634a53912c8c10a3495b83a6f3c6b361898a",
     "Assets/Resources/SkyPulse/Shaders/HolographicText.shader": "b20e1139f13665eb7d62c7a85168928c357d3075128045a457c247be4c9e1e56",
     "Assets/Resources/SkyPulse/Shaders/HolographicTree.shader": "a0a2b17d67ec35578e1a0e7b250ba44f44f8ef82cf198e64eb00ad723b027154",
@@ -82,12 +82,15 @@
   ],
   "baselineStatus": "22-group complete pass after LED/progression changes, before code-only source organisation",
   "finalSourceRequiredPassMarkers": [
+    "SKYPULSE_TRAIL_GEOMETRY_PASS",
     "SKYPULSE_CAP_CONTOUR_PASS",
     "SKYPULSE_DEPTH_PASS",
-    "SKYPULSE_PLAYER_EXPERIENCE_PASS",
-    "SKYPULSE_PIPE_PREVIEW_PASS"
+    "SKYPULSE_CINEMATIC_PASS",
+    "SKYPULSE_ONE_THUMB_LIVE_PASS",
+    "SKYPULSE_FLIGHT_GAMEPLAY_CAPTURE_PASS",
+    "SKYPULSE_FLIGHT_POLISH_PASS"
   ],
-  "finalSourceStatus": "Focused pipe-cap contour/depth, collider/animation, Home and player-experience checks pass on the final source. Earlier comprehensive and nine-group source checks remain identified separately.",
+  "finalSourceStatus": "Focused trail geometry/frame-rate/reset, cap contour and shaft shoulder bounds, three Homes, cinematic pause/zero-GC/Relay unlock/Heist presentation, one-thumb integration and actual flight recording pass. Earlier comprehensive results retain their own source commits.",
   "unityProcessExitCodes": {
     "full": 0,
     "finalRuntimeScoped": 0,
@@ -95,7 +98,10 @@
     "iosExport": 0,
     "pipeCapFix": 0,
     "pipeCapIosExport": 0,
-    "pipeCapVideoEncode": 0
+    "pipeCapVideoEncode": 0,
+    "flightPolish": 0,
+    "flightIosExport": 0,
+    "flightVideoEncode": 0
   },
   "evidence": {
     "fullBeforeSourceOrganisation": {
@@ -133,10 +139,22 @@
     "pipeCapVideoEncode": {
       "path": "artifacts/pipe-cap-polish-20261022/encode-preview.log",
       "sha256": "8dfc1ad82e40039ad9c304bee1032e5b1727f7cf29655259674dfd79e53f4c39"
+    },
+    "flightPolish": {
+      "path": "artifacts/flight-trail-polish-20261022/unity-verified.log",
+      "sha256": "066c9b20ce3c61df1f852423975d79d6f3cc61eadc9b040f1d2ad203f63119f8"
+    },
+    "flightIosExport": {
+      "path": "artifacts/flight-trail-polish-20261022/unity-ios-export-18.log",
+      "sha256": "1fb150c785bd3da93ee50eab88a6fa77e402b67ed10bb9f955d804a2e6f17780"
+    },
+    "flightVideoEncode": {
+      "path": "artifacts/flight-trail-polish-20261022/encode-preview.log",
+      "sha256": "ae6b264fe317eff1289cfa84812edddda67a3ccaca536f3872dfc93056a63eca"
     }
   },
   "physicalDeviceGameplay": "Pending for build 18 on iPhone and iPad",
-  "native": "Final exact-commit iOS IL2CPP export passed after collar correction; all 439 manifest entries match. No signed archive or upload.",
+  "native": "Final exact-commit iOS IL2CPP export passed after trail/shoulder polish; all 439 manifest entries match. No signed archive or upload.",
   "warnings": [
     "Unity Editor Search startup ArgumentOutOfRangeException is retained in logs; stack is Editor indexing, not shipping gameplay. Full suite intentionally injects persistence errors to test recovery.",
     "Initial capture-only attempt paused the offscreen stage by disabling its component. Final tree clip keeps the stage active and pauses between captured frames; corrected frames were inspected."
@@ -153,7 +171,8 @@
     "Actual discounted bird-unlock UI, insufficient/exact balance, stale quote refresh, duplicate purchase guard, 2-percent-per-trained-level cap/rounding/restore and bred unlock reveal.",
     "Original shaft/collar GPU textures on matching 3D geometry; visible-pixel regression check; LED clock equals elapsed time at 30/60/120 FPS and freezes under Reduced Motion.",
     "18 exact method bodies moved to named partials, six unreferenced private helpers/four constants removed; original MonoBehaviour GUID and save schema retained.",
-    "Negative opaque-corner control plus 216 transparent-corner/depth samples across upper/lower caps and three LED phases; opaque centre checks prevent hiding the whole mesh."
+    "Negative opaque-corner control plus 216 transparent-corner/depth samples across upper/lower caps and three LED phases; opaque centre checks prevent hiding the whole mesh.",
+    "Current source: shared-edge tapered ribbon, soft material opt-in, transparent tip, stable Reduced Motion and retry reset; history compared at 30/60/120 FPS. Shaft ends at far shoulder while collar bounds retain the physical gap. Warmed presentation allocates no managed memory. Actual 12-second normal-tap Editor simulation shows six wing poses, 19 taps and six earned points."
   ],
   "previousSourceVerification": {
     "sourceCommit": "ac5fffe5fad2bcebd01a6ed2af51e140fffa3d23",
@@ -182,5 +201,40 @@
     ],
     "msaaSamples": 4,
     "nativeSourceEntries": 439
+  },
+  "sourceVerificationHistory": [
+    {
+      "sourceCommit": "88225947fe8aca314c5246e8323a981ea41d0b98",
+      "requiredPassMarkers": [
+        "SKYPULSE_CAP_CONTOUR_PASS",
+        "SKYPULSE_DEPTH_PASS",
+        "SKYPULSE_PLAYER_EXPERIENCE_PASS",
+        "SKYPULSE_PIPE_PREVIEW_PASS"
+      ],
+      "status": "Focused pipe-cap contour/depth, collider/animation, Home and player-experience checks pass on the final source. Earlier comprehensive and nine-group source checks remain identified separately."
+    }
+  ],
+  "flightPolish": {
+    "record": "FLIGHT_TRAIL_POLISH.md",
+    "sourceCommit": "edb1fba86ab6d0c8743ecd9d1c4b152e1c55818c",
+    "fpsChecks": [
+      30,
+      60,
+      120
+    ],
+    "durationSeconds": 12,
+    "decodedFrames": 360,
+    "width": 750,
+    "height": 1334,
+    "actualWingPoses": 6,
+    "bufferedTaps": 19,
+    "earnedScore": 6,
+    "noInjectedGameplayState": true,
+    "deviceRecording": false,
+    "initialAttempt": "Failed in new test-fixture upper/lower selection; corrected fixture then entire focused run passed",
+    "gameplayCapture": {
+      "path": "artifacts/flight-trail-polish-20261022/captures/flight-gameplay/CAPTURE.txt",
+      "sha256": "51a398aee16748e26eaefcc5c0a718860d40ea8d30a0948ea9c2414849ae773b"
+    }
   }
 }

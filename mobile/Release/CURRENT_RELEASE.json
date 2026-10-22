@@ -6,7 +6,7 @@
   "appleTeamId": "TX54JLQ8VF",
   "version": "1.0.0",
   "build": "18",
-  "runtimeSourceCommit": "88225947fe8aca314c5246e8323a981ea41d0b98",
+  "runtimeSourceCommit": "edb1fba86ab6d0c8743ecd9d1c4b152e1c55818c",
   "metadata": "mobile/Release/HolographicPolish20261022/metadata.json",
   "qaRecord": "mobile/Release/HolographicPolish20261022/QA_RECORD.json",
   "sourceManifest": "mobile/Release/HolographicPolish20261022/SOURCE_MANIFEST.json",

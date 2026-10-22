@@ -1,13 +1,13 @@
 {
   "candidate": "SkyPulse 1.0.0 (18)",
-  "compiledSourceCommit": "88225947fe8aca314c5246e8323a981ea41d0b98",
+  "compiledSourceCommit": "edb1fba86ab6d0c8743ecd9d1c4b152e1c55818c",
   "branch": "main",
   "localIosExport": {
     "status": "SKYPULSE_IOS_EXPORT_PASS",
-    "path": "/private/tmp/skypulse-18-holographic-20261022/iOS-cap-contour",
+    "path": "/private/tmp/skypulse-18-holographic-20261022/iOS-flight-trail",
     "sourceManifestMatchesWorkingTree": true,
     "sourceEntries": 439,
-    "sourceCommit": "88225947fe8aca314c5246e8323a981ea41d0b98"
+    "sourceCommit": "edb1fba86ab6d0c8743ecd9d1c4b152e1c55818c"
   },
   "archive": {
     "status": "Not archived for build 18"
@@ -22,7 +22,7 @@
   "physicalDeviceGameplay": "Pending for build 18",
   "newExternalAssets": 0,
   "economy": "Owner-requested new bird-unlock saving: 2% per completed training level, capped at 20%; rounded up once from base price. Core discounts remain separate. Breeding creates one permanent lineage offspring, retains parents and blocks duplicate owned combinations.",
-  "saveCompatibility": "Existing version 1 bird genomes derive unlock saving; no keys, IDs, app/company identity, original script GUID or flight geometry changed",
+  "saveCompatibility": "Existing save schema, keys, catalogue IDs, app/company identity, script GUID and physical flight/collision geometry retained; only visible shaft extents and exhaust presentation changed in this pass",
   "artworkLedger": "mobile/Release/IdentityRights20261013/ARTWORK_LEDGER.json",
   "rightsAndSimilarity": "No new external image/model/font/audio; no exclusive-rights or private-comparator certification",
   "previews": [
@@ -46,12 +46,26 @@
       "physicalDeviceFootage": false,
       "sha256": "5b0e41ac39a6831dabc8f4906884f4f41356e2fcbc383a3fa4c7ea624c5d0b9c",
       "sourceCommit": "88225947fe8aca314c5246e8323a981ea41d0b98"
+    },
+    {
+      "file": "endless-flight-preview.mp4",
+      "seconds": 12,
+      "decodedFrames": 360,
+      "fps": 30,
+      "width": 750,
+      "height": 1334,
+      "physicalDeviceFootage": false,
+      "sourceCommit": "edb1fba86ab6d0c8743ecd9d1c4b152e1c55818c",
+      "sha256": "ba9bb7c318d6ababf00358bd96ea1c1f6c772882cad0b4f60312b401058587dd",
+      "content": "Actual buffered-tap flight simulation with authored wing strokes, moving gates, collision-checked passes and new tapered trail"
     }
   ],
   "evidenceSha256": {
-    "SOURCE_MANIFEST.json": "deb2b4e297e6d1417fe8ca032dd6e15e5389d2496c3ad09da94bd3628bb9ee99",
-    "BUILD_INFO.json": "947f3abac61894dc601006e62dbd8cf63b8e0f3f5919dd9497139c82ea3462f6",
-    "REFACTOR_CHECKS.json": "03c845f28a2ed98dd1db7505363867befb72c281f2616aab05ff8e6bfb780bd3"
+    "SOURCE_MANIFEST.json": "95cce90e1467a80d40b852dea1a6c233243f11e28b22bc76a3cf24d9acec3ca4",
+    "BUILD_INFO.json": "b2672cf9498e53610f0157115adef3eb516559bc41afac177fbadf71315c760a",
+    "REFACTOR_CHECKS.json": "03c845f28a2ed98dd1db7505363867befb72c281f2616aab05ff8e6bfb780bd3",
+    "FLIGHT_TRAIL_POLISH.md": "a8964b271619863f9b5cd171289347df276b7fc749b1b3788fab4ee7d6ac6e0b",
+    "endless-flight-frame.png": "4a8c16f0fb7e7099aadcb320002dbeca2df9bc2b7ad6a8eea5543b860c3f0b01"
   },
   "editingGuide": "mobile/EDITING_GUIDE.md",
   "metadataValidation": {
@@ -61,7 +75,7 @@
     "keywordUtf8Bytes": 81,
     "reportSha256": "7b6ed5095025cebae0df8cecff48488b05f2ec526cc6620d1d1e6b6bf4f9e445",
     "scope": "Current local copy/identity/source checks; branded-link verification retained separately from the preceding release record; no Apple private-comparison clearance",
-    "sourceRevalidatedForCommit": "88225947fe8aca314c5246e8323a981ea41d0b98",
+    "sourceRevalidatedForCommit": "edb1fba86ab6d0c8743ecd9d1c4b152e1c55818c",
     "brandedLinksPreviousVerification": {
       "recordCommit": "7a2bca5553d92e8534361e93797c6497052801af",
       "support": {
@@ -77,5 +91,6 @@
       "urlsChangedInThisVisualFix": false
     }
   },
-  "pipeCapContourFix": "PIPE_CAP_FIX.md"
+  "pipeCapContourFix": "PIPE_CAP_FIX.md",
+  "flightTrailPolish": "FLIGHT_TRAIL_POLISH.md"
 }

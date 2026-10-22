@@ -21,10 +21,15 @@ mobile/Tools/SkyPulseBirdProgressionChecks.cs
 mobile/Tools/SkyPulseDepthChecks.cs
 mobile/Tools/SkyPulsePlayerExperienceChecks.cs
 mobile/Tools/SkyPulseTechTreeChecks.cs
-mobile/Tools/SkyPulsePlayerExperienceChecks.cs
-mobile/Tools/SkyPulseTechTreeChecks.cs
 mobile/Tools/check_release_metadata.py
 mobile/Tools/test_release_metadata.py
 mobile/Release/CURRENT_RELEASE.json
 mobile/Release/HolographicPolish20261022/
 mobile/Release/HolographicPolish20261022/PIPE_CAP_FIX.md
+mobile/Assets/Scripts/SkyPulseFlightEffects.cs
+mobile/Assets/Scripts/SkyPulseNativeGame.Cinematic.cs
+mobile/Tools/SkyPulseFlightPolishChecks.cs
+mobile/Tools/run_modes_qa.py
+mobile/Release/HolographicPolish20261022/FLIGHT_TRAIL_POLISH.md
+mobile/Release/HolographicPolish20261022/endless-flight-preview.mp4
+mobile/Release/HolographicPolish20261022/endless-flight-frame.png

@@ -102,7 +102,7 @@
         },
         {
             "path": "Assets/Resources/SkyPulse/Shaders/FlightLight.shader",
-            "sha256": "19f5bbb0bcef2aae4c64b8ca5c9148ca5367929625615aeffca79c63864430bb"
+            "sha256": "e56ee5daceea1445c278bb3413c602fd854702c727070db13e7a9acb2d90230e"
         },
         {
             "path": "Assets/Resources/SkyPulse/Shaders/FlightLight.shader.meta",
@@ -1502,7 +1502,7 @@
         },
         {
             "path": "Assets/Scripts/SkyPulseFlightEffects.cs",
-            "sha256": "074abb9f8164391cabaccaab2ce907eb0fcf8ea47854bd8e2df8c6d6f2153120"
+            "sha256": "4b8bf951efd78b814939cfa73566285151c953132e18ae546a8a0948c491d197"
         },
         {
             "path": "Assets/Scripts/SkyPulseFlightEffects.cs.meta",
@@ -1558,7 +1558,7 @@
         },
         {
             "path": "Assets/Scripts/SkyPulseNativeGame.Cinematic.cs",
-            "sha256": "defe3d1539fced7a9c32a3d4d93dea4526eb8a511c919946a19eb43224932665"
+            "sha256": "51fa757dc239df66b31bd1a7eaab1906dfd50a08e7c7c7c2fb3f64f9bfdad73a"
         },
         {
             "path": "Assets/Scripts/SkyPulseNativeGame.Cinematic.cs.meta",
@@ -1574,7 +1574,7 @@
         },
         {
             "path": "Assets/Scripts/SkyPulseNativeGame.Depth.cs",
-            "sha256": "ef979729cf8303faf8f8f5f5561a13d4607f3b1ea004addf3871e035267a9efb"
+            "sha256": "f94917da49b0900900ef52e73159b0c63af537ed6fc6723b5918c2f42fe8b893"
         },
         {
             "path": "Assets/Scripts/SkyPulseNativeGame.Depth.cs.meta",
