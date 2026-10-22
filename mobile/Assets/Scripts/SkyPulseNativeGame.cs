@@ -1276,13 +1276,13 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
         private void OnApplicationFocus(bool hasFocus)
         {
             CheckDailyPeriod();
-            if (!hasFocus) PauseFlight();
+            if (!hasFocus) { StopGameSounds(); PauseFlight(); }
         }
 
         private void OnApplicationPause(bool paused)
         {
             CheckDailyPeriod();
-            if (paused) PauseFlight();
+            if (paused) { StopGameSounds(); PauseFlight(); }
         }
 
         private void CreateCamera()
@@ -1377,14 +1377,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             transitionRenderers = departureRenderers.ToArray();
             transitionColours = new Color[transitionRenderers.Length];
 
-            audioSource = gameObject.AddComponent<AudioSource>();
-            audioSource.playOnAwake = false;
-            audioSource.spatialBlend = 0f;
-            flapSound = Resources.Load<AudioClip>("SkyPulse/audio/flap");
-            scoreSound = Resources.Load<AudioClip>("SkyPulse/audio/score");
-            crashSound = Resources.Load<AudioClip>("SkyPulse/audio/crash");
-            crystalSound = Resources.Load<AudioClip>("SkyPulse/audio/crystal");
-            unlockSound = Resources.Load<AudioClip>("SkyPulse/audio/unlock");
+            CreateGameAudio();
         }
 
         private void CreateAmbientStars()
@@ -2092,14 +2085,14 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
         {
             var root = CreateScreen(parent, "Pause screen");
             CreateFullPanel(root.transform, "Pause dim", new Color(.005f, .012f, .04f, .78f));
-            var card = CreatePanel(root.transform, "Pause card", new Vector2(0f, 20f), new Vector2(760f, 840f), Hex("#07152b"));
+            var card = CreatePanel(root.transform, "Pause card", new Vector2(0f, 20f), new Vector2(760f, 980f), Hex("#07152b"));
             AddOutline(card.gameObject, new Color(.27f, .92f, 1f, .66f), 1.5f);
-            CreateUiGlyph(card, "Pause wing", new Vector2(0f, 354f), new Vector2(64f, 34f), Hex("#45eaff"), SkyPulseUiGlyph.Kind.WingMark);
-            CreateText(card, "PAUSED", new Vector2(0f, 284f), new Vector2(650f, 72f), 54, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            CreateText(card, "YOUR FLIGHT IS WAITING", new Vector2(0f, 226f), new Vector2(620f, 36f), 24, Hex("#a4bfd8"), TextAnchor.MiddleCenter, FontStyle.Normal);
-            var resume = CreateNeonButton(card, "RESUME", new Vector2(0f, 128f), new Vector2(600f, 104f), Hex("#45eaff"));
+            CreateUiGlyph(card, "Pause wing", new Vector2(0f, 414f), new Vector2(64f, 34f), Hex("#45eaff"), SkyPulseUiGlyph.Kind.WingMark);
+            CreateText(card, "PAUSED", new Vector2(0f, 344f), new Vector2(650f, 72f), 54, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            CreateText(card, "YOUR RUN IS WAITING", new Vector2(0f, 286f), new Vector2(620f, 36f), 24, Hex("#a4bfd8"), TextAnchor.MiddleCenter, FontStyle.Normal);
+            var resume = CreateNeonButton(card, "RESUME", new Vector2(0f, 188f), new Vector2(600f, 104f), Hex("#45eaff"));
             resume.onClick.AddListener(ResumeFlight);
-            CreateText(card, "FLIGHT COMFORT", new Vector2(0f, 36f), new Vector2(500f, 32f), 22, Hex("#91adc8"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            CreateText(card, "PLAY COMFORT", new Vector2(0f, 96f), new Vector2(500f, 32f), 22, Hex("#91adc8"), TextAnchor.MiddleCenter, FontStyle.Bold);
             var reduceMotion = CreateNeonButton(card, "", new Vector2(0f, -40f), new Vector2(600f, 92f), Hex("#61f5b3"));
             reduceMotionText = reduceMotion.GetComponentInChildren<Text>();
             reduceMotionText.fontSize = 26;
@@ -2108,7 +2101,11 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             hapticsText = haptics.GetComponentInChildren<Text>();
             hapticsText.fontSize = 26;
             haptics.onClick.AddListener(ToggleHaptics);
-            var menu = CreateNeonButton(card, "RETURN TO MENU", new Vector2(0f, -284f), new Vector2(600f, 92f), Hex("#8fa7c4"));
+            var sound = CreateNeonButton(card, "", new Vector2(0f, -260f), new Vector2(600f, 92f), Hex("#45eaff"));
+            soundText = sound.GetComponentInChildren<Text>();
+            soundText.fontSize = 26;
+            sound.onClick.AddListener(ToggleSound);
+            var menu = CreateNeonButton(card, "RETURN TO MENU", new Vector2(0f, -394f), new Vector2(600f, 92f), Hex("#8fa7c4"));
             menu.GetComponentInChildren<Text>().fontSize = 26;
             menu.onClick.AddListener(ResetToMenu);
             return root;
@@ -3787,6 +3784,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
 
         private void ResetToMenu()
         {
+            StopGameSounds();
             CloseBirdProgression();
             ClearMissionSession();
             ClearCrystalPickupBursts();
@@ -3843,6 +3841,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
         {
             if (state != FlightState.Playing) return;
             state = FlightState.Paused;
+            StopGameSounds();
             RefreshScreens();
         }
 
@@ -5654,6 +5653,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
         {
             if (reduceMotionText != null) reduceMotionText.text = reduceMotionEnabled ? "REDUCED MOTION  ·  ON" : "REDUCED MOTION  ·  OFF";
             if (hapticsText != null) hapticsText.text = hapticsEnabled ? "HAPTICS  ·  ON" : "HAPTICS  ·  OFF";
+            if (soundText != null) soundText.text = soundEnabled ? "SOUND  ·  ON" : "SOUND  ·  OFF";
         }
 
         private void RefreshScreens()
@@ -5685,11 +5685,6 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             return EventSystem.current.IsPointerOverGameObject();
         }
 
-        private void Play(AudioClip clip)
-        {
-            if (clip != null && audioSource != null) audioSource.PlayOneShot(clip);
-        }
-
         private void PulseHaptic(float cooldown)
         {
 #if !UNITY_EDITOR
@@ -5707,6 +5702,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
         #region Saved progress — retain keys and identifiers
         private void LoadProgress()
         {
+            soundEnabled = PlayerPrefs.GetInt("skypulse.native.sound", 1) == 1;
             best = PlayerPrefs.GetInt("skypulse.native.best", 0);
             crystals = PlayerPrefs.GetInt("skypulse.native.crystals", 0);
             flightCoachStage = Mathf.Clamp(PlayerPrefs.GetInt("skypulse.native.flight-coach-stage", 0), 0, 2);
@@ -5791,6 +5787,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             PlayerPrefs.SetInt("skypulse.native.flight-coach-stage", flightCoachStage);
             PlayerPrefs.SetInt("skypulse.native.reduce-motion", reduceMotionEnabled ? 1 : 0);
             PlayerPrefs.SetInt("skypulse.native.haptics", hapticsEnabled ? 1 : 0);
+            PlayerPrefs.SetInt("skypulse.native.sound", soundEnabled ? 1 : 0);
             PlayerPrefs.SetString("skypulse.native.skin", equippedSkin.Id);
             PlayerPrefs.SetString("skypulse.native.world", equippedWorld.Id);
             PlayerPrefs.SetString("skypulse.native.pipe", equippedPipe.Id);

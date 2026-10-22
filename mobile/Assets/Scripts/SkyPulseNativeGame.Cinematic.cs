@@ -62,9 +62,9 @@ namespace SkyPulse.Mobile
         }
         void PlayRelayPass(Vector3 at)
         {
-            if(scoreSound==null||audioSource==null)return;
+            if(scoreSound==null||audioSource==null||!soundEnabled||audioSource.mute)return;
             if(relayPassAudio==null){relayPassAudio=gameObject.AddComponent<AudioSource>();relayPassAudio.playOnAwake=false;relayPassAudio.spatialBlend=0;relayPassAudio.pitch=1.14f;}
-            relayPassAudio.volume=audioSource.volume*.55f;relayPassAudio.mute=audioSource.mute;
+            relayPassAudio.volume=audioSource.volume*.28f;relayPassAudio.mute=audioSource.mute;
             // Controlled stereo positioning is stable with the orthographic camera;
             // distance attenuation must not make high/low gates inaudible.
             relayPassAudio.panStereo=Mathf.Clamp(at.x/(GetViewportWidth()*.5f),-.5f,.5f);relayPassAudio.PlayOneShot(scoreSound);
