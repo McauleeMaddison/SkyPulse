@@ -149,6 +149,7 @@ public static class SkyPulsePlayerExperienceTargeted
     public static void Capture(){SessionState.SetBool("SkyPulseExperienceCaptureOnly",true);Run();}
     public static void TreePreview(){SessionState.SetBool("SkyPulseExperienceTreeOnly",true);Run();}
     public static void PipePreview(){SessionState.SetBool("SkyPulseExperiencePipeOnly",true);Run();}
+    public static void FlightPreview(){SessionState.SetBool("SkyPulseExperienceFlightOnly",true);Run();}
     static void Tick()
     {
         if(!SessionState.GetBool("SkyPulseExperienceTargeted",false)||!EditorApplication.isPlaying)return;
@@ -157,6 +158,16 @@ public static class SkyPulsePlayerExperienceTargeted
     static IEnumerator Execute()
     {
         var game=UnityEngine.Object.FindAnyObjectByType<SkyPulseNativeGame>();if(game==null)game=new GameObject("QA game").AddComponent<SkyPulseNativeGame>();game.enabled=false;
+        if(SessionState.GetBool("SkyPulseExperienceFlightOnly",false))
+        {
+            SessionState.SetBool("SkyPulseExperienceFlightOnly",false);
+            SkyPulseFlightPolishChecks.Trail();
+            yield return SkyPulseDepthChecks.Live(game);
+            yield return SkyPulseCinematicChecks.Live(game);
+            yield return SkyPulseOneThumbChecks.Live(game);
+            yield return SkyPulseFlightPolishChecks.Capture(game);
+            Debug.Log("SKYPULSE_FLIGHT_POLISH_PASS");EditorApplication.Exit(0);yield break;
+        }
         if(SessionState.GetBool("SkyPulseExperienceTreeOnly",false)){SessionState.SetBool("SkyPulseExperienceTreeOnly",false);yield return SkyPulseTechTreeChecks.Live(game);Debug.Log("SKYPULSE_TREE_PREVIEW_PASS");EditorApplication.Exit(0);yield break;}
         if(SessionState.GetBool("SkyPulseExperiencePipeOnly",false)){SessionState.SetBool("SkyPulseExperiencePipeOnly",false);yield return SkyPulseDepthChecks.Live(game);yield return SkyPulsePlayerExperienceChecks.Live(game);Debug.Log("SKYPULSE_PIPE_PREVIEW_PASS");EditorApplication.Exit(0);yield break;}
         bool capture=SessionState.GetBool("SkyPulseExperienceCaptureOnly",false);SessionState.SetBool("SkyPulseExperienceCaptureOnly",false);

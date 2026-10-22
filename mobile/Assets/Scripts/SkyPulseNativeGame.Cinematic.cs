@@ -40,7 +40,11 @@ namespace SkyPulse.Mobile
             if(!playing){if(cinematicFlying)cinematicFlight.ResetPresentation();cinematicFlying=false;cinematicLastWing=100;return;}
             if(!cinematicFlying||cinematicSession!=relaySession){cinematicFlight.ResetPresentation();cinematicSession=relaySession;cinematicPassed=0;cinematicLastWing=100;}
             cinematicFlying=true;
-            if(wingTimer<cinematicLastWing)cinematicFlight.Flap(bird.position,equippedSkin.Trail,reduceMotionEnabled);
+            // Socket is in the registered body frame, beneath the tail; banking
+            // rotates it with the bird instead of leaving a floating white bar.
+            var nozzle=(Vector2)bird.TransformPoint(new Vector3(-.55f,-.24f,0));
+            var forward=(Vector2)bird.right;
+            if(wingTimer<cinematicLastWing)cinematicFlight.Flap(nozzle,equippedSkin.Trail,reduceMotionEnabled);
             cinematicLastWing=wingTimer;
             if(relaySession!=null)
             {
@@ -51,7 +55,7 @@ namespace SkyPulse.Mobile
                 }
                 cinematicPassed=relaySession.Passed;
             }
-            cinematicFlight.Tick(dt,bird.position,birdVelocity/15,equippedSkin.Trail,reduceMotionEnabled);
+            cinematicFlight.Tick(dt,nozzle,forward,equippedSkin.Trail,reduceMotionEnabled);
         }
         void PlayRelayPass(Vector3 at)
         {

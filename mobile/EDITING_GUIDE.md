@@ -25,6 +25,7 @@ component on the scene; do not attach each partial file separately.
 | Glossy text finish | `Resources/SkyPulse/Shaders/HolographicText.shader` |
 | Original 3D pipe material and light packets | `SkyPulseNativeGame.Depth.cs`, `Resources/SkyPulse/Shaders/EndlessRouteMetal.shader` |
 | Original pipe artwork placement / collider anchors | `SkyPulseNativeGame.PipeVisuals.cs` |
+| Tapered exhaust, soft trail and passage sparks | `SkyPulseFlightEffects.cs`, `SkyPulseNativeGame.Cinematic.cs` |
 | Three Home layouts and mode input | `SkyPulseNativeGame.Controls.cs`, `.Presentation.cs` |
 | Relay gate rules | `SkyPulseMissionModels.cs` → `RelaySession` |
 | Signal Heist puzzle rules / presentation | `SkyPulseBlackoutCampaign.cs`, `SkyPulseNativeGame.Blackout.cs`, `SkyPulseHeistBoard.cs` |
@@ -86,3 +87,18 @@ migration deliberately if the save format ever changes.
 Release evidence lives in `mobile/Release/CURRENT_RELEASE.json`. Runtime changes
 make its recorded QA/export stale until checked again. App Review submission
 remains on hold; editing or compiling locally does not submit anything.
+
+## Bird exhaust and pipe joins
+
+`SkyPulseNativeGame.Cinematic.cs` places the exhaust socket in the bird's body
+frame, so it follows the bank. `SkyPulseFlightEffects.cs` samples that socket at
+60 Hz and joins a tapered ribbon with shared edge positions. Its fixed buffers
+avoid per-frame allocations. Plume length/width are presentation values only.
+`FlightLight.shader` feathers this material; `_Soft` defaults to zero so the
+existing Signal Heist fibres keep their finish. Reduced Motion removes the
+history/sparks and leaves a compact, static, feathered plume.
+
+In `SkyPulseNativeGame.Depth.cs`, the visible shaft ends 0.04 world units inside
+the collar's far shoulder. Collision shapes still overlap for reliable gameplay;
+do not trim those colliders when adjusting the visible join. The original collar
+cutout and cyan/pink LED material remain in use.

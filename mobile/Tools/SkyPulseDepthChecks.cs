@@ -30,7 +30,12 @@ public static class SkyPulseDepthChecks
         {
             var s=Get(pair,side);var body=(BoxCollider2D)Get(s,"BodyCollider");var cap=(BoxCollider2D)Get(s,"CapCollider");
             var root=(GameObject)Get(pair,"Root");var matching=root.GetComponentsInChildren<MeshRenderer>().Where(r=>r.name=="3D extruded gate column"||r.name=="3D bevelled gate collar").ToArray();
-            Check(matching.Any(r=>Mathf.Abs(r.bounds.center.y-body.bounds.center.y)<.001f&&Mathf.Abs(r.bounds.size.y-body.bounds.size.y)<.001f),"Extruded body follows its own collider transform");
+            var column=matching.Where(r=>r.name=="3D extruded gate column").OrderBy(r=>Mathf.Abs(r.bounds.center.y-body.bounds.center.y)).First();
+            float direction=body.bounds.center.y>cap.bounds.center.y?1:-1;
+            float far=column.bounds.center.y+direction*column.bounds.extents.y;
+            float near=column.bounds.center.y-direction*column.bounds.extents.y;
+            Check(Mathf.Abs(far-(body.bounds.center.y+direction*body.bounds.extents.y))<.001f,"Shaft retains its original far end");
+            Check(Mathf.Abs(near-(cap.bounds.center.y+direction*(cap.bounds.extents.y-.04f)))<.001f,"Visible shaft ends inside the collar shoulder, away from the open lip");
             Check(matching.Any(r=>Mathf.Abs(r.bounds.center.y-cap.bounds.center.y)<.001f&&Mathf.Abs(r.bounds.size.y-cap.bounds.size.y)<.001f),"3D collar matches the physical gap edge");
         }
         CapSilhouette(game,shaft,collar);

@@ -39,11 +39,18 @@ namespace SkyPulse.Mobile
             for(int i=0;i<routeDepth.Count;i++)
             {
                 var visual=routeDepth[i];var surface=visual.Surface;visual.Body.gameObject.SetActive(show);visual.Cap.gameObject.SetActive(show);if(!show)continue;
-                // Read only the collider dimensions already laid out by Endless.
-                // The new meshes cannot change spacing, openings or collisions.
+                // Colliders intentionally overlap. The visible shaft must stop
+                // inside the far shoulder, rather than entering the open lip.
+                // Read collision shapes only: never change the tested opening.
                 var body=surface.BodyCollider;var cap=surface.CapCollider;
-                visual.Body.localPosition=body.transform.localPosition+new Vector3(body.offset.x,body.offset.y,.10f);visual.Body.localScale=new Vector3(body.size.x,body.size.y,body.size.x);
-                visual.Cap.localPosition=cap.transform.localPosition+new Vector3(cap.offset.x,cap.offset.y,.10f);visual.Cap.localScale=new Vector3(cap.size.x,cap.size.y,cap.size.x);
+                var bodyCentre=body.transform.localPosition+new Vector3(body.offset.x,body.offset.y,.10f);
+                var capCentre=cap.transform.localPosition+new Vector3(cap.offset.x,cap.offset.y,.10f);
+                float direction=bodyCentre.y>capCentre.y?1:-1;
+                float farEnd=bodyCentre.y+direction*body.size.y*.5f;
+                float shoulder=capCentre.y+direction*(cap.size.y*.5f-.04f);
+                bodyCentre.y=(farEnd+shoulder)*.5f;
+                visual.Body.localPosition=bodyCentre;visual.Body.localScale=new Vector3(body.size.x,Mathf.Max(.01f,Mathf.Abs(farEnd-shoulder)),body.size.x);
+                visual.Cap.localPosition=capCentre;visual.Cap.localScale=new Vector3(cap.size.x,cap.size.y,cap.size.x);
                 for(int k=0;k<visual.Retired.Length;k++)visual.Retired[k].enabled=false;
             }
         }
@@ -57,7 +64,7 @@ namespace SkyPulse.Mobile
             {
                 var body=SkyPulseMeshBuilder.Surface(pair.Root.transform,"3D extruded gate column",routeBodyMesh,routeMetal,5);var cap=SkyPulseMeshBuilder.Surface(pair.Root.transform,"3D bevelled gate collar",routeCapMesh,routeCapMetal,11);
                 properties.SetFloat("_ArtFlip",s==pair.Top?1:0);body.SetPropertyBlock(properties);cap.SetPropertyBlock(properties);
-                routeDepth.Add(new RouteDepth{Surface=s,Body=body.transform,Cap=cap.transform,BodyRenderer=body,CapRenderer=cap,Retired=new[]{s.Artwork,s.Outer,s.Panel,s.Shade,s.RailLeft,s.RailRight,s.Core,s.CorePulse,s.Highlight,s.Energy,s.Scan,s.Beacon,s.CapOuter,s.CapAccent,s.CapPanel,s.CapEnergy}});
+                routeDepth.Add(new RouteDepth{Surface=s,Body=body.transform,Cap=cap.transform,BodyRenderer=body,CapRenderer=cap,Retired=new[]{s.Artwork,s.Outer,s.Panel,s.Shade,s.RailLeft,s.RailRight,s.Core,s.CorePulse,s.Highlight,s.Energy,s.Scan,s.Beacon,s.CapGlow,s.CapOuter,s.CapAccent,s.CapPanel,s.CapEnergy}});
             }
         }
         Material OriginalRouteMaterial(Sprite artwork,string label,bool cutout=false)
