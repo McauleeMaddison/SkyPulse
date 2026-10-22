@@ -1015,6 +1015,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
         private Text resultBestText;
         private Text resultCrystalsText;
         private Text resultBonusText;
+        private Text resultBirdBonusText;
         private Text resultBalanceText;
         private Text resultWorldText;
         private Text resultShareText;
@@ -2102,17 +2103,18 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             resultNewBestText = CreateText(card, "NEW PERSONAL BEST", new Vector2(0f, 153f), new Vector2(620f, 38f), 26, Hex("#ffc34d"), TextAnchor.MiddleCenter, FontStyle.Bold);
             resultReasonText = CreateText(card, "GATE IMPACT", new Vector2(0f, 106f), new Vector2(620f, 34f), 22, Hex("#e6b4d6"), TextAnchor.MiddleCenter, FontStyle.Normal);
 
-            var rewards = CreatePanel(card, "Run rewards", new Vector2(0f, -38f), new Vector2(680f, 224f), Hex("#0b2137"));
+            var rewards = CreatePanel(card, "Run rewards", new Vector2(0f, -46f), new Vector2(680f, 250f), Hex("#0b2137"));
             rewards.GetComponent<Image>().raycastTarget = false;
             var rewardIcon = CreateImage(rewards, "Run reward crystal", new Vector2(-271f, 22f), new Vector2(86f, 104f), Color.white);
             rewardIcon.sprite = LoadSprite(CrystalArtworkPath);
             rewardIcon.preserveAspect = true;
             rewardIcon.raycastTarget = false;
-            resultCrystalsText = CreateText(rewards, "RUN CRYSTALS  ·  0", new Vector2(57f, 65f), new Vector2(500f, 42f), 28, Hex("#8eeeff"), TextAnchor.MiddleLeft, FontStyle.Bold);
-            resultBonusText = CreateText(rewards, "TECH REWARD BONUS  ·  +0", new Vector2(57f, 17f), new Vector2(500f, 36f), 24, Hex("#ffc34d"), TextAnchor.MiddleLeft, FontStyle.Normal);
-            var rewardRule = CreateImage(rewards, "Reward balance divider", new Vector2(0f, -20f), new Vector2(604f, 1f), new Color(.27f, .92f, 1f, .24f));
+            resultCrystalsText = CreateText(rewards, "PICKUPS  ·  0", new Vector2(57f, 82f), new Vector2(500f, 38f), 27, Hex("#8eeeff"), TextAnchor.MiddleLeft, FontStyle.Bold);
+            resultBonusText = CreateText(rewards, "TECH  ·  +0", new Vector2(57f, 42f), new Vector2(500f, 34f), 25, Hex("#ffc34d"), TextAnchor.MiddleLeft, FontStyle.Normal);
+            resultBirdBonusText = CreateText(rewards, "BIRD TRAITS  ·  +0", new Vector2(57f, 5f), new Vector2(500f, 34f), 25, Hex("#8dedd6"), TextAnchor.MiddleLeft, FontStyle.Normal);
+            var rewardRule = CreateImage(rewards, "Reward balance divider", new Vector2(0f, -28f), new Vector2(604f, 1f), new Color(.27f, .92f, 1f, .24f));
             rewardRule.raycastTarget = false;
-            resultBalanceText = CreateText(rewards, "TOTAL BALANCE  ·  0", new Vector2(0f, -68f), new Vector2(604f, 42f), 28, Hex("#d6e9f6"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            resultBalanceText = CreateText(rewards, "TOTAL BALANCE  ·  0", new Vector2(0f, -80f), new Vector2(604f, 42f), 28, Hex("#d6e9f6"), TextAnchor.MiddleCenter, FontStyle.Bold);
             resultWorldText = CreateText(card, "ROUTE REACHED  ·  NEON CITY", new Vector2(0f, -191f), new Vector2(710f, 38f), 24, Hex("#b5c8de"), TextAnchor.MiddleCenter, FontStyle.Normal);
             var flyAgain = CreateNeonButton(card, "RETRY", new Vector2(0f, -276f), new Vector2(680f, 108f), Hex("#45eaff"));
             flyAgain.onClick.AddListener(RestartFlight);
@@ -3366,10 +3368,13 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             // Currency is banked on contact—even a failed run keeps the find.
             // Prism Conduit adds value through a fractional carry so +5/+10/+15%
             // remains mathematically fair even though the wallet stores whole crystals.
-            var crystalValue = CrystalPickupValue(1) + BirdPickupBonus();
+            int techValue=CrystalPickupValue(1),birdValue=BirdPickupBonus();
+            var crystalValue = techValue + birdValue;
             BankCollectedCrystals(crystalValue);
+            runTechPickupBonus+=techValue-1;runBirdPickupBonus+=birdValue;
             RecordDailyEvent(DailyGameplayEvent.CrystalPickup, crystalValue);
             ShowCrystalBurst(crystalValue);
+            if(birdValue>0&&scoreBurstText!=null){scoreBurstText.text="COLLECTOR +"+birdValue+" · CRYSTALS +"+crystalValue+" ✦";scoreBurstText.color=Hex("#8dedd6");}
             TriggerFlightFeedback(Hex("#45eaff"), .26f);
             PulseHaptic(.08f);
             Play(crystalSound);
@@ -7195,6 +7200,7 @@ hangarInformationCanvas != null)
             var interval = PrecisionHarvesterPassInterval();
             if (interval <= 0 || perfectPasses <= 0 || perfectPasses % interval != 0) return;
             BankCollectedCrystals(1);
+            runTechPickupBonus++;
             ShowCrystalBurst(1);
         }
 
@@ -7203,6 +7209,7 @@ hangarInformationCanvas != null)
             var reward = StreakCapacitorGateReward();
             if (reward <= 0 || score <= 0 || score % 15 != 0) return;
             BankCollectedCrystals(reward);
+            runTechPickupBonus+=reward;
             ShowCrystalBurst(reward);
         }
 
@@ -7238,7 +7245,9 @@ hangarInformationCanvas != null)
                 : 0;
             var recoveryBonus = RecoveryCacheBonus();
             var archiveBonus = newBest ? ArchiveEngineBestBonus() : 0;
-            runCrystalBonus = salvageBonus + apexBonus + recoveryBonus + archiveBonus + BirdRunBonus();
+            runTechResultBonus=salvageBonus+apexBonus+recoveryBonus+archiveBonus;
+            runBirdResultBonus=BirdRunBonus();
+            runCrystalBonus = runTechResultBonus+runBirdResultBonus;
 
             if (runCrystalBonus > 0)
             {
@@ -7263,9 +7272,10 @@ hangarInformationCanvas != null)
 
         private void RefreshProgressionResultLabels()
         {
-            var bonus = ApplyResultTechBonuses();
-            if (resultCrystalsText != null) resultCrystalsText.text = $"RUN CRYSTALS  ·  {runCrystalsCollected}";
-            if (resultBonusText != null) resultBonusText.text = $"TECH REWARD BONUS  ·  +{bonus}";
+            ApplyResultTechBonuses();
+            if (resultCrystalsText != null) resultCrystalsText.text = $"PICKUPS  ·  {runCrystalsCollected-runTechPickupBonus-runBirdPickupBonus}";
+            if (resultBonusText != null) resultBonusText.text = $"TECH  ·  +{runTechPickupBonus+runTechResultBonus} ✦";
+            if (resultBirdBonusText != null) resultBirdBonusText.text = $"BIRD TRAITS  ·  +{runBirdPickupBonus+runBirdResultBonus} ✦";
             if (resultBalanceText != null) resultBalanceText.text = $"TOTAL BALANCE  ·  {crystals}";
             if (resultWorldText != null) resultWorldText.text = $"ROUTE REACHED  ·  {RouteWorldName(runFarthestWorldIndex)}";
             if (resultShareText != null) resultShareText.text = "SHARE";

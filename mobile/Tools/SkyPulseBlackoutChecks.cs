@@ -31,6 +31,11 @@ public static class SkyPulseBlackoutChecks
         {
             var path=SkyPulseMissionChecks.Solve(p);Check(path!=null,"Exhaustive orientation search finds a solution: "+p.Name);
             var s=new BlackoutSession(p);Check(s.State==MissionSessionState.Playing,"Vault never starts completed");
+            var preview=new BlackoutSession(p);var initial=(int[])s.Rotations.Clone();
+            Check(s.PreviewRotation(path[0],preview)&&s.Trace==0&&s.Turns==0&&s.Rotations.SequenceEqual(initial),"Planning uses the real rules without mutating live trace, turns or optics");
+            var comparison=new BlackoutSession(p);comparison.Rotate(path[0]);
+            Check(preview.Trace==comparison.Trace&&preview.LastCost==comparison.LastCost&&preview.Beams.Take(preview.BeamCount).SequenceEqual(comparison.Beams.Take(comparison.BeamCount)),"Preview beam network and exact cost match a committed move");
+            Check(!s.PreviewRotation(path[0],s)&&!s.PreviewRotation(-1,preview),"Preview rejects live-session aliasing and non-optical targets");
             Check(!s.Rotate(-1)&&!s.Rotate(p.Count)&&!s.Rotate(p.Start)&&s.Trace==0,"Only rotatable optics consume a turn");
             s.Pause(true);Check(!s.Rotate(path[0]),"Paused prism rejects input");s.Pause(false);
             foreach(int tile in path)Check(s.Rotate(tile),"Solution rotation accepted");
@@ -54,6 +59,9 @@ public static class SkyPulseBlackoutChecks
         var alarm=new BlackoutSession(new BlackoutPuzzle("sensor","","",new[]{"##!#","S.M#","##C#","##ME"},first.Initial,8,2));
         Check(alarm.Alarms==1&&alarm.Rotate(14)&&alarm.LastCost==3&&alarm.Trace==3,"A lit sensor charges one turn plus two trace");
         Check(alarm.Rotate(6)&&alarm.LastCost==1&&alarm.State==MissionSessionState.Succeeded,"Disconnecting a sensor immediately restores normal cost");
+        var alarmLive=new BlackoutSession(alarm.Puzzle);var alarmPreview=new BlackoutSession(alarm.Puzzle);
+        alarmLive.PreviewRotation(14,alarmPreview);Check(alarmPreview.LastCost==3&&alarmLive.Trace==0,"Preview exposes the sensor's three-trace cost before spending");
+        alarmLive.PreviewRotation(6,alarmPreview);Check(alarmPreview.LastCost==1&&alarmLive.Trace==0,"Preview recalculates disconnection rather than showing a stale sensor price");
         var loop=new BlackoutSession(new BlackoutPuzzle("loop","","",new[]{"S.YM","C.M.","##MM"},new[]{0,0,0,1,0,0,0,0,0,0,1,0},20,4));
         int count=loop.BeamCount;for(int i=0;i<100;i++)loop.Recalculate();Check(count==loop.BeamCount&&count<200,"A cyclic split beam terminates deterministically within fixed buffers");
         var store=new Store();const string legacy="{\"version\":2,\"medals\":[3,3,3,3,3,3,3,3]}";store.Set("skypulse.blackout-campaign.v2",legacy);store.SetInt(SkyPulseDailyMissions.WalletKey,321);
@@ -82,6 +90,12 @@ public static class SkyPulseBlackoutChecks
         Call(game,"PauseFlight");Call(game,"UpdateProtocolPresentation",0f);var network=(SkyPulseHeistBoard)Get(game,"blackoutBoard");float phase=network.Phase;network.Reveal=.5f;
         yield return new WaitForSecondsRealtime(.35f);Call(game,"TouchBlackoutNode",6);Check(network.Phase==phase&&network.Reveal==.5f&&s.Trace==1,"Pause freezes animation and rejects puzzle taps");
         Call(game,"ResumeFlight");Call(game,"RestartBlackoutVault");s=(BlackoutSession)Get(game,"blackoutSession");Check(s.Trace==0&&controls[6].interactable,"Restart clears attempt and restores touch interaction");
+        Call(game,"ToggleBlackoutPreview");Call(game,"PreviewBlackoutNode",14);
+        Check(s.Trace==0&&network.Preview!=null&&((Button)Get(game,"blackoutCommitButton")).interactable,"Plan mode presents a separate optical preview without spending");
+        Call(game,"CommitBlackoutPreview");Call(game,"CommitBlackoutPreview");
+        Check(s.Trace==1&&s.Turns==1&&network.Preview==null,"Preview confirmation spends once and returns immediately to live optics");
+        Call(game,"ToggleBlackoutPreview");Call(game,"PreviewBlackoutNode",6);Call(game,"PauseFlight");Call(game,"UpdateProtocolPresentation",0f);
+        Check(network.Preview==null&&!(bool)Get(game,"blackoutPlanning"),"Pause clears speculative paths and commit controls");Call(game,"ResumeFlight");Call(game,"RestartBlackoutVault");s=(BlackoutSession)Get(game,"blackoutSession");
         while(s.State==MissionSessionState.Playing)Call(game,"TouchBlackoutNode",6);
         Check(Get(game,"state").ToString()=="GameOver"&&((GameObject)Get(game,"missionResultScreen")).activeSelf,"Trace exhaustion uses proper failure result");
         ((GameObject)Get(game,"missionResultScreen")).GetComponentsInChildren<Button>().Single(b=>b.GetComponentInChildren<Text>().text=="RETRY VAULT").onClick.Invoke();

@@ -11,7 +11,7 @@ namespace SkyPulse.Mobile
     {
         public int Variant;
         public SkyPulseSurface Surface;
-        public bool Ambient, ReducedMotion, MotionPaused, Primary, CinematicUnderlay;
+        public bool Ambient, ReducedMotion, MotionPaused, Primary, CinematicUnderlay, SoftGlass;
         private float phase;
         private bool previousReduced;
         private float Motion => ReducedMotion ? 0f : phase;
@@ -130,6 +130,16 @@ namespace SkyPulse.Mobile
         private void Panel(VertexHelper vh,Rect r)
         {
             Color accent=color;accent.a=1;
+            if(SoftGlass)
+            {
+                // Translucent satin controls have a single fine edge; no black
+                // shadow slab, repeated frame, scan lines or moving hit area.
+                var lo=Color.Lerp(new Color(.035f,.075f,.13f,.82f),A(accent,.88f),Primary?.45f:.08f);
+                var hi=Color.Lerp(new Color(.15f,.25f,.32f,.91f),A(accent,.96f),Primary?.55f:.13f);
+                Bevel(vh,r,14,lo,hi);Border(vh,r,14,.75f,A(Color.Lerp(accent,Color.white,.55f),.28f));
+                Line(vh,new Vector2(r.xMin+18,r.yMax-1),new Vector2(r.xMax-18,r.yMax-1),1,A(Color.white,.18f));
+                return;
+            }
             var shadow=new Rect(r.xMin-2,r.yMin-9,r.width+4,r.height+4);Bevel(vh,shadow,18,new Color(0,0,0,.65f),new Color(0,0,0,.65f));
             var bottom=Variant==2?new Color(.006f,.034f,.024f):new Color(.013f,.027f,.046f);var top=Variant==2?new Color(.035f,.13f,.093f):new Color(.085f,.15f,.20f);
             if(Primary){bottom=Color.Lerp(bottom,accent,.14f);top=Color.Lerp(top,accent,.28f);}

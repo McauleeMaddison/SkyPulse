@@ -52,7 +52,7 @@ namespace SkyPulse.Mobile
                 var colour = colours[family];
                 var fork = new Vector2(x, family == 1 ? -490 : -450);
                 branches.Add(new HolographicBranch { From = core, To = fork, Colour = colour, Powered = true, Trunk = true });
-                TechLabel(families[family], new Vector2(x + 100, family == 1 ? -520 : -480), new Vector2(280, 40), 27, colour);
+                TechLabel(families[family], new Vector2(x + (family==0?-38:family==2?38:0), family == 1 ? -560 : -520), new Vector2(280, 40), 27, colour);
                 var previous = fork;
                 foreach (var upgrade in Upgrades)
                 {
@@ -77,11 +77,17 @@ namespace SkyPulse.Mobile
                         roots.Add(new HolographicRoot { At = leaf, Colour = colour, Powered = index <= level && unlocked, Size = index == level && unlocked ? 26f : 18f });
                         float side = index == 1 ? 1 : -1;
                         CreateTechTouch(upgrade.Id + " level " + (index + 1), leaf + new Vector2(side * 40, 0), new Vector2(200, 180), () => InspectTechLevel(upgrade, selected), leaf);
-                        TechLabel("0" + (index + 1), leaf + new Vector2(side * 80, 0), new Vector2(110, 36), 29, index <= level && unlocked ? colour : Hex("#77899e"));
-                        // Keep the map calm; exact effects, prerequisites and every
-                        // level's state remain available in the tap inspector.
-                        if (index == level && unlocked)
-                            TechLabel(UpgradeCrystalPrice(upgrade,index) + " ✦", leaf + new Vector2(side * 80, -34), new Vector2(120, 30), 24, Hex("#d1e4ec"));
+                        bool next=index==level&&unlocked,done=index<level;
+                        var labelAt=leaf+new Vector2(side*46,-8);
+                        var plaque=ProtocolGraphic(customizeContent,"Connected level touch · "+upgrade.Id+" · "+(index+1),labelAt+Vector2.down*18,new Vector2(196,112),0,SkyPulseSurface.Panel,colour);
+                        plaque.SoftGlass=true;plaque.rectTransform.anchorMin=plaque.rectTransform.anchorMax=new Vector2(.5f,1);plaque.color=done||next?colour:Hex("#62778d");
+                        TechLabel("LEVEL "+(index+1),labelAt,new Vector2(188,42),30,next?Hex("#f4fcff"):done?colour:Hex("#8293a8"));
+                        TechLabel(done?"INSTALLED":next?"NEXT · "+UpgradeCrystalPrice(upgrade,index)+" ✦":"LOCKED",labelAt+new Vector2(0,-42),new Vector2(194,34),23,next?colour:done?Hex("#aac6d3"):Hex("#718398"));
+                        if(next)
+                        {
+                            var marker=CreateUiGlyph(customizeContent,"Next available · "+upgrade.Id,leaf+new Vector2(side*46,38),new Vector2(44,20),colour,SkyPulseUiGlyph.Kind.WingMark);
+                            marker.rectTransform.anchorMin=marker.rectTransform.anchorMax=new Vector2(.5f,1);marker.raycastTarget=false;
+                        }
                     }
                     previous = at;
                 }

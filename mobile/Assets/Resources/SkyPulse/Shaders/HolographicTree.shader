@@ -28,10 +28,10 @@ Shader "SkyPulse/Holographic Tree"
                 float radius=distance(i.local.xy,_Press.xy);
                 float touch=pow(saturate(1-abs(radius-_Press.z*5)*4),3)*saturate(1-_Press.z*1.7)*_Press.w;
                 float3 light=normalize(float3(-.5,.75,-1));
-                float diffuse=.16+.52*saturate(dot(n,light));
+                float diffuse=.29+.48*saturate(dot(n,light));
                 float spec=pow(saturate(dot(n,normalize(light+v))),62);
                 float body=step(1.5,i.uv.y)*(1-step(3.5,i.uv.y));
-                float3 glass=i.color.rgb*(diffuse+edge*.30)+float3(.67,.88,1)*spec*.72;
+                float3 glass=i.color.rgb*(diffuse+edge*.22)+float3(.67,.88,1)*spec*.52;
                 float3 energy=lerp(i.color.rgb,float3(.82,.97,1),.2+moving*.5)*( .78+moving*.7+touch*.55 );
                 float3 tint=lerp(energy,glass,body)+i.color.rgb*touch*.35;
                 return fixed4(tint*_Tint.rgb, i.color.a*_Reveal*_Tint.a);

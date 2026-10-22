@@ -18,6 +18,11 @@ namespace SkyPulse.Mobile
             v.Add(a);v.Add(b);v.Add(d);for(int k=0;k<3;k++){n.Add(normal);c.Add(colour);t.Add(i+k);}
         }
         public void Quad(Vector3 a,Vector3 b,Vector3 d,Vector3 e,Color colour){Face(a,b,d,colour);Face(a,d,e,colour);}
+        public void SmoothQuad(Vector3 a,Vector3 b,Vector3 d,Vector3 e,Vector3 na,Vector3 nb,Color colour)
+        {
+            int i=v.Count;v.Add(a);v.Add(b);v.Add(d);v.Add(e);n.Add(na);n.Add(nb);n.Add(nb);n.Add(na);
+            for(int j=0;j<4;j++)c.Add(colour);t.Add(i);t.Add(i+1);t.Add(i+2);t.Add(i);t.Add(i+2);t.Add(i+3);
+        }
         public void Box(Vector3 p,Vector3 size,Color colour)
         {
             Vector3 a=p-size*.5f,b=p+size*.5f;

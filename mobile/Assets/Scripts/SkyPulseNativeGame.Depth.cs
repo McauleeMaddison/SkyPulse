@@ -6,7 +6,7 @@ namespace SkyPulse.Mobile
 {
     public sealed partial class SkyPulseNativeGame
     {
-        SkyPulseDepthStage homeDepth,resultDepth;
+        SkyPulseDepthStage homeDepth;
         sealed class RouteDepth
         {
             public PipeSurface Surface;public Transform Body,Cap;public MeshRenderer BodyRenderer,CapRenderer;public SpriteRenderer[] Retired;
@@ -22,19 +22,18 @@ namespace SkyPulse.Mobile
         void EnsureHomeDepth()
         {
             if(homeDepth==null){homeDepth=DepthStage(homeScreen.transform,homeProtocol,new Vector2(0,355),new Vector2(930,558));homeDepth.transform.SetSiblingIndex(menuHeroTransform.GetSiblingIndex());}
-            homeDepth.Mode=homeProtocol;homeDepth.ReducedMotion=reduceMotionEnabled;homeDepth.MotionPaused=false;homeDepth.Tick(0);
+            homeDepth.Mode=homeProtocol;homeDepth.ReducedMotion=reduceMotionEnabled;homeDepth.MotionPaused=false;homeDepth.RestoredSystems=0;
+            if(blackoutCampaign!=null)foreach(int medal in blackoutCampaign.Data.medals)if(medal>0)homeDepth.RestoredSystems++;
+            homeDepth.Tick(0);
         }
         void UpdateDepthPresentation(float dt)
         {
             UpdateProgressionPresentation(dt);
             if(homeScreen!=null&&homeScreen.activeInHierarchy){EnsureHomeDepth();homeDepth.ReducedMotion=reduceMotionEnabled;}
-            if(gameOverScreen!=null&&gameOverScreen.activeInHierarchy&&activeMode==SkyPulseMode.EndlessRoute)
-            {
-                if(resultDepth==null){resultDepth=DepthStage(gameOverScreen.transform,SkyPulseMode.EndlessRoute,new Vector2(0,375),new Vector2(880,528));resultDepth.transform.SetSiblingIndex(2);}resultDepth.ReducedMotion=reduceMotionEnabled;
-            }
             if(holographicTree!=null)holographicTree.ReducedMotion=reduceMotionEnabled;
             if(pipePool[0]==null)return;
             if(routeMetal==null)BuildEndlessDepth();
+            var sceneTint=SceneLightTint();routeMetal.SetColor("_LightTint",sceneTint);routeMetal.SetColor("_GlowColor",sceneTint);
             bool show=activeMode==SkyPulseMode.EndlessRoute&&(state==FlightState.Playing||state==FlightState.Impact||state==FlightState.GameOver||state==FlightState.Paused);
             for(int i=0;i<routeDepth.Count;i++)
             {
@@ -49,7 +48,7 @@ namespace SkyPulse.Mobile
         }
         void BuildEndlessDepth()
         {
-            routeMetal=new Material(Resources.Load<Shader>("SkyPulse/Shaders/HeistOptics")){name="Endless machined cobalt gates"};routeMetal.SetColor("_BaseColor",new Color(.065f,.16f,.25f));routeMetal.SetFloat("_Roughness",.25f);routeMetal.SetColor("_GlowColor",new Color(.15f,.65f,1));routeMetal.SetFloat("_Energy",.10f);
+            routeMetal=new Material(Resources.Load<Shader>("SkyPulse/Shaders/HeistOptics")){name="Endless polished titanium gates"};routeMetal.SetColor("_BaseColor",new Color(.19f,.32f,.43f));routeMetal.SetFloat("_Roughness",.22f);routeMetal.SetColor("_GlowColor",new Color(.15f,.65f,1));routeMetal.SetFloat("_Energy",.07f);routeMetal.SetFloat("_PanelMode",1);
             routeBodyMesh=RouteCylinder(false);routeCapMesh=RouteCylinder(true);
             foreach(var pair in pipePool)foreach(var s in new[]{pair.Top,pair.Bottom})
             {
@@ -66,7 +65,9 @@ namespace SkyPulse.Mobile
                 for(int j=1;j<profile.Length;j++)
                 {
                     var p=profile[j-1];var q=profile[j];Color colour=cap?new Color(.7f,.9f,1,j==2?0:1):new Color(.85f,.95f,1,i%12==0?1:0);
-                    b.Quad(new Vector3(Mathf.Cos(a)*p.x,p.y,Mathf.Sin(a)*p.x),new Vector3(Mathf.Cos(c)*p.x,p.y,Mathf.Sin(c)*p.x),new Vector3(Mathf.Cos(c)*q.x,q.y,Mathf.Sin(c)*q.x),new Vector3(Mathf.Cos(a)*q.x,q.y,Mathf.Sin(a)*q.x),colour);
+                    float dy=q.y-p.y,dr=q.x-p.x;
+                    var na=new Vector3(Mathf.Cos(a)*dy,-dr,Mathf.Sin(a)*dy).normalized;var nb=new Vector3(Mathf.Cos(c)*dy,-dr,Mathf.Sin(c)*dy).normalized;
+                    b.SmoothQuad(new Vector3(Mathf.Cos(a)*p.x,p.y,Mathf.Sin(a)*p.x),new Vector3(Mathf.Cos(c)*p.x,p.y,Mathf.Sin(c)*p.x),new Vector3(Mathf.Cos(c)*q.x,q.y,Mathf.Sin(c)*q.x),new Vector3(Mathf.Cos(a)*q.x,q.y,Mathf.Sin(a)*q.x),na,nb,colour);
                 }
                 foreach(int side in new[]{-1,1})b.Face(new Vector3(0,side*.5f,0),new Vector3(Mathf.Cos(a)*.46f,side*.5f,Mathf.Sin(a)*.46f),new Vector3(Mathf.Cos(c)*.46f,side*.5f,Mathf.Sin(c)*.46f),new Color(.9f,.95f,1,.2f));
             }

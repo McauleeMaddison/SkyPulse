@@ -176,6 +176,8 @@ public static class SkyPulseBirdProgressionChecks
         Set(game,"runCrystalsCollected",100);Set(game,"score",10);Set(game,"perfectPasses",0);Set(game,"newBest",false);Set(game,"resultCrystalBonusApplied",false);
         int reward=(int)Call(game,"ApplyResultTechBonuses"),afterReward=(int)Get(game,"crystals");Call(game,"ApplyResultTechBonuses");
         Check(reward==4&&afterReward==19490&&(int)Get(game,"crystals")==afterReward,"Trained bird traits credit the real result wallet exactly once");
+        Call(game,"RefreshProgressionResultLabels");
+        Check((int)Get(game,"runBirdResultBonus")==4&&(int)Get(game,"runTechResultBonus")==0&&((Text)Get(game,"resultBirdBonusText")).text.Contains("+4")&&((Text)Get(game,"resultBonusText")).text.Contains("+0"),"Result names the bird's actual reward separately from Tech, without crediting again");
         store.SetInt(SkyPulseDailyMissions.WalletKey,afterReward);levels.Clear();foreach(var pair in oldLevels)levels[pair.Key]=pair.Value;foreach(var id in oldTechOwned)techOwned.Add(id);
         yield return DiscountedTechChecks(game,p,store);
         Call(game,"OpenBreeding",skins.GetValue(0));yield return null;
@@ -213,7 +215,7 @@ public static class SkyPulseBirdProgressionChecks
             p.Data.core=rank;levels.Clear();owned.Clear();store.SetInt(SkyPulseDailyMissions.WalletKey,costs[rank-1]);Set(game,"crystals",costs[rank-1]);
             Call(game,"OpenUpgrades");yield return null;
             var content=(RectTransform)Get(game,"customizeContent");
-            Check(content.GetComponentsInChildren<Text>().Any(t=>t.text==costs[rank-1]+" ✦"),"Core "+rank+" tree map shows its actual discounted purchase price");
+            Check(content.GetComponentsInChildren<Text>().Any(t=>t.text=="NEXT · "+costs[rank-1]+" ✦"),"Core "+rank+" tree map shows its actual discounted purchase price");
             Call(game,"SelectUpgrade",first);
             Check(((Text)Get(game,"purchaseConfirmText")).text=="CONFIRM · "+costs[rank-1]+" ✦"&&((Button)Get(game,"purchaseConfirmButton")).interactable,"Core "+rank+" inspector matches the map and accepts the exact discounted balance");
             Call(game,"ConfirmPurchase");Call(game,"ConfirmPurchase");yield return null;

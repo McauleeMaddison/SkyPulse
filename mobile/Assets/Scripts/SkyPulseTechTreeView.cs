@@ -96,10 +96,10 @@ namespace SkyPulse.Mobile
                 var b = to + new Vector3(branch.Trunk ? 0 : -spread * .16f, gap * .27f, -.22f);
                 // A substantial shaded glass conductor carries a narrow light
                 // vein on its front face. Shared rings keep every curve seamless.
-                Tube(from, a, b, to, branch.Trunk ? .105f : .072f, branch.Colour,
+                Tube(from, a, b, to, branch.Trunk ? .12f : .085f, branch.Colour,
                     branch.Powered ? .94f : .58f, vertices, normals, colours, uv, triangles, 2);
                 var front = new Vector3(0, 0, -.10f);
-                Tube(from+front, a+front, b+front, to+front, branch.Trunk ? .024f : .016f, branch.Colour,
+                Tube(from+front, a+front, b+front, to+front, branch.Trunk ? .016f : .012f, branch.Colour,
                     branch.Powered ? .92f : .25f, vertices, normals, colours, uv, triangles);
                 Tube(from, a, b, to, branch.Trunk ? .18f : .13f, branch.Colour,
                     branch.Powered ? .055f : .025f, vertices, normals, colours, uv, triangles, 4);

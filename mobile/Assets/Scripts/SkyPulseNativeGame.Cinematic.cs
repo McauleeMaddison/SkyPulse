@@ -13,6 +13,12 @@ namespace SkyPulse.Mobile
         float cinematicClock,cinematicLastWing=100;
         int cinematicPassed;
         bool cinematicFlying;
+        Color SceneLightTint()
+        {
+            if(activeMode==SkyPulseMode.PulseRelay)return new Color(.62f,.86f,1);
+            var world=routeWorld??equippedWorld;
+            return world==null?new Color(.7f,.85f,1):Color.Lerp(Color.white,world.Accent,.33f);
+        }
 
         // Late presentation observes the final physics/pose of the rendered frame.
         // No protected Endless simulation or input methods need modification.
@@ -29,7 +35,7 @@ namespace SkyPulse.Mobile
             cinematicFlight.gameObject.SetActive(playing||paused);
             if(paused)return;
             if(!reduceMotionEnabled&&(playing||state==FlightState.Menu))cinematicClock+=dt;
-            var light=activeMode==SkyPulseMode.PulseRelay?new Color(.30f,.85f,1):equippedSkin.Accent;
+            var light=SceneLightTint();
             cinematicBird.Present(reduceMotionEnabled?0:cinematicClock,Mathf.Exp(-wingTimer*12),birdVelocity/15,reduceMotionEnabled,light);
             if(!playing){if(cinematicFlying)cinematicFlight.ResetPresentation();cinematicFlying=false;cinematicLastWing=100;return;}
             if(!cinematicFlying||cinematicSession!=relaySession){cinematicFlight.ResetPresentation();cinematicSession=relaySession;cinematicPassed=0;cinematicLastWing=100;}

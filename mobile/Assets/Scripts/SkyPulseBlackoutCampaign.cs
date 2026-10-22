@@ -60,6 +60,15 @@ namespace SkyPulse.Mobile
             if(State!=MissionSessionState.Playing||!Puzzle.Rotatable(tile))return false;
             Rotations[tile]=(Rotations[tile]+1)%Puzzle.Orientations(tile);Turns++;Recalculate();LastCost=1+(Alarms>0?2:0);Trace+=LastCost;Resolve();return true;
         }
+        // The same rules evaluate a speculative move in a reusable, separate
+        // session. Preview cannot spend live trace, complete a vault or save.
+        public bool PreviewRotation(int tile,BlackoutSession destination)
+        {
+            if(State!=MissionSessionState.Playing||!Puzzle.Rotatable(tile)||destination==null||ReferenceEquals(this,destination)||destination.Puzzle!=Puzzle)return false;
+            Array.Copy(Rotations,destination.Rotations,Rotations.Length);
+            destination.Trace=Trace;destination.Turns=Turns;destination.State=MissionSessionState.Playing;destination.Result="";destination.LastCost=0;
+            return destination.Rotate(tile);
+        }
         void Resolve()
         {
             if(Trace<=Puzzle.TraceLimit&&CoresPowered==Puzzle.CoreCount&&UplinkPowered){State=MissionSessionState.Succeeded;Result="VAULT EXTRACTED";}
@@ -102,6 +111,10 @@ namespace SkyPulse.Mobile
     }
     public static class SkyPulseBlackoutCampaign
     {
+        // Each optical vault restores one real part of the city's signal grid.
+        // Existing stage identifiers, solutions, budgets and saves stay intact.
+        public static readonly string[] Systems={"Dock beacons","Cargo link","Transit grid","Relay station","Power exchange","Skyway network","City shield","SkyPulse uplink"};
+        public static string Objective(int stage)=>"Restore "+Systems[Math.Max(0,Math.Min(7,stage))];
         public static readonly BlackoutPuzzle[] Stages={
             new BlackoutPuzzle("heist.v1.01", "First Light", "Rotate the two prisms. Power the core and the uplink together.", new[]{"####","S.M#","##C#","##ME"}, new[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, 8, 2, 0),
             new BlackoutPuzzle("heist.v1.02", "Silent Angles", "Keep both cores powered while guiding the beam to the uplink.", new[]{"#####","S..M#","#M.CE","#MCM!","#####"}, new[]{0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0}, 10, 4, 0),

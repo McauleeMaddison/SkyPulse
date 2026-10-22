@@ -62,6 +62,7 @@ public static class SkyPulseTechTreeChecks
         Check((int)Get(game,"crystals")==originalBalance&&!((GameObject)Get(game,"purchaseModal")).activeSelf,"Immediate visual press feedback cannot purchase an upgrade");
         pan.OnBeginDrag(new PointerEventData(EventSystem.current));
         Check(tree.BranchCount==39&&tree.SocketCount==37,"One core feeds three trunks, nine families and all 27 upgrade levels");
+        Check(content.GetComponentsInChildren<Text>().Count(t=>t.text.StartsWith("LEVEL "))==27&&content.GetComponentsInChildren<Text>().Any(t=>t.text.StartsWith("NEXT · "))&&content.GetComponentsInChildren<Text>().Any(t=>t.text=="LOCKED"),"Every upgrade point has a prominent level label and an explicit next/locked state");
         var reachable=new HashSet<Vector2>{new Vector2(0,-250)};
         for(int pass=0;pass<40;pass++)foreach(var b in tree.Branches)if(reachable.Contains(b.From))reachable.Add(b.To);
         Check(tree.Roots.All(r=>reachable.Contains(r.At)),"Every family and level remains connected to the single core");

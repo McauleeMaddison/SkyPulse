@@ -23,6 +23,7 @@ namespace SkyPulse.Mobile
         string breedingParentA,breedingParentB;
         BirdGenome flightBirdGenome;
         float birdCollectionCarry;
+        int runBirdPickupBonus,runTechPickupBonus,runBirdResultBonus,runTechResultBonus;
         int quotedUpgradePrice=-1,quotedUpgradeLevel=-1,quotedUpgradeCore=-1;
         int UpgradeCrystalPrice(Upgrade upgrade,int level)=>birdProgression.DiscountedPrice(upgrade.PriceAtLevel(level));
         void QuoteUpgrade(Upgrade upgrade,int level)
@@ -64,6 +65,7 @@ namespace SkyPulse.Mobile
         {
             // Snapshot the equipped build once; no DNA lookup/allocation in the pickup loop.
             flightBirdGenome=birdProgression.Genome(equippedSkin.Id);birdCollectionCarry=0;
+            runBirdPickupBonus=runTechPickupBonus=runBirdResultBonus=runTechResultBonus=0;
         }
         int BirdPickupBonus()
         {

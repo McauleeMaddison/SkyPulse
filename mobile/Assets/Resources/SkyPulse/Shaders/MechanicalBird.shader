@@ -43,7 +43,7 @@ Shader "SkyPulse/Mechanical Bird"
                 float spec=pow(saturate(dot(n,normalize(key+float3(0,0,-1)))),45);
                 float metallic=smoothstep(.16,.72,dot(art.rgb,lum));
                 float sweep=pow(saturate(1-abs(i.body.x+i.body.y*.35-(.6+sin(_Rig.x*.65)*.45))),18);
-                art.rgb=art.rgb*(.88+.12*saturate(dot(n,key)))+_LightTint.rgb*metallic*(spec*.10+sweep*.055);
+                art.rgb=art.rgb*(.93+.10*saturate(dot(n,key)))*lerp(float3(1,1,1),_LightTint.rgb,.12)+_LightTint.rgb*metallic*(spec*.13+sweep*.035);
                 art.rgb*=art.a;return art;
             }
             ENDCG

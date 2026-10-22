@@ -69,7 +69,7 @@ namespace SkyPulse.Mobile
         {
             if(generation!=blackoutGeneration || activeMode!=SkyPulseMode.BlackoutProtocol || state!=FlightState.Playing)return;
             if(!gameplayInput.Press(pointer,Time.frameCount,Time.unscaledTime,pointer>=0))return;
-            TouchBlackoutNode(tile);
+            if(blackoutPlanning)PreviewBlackoutNode(tile);else TouchBlackoutNode(tile);
         }
         Button modeHomeMap,modeHomeGuide;
         RectTransform homeHangar;
@@ -112,14 +112,14 @@ namespace SkyPulse.Mobile
             if(endless){menuModeDetailText.rectTransform.anchoredPosition=new Vector2(0,-491);menuRouteText.rectTransform.anchoredPosition=new Vector2(0,-540);homeActivityCopy.text="FLIGHT · CIRCUITS · PUZZLES";return;}
             int next=HomeNextMission(),completed=0,total=relay?4:8;
             foreach(int medal in relay?dailyRelay.Data.medals:blackoutCampaign.Data.medals)if(medal>0)completed++;
-            homeBestCaption.text=relay?"TODAY CLEARED":"VAULTS EXTRACTED";menuBestText.text=completed+" / "+total;
+            homeBestCaption.text=relay?"TODAY CLEARED":"SYSTEMS RESTORED";menuBestText.text=completed+" / "+total;
             homeLaunchButton.GetComponentInChildren<Text>().text=relay?"FLY CIRCUIT "+(next+1).ToString("00"):"ENTER VAULT "+(next+1).ToString("00");
             modeHomeMap.GetComponentInChildren<Text>().text=relay?"CIRCUIT MAP":"VAULT MAP";
             homeActivityCopy.text=relay?"TAP TO FLY · CRYSTALS OPEN GATES":"ROTATE PRISMS · ROUTE THE LIGHT";
             menuModeDetailText.rectTransform.anchoredPosition=relay?new Vector2(0,-640):new Vector2(0,-478);
             menuRouteText.rectTransform.anchoredPosition=relay?new Vector2(0,-745):new Vector2(0,-540);
             if(relay){menuModeDetailText.text="SPECTRAL CRYSTALS · AUTOMATIC GATES";menuRouteText.text="NEXT · "+dailyRelay.Missions[next].Name;}
-            else{menuModeDetailText.text="LIVE ENERGY · RELAYS · TRACE";menuRouteText.text="NEXT · "+SkyPulseBlackoutCampaign.Stages[next].Name;}
+            else{menuModeDetailText.text="BRING THE CITY BACK ONLINE";menuRouteText.text=completed==8?"NETWORK RESTORED · REPLAY ANY VAULT":SkyPulseBlackoutCampaign.Objective(next).ToUpperInvariant();}
         }
         void OpenModeGuide()
         {

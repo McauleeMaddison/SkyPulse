@@ -124,11 +124,16 @@ namespace SkyPulse.Mobile
             foreach(var button in homeScreen.GetComponentsInChildren<Button>(true))
                 if(button!=homeLaunchButton&&button.transform!=difficultyText.transform.parent&&!(button.targetGraphic is SkyPulseCircuitGraphic))homeFrames.Add(PolishButton(button,0,Hex("#8ed8ed")));
             homeFlightDock=homeScreen.transform.Find("Home flight dock");
+            // The old illustrated dock and opaque 3D support bars competed with
+            // the hero. The selected mode now gets one open, dimensional stage.
+            foreach(var frame in homeFrames){frame.SoftGlass=true;frame.Ambient=false;frame.SetVerticesDirty();}
             foreach(var text in homeScreen.GetComponentsInChildren<Text>())if(text.text=="PERSONAL BEST")homeBestCaption=text;
         }
         private void ApplyPremiumHomeTheme()
         {
             var accent=ProtocolAccent(homeProtocol);
+            foreach(var face in homeScreen.GetComponentsInChildren<SkyPulseCircuitGraphic>(true))
+                if(face.Surface==SkyPulseSurface.Panel){face.SoftGlass=true;face.Ambient=false;face.SetVerticesDirty();}
             if(homeAtmosphere!=null){homeAtmosphere.Variant=(int)homeProtocol;homeAtmosphere.SetVerticesDirty();}
             foreach(var frame in homeFrames){frame.Variant=(int)homeProtocol;frame.color=homeProtocol==SkyPulseMode.EndlessRoute?Hex("#45eaff"):accent;frame.SetVerticesDirty();}
             difficultyText.color=accent;var badge=(RectTransform)difficultyText.transform.parent;badge.sizeDelta=new Vector2(340,68);badge.anchoredPosition=new Vector2(-285,950);
@@ -143,7 +148,7 @@ namespace SkyPulse.Mobile
         {
             if(menuHeroTransform==null)return;
             menuHeroTransform.gameObject.SetActive(homeProtocol!=SkyPulseMode.BlackoutProtocol);
-            if(homeFlightDock!=null)homeFlightDock.gameObject.SetActive(homeProtocol==SkyPulseMode.EndlessRoute);
+            if(homeFlightDock!=null)homeFlightDock.gameObject.SetActive(false);
             if(homeProtocol==SkyPulseMode.PulseRelay){menuHeroTransform.localScale=Vector3.one*.54f;menuHeroTransform.anchoredPosition=new Vector2(-105,355);menuEquippedText.text="PILOT · "+equippedSkin.Name;}
             else if(homeProtocol==SkyPulseMode.BlackoutProtocol)menuEquippedText.text="Rotate prisms · route live energy";
             else {menuHeroTransform.localScale=Vector3.one;menuHeroTransform.anchoredPosition=new Vector2(0,355);menuEquippedText.text="EQUIPPED · "+equippedSkin.Name;}
