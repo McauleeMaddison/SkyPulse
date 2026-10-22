@@ -1,13 +1,13 @@
 {
   "candidate": "SkyPulse 1.0.0 (18)",
-  "compiledSourceCommit": "ac5fffe5fad2bcebd01a6ed2af51e140fffa3d23",
+  "compiledSourceCommit": "88225947fe8aca314c5246e8323a981ea41d0b98",
   "branch": "main",
   "localIosExport": {
     "status": "SKYPULSE_IOS_EXPORT_PASS",
-    "path": "/private/tmp/skypulse-18-holographic-20261022/iOS-organised",
+    "path": "/private/tmp/skypulse-18-holographic-20261022/iOS-cap-contour",
     "sourceManifestMatchesWorkingTree": true,
     "sourceEntries": 439,
-    "sourceCommit": "ac5fffe5fad2bcebd01a6ed2af51e140fffa3d23"
+    "sourceCommit": "88225947fe8aca314c5246e8323a981ea41d0b98"
   },
   "archive": {
     "status": "Not archived for build 18"
@@ -44,12 +44,13 @@
       "width": 750,
       "height": 1334,
       "physicalDeviceFootage": false,
-      "sha256": "b5187c3641f4698533c9a7e42205b93632b84766065d381acdeda7fb0ac4e2f3"
+      "sha256": "5b0e41ac39a6831dabc8f4906884f4f41356e2fcbc383a3fa4c7ea624c5d0b9c",
+      "sourceCommit": "88225947fe8aca314c5246e8323a981ea41d0b98"
     }
   ],
   "evidenceSha256": {
-    "SOURCE_MANIFEST.json": "ac2bf8f3108e490abf81f9bc227ec3cc0f19ceb5145582a0f35961fab35be8ad",
-    "BUILD_INFO.json": "e689b575eae82366fae5a5fb97ef7e0d12e564571eeae4738f2893e28bd100d0",
+    "SOURCE_MANIFEST.json": "deb2b4e297e6d1417fe8ca032dd6e15e5389d2496c3ad09da94bd3628bb9ee99",
+    "BUILD_INFO.json": "947f3abac61894dc601006e62dbd8cf63b8e0f3f5919dd9497139c82ea3462f6",
     "REFACTOR_CHECKS.json": "03c845f28a2ed98dd1db7505363867befb72c281f2616aab05ff8e6bfb780bd3"
   },
   "editingGuide": "mobile/EDITING_GUIDE.md",
@@ -58,8 +59,23 @@
     "unitTests": 11,
     "descriptionCharacters": 3965,
     "keywordUtf8Bytes": 81,
-    "brandedSupportAndPrivacyHttp": 200,
-    "reportSha256": "250c52d1dcb654855dbcccd81c3369d84d0647943a7d6b55f8566fd9af3a7184",
-    "scope": "Local copy/identity/build/source consistency and live branded-link checks; no Apple private-comparison clearance"
-  }
+    "reportSha256": "7b6ed5095025cebae0df8cecff48488b05f2ec526cc6620d1d1e6b6bf4f9e445",
+    "scope": "Current local copy/identity/source checks; branded-link verification retained separately from the preceding release record; no Apple private-comparison clearance",
+    "sourceRevalidatedForCommit": "88225947fe8aca314c5246e8323a981ea41d0b98",
+    "brandedLinksPreviousVerification": {
+      "recordCommit": "7a2bca5553d92e8534361e93797c6497052801af",
+      "support": {
+        "url": "https://skypulse.macwebstudio.com/support",
+        "http": 200,
+        "contactPresent": true
+      },
+      "privacy": {
+        "url": "https://skypulse.macwebstudio.com/privacy",
+        "http": 200,
+        "contactPresent": true
+      },
+      "urlsChangedInThisVisualFix": false
+    }
+  },
+  "pipeCapContourFix": "PIPE_CAP_FIX.md"
 }

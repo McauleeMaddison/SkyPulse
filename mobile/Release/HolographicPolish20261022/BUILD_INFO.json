@@ -5,10 +5,10 @@
     "unityVersion": "6000.6.0f1",
     "sdk": "iphoneos",
     "targetDevice": "iPhoneAndiPad",
-    "createdUtc": "2026-10-22T07:06:55.7776920Z",
+    "createdUtc": "2026-10-22T07:31:37.4850630Z",
     "gameplaySourceSha256": "0839d856c1b85921e6732305b3a66dfbabbdd0978b80df80a0735c80200682c9",
     "iconSha256": "6cbc6acd07a0f1de1b07ff757e010abdf9c1b5d1befe8a61e3c6d4b6d22b0887",
     "publicLinksSha256": "7723d668b279f7826a962b3cfb386f47eea2ce6b1fed090d53ebb7eb0493a476",
-    "sourceCommit": "ac5fffe5fad2bcebd01a6ed2af51e140fffa3d23",
-    "sourceManifestSha256": "ac2bf8f3108e490abf81f9bc227ec3cc0f19ceb5145582a0f35961fab35be8ad"
+    "sourceCommit": "88225947fe8aca314c5246e8323a981ea41d0b98",
+    "sourceManifestSha256": "deb2b4e297e6d1417fe8ca032dd6e15e5389d2496c3ad09da94bd3628bb9ee99"
 }

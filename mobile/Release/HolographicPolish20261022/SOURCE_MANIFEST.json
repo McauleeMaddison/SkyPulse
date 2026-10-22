@@ -94,7 +94,7 @@
         },
         {
             "path": "Assets/Resources/SkyPulse/Shaders/EndlessRouteMetal.shader",
-            "sha256": "3ccc4613cf7e98a7eceac0f686688b97d4d35e7f21e8339b5bc27de5e658c22d"
+            "sha256": "8709521af9c8b74616b5c53a6594787807df56c300426573838d34bfe00c84bf"
         },
         {
             "path": "Assets/Resources/SkyPulse/Shaders/EndlessRouteMetal.shader.meta",
@@ -1574,7 +1574,7 @@
         },
         {
             "path": "Assets/Scripts/SkyPulseNativeGame.Depth.cs",
-            "sha256": "5f8987c52edc1383c45ea233e812bfc0efb9b9502ed3e7d7d6c2dc2cb733766f"
+            "sha256": "ef979729cf8303faf8f8f5f5561a13d4607f3b1ea004addf3871e035267a9efb"
         },
         {
             "path": "Assets/Scripts/SkyPulseNativeGame.Depth.cs.meta",

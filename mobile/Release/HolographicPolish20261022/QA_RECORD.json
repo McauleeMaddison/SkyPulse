@@ -1,6 +1,6 @@
 {
   "candidate": "1.0.0 (18)",
-  "compiledSourceCommit": "ac5fffe5fad2bcebd01a6ed2af51e140fffa3d23",
+  "compiledSourceCommit": "88225947fe8aca314c5246e8323a981ea41d0b98",
   "unityVersion": "6000.6.0f1",
   "runtimeSourceSha256": {
     "Assets/Scripts/SkyPulseBirdProgression.cs": "1a1c01342e7b24452835109d624ac88d1d392067284ac0cd9be358a68465ccc0",
@@ -22,7 +22,7 @@
     "Assets/Scripts/SkyPulseNativeGame.Blackout.cs": "ac5172d15b33e7b13b9c44649dcf83b61514adfe6b6431b7be28fee128d330f3",
     "Assets/Scripts/SkyPulseNativeGame.Cinematic.cs": "defe3d1539fced7a9c32a3d4d93dea4526eb8a511c919946a19eb43224932665",
     "Assets/Scripts/SkyPulseNativeGame.Controls.cs": "044b0db4552c9746a534c1d02b466d8c1b6183b559fa0065cd867b06d44b44e2",
-    "Assets/Scripts/SkyPulseNativeGame.Depth.cs": "5f8987c52edc1383c45ea233e812bfc0efb9b9502ed3e7d7d6c2dc2cb733766f",
+    "Assets/Scripts/SkyPulseNativeGame.Depth.cs": "ef979729cf8303faf8f8f5f5561a13d4607f3b1ea004addf3871e035267a9efb",
     "Assets/Scripts/SkyPulseNativeGame.Hangar.cs": "2ef1db7ae03b6b0c003258c2aba91f2b5cd2b142233f4595ac7b777e92cc7ef1",
     "Assets/Scripts/SkyPulseNativeGame.Missions.cs": "476e96fec1be2ee57759a70fc8889929be2834ddd3094eb5b491dea85a52909a",
     "Assets/Scripts/SkyPulseNativeGame.PipeVisuals.cs": "220ad836e8fd35437db921692adc9c131b63e01ad052ce956fce25cd6237a8b3",
@@ -44,7 +44,7 @@
     "Assets/Scripts/SkyPulseUiGlyph.cs": "53e22a71da5f9f651c61afa05a4201579be880be620e74f294358d19a7928088"
   },
   "shaderSourceSha256": {
-    "Assets/Resources/SkyPulse/Shaders/EndlessRouteMetal.shader": "3ccc4613cf7e98a7eceac0f686688b97d4d35e7f21e8339b5bc27de5e658c22d",
+    "Assets/Resources/SkyPulse/Shaders/EndlessRouteMetal.shader": "8709521af9c8b74616b5c53a6594787807df56c300426573838d34bfe00c84bf",
     "Assets/Resources/SkyPulse/Shaders/FlightLight.shader": "19f5bbb0bcef2aae4c64b8ca5c9148ca5367929625615aeffca79c63864430bb",
     "Assets/Resources/SkyPulse/Shaders/HeistOptics.shader": "180d649d67ba1e59ff83d4531849634a53912c8c10a3495b83a6f3c6b361898a",
     "Assets/Resources/SkyPulse/Shaders/HolographicText.shader": "b20e1139f13665eb7d62c7a85168928c357d3075128045a457c247be4c9e1e56",
@@ -82,22 +82,20 @@
   ],
   "baselineStatus": "22-group complete pass after LED/progression changes, before code-only source organisation",
   "finalSourceRequiredPassMarkers": [
-    "SKYPULSE_BLACKOUT_PURE_PASS",
+    "SKYPULSE_CAP_CONTOUR_PASS",
     "SKYPULSE_DEPTH_PASS",
-    "SKYPULSE_TECH_TREE_PASS",
-    "SKYPULSE_BIRD_PROGRESSION_LIVE_PASS",
-    "SKYPULSE_BLACKOUT_LIVE_PASS",
-    "SKYPULSE_CINEMATIC_PASS",
-    "SKYPULSE_HEIST_CAPTURE_PASS",
     "SKYPULSE_PLAYER_EXPERIENCE_PASS",
-    "SKYPULSE_EXPERIENCE_TARGETED_PASS"
+    "SKYPULSE_PIPE_PREVIEW_PASS"
   ],
-  "finalSourceStatus": "All nine scoped marker groups passed after source organisation; an additional tree-only test/capture passed after correcting capture-stage alignment",
+  "finalSourceStatus": "Focused pipe-cap contour/depth, collider/animation, Home and player-experience checks pass on the final source. Earlier comprehensive and nine-group source checks remain identified separately.",
   "unityProcessExitCodes": {
     "full": 0,
     "finalRuntimeScoped": 0,
     "alignedTreeCapture": 0,
-    "iosExport": 0
+    "iosExport": 0,
+    "pipeCapFix": 0,
+    "pipeCapIosExport": 0,
+    "pipeCapVideoEncode": 0
   },
   "evidence": {
     "fullBeforeSourceOrganisation": {
@@ -123,10 +121,22 @@
     "ledEncode": {
       "path": "artifacts/holographic-polish-20261022/encode-led-final.log",
       "sha256": "8dfc1ad82e40039ad9c304bee1032e5b1727f7cf29655259674dfd79e53f4c39"
+    },
+    "pipeCapFix": {
+      "path": "artifacts/pipe-cap-polish-20261022/unity.log",
+      "sha256": "aac37b3d35b2d8aa6a8f6843848545f89b7a69921fab745f3cd85233712b4e51"
+    },
+    "pipeCapIosExport": {
+      "path": "artifacts/pipe-cap-polish-20261022/unity-ios-export-18.log",
+      "sha256": "8b9be4b8e18cd5c513e5dc49994a12f64b3bb5e90c274150eb11fdf6106a0545"
+    },
+    "pipeCapVideoEncode": {
+      "path": "artifacts/pipe-cap-polish-20261022/encode-preview.log",
+      "sha256": "8dfc1ad82e40039ad9c304bee1032e5b1727f7cf29655259674dfd79e53f4c39"
     }
   },
   "physicalDeviceGameplay": "Pending for build 18 on iPhone and iPad",
-  "native": "Final exact-commit iOS IL2CPP export passed; 439 manifest entries match the repository; no signed archive or upload",
+  "native": "Final exact-commit iOS IL2CPP export passed after collar correction; all 439 manifest entries match. No signed archive or upload.",
   "warnings": [
     "Unity Editor Search startup ArgumentOutOfRangeException is retained in logs; stack is Editor indexing, not shipping gameplay. Full suite intentionally injects persistence errors to test recovery.",
     "Initial capture-only attempt paused the offscreen stage by disabling its component. Final tree clip keeps the stage active and pauses between captured frames; corrected frames were inspected."
@@ -142,6 +152,35 @@
     "The advanced preview follows a real solution through all but its last turn and shows a winning network using the non-spending preview API.",
     "Actual discounted bird-unlock UI, insufficient/exact balance, stale quote refresh, duplicate purchase guard, 2-percent-per-trained-level cap/rounding/restore and bred unlock reveal.",
     "Original shaft/collar GPU textures on matching 3D geometry; visible-pixel regression check; LED clock equals elapsed time at 30/60/120 FPS and freezes under Reduced Motion.",
-    "18 exact method bodies moved to named partials, six unreferenced private helpers/four constants removed; original MonoBehaviour GUID and save schema retained."
-  ]
+    "18 exact method bodies moved to named partials, six unreferenced private helpers/four constants removed; original MonoBehaviour GUID and save schema retained.",
+    "Negative opaque-corner control plus 216 transparent-corner/depth samples across upper/lower caps and three LED phases; opaque centre checks prevent hiding the whole mesh."
+  ],
+  "previousSourceVerification": {
+    "sourceCommit": "ac5fffe5fad2bcebd01a6ed2af51e140fffa3d23",
+    "requiredPassMarkers": [
+      "SKYPULSE_BLACKOUT_PURE_PASS",
+      "SKYPULSE_DEPTH_PASS",
+      "SKYPULSE_TECH_TREE_PASS",
+      "SKYPULSE_BIRD_PROGRESSION_LIVE_PASS",
+      "SKYPULSE_BLACKOUT_LIVE_PASS",
+      "SKYPULSE_CINEMATIC_PASS",
+      "SKYPULSE_HEIST_CAPTURE_PASS",
+      "SKYPULSE_PLAYER_EXPERIENCE_PASS",
+      "SKYPULSE_EXPERIENCE_TARGETED_PASS"
+    ],
+    "status": "All nine scoped marker groups passed after source organisation; an additional tree-only test/capture passed after correcting capture-stage alignment"
+  },
+  "pipeCapFix": {
+    "negativeControl": "Old opaque corner reproduced",
+    "orientations": 2,
+    "ledPhases": 3,
+    "cornerDepthSamples": 216,
+    "solidCentreChecks": 6,
+    "changedRuntimeFiles": [
+      "mobile/Assets/Resources/SkyPulse/Shaders/EndlessRouteMetal.shader",
+      "mobile/Assets/Scripts/SkyPulseNativeGame.Depth.cs"
+    ],
+    "msaaSamples": 4,
+    "nativeSourceEntries": 439
+  }
 }

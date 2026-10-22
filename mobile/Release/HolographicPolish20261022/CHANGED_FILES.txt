@@ -27,3 +27,4 @@ mobile/Tools/check_release_metadata.py
 mobile/Tools/test_release_metadata.py
 mobile/Release/CURRENT_RELEASE.json
 mobile/Release/HolographicPolish20261022/
+mobile/Release/HolographicPolish20261022/PIPE_CAP_FIX.md

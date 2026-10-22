@@ -32,16 +32,6 @@
     "No global duplication/comparator test or rights certification.",
     "Later source, policy and live listing changes require renewed checks."
   ],
-  "privacyUrl": {
-    "url": "https://skypulse.macwebstudio.com/privacy",
-    "http": 200,
-    "contactPresent": true
-  },
-  "supportUrl": {
-    "url": "https://skypulse.macwebstudio.com/support",
-    "http": 200,
-    "contactPresent": true
-  },
   "runtimeMatchesRecordedQA": 39,
   "sourceManifestMatchesCandidate": 439,
   "build": "18",

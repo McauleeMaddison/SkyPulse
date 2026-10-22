@@ -54,6 +54,9 @@ For pipe LEDs, `packet` in `EndlessRouteMetal.shader` controls the moving bright
 section; `_Clock * .48` controls its speed. Cyan/pink masks keep the effect on
 the original coloured strips. Reduced Motion freezes the clock and keeps the
 lights on. Change the finish without changing pipe collision dimensions.
+The collar material sets `_Cutout` to 1 so transparent artwork corners write
+neither dark pixels nor depth. Keep that contour handling when editing its shader;
+the solid shaft deliberately leaves `_Cutout` at 0.
 
 For the Tech Tree, change text/cues in `BuildTechTree`, and geometry in
 `SkyPulseTechTreeView`. Keep fixed touch targets, direct two-axis dragging and
