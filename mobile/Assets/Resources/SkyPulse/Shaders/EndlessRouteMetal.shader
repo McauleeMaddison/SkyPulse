@@ -30,10 +30,16 @@ Shader "SkyPulse/Original Endless Neon Metal"
                 float diffuse=.84+.22*saturate(dot(n,l));
                 float spec=pow(saturate(dot(n,normalize(l+v))),100);
                 float3 base=lerp(float3(.035,.05,.085),art.rgb,art.a);
-                float chroma=max(base.r,max(base.g,base.b))-min(base.r,min(base.g,base.b));
-                float energy=chroma*saturate(max(base.r,max(base.g,base.b))-.3);
+                // Only the original coloured inlays emit: cyan edge rails and
+                // pink central/collar strips. A bright packet travels through
+                // each diffuser while the underlying rail stays continuously lit.
+                float cyan=saturate((min(base.g,base.b)-base.r-.16)*5);
+                float pink=saturate((min(base.r,base.b)-base.g-.16)*5);
+                float led=max(cyan,pink);
+                float packet=pow(saturate(1-abs(frac(uv.y*1.4-_Clock*.48)-.5)*6),3);
+                float3 ledColour=lerp(float3(.01,.85,1),float3(1,.03,.85),pink/(cyan+pink+.001));
                 float3 tint=base*diffuse*lerp(float3(1,1,1),_LightTint.rgb,.15)+_LightTint.rgb*spec*.14;
-                tint+=base*energy*(.18+.07*sin(_Clock*2.1));
+                tint+=ledColour*led*(.28+packet*.85);
                 return fixed4(tint,1);
             }
             ENDCG

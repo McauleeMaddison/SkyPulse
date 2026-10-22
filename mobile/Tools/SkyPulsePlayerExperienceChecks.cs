@@ -87,7 +87,16 @@ public static class SkyPulsePlayerExperienceChecks
         foreach(var renderer in gateMeshes)renderer.enabled=false;camera.Render();RenderTexture.active=rt;read.ReadPixels(new Rect((int)(pixel.x*rt.width),(int)(pixel.y*rt.height),1,1),0,0);read.Apply();var clear=read.GetPixel(0,0);
         Check(Vector3.Distance(new Vector3(lit.r,lit.g,lit.b),new Vector3(clear.r,clear.g,clear.b))>.05f,"Original neon 3D collar produces visible pixels rather than a culled/invisible surface");
         foreach(var renderer in gateMeshes)renderer.enabled=true;UnityEngine.Object.Destroy(read);RenderTexture.active=null;
-        Call(game,"UpdateScoreBurst",10f);Fit(game);Save(camera,rt,Path.Combine(folder,"endless-pipe-lighting.png"));Call(game,"StartFlight");
+        Call(game,"UpdateScoreBurst",10f);Fit(game);Save(camera,rt,Path.Combine(folder,"endless-pipe-lighting.png"));
+        string ledClip=Path.Combine(folder,"endless-led-strips");Directory.CreateDirectory(ledClip);
+        float savedClock=(float)Get(game,"cinematicClock");
+        for(int frame=0;frame<120;frame++)
+        {
+            // A stationary inspection of the actual 3D material, not a mockup
+            // or simulated physical-device run. Only the light clock advances.
+            Set(game,"cinematicClock",frame/30f);Call(game,"UpdateDepthPresentation",0f);Save(camera,rt,Path.Combine(ledClip,frame.ToString("000")+".png"));yield return null;
+        }
+        Set(game,"cinematicClock",savedClock);Call(game,"StartFlight");
         var pickup=((Array)Get(game,"crystalPickupPool")).GetValue(0);int wallet=(int)Get(game,"crystals");
         for(int i=0;i<100;i++)Call(game,"CollectCrystalPickup",pickup);
         int banked=(int)Get(game,"runCrystalsCollected"),bird=(int)Get(game,"runBirdPickupBonus"),tech=(int)Get(game,"runTechPickupBonus");

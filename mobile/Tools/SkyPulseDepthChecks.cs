@@ -18,6 +18,13 @@ public static class SkyPulseDepthChecks
         var shaft=(Material)Get(game,"routeMetal");var collar=(Material)Get(game,"routeCapMetal");
         Check(shaft.shader.isSupported&&shaft.shader.name=="SkyPulse/Original Endless Neon Metal","Original neon art is rendered on the real collision-matched 3D geometry");
         Check(shaft.mainTexture==((Sprite)Get(game,"pipeBodySprite")).texture&&collar.mainTexture==((Sprite)Get(game,"pipeCapSprite")).texture,"Endless uses the original shaft and collar textures, not replacement pipe artwork");
+        foreach(int fps in new[]{30,60,120})
+        {
+            typeof(SkyPulseNativeGame).GetField("cinematicClock",F).SetValue(game,0f);
+            for(int i=0;i<fps;i++)Call(game,"UpdateCinematicPresentation",1f/fps);Call(game,"UpdateDepthPresentation",0f);
+            Check(Mathf.Abs(shaft.GetFloat("_Clock")-1)<.001f,"LED strip packets use the same elapsed-time clock at "+fps+" FPS");
+        }
+        typeof(SkyPulseNativeGame).GetField("reduceMotionEnabled",F).SetValue(game,true);Call(game,"UpdateDepthPresentation",0f);Check(shaft.GetFloat("_Clock")==0&&collar.GetFloat("_Clock")==0,"Reduced Motion keeps cyan/pink rails lit with static packets");typeof(SkyPulseNativeGame).GetField("reduceMotionEnabled",F).SetValue(game,false);
         foreach(var pair in (Array)Get(game,"pipePool"))foreach(string side in new[]{"Top","Bottom"})
         {
             var s=Get(pair,side);var body=(BoxCollider2D)Get(s,"BodyCollider");var cap=(BoxCollider2D)Get(s,"CapCollider");

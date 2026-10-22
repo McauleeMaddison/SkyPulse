@@ -46,6 +46,14 @@ namespace SkyPulse.Mobile
         public int DiscountedPrice(int basePrice)=>PriceAfterCoreDiscount(basePrice,Data.core);
         public int TrainingCost(BirdGenome bird)=>bird!=null&&bird.level>=1&&bird.level<MaxTraining?DiscountedPrice(TrainingPrices[bird.level-1]):0;
         public int BreedingCost(BirdGenome bird)=>DiscountedPrice(BreedingPrice(bird));
+        // Training is a permanent investment in the whole Hangar. Derive the
+        // saving from the existing genomes so old saves benefit without migration.
+        public int BirdUnlockDiscountPercent
+        {
+            get {int levels=0;foreach(var bird in Data.birds)levels+=Math.Max(0,bird.level-1);return Math.Min(20,levels*2);}
+        }
+        public static int BirdPriceAfterTrainingDiscount(int price,int percent)=>price<=0?0:(int)(((long)price*(100-Math.Max(0,Math.Min(20,percent)))+99)/100);
+        public int BirdUnlockPrice(int price)=>BirdPriceAfterTrainingDiscount(price,BirdUnlockDiscountPercent);
         public SkyPulseBirdProgression(IMissionStore store,string[] founders)
         {
             this.store=store;this.founders=founders;

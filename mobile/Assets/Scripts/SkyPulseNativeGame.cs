@@ -5601,6 +5601,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
 
             var skin = BirdRoster[hangarPageIndex];
             var owned = IsSkinOwned(skin);
+            int unlockPrice=BirdUnlockPrice(skin);
             var equipped =
                 equippedSkin != null &&
                 equippedSkin.Id == skin.Id;
@@ -5829,9 +5830,9 @@ hangarPreviousBirdRoot != null
             var traits=CreateText(informationGlass, BirdTraitSummary(skin), new Vector2(0f, 10f), new Vector2(690f, 42f), 25, Hex("#d2def0"), TextAnchor.MiddleCenter, FontStyle.Bold);
             traits.resizeTextForBestFit=true;traits.resizeTextMinSize=20;traits.resizeTextMaxSize=25;
             CreateText(informationGlass, $"YOUR CRYSTALS · {crystals:N0}", new Vector2(0f, -48f), new Vector2(690f, 42f), 27, accent, TextAnchor.MiddleCenter, FontStyle.Bold);
-            var unlockProgress = owned ? "ENDLESS REWARD TRAITS · SHARED FLIGHT CONTROLS"
-                : crystals >= skin.Price ? "READY TO UNLOCK WITH EARNED CRYSTALS"
-                : $"EARN {skin.Price - crystals:N0} MORE CRYSTALS TO UNLOCK";
+            var unlockProgress = owned ? "BIRD UNLOCK SAVINGS · "+birdProgression.BirdUnlockDiscountPercent+"%"
+                : crystals >= unlockPrice ? BirdUnlockSaving(skin)
+                : $"NEED {unlockPrice-crystals:N0} ✦ · TRAINING SAVINGS {birdProgression.BirdUnlockDiscountPercent}%";
             CreateText(informationGlass, unlockProgress, new Vector2(0f, -106f), new Vector2(710f, 42f), 23, Hex("#adc6dd"), TextAnchor.MiddleCenter, FontStyle.Normal);
 
             var actionLabel =
@@ -5839,7 +5840,7 @@ hangarPreviousBirdRoot != null
                     ? "EQUIPPED"
                     : owned
                         ? "EQUIP BIRD"
-                        : $"UNLOCK   ·   {skin.Price:N0} ✦";
+                        : $"UNLOCK   ·   {unlockPrice:N0} ✦";
 
             var actionButton = CreateNeonButton(
                 informationGlass,
@@ -6911,7 +6912,7 @@ hangarInformationCanvas != null)
             name.resizeTextMaxSize = 31;
             CreateText(card, profile.Rarity, new Vector2(-85f, -156f), new Vector2(220f, 36f), 24,
                 new Color(profile.RarityColour.r, profile.RarityColour.g, profile.RarityColour.b, owned ? .95f : .65f), TextAnchor.MiddleLeft, FontStyle.Bold);
-            var status = equipped ? "ACTIVE" : owned ? "EQUIP ›" : $"{skin.Price:N0} ✦";
+            var status = equipped ? "ACTIVE" : owned ? "EQUIP ›" : $"{BirdUnlockPrice(skin):N0} ✦";
             CreateText(card, status, new Vector2(118f, -156f), new Vector2(164f, 36f), 28,
                 equipped ? Hex("#45eaff") : owned ? Hex("#dcefff") : Hex("#cbd7e8"), TextAnchor.MiddleRight, FontStyle.Bold);
         }
@@ -7314,10 +7315,13 @@ hangarInformationCanvas != null)
 
         private void OpenPurchaseModal(Skin skin)
         {
+            if(!RecoverWalletTransaction())return;
             pendingSkin = skin;
             pendingUpgrade = null;
             pendingPurchase = PendingPurchase.Skin;
-            OpenPurchaseModal(skin.Name, "THIS BIRD WILL BE EQUIPPED AFTER UNLOCKING", skin.Price, skin.Accent, LoadSprite(skin.ArtPath));
+            quotedBirdId=skin.Id;quotedBirdPrice=BirdUnlockPrice(skin);quotedBirdDiscount=birdProgression.BirdUnlockDiscountPercent;
+            OpenPurchaseModal(skin.Name, BirdTraitSummary(skin), quotedBirdPrice, skin.Accent, LoadSprite(skin.ArtPath));
+            purchaseBalanceText.text+="\n"+BirdUnlockSaving(skin);
         }
 
         private void OpenPurchaseModal(string itemName, string detail, int price, Color accent, Sprite preview)
@@ -7363,11 +7367,18 @@ hangarInformationCanvas != null)
             pendingUpgrade = null;
             pendingPurchase = PendingPurchase.None;
             quotedUpgradePrice=quotedUpgradeLevel=quotedUpgradeCore=-1;
+            quotedBirdId=null;quotedBirdPrice=quotedBirdDiscount=-1;
         }
 
         private void ConfirmPurchase()
         {
             if (!RecoverWalletTransaction()) return;
+            if(pendingPurchase==PendingPurchase.Skin&&pendingSkin!=null)
+            {
+                if(IsSkinOwned(pendingSkin)){ClosePurchaseModal();return;}
+                if(quotedBirdId!=pendingSkin.Id||quotedBirdPrice!=BirdUnlockPrice(pendingSkin)||quotedBirdDiscount!=birdProgression.BirdUnlockDiscountPercent)
+                {OpenPurchaseModal(pendingSkin);return;}
+            }
             if (pendingPurchase == PendingPurchase.Upgrade &&
                 (pendingUpgrade == null || !IsUpgradePrerequisiteMet(pendingUpgrade) || GetUpgradeLevel(pendingUpgrade.Id) >= pendingUpgrade.MaxLevel))
             {
@@ -7380,7 +7391,7 @@ hangarInformationCanvas != null)
                 return;
             }
             if (purchaseConfirmButton != null) purchaseConfirmButton.interactable = false;
-            var price = pendingPurchase == PendingPurchase.Skin && pendingSkin != null ? pendingSkin.Price
+            var price = pendingPurchase == PendingPurchase.Skin && pendingSkin != null ? BirdUnlockPrice(pendingSkin)
                 : pendingPurchase == PendingPurchase.Upgrade && pendingUpgrade != null
                     ? UpgradeCrystalPrice(pendingUpgrade,GetUpgradeLevel(pendingUpgrade.Id)) : -1;
             if (price < 0 || crystals < price)

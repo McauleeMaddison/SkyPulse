@@ -87,6 +87,7 @@ namespace SkyPulse.Mobile
         {
             if(techBackdropMaterial!=null)Destroy(techBackdropMaterial);
             if(techTypographyMaterial!=null)Destroy(techTypographyMaterial);
+            if(progressionTypographyMaterial!=null)Destroy(progressionTypographyMaterial);
             if(routeBodyMesh!=null)Destroy(routeBodyMesh);if(routeCapMesh!=null)Destroy(routeCapMesh);if(routeMetal!=null)Destroy(routeMetal);
             if(routeCapMetal!=null)Destroy(routeCapMetal);
         }

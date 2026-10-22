@@ -17,6 +17,8 @@ namespace SkyPulse.Mobile
         CanvasGroup progressionCanvas;
         float progressionReveal;
         Color progressionAccent=new Color(.45f,.9f,1);
+        Material progressionTypographyMaterial;
+        float progressionTypeClock;
         Text birdProgressionNotice;
         bool progressionCommitting;
         int progressionPanelEpoch;
@@ -25,6 +27,10 @@ namespace SkyPulse.Mobile
         float birdCollectionCarry;
         int runBirdPickupBonus,runTechPickupBonus,runBirdResultBonus,runTechResultBonus;
         int quotedUpgradePrice=-1,quotedUpgradeLevel=-1,quotedUpgradeCore=-1;
+        int quotedBirdPrice=-1,quotedBirdDiscount=-1;
+        string quotedBirdId;
+        int BirdUnlockPrice(Skin skin)=>birdProgression.BirdUnlockPrice(skin.Price);
+        string BirdUnlockSaving(Skin skin)=>"TRAINING −"+birdProgression.BirdUnlockDiscountPercent+"% · SAVE "+(skin.Price-BirdUnlockPrice(skin))+" ✦";
         int UpgradeCrystalPrice(Upgrade upgrade,int level)=>birdProgression.DiscountedPrice(upgrade.PriceAtLevel(level));
         void QuoteUpgrade(Upgrade upgrade,int level)
         {
@@ -77,7 +83,10 @@ namespace SkyPulse.Mobile
         {
             var label=CreateText(parent,text,new Vector2(0,y),new Vector2(790,height),size,colour??Hex("#dceef5"),TextAnchor.MiddleCenter,FontStyle.Normal);
             label.horizontalOverflow=HorizontalWrapMode.Wrap;label.verticalOverflow=VerticalWrapMode.Truncate;
-            label.GetComponent<Shadow>().enabled=false;return label;
+            label.GetComponent<Shadow>().enabled=false;
+            if(progressionTypographyMaterial==null)progressionTypographyMaterial=new Material(Resources.Load<Shader>("SkyPulse/Shaders/HolographicText")){name="SkyPulse progression lettering"};
+            label.canvas.additionalShaderChannels|=AdditionalCanvasShaderChannels.TexCoord1;label.material=progressionTypographyMaterial;
+            label.gameObject.AddComponent<SkyPulseHolographicText>().Emphasis=.3f;return label;
         }
         Button ProgressionButton(Transform parent,string text,Vector2 at,Vector2 size,UnityEngine.Events.UnityAction action)
         {
@@ -109,6 +118,8 @@ namespace SkyPulse.Mobile
         void UpdateProgressionPresentation(float dt)
         {
             if(birdProgressionScreen==null||!birdProgressionScreen.activeInHierarchy)return;
+            if(!reduceMotionEnabled)progressionTypeClock+=Mathf.Max(0,dt);
+            if(progressionTypographyMaterial!=null){progressionTypographyMaterial.SetFloat("_Clock",progressionTypeClock);progressionTypographyMaterial.SetFloat("_Motion",reduceMotionEnabled?0:1);}
             progressionReveal=Mathf.Min(1,progressionReveal+Mathf.Max(0,dt)/.18f);
             progressionCanvas.alpha=reduceMotionEnabled?1:.8f+.2f*Mathf.SmoothStep(0,1,progressionReveal);
             if(coreProgressionPreview!=null)coreProgressionPreview.ReducedMotion=reduceMotionEnabled;
@@ -156,6 +167,11 @@ namespace SkyPulse.Mobile
                 equippedTrail=GetTrailForSkin(equippedSkin);CloseBirdProgression();ApplyEquippedVisuals();SaveProgress();RebuildCustomizeGrid();
                 if(cosmeticCategory==CosmeticCategory.Upgrades)customizeContent.anchoredPosition=at;
                 Play(unlockSound);PulseHaptic(.3f);
+                if(equip!=null)
+                {
+                    ShowUnlockReveal(equippedSkin);
+                    unlockRevealDetail.text="BRED & EQUIPPED · BOTH PARENTS KEPT";
+                }
             }
             catch(Exception e){Debug.LogWarning("SkyPulse progression save will retry: "+e.GetType().Name);birdProgressionNotice.text="Couldn't finish saving. Reopen this panel to retry safely.";}
         }
@@ -242,7 +258,11 @@ namespace SkyPulse.Mobile
             ProgressionText(birdProgressionBody,"LEVEL "+bird.level+(can?" → "+(bird.level+1):"")+"   /   CORE LIMIT "+birdProgression.TrainingCap,74,22,48,Hex("#aec9d7"));
             var trained=JsonUtility.FromJson<BirdGenome>(JsonUtility.ToJson(bird));if(can)trained.level++;
             TraitComparison(bird,trained,bird.primary,-33);TraitComparison(bird,trained,bird.secondary,-179);
-            ProgressionText(birdProgressionBody,can?"Next level · stronger rewards in Endless Route":bird.level==5?"Both traits are fully trained":"Evolve your Core to unlock further training",-307,26,68,Hex("#b2cbd7"));
+            int savings=birdProgression.BirdUnlockDiscountPercent,after=Math.Min(20,savings+(can?2:0));
+            Skin nextBird=null;foreach(var candidate in Skins)if(!IsSkinOwned(candidate)){nextBird=candidate;break;}
+            string benefit=can?"BIRD UNLOCK SAVINGS · "+savings+"% → "+after+"%":"BIRD UNLOCK SAVINGS · "+savings+"%";
+            benefit+="\n"+(can&&nextBird!=null?nextBird.Name+" · "+BirdUnlockPrice(nextBird)+" → "+SkyPulseBirdProgression.BirdPriceAfterTrainingDiscount(nextBird.Price,after)+" ✦":bird.level==5?"Fully trained · both reward traits retained":can?"Stronger Endless rewards · all founder birds owned":"Evolve your Core for the next training level");
+            ProgressionText(birdProgressionBody,benefit,-307,26,100,Hex("#c4dce8"));
             int price=birdProgression.TrainingCost(bird);
             var button=ProgressionButton(birdProgressionBody,can?"TRAIN · "+price+" ✦":bird.level>=5?"FULLY TRAINED":"VIEW CORE",new Vector2(0,-445),new Vector2(820,152),()=>{if(can)CommitBirdProgression(()=>birdProgression.Train(skin.Id,revision,OwnBirdId));else OpenCoreProgression();});
             button.interactable=can?crystals>=price:IsSkinOwned(skin)&&bird.level<5;
@@ -266,9 +286,9 @@ namespace SkyPulse.Mobile
             {
                 var skin=BredSkin(preview);
                 ProgressionStudio(new Vector2(0,270),new Vector2(820,660),new[]{ProgressionPortrait(FindBird(firstId),new Vector2(-210,175),new Vector2(250,140)),ProgressionPortrait(FindBird(secondId),new Vector2(210,175),new Vector2(250,140)),ProgressionPortrait(skin,new Vector2(0,-110),new Vector2(375,200))},true);
-                ProgressionText(birdProgressionBody,"OFFSPRING   /   GENERATION "+preview.generation,-59,23,50,Hex("#c6d6ff"));
+                ProgressionText(birdProgressionBody,"NEW BIRD   /   GENERATION "+preview.generation,-59,23,50,Hex("#c6d6ff"));
                 InheritedTrait(preview,true,-210);InheritedTrait(preview,false,210);
-                ProgressionText(birdProgressionBody,"Combine reward traits for your style of play.\n"+(birdProgression.Data.core<3?"Core 3 unlocks stronger inherited grades.":"Level 3+ parents can pass stronger grades."),-297,26,88,Hex("#b8cbd7"));
+                ProgressionText(birdProgressionBody,"Unlock this offspring in your Hangar. Both parents stay.\n"+(birdProgression.Data.core<3?"Core 3 unlocks stronger inherited grades.":"Level 3+ parents can pass stronger grades."),-297,26,88,Hex("#c4dce8"));
             }
             else
             {

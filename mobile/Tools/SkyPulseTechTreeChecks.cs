@@ -119,18 +119,19 @@ public static class SkyPulseTechTreeChecks
         var camera=(Camera)Get(game,"flightCamera");var canvas=((GameObject)Get(game,"uiRoot")).GetComponent<Canvas>();canvas.renderMode=RenderMode.ScreenSpaceCamera;canvas.worldCamera=camera;canvas.planeDistance=1;
         string folder=Path.Combine(Environment.GetEnvironmentVariable("SKYPULSE_QA_OUTPUT"),"holographic-tree");Directory.CreateDirectory(folder);
         var rt=RenderTexture.GetTemporary(750,1334,24);camera.targetTexture=rt;
-        for(int frame=0;frame<120;frame++)
+        tree.enabled=false;
+        for(int frame=0;frame<240;frame++)
         {
-            // Show the live projector, direct two-axis exploration and non-blocking return.
-            if(frame<30)content.anchoredPosition=Vector2.zero;
+            // Actual 30 FPS Editor rendering: follow a connected limb, hold its
+            // readable levels, then use the same interruptible Core control.
+            if(frame<45)content.anchoredPosition=Vector2.zero;
             if(frame==8)tree.Press(new Vector2(0,-250));
-            if(frame>=30&&frame<90){float t=(frame-30)/59f;content.anchoredPosition=new Vector2(Mathf.Sin(t*Mathf.PI*2)*640,Mathf.SmoothStep(0,2150,t));}
-            if(frame==90)coreControl=((RectTransform)Get(game,"techCoreControl"));
-            if(frame==90)coreControl.GetComponent<Button>().onClick.Invoke();
-            tree.Tick(1f/10);Canvas.ForceUpdateCanvases();tree.Render();camera.Render();
+            if(frame>=45&&frame<120){float t=Mathf.SmoothStep(0,1,(frame-45)/74f);content.anchoredPosition=new Vector2(520,560)*t;}
+            if(frame==210)coreControl.GetComponent<Button>().onClick.Invoke();
+            tree.Tick(1f/30);Canvas.ForceUpdateCanvases();tree.Render();camera.Render();
             RenderTexture.active=rt;var image=new Texture2D(750,1334,TextureFormat.RGB24,false);image.ReadPixels(new Rect(0,0,750,1334),0,0);image.Apply();File.WriteAllBytes(Path.Combine(folder,frame.ToString("000")+".png"),image.EncodeToPNG());UnityEngine.Object.Destroy(image);RenderTexture.active=null;
             yield return null;
         }
-        camera.targetTexture=null;RenderTexture.ReleaseTemporary(rt);levels.Clear();foreach(var pair in saved)levels[pair.Key]=pair.Value;Set(game,"crystals",balance);Call(game,"SaveProgress");Call(game,"ResetToMenu");Debug.Log("SKYPULSE_TECH_TREE_PASS");
+        tree.enabled=true;camera.targetTexture=null;RenderTexture.ReleaseTemporary(rt);levels.Clear();foreach(var pair in saved)levels[pair.Key]=pair.Value;Set(game,"crystals",balance);Call(game,"SaveProgress");Call(game,"ResetToMenu");Debug.Log("SKYPULSE_TECH_TREE_PASS");
     }
 }
