@@ -1,0 +1,45 @@
+{
+  "candidate": "SkyPulse 1.0.0 (18)",
+  "compiledSourceCommit": "8ddea0f4c07b16968772264dac6e4dc362ba3e8f",
+  "branch": "main",
+  "localIosExport": {
+    "status": "SKYPULSE_IOS_EXPORT_PASS",
+    "path": "/private/tmp/skypulse-18-player-experience-20261022/iOS-final",
+    "sourceManifestMatchesWorkingTree": true,
+    "sourceEntries": 429,
+    "sourceCommit": "8ddea0f4c07b16968772264dac6e4dc362ba3e8f",
+    "supersedesLocalExport": "/private/tmp/skypulse-18-player-experience-20261022/iOS"
+  },
+  "archive": {
+    "status": "Not archived for build 18"
+  },
+  "testFlight": {
+    "uploaded": false,
+    "latestUploadedBuild": "17",
+    "latestKnownStatus": "Testing in SkyPulse Internal"
+  },
+  "publicReviewSubmitted": false,
+  "appStoreConnectCopy": "Current candidate copy is prepared locally; no website change or review submission in this task",
+  "physicalDeviceGameplay": "Pending for build 18",
+  "newExternalAssets": 0,
+  "economyAndSaveCompatibility": "No prices, rewards, budgets, puzzle solutions, controls, gate dimensions/spacing, identity or save keys changed. Presentation counters explain existing payouts; planning uses a separate reused session.",
+  "networkPurpose": "Each existing saved vault medal restores one named system and illuminates a Home beacon; no new currency or unlock gate.",
+  "artworkLedger": "mobile/Release/IdentityRights20261013/ARTWORK_LEDGER.json",
+  "rightsAndSimilarity": "No new external artwork/model/font/audio. No exclusive-rights or private-comparator certification.",
+  "preview": {
+    "file": "signal-planning-preview.mp4",
+    "seconds": 9,
+    "decodedFrames": 270,
+    "width": 750,
+    "height": 1334,
+    "fps": 30,
+    "physicalDeviceFootage": false,
+    "sha256": "ffa8d105d94ddbc1295b8cd558f96754073c72b695da36ad3665d9620a9496f6"
+  },
+  "evidenceSha256": {
+    "unity-ios-export-18-final.log": "3794031311da212a205b20429f5a2ce83bfaa16e9d241399d3c42b19f4cd8131",
+    "SOURCE_MANIFEST.json": "295b4fdb6eb1269e7b3c4aced48b325a21221d2bec04005bcc614c4cd4ad9082",
+    "BUILD_INFO.json": "2d9acac0552ecf13612c55f1561609518aff1db22268c79f0e388d0503f04c92"
+  },
+  "changedFiles": "CHANGED_FILES.txt"
+}

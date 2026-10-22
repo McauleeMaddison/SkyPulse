@@ -1,0 +1,5 @@
+SkyPulse Arcade 1.0.0 (18) — preparation only, public review held.
+
+This candidate removes dark Home support slabs, unifies satin controls, improves world-lit pipe/bird materials and makes all Tech Tree levels explicit. In Blackout, restore eight city network systems. Normal taps rotate immediately. PLAN allows non-spending previews; dashed blue paths show the next rotation, core state and exact trace cost. Confirm with ROTATE or choose LIVE VIEW. Completions still advance immediately and save once. Endless results separately show collected crystals, Tech bonuses and bird-trait rewards without changing the economy.
+
+No sign-in or purchases are needed. Existing saves, game identities, flight handling, gate spacing, Relay auto-unlock and puzzle budgets/solutions are retained. Physical testing of this candidate remains required. The owner has instructed that public submission remain on hold pending Apple’s clarification of its unidentified similarity concern. Do not submit automatically.

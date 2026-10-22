@@ -1,4 +1,16 @@
-## Current TestFlight candidate — 21 October 2026
+## Current local candidate — 22 October 2026
+
+Build 18 refines Homes, world-lit pipe/bird materials, bird-reward reporting, minimal Tech Tree level labels and Signal Heist optics/controls. Optional Plan evaluates a real rotation without spending, shows its beam/cost and retains immediate normal taps and puzzle progression. Existing medals now represent eight restored network systems; prices, rewards, puzzle budgets/solutions, save keys and tested flight handling remain unchanged.
+
+Final-source scoped Unity checks and the exact-commit iOS IL2CPP export passed. Physical gameplay/performance are pending. Build 18 is not signed/uploaded; build 17 remains Testing in SkyPulse Internal. See the [current guide and Unity previews](PlayerExperience20261022/README.md) and [validation record](PlayerExperience20261022/QA_RECORD.json).
+
+**Public App Review remains on hold.** Candidate copy is prepared locally. App Store Connect was not changed during this update; its earlier mixed draft, historical media and build selection are not submission-ready for build 18. Apple's unidentified similarity comparison remains unresolved. No message or submission was sent.
+
+The following sections are historical evidence.
+
+---
+
+## Previous TestFlight delivery — 21 October 2026
 
 Build 17 contains the new eight-vault Signal Heist, three-mode depth presentation and one connected holographic Tech Tree. The tree supports bounded dragging on both axes with mouse or one finger, has no visible scrollbar or wheel navigation, keeps its curved spectral branches aligned during panning, and preserves base upgrade prices, prerequisites, saves and both viewing coordinates after purchase. Blackout's old tile-walking implementation and the disconnected upgrade-card renderer are removed. The current finish keeps the expansive asymmetric map, adds thicker shaded glass conductors, calmer optical motion, compact level labels, a full-bleed navy atmosphere and a refined upgrade inspector. All 37 core/family/level touch targets are disjoint; the fixed-header core-return control remains interruptible. Five Core levels now unlock higher bird training and lineage limits. Fifteen founders have distinct Endless reward traits; trained/bred birds retain their inherited stats, appearance source and parent links, with fixed-price previews and debit recovery. Parents are retained. Flight controls, score and collision remain shared. The progression UI now has a refined rank track, clear current/next effects, animated registered birds over 3D pedestals and unobscured parent-to-offspring signals. Decoration keeps touch targets stationary and respects Reduced Motion. The previous visual pass changed no rules. The subsequent owner-requested Core update adds 5/10/15/20% discounts for Tech Tree, training and breeding, with exact-price quotes, while retaining base catalogues, inheritance, saves and flight rules. No external raster/model/font/audio asset was added.
 

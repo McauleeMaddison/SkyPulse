@@ -1,0 +1,27 @@
+mobile/Assets/Resources/SkyPulse/Shaders/HeistOptics.shader
+mobile/Assets/Resources/SkyPulse/Shaders/HolographicTree.shader
+mobile/Assets/Resources/SkyPulse/Shaders/MechanicalBird.shader
+mobile/Assets/Scripts/SkyPulseBlackoutCampaign.cs
+mobile/Assets/Scripts/SkyPulseCircuitGraphic.cs
+mobile/Assets/Scripts/SkyPulseDepthStage.cs
+mobile/Assets/Scripts/SkyPulseHeistBoard.cs
+mobile/Assets/Scripts/SkyPulseNativeGame.BirdProgression.cs
+mobile/Assets/Scripts/SkyPulseNativeGame.Blackout.cs
+mobile/Assets/Scripts/SkyPulseNativeGame.Cinematic.cs
+mobile/Assets/Scripts/SkyPulseNativeGame.Controls.cs
+mobile/Assets/Scripts/SkyPulseNativeGame.Depth.cs
+mobile/Assets/Scripts/SkyPulseNativeGame.Presentation.cs
+mobile/Assets/Scripts/SkyPulseNativeGame.TechTree.cs
+mobile/Assets/Scripts/SkyPulseNativeGame.cs
+mobile/Assets/Scripts/SkyPulsePrism.cs
+mobile/Assets/Scripts/SkyPulseProgressionSurface.cs
+mobile/Assets/Scripts/SkyPulseTechTreeView.cs
+mobile/ProjectSettings/ProjectSettings.asset
+mobile/Tools/SkyPulseBirdProgressionChecks.cs
+mobile/Tools/SkyPulseBlackoutChecks.cs
+mobile/Tools/SkyPulseDepthChecks.cs
+mobile/Tools/SkyPulsePlayerExperienceChecks.cs
+mobile/Tools/SkyPulseTechTreeChecks.cs
+mobile/Tools/run_modes_qa.py
+
+Additional release records/previews: mobile/Release/PlayerExperience20261022/, mobile/Release/CURRENT_RELEASE.json, mobile/Release/REVIEW_STATUS.md, README.md
