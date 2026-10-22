@@ -1,6 +1,8 @@
 # SkyPulse Arcade
 
-> **Current local candidate: build 18.** Open 3D Homes replace dark support slabs, pipe and bird lighting share the world palette, and the reward report separates bird traits from Tech bonuses. All 27 Tech Tree levels have clear Installed/Next/Locked labels with minimal glass treatment. Signal Heist has refined optical hardware, quieter controls, eight saved city-system objectives and optional non-spending beam/cost planning. [Current release guide and actual Unity previews](mobile/Release/PlayerExperience20261022/README.md). Final-source scoped Unity checks and the exact-commit iOS IL2CPP export passed. Physical testing remains pending. Build 17 remains available in internal TestFlight; build 18 is not uploaded.
+> **Current local candidate: build 18.** Open 3D Homes replace dark support slabs; pipe and bird lighting share the world palette. Tech Tree levels have clear Installed/Next/Locked labels, Core/training/breeding have visible progression benefits, and Signal Heist has eight saved restoration objectives with non-spending beam/cost planning. The latest pass cleans up pipe shoulder joins and replaces the rectangular exhaust with a soft tapered flight trail. [Current release guide and moving Unity preview](mobile/Release/HolographicPolish20261022/README.md). Final-source scoped Unity checks and the exact-commit iOS IL2CPP export passed. Physical testing remains pending. Build 17 remains available in internal TestFlight; build 18 is not uploaded.
+
+For manual work in Unity and VS Code, start with the [handoff guide and checklist prompt](mobile/MANUAL_HANDOFF.md) and [editing map](mobile/EDITING_GUIDE.md).
 
 > **App Review hold:** public submission remains on hold pending Apple's clarification, current device/media validation and renewed owner authorization. Candidate copy is prepared locally; the public draft is not a matching build 18 submission. [Review status](mobile/Release/REVIEW_STATUS.md).
 
