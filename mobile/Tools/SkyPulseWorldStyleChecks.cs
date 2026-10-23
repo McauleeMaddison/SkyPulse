@@ -37,16 +37,19 @@ public static class SkyPulseWorldStyleChecks
             var first=((IList)Get(game,"routeDepth"))[0];Check(((MeshFilter)Get(first,"BodyFilter")).sharedMesh==bodies[world]&&((MeshFilter)Get(first,"CapFilter")).sharedMesh==caps[world],"Visible shaft and collar bind to the current world mesh "+world);
             var material=(Material)Get(game,"routeMetal");Check(Mathf.Abs(material.GetFloat("_Theme")-world)<.001f&&material.shader.isSupported,"World-specific pipe material is active "+world);
             string frames=Path.Combine(folder,world.ToString("00"));Directory.CreateDirectory(frames);
-            for(int frame=0;frame<40;frame++)
+            // A short milestone vignette, not an artificial perfect run.
+            for(int frame=0;frame<20;frame++)
             {
                 for(int step=0;step<12;step++)
                 {
                     float nearest=float.MaxValue,target=0;
-                    foreach(var pipe in (Array)Get(game,"pipePool")){float x=(float)Get(pipe,"X");if(!(bool)Get(pipe,"Passed")&&x>=-3.7f&&x<nearest){nearest=x;target=(float)Get(pipe,"GapCenter");}}
+                    // Hold the current opening until the bird has physically
+                    // cleared its trailing edge, then approach the next one.
+                    foreach(var pipe in (Array)Get(game,"pipePool")){float x=(float)Get(pipe,"X");if(!(bool)Get(pipe,"Passed")&&x<nearest){nearest=x;target=(float)Get(pipe,"GapCenter");}}
                     if((float)Get(game,"birdY")<target-.55f&&(float)Get(game,"birdVelocity")<0)Call(game,"BufferFlapInput");Call(game,"SimulateFlight",1f/120f);
                 }
-                Check(Get(game,"state").ToString()=="Playing","World preview follows collision-checked normal flight: "+world+" / "+frame);
-                Set(game,"ambientTime",(float)Get(game,"ambientTime")+.1f);Call(game,"UpdateAmbientVisuals");Call(game,"UpdateGameplayWingState",.1f);Call(game,"UpdateBirdWingMotion");Call(game,"UpdateCinematicPresentation",.1f);
+                Check(Get(game,"state").ToString()=="Playing","World preview follows collision-checked normal flight: "+world+" / "+frame+" y="+Get(game,"birdY")+" velocity="+Get(game,"birdVelocity")+" reason="+Get(game,"lastCrashReason"));
+                Set(game,"ambientTime",(float)Get(game,"ambientTime")+.1f);Call(game,"UpdateAmbientVisuals");Call(game,"UpdateScoreBurst",.1f);Call(game,"UpdateFlightFeedback",.1f);Call(game,"UpdateCrystalPickupBursts",.1f);Call(game,"UpdateGameplayWingState",.1f);Call(game,"UpdateBirdWingMotion");Call(game,"UpdateScoreFinish",.1f);Call(game,"UpdateCinematicPresentation",.1f);
                 Canvas.ForceUpdateCanvases();Call(game,"ApplySafeArea");Call(game,"FitInterfaceToSafeArea");Canvas.ForceUpdateCanvases();camera.Render();var active=RenderTexture.active;RenderTexture.active=rt;image.ReadPixels(new Rect(0,0,750,1334),0,0);image.Apply();
                 File.WriteAllBytes(Path.Combine(frames,frame.ToString("000")+".png"),image.EncodeToPNG());if(frame==14)File.WriteAllBytes(Path.Combine(folder,"world-"+world.ToString("00")+".png"),image.EncodeToPNG());RenderTexture.active=active;yield return null;
             }

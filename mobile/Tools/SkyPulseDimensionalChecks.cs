@@ -57,7 +57,7 @@ public static class SkyPulseDimensionalChecks
         if(System.Environment.GetEnvironmentVariable("SKYPULSE_WORLD_PIPE_PREVIEW")=="1")yield return SkyPulseWorldStyleChecks.Capture(game);
         Debug.Log("SKYPULSE_DIMENSIONAL_PASS");EditorApplication.Exit(0);
     }
-    static void PlayerGoals(SkyPulseNativeGame game)
+    public static void PlayerGoals(SkyPulseNativeGame game)
     {
         Call(game,"SetHomeProtocol",SkyPulseMode.EndlessRoute);Call(game,"StartFlight");
         var label=(Text)Get(game,"routeGoalText");

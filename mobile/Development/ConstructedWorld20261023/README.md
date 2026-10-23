@@ -1,5 +1,10 @@
 # Constructed Endless world and three Home identities — 23 October 2026
 
+**Historical preview, superseded.** The colourful twelve-world candidate, with
+individual architecture and matching pipes, is in
+[WorldIdentity20261023](../WorldIdentity20261023/README.md). This folder preserves
+the earlier visual experiment; use the new gallery when reviewing the game.
+
 These are actual Unity renders of the local development revision, using isolated
 QA saves. They are not concept images or physical iPhone footage.
 

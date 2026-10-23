@@ -81,7 +81,7 @@ public static class SkyPulseFlightPolishChecks
                 if(Get(game,"state").ToString()!="Playing")throw new Exception("QA pilot crashed at frame "+frame+": "+Get(game,"lastCrashReason"));
                 Set(game,"ambientTime",(float)Get(game,"ambientTime")+dt);Call(game,"UpdateAmbientVisuals");
                 Call(game,"UpdateScoreBurst",dt);Call(game,"UpdateFlightFeedback",dt);Call(game,"UpdateCrystalPickupBursts",dt);
-                Call(game,"UpdateGameplayWingState",dt);Call(game,"UpdateBirdWingMotion");Call(game,"UpdateFlightCoach");Call(game,"UpdateCinematicPresentation",dt);
+                Call(game,"UpdateGameplayWingState",dt);Call(game,"UpdateBirdWingMotion");Call(game,"UpdateFlightCoach");Call(game,"UpdateScoreFinish",dt);Call(game,"UpdateCinematicPresentation",dt);
                 poses.Add(bird.sprite);y=(float)Get(game,"birdY");lo=Mathf.Min(lo,y);hi=Mathf.Max(hi,y);
                 camera.Render();var active=RenderTexture.active;RenderTexture.active=rt;image.ReadPixels(new Rect(0,0,rt.width,rt.height),0,0);image.Apply();
                 File.WriteAllBytes(Path.Combine(folder,frame.ToString("000")+".png"),image.EncodeToPNG());RenderTexture.active=active;

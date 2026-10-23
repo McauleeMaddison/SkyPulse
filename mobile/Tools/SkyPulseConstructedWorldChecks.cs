@@ -21,6 +21,15 @@ public static class SkyPulseConstructedWorldChecks
     {
         var game=UnityEngine.Object.FindAnyObjectByType<SkyPulseNativeGame>();if(game==null)game=new GameObject("QA game").AddComponent<SkyPulseNativeGame>();
         game.enabled=false;typeof(SkyPulseNativeGame).GetField("hapticsEnabled",BindingFlags.Instance|BindingFlags.NonPublic).SetValue(game,false);
+        if(Environment.GetEnvironmentVariable("SKYPULSE_FLIGHT_ONLY")=="1")
+        {
+            yield return SkyPulseFlightPolishChecks.Capture(game);EditorApplication.Exit(0);yield break;
+        }
+        if(Environment.GetEnvironmentVariable("SKYPULSE_STYLES_ONLY")=="1")
+        {
+            SkyPulseDimensionalChecks.PlayerGoals(game);yield return SkyPulseWorldStyleChecks.Capture(game);
+            Debug.Log("SKYPULSE_WORLD_STYLE_PREVIEW_PASS");EditorApplication.Exit(0);yield break;
+        }
         CompositeCheck(game);
         if(Environment.GetEnvironmentVariable("SKYPULSE_WORLD_QA_ONLY")=="1")yield return SkyPulseDimensionalChecks.Environment(game);
         yield return SkyPulsePresentationChecks.Captures(game);
