@@ -32,3 +32,6 @@ mobile/*.sln
 
 # Local Xcode build archives
 artifacts/
+
+# Temporary sidecars created beside encoded previews by macOS AVFoundation.
+*.mp4.sb-*
