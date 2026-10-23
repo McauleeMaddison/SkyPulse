@@ -49,7 +49,7 @@ Shader "SkyPulse/Flight Architecture"
                 float softbox=pow(saturate(1-abs(reflection.x*.72+reflection.y*.32-.19)*1.75),22);
                 float spec=pow(saturate(dot(n,halfway)),lerp(52,126,glass));
                 float3 colour=i.color.rgb*(.24+ndl*.80)*lerp(float3(.92,.98,1.05),_Tint.rgb,.06);
-                colour+=ambient*(.19+glass*.56+fresnel*.46)+float3(.87,.91,1)*(spec*.46+softbox*(.12+glass*.34));
+                colour+=ambient*(.19+glass*.56+fresnel*.46)+float3(.87,.91,1)*(spec*.46+softbox*(.12+glass*.34))*lerp(1,.15,stone);
                 // Facade bays are glazing with dark reveals and a few occupied
                 // warm interiors. They are not continuous glowing floor discs.
                 float2 grid=float2((i.local.x+i.local.z*.61)*9.5,i.local.y*4.1);
@@ -61,6 +61,12 @@ Shader "SkyPulse/Flight Architecture"
                 float surface=.94+.06*hash21(floor(i.local.xz*28));
                 colour*=lerp(1,surface,stone);
                 colour+=stone*i.color.rgb*(.17+.14*saturate(n.y))+.035*stone*_Tint.rgb;
+                float masonry=step(.10,i.color.a)*(1-step(.145,i.color.a));
+                float2 courses=float2((i.local.x+i.local.z*.73)*3.2,i.local.y*10.5);
+                courses.x+=fmod(floor(courses.y),2)*.5;
+                float mortar=max(facadeLine(courses.y,.012),facadeLine(courses.x,.017));
+                colour*=1-masonry*mortar*.18;
+                colour*=lerp(1,.95+hash21(floor(courses))*.10,masonry);
                 float floorShade=lerp(.72,1,smoothstep(-.10,.50,i.local.y));colour*=floorShade;
                 float pulse=.88+.08*sin(_Clock*.46-i.local.y*1.7+_Design);
                 colour=lerp(colour,i.color.rgb*pulse*.88+ambient*.05,light);

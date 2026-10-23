@@ -182,7 +182,7 @@ namespace SkyPulse.Mobile
         }
         static Vector3 TowerPoint(float a,float t,float width,float depth,float height,float lean,int form)
         {
-            float c=Mathf.Cos(a),s=Mathf.Sin(a),exponent=form==4?1:form==3?.58f:.45f,r=Shape(t,form);
+            float c=Mathf.Cos(a),s=Mathf.Sin(a),exponent=form==4?1:form==3?.58f:form==1?.65f:.24f,r=Shape(t,form);
             return new Vector3(Mathf.Sign(c)*Mathf.Pow(Mathf.Abs(c),exponent)*width*.5f*r+lean*t*t,t*height,Mathf.Sign(s)*Mathf.Pow(Mathf.Abs(s),exponent)*depth*.5f*r);
         }
         static Vector3 TowerNormal(float a,float t,float width,float depth,float height,float lean,int form)
@@ -284,8 +284,8 @@ namespace SkyPulse.Mobile
                 float a=side*Mathf.PI*2/sides,c=(side+1f)*Mathf.PI*2/sides;
                 float t=row/(float)rows,u=(row+1f)/rows;
                 var p=Rock(a,t,rx,rz,depth,world);var q=Rock(c,t,rx,rz,depth,world);var r=Rock(c,u,rx,rz,depth,world);var s=Rock(a,u,rx,rz,depth,world);
-                Color stone=world==1||world==5||world==11?new Color(.30f,.42f,.50f,.12f):world==10?new Color(.35f,.23f,.17f,.12f):world==6?new Color(.17f,.23f,.19f,.12f):new Color(.24f,.18f,.24f,.12f);
-                stone*=.76f+Hash(world*97+side*17+row*13)*.32f;stone.a=.12f;b.Quad(p,q,r,s,stone);
+                Color stone=world==1||world==5||world==11?new Color(.30f,.42f,.50f,.18f):world==10?new Color(.35f,.23f,.17f,.18f):world==6?new Color(.17f,.23f,.19f,.18f):new Color(.24f,.18f,.24f,.18f);
+                b.SmoothQuad(p,q,r,s,RockNormal(a,(t+u)*.5f,rx,rz,depth,world),RockNormal(c,(t+u)*.5f,rx,rz,depth,world),stone);
                 if(row==0)b.Face(new Vector3(0,-.02f,0),q,p,new Color(.18f,.22f,.24f,0));
                 if(row==rows-1)b.Face(new Vector3(.22f,-depth,0),s,r,stone);
             }
@@ -295,6 +295,12 @@ namespace SkyPulse.Mobile
             float radius=(1-.58f*Mathf.Pow(t,1.18f))*(1+.10f*Mathf.Sin(a*5+world)+.055f*Mathf.Sin(a*11+t*4));
             return new Vector3(Mathf.Cos(a)*rx*radius+.22f*t, -.04f-depth*t+.14f*Mathf.Sin(a*7+world)*t,Mathf.Sin(a)*rz*radius);
         }
+        static Vector3 RockNormal(float a,float t,float rx,float rz,float depth,int world)
+        {
+            var around=Rock(a+.01f,t,rx,rz,depth,world)-Rock(a-.01f,t,rx,rz,depth,world);
+            var down=Rock(a,t+.01f,rx,rz,depth,world)-Rock(a,t-.01f,rx,rz,depth,world);
+            return Vector3.Cross(around.normalized,down.normalized).normalized;
+        }
         static void Garden(SkyPulseMeshBuilder b,Vector3 at,float span,int world)
         {
             RoundedSlab(b,at,span*2,.30f,.08f,new Color(.16f,.24f,.18f,0));
@@ -302,8 +308,8 @@ namespace SkyPulse.Mobile
             {
                 var p=at+new Vector3((i-2)*span*.40f,.10f,Mathf.Sin(i*2)*.08f);
                 Beam(b,p,p+Vector3.up*.20f,.024f,.026f,Frame);
-                Dome(b,p+Vector3.up*.21f,.15f,.24f,.14f,new Color(.12f,.29f,.18f,.12f),12,5);
-                Dome(b,p+Vector3.up*.23f,.11f,.18f,.13f,new Color(.18f,.37f,.23f,.12f),12,5);
+                Dome(b,p+Vector3.up*.21f,.15f,.24f,.14f,new Color(.12f,.29f,.18f,.20f),12,5);
+                Dome(b,p+Vector3.up*.23f,.11f,.18f,.13f,new Color(.18f,.37f,.23f,.20f),12,5);
             }
         }
         static void Skyway(SkyPulseMeshBuilder b,Vector3 from,Vector3 to,float width,int world)
