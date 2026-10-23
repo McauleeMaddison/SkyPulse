@@ -46,6 +46,7 @@ namespace SkyPulse.Mobile
                 var image=button.GetComponent<Image>();
                 foreach(var layer in button.GetComponentsInChildren<Image>())if(layer!=image)layer.enabled=false;
                 var accent=button.GetComponentInChildren<Text>().text=="RETRY"?Hex("#65e6ff"):Hex("#85b8d4");
+                button.GetComponentInChildren<Text>().color=Hex("#effcff");
                 button.targetGraphic=ApplyScoreGlass((RectTransform)button.transform,accent);
                 // The original transparent Image remains the button's hit area;
                 // the finish and text are decorative and never intercept taps.

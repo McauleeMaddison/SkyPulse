@@ -66,6 +66,7 @@ public static class SkyPulseScoreChecks
                 }
                 foreach(var button in root.GetComponentsInChildren<Button>())
                 {
+                    Check(button.GetComponentInChildren<Text>().color.maxColorComponent>=.7f,"Action lettering stays light over dark glass");
                     var rect=(RectTransform)button.transform;
                     var point=RectTransformUtility.WorldToScreenPoint(camera,rect.TransformPoint(rect.rect.center));
                     var hits=new List<RaycastResult>();EventSystem.current.RaycastAll(new PointerEventData(EventSystem.current){position=point},hits);
