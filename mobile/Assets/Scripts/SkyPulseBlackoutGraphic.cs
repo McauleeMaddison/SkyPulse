@@ -36,8 +36,8 @@ namespace SkyPulse.Mobile
         static Color A(Color c,float a){c.a=a;return c;}
         void Backdrop(VertexHelper vh,Rect r)
         {
-            Gradient(vh,r,new Color(.002f,.009f,.023f,.97f),new Color(.012f,.028f,.046f,.82f));
-            Glow(vh,new Vector2(0,130),r.width*.70f,A(Mint,.085f));
+            Gradient(vh,r,new Color(.002f,.014f,.025f,.80f),new Color(.012f,.046f,.052f,.66f));
+            Glow(vh,new Vector2(0,130),r.width*.70f,A(Mint,.10f));
             Glow(vh,new Vector2(-r.width*.45f,650),r.width*.40f,A(Ice,.045f));
             Glow(vh,new Vector2(r.width*.45f,-540),r.width*.48f,A(Mint,.055f));
             for(int i=-6;i<=6;i++)

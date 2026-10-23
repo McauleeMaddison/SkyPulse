@@ -68,7 +68,7 @@ namespace SkyPulse.Mobile
         {
             if(scene==null||MotionPaused)return;if(!ReducedMotion)clock+=Mathf.Max(0,dt);
             endless.gameObject.SetActive(Mode==SkyPulseMode.EndlessRoute);relay.gameObject.SetActive(Mode==SkyPulseMode.PulseRelay);blackout.gameObject.SetActive(Mode==SkyPulseMode.BlackoutProtocol);
-            float t=ReducedMotion?0:clock;var parallax=Quaternion.Euler(Mathf.Sin(t*.21f)*1.2f,Mathf.Sin(t*.18f)*2,0);endless.localRotation=relay.localRotation=blackout.localRotation=parallax;
+            float t=ReducedMotion?0:clock;glass.SetFloat("_Clock",t);glass.SetFloat("_Hologram",Mode==SkyPulseMode.BlackoutProtocol?1:0);var parallax=Quaternion.Euler(Mathf.Sin(t*.21f)*1.2f,Mathf.Sin(t*.18f)*2,0);endless.localRotation=relay.localRotation=blackout.localRotation=parallax;
             // Preserve the offscreen scene's position while giving every visible
             // face a small, smooth change in reflection and geometric parallax.
             core.localRotation=Quaternion.Euler(12,25+t*13,4);core.localPosition=new Vector3(0,.12f+Mathf.Sin(t*1.1f)*.08f,-.1f);

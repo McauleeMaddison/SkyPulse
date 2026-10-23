@@ -11,6 +11,8 @@ Shader "SkyPulse/Heist Optical Materials"
         _LightTint("World key colour",Color)=(.78,.9,1,1)
         _PanelMode("Machined column details",Float)=0
         _ContactShadow("Soft contact pool",Float)=0
+        _Hologram("Projected optical volume",Float)=0
+        _Clock("Projection clock",Float)=0
     }
     SubShader
     {
@@ -25,7 +27,7 @@ Shader "SkyPulse/Heist Optical Materials"
             #include "UnityCG.cginc"
             struct app {float4 vertex:POSITION;float3 normal:NORMAL;fixed4 color:COLOR;UNITY_VERTEX_INPUT_INSTANCE_ID};
             struct vary {float4 pos:SV_POSITION;float3 normal:TEXCOORD0;float3 world:TEXCOORD1;float3 local:TEXCOORD2;fixed4 color:COLOR;};
-            fixed4 _BaseColor,_GlowColor,_LightTint;float _Energy,_Glass,_Roughness,_PanelMode,_ContactShadow;
+            fixed4 _BaseColor,_GlowColor,_LightTint;float _Energy,_Glass,_Roughness,_PanelMode,_ContactShadow,_Hologram,_Clock;
             vary vert(app v){UNITY_SETUP_INSTANCE_ID(v);vary o;o.pos=UnityObjectToClipPos(v.vertex);o.normal=UnityObjectToWorldNormal(v.normal);o.world=mul(unity_ObjectToWorld,v.vertex).xyz;o.local=v.vertex.xyz;o.color=v.color;return o;}
             fixed4 frag(vary i):SV_Target
             {
@@ -44,7 +46,15 @@ Shader "SkyPulse/Heist Optical Materials"
                 metal=metal*(1-_PanelMode*seam*.12)+_GlowColor.rgb*rail*_PanelMode*.26;
                 float3 glass=_BaseColor.rgb*i.color.rgb*(.52+.4*diffuse)+_LightTint.rgb*(spec*.65+strip*.35+rim*.30);
                 float led=i.color.a;float3 tint=lerp(metal,glass,_Glass)+_GlowColor.rgb*_Energy*((.22+led*.68)+_Glass*.28);
-                return fixed4(tint,lerp(_BaseColor.a,saturate(_BaseColor.a+rim*.3+spec*.18),_Glass));
+                float alpha=lerp(_BaseColor.a,saturate(_BaseColor.a+rim*.3+spec*.18),_Glass);
+                // A translucent projection, with a lit silhouette and moving
+                // interference bands. No opaque image or black backing plane.
+                float scan=pow(saturate(cos(i.local.y*38-_Clock*1.6)),18);
+                float sweep=pow(saturate(1-abs(frac(i.local.y*.18-_Clock*.045)-.5)*12),4);
+                float3 hologram=_BaseColor.rgb*.28+_GlowColor.rgb*(.16+rim*.85+scan*.09+sweep*.16+_Energy*.6)+_LightTint.rgb*spec*.45;
+                tint=lerp(tint,hologram,_Hologram);
+                alpha=lerp(alpha,saturate(_BaseColor.a+rim*.4+scan*.05+sweep*.10),_Hologram);
+                return fixed4(tint,alpha);
             }
             ENDCG
         }

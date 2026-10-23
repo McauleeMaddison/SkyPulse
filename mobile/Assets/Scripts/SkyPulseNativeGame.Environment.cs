@@ -5,6 +5,7 @@ namespace SkyPulse.Mobile
     public sealed partial class SkyPulseNativeGame
     {
         SkyPulseFlightEnvironment flightEnvironment;
+        SkyPulseRelayEnvironment relayHomeEnvironment;
         float sceneryTravel,sceneryAnchorX,sceneryEntry,sceneryHomeTravel;
         int scenerySequence=int.MinValue;
         void ResetFlightEnvironment()
@@ -14,6 +15,18 @@ namespace SkyPulse.Mobile
         }
         void UpdateFlightEnvironment(float dt)
         {
+            bool relayHome=homeScreen!=null&&homeScreen.activeInHierarchy&&homeProtocol==SkyPulseMode.PulseRelay;
+            // The Canvas underlay must not cover the live perspective station.
+            if(homeProtocolBackdrop!=null)homeProtocolBackdrop.enabled=!relayHome;
+            if(relayHome&&relayHomeEnvironment==null)
+            {
+                var station=new GameObject("Home orbital station depth");station.transform.SetParent(transform,false);relayHomeEnvironment=station.AddComponent<SkyPulseRelayEnvironment>();relayHomeEnvironment.Build(GetViewportWidth(),LoadSprite(RelayStationPath).texture);
+            }
+            if(relayHomeEnvironment!=null)
+            {
+                relayHomeEnvironment.gameObject.SetActive(relayHome);
+                if(relayHome){relayHomeEnvironment.SetViewport(GetViewportWidth());relayHomeEnvironment.SetVisual(0,reduceMotionEnabled?0:cinematicClock);}
+            }
             bool home=homeScreen!=null&&homeScreen.activeInHierarchy&&homeProtocol==SkyPulseMode.EndlessRoute;
             bool show=home||activeMode==SkyPulseMode.EndlessRoute&&(state==FlightState.Playing||state==FlightState.Paused||state==FlightState.Impact||state==FlightState.GameOver);
             // The original illustrations remain available to the world guide

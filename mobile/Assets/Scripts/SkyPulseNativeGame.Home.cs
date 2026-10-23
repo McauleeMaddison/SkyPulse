@@ -6,10 +6,20 @@ namespace SkyPulse.Mobile
     public sealed partial class SkyPulseNativeGame
     {
         Text homeIdentity;
+        Material homeGlassMaterial;
+        Material HomeGlassFinish
+        {
+            get
+            {
+                if(homeGlassMaterial==null){homeGlassMaterial=new Material(ScoreGlassFinish){name="Open holographic Home glass"};homeGlassMaterial.SetFloat("_HomeFinish",1);}
+                return homeGlassMaterial;
+            }
+        }
         void ApplyHomeIdentity()
         {
             bool endless=homeProtocol==SkyPulseMode.EndlessRoute,relay=homeProtocol==SkyPulseMode.PulseRelay;
-            Color accent=endless?Hex("#7eeaff"):relay?Hex("#ffd39a"):Hex("#79ffd1");
+            if(homeProtocolBackdrop!=null)homeProtocolBackdrop.enabled=!relay;
+            Color accent=endless?Hex("#ab91ff"):relay?Hex("#50e9ff"):Hex("#4dffd3");
             if(homeIdentity==null)
             {
                 homeIdentity=CreateText(homeScreen.transform,"ENDLESS ROUTE",new Vector2(0,645),new Vector2(930,90),55,accent,TextAnchor.MiddleCenter,FontStyle.Bold);
@@ -31,8 +41,8 @@ namespace SkyPulse.Mobile
             foreach(var face in homeScreen.GetComponentsInChildren<SkyPulseCircuitGraphic>(true))
             {
                 if(face.Surface!=SkyPulseSurface.Panel)continue;
-                face.ProjectedGlass=true;face.SoftGlass=true;face.Ambient=false;face.material=ScoreGlassFinish;face.canvas.additionalShaderChannels|=AdditionalCanvasShaderChannels.TexCoord1;
-                face.color=Color.Lerp(accent,Hex("#8bb0c5"),face.Primary?.10f:.55f);face.SetVerticesDirty();
+                face.ProjectedGlass=true;face.SoftGlass=true;face.Ambient=false;face.material=HomeGlassFinish;face.canvas.additionalShaderChannels|=AdditionalCanvasShaderChannels.TexCoord1;
+                face.color=Color.Lerp(accent,relay?Hex("#e7b76d"):Hex("#72c9ff"),face.Primary?.05f:.22f);face.SetVerticesDirty();
             }
             foreach(var button in homeScreen.GetComponentsInChildren<Button>(true))
             {

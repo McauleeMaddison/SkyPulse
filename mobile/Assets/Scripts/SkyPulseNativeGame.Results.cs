@@ -62,6 +62,7 @@ namespace SkyPulse.Mobile
             if(!reduceMotionEnabled&&state!=FlightState.Paused)scoreFinishClock+=Mathf.Max(0,dt);
             float motion=reduceMotionEnabled?0:1;
             if(scoreGlassMaterial!=null){scoreGlassMaterial.SetFloat("_Clock",scoreFinishClock);scoreGlassMaterial.SetFloat("_Motion",motion);}
+            if(homeGlassMaterial!=null){homeGlassMaterial.SetFloat("_Clock",scoreFinishClock);homeGlassMaterial.SetFloat("_Motion",motion);}
             if(scoreTypographyMaterial!=null){scoreTypographyMaterial.SetFloat("_Clock",scoreFinishClock);scoreTypographyMaterial.SetFloat("_Motion",motion);}
         }
     }

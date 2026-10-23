@@ -5,6 +5,7 @@ Shader "SkyPulse/Holographic Score Glass"
         [PerRendererData] _MainTex("UI texture",2D)="white" {}
         _Clock("Light clock",Float)=0
         _Motion("Motion enabled",Float)=1
+        _HomeFinish("Open Home glass",Float)=0
         _StencilComp("Stencil Comparison",Float)=8
         _Stencil("Stencil ID",Float)=0
         _StencilOp("Stencil Operation",Float)=0
@@ -30,12 +31,12 @@ Shader "SkyPulse/Holographic Score Glass"
             #include "UnityUI.cginc"
             struct app { float4 vertex:POSITION; fixed4 color:COLOR; float2 uv:TEXCOORD0; float4 extent:TEXCOORD1; };
             struct vary { float4 pos:SV_POSITION; fixed4 color:COLOR; float2 uv:TEXCOORD0; float2 extent:TEXCOORD1; float4 local:TEXCOORD2; };
-            float4 _ClipRect;float _Clock,_Motion;
+            float4 _ClipRect;float _Clock,_Motion,_HomeFinish;
             vary vert(app v) { vary o;o.local=v.vertex;o.pos=UnityObjectToClipPos(v.vertex);o.color=v.color;o.uv=v.uv;o.extent=v.extent.xy;return o; }
             fixed4 frag(vary i):SV_Target
             {
                 float2 size=max(i.extent,1),p=(i.uv-.5)*size;
-                float radius=min(28,min(size.x,size.y)*.15);
+                float radius=min(lerp(28,56,_HomeFinish),min(size.x,size.y)*lerp(.15,.32,_HomeFinish));
                 float2 q=abs(p)-(size*.5-radius-1.5);
                 float sd=length(max(q,0))+min(max(q.x,q.y),0)-radius;
                 float aa=max(fwidth(sd),.65),inside=1-smoothstep(-aa,aa,sd);
@@ -46,11 +47,11 @@ Shader "SkyPulse/Holographic Score Glass"
                 // Broad reflected light moves slowly, never across text opacity.
                 float sweep=pow(saturate(1-abs(i.uv.x+i.uv.y*.24-(frac(_Clock*.075)*1.8-.35))*5),4)*_Motion;
                 float3 accent=i.color.rgb;
-                float3 base=lerp(float3(.016,.034,.065),float3(.052,.092,.135),i.uv.y)+accent*(.025+top*.055);
+                float3 base=lerp(float3(.016,.034,.065),float3(.052,.092,.135),i.uv.y)+accent*(.065+top*.10);
                 float3 spectrum=lerp(accent,float3(.72,.83,1),i.uv.x*.65);
-                base+=spectrum*(rim*edgeLight*.72+inset)+float3(.68,.89,1)*(top*.035+sweep*.022);
+                base+=spectrum*(rim*edgeLight*.82+inset)+float3(.68,.89,1)*(top*.035+sweep*.022);
                 base+=spectrum*sweep*rim*.25;
-                fixed4 c=fixed4(base,inside*(.91+rim*.07)*i.color.a);
+                fixed4 c=fixed4(base,inside*(lerp(.91,.72,_HomeFinish)+rim*.07)*i.color.a);
                 #ifdef UNITY_UI_CLIP_RECT
                 c.a*=UnityGet2DClipping(i.local.xy,_ClipRect);
                 #endif

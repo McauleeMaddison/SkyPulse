@@ -97,6 +97,7 @@ namespace SkyPulse.Mobile
         void OnDestroy()
         {
             if(scoreGlassMaterial!=null)Destroy(scoreGlassMaterial);
+            if(homeGlassMaterial!=null)Destroy(homeGlassMaterial);
             if(scoreTypographyMaterial!=null)Destroy(scoreTypographyMaterial);
             if(techBackdropMaterial!=null)Destroy(techBackdropMaterial);
             if(techTypographyMaterial!=null)Destroy(techTypographyMaterial);

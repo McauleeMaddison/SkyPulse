@@ -32,7 +32,7 @@ Shader "SkyPulse/Flight Architecture"
                 clip(_Visibility-threshold-.00001);
                 float3 n=normalize(i.normal),v=unity_OrthoParams.w>.5?float3(0,0,-1):normalize(_WorldSpaceCameraPos.xyz-i.world),key=normalize(float3(-.55,.8,-.9));
                 if(dot(n,v)<0)n=-n;
-                float diffuse=.74+.55*saturate(dot(n,key))+.18*saturate(dot(n,normalize(float3(.8,.2,-.6))));
+                float diffuse=.89+.55*saturate(dot(n,key))+.18*saturate(dot(n,normalize(float3(.8,.2,-.6))));
                 float gloss=smoothstep(.12,.38,i.color.a)*(1-smoothstep(.65,.8,i.color.a));
                 float spec=pow(saturate(dot(n,normalize(key+v))),lerp(52,110,gloss))*.28;
                 float3 reflection=reflect(-v,n);
@@ -41,7 +41,7 @@ Shader "SkyPulse/Flight Architecture"
                 float3 metal=i.color.rgb*diffuse*lerp(float3(.75,.84,.94),_Tint.rgb,.18)+(spec+softbox*gloss*.14)*float3(.68,.83,1)+_Tint.rgb*rim;
                 float2 reflectionUv=saturate(reflection.xy*.34+float2(.5,.36));
                 float3 worldReflection=tex2D(_Environment,reflectionUv).rgb;
-                metal=lerp(metal,worldReflection*.48+metal*.74,.12+gloss*.28);
+                metal=lerp(metal,worldReflection*.64+metal*.86,.12+gloss*.28);
                 // Fine mullions and reflected softbox strips make the glazing
                 // continuous curtain wall, rather than painted blue blocks.
                 float floors=1-smoothstep(.015,.045,abs(frac(i.local.y*4.5)-.5));
@@ -54,7 +54,10 @@ Shader "SkyPulse/Flight Architecture"
                 float emission=smoothstep(.65,.95,i.color.a);
                 float3 lit=lerp(metal,lerp(i.color.rgb,_Tint.rgb,.20)*pulse*lerp(1,.72,_Architecture),emission);
                 // Distance haze ties the skyline into the authored atmosphere.
-                float mist=saturate((i.world.z-5)*.012);
+                float geology=_Architecture*(1-step(.03,i.local.y));
+                float strata=.90+.10*sin(i.local.y*39+sin(i.local.x*7)*2);
+                lit=lerp(lit,lit*strata+float3(.16,.045,.11)*pow(saturate(-n.y),3),geology);
+                float mist=saturate((i.world.z-5)*.009);
                 float3 atmosphere=max(_Haze.rgb,lerp(float3(.04,.075,.14),_Tint.rgb,.06));
                 return fixed4(lerp(lit,atmosphere,mist),1);
             }

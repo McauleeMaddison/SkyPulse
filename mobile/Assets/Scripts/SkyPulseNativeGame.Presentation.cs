@@ -38,7 +38,6 @@ namespace SkyPulse.Mobile
         private readonly List<SpriteRenderer> relayShutterArt=new List<SpriteRenderer>(),relayMembranes=new List<SpriteRenderer>(),relayCrystalGlints=new List<SpriteRenderer>();
         private readonly List<TextMesh> relayGateLabels=new List<TextMesh>();
         private readonly List<int> relayGateLabelCounts=new List<int>();
-        private SpriteRenderer relayScenery;
         private Text relayChargeText,relayProgressText,blackoutDataText,blackoutTraceText,blackoutUplinkText;
 
         private SkyPulseCircuitGraphic ProtocolGraphic(Transform parent,string name,Vector2 position,Vector2 size,int variant,SkyPulseSurface surface,Color accent,bool animated=false)
@@ -189,7 +188,7 @@ namespace SkyPulse.Mobile
             }
             if(activeMode==SkyPulseMode.PulseRelay && state==FlightState.Playing && !reduceMotionEnabled)protocolVisualTime+=dt;
         }
-        private void ClearProtocolWorldArt(){relayApertureGlow.Clear();relayPortalHardware.Clear();relayPortalOrbits.Clear();relayChargeArt.Clear();relayPrisms.Clear();relayLasers.Clear();relayLaserHalos.Clear();relayOpeningTimes.Clear();relayShutterArt.Clear();relayMembranes.Clear();relayCrystalGlints.Clear();relayCrystalHighlights.Clear();relayCrystalFlares.Clear();relayGateLabels.Clear();relayGateLabelCounts.Clear();relayExitHardware=null;relayDeck=null;relayEnvironment=null;relayScenery=null;protocolVisualTime=0;modeDropdownOpen=false;}
+        private void ClearProtocolWorldArt(){relayApertureGlow.Clear();relayPortalHardware.Clear();relayPortalOrbits.Clear();relayChargeArt.Clear();relayPrisms.Clear();relayLasers.Clear();relayLaserHalos.Clear();relayOpeningTimes.Clear();relayShutterArt.Clear();relayMembranes.Clear();relayCrystalGlints.Clear();relayCrystalHighlights.Clear();relayCrystalFlares.Clear();relayGateLabels.Clear();relayGateLabelCounts.Clear();relayExitHardware=null;relayDeck=null;relayEnvironment=null;protocolVisualTime=0;modeDropdownOpen=false;}
         private void RemoveScreenPresentation(GameObject root)
         {
             protocolGraphics.RemoveAll(g=>g==null || (g.transform.IsChildOf(root.transform) && !g.transform.parent.name.EndsWith("backdrop")));
@@ -248,8 +247,8 @@ namespace SkyPulse.Mobile
         private void BuildPremiumRelayWorld()
         {
             missionWorld=new GameObject("Authored Pulse circuit").transform;HideOriginalWorld(true);
-            var tint=selectedMission==1?new Color(.76f,.95f,1):selectedMission==2?new Color(1,.87f,.68f):selectedMission==3?new Color(.70f,.82f,1):Color.white;
-            relayScenery=CreateRenderer("Relay orbital station",LoadSprite(RelayStationPath),tint,-40,missionWorld);FitBackgroundToCamera(relayScenery,1.1f);
+            // The station art is the distant layer inside the perspective scene.
+            // Do not place an opaque sprite over its moving 3D hardware.
             CircuitSprite(missionWorld,"Station atmosphere veil",Vector2.zero,new Vector2(GetViewportWidth()+1,22),new Color(.005f,.035f,.065f,.24f),-30);
             WorldGlow(missionWorld,"Station atmosphere",new Vector2(1,2),new Vector2(20,26),new Color(.1f,.68f,.83f,.31f),-28);
             WorldGlow(missionWorld,"Gold horizon",new Vector2(0,-7),new Vector2(18,7),new Color(1,.6f,.12f,.16f),-27);
@@ -303,7 +302,6 @@ namespace SkyPulse.Mobile
         private void AnimateRelayArtwork()
         {
             float motion=reduceMotionEnabled?0:protocolVisualTime;
-            if(relayScenery!=null)relayScenery.transform.localPosition=new Vector2(reduceMotionEnabled?0:Mathf.Sin(relaySession.Distance*.018f)*-.22f+Mathf.Sin(motion*.22f)*.06f,.12f+Mathf.Sin(motion*.3f)*.06f);
             for(int i=0;i<relayShutters.Count;i++)
             {
                 bool open=relaySession.IsOpen(i);var gate=relayShutters[i];
@@ -327,7 +325,7 @@ namespace SkyPulse.Mobile
 
             }
             if(relayDeck!=null)relayDeck.SetVisual(reduceMotionEnabled?0:relaySession.Distance,motion);
-            if(relayEnvironment!=null)relayEnvironment.SetVisual(reduceMotionEnabled?0:relaySession.Distance,motion);
+            if(relayEnvironment!=null){relayEnvironment.SetViewport(GetViewportWidth());relayEnvironment.SetVisual(reduceMotionEnabled?0:relaySession.Distance,motion);}
             if(relayExitHardware!=null)relayExitHardware.SetVisual(true,motion,0);
             for(int i=0;i<relayChargeArt.Count;i++)
             {
