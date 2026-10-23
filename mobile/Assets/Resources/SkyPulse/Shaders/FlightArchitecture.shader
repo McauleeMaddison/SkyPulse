@@ -10,6 +10,8 @@ Shader "SkyPulse/Flight Architecture"
         _Architecture("Curtain wall detail",Float)=0
         _Geology("Mineral strata",Float)=0
         _Design("District identity",Float)=0
+        _WindowGlow("Occupied window illumination",Range(0,1))=1
+        _BeaconGlow("Star LED light spill",Range(0,1))=1
     }
     SubShader
     {
@@ -24,7 +26,8 @@ Shader "SkyPulse/Flight Architecture"
             #include "UnityCG.cginc"
             struct app {float4 vertex:POSITION;float3 normal:NORMAL;float4 color:COLOR;};
             struct vary {float4 pos:SV_POSITION;float3 world:TEXCOORD0;float3 normal:TEXCOORD1;float4 color:COLOR;float3 local:TEXCOORD2;};
-            float _Visibility,_Clock,_Architecture,_Geology,_Design;float4 _Tint,_Haze;
+            float _Visibility,_Clock,_Architecture,_Geology,_Design,_WindowGlow,_BeaconGlow;float4 _Tint,_Haze;
+            float4 _BeaconPoints[5],_BeaconColours[5];
             sampler2D _Environment;
             vary vert(app v){vary o;o.pos=UnityObjectToClipPos(v.vertex);o.world=mul(unity_ObjectToWorld,v.vertex).xyz;o.normal=UnityObjectToWorldNormal(v.normal);o.color=v.color;o.local=v.vertex.xyz;return o;}
             float hash21(float2 p){return frac(sin(dot(p,float2(127.1,311.7)))*43758.5453);}
@@ -35,7 +38,8 @@ Shader "SkyPulse/Flight Architecture"
                 if(dot(n,view)<0)n=-n;
                 float3 key=normalize(float3(-.64,.87,-.75)),halfway=normalize(key+view);
                 float facing=saturate(dot(n,view)),ndl=saturate(dot(n,key));
-                float glass=smoothstep(.27,.32,i.color.a)*(1-smoothstep(.38,.43,i.color.a));
+                float neon=smoothstep(.445,.465,i.color.a)*(1-smoothstep(.495,.515,i.color.a));
+                float glass=max(neon,smoothstep(.27,.32,i.color.a)*(1-smoothstep(.38,.43,i.color.a)));
                 float light=smoothstep(.76,.96,i.color.a),stone=step(.06,i.color.a)*(1-step(.23,i.color.a));
                 float3 reflection=reflect(-view,n);
                 float sky=saturate(reflection.y*.6+.4);
@@ -48,7 +52,8 @@ Shader "SkyPulse/Flight Architecture"
                 // the frame and glass have separate roughness and reflectance.
                 float softbox=pow(saturate(1-abs(reflection.x*.72+reflection.y*.32-.19)*1.75),22);
                 float spec=pow(saturate(dot(n,halfway)),lerp(52,126,glass));
-                float3 colour=i.color.rgb*(.24+ndl*.80)*lerp(float3(.92,.98,1.05),_Tint.rgb,.06);
+                float3 surfaceColour=lerp(i.color.rgb,float3(.035,.055,.085)+i.color.rgb*.04,neon);
+                float3 colour=surfaceColour*(.24+ndl*.80)*lerp(float3(.92,.98,1.05),_Tint.rgb,.06);
                 colour+=ambient*(.19+glass*.56+fresnel*.46)+float3(.87,.91,1)*(spec*.46+softbox*(.12+glass*.34))*lerp(1,.15,stone);
                 // Facade bays are glazing with dark reveals and a few occupied
                 // warm interiors. They are not continuous glowing floor discs.
@@ -57,7 +62,12 @@ Shader "SkyPulse/Flight Architecture"
                 colour*=1-glass*mullion*.25;
                 float2 cell=frac(grid);float interior=smoothstep(.15,.23,cell.x)*(1-smoothstep(.72,.84,cell.x))*smoothstep(.18,.28,cell.y)*(1-smoothstep(.67,.78,cell.y));
                 float occupied=step(.76,hash21(floor(grid)+_Design*7.1));
-                colour+=glass*interior*occupied*float3(.90,.60,.30)*(.15+.05*sin(_Clock*.10+i.local.y));
+                colour+=glass*(1-neon)*interior*occupied*float3(.90,.60,.30)*(.15+.05*sin(_Clock*.10+i.local.y));
+                // Only the explicitly occupied recessed panes emit. Their
+                // colour is baked from the same palette as the pipe LEDs.
+                // Slow, restrained drift keeps interiors alive without flashes.
+                float windowPulse=.66+.025*sin(_Clock*.24+floor(i.local.y*2.6)*.73+_Design);
+                colour+=neon*_WindowGlow*i.color.rgb*(windowPulse+.10*pow(facing,3));
                 float surface=.94+.06*hash21(floor(i.local.xz*28));
                 colour*=lerp(1,surface,stone);
                 colour+=stone*i.color.rgb*(.17+.14*saturate(n.y))+.035*stone*_Tint.rgb;
@@ -70,6 +80,22 @@ Shader "SkyPulse/Flight Architecture"
                 float floorShade=lerp(.72,1,smoothstep(-.10,.50,i.local.y));colour*=floorShade;
                 float pulse=.88+.08*sin(_Clock*.46-i.local.y*1.7+_Design);
                 colour=lerp(colour,i.color.rgb*pulse*.88+ambient*.05,light);
+                // Local LED spill is evaluated on the real cliff/foundation,
+                // not on a transparent square. Shared mesh-space positions keep
+                // it attached during parallax, rotation and nonuniform scaling.
+                // The fixed five-source loop runs only on the island underside.
+                if(_BeaconGlow>.001&&i.local.y<-.06)
+                {
+                    float3 spill=0;
+                    [unroll] for(int beacon=0;beacon<5;beacon++)
+                    {
+                        float radius=_BeaconPoints[beacon].w;
+                        float distanceToLed=length(i.local-_BeaconPoints[beacon].xyz)/max(radius,.001);
+                        float ledPulse=.90+.07*sin(_Clock*.80+beacon*.63+_Design);
+                        spill+=_BeaconColours[beacon].rgb*exp2(-distanceToLed*distanceToLed*1.35)*ledPulse*step(.01,radius);
+                    }
+                    colour+=spill*_BeaconGlow*.58;
+                }
                 float distanceToCamera=length(_WorldSpaceCameraPos.xyz-i.world);
                 float mist=saturate((distanceToCamera-25)/35)*.51;
                 float3 atmosphere=lerp(float3(.13,.15,.24),max(_Haze.rgb,_Tint.rgb*.23),.46);

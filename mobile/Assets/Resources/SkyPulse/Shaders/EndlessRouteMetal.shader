@@ -60,6 +60,24 @@ Shader "SkyPulse/Original Endless Neon Metal"
                 float panelAA=max(fwidth(panel),.004);
                 float engraving=1-smoothstep(.012,.026+panelAA,panel);
                 colour*=1-engraving*(.055+ceramic*.035);
+                // Small recessed service joints and machined fasteners belong
+                // to each housing. Analytic antialiasing keeps them quiet at
+                // phone size; no extra geometry enters the flight opening.
+                float endJoint=min(abs(uv.y-.135),abs(uv.y-.865));
+                float jointAA=max(fwidth(uv.y),.0015);
+                float joint=1-smoothstep(.003,.007+jointAA,endJoint);
+                colour*=1-joint*(1-_Cutout)*.16;
+                float boltX=abs(i.local.x)-lerp(.205,.235,ceramic);
+                float boltY=min(abs(uv.y-.115),abs(uv.y-.885));
+                float boltDistance=length(float2(boltX*34,boltY*60));
+                float boltAA=max(fwidth(boltDistance),.08);
+                float bolt=1-smoothstep(.70,.87+boltAA,boltDistance);
+                float boltRim=exp2(-pow((boltDistance-.65)*6,2));
+                float slot=1-smoothstep(.06,.12+fwidth(boltX)*34,abs(boltX*34));
+                float front=smoothstep(.35,.75,-n.z)*(1-_Cutout)*(1-led);
+                colour=lerp(colour,float3(.13,.17,.22)+float3(.32,.39,.48)*(ndl*.38+broad*.25)+spec*.16,bolt*front*.65);
+                colour+=boltRim*front*(float3(.16,.21,.27)+_ThemeAccent.rgb*.025);
+                colour*=1-bolt*slot*front*.22;
                 float brush=sin(i.world.y*228)*sin(i.local.x*316);float aa=saturate(1-fwidth(i.world.y*228));colour*=1+brush*.008*aa;
                 colour=lerp(colour,float3(.021,.031,.046)*(1+ndl*.3)+spec*.08,seal);
                 float path=lerp(i.world.y,-i.world.y,_ArtFlip)*.55;

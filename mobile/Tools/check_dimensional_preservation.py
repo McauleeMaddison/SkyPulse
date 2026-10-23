@@ -2,8 +2,10 @@
 """Read-only comparison against the protected starting commit for the 3D branch."""
 import hashlib,json,re,subprocess
 from pathlib import Path
+from generate_skypulse_audio import CUE_FRAMES, make_clip
 ROOT=Path(__file__).resolve().parents[2]
 BASE='a343aef'
+AUDIO_IDENTITY_BASE='ad47d69' # Includes the two later Signal Heist cues.
 def old(path):return subprocess.check_output(['git','show',BASE+':'+path],cwd=ROOT)
 def digest(data):return hashlib.sha256(data).hexdigest()
 def body(source,name):
@@ -19,8 +21,16 @@ report={'baseCommit':BASE,'unchangedFiles':{},'unchangedMethods':{}}
 files=['SkyPulseMissionModels.cs','SkyPulseDailyMissions.cs','SkyPulseBirdProgression.cs','SkyPulseInputFence.cs','SkyPulseRelayGate.cs','SkyPulsePrism.cs','SkyPulseBlackoutCampaign.cs']
 for name in files:
     path='mobile/Assets/Scripts/'+name;data=(ROOT/path).read_bytes();assert data==old(path),'Protected rules changed: '+name;report['unchangedFiles'][path]=digest(data)
-for name in ['flap','score','crystal','crash','unlock']:
-    path='mobile/Assets/Resources/SkyPulse/audio/'+name+'.wav';data=(ROOT/path).read_bytes();assert data==old(path),'Working cue replaced: '+name;report['unchangedFiles'][path]=digest(data)
+# The owner explicitly requested a new sound palette on 23 October. Keep the
+# resource names/GUIDs and require reproducible authored output, rather than
+# treating an old waveform as an immutable gameplay rule.
+report['authoredAudio']={}
+for name in CUE_FRAMES:
+    path='mobile/Assets/Resources/SkyPulse/audio/'+name+'.wav';data=(ROOT/path).read_bytes()
+    assert data==make_clip(name),'Unreproducible cue: '+name
+    meta=path+'.meta';original_meta=subprocess.check_output(['git','show',AUDIO_IDENTITY_BASE+':'+meta],cwd=ROOT)
+    assert (ROOT/meta).read_bytes()==original_meta,'Audio identity/import settings changed: '+name
+    report['authoredAudio'][path]={'sha256':digest(data),'metaSha256':digest((ROOT/meta).read_bytes()),'matchesGenerator':True}
 for path in (ROOT/'mobile/Assets/Scenes').glob('*'):
     if path.is_file():
         rel=path.relative_to(ROOT).as_posix();assert path.read_bytes()==old(rel),'Scene changed';report['unchangedFiles'][rel]=digest(path.read_bytes())

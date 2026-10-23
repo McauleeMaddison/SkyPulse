@@ -1,0 +1,917 @@
+{
+  "date": "2026-10-23",
+  "baseCommit": "ad47d69c4e650d01847b54eda6cc2015cff40ecf",
+  "candidate": "Selective neon windows, facade depth, cliff strata, brighter detailed LED star beacons, additional pipe housing finish and redeveloped audio",
+  "sourceChanges": {
+    "mobile/Assets/Scripts/SkyPulseWorldArchitecture.cs": {
+      "beforeSha256": "ad9c14f2c5d673801f796bebaad478fdc5d611c9f2c25dafa5e42cf28ca7e15d",
+      "afterSha256": "611ccc99d4f2300b9595d9b7a440ad9ecb08d08f88d2be74887f9d15ad617d22"
+    },
+    "mobile/Assets/Resources/SkyPulse/Shaders/FlightArchitecture.shader": {
+      "beforeSha256": "47288e9c198d56e8fcd028ff572fdd55562ffa78cf35b2b156265f492e5242b2",
+      "afterSha256": "1c52ddbf79779c04e581c638812dbbfb8b860858c242701d99c0825ff0bb6f8b"
+    },
+    "mobile/Assets/Resources/SkyPulse/Shaders/EndlessRouteMetal.shader": {
+      "beforeSha256": "ec48ae2b3698d7052cc15b6331bceb9763fc49a9d120813de176657d9b349a09",
+      "afterSha256": "1c9710a9ea93cf2e27d6cc385589ab01444148ea3464569dbf60dfc36971c0b9"
+    },
+    "mobile/Assets/Scripts/SkyPulseFlightEnvironment.cs": {
+      "beforeSha256": "6dfa91d9a31c5429612b3bfbbe9998497a13b1fc39256a9d190223d6fe1dee60",
+      "afterSha256": "c73a0c6ec8058a0eac996201468c3d7796e0ba94734d7389f74fef21fd989ce5"
+    }
+  },
+  "shaderCompileErrors": false,
+  "unityRegression": {
+    "groupCount": 32,
+    "passedGroups": [
+      "SKYPULSE_BIRD_PROGRESSION_LIVE_PASS",
+      "SKYPULSE_BIRD_PROGRESSION_PURE_PASS",
+      "SKYPULSE_BLACKOUT_LIVE_PASS",
+      "SKYPULSE_BLACKOUT_PURE_PASS",
+      "SKYPULSE_CAP_CONTOUR_PASS",
+      "SKYPULSE_CINEMATIC_PASS",
+      "SKYPULSE_COPY_UI_PASS",
+      "SKYPULSE_DAILY_ROUTE_LIVE_PASS",
+      "SKYPULSE_DAILY_ROUTE_PURE_PASS",
+      "SKYPULSE_DEPTH_PASS",
+      "SKYPULSE_DESIGN_NORMALS_PASS",
+      "SKYPULSE_DIMENSIONAL_AUDIO_PASS",
+      "SKYPULSE_DIMENSIONAL_PASS",
+      "SKYPULSE_FLIGHT_ENVIRONMENT_PASS",
+      "SKYPULSE_FLIGHT_GAMEPLAY_CAPTURE_PASS",
+      "SKYPULSE_GUIDE_WORLD_PASS",
+      "SKYPULSE_HEIST_CAPTURE_PASS",
+      "SKYPULSE_MISSION_INTEGRATION_PASS",
+      "SKYPULSE_MISSION_LEGACY_PASS",
+      "SKYPULSE_MISSION_PURE_PASS",
+      "SKYPULSE_ONE_THUMB_LIVE_PASS",
+      "SKYPULSE_ONE_THUMB_PURE_PASS",
+      "SKYPULSE_PIPE_FINISH_PASS",
+      "SKYPULSE_PLAYER_GOALS_PASS",
+      "SKYPULSE_PRESENTATION_CAPTURES_PASS",
+      "SKYPULSE_PURPOSE_LIVE_PASS",
+      "SKYPULSE_RELAY_MESH_PASS",
+      "SKYPULSE_ROUTE_FADE_PASS",
+      "SKYPULSE_SCORE_FINISH_PASS",
+      "SKYPULSE_STATION_DEPTH_PASS",
+      "SKYPULSE_TOUCH_COMFORT_PASS",
+      "SKYPULSE_WORLD_STYLES_PASS"
+    ],
+    "logSha256": "69cea5e1568eefd9f737b162e55a76df8de725524199aeaa6d4a42cf4ea7f17e",
+    "localLog": "artifacts/neon-districts-20261023/full-unity-qa.log",
+    "matchedShippingSourceResourceAndMetadataFiles": 79
+  },
+  "districtInspection": {
+    "passed": true,
+    "comparisons": [
+      {
+        "world": 0,
+        "variant": 0,
+        "illuminatedPixels": 9876,
+        "modelPixels": 195496,
+        "fraction": 0.0505176576502844
+      },
+      {
+        "world": 1,
+        "variant": 0,
+        "illuminatedPixels": 6096,
+        "modelPixels": 169080,
+        "fraction": 0.036053938963804114
+      },
+      {
+        "world": 2,
+        "variant": 0,
+        "illuminatedPixels": 6758,
+        "modelPixels": 191594,
+        "fraction": 0.03527250331430003
+      },
+      {
+        "world": 3,
+        "variant": 0,
+        "illuminatedPixels": 7815,
+        "modelPixels": 193469,
+        "fraction": 0.040394068300347856
+      },
+      {
+        "world": 4,
+        "variant": 0,
+        "illuminatedPixels": 11918,
+        "modelPixels": 273198,
+        "fraction": 0.04362403824332536
+      },
+      {
+        "world": 5,
+        "variant": 0,
+        "illuminatedPixels": 5358,
+        "modelPixels": 181341,
+        "fraction": 0.029546544907108705
+      },
+      {
+        "world": 6,
+        "variant": 0,
+        "illuminatedPixels": 5917,
+        "modelPixels": 192747,
+        "fraction": 0.030698272865466128
+      },
+      {
+        "world": 7,
+        "variant": 0,
+        "illuminatedPixels": 10198,
+        "modelPixels": 219941,
+        "fraction": 0.04636698023560864
+      },
+      {
+        "world": 8,
+        "variant": 0,
+        "illuminatedPixels": 5274,
+        "modelPixels": 232797,
+        "fraction": 0.022654931120246396
+      },
+      {
+        "world": 9,
+        "variant": 0,
+        "illuminatedPixels": 10834,
+        "modelPixels": 215063,
+        "fraction": 0.050375936353533615
+      },
+      {
+        "world": 10,
+        "variant": 0,
+        "illuminatedPixels": 5920,
+        "modelPixels": 237032,
+        "fraction": 0.024975530730028013
+      },
+      {
+        "world": 11,
+        "variant": 0,
+        "illuminatedPixels": 4810,
+        "modelPixels": 219738,
+        "fraction": 0.02188970501233287
+      },
+      {
+        "world": 0,
+        "variant": 1,
+        "illuminatedPixels": 7458,
+        "modelPixels": 222740,
+        "fraction": 0.03348298464577534
+      },
+      {
+        "world": 1,
+        "variant": 1,
+        "illuminatedPixels": 6495,
+        "modelPixels": 204137,
+        "fraction": 0.031816868083688894
+      },
+      {
+        "world": 2,
+        "variant": 1,
+        "illuminatedPixels": 6259,
+        "modelPixels": 191481,
+        "fraction": 0.032687316235031155
+      },
+      {
+        "world": 3,
+        "variant": 1,
+        "illuminatedPixels": 10205,
+        "modelPixels": 202778,
+        "fraction": 0.050325972245509866
+      },
+      {
+        "world": 4,
+        "variant": 1,
+        "illuminatedPixels": 10452,
+        "modelPixels": 263234,
+        "fraction": 0.03970611699096621
+      },
+      {
+        "world": 5,
+        "variant": 1,
+        "illuminatedPixels": 7359,
+        "modelPixels": 204222,
+        "fraction": 0.03603431559773188
+      },
+      {
+        "world": 6,
+        "variant": 1,
+        "illuminatedPixels": 5092,
+        "modelPixels": 200779,
+        "fraction": 0.02536121805567315
+      },
+      {
+        "world": 7,
+        "variant": 1,
+        "illuminatedPixels": 10844,
+        "modelPixels": 232032,
+        "fraction": 0.04673493311267411
+      },
+      {
+        "world": 8,
+        "variant": 1,
+        "illuminatedPixels": 7819,
+        "modelPixels": 267306,
+        "fraction": 0.029251120438748102
+      },
+      {
+        "world": 9,
+        "variant": 1,
+        "illuminatedPixels": 11993,
+        "modelPixels": 198935,
+        "fraction": 0.060286023072862994
+      },
+      {
+        "world": 10,
+        "variant": 1,
+        "illuminatedPixels": 11384,
+        "modelPixels": 242540,
+        "fraction": 0.04693658777933537
+      },
+      {
+        "world": 11,
+        "variant": 1,
+        "illuminatedPixels": 5613,
+        "modelPixels": 212375,
+        "fraction": 0.026429664508534432
+      }
+    ],
+    "starGlowComparisons": [
+      {
+        "world": 0,
+        "variant": 0,
+        "illuminatedFoundationPixels": 4327
+      },
+      {
+        "world": 1,
+        "variant": 0,
+        "illuminatedFoundationPixels": 4486
+      },
+      {
+        "world": 2,
+        "variant": 0,
+        "illuminatedFoundationPixels": 5598
+      },
+      {
+        "world": 3,
+        "variant": 0,
+        "illuminatedFoundationPixels": 4631
+      },
+      {
+        "world": 4,
+        "variant": 0,
+        "illuminatedFoundationPixels": 5528
+      },
+      {
+        "world": 5,
+        "variant": 0,
+        "illuminatedFoundationPixels": 4401
+      },
+      {
+        "world": 6,
+        "variant": 0,
+        "illuminatedFoundationPixels": 4464
+      },
+      {
+        "world": 7,
+        "variant": 0,
+        "illuminatedFoundationPixels": 4022
+      },
+      {
+        "world": 8,
+        "variant": 0,
+        "illuminatedFoundationPixels": 4554
+      },
+      {
+        "world": 9,
+        "variant": 0,
+        "illuminatedFoundationPixels": 4732
+      },
+      {
+        "world": 10,
+        "variant": 0,
+        "illuminatedFoundationPixels": 5392
+      },
+      {
+        "world": 11,
+        "variant": 0,
+        "illuminatedFoundationPixels": 5879
+      },
+      {
+        "world": 0,
+        "variant": 1,
+        "illuminatedFoundationPixels": 5204
+      },
+      {
+        "world": 1,
+        "variant": 1,
+        "illuminatedFoundationPixels": 5444
+      },
+      {
+        "world": 2,
+        "variant": 1,
+        "illuminatedFoundationPixels": 5611
+      },
+      {
+        "world": 3,
+        "variant": 1,
+        "illuminatedFoundationPixels": 4737
+      },
+      {
+        "world": 4,
+        "variant": 1,
+        "illuminatedFoundationPixels": 5528
+      },
+      {
+        "world": 5,
+        "variant": 1,
+        "illuminatedFoundationPixels": 5122
+      },
+      {
+        "world": 6,
+        "variant": 1,
+        "illuminatedFoundationPixels": 4686
+      },
+      {
+        "world": 7,
+        "variant": 1,
+        "illuminatedFoundationPixels": 4392
+      },
+      {
+        "world": 8,
+        "variant": 1,
+        "illuminatedFoundationPixels": 5489
+      },
+      {
+        "world": 9,
+        "variant": 1,
+        "illuminatedFoundationPixels": 4405
+      },
+      {
+        "world": 10,
+        "variant": 1,
+        "illuminatedFoundationPixels": 5615
+      },
+      {
+        "world": 11,
+        "variant": 1,
+        "illuminatedFoundationPixels": 5879
+      }
+    ],
+    "meshCounts": [
+      {
+        "world": 0,
+        "arrangement": "civic",
+        "vertices": 48674,
+        "frames": 90
+      },
+      {
+        "world": 1,
+        "arrangement": "civic",
+        "vertices": 36574,
+        "frames": 90
+      },
+      {
+        "world": 2,
+        "arrangement": "civic",
+        "vertices": 35348,
+        "frames": 90
+      },
+      {
+        "world": 3,
+        "arrangement": "civic",
+        "vertices": 43686,
+        "frames": 90
+      },
+      {
+        "world": 4,
+        "arrangement": "civic",
+        "vertices": 57264,
+        "frames": 90
+      },
+      {
+        "world": 5,
+        "arrangement": "civic",
+        "vertices": 45736,
+        "frames": 90
+      },
+      {
+        "world": 6,
+        "arrangement": "civic",
+        "vertices": 33112,
+        "frames": 90
+      },
+      {
+        "world": 7,
+        "arrangement": "civic",
+        "vertices": 53178,
+        "frames": 90
+      },
+      {
+        "world": 8,
+        "arrangement": "civic",
+        "vertices": 55564,
+        "frames": 90
+      },
+      {
+        "world": 9,
+        "arrangement": "civic",
+        "vertices": 46160,
+        "frames": 90
+      },
+      {
+        "world": 10,
+        "arrangement": "civic",
+        "vertices": 39458,
+        "frames": 90
+      },
+      {
+        "world": 11,
+        "arrangement": "civic",
+        "vertices": 39082,
+        "frames": 90
+      },
+      {
+        "world": 0,
+        "arrangement": "residential",
+        "vertices": 44542,
+        "frames": 1
+      },
+      {
+        "world": 1,
+        "arrangement": "residential",
+        "vertices": 34950,
+        "frames": 1
+      },
+      {
+        "world": 2,
+        "arrangement": "residential",
+        "vertices": 34664,
+        "frames": 1
+      },
+      {
+        "world": 3,
+        "arrangement": "residential",
+        "vertices": 44498,
+        "frames": 1
+      },
+      {
+        "world": 4,
+        "arrangement": "residential",
+        "vertices": 54828,
+        "frames": 1
+      },
+      {
+        "world": 5,
+        "arrangement": "residential",
+        "vertices": 43300,
+        "frames": 1
+      },
+      {
+        "world": 6,
+        "arrangement": "residential",
+        "vertices": 32428,
+        "frames": 1
+      },
+      {
+        "world": 7,
+        "arrangement": "residential",
+        "vertices": 49930,
+        "frames": 1
+      },
+      {
+        "world": 8,
+        "arrangement": "residential",
+        "vertices": 53940,
+        "frames": 1
+      },
+      {
+        "world": 9,
+        "arrangement": "residential",
+        "vertices": 45348,
+        "frames": 1
+      },
+      {
+        "world": 10,
+        "arrangement": "residential",
+        "vertices": 39458,
+        "frames": 1
+      },
+      {
+        "world": 11,
+        "arrangement": "residential",
+        "vertices": 36574,
+        "frames": 1
+      }
+    ],
+    "maxVertices": 57264,
+    "vertexIndexGpuBytes": 44696424,
+    "modelsFullyFramed": true,
+    "logSha256": "e8e5a6620e47ddf5d3575f343e224d264f82c4fd355e3d6b77f06802f2e04cb4"
+  },
+  "lifecycle": {
+    "pauseFreezesLighting": true,
+    "reducedMotionFreezesLighting": true,
+    "newWindowObjectsOrRealtimeLights": 0,
+    "sceneRendererCount": 25,
+    "modelMeshCount": 24
+  },
+  "audioRecord": "AUDIO_RECORD.json",
+  "guards": {
+    "preservation": {
+      "baseCommit": "a343aef",
+      "unchangedFiles": {
+        "mobile/Assets/Scripts/SkyPulseMissionModels.cs": "2966173db2cd29644df19e99126a13d93f528897bf7153a0ff80938efc874605",
+        "mobile/Assets/Scripts/SkyPulseDailyMissions.cs": "10157b808de4de3ee309b00a019ee43b4faeb11be50f8276f46d2c105b7ea8be",
+        "mobile/Assets/Scripts/SkyPulseBirdProgression.cs": "1a1c01342e7b24452835109d624ac88d1d392067284ac0cd9be358a68465ccc0",
+        "mobile/Assets/Scripts/SkyPulseInputFence.cs": "ccf585a47e7bb3d401c4358d792209b548185f755b27b494a368ce7838ec7b25",
+        "mobile/Assets/Scripts/SkyPulseRelayGate.cs": "745e48b7500df3581847860531d88dfd16427491242ab42a68d131365d4b2598",
+        "mobile/Assets/Scripts/SkyPulsePrism.cs": "68e619ebc3729f03a8dadba7b2e20f8095a53a245895b234ecb49d8d06a12021",
+        "mobile/Assets/Scripts/SkyPulseBlackoutCampaign.cs": "37e6fdc0b2dce5c978a0cb1d075e53bfae1f48dfb4a76e4685e17408f815d083",
+        "mobile/Assets/Scenes/SkyPulse.unity": "559ca9680dcb6f841f1d6e68f273e068d6af595b7e047619c853b2e2175aea15",
+        "mobile/Assets/Scenes/SkyPulse.unity.meta": "517caf9b9d042a7e98de0d54877713e383b57cf9098e94bb81ca59a4f04bfec9"
+      },
+      "unchangedMethods": {
+        "CreateCamera": "e5ee6cd25c8a8a5cfbd5e3f60303a6666948213ca3070da271ba022118fa86f2",
+        "SimulateFlight": "5767b7e90e1bc0da2d2874139a4fcf688025b129ad4407a0c7d614fb8c161d39",
+        "UpdateBird": "36bfdebbb6e9da3bc7822f5b6952cb000abeefced13bcde1348c4ae125b528d5",
+        "Flap": "78f20fe6276e2d5c4d5442750310a7dbec672e40e3afc3942b1e49d7ddc58c1c",
+        "CollidersOverlap": "817b7019108b03139df919a5f90f65e481bf0acb0736ece53dfcaf4961f7f1ce",
+        "BirdCollidesWithPipe": "6cadc010df5471c012522e463ddd693eb0520beb40cf9e2a9a197becd0539978",
+        "RoutePipeSpacing": "dc32e8640f88955dc09c5d8a457f2a438e487f657843eaaeec7ba53529d7f5ad",
+        "GetViewportWidth": "58b987a0239323791deeb9ec1128347009ddc7e73eccd2894426c66982ae6cb3",
+        "UpdatePipes": "addb789f64a993c534bb3b3299cb94a3d6a7869d8c3e8e65b532a8d3532448ac",
+        "ConfigurePipe": "c1d04679b6892ee548ccb67a4f40d71473832f91b4ace16db795892d58ffe4fe",
+        "BeginWorldTransition": "a1be2bc452d27b9be4bb2d7bc6af75f2c404c3b08bc0c72ad0bdb9fe7e4594fd",
+        "UpdateWorldTransition": "769d8fff91c80a622b58208102e9f0b75acc79e0f964a4f7fe7b04aca9978a5f",
+        "CollectCrystalPickup": "8377643e706ec6f4e8b2a5ef2ede3acec798b0e43def97fc759d730a7d89868a",
+        "EndFlight": "d20666b1bef6fb7ce6784e2281a777f6d110e5f01999938669f6cdf0aad81b82",
+        "BankCollectedCrystals": "85ec101d6e92c45fbde5c903f1960b9fc593abce52678444daec2cb875f08a98",
+        "SaveProgress": "ce698364177ad0c7549953cb60a9f294fe5f0705f65d433a04bc7b72ee5cf3ff",
+        "SimulateRelay": "9ac5717e01b1f15cc68bf231a637b4ab81c4b1e6dd75684721da3bd8578e0322",
+        "RelayPlaneContact": "a082e73f15584e9e8bb261dd533416124f00bbc9dbf2b03f2b188f8b792d9bb5",
+        "RelayCellContact": "865073dcd37f41eecdda96c74809bc58b9288fbb3de2815117b736e81e7ec0fd",
+        "RelayUnlocked": "bacd9c8f38fdbaa3922ad9d24a580e029c4e063ead89ea30c2079a56c63ab947",
+        "FinalizeMission": "d76030fddf65b2be939870854c077a69677b7de70f3af6f6692a015e38aa8850",
+        "ClaimDaily": "434c11d7af1aa2510b1e956fcd143902933b875cd13fbf1e48fabe101943c6d5",
+        "TouchBlackoutNode": "ca78a1c01ef5ca5e6ae303556566e2b386645c039c34d6394c53cdd0b63c331d",
+        "ActivateNextBlackoutPuzzle": "a2d8be9f19912df1d60d684ecfc2f0f03b75b64551d8a21539875bc9dbc3c0f2",
+        "RestartBlackoutVault": "11c57caae9e4b576f7a4060f4e45b6fd88c3cac8f7cf50681dda4c5554adae58",
+        "SaveBlackoutAttempt": "710fa360bbe42d2a0dcd80bf79ce3a63debc34f6cfec999f58b986d9f08df804",
+        "ToggleBlackoutPreview": "869081ed3d773ac7170390bfc1cfd9dec26135835881a54a08a1c1c535a67983",
+        "CancelBlackoutPreview": "c2ecddb9460073077c12214b95efcd7e6c41adbbae12d13bab22ae5d5a4586b6",
+        "PreviewBlackoutNode": "b93ac79c7853708caa0ea3a26481467e06e1dce322863be80c4df1f1f6ea1b1f",
+        "CommitBlackoutPreview": "0388922d3623e14d679d7d44857141d495bc8cbca06d28f5fa4bfa87737f997d",
+        "ResetBlackoutEffects": "a7df504cebf35687d546efdd7a0df27ec80a8f6f1fb8ad3e55d0609bf0c8b212"
+      },
+      "authoredAudio": {
+        "mobile/Assets/Resources/SkyPulse/audio/flap.wav": {
+          "sha256": "135937e425d8c14b0b958ca9be1304a5391d742e41828a3cbfbe752659bb9316",
+          "metaSha256": "b85ceb96eece6d1b3371de9f9f36342ff346909af6be91d15aab93a919361fd9",
+          "matchesGenerator": true
+        },
+        "mobile/Assets/Resources/SkyPulse/audio/score.wav": {
+          "sha256": "cda7c93f64c53c38898c79fdd17d267fae1544e6adcc0a0ca7b15467103b63a8",
+          "metaSha256": "deebf78df3494eb74903aa5b200ad08877cd46000630b25ec189ff24e37d6697",
+          "matchesGenerator": true
+        },
+        "mobile/Assets/Resources/SkyPulse/audio/crystal.wav": {
+          "sha256": "5b32feba4d5632b346592bb0c0f78e0f173204910d77f14fab36152b61c1e1f1",
+          "metaSha256": "5bea402d3115407b2cedfb91cb71972d72230408a19557754e43327f0a83fb93",
+          "matchesGenerator": true
+        },
+        "mobile/Assets/Resources/SkyPulse/audio/crash.wav": {
+          "sha256": "0859d670b7a5ed45627b2ce9912e49bb69bb93bf4a054bb5199a5c051142e09f",
+          "metaSha256": "00c546e138af60b73a45aa508612dd29dbe5515528d50bfdc246319dd88350a0",
+          "matchesGenerator": true
+        },
+        "mobile/Assets/Resources/SkyPulse/audio/unlock.wav": {
+          "sha256": "2fed971cbf0892c97825197aaf62153c94bc5ea84f94176f2ea0e78f5d739994",
+          "metaSha256": "09575c9815697f9ea3fe1b00eb20b1b5fb87d41d69ae09b792edfacddc28820a",
+          "matchesGenerator": true
+        },
+        "mobile/Assets/Resources/SkyPulse/audio/prism.wav": {
+          "sha256": "5f4d2950b17ebb8cad1e175942aa2de41f5bbe959eefe40457a44db1ae0a045f",
+          "metaSha256": "0a442164c565c60298bb9d863f8613572e9bdd1fbb7bec7b97e7e3a4b5e883ac",
+          "matchesGenerator": true
+        },
+        "mobile/Assets/Resources/SkyPulse/audio/sensor.wav": {
+          "sha256": "ad4f0a91fd613f687470921d5cc67f605ae6721acf49649ad25c6599fb48dd83",
+          "metaSha256": "8aad8aa4666810dd87e8be14903afc1feb439d8d515d16ab62f92e659d521b4a",
+          "matchesGenerator": true
+        }
+      },
+      "uniqueUnityGuids": 549,
+      "presentationOnlyFlightHook": true,
+      "newRunFeedbackReset": true,
+      "savedAudioPreferenceHook": true,
+      "passed": true
+    },
+    "copy": {
+      "passed": true,
+      "sourceFiles": 51,
+      "resourceJsonFiles": 3,
+      "stringsChecked": 2788,
+      "negativeControlsPassed": 5,
+      "legitimateCopyControlsPassed": 4,
+      "findings": [],
+      "limitations": [
+        "Does not certify typography, image text, every possible dynamic state or future edits."
+      ]
+    },
+    "artwork": {
+      "passed": true,
+      "imagesCovered": 145,
+      "sha256AndSizesMatch": true,
+      "exactByteDuplicateGroups": [],
+      "ownerReferenceStatementRecorded": true,
+      "exclusiveRightsCertified": false,
+      "appleSimilarityResolved": false,
+      "limitations": [
+        "Exact byte checks do not compare against other apps or certify copyright.",
+        "Owner attestations and published terms do not authenticate every original export."
+      ]
+    }
+  },
+  "images": {
+    "models/08-violet-rain-civic.png": {
+      "sha256": "6e9f45eebf96400c286f305afa740f49bf41851f0537a74e51e9740e563895af",
+      "width": 1000,
+      "height": 1200
+    },
+    "models/11-amber-skies-residential.png": {
+      "sha256": "9891a3432e3557c47ff337350fda6eb8c7cae1732e3686bcd631d470fa8093bc",
+      "width": 1000,
+      "height": 1200
+    },
+    "models/10-cobalt-storm-civic.png": {
+      "sha256": "8b80a99fbaa9d85313d57ea7b94b805daa8686ee4ba9d43f9d20dc206ee8eef6",
+      "width": 1000,
+      "height": 1200
+    },
+    "models/03-solar-drift-residential.png": {
+      "sha256": "b4cfb998f1ec936edef89604358a046187283839afc458c18ed3ca0540e7a3b3",
+      "width": 1000,
+      "height": 1200
+    },
+    "models/03-solar-drift-civic.png": {
+      "sha256": "0e53d05b0201064fbaa7071e9376bbefad741a0f32a952e5d565f8f60b79eafe",
+      "width": 1000,
+      "height": 1200
+    },
+    "models/07-jade-horizon-residential.png": {
+      "sha256": "eba834d6c299c8a01397a70a45803a76a351cad240d7fc93bc6240761d49c4a5",
+      "width": 1000,
+      "height": 1200
+    },
+    "models/01-neon-city-civic.png": {
+      "sha256": "4911799e9e9420d9e8cd4f72f5b7bea24388511269c0352311974d75b15fc089",
+      "width": 1000,
+      "height": 1200
+    },
+    "models/04-midnight-tide-residential.png": {
+      "sha256": "c601ec58bd0a12128fc51ce8ce707d8a48b272466ee2d626aab495360d88ee2f",
+      "width": 1000,
+      "height": 1200
+    },
+    "models/01-neon-city-residential.png": {
+      "sha256": "0e00bbfa348ad947bb12f27dcbefbd8cc9e4626022fd1324265b86a3d7894dd2",
+      "width": 1000,
+      "height": 1200
+    },
+    "models/12-polar-glow-civic.png": {
+      "sha256": "e2e9ab592417a8cf44532bd23053ed98c3b3f98ff1b0f3e05fbd61c40a097dba",
+      "width": 1000,
+      "height": 1200
+    },
+    "models/08-violet-rain-residential.png": {
+      "sha256": "75acebe2f6979e3bf3579b5b919e1b79b67a8c2e923d4d210d6c8a9a1cb7d60a",
+      "width": 1000,
+      "height": 1200
+    },
+    "models/06-crystal-night-residential.png": {
+      "sha256": "84d49513e3e5b224d99edd8dc8f1efa47f33dab6b7214e457a77d411b151d32c",
+      "width": 1000,
+      "height": 1200
+    },
+    "models/11-amber-skies-civic.png": {
+      "sha256": "5fa771ebcd2bc1f030fa5cc0775d45007128f970fabe4a8e3a2632966c86062c",
+      "width": 1000,
+      "height": 1200
+    },
+    "models/12-polar-glow-residential.png": {
+      "sha256": "edc9d28c74032688707eb1d643c7e15dea575dd1856b47e912b58b39c05d9892",
+      "width": 1000,
+      "height": 1200
+    },
+    "models/04-midnight-tide-civic.png": {
+      "sha256": "93896f6b80e687f99a8a4f5e159fb85d8eb2a11f106484d3bf1a99152ffeb249",
+      "width": 1000,
+      "height": 1200
+    },
+    "models/09-eclipse-residential.png": {
+      "sha256": "4fcbecc69a1bfbef2c491146ed9fb285a1eb608259a1b4e1f527f3adcd2475a6",
+      "width": 1000,
+      "height": 1200
+    },
+    "models/05-velvet-dawn-residential.png": {
+      "sha256": "4c7a3038ee28c0bcd785c49499d10a390295a761fecbe9e4b8b633b23bdbd1a2",
+      "width": 1000,
+      "height": 1200
+    },
+    "models/05-velvet-dawn-civic.png": {
+      "sha256": "c090bd9b52ad72148e8c73d144443a9e2c4791dd514a58e20fe5b406690a8317",
+      "width": 1000,
+      "height": 1200
+    },
+    "models/10-cobalt-storm-residential.png": {
+      "sha256": "0b57a50cabcf3dd80660b1bd636a7c7fb149ba4ea5377d773f3a081f850053a0",
+      "width": 1000,
+      "height": 1200
+    },
+    "models/06-crystal-night-civic.png": {
+      "sha256": "ca6c91d35daf3ba923a04438f98a6fa24ab96e36662f99c11bea4ac8c18ea9aa",
+      "width": 1000,
+      "height": 1200
+    },
+    "models/02-aurora-rise-residential.png": {
+      "sha256": "f0a197dc0379ad6e1ec2f698c258e75b218282e9cfa8232f84d1a1c8c0bcf1da",
+      "width": 1000,
+      "height": 1200
+    },
+    "models/02-aurora-rise-civic.png": {
+      "sha256": "ca2ac4b3ead08b06edc7c53d40edb679bda16ccb574cac46c255fbe08b02f46a",
+      "width": 1000,
+      "height": 1200
+    },
+    "models/07-jade-horizon-civic.png": {
+      "sha256": "7a08b09a48f08f77867adad3746d296f6fa4b3ca5347d3cdccbfe948fa0411f8",
+      "width": 1000,
+      "height": 1200
+    },
+    "models/09-eclipse-civic.png": {
+      "sha256": "e1d6d54c935b81b220823b55b95ba3cea9c9e54da3a07b5941b62bedc2e6d500",
+      "width": 1000,
+      "height": 1200
+    },
+    "worlds/08-violet-rain.png": {
+      "sha256": "b0bbb35edbf09db0de9c343fa5c6a4f409c6a5b9af9fe4ba04e4bfb829742e02",
+      "width": 750,
+      "height": 1334
+    },
+    "worlds/04-midnight-tide.png": {
+      "sha256": "017e94a0f8126021d4e7bff8726ca275e65b4a8fbf690731c5d6d45351fd9f40",
+      "width": 750,
+      "height": 1334
+    },
+    "worlds/10-cobalt-storm.png": {
+      "sha256": "bedca1eafd0231f7dbd4daec5162c0c8953c79faa6ed9be02a0392198e86ba30",
+      "width": 750,
+      "height": 1334
+    },
+    "worlds/05-velvet-dawn.png": {
+      "sha256": "74b9a7aa20ceb6da14dc65de789d1b679310631046182197d24344a232208638",
+      "width": 750,
+      "height": 1334
+    },
+    "worlds/07-jade-horizon.png": {
+      "sha256": "d5c97f1f5e70370a6be0154bf011615868cf4344454063858a4253d27638c200",
+      "width": 750,
+      "height": 1334
+    },
+    "worlds/01-neon-city.png": {
+      "sha256": "f6378e8b46eaaef3100924ee8a25f947b07e6e2f21c0c3de14d8d9dcaf4b2420",
+      "width": 750,
+      "height": 1334
+    },
+    "worlds/02-aurora-rise.png": {
+      "sha256": "4252968f042559cc730ab84a73f2b7ac051ad90f2db40177c0675369469bae80",
+      "width": 750,
+      "height": 1334
+    },
+    "worlds/06-crystal-night.png": {
+      "sha256": "59991023900005c88706994f4d3ba40126021063207342175ffdb168146a3cc0",
+      "width": 750,
+      "height": 1334
+    },
+    "worlds/09-eclipse.png": {
+      "sha256": "4ecbf02336dfa46f5081956b7dca4ce9e7c7a30e9b28054504b96d617b675929",
+      "width": 750,
+      "height": 1334
+    },
+    "worlds/11-amber-skies.png": {
+      "sha256": "a72dcd14bb3c6148a798aa0d8de5f5b77e5f47c1b46e28e88e6177ab85f033ad",
+      "width": 750,
+      "height": 1334
+    },
+    "worlds/03-solar-drift.png": {
+      "sha256": "45a7ca7d1001b19d263149be27ef20a23feee3c080f044a2cdca0eb50166d8cd",
+      "width": 750,
+      "height": 1334
+    },
+    "worlds/12-polar-glow.png": {
+      "sha256": "84a0c4f0d02e5d9102386ae8784f09273c38af6f75ba017030d46d35a502ae17",
+      "width": 750,
+      "height": 1334
+    },
+    "Models-Civic.png": {
+      "sha256": "5571e7ea8bb626b31ba6ba6240357206a07fb631fd808a9a8c680af0e00bacd0",
+      "width": 1600,
+      "height": 1630
+    },
+    "Pulse-Relay.decoded.png": {
+      "sha256": "a38a882f4cfde43a214c92ddce6e983d73757fb240995c1856b763d4679133e9",
+      "width": 1320,
+      "height": 2868
+    },
+    "Models-Residential.png": {
+      "sha256": "a50df43da539e9a7f2b490bf61526a535633fc88acce9d5d482418eb6297e718",
+      "width": 1600,
+      "height": 1630
+    },
+    "Pulse-Relay.png": {
+      "sha256": "619394114b9624b9e529b21b99efb9ec6745771c217596bcaca062448bf85d9e",
+      "width": 1320,
+      "height": 2868
+    },
+    "Pipe-Finishes.png": {
+      "sha256": "31d9b81eb7ccc11882d5e3ba1d431a7a3d5127d942ce0036d44ce710b8304403",
+      "width": 1440,
+      "height": 2050
+    },
+    "Worlds-and-Pipes.png": {
+      "sha256": "201fd58ffe2cb44467df913a303a9351ee50f235983d566858f2ede7bbe61bcb",
+      "width": 1440,
+      "height": 2050
+    },
+    "Building-Inspection.decoded.png": {
+      "sha256": "32ec5fffd5ad4d77a34b7b21c5f50f0dd71911224772b7ff6844c97e8dd23c9b",
+      "width": 1440,
+      "height": 960
+    },
+    "Pulse-Relay-Background.png": {
+      "sha256": "eb844f4c073cf3fe600b0bf7aebbcc9a3034322cfa7099152ce6720cc6170aa3",
+      "width": 720,
+      "height": 1281
+    },
+    "Building-Details.png": {
+      "sha256": "12f8c7e60fd13a7591c5b7f4476c251b6da488a4163d8cccb1c34efa5bc72749",
+      "width": 1440,
+      "height": 960
+    },
+    "Cliff-Star-Details.png": {
+      "sha256": "7a2d1ec04518009debe2a026226a1b3ac08af6a8f35a93a507bc272352ccf451",
+      "width": 1280,
+      "height": 430
+    },
+    "Worlds-in-Motion.decoded.png": {
+      "sha256": "5281c64f506dda4ae88d2529a3e45ae36cd5038a0d2f554c8b9cf5456404e0a5",
+      "width": 1440,
+      "height": 2050
+    }
+  },
+  "videos": {
+    "Building-Inspection.mp4": {
+      "sha256": "0f10d56b33f04cac75974bb7c8c661728c4072415a24b5f179f325baefb7402c",
+      "decodedFrames": 90,
+      "fps": 30,
+      "seconds": 3,
+      "width": 1440,
+      "height": 960
+    },
+    "Worlds-in-Motion.mp4": {
+      "sha256": "d676dd832427e57c06ee2ae8c43f7afe2aa905755dd53592b034ba479abf77a1",
+      "decodedFrames": 20,
+      "fps": 10,
+      "seconds": 2,
+      "width": 1440,
+      "height": 2050
+    }
+  },
+  "knownDiagnostics": [
+    "Existing UnityEditor.Search startup indexing exception; successful final exit.",
+    "Save-failure diagnostics deliberately injected by existing persistence checks."
+  ],
+  "backgroundWorkshop": {
+    "passed": true,
+    "scenes": 25,
+    "selectableStructures": 227,
+    "logSha256": "237648f92f088140a4e3d22d5aecb3ed0a31f53676d63bae6af31200531aa04f",
+    "editableGuide": "../BackgroundWorkshop20261023/EDITING_GUIDE.md"
+  },
+  "pipeMaterialChecks": {
+    "passed": true,
+    "logSha256": "57f97d77cb98ecb577391b7cfa6ada734163e59fc1974a67781cb691e0fa0d67",
+    "checks": 90
+  },
+  "deviceChecksRemaining": [
+    "Visual acceptance",
+    "Speaker and headphone listening",
+    "Sustained FPS/GPU/peak memory/thermals/battery",
+    "Natural complete twelve-world run"
+  ],
+  "delivery": {
+    "nativeBuildCreated": false,
+    "phoneInstalled": false,
+    "testFlightUploaded": false,
+    "publicReviewSubmitted": false,
+    "mainMerged": false
+  }
+}

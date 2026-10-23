@@ -1,5 +1,9 @@
 # SkyPulse — updated world colours and pipe finishes
 
+The colours and pipe finishes remain current. [New neon windows, building/island
+detail and sound previews](../NeonDistricts20261023/PREVIEW_INDEX.md) include the
+latest requested additions; the views below record the earlier building pass.
+
 Actual Unity renders of the current local visual candidate. Neon City reference
 captures and the owner-approved building geometry are preserved.
 

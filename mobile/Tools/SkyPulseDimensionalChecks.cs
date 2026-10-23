@@ -133,6 +133,7 @@ public static class SkyPulseDimensionalChecks
             env.Present(0,4,1,1,Color.cyan,Color.black,false);Check((expected-transforms[1,7].localPosition).sqrMagnitude<.000001f,"Absolute-distance parallax agrees at "+fps+" FPS");
         }
         var items=(Transform[,])Get(env,"scenery");env.Present(0,20,4,1,Color.cyan,Color.black,true);var reduced=items[1,7].localPosition;env.Present(0,30,8,1,Color.cyan,Color.black,true);Check(reduced==items[1,7].localPosition,"Reduced Motion freezes scenery travel and idle drift");
+        Check(((Material[])Get(env,"surfaces"))[1].GetFloat("_Clock")==0,"Reduced Motion also freezes occupied-window and architectural lighting");
         Check(items[1,7].localPosition.z!=items[1,1].localPosition.z&&items[1,9].localPosition.z!=items[1,7].localPosition.z,"The three city layers occupy distinct physical depths");
         for(int world=0;world<12;world++)
         {
@@ -143,7 +144,7 @@ public static class SkyPulseDimensionalChecks
         env.Present(0,10,1,1,Color.cyan,Color.black,false);for(int i=0;i<3;i++)env.Present(0,10,1,1,Color.cyan,Color.black,false);
         long before=GC.GetAllocatedBytesForCurrentThread();for(int i=0;i<120;i++)env.Present(0,i/30f,i/60f,1,Color.cyan,Color.black,false);Check(GC.GetAllocatedBytesForCurrentThread()==before,"Warmed architecture update has zero managed allocations");
         yield return RenderEnvironment(game,env,camera);
-        Call(game,"PauseFlight");var frozen=items[1,7].localPosition;Call(game,"UpdateCinematicPresentation",1f);Check(frozen==items[1,7].localPosition,"Pause freezes flight scenery");Call(game,"ResumeFlight");
+        Call(game,"PauseFlight");var frozen=items[1,7].localPosition;float frozenLight=((Material[])Get(env,"surfaces"))[1].GetFloat("_Clock");Call(game,"UpdateCinematicPresentation",1f);Check(frozen==items[1,7].localPosition,"Pause freezes flight scenery");Check(((Material[])Get(env,"surfaces"))[1].GetFloat("_Clock")==frozenLight,"Pause freezes window-light animation");Call(game,"ResumeFlight");
         Call(game,"ResetToMenu");Call(game,"StartFlight");Call(game,"UpdateCinematicPresentation",0f);Check(env.Travel==0,"Retry resets scenery distance");
         Call(game,"SetHomeProtocol",SkyPulseMode.PulseRelay);Call(game,"ResetToMenu");
         var home=(GameObject)Get(game,"homeScreen");var map=(Button)Get(game,"modeHomeMap");var guide=(Button)Get(game,"modeHomeGuide");var hangar=(RectTransform)Get(game,"homeHangar");

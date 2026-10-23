@@ -7,7 +7,7 @@ namespace SkyPulse.Mobile
     {
         readonly Transform[] rails=new Transform[6],turbines=new Transform[2],drones=new Transform[2];
         Mesh railMesh,turbineMesh,droneMesh,quad;Material material,backdrop,feed;float width,aspect;
-        Transform scene,screen,back;Camera sceneCamera;RenderTexture image;static int nextScene;
+        Transform scene,screen,back;Camera sceneCamera;SkyPulseRelayBackgroundEdits authored;Transform[] authoredTargets;RenderTexture image;static int nextScene;
         public Camera WorldCamera=>sceneCamera;public RenderTexture WorldImage=>image;
         static readonly int ClockId=Shader.PropertyToID("_Clock");
         public void Build(float viewWidth,Texture reflection=null)
@@ -71,6 +71,38 @@ namespace SkyPulse.Mobile
             for(int i=0;i<2;i++){turbines[i]=SkyPulseMeshBuilder.Surface(scene,"Distant air recycler "+i,turbineMesh,material,-25).transform;drones[i]=SkyPulseMeshBuilder.Surface(scene,"Autonomous maintenance drone "+i,droneMesh,material,-15).transform;}
             foreach(var item in scene.GetComponentsInChildren<Transform>(true))item.gameObject.layer=30;
             SetVisual(0,0);
+            LoadAuthoredStructures();
+            if(authored!=null)SetVisual(0,0);
+        }
+        void LoadAuthoredStructures()
+        {
+            authored=Resources.Load<SkyPulseRelayBackgroundEdits>("SkyPulse/BackgroundEdits/relay");
+            if(authored==null||authored.Parts==null)return;
+            authoredTargets=new Transform[authored.Parts.Length];
+            for(int i=0;i<authored.Parts.Length;i++)
+            {
+                var part=authored.Parts[i];if(part==null)continue;
+                var target=scene.Find(part.Name);
+                if(part.Hidden){if(target!=null)target.gameObject.SetActive(false);continue;}
+                if(part.Mesh==null)continue;
+                if(target==null&&part.AdditionalStructure)
+                {
+                    target=SkyPulseMeshBuilder.Surface(scene,part.Name,part.Mesh,material,-22).transform;target.gameObject.layer=30;
+                    target.localPosition=part.PositionOffset;target.localRotation=part.RotationOffset;target.localScale=part.ScaleMultiplier;
+                }
+                if(target==null)continue;
+                target.GetComponent<MeshFilter>().sharedMesh=part.Mesh;authoredTargets[i]=target;
+            }
+        }
+        void ApplyAuthoredStructures()
+        {
+            if(authoredTargets==null)return;
+            for(int i=0;i<authoredTargets.Length;i++)
+            {
+                var target=authoredTargets[i];var part=authored.Parts[i];if(target==null||part.AdditionalStructure)continue;
+                target.localPosition+=part.PositionOffset;target.localRotation=part.RotationOffset*target.localRotation;
+                target.localScale=Vector3.Scale(target.localScale,part.ScaleMultiplier);
+            }
         }
         static void Arc(SkyPulseMeshBuilder b,Vector3 centre,float radius,float tube,float start,float sweep,Color colour)
         {
@@ -111,6 +143,7 @@ namespace SkyPulse.Mobile
                 drones[i].localPosition=new Vector3(Mathf.Repeat(clock*(i==0?.32f:-.23f)+i*width*.6f+width*.5f,width)-width*.5f,i==0?4.7f+Mathf.Sin(clock*.36f)*.35f:-6.1f+Mathf.Sin(clock*.3f)*.3f,3);
                 drones[i].localRotation=Quaternion.Euler(12,Mathf.Sin(clock*.21f+i)*14,Mathf.Sin(clock*.32f+i)*4);
             }
+            ApplyAuthoredStructures();
             material.SetFloat(ClockId,clock);sceneCamera.transform.localPosition=new Vector3(Mathf.Sin(clock*.12f)*.10f,Mathf.Sin(clock*.10f)*.06f,-18);if(gameObject.activeInHierarchy)sceneCamera.Render();
         }
         public void SetViewport(float viewWidth)

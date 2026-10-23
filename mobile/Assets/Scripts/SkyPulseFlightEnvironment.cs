@@ -11,6 +11,7 @@ namespace SkyPulse.Mobile
         const int Themes=12, Layers=3, PerLayer=4;
         readonly Mesh[] silhouettes=new Mesh[Themes];
         readonly Mesh[] residential=new Mesh[Themes];
+        readonly MaterialPropertyBlock[,] authoredLighting=new MaterialPropertyBlock[Themes,2];
         readonly Transform[,] scenery=new Transform[2,Layers*PerLayer];
         readonly Material[] surfaces=new Material[2];
         readonly int[] bankTheme={-1,-1};
@@ -36,7 +37,16 @@ namespace SkyPulse.Mobile
             worldCamera=cameraObject.GetComponent<Camera>();worldCamera.enabled=false;worldCamera.orthographic=false;worldCamera.fieldOfView=38;worldCamera.cullingMask=1<<30;
             cameraObject.transform.localPosition=new Vector3(0,1.8f,-18);cameraObject.transform.localRotation=Quaternion.Euler(5,0,0);
             worldCamera.clearFlags=CameraClearFlags.SolidColor;worldCamera.backgroundColor=new Color(.008f,.015f,.04f);worldCamera.nearClipPlane=.2f;worldCamera.farClipPlane=125;worldCamera.allowHDR=false;worldCamera.allowMSAA=true;
-            for(int theme=0;theme<Themes;theme++){silhouettes[theme]=Architecture(theme);residential[theme]=SkyPulseWorldArchitecture.Build(theme,1);}
+            for(int theme=0;theme<Themes;theme++)
+            {
+                silhouettes[theme]=Architecture(theme);residential[theme]=Architecture(theme,1);
+                for(int variant=0;variant<2;variant++)
+                {
+                    var data=Resources.Load<SkyPulseBackgroundLighting>("SkyPulse/BackgroundEdits/world-"+theme.ToString("00")+"-"+(variant==0?"civic":"residential")+"-lighting");
+                    if(data==null)continue;
+                    var properties=new MaterialPropertyBlock();properties.SetVectorArray("_BeaconPoints",data.Points);properties.SetVectorArray("_BeaconColours",data.Colours);authoredLighting[theme,variant]=properties;
+                }
+            }
             var shader=Resources.Load<Shader>("SkyPulse/Shaders/FlightArchitecture");
             for(int bank=0;bank<2;bank++)
             {
@@ -99,12 +109,20 @@ namespace SkyPulse.Mobile
         {
             bool changed=bankTheme[bank]!=theme;bankTheme[bank]=theme;
             var material=surfaces[bank];material.SetFloat("_Geology",theme==0?1:0);material.SetFloat("_Design",theme);material.SetFloat(Visibility,visibility);material.SetFloat(Clock,clock);material.SetColor(Tint,tint);material.SetColor(Haze,haze);
-            if(changed)material.SetTexture("_Environment",reflections[theme]!=null?reflections[theme]:Texture2D.grayTexture);
+            if(changed)
+            {
+                material.SetTexture("_Environment",reflections[theme]!=null?reflections[theme]:Texture2D.grayTexture);
+                SkyPulseWorldArchitecture.ConfigureBeaconLighting(material,theme);
+            }
             for(int i=0;i<Layers*PerLayer;i++)
             {
                 var item=scenery[bank,i];bool visible=visibility>.0001f;
                 if(item.gameObject.activeSelf!=visible)item.gameObject.SetActive(visible);
-                if(changed)item.GetComponent<MeshFilter>().sharedMesh=(i+theme)%2==0?silhouettes[theme]:residential[theme];
+                if(changed)
+                {
+                    int variant=(i+theme)%2;item.GetComponent<MeshFilter>().sharedMesh=variant==0?silhouettes[theme]:residential[theme];
+                    item.GetComponent<MeshRenderer>().SetPropertyBlock(authoredLighting[theme,variant]);
+                }
                 if(!visible)continue;
                 int layer=i/PerLayer,slot=i%PerLayer;
                 float seed=Hash(theme*43+i*17),scale=(.48f+layer*.25f)*(.86f+seed*.24f);
@@ -122,7 +140,11 @@ namespace SkyPulse.Mobile
         }
         static float Hash(int n){uint x=(uint)n*747796405u+2891336453u;x=((x>>((int)(x>>28)+4))^x)*277803737u;return ((x>>22)^x)/4294967295f;}
         // Geometry construction is kept separate from the runtime camera/pool.
-        static Mesh Architecture(int theme)=>SkyPulseWorldArchitecture.Build(theme);
+        static Mesh Architecture(int theme,int variant=0)
+        {
+            var authored=Resources.Load<Mesh>("SkyPulse/BackgroundEdits/world-"+theme.ToString("00")+"-"+(variant==0?"civic":"residential"));
+            return authored!=null?Instantiate(authored):SkyPulseWorldArchitecture.Build(theme,variant);
+        }
 
         void OnDestroy()
         {

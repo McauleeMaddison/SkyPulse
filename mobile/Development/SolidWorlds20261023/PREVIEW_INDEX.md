@@ -1,7 +1,9 @@
 # SkyPulse — complete model and world previews
 
-The building models remain current. [Updated sky colours and pipe finishes](../WorldFinish20261023/PREVIEW_INDEX.md)
-are now available; the world images below preserve the earlier material pass.
+The original district forms are retained in the [latest building and island
+detail pass](../NeonDistricts20261023/PREVIEW_INDEX.md), with neon windows and star
+beacons. [Updated sky colours and pipe finishes](../WorldFinish20261023/PREVIEW_INDEX.md)
+are also available; the images below preserve the earlier material pass.
 
 Actual Unity Editor renders of the current local visual candidate.
 Both district arrangements for every world are included. Model inspection uses

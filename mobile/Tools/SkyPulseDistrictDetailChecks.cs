@@ -44,6 +44,7 @@ public static class SkyPulseDistrictDetailChecks
             var definition=worlds.GetValue(world);var type=definition.GetType();
             material.SetColor("_Tint",(Color)type.GetField("Accent").GetValue(definition));material.SetColor("_Haze",(Color)type.GetField("Floor").GetValue(definition));
             material.SetFloat("_Design",world);material.SetFloat("_Visibility",1);material.SetFloat("_Clock",2);
+            typeof(SkyPulseFlightEnvironment).Assembly.GetType("SkyPulse.Mobile.SkyPulseWorldArchitecture").GetMethod("ConfigureBeaconLighting",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,new object[]{material,world});
             var sprite=(Sprite)Call(game,"LoadSprite",(string)type.GetField("BackgroundPath").GetValue(definition));material.SetTexture("_Environment",sprite.texture);
             var mesh=((Mesh[])Get(env,variant==0?"silhouettes":"residential"))[world];
             if(mesh==null||mesh.vertexCount==0)throw new Exception("Missing district model: "+world+" / "+variant);
@@ -57,6 +58,25 @@ public static class SkyPulseDistrictDetailChecks
             {
                 proxy.transform.localRotation=Quaternion.Euler(0,-22+frame*.48f,0);material.SetFloat("_Clock",2+frame/30f);camera.Render();
                 var prior=RenderTexture.active;RenderTexture.active=rt;image.ReadPixels(new Rect(0,0,1000,1200),0,0);image.Apply();RenderTexture.active=prior;
+                if(frame==0)
+                {
+                    var lit=image.GetPixels32();material.SetFloat("_WindowGlow",0);camera.Render();RenderTexture.active=rt;image.ReadPixels(new Rect(0,0,1000,1200),0,0);image.Apply();RenderTexture.active=prior;
+                    var dark=image.GetPixels32();int changed=0,modelPixels=0;var background=lit[0];
+                    for(int pixel=0;pixel<lit.Length;pixel++)
+                    {
+                        if(Math.Abs(lit[pixel].r-background.r)+Math.Abs(lit[pixel].g-background.g)+Math.Abs(lit[pixel].b-background.b)>8)modelPixels++;
+                        if(Math.Abs(lit[pixel].r-dark[pixel].r)+Math.Abs(lit[pixel].g-dark[pixel].g)+Math.Abs(lit[pixel].b-dark[pixel].b)>15)changed++;
+                    }
+                    if(changed<60||changed>modelPixels*.30f)throw new Exception("Window lighting must be visible and selective: "+world+" / "+variant+" / "+changed+" of "+modelPixels);
+                    Debug.Log("DISTRICT_WINDOW_CHECK: "+world+" / "+variant+" / "+changed+" illuminated pixels of "+modelPixels);
+                    material.SetFloat("_WindowGlow",1);camera.Render();RenderTexture.active=rt;image.ReadPixels(new Rect(0,0,1000,1200),0,0);image.Apply();RenderTexture.active=prior;
+                    var glowing=image.GetPixels32();material.SetFloat("_BeaconGlow",0);camera.Render();RenderTexture.active=rt;image.ReadPixels(new Rect(0,0,1000,1200),0,0);image.Apply();RenderTexture.active=prior;
+                    var noSpill=image.GetPixels32();int glowPixels=0;
+                    for(int pixel=0;pixel<glowing.Length;pixel++)if(Math.Abs(glowing[pixel].r-noSpill[pixel].r)+Math.Abs(glowing[pixel].g-noSpill[pixel].g)+Math.Abs(glowing[pixel].b-noSpill[pixel].b)>15)glowPixels++;
+                    if(glowPixels<30)throw new Exception("Star LEDs must visibly illuminate the foundation: "+world+" / "+variant+" / "+glowPixels);
+                    Debug.Log("DISTRICT_BEACON_CHECK: "+world+" / "+variant+" / "+glowPixels+" illuminated foundation pixels");
+                    material.SetFloat("_BeaconGlow",1);camera.Render();RenderTexture.active=rt;image.ReadPixels(new Rect(0,0,1000,1200),0,0);image.Apply();RenderTexture.active=prior;
+                }
                 var png=image.EncodeToPNG();File.WriteAllBytes(Path.Combine(motion,frame.ToString("000")+".png"),png);if(frame==0)File.WriteAllBytes(Path.Combine(variantFolder,"world-"+world.ToString("00")+".png"),png);yield return null;
             }
             Debug.Log("DISTRICT_PREVIEW_CAPTURE: "+world.ToString("00")+" / "+arrangement+" / "+mesh.vertexCount+" vertices / "+frames+" frames");

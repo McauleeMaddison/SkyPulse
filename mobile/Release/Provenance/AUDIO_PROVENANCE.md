@@ -1,6 +1,12 @@
 # Replacement audio with retained source — 29 September 2026
 
-The five current sound effects were synthesized specifically for SkyPulse with the retained Python standard-library generator `mobile/Tools/generate_skypulse_audio.py`, authored with Codex in this session. It uses mathematical tones, envelopes and a deterministic noise sequence. It reads no input audio, recordings, sample packs or third-party sound libraries and calls no external service.
+This historical record describes the September palette. The owner requested a
+new seven-cue sound palette on 23 October; its current generator, old/new hashes,
+unchanged audio metadata and validation are recorded in
+[NeonDistricts20261023](../../Development/NeonDistricts20261023/AUDIO_RECORD.json).
+The earlier generator version and waveforms remain recoverable through Git.
+
+The five sound effects at that revision were synthesized specifically for SkyPulse with the retained Python standard-library generator `mobile/Tools/generate_skypulse_audio.py`, authored with Codex in that session. It uses mathematical tones, envelopes and a deterministic noise sequence. It reads no input audio, recordings, sample packs or third-party sound libraries and calls no external service.
 
 | Resource | Character | Duration |
 |---|---|---|
