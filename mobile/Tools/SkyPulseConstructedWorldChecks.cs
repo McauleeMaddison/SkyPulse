@@ -35,6 +35,11 @@ public static class SkyPulseConstructedWorldChecks
             if(label.text!=(mode==SkyPulseMode.EndlessRoute?"ENDLESS ROUTE":mode==SkyPulseMode.PulseRelay?"PULSE RELAY":"BLACKOUT PROTOCOL"))throw new Exception("Wrong Home identity");
             foreach(var face in home.GetComponentsInChildren<SkyPulseCircuitGraphic>())if(face.Surface==SkyPulseSurface.Panel&&(!face.ProjectedGlass||!face.material.shader.isSupported))throw new Exception("Home does not use supported projected glass");
         }
+        if(Environment.GetEnvironmentVariable("SKYPULSE_WORLD_PIPE_PREVIEW")=="1")
+        {
+            yield return SkyPulsePipeFinishChecks.Live(game);yield return SkyPulseDepthChecks.Live(game);
+            yield return SkyPulseWorldStyleChecks.Capture(game);
+        }
         Debug.Log("SKYPULSE_CONSTRUCTED_PREVIEW_PASS");EditorApplication.Exit(0);
     }
     public static void StationCheck(SkyPulseNativeGame game)

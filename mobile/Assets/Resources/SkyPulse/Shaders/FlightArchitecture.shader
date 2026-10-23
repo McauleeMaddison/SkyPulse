@@ -8,6 +8,7 @@ Shader "SkyPulse/Flight Architecture"
         _Haze ("Atmosphere", Color)=(.02,.04,.09,1)
         _Environment ("Authored world reflections",2D)="gray"{}
         _Architecture("Curtain wall detail",Float)=0
+        _Geology("Mineral strata",Float)=0
     }
     SubShader
     {
@@ -22,7 +23,7 @@ Shader "SkyPulse/Flight Architecture"
             #include "UnityCG.cginc"
             struct app {float4 vertex:POSITION;float3 normal:NORMAL;float4 color:COLOR;};
             struct vary {float4 pos:SV_POSITION;float3 world:TEXCOORD0;float3 normal:TEXCOORD1;float4 color:COLOR;float3 local:TEXCOORD2;};
-            float _Visibility,_Clock,_Architecture;float4 _Tint,_Haze;
+            float _Visibility,_Clock,_Architecture,_Geology;float4 _Tint,_Haze;
             sampler2D _Environment;
             vary vert(app v){vary o;o.pos=UnityObjectToClipPos(v.vertex);o.world=mul(unity_ObjectToWorld,v.vertex).xyz;o.normal=UnityObjectToWorldNormal(v.normal);o.color=v.color;o.local=v.vertex.xyz;return o;}
             fixed4 frag(vary i):SV_Target
@@ -54,7 +55,7 @@ Shader "SkyPulse/Flight Architecture"
                 float emission=smoothstep(.65,.95,i.color.a);
                 float3 lit=lerp(metal,lerp(i.color.rgb,_Tint.rgb,.20)*pulse*lerp(1,.72,_Architecture),emission);
                 // Distance haze ties the skyline into the authored atmosphere.
-                float geology=_Architecture*(1-step(.03,i.local.y));
+                float geology=_Geology*(1-step(.03,i.local.y));
                 float strata=.90+.10*sin(i.local.y*39+sin(i.local.x*7)*2);
                 lit=lerp(lit,lit*strata+float3(.16,.045,.11)*pow(saturate(-n.y),3),geology);
                 float mist=saturate((i.world.z-5)*.009);

@@ -53,6 +53,7 @@ public static class SkyPulseDimensionalChecks
         yield return SkyPulsePresentationChecks.Captures(game);
         yield return SkyPulseBlackoutChecks.Captures(game);
         if(System.Environment.GetEnvironmentVariable("SKYPULSE_CAPTURE_ENDLESS")=="1")yield return SkyPulseFlightPolishChecks.Capture(game);
+        if(System.Environment.GetEnvironmentVariable("SKYPULSE_WORLD_PIPE_PREVIEW")=="1")yield return SkyPulseWorldStyleChecks.Capture(game);
         Debug.Log("SKYPULSE_DIMENSIONAL_PASS");EditorApplication.Exit(0);
     }
     static IEnumerator Audio(SkyPulseNativeGame game)
@@ -92,8 +93,10 @@ public static class SkyPulseDimensionalChecks
         Check(env.WorldCamera!=camera&&!env.WorldCamera.orthographic&&env.WorldCamera.cullingMask==(1<<30)&&env.WorldImage.width==720,"Dedicated perspective scenery camera has a bounded mobile render target");
         foreach(var r in env.WorldScene.GetComponentsInChildren<MeshRenderer>(true))Check(r.sortingOrder<0&&r.sharedMaterial.shader.isSupported,"All scenery stays behind gameplay with supported shader");
         var meshes=(Mesh[])Get(env,"silhouettes");Check(meshes.Length==12&&new HashSet<Mesh>(meshes).Count==12&&meshes.All(m=>m.bounds.size.z>.2f),"Twelve unique mesh signatures have genuine volume");
-        Check(meshes.All(m=>m.bounds.min.y< -1.8f&&m.bounds.max.y>4),"Floating islands include a visible mineral underside and inhabited crown");
-        Check(meshes.All(m=>m.bounds.size.x>3&&m.bounds.size.z>1),"Island terraces have width and genuine front-to-back depth");
+        Check(meshes.Select(m=>m.vertexCount).Distinct().Count()>=9,"Worlds use different structural geometry, not twelve copies of one city mesh");
+        Check(meshes.Take(3).All(m=>m.bounds.min.y> -4)&&new[]{3,4,6,7,8,9,10,11}.All(i=>meshes[i].bounds.min.y< -10),"Airborne first worlds and grounded later cities use distinct terrain structures");
+        Check(meshes.All(m=>m.bounds.min.y< -1.8f&&m.bounds.max.y>4),"Every world structure includes physical foundations or a suspended underside and a visible landmark");
+        Check(meshes.All(m=>m.bounds.size.x>3&&m.bounds.size.z>1),"Every architectural family has width and genuine front-to-back depth");
         foreach(int fps in new[]{30,60,120})
         {
             env.ResetView();for(int frame=0;frame<=fps;frame++)env.Present(0,frame*4f/fps,frame/(float)fps,1,Color.cyan,Color.black,false);
