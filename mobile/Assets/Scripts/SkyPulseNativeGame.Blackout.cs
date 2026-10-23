@@ -43,6 +43,7 @@ namespace SkyPulse.Mobile
         }
         RectTransform BlackoutPanel(Transform parent,string name,Vector2 at,Vector2 size)
         {
+            if(IsResultContent(parent))return HolographicScorePanel(parent,name,at,size,BlackoutMint);
             var panel=CreatePanel(parent,name,at,size,Color.clear);panel.GetComponent<Image>().raycastTarget=false;
             var face=ProgressionSurface(panel,"Quiet optical instrument",Vector2.zero,size,SkyPulseProgressionSurface.Finish.Quiet);face.Accent=BlackoutMint;return panel;
         }

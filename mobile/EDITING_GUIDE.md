@@ -23,6 +23,7 @@ component on the scene; do not attach each partial file separately.
 | Tree labels and clickable upgrade targets | `SkyPulseNativeGame.TechTree.cs` → `BuildTechTree` |
 | Connected 3D tree branches, Core and halo movement | `SkyPulseTechTreeView.cs` |
 | Glossy text finish | `Resources/SkyPulse/Shaders/HolographicText.shader` |
+| Holographic score/result cards and labels | `SkyPulseNativeGame.Results.cs`, `SkyPulseScoreGlass.cs`, `Resources/SkyPulse/Shaders/ScoreGlass.shader` |
 | Original 3D pipe material and light packets | `SkyPulseNativeGame.Depth.cs`, `Resources/SkyPulse/Shaders/EndlessRouteMetal.shader` |
 | Original pipe artwork placement / collider anchors | `SkyPulseNativeGame.PipeVisuals.cs` |
 | Tapered exhaust, soft trail and passage sparks | `SkyPulseFlightEffects.cs`, `SkyPulseNativeGame.Cinematic.cs` |

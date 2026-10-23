@@ -45,6 +45,7 @@ public static class SkyPulseDimensionalChecks
         yield return SkyPulseBirdProgressionChecks.Live(game);
         yield return SkyPulseGuideWorldChecks.Live(game);
         yield return SkyPulseCopyChecks.Live(game);
+        yield return SkyPulseScoreChecks.Live(game);
         yield return SkyPulseDepthChecks.Live(game);
         yield return SkyPulseCinematicChecks.Live(game);
         yield return SkyPulseRelayGateChecks.Live(game);

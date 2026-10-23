@@ -59,6 +59,9 @@ public static class SkyPulseCopyChecks
             AssertVisible(game,"World map "+page);
             foreach(var button in worlds.GetComponentsInChildren<Button>())if(button.GetComponentInChildren<Text>().text=="NEXT"){button.onClick.Invoke();break;}
         }
+        // Match the real guide's Back action before navigating by fixture calls.
+        // ResetToMenu does not own this independently opened overlay.
+        worlds.SetActive(false);
         Call(game,"ResetToMenu");Call(game,"OpenHangar");
         for(int bird=0;bird<15;bird++){AssertVisible(game,"Founder bird "+bird);Call(game,"ShowNextHangarBird");}
         Call(game,"OpenUpgrades");AssertVisible(game,"Tech Tree");Call(game,"OpenCoreProgression");AssertVisible(game,"Core progression");Call(game,"CloseBirdProgression");

@@ -56,6 +56,7 @@ namespace SkyPulse.Mobile
         }
         private RectTransform PremiumPanel(Transform parent,string name,Vector2 at,Vector2 size,int variant,Color accent,bool primary=false)
         {
+            if(IsResultContent(parent))return HolographicScorePanel(parent,name,at,size,accent);
             var panel=CreatePanel(parent,name,at,size,Color.clear);panel.GetComponent<Image>().raycastTarget=false;
             var graphic=ProtocolGraphic(panel,"Machined surface",Vector2.zero,size,variant,SkyPulseSurface.Panel,accent,primary);graphic.Primary=primary;return panel;
         }
@@ -159,6 +160,7 @@ namespace SkyPulse.Mobile
         private void UpdateProtocolPresentation(float dt)
         {
             bool paused=state==FlightState.Paused;
+            UpdateScoreFinish(dt);
             FitRelayHudToSafeArea();
             UpdateBlackoutPresentation();
             UpdateBlackoutActionAnimation(dt);

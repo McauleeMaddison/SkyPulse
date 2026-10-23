@@ -2068,6 +2068,8 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             hudScoreText.resizeTextMinSize = 34;
             hudScoreText.resizeTextMaxSize = 82;
             hudBestText = CreateText(scoreCard, "BEST  0", new Vector2(0f, -77f), new Vector2(226f, 32f), 20, Hex("#b5c8de"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            ApplyScoreGlass(scoreCard, Hex("#45eaff"));
+            PolishScoreLabels(scoreCard, .12f);
             var pause = CreateNeonButton(root.transform, "Ⅱ", new Vector2(421f, 932f), new Vector2(88f, 88f), Hex("#b17cff"));
             SetComfortHitTarget(pause);
             pause.onClick.AddListener(PauseFlight);
@@ -2116,8 +2118,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
         {
             var root = CreateScreen(parent, "Game over screen");
             CreateFullPanel(root.transform, "Game over dim", new Color(.005f, .012f, .04f, .82f));
-            var card = CreatePanel(root.transform, "Game over card", Vector2.zero, new Vector2(820f, 1190f), Hex("#07152b"));
-            AddOutline(card.gameObject, new Color(.27f, .92f, 1f, .66f), 1.5f);
+            var card = HolographicScorePanel(root.transform, "Game over card", Vector2.zero, new Vector2(820f, 1190f), Hex("#75ddff"));
             CreateText(card, "RUN COMPLETE", new Vector2(0f, 505f), new Vector2(720f, 70f), 48, Hex("#f4fbff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             resultModeText = CreateText(card, "ENDLESS ROUTE", new Vector2(0f, 451f), new Vector2(600f, 36f), 24, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             CreateUiGlyph(card, "Result flight horizon", new Vector2(0f, 408f), new Vector2(640f, 24f), new Color(.27f, .92f, 1f, .48f), SkyPulseUiGlyph.Kind.Horizon);
@@ -2130,7 +2131,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             resultNewBestText = CreateText(card, "NEW PERSONAL BEST", new Vector2(0f, 153f), new Vector2(620f, 38f), 26, Hex("#ffc34d"), TextAnchor.MiddleCenter, FontStyle.Bold);
             resultReasonText = CreateText(card, "GATE IMPACT", new Vector2(0f, 106f), new Vector2(620f, 34f), 22, Hex("#e6b4d6"), TextAnchor.MiddleCenter, FontStyle.Normal);
 
-            var rewards = CreatePanel(card, "Run rewards", new Vector2(0f, -46f), new Vector2(680f, 250f), Hex("#0b2137"));
+            var rewards = HolographicScorePanel(card, "Run rewards", new Vector2(0f, -46f), new Vector2(680f, 250f), Hex("#8db8ec"));
             rewards.GetComponent<Image>().raycastTarget = false;
             var rewardIcon = CreateImage(rewards, "Run reward crystal", new Vector2(-271f, 22f), new Vector2(86f, 104f), Color.white);
             rewardIcon.sprite = LoadSprite(CrystalArtworkPath);
@@ -2158,6 +2159,8 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             var menu = CreateNeonButton(card, "MAIN MENU", new Vector2(177f, -509f), new Vector2(326f, 88f), Hex("#8fa7c4"));
             menu.GetComponentInChildren<Text>().fontSize = 26;
             menu.onClick.AddListener(ResetToMenu);
+            PolishScoreActions(card);
+            PolishScoreLabels(card);
             return root;
         }
 

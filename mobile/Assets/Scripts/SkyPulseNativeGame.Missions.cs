@@ -93,6 +93,7 @@ namespace SkyPulse.Mobile
         private Text MissionText(Transform root,string label,float y,int size=28,Color? colour=null,float width=900f,float height=64f)
         {
             var text=CreateText(root,label,new Vector2(0,y),new Vector2(width,height),size,colour??Hex("#d8f6ff"),TextAnchor.MiddleCenter,FontStyle.Bold);
+            if(IsResultContent(root))PolishScoreLabel(text);
             text.horizontalOverflow=HorizontalWrapMode.Wrap;text.verticalOverflow=VerticalWrapMode.Truncate;return text;
         }
         private Button MissionButton(Transform root,string label,float x,float y,float width,Action action,Color? colour=null,float height=100)
@@ -102,6 +103,11 @@ namespace SkyPulse.Mobile
             if(feedback!=null){feedback.ReducedMotion=reduceMotionEnabled;protocolButtonFeedback.Add(feedback);}
             var t=b.GetComponentInChildren<Text>();t.resizeTextForBestFit=true;t.resizeTextMinSize=20;t.resizeTextMaxSize=28;
             PolishButton(b,colour.HasValue && colour.Value.g>.85f && colour.Value.r<.6f?2:1,colour??Hex("#45eaff"),label=="PLAY" || label.StartsWith("PULSE") || label.StartsWith("START"));
+            if(IsResultContent(root))
+            {
+                var face=b.targetGraphic as SkyPulseCircuitGraphic;face.SoftGlass=true;face.Ambient=false;face.SetVerticesDirty();
+                PolishScoreLabel(t,.35f);
+            }
             b.onClick.AddListener(()=>action());return b;
         }
         private GameObject MissionScreen(string name,bool blackout=false,bool backdrop=true)
