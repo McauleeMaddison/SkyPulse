@@ -65,7 +65,9 @@ namespace SkyPulse.Mobile
             moon=SkyPulseMeshBuilder.Surface(worldScene,"Real spherical moon",skyMesh,moonMaterial,-44).transform;moon.localPosition=new Vector3(5.2f,8.5f,30);moon.localScale=Vector3.one*.065f;
             foreach(var item in worldScene.GetComponentsInChildren<Transform>(true))item.gameObject.layer=30;
             compositeMesh=new Mesh{name="Live perspective world composite"};compositeMesh.vertices=new[]{new Vector3(-.5f,-.5f),new Vector3(-.5f,.5f),new Vector3(.5f,.5f),new Vector3(.5f,-.5f)};compositeMesh.uv=new[]{new Vector2(0,0),new Vector2(0,1),new Vector2(1,1),new Vector2(1,0)};compositeMesh.triangles=new[]{0,1,2,0,2,3};compositeMesh.RecalculateBounds();
-            compositeMaterial=new Material(Shader.Find("Unlit/Texture")){name="Live 3D world feed"};compositeMaterial.renderQueue=3000;
+            // Keep the shader under Resources so native shader stripping cannot
+            // remove a material referenced only by this procedural scene.
+            compositeMaterial=new Material(Resources.Load<Shader>("SkyPulse/Shaders/WorldComposite")){name="Live 3D world feed"};compositeMaterial.renderQueue=3000;
             composite=SkyPulseMeshBuilder.Surface(transform,"Live constructed background",compositeMesh,compositeMaterial,-48).transform;composite.localPosition=new Vector3(0,0,24);
             SetViewport(viewWidth);
         }
