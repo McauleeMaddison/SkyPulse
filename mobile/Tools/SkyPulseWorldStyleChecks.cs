@@ -8,6 +8,7 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
 using SkyPulse.Mobile;
+using UnityEditor;
 
 public static class SkyPulseWorldStyleChecks
 {
@@ -19,6 +20,7 @@ public static class SkyPulseWorldStyleChecks
     public static IEnumerator Capture(SkyPulseNativeGame game)
     {
         if(Application.companyName!="SkyPulseQA20261006")throw new Exception("Disposable QA required");
+        Normals();
         game.enabled=false;Set(game,"hapticsEnabled",false);Set(game,"reduceMotionEnabled",false);
         var camera=(Camera)Get(game,"flightCamera");var old=camera.targetTexture;var rt=RenderTexture.GetTemporary(750,1334,24);camera.targetTexture=rt;
         var canvas=((GameObject)Get(game,"uiRoot")).GetComponent<Canvas>();canvas.renderMode=RenderMode.ScreenSpaceCamera;canvas.worldCamera=camera;canvas.planeDistance=1;
@@ -31,7 +33,9 @@ public static class SkyPulseWorldStyleChecks
             Set(game,"routeWorldIndex",world);Set(game,"routeWorld",worlds.GetValue(world));Call(game,"ApplyRouteWorldVisuals");Call(game,"ResetFlightEnvironment");
             float spacing=(float)Call(game,"RoutePipeSpacing");int slot=0;
             foreach(var pipe in (Array)Get(game,"pipePool"))Call(game,"ConfigurePipe",pipe,3.6f+(slot++)*spacing);
-            Call(game,"UpdateCinematicPresentation",0f);Call(game,"RefreshViewportDecor");
+            // Capture the occupied district after its normal entry reveal.
+            // Flight still begins at its real milestone state below.
+            Call(game,"UpdateCinematicPresentation",1f);Call(game,"RefreshViewportDecor");
             var bodies=(Mesh[])Get(game,"routeBodyThemes");var caps=(Mesh[])Get(game,"routeCapThemes");
             foreach(var mesh in new[]{bodies[world],caps[world]})Check(mesh.bounds.size.x<=1.001f&&mesh.bounds.size.x>=.97f&&Mathf.Abs(mesh.bounds.size.y-1)<.001f,"Pipe mesh stays within tested dimensions: "+world+" / "+mesh.name);
             var first=((IList)Get(game,"routeDepth"))[0];Check(((MeshFilter)Get(first,"BodyFilter")).sharedMesh==bodies[world]&&((MeshFilter)Get(first,"CapFilter")).sharedMesh==caps[world],"Visible shaft and collar bind to the current world mesh "+world);
@@ -59,6 +63,28 @@ public static class SkyPulseWorldStyleChecks
         Check(((Material)Get(game,"routeMetal")).GetFloat("_Theme")==0,"Departing pipes retain their own design while fading");
         Call(game,"UpdateWorldTransition",.65f);Call(game,"UpdateDepthPresentation",0f);
         Check(((Material)Get(game,"routeMetal")).GetFloat("_Theme")==1,"Incoming world binds its new pipe geometry after departure fades");
+        foreach(string path in new[]{"FlightArchitecture","EndlessRouteMetal"})
+        {
+            var shader=Resources.Load<Shader>("SkyPulse/Shaders/"+path);
+            foreach(var message in ShaderUtil.GetShaderMessages(shader))if(message.severity.ToString()=="Error")throw new Exception("Rendered material compilation error: "+message.message);
+        }
         camera.targetTexture=old;RenderTexture.ReleaseTemporary(rt);UnityEngine.Object.Destroy(image);Call(game,"ResetToMenu");Debug.Log("SKYPULSE_WORLD_STYLES_PASS");
+    }
+    static void Normals()
+    {
+        var assembly=typeof(SkyPulseNativeGame).Assembly;
+        var barrel=assembly.GetType("SkyPulse.Mobile.SkyPulseRouteArchitecture").GetMethod("Normal",BindingFlags.Static|BindingFlags.NonPublic);
+        for(int world=1;world<12;world++)for(int side=0;side<16;side++)foreach(float dy in new[]{.008f,.12f,1f})
+        {
+            var n=(Vector3)barrel.Invoke(null,new object[]{side*Mathf.PI/8,new Vector2(.48f,.10f),world,false,dy,.002f});
+            Check(!float.IsNaN(n.x)&&n.sqrMagnitude>.99f,"Small profile derivatives retain a unit lighting normal: "+world+" / "+side+" / "+dy);
+        }
+        var tower=assembly.GetType("SkyPulse.Mobile.SkyPulseWorldArchitecture").GetMethod("TowerNormal",BindingFlags.Static|BindingFlags.NonPublic);
+        for(int form=0;form<5;form++)for(int side=0;side<16;side++)
+        {
+            var n=(Vector3)tower.Invoke(null,new object[]{side*Mathf.PI/8,.75f,.30f,.35f,1.5f,.12f,form});
+            Check(!float.IsNaN(n.x)&&n.sqrMagnitude>.99f,"Small buildings retain finite surface normals: "+form+" / "+side);
+        }
+        Debug.Log("SKYPULSE_DESIGN_NORMALS_PASS");
     }
 }

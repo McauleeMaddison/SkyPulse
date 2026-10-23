@@ -112,7 +112,7 @@ public static class SkyPulseDimensionalChecks
     {
         Call(game,"SetHomeProtocol",SkyPulseMode.EndlessRoute);Call(game,"StartFlight");Call(game,"UpdateCinematicPresentation",1f);
         var env=(SkyPulseFlightEnvironment)Get(game,"flightEnvironment");var camera=(Camera)Get(game,"flightCamera");
-        Check(env!=null&&env.WorldScene.GetComponentsInChildren<MeshRenderer>(true).Length==26,"Active flight uses two pooled 12-island mesh banks plus a constructed sky dome and spherical moon");
+        Check(env!=null&&env.WorldScene.GetComponentsInChildren<MeshRenderer>(true).Length==25,"Active flight uses two pooled twelve-district mesh banks and one atmosphere dome");
         Check(!((SpriteRenderer)Get(game,"backgroundRenderer")).enabled&&!((SpriteRenderer)Get(game,"incomingBackground")).enabled&&!((SpriteRenderer)Get(game,"backgroundVeil")).enabled,"Endless displays its constructed world instead of the flat city images");
         Check(camera.orthographic&&camera.transform.position==new Vector3(0,0,-10)&&camera.nearClipPlane<1&&camera.farClipPlane>30,"Original orthographic camera contains the architecture depth range");
         Check(env.WorldScene.GetComponentsInChildren<Collider>(true).Length==0&&env.WorldScene.GetComponentsInChildren<Collider2D>(true).Length==0,"Scenery owns no collision shapes");
@@ -120,7 +120,10 @@ public static class SkyPulseDimensionalChecks
         foreach(var r in env.WorldScene.GetComponentsInChildren<MeshRenderer>(true))Check(r.sortingOrder<0&&r.sharedMaterial.shader.isSupported,"All scenery stays behind gameplay with supported shader");
         var meshes=(Mesh[])Get(env,"silhouettes");Check(meshes.Length==12&&new HashSet<Mesh>(meshes).Count==12&&meshes.All(m=>m.bounds.size.z>.2f),"Twelve unique mesh signatures have genuine volume");
         Check(meshes.Select(m=>m.vertexCount).Distinct().Count()>=9,"Worlds use different structural geometry, not twelve copies of one city mesh");
-        Check(meshes.Take(3).All(m=>m.bounds.min.y> -4)&&new[]{3,4,6,7,8,9,10,11}.All(i=>meshes[i].bounds.min.y< -10),"Airborne first worlds and grounded later cities use distinct terrain structures");
+        foreach(var mesh in meshes)Debug.Log("DISTRICT_MESH: "+mesh.name+" / "+mesh.vertexCount+" vertices / "+mesh.bounds);
+        Check(meshes.All(m=>m.bounds.min.y> -4)&&meshes.All(m=>m.vertexCount<60000),"Complete district foundations stay bounded and each cached mesh fits a 16-bit mobile index buffer");
+        var residential=(Mesh[])Get(env,"residential");Check(residential.Length==12&&residential.All(m=>m.vertexCount<60000)&&new HashSet<Mesh>(meshes.Concat(residential)).Count==24,"Twenty-four cached civic/residential meshes avoid repeating one identical district stamp");
+        Debug.Log("DISTRICT_GEOMETRY_BUDGET: "+meshes.Concat(residential).Sum(m=>(long)m.vertexCount*40+(long)m.GetIndexCount(0)*2)+" estimated GPU bytes across all 24 districts");
         Check(meshes.All(m=>m.bounds.min.y< -1.8f&&m.bounds.max.y>4),"Every world structure includes physical foundations or a suspended underside and a visible landmark");
         Check(meshes.All(m=>m.bounds.size.x>3&&m.bounds.size.z>1),"Every architectural family has width and genuine front-to-back depth");
         foreach(int fps in new[]{30,60,120})
@@ -150,7 +153,7 @@ public static class SkyPulseDimensionalChecks
         yield return null;SkyPulsePlayerExperienceChecks.CaptureUi(game,"relay-home-refined");
         Call(game,"SetHomeProtocol",SkyPulseMode.EndlessRoute);Call(game,"ResetToMenu");Check(hangar.anchoredPosition==new Vector2(-187,-355)&&((RectTransform)guide.transform).sizeDelta==new Vector2(660,144),"Switching preserves Endless's hangar placement and restores the accessible guide/footer layout");
         var cleanup=new GameObject("Scenery lifecycle fixture");var owned=cleanup.AddComponent<SkyPulseFlightEnvironment>();owned.Build(12);
-        var ownedMeshes=(Mesh[])Get(owned,"silhouettes");var ownedMaterials=(Material[])Get(owned,"surfaces");
+        var ownedMeshes=((Mesh[])Get(owned,"silhouettes")).Concat((Mesh[])Get(owned,"residential")).ToArray();var ownedMaterials=(Material[])Get(owned,"surfaces");
         UnityEngine.Object.Destroy(cleanup);yield return null;yield return null;
         Check(ownedMeshes.All(m=>m==null)&&ownedMaterials.All(m=>m==null),"Owned environment meshes and materials are released on destroy");
         Debug.Log("SKYPULSE_FLIGHT_ENVIRONMENT_PASS");

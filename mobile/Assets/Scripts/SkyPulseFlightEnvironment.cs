@@ -10,11 +10,12 @@ namespace SkyPulse.Mobile
     {
         const int Themes=12, Layers=3, PerLayer=4;
         readonly Mesh[] silhouettes=new Mesh[Themes];
+        readonly Mesh[] residential=new Mesh[Themes];
         readonly Transform[,] scenery=new Transform[2,Layers*PerLayer];
         readonly Material[] surfaces=new Material[2];
         readonly int[] bankTheme={-1,-1};
         readonly Texture[] reflections=new Texture[Themes];
-        Mesh skyMesh;Material skyMaterial,moonMaterial;Transform sky,moon;
+        Mesh skyMesh;Material skyMaterial;Transform sky;
         Transform worldScene,composite;Camera worldCamera;RenderTexture worldImage;Mesh compositeMesh;Material compositeMaterial;float viewAspect;
         public Transform WorldScene=>worldScene;
         public Camera WorldCamera=>worldCamera;
@@ -35,7 +36,7 @@ namespace SkyPulse.Mobile
             worldCamera=cameraObject.GetComponent<Camera>();worldCamera.enabled=false;worldCamera.orthographic=false;worldCamera.fieldOfView=38;worldCamera.cullingMask=1<<30;
             cameraObject.transform.localPosition=new Vector3(0,1.8f,-18);cameraObject.transform.localRotation=Quaternion.Euler(5,0,0);
             worldCamera.clearFlags=CameraClearFlags.SolidColor;worldCamera.backgroundColor=new Color(.008f,.015f,.04f);worldCamera.nearClipPlane=.2f;worldCamera.farClipPlane=125;worldCamera.allowHDR=false;worldCamera.allowMSAA=true;
-            for(int theme=0;theme<Themes;theme++)silhouettes[theme]=Architecture(theme);
+            for(int theme=0;theme<Themes;theme++){silhouettes[theme]=Architecture(theme);residential[theme]=SkyPulseWorldArchitecture.Build(theme,1);}
             var shader=Resources.Load<Shader>("SkyPulse/Shaders/FlightArchitecture");
             for(int bank=0;bank<2;bank++)
             {
@@ -61,8 +62,6 @@ namespace SkyPulse.Mobile
             // The camera sits inside the dome, so each ray crosses one sky
             // surface. An outside view of both halves produced latitude bands.
             sky.localPosition=Vector3.zero;sky.localScale=Vector3.one*3;
-            moonMaterial=new Material(Resources.Load<Shader>("SkyPulse/Shaders/WorldMoon")){name="Lit mineral moon"};
-            moon=SkyPulseMeshBuilder.Surface(worldScene,"Real spherical moon",skyMesh,moonMaterial,-44).transform;moon.localPosition=new Vector3(10.2f,11.5f,38);moon.localScale=Vector3.one*.035f;
             foreach(var item in worldScene.GetComponentsInChildren<Transform>(true))item.gameObject.layer=30;
             compositeMesh=new Mesh{name="Live perspective world composite"};compositeMesh.vertices=new[]{new Vector3(-.5f,-.5f),new Vector3(-.5f,.5f),new Vector3(.5f,.5f),new Vector3(.5f,-.5f)};compositeMesh.uv=new[]{new Vector2(0,0),new Vector2(0,1),new Vector2(1,1),new Vector2(1,0)};compositeMesh.triangles=new[]{0,1,2,0,2,3};compositeMesh.RecalculateBounds();
             // Keep the shader under Resources so native shader stripping cannot
@@ -94,18 +93,17 @@ namespace SkyPulse.Mobile
             float blend=previous==world?1:Mathf.Clamp01(transition);
             skyMaterial.SetTexture("_SkyA",reflections[previous]!=null?reflections[previous]:Texture2D.grayTexture);skyMaterial.SetTexture("_SkyB",reflections[world]!=null?reflections[world]:Texture2D.grayTexture);skyMaterial.SetFloat("_Blend",blend);
             skyMaterial.SetColor(Tint,Color.Lerp(previousTint,tint,blend));skyMaterial.SetColor(Haze,Color.Lerp(previousHaze,haze,blend));skyMaterial.SetFloat(Clock,clock);skyMaterial.SetFloat("_World",Mathf.Lerp(previous,world,blend));
-            moonMaterial.SetColor(Tint,Color.Lerp(previousTint,tint,blend));moon.localRotation=Quaternion.Euler(12,clock*.6f,18);
         }
         void SetBank(int bank,int theme,float distance,float clock,float visibility,Color tint,Color haze)
         {
             bool changed=bankTheme[bank]!=theme;bankTheme[bank]=theme;
-            var material=surfaces[bank];material.SetFloat("_Geology",theme==0?1:0);material.SetFloat(Visibility,visibility);material.SetFloat(Clock,clock);material.SetColor(Tint,tint);material.SetColor(Haze,haze);
+            var material=surfaces[bank];material.SetFloat("_Geology",theme==0?1:0);material.SetFloat("_Design",theme);material.SetFloat(Visibility,visibility);material.SetFloat(Clock,clock);material.SetColor(Tint,tint);material.SetColor(Haze,haze);
             if(changed)material.SetTexture("_Environment",reflections[theme]!=null?reflections[theme]:Texture2D.grayTexture);
             for(int i=0;i<Layers*PerLayer;i++)
             {
                 var item=scenery[bank,i];bool visible=visibility>.0001f;
                 if(item.gameObject.activeSelf!=visible)item.gameObject.SetActive(visible);
-                if(changed)item.GetComponent<MeshFilter>().sharedMesh=silhouettes[theme];
+                if(changed)item.GetComponent<MeshFilter>().sharedMesh=(i+theme)%2==0?silhouettes[theme]:residential[theme];
                 if(!visible)continue;
                 int layer=i/PerLayer,slot=i%PerLayer;
                 float seed=Hash(theme*43+i*17),scale=(.48f+layer*.25f)*(.86f+seed*.24f);
@@ -113,10 +111,12 @@ namespace SkyPulse.Mobile
                 // Stagger inhabited islands above the cloud sea; near landforms
                 // travel faster while distant cities keep the flight path legible.
                 bool floating=theme<3;
-                float y=(floating?(layer==0?-.5f:layer==1?-3.5f:-7.4f):(layer==0?-3.3f:layer==1?-5.9f:-8.0f))+seed*(floating?(layer==0?4.2f:3.2f):1.1f)+Mathf.Sin(clock*.13f+i)*(floating?.045f:0);
+                float y=(floating?(layer==0?-.8f:layer==1?-3.2f:-6.0f):(layer==0?-2.5f:layer==1?-3.8f:-5.4f))+seed*(floating?(layer==0?2.6f:1.7f):.6f)+Mathf.Sin(clock*.13f+i)*(floating?.025f:0);
                 item.localPosition=new Vector3(x,y,27-layer*8);
-                item.localScale=Vector3.one*scale;
-                item.localRotation=Quaternion.Euler(0,-22+seed*44,0);
+                // Small differences in the occupied floor area and skyline
+                // proportions break the old repeated-stamp silhouette.
+                item.localScale=new Vector3(scale*(.88f+Hash(i*31+theme)*.24f),scale*(.86f+Hash(i*53+theme)*.28f),scale);
+                item.localRotation=Quaternion.Euler(0,-34+seed*38,0);
             }
         }
         static float Hash(int n){uint x=(uint)n*747796405u+2891336453u;x=((x>>((int)(x>>28)+4))^x)*277803737u;return ((x>>22)^x)/4294967295f;}
@@ -126,8 +126,9 @@ namespace SkyPulse.Mobile
         void OnDestroy()
         {
             foreach(var mesh in silhouettes)if(mesh!=null)Destroy(mesh);
+            foreach(var mesh in residential)if(mesh!=null)Destroy(mesh);
             foreach(var material in surfaces)if(material!=null)Destroy(material);
-            if(skyMesh!=null)Destroy(skyMesh);if(skyMaterial!=null)Destroy(skyMaterial);if(moonMaterial!=null)Destroy(moonMaterial);
+            if(skyMesh!=null)Destroy(skyMesh);if(skyMaterial!=null)Destroy(skyMaterial);
             if(worldScene!=null)Destroy(worldScene.gameObject);if(worldImage!=null){worldImage.Release();Destroy(worldImage);}if(compositeMesh!=null)Destroy(compositeMesh);if(compositeMaterial!=null)Destroy(compositeMaterial);
         }
     }

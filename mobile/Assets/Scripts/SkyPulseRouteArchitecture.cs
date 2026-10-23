@@ -2,153 +2,116 @@ using UnityEngine;
 
 namespace SkyPulse.Mobile
 {
-    // One cached shaft/collar pair per world. All profiles stay inside the same
-    // tested dimensions; these meshes never own or resize flight colliders.
+    // One continuous engineered assembly per world. Channels follow the barrel
+    // surface; there are no front-facing plates or floating sticker decorations.
     internal static class SkyPulseRouteArchitecture
     {
-        public static readonly string[] Names={"Neon inlay","Aurora flutes","Solar radiator","Tidal seals","Rose deco","Crystal facets","Jade collars","Violet armour","Obsidian crown","Storm conduits","Copper observatory","Polar glass"};
+        public static readonly string[] Names={"Neon precision alloy","Aurora ceramic channels","Solar collector housing","Tidal titanium seals","Rose ceramic alloy","Prismatic silver shell","Jade bioceramic housing","Violet arcology alloy","Obsidian precision crown","Cobalt induction housing","Amber bronze housing","Polar insulated shell"};
         public static Color Accent(int world)
         {
-            switch(world)
-            {
-                case 1:return new Color(.22f,1,.73f);case 2:return new Color(1,.65f,.13f);case 3:return new Color(.12f,.72f,1);
-                case 4:return new Color(1,.32f,.69f);case 5:return new Color(.70f,.90f,1);case 6:return new Color(.25f,1,.55f);
-                case 7:return new Color(.68f,.32f,1);case 8:return new Color(.73f,.47f,1);case 9:return new Color(.18f,.45f,1);
-                case 10:return new Color(1,.61f,.23f);case 11:return new Color(.40f,.96f,1);default:return new Color(.02f,.85f,1);
-            }
+            switch(world){case 1:return new Color(.25f,1,.81f);case 2:return new Color(1,.66f,.22f);case 3:return new Color(.14f,.70f,1);case 4:return new Color(1,.37f,.62f);case 5:return new Color(.62f,.82f,1);case 6:return new Color(.29f,.93f,.57f);case 7:return new Color(.73f,.37f,1);case 8:return new Color(.98f,.72f,.36f);case 9:return new Color(.22f,.50f,1);case 10:return new Color(1,.65f,.28f);case 11:return new Color(.43f,.92f,1);default:return new Color(.02f,.85f,1);}
         }
-        public static Color Secondary(int world)=>world==2||world==10?new Color(1,.36f,.12f):world==4?new Color(1,.75f,.84f):world==6?new Color(.14f,.73f,.64f):world==7?new Color(1,.25f,.77f):world==8?new Color(1,.70f,.35f):world==0?new Color(1,.03f,.85f):new Color(.76f,.93f,1);
-        public static Color Metal(int world)=>world==2||world==10?new Color(.69f,.42f,.24f):world==4?new Color(.58f,.38f,.49f):world==5||world==11?new Color(.64f,.80f,.90f):world==6?new Color(.30f,.52f,.43f):world==8?new Color(.23f,.19f,.32f):world==7?new Color(.35f,.28f,.49f):new Color(.31f,.43f,.62f);
+        public static Color Secondary(int world)=>world==0?new Color(1,.03f,.85f):world==4?new Color(1,.77f,.80f):world==7?new Color(1,.28f,.64f):world==8?new Color(.76f,.66f,1):new Color(.76f,.90f,1);
+        public static Color Metal(int world)
+        {
+            switch(world){case 1:return new Color(.58f,.66f,.66f);case 2:return new Color(.45f,.40f,.31f);case 3:return new Color(.13f,.22f,.29f);case 4:return new Color(.48f,.38f,.39f);case 5:return new Color(.50f,.61f,.69f);case 6:return new Color(.19f,.30f,.26f);case 7:return new Color(.20f,.19f,.28f);case 8:return new Color(.11f,.12f,.16f);case 9:return new Color(.26f,.33f,.44f);case 10:return new Color(.46f,.32f,.22f);case 11:return new Color(.61f,.69f,.73f);default:return new Color(.24f,.31f,.39f);}
+        }
+        static readonly Color Base=new Color(1,1,1,0),Trim=new Color(1,1,1,.25f),Seal=new Color(1,1,1,.55f),Light=new Color(1,1,1,1);
         public static Mesh Build(int world,bool cap)
         {
-            var b=new SkyPulseMeshBuilder();var profile=Profile(world,cap);const int sides=48;
-            for(int i=0;i<sides;i++)for(int row=1;row<profile.Length;row++)
+            var b=new SkyPulseMeshBuilder();var profile=Profile(world,cap);const int sides=64;
+            for(int row=1;row<profile.Length;row++)for(int side=0;side<sides;side++)
             {
-                float a=i*Mathf.PI*2/sides,c=(i+1)*Mathf.PI*2/sides;var lo=profile[row-1];var hi=profile[row];
+                float a=side*Mathf.PI*2/sides,c=(side+1f)*Mathf.PI*2/sides;var lo=profile[row-1];var hi=profile[row];
                 var p=Point(a,lo,world,cap);var q=Point(c,lo,world,cap);var r=Point(c,hi,world,cap);var t=Point(a,hi,world,cap);
-                float dy=hi.y-lo.y,dr=hi.x-lo.x;var na=new Vector3(Mathf.Cos(a)*dy,-dr,Mathf.Sin(a)*dy).normalized;var nc=new Vector3(Mathf.Cos(c)*dy,-dr,Mathf.Sin(c)*dy).normalized;
-                b.SmoothQuad(p,q,r,t,na,nc,new Color(1,1,1,0));
-                if(row==1)b.Face(new Vector3(0,lo.y,0),q,p,new Color(1,1,1,0));
-                if(row==profile.Length-1)b.Face(new Vector3(0,hi.y,0),t,r,new Color(1,1,1,0));
+                float dy=hi.y-lo.y,dr=hi.x-lo.x;var na=Normal(a,lo,world,cap,dy,dr);var nb=Normal(c,lo,world,cap,dy,dr);
+                Color material=cap&&(row==2||row==profile.Length-2)?Trim:Base;
+                b.SmoothQuad(p,q,r,t,na,nb,material);
+                if(row==1)b.Face(new Vector3(0,lo.y,0),q,p,Base);
+                if(row==profile.Length-1)b.Face(new Vector3(0,hi.y,0),t,r,Trim);
             }
-            Decorate(b,world,cap);
-            return b.Finish(Names[world]+(cap?" / bevelled collar":" / structural shaft"));
-        }
-        static readonly Color Trim=new Color(1,1,1,.35f),Inlay=new Color(1,1,1,1);
-        static void Decorate(SkyPulseMeshBuilder b,int world,bool cap)
-        {
             if(cap)
             {
-                int seals=world==2||world==6||world==9?4:world==5||world==11?2:3;
-                for(int i=0;i<seals;i++)Band(b,-.28f+i*.56f/(seals-1),.015f,world,Trim);
-                int panels=world==7?3:world==8?1:2;
-                for(int i=0;i<panels;i++){float x=(i-(panels-1)*.5f)*.22f;Plate(b,x,0,.055f,world==5?.26f:.20f,Trim);Strip(b,new Vector2(x,-.065f),new Vector2(x,.065f),.009f,Inlay);}
-                return;
+                // Recessed dark seals and a single light reveal belong to the
+                // housing rather than crossing it as big surface-mounted bands.
+                Band(b,world,profile,-.28f,.018f,Seal);Band(b,world,profile,.24f,.012f,Light);
+                for(int i=0;i<8;i++)Channel(b,world,profile,i*Mathf.PI/4,-.17f,.12f,.028f,Trim,true);
             }
-            switch(world)
+            else
             {
-                case 1:
-                    for(int side=-1;side<=1;side+=2)for(int i=0;i<12;i++)
-                    {float y=-.43f+i*.072f,c=y+.072f;Strip(b,new Vector2(side*(.24f+.045f*Mathf.Sin(y*5)),y),new Vector2(side*(.24f+.045f*Mathf.Sin(c*5)),c),.012f,Inlay);}break;
-                case 2:
-                    for(int i=0;i<7;i++){Band(b,-.40f+i*.13f,.026f,world,Trim);Strip(b,new Vector2(-.17f,-.36f+i*.12f),new Vector2(.17f,-.36f+i*.12f),.008f,Inlay);}break;
-                case 3:
-                    for(int i=0;i<4;i++){Band(b,-.36f+i*.24f,.020f,world,Trim);Band(b,-.33f+i*.24f,.006f,world,Inlay);}break;
-                case 4:
-                    for(int i=0;i<4;i++)for(int side=-1;side<=1;side+=2)Strip(b,new Vector2(side*.26f,-.35f+i*.22f),new Vector2(0,-.23f+i*.22f),.014f,Trim);break;
-                case 5:
-                    for(int side=-1;side<=1;side+=2){Strip(b,new Vector2(side*.18f,-.44f),new Vector2(side*.27f,0),.025f,Trim);Strip(b,new Vector2(side*.27f,0),new Vector2(side*.18f,.44f),.025f,Trim);}
-                    Strip(b,new Vector2(0,-.40f),new Vector2(0,.40f),.011f,Inlay);break;
-                case 6:
-                    for(int i=0;i<4;i++){Band(b,-.39f+i*.26f,.032f,world,Trim);Band(b,-.36f+i*.26f,.008f,world,Inlay);}break;
-                case 7:
-                    for(int i=0;i<3;i++){float y=-.3f+i*.3f;Plate(b,0,y,.24f,.20f,Trim);for(int j=0;j<3;j++)Strip(b,new Vector2(-.085f,y-.042f+j*.042f),new Vector2(.085f,y-.042f+j*.042f),.007f,Inlay);}break;
-                case 8:
-                    Strip(b,new Vector2(0,-.43f),new Vector2(.22f,0),.020f,Trim);Strip(b,new Vector2(.22f,0),new Vector2(0,.43f),.020f,Trim);Strip(b,new Vector2(0,.43f),new Vector2(-.22f,0),.020f,Trim);Strip(b,new Vector2(-.22f,0),new Vector2(0,-.43f),.020f,Trim);
-                    for(int i=0;i<3;i++)Band(b,-.32f+i*.32f,.008f,world,Inlay);break;
-                case 9:
-                    for(int side=-1;side<=1;side+=2)for(int i=0;i<6;i++)Strip(b,new Vector2(side*(i%2==0?.15f:.29f),-.42f+i*.14f),new Vector2(side*(i%2==0?.29f:.15f),-.28f+i*.14f),.012f,Inlay);break;
-                case 10:
-                    for(int side=-1;side<=1;side+=2){Plate(b,side*.25f,0,.035f,.82f,Trim);Strip(b,new Vector2(side*.25f,-.38f),new Vector2(side*.25f,.38f),.006f,Inlay);}
-                    Band(b,-.35f,.024f,world,Trim);Band(b,.35f,.024f,world,Trim);break;
-                default:
-                    for(int i=0;i<5;i++){float y=-.38f+i*.19f;Strip(b,new Vector2(-.22f,y-.045f),new Vector2(0,y+.045f),.012f,Inlay);Strip(b,new Vector2(0,y+.045f),new Vector2(.22f,y-.045f),.012f,Inlay);}break;
+                int rails=world==2||world==9?6:world==5||world==11?3:4;
+                for(int rail=0;rail<rails;rail++)
+                {
+                    float a=Mathf.PI*2*(rail+.5f)/rails;
+                    Channel(b,world,profile,a,-.475f,.475f,.095f,Seal,false);
+                    Channel(b,world,profile,a,-.455f,.455f,.025f,Light,false);
+                }
+                Band(b,world,profile,-.43f,.014f,Trim);Band(b,world,profile,.416f,.014f,Trim);
+                if(world==2||world==9)for(int i=0;i<3;i++)Band(b,world,profile,-.20f+i*.20f,.009f,Seal);
+            }
+            return b.Finish(Names[world]+(cap?" / machined collar":" / continuous barrel"));
+        }
+        static void Channel(SkyPulseMeshBuilder b,int world,Vector2[] profile,float angle,float bottom,float top,float width,Color colour,bool cap)
+        {
+            const int steps=24;
+            for(int i=0;i<steps;i++)
+            {
+                float y=Mathf.Lerp(bottom,top,i/(float)steps),z=Mathf.Lerp(bottom,top,(i+1f)/steps);
+                float sweep=cap?0:world==1?.055f*Mathf.Sin(y*3):world==7?.035f*y:world==11?.024f*Mathf.Sin(y*5):0;
+                float next=cap?0:world==1?.055f*Mathf.Sin(z*3):world==7?.035f*z:world==11?.024f*Mathf.Sin(z*5):0;
+                float a=angle+sweep-width*.5f,c=angle+sweep+width*.5f,d=angle+next+width*.5f,e=angle+next-width*.5f;
+                float relief=colour.a>.8f?.002f:colour.a>.4f?.0004f:.001f;
+                float r=Mathf.Min(.50f,Radius(profile,y)+relief),s=Mathf.Min(.50f,Radius(profile,z)+relief);
+                b.SmoothQuad(Point(a,new Vector2(r,y),world,cap),Point(c,new Vector2(r,y),world,cap),Point(d,new Vector2(s,z),world,cap),Point(e,new Vector2(s,z),world,cap),Normal(a,new Vector2(r,y),world,cap,1,0),Normal(c,new Vector2(r,y),world,cap,1,0),colour);
             }
         }
-        static void Band(SkyPulseMeshBuilder b,float y,float height,int world,Color colour)
+        static void Band(SkyPulseMeshBuilder b,int world,Vector2[] profile,float bottom,float height,Color colour)
         {
-            const int sides=48;
+            const int sides=64;
             for(int i=0;i<sides;i++)
             {
-                float a=i*Mathf.PI*2/sides,c=(i+1)*Mathf.PI*2/sides;
-                var p=Point(a,new Vector2(.499f,y),world,true);var q=Point(c,new Vector2(.499f,y),world,true);
-                b.SmoothQuad(p,q,q+Vector3.up*height,p+Vector3.up*height,new Vector3(Mathf.Cos(a),0,Mathf.Sin(a)),new Vector3(Mathf.Cos(c),0,Mathf.Sin(c)),colour);
+                float a=i*Mathf.PI*2/sides,c=(i+1f)*Mathf.PI*2/sides;
+                float r=Mathf.Min(.5f,Radius(profile,bottom)+.0012f),s=Mathf.Min(.5f,Radius(profile,bottom+height)+.0012f);
+                b.SmoothQuad(Point(a,new Vector2(r,bottom),world,true),Point(c,new Vector2(r,bottom),world,true),Point(c,new Vector2(s,bottom+height),world,true),Point(a,new Vector2(s,bottom+height),world,true),Normal(a,new Vector2(r,bottom),world,true,1,0),Normal(c,new Vector2(r,bottom),world,true,1,0),colour);
             }
         }
-        static void Strip(SkyPulseMeshBuilder b,Vector2 a,Vector2 c,float width,Color colour)
+        static float Radius(Vector2[] profile,float y)
         {
-            var side=new Vector2(-(c-a).y,(c-a).x).normalized*width*.5f;
-            b.Quad(new Vector3(a.x-side.x,a.y-side.y,-.532f),new Vector3(c.x-side.x,c.y-side.y,-.532f),new Vector3(c.x+side.x,c.y+side.y,-.532f),new Vector3(a.x+side.x,a.y+side.y,-.532f),colour);
+            for(int i=1;i<profile.Length;i++)if(y<=profile[i].y)return Mathf.Lerp(profile[i-1].x,profile[i].x,Mathf.InverseLerp(profile[i-1].y,profile[i].y,y));
+            return profile[profile.Length-1].x;
         }
-        static void Plate(SkyPulseMeshBuilder b,float x,float y,float width,float height,Color colour)
+        static Vector3 Normal(float a,Vector2 p,int world,bool cap,float dy,float dr)
         {
-            float cut=Mathf.Min(width*.18f,height*.12f),w=width*.5f,h=height*.5f;
-            var outline=new[]{new Vector2(-w+cut,-h),new Vector2(w-cut,-h),new Vector2(w,-h+cut),new Vector2(w,h-cut),new Vector2(w-cut,h),new Vector2(-w+cut,h),new Vector2(-w,h-cut),new Vector2(-w,-h+cut)};
-            for(int i=0;i<8;i++)
-            {
-                var p=outline[i];var q=outline[(i+1)%8];
-                if(width>.20f)
-                    b.Quad(new Vector3(x+p.x,y+p.y,-.52f),new Vector3(x+q.x,y+q.y,-.52f),new Vector3(x+q.x*.92f,y+q.y*.92f,-.52f),new Vector3(x+p.x*.92f,y+p.y*.92f,-.52f),colour);
-                else b.Face(new Vector3(x,y,-.52f),new Vector3(x+q.x,y+q.y,-.52f),new Vector3(x+p.x,y+p.y,-.52f),colour);
-                b.Quad(new Vector3(x+p.x,y+p.y,-.52f),new Vector3(x+q.x,y+q.y,-.52f),new Vector3(x+q.x,y+q.y,-.495f),new Vector3(x+p.x,y+p.y,-.495f),colour);
-            }
+            var tangent=Point(a+.001f,p,world,cap)-Point(a-.001f,p,world,cap);
+            var radial=Point(a,new Vector2(p.x+dr*.001f,p.y+dy*.001f),world,cap)-Point(a,p,world,cap);
+            // Unity treats vectors shorter than 1e-5 as zero. Differentiate in
+            // mesh units, then scale before normalising the cross product.
+            return Vector3.Cross(radial*10000,tangent*100).normalized;
         }
         static Vector3 Point(float a,Vector2 p,int world,bool cap)
         {
-            float twist=cap?0:world==1?p.y*.17f:world==9?p.y*.22f:world==11?p.y*.12f:0;a+=twist;
-            float c=Mathf.Cos(a),s=Mathf.Sin(a),radius=1;
-            if(world==5||world==8||world==11)
-            {
-                int count=world==8?8:6;float half=Mathf.PI/count,angle=Mathf.Repeat(a,2*half)-half;radius=Mathf.Cos(half)/Mathf.Cos(angle);
-            }
-            else if(world==2||world==4||world==6||world==9||world==10)radius=.96f+.04f*Mathf.Cos(a*(world==9?6:world==4||world==10?12:8));
-            if(world==7)return new Vector3(Mathf.Sign(c)*Mathf.Pow(Mathf.Abs(c),.40f)*p.x,p.y,Mathf.Sign(s)*Mathf.Pow(Mathf.Abs(s),.40f)*p.x);
-            return new Vector3(c*p.x*radius,p.y,s*p.x*radius*(world==3?.85f:1));
+            float c=Mathf.Cos(a),s=Mathf.Sin(a),r=1;
+            if(world==5||world==8){int sides=world==5?8:12;float h=Mathf.PI/sides;float d=Mathf.Repeat(a,2*h)-h;r=Mathf.Cos(h)/Mathf.Cos(d);}
+            else if(world==2||world==9||world==10)r=.985f+.015f*Mathf.Cos(a*(world==9?8:12));
+            if(world==7)return new Vector3(Mathf.Sign(c)*Mathf.Pow(Mathf.Abs(c),.68f)*p.x,p.y,Mathf.Sign(s)*Mathf.Pow(Mathf.Abs(s),.68f)*p.x);
+            return new Vector3(c*p.x*r,p.y,s*p.x*r*(world==3?.90f:1));
         }
         static Vector2[] Profile(int world,bool cap)
         {
-            if(cap)switch(world)
+            if(cap)
             {
-                case 1:return P(.46f,-.5f,.5f,-.38f,.47f,-.20f,.50f,.26f,.49f,.4f,.46f,.5f);
-                case 2:return P(.46f,-.5f,.50f,-.40f,.46f,-.22f,.50f,-.16f,.46f,.02f,.50f,.08f,.46f,.26f,.50f,.34f,.46f,.5f);
-                case 3:return P(.46f,-.5f,.50f,-.36f,.47f,-.26f,.50f,-.08f,.47f,.04f,.50f,.23f,.49f,.4f,.46f,.5f);
-                case 4:return P(.46f,-.5f,.5f,-.37f,.49f,-.20f,.47f,.06f,.50f,.32f,.48f,.43f,.46f,.5f);
-                case 5:return P(.46f,-.5f,.50f,-.30f,.50f,.25f,.46f,.5f);
-                case 6:return P(.46f,-.5f,.50f,-.35f,.46f,-.16f,.50f,.0f,.46f,.18f,.50f,.35f,.46f,.5f);
-                case 7:return P(.46f,-.5f,.5f,-.39f,.5f,-.22f,.47f,-.12f,.47f,.12f,.5f,.22f,.5f,.39f,.46f,.5f);
-                case 8:return P(.46f,-.5f,.50f,-.29f,.48f,.16f,.50f,.32f,.46f,.5f);
-                case 9:return P(.46f,-.5f,.50f,-.37f,.46f,-.20f,.50f,-.06f,.46f,.10f,.50f,.28f,.48f,.43f,.46f,.5f);
-                case 10:return P(.46f,-.5f,.49f,-.42f,.50f,-.27f,.50f,.23f,.49f,.40f,.46f,.5f);
-                default:return P(.46f,-.5f,.48f,-.42f,.50f,-.28f,.48f,-.1f,.50f,.14f,.48f,.36f,.46f,.5f);
+                if(world==2||world==9)return P(.455f,-.5f,.490f,-.44f,.5f,-.34f,.478f,-.22f,.478f,-.12f,.498f,-.06f,.498f,.12f,.478f,.18f,.5f,.30f,.490f,.44f,.455f,.5f);
+                if(world==4||world==6)return P(.455f,-.5f,.484f,-.44f,.497f,-.32f,.5f,-.18f,.484f,.14f,.497f,.27f,.488f,.42f,.455f,.5f);
+                if(world==5||world==8)return P(.455f,-.5f,.5f,-.34f,.5f,-.24f,.48f,-.15f,.48f,.15f,.5f,.24f,.5f,.34f,.455f,.5f);
+                return P(.455f,-.5f,.486f,-.45f,.5f,-.34f,.5f,-.27f,.478f,-.21f,.478f,.17f,.498f,.22f,.5f,.33f,.486f,.45f,.455f,.5f);
             }
-            switch(world)
-            {
-                case 1:return P(.48f,-.5f,.5f,-.43f,.46f,-.15f,.5f,.16f,.48f,.44f,.48f,.5f);
-                case 2:return P(.48f,-.5f,.50f,-.46f,.47f,-.34f,.50f,-.26f,.47f,-.08f,.50f,.02f,.47f,.2f,.50f,.28f,.47f,.44f,.48f,.5f);
-                case 3:return P(.48f,-.5f,.50f,-.44f,.49f,-.34f,.46f,-.30f,.46f,.31f,.49f,.36f,.50f,.44f,.48f,.5f);
-                case 4:return P(.48f,-.5f,.50f,-.40f,.46f,-.24f,.47f,.20f,.50f,.39f,.48f,.5f);
-                case 5:return P(.48f,-.5f,.50f,-.32f,.50f,.34f,.48f,.5f);
-                case 6:return P(.48f,-.5f,.49f,-.43f,.46f,-.32f,.46f,-.1f,.50f,-.04f,.46f,.05f,.46f,.33f,.50f,.39f,.48f,.5f);
-                case 7:return P(.48f,-.5f,.50f,-.43f,.50f,-.27f,.47f,-.21f,.47f,.22f,.5f,.28f,.5f,.43f,.48f,.5f);
-                case 8:return P(.48f,-.5f,.49f,-.45f,.46f,-.3f,.47f,.26f,.5f,.4f,.48f,.5f);
-                case 9:return P(.48f,-.5f,.5f,-.43f,.46f,-.18f,.5f,-.08f,.46f,.14f,.5f,.23f,.47f,.42f,.48f,.5f);
-                case 10:return P(.48f,-.5f,.5f,-.41f,.48f,-.30f,.47f,.3f,.5f,.42f,.48f,.5f);
-                default:return P(.48f,-.5f,.5f,-.41f,.48f,-.26f,.5f,.12f,.48f,.35f,.48f,.5f);
-            }
+            if(world==2||world==9)return P(.478f,-.5f,.495f,-.46f,.5f,-.42f,.482f,-.35f,.480f,-.05f,.493f,0,.480f,.05f,.482f,.35f,.5f,.42f,.495f,.46f,.478f,.5f);
+            if(world==5||world==8)return P(.475f,-.5f,.497f,-.45f,.5f,-.39f,.5f,.39f,.497f,.45f,.475f,.5f);
+            if(world==1||world==11)return P(.475f,-.5f,.494f,-.46f,.5f,-.37f,.487f,-.26f,.487f,.26f,.5f,.37f,.494f,.46f,.475f,.5f);
+            if(world==4)return P(.475f,-.5f,.493f,-.45f,.5f,-.34f,.488f,-.18f,.483f,.02f,.488f,.18f,.5f,.34f,.493f,.45f,.475f,.5f);
+            if(world==6)return P(.475f,-.5f,.5f,-.40f,.483f,-.28f,.483f,-.10f,.497f,-.04f,.483f,.04f,.483f,.28f,.5f,.40f,.475f,.5f);
+            return P(.475f,-.5f,.496f,-.46f,.5f,-.39f,.484f,-.30f,.484f,.30f,.5f,.39f,.496f,.46f,.475f,.5f);
         }
-        static Vector2[] P(params float[] pairs)
-        {
-            var result=new Vector2[pairs.Length/2];for(int i=0;i<result.Length;i++)result[i]=new Vector2(pairs[i*2],pairs[i*2+1]);return result;
-        }
+        static Vector2[] P(params float[] xy){var p=new Vector2[xy.Length/2];for(int i=0;i<p.Length;i++)p[i]=new Vector2(Mathf.Min(.498f,xy[i*2]),xy[i*2+1]);return p;}
     }
 }
