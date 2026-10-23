@@ -2075,6 +2075,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             pause.onClick.AddListener(PauseFlight);
             hudCrystalText = CreateCrystalChip(root.transform, new Vector2(365f, 816f), "✦  0", Hex("#45eaff"));
             hudModeText = CreateText(root.transform, "NEON CITY", new Vector2(-326f, 724f), new Vector2(280f, 32f), 17, Hex("#45eaff"), TextAnchor.MiddleLeft, FontStyle.Bold);
+            CreateRouteGoal(root.transform);
             scoreBurstText = CreateText(root.transform, "+1", new Vector2(0f, HudFeedbackY), new Vector2(720f, 54f), 27, Hex("#45eaff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             scoreBurstText.gameObject.SetActive(false);
             hudPowerUpText = CreateText(root.transform, "", new Vector2(296f, 744f), new Vector2(340f, 34f), 17, Hex("#61f5b3"), TextAnchor.MiddleRight, FontStyle.Bold);

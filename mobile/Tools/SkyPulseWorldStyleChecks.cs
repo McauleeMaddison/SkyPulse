@@ -27,6 +27,7 @@ public static class SkyPulseWorldStyleChecks
         for(int world=0;world<12;world++)
         {
             Call(game,"SetHomeProtocol",SkyPulseMode.EndlessRoute);Call(game,"ResetToMenu");Call(game,"StartFlight");
+            Set(game,"score",world*15);((Text)Get(game,"hudScoreText")).text=(world*15).ToString();
             Set(game,"routeWorldIndex",world);Set(game,"routeWorld",worlds.GetValue(world));Call(game,"ApplyRouteWorldVisuals");Call(game,"ResetFlightEnvironment");
             float spacing=(float)Call(game,"RoutePipeSpacing");int slot=0;
             foreach(var pipe in (Array)Get(game,"pipePool"))Call(game,"ConfigurePipe",pipe,3.6f+(slot++)*spacing);

@@ -59,6 +59,14 @@ namespace SkyPulse.Mobile
         }
         void UpdateScoreFinish(float dt)
         {
+            UpdateRouteGoalFeedback();
+            if(activeMode==SkyPulseMode.EndlessRoute&&state==FlightState.GameOver&&resultReasonText!=null)
+            {
+                // Actionable, single-line feedback; the collision result and
+                // reward flow remain owned by EndFlight, not presentation.
+                string guidance=lastCrashReason=="GROUND CONTACT"?"GROUND CONTACT · Tap sooner to climb":"GATE IMPACT · Aim through the opening";
+                if(resultReasonText.text!=guidance)resultReasonText.text=guidance;
+            }
             if(!reduceMotionEnabled&&state!=FlightState.Paused)scoreFinishClock+=Mathf.Max(0,dt);
             float motion=reduceMotionEnabled?0:1;
             if(scoreGlassMaterial!=null){scoreGlassMaterial.SetFloat("_Clock",scoreFinishClock);scoreGlassMaterial.SetFloat("_Motion",motion);}

@@ -12,6 +12,27 @@ namespace SkyPulse.Mobile
         readonly Button[] modeGuideTabs = new Button[5];
         readonly string[] endlessGuideTopics = { "FLIGHT", "TECH TREE", "SKYPULSE CORE", "BIRD TRAINING", "BREEDING" };
 
+        Text routeGoalText;
+        int routeGoalScore = -1;
+        void CreateRouteGoal(Transform parent)
+        {
+            routeGoalText = CreateText(parent, "", new Vector2(-226, 680), new Vector2(480, 32), 22, Hex("#c4dbe8"), TextAnchor.MiddleLeft, FontStyle.Normal);
+            routeGoalText.gameObject.name = "Next world goal";
+            routeGoalText.raycastTarget = false;
+        }
+        void UpdateRouteGoalFeedback()
+        {
+            // Read the existing score only. No separate missions, rewards or save
+            // keys; the label follows retries and every twelve-world route lap.
+            if (routeGoalText == null) return;
+            bool visible = activeMode == SkyPulseMode.EndlessRoute;
+            if (routeGoalText.gameObject.activeSelf != visible) routeGoalText.gameObject.SetActive(visible);
+            if (!visible || routeGoalScore == score) return;
+            routeGoalScore = score;
+            int gates = Mathf.Max(0, score);
+            routeGoalText.text = $"{Worlds[((gates / 15) + 1) % Worlds.Length].Name} · {15 - gates % 15} TO GO";
+        }
+
         void OpenWorldGuide()
         {
             if (modeGuideScreen != null) modeGuideScreen.SetActive(false);
@@ -118,7 +139,7 @@ namespace SkyPulse.Mobile
                     break;
                 default:
                     GuideStep(0, "TAP TO TAKE FLIGHT", "Tap PLAY, then tap the flight area to flap through each pipe opening. Avoid the pipes and ground. Use the pause button to stop, resume or return to Home.");
-                    GuideStep(1, "DISCOVER TWELVE WORLDS", "Every run begins in Neon City. A new world arrives every 15 gates; after Polar Glow the route returns to Neon City at score 180. Your best score is saved.");
+                    GuideStep(1, "DISCOVER TWELVE WORLDS", "The flight HUD shows your next world and gates remaining. Every run begins in Neon City; a new world arrives every 15 gates. After Polar Glow, Neon City returns at score 180. Your best is saved.");
                     GuideStep(2, "TURN FLIGHTS INTO PROGRESS", "Collect crystals and power-ups in flight. Spend earned crystals on birds, training, breeding, Core evolution and Tech. Open the topics above for their exact benefits.");
                     break;
             }

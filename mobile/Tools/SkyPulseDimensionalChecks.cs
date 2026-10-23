@@ -31,6 +31,7 @@ public static class SkyPulseDimensionalChecks
         SkyPulseBirdProgressionChecks.Pure();SkyPulseDailyRouteChecks.Pure();SkyPulseMissionChecks.PureChecks();SkyPulseOneThumbChecks.Pure();SkyPulseBlackoutChecks.Pure();
         var game=UnityEngine.Object.FindAnyObjectByType<SkyPulseNativeGame>();if(game==null)game=new GameObject("QA game").AddComponent<SkyPulseNativeGame>();game.enabled=false;
         Set(game,"hapticsEnabled",false);
+        PlayerGoals(game);
         yield return Audio(game);
         yield return SkyPulseTouchComfortChecks.Live(game);
         yield return Environment(game);
@@ -55,6 +56,31 @@ public static class SkyPulseDimensionalChecks
         if(System.Environment.GetEnvironmentVariable("SKYPULSE_CAPTURE_ENDLESS")=="1")yield return SkyPulseFlightPolishChecks.Capture(game);
         if(System.Environment.GetEnvironmentVariable("SKYPULSE_WORLD_PIPE_PREVIEW")=="1")yield return SkyPulseWorldStyleChecks.Capture(game);
         Debug.Log("SKYPULSE_DIMENSIONAL_PASS");EditorApplication.Exit(0);
+    }
+    static void PlayerGoals(SkyPulseNativeGame game)
+    {
+        Call(game,"SetHomeProtocol",SkyPulseMode.EndlessRoute);Call(game,"StartFlight");
+        var label=(Text)Get(game,"routeGoalText");
+        foreach(var entry in new[]{(0,"AURORA RISE · 15 TO GO"),(14,"AURORA RISE · 1 TO GO"),(15,"SOLAR DRIFT · 15 TO GO"),(179,"NEON CITY · 1 TO GO"),(180,"AURORA RISE · 15 TO GO")})
+        {
+            Set(game,"score",entry.Item1);Call(game,"UpdateScoreFinish",0f);
+            Check(label.text==entry.Item2&&!label.raycastTarget,"Next-world goal follows boundary and repeat lap: "+entry.Item1);
+            Check(label.preferredWidth<=label.rectTransform.rect.width,"World goal stays within its quiet HUD column");
+        }
+        Call(game,"RestartFlight");Call(game,"UpdateScoreFinish",0f);Check(label.text=="AURORA RISE · 15 TO GO","Retry resets the route goal");
+        var update=(Action<float>)Delegate.CreateDelegate(typeof(Action<float>),game,typeof(SkyPulseNativeGame).GetMethod("UpdateScoreFinish",F));for(int i=0;i<50;i++)update(0);
+        long before=GC.GetAllocatedBytesForCurrentThread();for(int i=0;i<1000;i++)update(0);
+        Check(GC.GetAllocatedBytesForCurrentThread()==before,"Unchanged route goal allocates no managed bytes");
+        int wallet=(int)Get(game,"crystals");
+        Call(game,"EndFlight");Set(game,"state",Enum.Parse(Get(game,"state").GetType(),"GameOver"));
+        foreach(string reason in new[]{"GROUND CONTACT","GATE IMPACT"})
+        {
+            Set(game,"lastCrashReason",reason);Call(game,"UpdateScoreFinish",0f);var text=(Text)Get(game,"resultReasonText");
+            Check(text.text.StartsWith(reason)&&text.text.Contains(reason=="GROUND CONTACT"?"Tap sooner":"Aim through"),"Collision guidance matches actual failure");
+        }
+        Check((int)Get(game,"crystals")==wallet,"Goal and failure guidance cannot spend or award crystals");
+        Call(game,"LaunchMission",SkyPulseMode.PulseRelay,0);Call(game,"UpdateScoreFinish",0f);Check(!label.gameObject.activeSelf,"Relay keeps its own mission objective");
+        Call(game,"ResetToMenu");Call(game,"SetHomeProtocol",SkyPulseMode.EndlessRoute);Debug.Log("SKYPULSE_PLAYER_GOALS_PASS");
     }
     static IEnumerator Audio(SkyPulseNativeGame game)
     {
