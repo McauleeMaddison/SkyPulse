@@ -1,0 +1,226 @@
+{
+  "date": "2026-10-23",
+  "candidate": "Solid structural districts and integrated pipe hardware",
+  "sourceCommit": "4794af1ca9c10da41c81efcd4dbdc23a62c761f8",
+  "nativeBuildInfo": {
+    "version": "1.0.0",
+    "build": "18",
+    "bundleId": "com.mcauleemaddison.skypulse",
+    "unityVersion": "6000.6.0f1",
+    "sdk": "iphoneos",
+    "targetDevice": "iPhoneAndiPad",
+    "createdUtc": "2026-10-23T17:42:56.0712060Z",
+    "gameplaySourceSha256": "4cf7363d1483ff5215a89a98a1701e951c3453b92e9cfee5c49ef0dcee42218a",
+    "iconSha256": "6cbc6acd07a0f1de1b07ff757e010abdf9c1b5d1befe8a61e3c6d4b6d22b0887",
+    "publicLinksSha256": "7723d668b279f7826a962b3cfb386f47eea2ce6b1fed090d53ebb7eb0493a476",
+    "sourceCommit": "4794af1ca9c10da41c81efcd4dbdc23a62c761f8",
+    "sourceManifestSha256": "49989e4e756779b6aa50df16356e2673f8b5ea3f6c9bb347a81ca5651ae72ed7"
+  },
+  "nativeValidation": {
+    "xcodeReleaseBuildPassed": true,
+    "codesignDeepStrictPassed": true,
+    "sourceFilesMatched": 469,
+    "sourceManifestSha256": "49989e4e756779b6aa50df16356e2673f8b5ea3f6c9bb347a81ca5651ae72ed7",
+    "archive": "artifacts/solid-worlds-20261023/SkyPulse-local18.zip"
+  },
+  "unityRegression": {
+    "groupCount": 32,
+    "passedGroups": [
+      "SKYPULSE_BIRD_PROGRESSION_LIVE_PASS",
+      "SKYPULSE_BIRD_PROGRESSION_PURE_PASS",
+      "SKYPULSE_BLACKOUT_LIVE_PASS",
+      "SKYPULSE_BLACKOUT_PURE_PASS",
+      "SKYPULSE_CAP_CONTOUR_PASS",
+      "SKYPULSE_CINEMATIC_PASS",
+      "SKYPULSE_COPY_UI_PASS",
+      "SKYPULSE_DAILY_ROUTE_LIVE_PASS",
+      "SKYPULSE_DAILY_ROUTE_PURE_PASS",
+      "SKYPULSE_DEPTH_PASS",
+      "SKYPULSE_DESIGN_NORMALS_PASS",
+      "SKYPULSE_DIMENSIONAL_AUDIO_PASS",
+      "SKYPULSE_DIMENSIONAL_PASS",
+      "SKYPULSE_FLIGHT_ENVIRONMENT_PASS",
+      "SKYPULSE_FLIGHT_GAMEPLAY_CAPTURE_PASS",
+      "SKYPULSE_GUIDE_WORLD_PASS",
+      "SKYPULSE_HEIST_CAPTURE_PASS",
+      "SKYPULSE_MISSION_INTEGRATION_PASS",
+      "SKYPULSE_MISSION_LEGACY_PASS",
+      "SKYPULSE_MISSION_PURE_PASS",
+      "SKYPULSE_ONE_THUMB_LIVE_PASS",
+      "SKYPULSE_ONE_THUMB_PURE_PASS",
+      "SKYPULSE_PIPE_FINISH_PASS",
+      "SKYPULSE_PLAYER_GOALS_PASS",
+      "SKYPULSE_PRESENTATION_CAPTURES_PASS",
+      "SKYPULSE_PURPOSE_LIVE_PASS",
+      "SKYPULSE_RELAY_MESH_PASS",
+      "SKYPULSE_ROUTE_FADE_PASS",
+      "SKYPULSE_SCORE_FINISH_PASS",
+      "SKYPULSE_STATION_DEPTH_PASS",
+      "SKYPULSE_TOUCH_COMFORT_PASS",
+      "SKYPULSE_WORLD_STYLES_PASS"
+    ],
+    "noCSharpOrShaderCompileErrors": true,
+    "logSha256": "d961e3bf400d162cc03370645aaef7d194e238185254c41e5185bb46968d33c3",
+    "localLog": "artifacts/solid-worlds-20261023/full-unity-qa.log"
+  },
+  "architecture": {
+    "worlds": 12,
+    "districtArrangementsPerWorld": 2,
+    "cachedMeshes": 24,
+    "renderersInPerspectiveScene": 25,
+    "maxVerticesPerMeshBudget": 60000,
+    "estimatedAllDistrictVertexIndexGpuBytes": 37760136,
+    "windows": "Recessed panes inside solid structural wall bays",
+    "extraLivePhysicsColliders": 0,
+    "oldMoonShaderRemoved": true
+  },
+  "previewFixtures": {
+    "worldSelection": "QA selects milestone score and world; normal tap buffering, simulation and collision checks remain enabled.",
+    "gallery": "Twenty frames / two seconds per world, after the normal scenery entry reveal.",
+    "modelInspection": "Actual production mesh and material, isolated on a neutral backdrop for viewing; the gameplay camera is unchanged.",
+    "fullNatural180GateRunVerified": false,
+    "detailLogSha256": "3e25d39bec309b98def274f8806c544097dc818f2827b2f02dd5f30b58ef1627"
+  },
+  "localChecks": {
+    "preservation": {
+      "baseCommit": "a343aef",
+      "unchangedFiles": {
+        "mobile/Assets/Scripts/SkyPulseMissionModels.cs": "2966173db2cd29644df19e99126a13d93f528897bf7153a0ff80938efc874605",
+        "mobile/Assets/Scripts/SkyPulseDailyMissions.cs": "10157b808de4de3ee309b00a019ee43b4faeb11be50f8276f46d2c105b7ea8be",
+        "mobile/Assets/Scripts/SkyPulseBirdProgression.cs": "1a1c01342e7b24452835109d624ac88d1d392067284ac0cd9be358a68465ccc0",
+        "mobile/Assets/Scripts/SkyPulseInputFence.cs": "ccf585a47e7bb3d401c4358d792209b548185f755b27b494a368ce7838ec7b25",
+        "mobile/Assets/Scripts/SkyPulseRelayGate.cs": "745e48b7500df3581847860531d88dfd16427491242ab42a68d131365d4b2598",
+        "mobile/Assets/Scripts/SkyPulsePrism.cs": "68e619ebc3729f03a8dadba7b2e20f8095a53a245895b234ecb49d8d06a12021",
+        "mobile/Assets/Scripts/SkyPulseBlackoutCampaign.cs": "37e6fdc0b2dce5c978a0cb1d075e53bfae1f48dfb4a76e4685e17408f815d083",
+        "mobile/Assets/Resources/SkyPulse/audio/flap.wav": "1ed6fefec6d5e1b3623a4942ad653893769dcc74c49e863ba4332247510a9b9a",
+        "mobile/Assets/Resources/SkyPulse/audio/score.wav": "716c509700cd94b00ecae271a806083942684cb1fb7bfbbf93e79f1d5b294649",
+        "mobile/Assets/Resources/SkyPulse/audio/crystal.wav": "07f2d25eab664bec43d65ff6565bea2fb3fdef5057efb40b76bdb84db8c84a8d",
+        "mobile/Assets/Resources/SkyPulse/audio/crash.wav": "d1ef6b95713b0df4c19218df11fb331af2eb95fad0ea2b3887be5715269eb36d",
+        "mobile/Assets/Resources/SkyPulse/audio/unlock.wav": "e117b2599f5269c5228506ad53e3f6e426e904ff03de8103a716c806703a83d2",
+        "mobile/Assets/Scenes/SkyPulse.unity": "559ca9680dcb6f841f1d6e68f273e068d6af595b7e047619c853b2e2175aea15",
+        "mobile/Assets/Scenes/SkyPulse.unity.meta": "517caf9b9d042a7e98de0d54877713e383b57cf9098e94bb81ca59a4f04bfec9"
+      },
+      "unchangedMethods": {
+        "CreateCamera": "e5ee6cd25c8a8a5cfbd5e3f60303a6666948213ca3070da271ba022118fa86f2",
+        "SimulateFlight": "5767b7e90e1bc0da2d2874139a4fcf688025b129ad4407a0c7d614fb8c161d39",
+        "UpdateBird": "36bfdebbb6e9da3bc7822f5b6952cb000abeefced13bcde1348c4ae125b528d5",
+        "Flap": "78f20fe6276e2d5c4d5442750310a7dbec672e40e3afc3942b1e49d7ddc58c1c",
+        "CollidersOverlap": "817b7019108b03139df919a5f90f65e481bf0acb0736ece53dfcaf4961f7f1ce",
+        "BirdCollidesWithPipe": "6cadc010df5471c012522e463ddd693eb0520beb40cf9e2a9a197becd0539978",
+        "RoutePipeSpacing": "dc32e8640f88955dc09c5d8a457f2a438e487f657843eaaeec7ba53529d7f5ad",
+        "GetViewportWidth": "58b987a0239323791deeb9ec1128347009ddc7e73eccd2894426c66982ae6cb3",
+        "UpdatePipes": "addb789f64a993c534bb3b3299cb94a3d6a7869d8c3e8e65b532a8d3532448ac",
+        "ConfigurePipe": "c1d04679b6892ee548ccb67a4f40d71473832f91b4ace16db795892d58ffe4fe",
+        "BeginWorldTransition": "a1be2bc452d27b9be4bb2d7bc6af75f2c404c3b08bc0c72ad0bdb9fe7e4594fd",
+        "UpdateWorldTransition": "769d8fff91c80a622b58208102e9f0b75acc79e0f964a4f7fe7b04aca9978a5f",
+        "CollectCrystalPickup": "8377643e706ec6f4e8b2a5ef2ede3acec798b0e43def97fc759d730a7d89868a",
+        "EndFlight": "d20666b1bef6fb7ce6784e2281a777f6d110e5f01999938669f6cdf0aad81b82",
+        "BankCollectedCrystals": "85ec101d6e92c45fbde5c903f1960b9fc593abce52678444daec2cb875f08a98",
+        "SaveProgress": "ce698364177ad0c7549953cb60a9f294fe5f0705f65d433a04bc7b72ee5cf3ff",
+        "SimulateRelay": "9ac5717e01b1f15cc68bf231a637b4ab81c4b1e6dd75684721da3bd8578e0322",
+        "RelayPlaneContact": "a082e73f15584e9e8bb261dd533416124f00bbc9dbf2b03f2b188f8b792d9bb5",
+        "RelayCellContact": "865073dcd37f41eecdda96c74809bc58b9288fbb3de2815117b736e81e7ec0fd",
+        "RelayUnlocked": "bacd9c8f38fdbaa3922ad9d24a580e029c4e063ead89ea30c2079a56c63ab947",
+        "FinalizeMission": "d76030fddf65b2be939870854c077a69677b7de70f3af6f6692a015e38aa8850",
+        "ClaimDaily": "434c11d7af1aa2510b1e956fcd143902933b875cd13fbf1e48fabe101943c6d5",
+        "TouchBlackoutNode": "ca78a1c01ef5ca5e6ae303556566e2b386645c039c34d6394c53cdd0b63c331d",
+        "ActivateNextBlackoutPuzzle": "a2d8be9f19912df1d60d684ecfc2f0f03b75b64551d8a21539875bc9dbc3c0f2",
+        "RestartBlackoutVault": "11c57caae9e4b576f7a4060f4e45b6fd88c3cac8f7cf50681dda4c5554adae58",
+        "SaveBlackoutAttempt": "710fa360bbe42d2a0dcd80bf79ce3a63debc34f6cfec999f58b986d9f08df804",
+        "ToggleBlackoutPreview": "869081ed3d773ac7170390bfc1cfd9dec26135835881a54a08a1c1c535a67983",
+        "CancelBlackoutPreview": "c2ecddb9460073077c12214b95efcd7e6c41adbbae12d13bab22ae5d5a4586b6",
+        "PreviewBlackoutNode": "b93ac79c7853708caa0ea3a26481467e06e1dce322863be80c4df1f1f6ea1b1f",
+        "CommitBlackoutPreview": "0388922d3623e14d679d7d44857141d495bc8cbca06d28f5fa4bfa87737f997d",
+        "ResetBlackoutEffects": "a7df504cebf35687d546efdd7a0df27ec80a8f6f1fb8ad3e55d0609bf0c8b212"
+      },
+      "uniqueUnityGuids": 243,
+      "presentationOnlyFlightHook": true,
+      "newRunFeedbackReset": true,
+      "savedAudioPreferenceHook": true,
+      "passed": true
+    },
+    "copy": {
+      "passed": true,
+      "sourceFiles": 48,
+      "resourceJsonFiles": 3,
+      "stringsChecked": 2741,
+      "negativeControlsPassed": 5,
+      "legitimateCopyControlsPassed": 4,
+      "findings": [],
+      "limitations": [
+        "Does not certify typography, image text, every possible dynamic state or future edits."
+      ]
+    },
+    "artwork": {
+      "passed": true,
+      "imagesCovered": 145,
+      "sha256AndSizesMatch": true,
+      "exactByteDuplicateGroups": [],
+      "ownerReferenceStatementRecorded": true,
+      "exclusiveRightsCertified": false,
+      "appleSimilarityResolved": false,
+      "limitations": [
+        "Exact byte checks do not compare against other apps or certify copyright.",
+        "Owner attestations and published terms do not authenticate every original export."
+      ]
+    }
+  },
+  "metadataUnitTestsPassed": 11,
+  "visibleCopyCheck": {
+    "states": 51,
+    "textValues": 1557,
+    "placeholderFindings": 0
+  },
+  "media": {
+    "Worlds-in-Motion.mp4": {
+      "decodedFrames": 20,
+      "capturedFps": 10,
+      "seconds": 2.0,
+      "width": 1440,
+      "height": 2012,
+      "sha256": "0ecc14d5335b27cd2296a263f4565409531e088bc9f7661e6205bb845ff091bc",
+      "deviceFootage": false
+    },
+    "Structure-Inspection.mp4": {
+      "decodedFrames": 90,
+      "capturedFps": 30,
+      "seconds": 3.0,
+      "width": 1440,
+      "height": 960,
+      "sha256": "4480f72aede8337890fb3149c191d0f2ec020dcd0cc0d581616f674a199bb368",
+      "deviceFootage": false
+    },
+    "Flight.mp4": {
+      "decodedFrames": 360,
+      "capturedFps": 30,
+      "seconds": 12.0,
+      "width": 750,
+      "height": 1334,
+      "sha256": "e4a39b2d9a8e0ad0c6b073549e916ed33e3ddc9c34b9eeadf43c811e5c35aa9c",
+      "deviceFootage": false
+    }
+  },
+  "releaseHold": {
+    "installedOnPhone": false,
+    "uploadedToTestFlight": false,
+    "mainMerged": false,
+    "publicReviewSubmitted": false,
+    "appStoreMetadataEdited": false,
+    "websitePublished": false
+  },
+  "remainingValidation": [
+    "Owner visual acceptance on the actual iPhone.",
+    "Natural route playthrough and sustained device frame time, peak memory, battery and thermal behaviour.",
+    "Speaker/headphone listening and longer play sessions."
+  ],
+  "knownWarnings": [
+    "Existing Unity Editor Search indexing ArgumentOutOfRangeException; complete final regression markers pass.",
+    "Generated native libc++ platform-deprecation and script-phase output warnings."
+  ],
+  "limitations": [
+    "Captured FPS and simulated 30/60/120 Hz checks do not measure iPhone performance.",
+    "Distant sky artwork remains on an atmosphere dome; buildings, window recesses, terrain and pipe housings are geometry.",
+    "Stylised procedural game art, not a claim of photorealism, perfect quality or a bug-free game.",
+    "Local asset/metadata guards cannot resolve Apple's private similarity allegation or certify exclusive artwork rights."
+  ]
+}

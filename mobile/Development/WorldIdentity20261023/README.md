@@ -1,5 +1,9 @@
 # Twelve individual worlds, matching pipes and clearer player goals
 
+**Historical candidate, superseded.** The structural buildings, castle districts
+and revised pipe housings are in [SolidWorlds20261023](../SolidWorlds20261023/README.md).
+Use that folder for the current visual review.
+
 Actual Unity Editor renders of the local development candidate, 23 October 2026.
 These are rendered game frames, not concept artwork or physical iPhone footage.
 
