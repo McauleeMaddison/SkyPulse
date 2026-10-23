@@ -1,5 +1,7 @@
 # SkyPulse Arcade
 
+> **23 October development update:** [Fresh moving previews of all three modes, updated How to Play and copy-audit results](mobile/Development/OrbitalPolish20261023/README.md). Curved skyline meshes, rounded Relay objects and a pooled 3D deck accompany Blackout's visible city-restoration objective. Score/results cards now share a holographic glass finish; How to Play covers the current modes and progression. The complete local candidate is built for visual review; phone acceptance remains open.
+
 > **Installed local candidate: build 18, source `6692cd6` (23 October).** The [pipe, LED, scenery and retry-feedback repairs](mobile/Development/PipeFinish20261022/README.md) were rebuilt, signed, installed and launched on the iPhone. **The owner reported an issue; device acceptance remains open.** [Native build evidence and remaining checks](mobile/Development/LocalDevice20261023/README.md). The [Relay and Signal Heist previews](mobile/Development/PhoneReference20261022/README.md) are actual Unity renders from the earlier installed source `f71eb7d`, not new phone footage. The old 12 October prototype is archived. Build 17 was last verified in internal TestFlight; local build 18 has not been uploaded.
 
 For manual work in Unity and VS Code, start with the [handoff guide and checklist prompt](mobile/MANUAL_HANDOFF.md) and [editing map](mobile/EDITING_GUIDE.md).
@@ -36,6 +38,12 @@ Saved scores, crystals, owned birds, upgrade levels and preferences retain their
 ## Verify changes
 
 Run `python3 mobile/Tools/check_release_metadata.py --online --require-build 18` for the current listing, identity, links and exact candidate source checks, `python3 mobile/Tools/test_release_metadata.py` for stale-copy guards, and `python3 mobile/Tools/check_artwork_ledger.py` for complete current image/hash coverage. Update `CURRENT_RELEASE.json` and matching evidence when a future candidate changes; historical metadata must be selected explicitly with `--metadata`. These checks do not certify exclusive rights or Apple's private comparison.
+
+Run `python3 mobile/Tools/check_player_copy.py` for unfinished player-copy guards.
+`run_dimensional_qa.py` also checks visible UI copy; its helpers run only in the
+isolated QA product. See the development report above for the current candidate's
+recorded checks; the canonical release record still requires a deliberate update
+after device acceptance.
 
 Run `python3 mobile/Tools/verify_bird_registration.py` to validate all 90 flight frames. For gameplay, persistence, purchases, scrolling and safe-area checks, follow `mobile/Tools/VISUAL_SMOKE.md`; run those harnesses only in an isolated QA project, because they reset the QA save. Use **SkyPulse → Playtest Checklist** for manual testing.
 

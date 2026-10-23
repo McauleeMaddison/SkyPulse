@@ -46,7 +46,7 @@ public static class SkyPulseScoreChecks
                 Call(game,"ResetToMenu");
                 if(scene=="endless")
                 {
-                    Call(game,"SetHomeProtocol",SkyPulseMode.EndlessRoute);Call(game,"StartFlight");Set(game,"score",27);Set(game,"runCrystalsCollected",36);Call(game,"EndFlight");
+                    Call(game,"SetHomeProtocol",SkyPulseMode.EndlessRoute);Call(game,"StartFlight");Set(game,"score",27);Call(game,"BankCollectedCrystals",36);Call(game,"EndFlight");
                     Set(game,"state",Enum.Parse(Get(game,"state").GetType(),"GameOver"));Call(game,"RefreshScreens");
                 }
                 else if(scene=="relay"){Call(game,"LaunchMission",SkyPulseMode.PulseRelay,0);Call(game,"FinishRelayFailure","GROUND CONTACT");}
@@ -57,6 +57,9 @@ public static class SkyPulseScoreChecks
                 }
                 var root=(GameObject)Get(game,scene=="endless"?"gameOverScreen":"missionResultScreen");Check(root.activeSelf,"Real result flow visible: "+scene);
                 Canvas.ForceUpdateCanvases();Call(game,"ApplySafeArea");Call(game,"FitInterfaceToSafeArea");Canvas.ForceUpdateCanvases();yield return null;
+                // Populate Graphic.depth on a fresh batch-mode camera before
+                // asking GraphicRaycaster to sort the newly visible buttons.
+                Save(camera,rt,Path.Combine(folder,scene+"-"+size.x+".png"));
                 var glasses=root.GetComponentsInChildren<SkyPulseScoreGlass>();Check(glasses.Length>0,"Holographic glass exists: "+scene);
                 foreach(var glass in glasses)Check(!glass.raycastTarget&&glass.material.shader.isSupported,"Supported static glass cannot intercept input: "+scene);
                 foreach(var text in root.GetComponentsInChildren<Text>())
@@ -70,7 +73,7 @@ public static class SkyPulseScoreChecks
                     var rect=(RectTransform)button.transform;
                     var point=RectTransformUtility.WorldToScreenPoint(camera,rect.TransformPoint(rect.rect.center));
                     var hits=new List<RaycastResult>();EventSystem.current.RaycastAll(new PointerEventData(EventSystem.current){position=point},hits);
-                    Check(hits.Count>0&&ExecuteEvents.GetEventHandler<IPointerClickHandler>(hits[0].gameObject)==button.gameObject,"Actual centre raycast reaches result action: "+button.GetComponentInChildren<Text>().text);
+                    Check(hits.Count>0&&ExecuteEvents.GetEventHandler<IPointerClickHandler>(hits[0].gameObject)==button.gameObject,"Actual centre raycast reaches result action: "+button.GetComponentInChildren<Text>().text+"; top="+(hits.Count==0?"none":hits[0].gameObject.name));
                 }
                 int score=(int)Get(game,"score"),wallet=(int)Get(game,"crystals");Call(game,"UpdateScoreFinish",.5f);
                 Check((int)Get(game,"score")==score&&(int)Get(game,"crystals")==wallet,"Finish cannot change scores or rewards");

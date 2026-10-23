@@ -1,0 +1,171 @@
+{
+  "sourceCommit": "1bb749bcfccf6fff9b3dcae97ab7345c46852b65",
+  "version": "1.0.0",
+  "localBuild": "18",
+  "bundleId": "com.mcauleemaddison.skypulse",
+  "unityVersion": "6000.6.0f1",
+  "nativeExportUtc": "2026-10-23T13:11:22.4683260Z",
+  "sourceManifestEntriesChecked": 459,
+  "nativeExportAndCurrentSourcesMatch": true,
+  "qaProjectMatchesNativeExportExceptIsolatedPlayerSettings": true,
+  "unityExportExitCode": 0,
+  "xcodeReleaseBuildExitCode": 0,
+  "codeSignatureDeepStrictVerified": true,
+  "phoneInstallationOfThisRevisionPerformed": false,
+  "physicalDeviceAcceptancePassed": false,
+  "physicalFrameRateMemoryThermalsMeasured": false,
+  "previousInstalledSource": "6692cd61aecbddde3b34fd65031186ef2b8cd358",
+  "previousInstalledSourceFailedPresentationAcceptance": true,
+  "publicReviewSubmitted": false,
+  "testFlightUploadPerformed": false,
+  "mainMerged": false,
+  "previews": {
+    "Endless-Route.mp4": {
+      "framesDecoded": 360,
+      "fps": 30,
+      "seconds": 12.0,
+      "width": 750,
+      "height": 1334,
+      "sha256": "8103892be513343a352b1c99226cf39c328f48affa2f58e1d17403de83887d66"
+    },
+    "Pulse-Relay.mp4": {
+      "framesDecoded": 420,
+      "fps": 30,
+      "seconds": 14.0,
+      "width": 750,
+      "height": 1334,
+      "sha256": "44747e5370d84f0a3fb9951572049df6ab2279c2d91176dc5333e9fc4683195c"
+    },
+    "Blackout-Protocol.mp4": {
+      "framesDecoded": 270,
+      "fps": 30,
+      "seconds": 9.0,
+      "width": 750,
+      "height": 1334,
+      "sha256": "df24946610641404fc26dcafbb129389b23545a8a6683bc14b90dc12910751e2"
+    },
+    "Score-Cards.mp4": {
+      "framesDecoded": 90,
+      "fps": 30,
+      "seconds": 3.0,
+      "width": 1536,
+      "height": 1030,
+      "sha256": "04a6a10e7fd81535ea7afdffd429fe9a558323ffcc6f7d631f33018138be06dd"
+    },
+    "Three-Modes.mp4": {
+      "framesDecoded": 270,
+      "fps": 30,
+      "seconds": 9.0,
+      "width": 1536,
+      "height": 1030,
+      "sha256": "39fd8ad7c949eb73305906c0503f7831c1208e8a1e04e2e67a818401d0f51241"
+    }
+  },
+  "previewType": "Actual Unity Editor gameplay, isolated QA saves, silent H.264; not device footage or approved App Store media",
+  "rendering": "Real 3D mesh architecture/objects and pooled runway over the existing distant authored sky artwork; not a fully mesh-only environment",
+  "sourceManifestSha256": "a6a687d3e14bacd0d4b3a8377abe525a07194479fb1a101518846dc9c69d8ade",
+  "nativeBinarySha256": {
+    "SkyPulse": "d8d45b5d30cab54f33d4c20582892d2116a91669b01eead9881868f8228522c6",
+    "Frameworks/UnityFramework.framework/UnityFramework": "d4d7aad9f87765fcae60334f42786191248577d4570b77160fd5c07bd5cc1e19"
+  },
+  "nativeWarnings": "Unity-generated deprecation, libc++ platform-availability and no-output script-phase warnings remain; build succeeded.",
+  "mediaSha256": {
+    "Three-Modes-Preview.png": "9d2e74ce7e532f9ab863b41d78869615ccb0120fe1383b63cc80600a8d96a312",
+    "Pulse-Relay.decoded.png": "d9a6fbc4a8f534087b2a8df07f56e608eb485760f82f0693b9091804d224e1e0",
+    "Score-Cards.decoded.png": "ab75b87331e5d61951bccbb911119ef9ed7876b6b1ed0e251e7fc22c6a6f7871",
+    "Score-Cards.mp4": "04a6a10e7fd81535ea7afdffd429fe9a558323ffcc6f7d631f33018138be06dd",
+    "Three-Modes.mp4": "39fd8ad7c949eb73305906c0503f7831c1208e8a1e04e2e67a818401d0f51241",
+    "Blackout-Protocol.decoded.png": "f8012f47526dd4f49be7f3c722369eba1296ff1a44cc5e8f1e679c9c81713efc",
+    "Score-Cards.png": "c8d123e9996cabe136475d6f50dec4a6d8a291908c376a70e9f66d24e2ac3ffe",
+    "blackout-result.png": "04999f65dedd98305df25352c6e1d00edcbc3946723571e62870a092329643f7",
+    "How-to-Play-Blackout.png": "b9248f48bd1aa11d556866d391086fc00e89e29a74cf21f2d47b47ebe8179a67",
+    "Blackout-Protocol.mp4": "df24946610641404fc26dcafbb129389b23545a8a6683bc14b90dc12910751e2",
+    "Pulse-Relay.mp4": "44747e5370d84f0a3fb9951572049df6ab2279c2d91176dc5333e9fc4683195c",
+    "Three-Modes.decoded.png": "d04530662602645eb5f6b852764ec077f34f0e4d321b2b3752aedaf49bb7afa9",
+    "Endless-Route.decoded.png": "c755f6ce46fced8331c8c9d97edb369e562873b5c256c00ec14768ee5d84f28e",
+    "Endless-Route.mp4": "8103892be513343a352b1c99226cf39c328f48affa2f58e1d17403de83887d66",
+    "relay-result.png": "5c4721ba2e6262eae954445cd5f6f3be32782856c24b1b1071988acb65ceadae",
+    "endless-result.png": "1b4f25e58070c73dbb483dcf1f04286e049987a22b19ad46e8197cd450b9cd0b"
+  },
+  "gameplaySourceCommit": "98b6a13de26976c869b3bc4ff9707901ad461ef9",
+  "fullGameplayQa": {
+    "sourceCommit": "98b6a13de26976c869b3bc4ff9707901ad461ef9",
+    "exitCode": 0,
+    "passGroups": [
+      "SKYPULSE_BIRD_PROGRESSION_LIVE_PASS",
+      "SKYPULSE_BIRD_PROGRESSION_PURE_PASS",
+      "SKYPULSE_BLACKOUT_LIVE_PASS",
+      "SKYPULSE_BLACKOUT_PURE_PASS",
+      "SKYPULSE_CAP_CONTOUR_PASS",
+      "SKYPULSE_CINEMATIC_PASS",
+      "SKYPULSE_COPY_UI_PASS",
+      "SKYPULSE_DAILY_ROUTE_LIVE_PASS",
+      "SKYPULSE_DAILY_ROUTE_PURE_PASS",
+      "SKYPULSE_DEPTH_PASS",
+      "SKYPULSE_DIMENSIONAL_AUDIO_PASS",
+      "SKYPULSE_DIMENSIONAL_PASS",
+      "SKYPULSE_FLIGHT_ENVIRONMENT_PASS",
+      "SKYPULSE_FLIGHT_GAMEPLAY_CAPTURE_PASS",
+      "SKYPULSE_GUIDE_WORLD_PASS",
+      "SKYPULSE_HEIST_CAPTURE_PASS",
+      "SKYPULSE_MISSION_INTEGRATION_PASS",
+      "SKYPULSE_MISSION_LEGACY_PASS",
+      "SKYPULSE_MISSION_PURE_PASS",
+      "SKYPULSE_ONE_THUMB_LIVE_PASS",
+      "SKYPULSE_ONE_THUMB_PURE_PASS",
+      "SKYPULSE_PIPE_FINISH_PASS",
+      "SKYPULSE_PRESENTATION_CAPTURES_PASS",
+      "SKYPULSE_PURPOSE_LIVE_PASS",
+      "SKYPULSE_RELAY_MESH_PASS",
+      "SKYPULSE_ROUTE_FADE_PASS",
+      "SKYPULSE_SCORE_FINISH_PASS",
+      "SKYPULSE_TOUCH_COMFORT_PASS"
+    ],
+    "subsequentShippingChange": "Retry lettering color corrected in 1bb749b; final focused result QA covers this change."
+  },
+  "guideAndCopyQa": {
+    "sourceCommit": "98b6a13de26976c869b3bc4ff9707901ad461ef9",
+    "exitCode": 0,
+    "uiStates": 51,
+    "uiTextValues": 1535,
+    "guideTopicsFitAtSizes": [
+      "640x1136",
+      "1320x2868",
+      "1640x2360"
+    ]
+  },
+  "previewSourceNote": "Gameplay renders use 7ccb6af. The only subsequent shipping source edit is How to Play copy/tabs; it does not appear in these clips. The final native candidate includes that help update.",
+  "minimumIosVersion": "15.0",
+  "deviceFamilies": [
+    1,
+    2
+  ],
+  "scoreFinishQa": {
+    "runtimeSourceCommit": "1bb749bcfccf6fff9b3dcae97ab7345c46852b65",
+    "testRunnerSha256": "f966e8cb8beced13d1de687d16ecddae341c3dcb4244da8d7d0c2bc00d5d1b90",
+    "exitCode": 0,
+    "markers": [
+      "SKYPULSE_SCORE_FINISH_PASS",
+      "SKYPULSE_SCORE_CAPTURE_PASS"
+    ],
+    "renderSizes": [
+      "640x1136",
+      "1320x2868",
+      "1640x2360"
+    ],
+    "actualButtonCentreRaycasts": true,
+    "reducedMotionAndPause": true,
+    "frameStepRates": [
+      30,
+      60,
+      120
+    ],
+    "warmedUpdateManagedAllocationBytes": 0,
+    "captureSave": "Artificial isolated QA progress; actual collection-bank and mode result handlers."
+  },
+  "localSignedAppArchive": {
+    "pathRelativeToRepo": "artifacts/orbital-polish-20261023/SkyPulse-local18-1bb749b.zip",
+    "sha256": "ecd54eff400ee11d70fda29c75a2029b13d0aac1afa42f2964fbb0145c897118",
+    "trackedByGit": false
+  }
+}

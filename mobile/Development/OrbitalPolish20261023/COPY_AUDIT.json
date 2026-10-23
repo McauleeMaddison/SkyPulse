@@ -1,0 +1,25 @@
+{
+  "source": {
+    "passed": true,
+    "sourceFiles": 45,
+    "resourceJsonFiles": 3,
+    "stringsChecked": 2636,
+    "negativeControlsPassed": 5,
+    "legitimateCopyControlsPassed": 4,
+    "findings": [],
+    "limitations": [
+      "Does not certify typography, image text, every possible dynamic state or future edits."
+    ]
+  },
+  "visibleUi": {
+    "screenStatesChecked": 51,
+    "textValuesChecked": 1535,
+    "placeholderFindings": 0
+  },
+  "imageOcr": {
+    "imagesChecked": 145,
+    "placeholderFindings": 0,
+    "unreadableImages": 0,
+    "limitations": "OCR may miss stylized or low contrast text; human visual review remains necessary."
+  }
+}
