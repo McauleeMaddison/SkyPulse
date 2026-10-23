@@ -11,10 +11,13 @@ namespace SkyPulse.Mobile
         {
             switch(world){case 1:return new Color(.25f,1,.81f);case 2:return new Color(1,.66f,.22f);case 3:return new Color(.14f,.70f,1);case 4:return new Color(1,.37f,.62f);case 5:return new Color(.62f,.82f,1);case 6:return new Color(.29f,.93f,.57f);case 7:return new Color(.73f,.37f,1);case 8:return new Color(.98f,.72f,.36f);case 9:return new Color(.22f,.50f,1);case 10:return new Color(1,.65f,.28f);case 11:return new Color(.43f,.92f,1);default:return new Color(.02f,.85f,1);}
         }
-        public static Color Secondary(int world)=>world==0?new Color(1,.03f,.85f):world==4?new Color(1,.77f,.80f):world==7?new Color(1,.28f,.64f):world==8?new Color(.76f,.66f,1):new Color(.76f,.90f,1);
+        public static Color Secondary(int world)
+        {
+            switch(world){case 1:return new Color(.72f,.58f,1);case 2:return new Color(1,.28f,.10f);case 3:return new Color(.32f,1,.83f);case 4:return new Color(1,.78f,.44f);case 5:return new Color(.78f,.38f,1);case 6:return new Color(.92f,.81f,.40f);case 7:return new Color(.20f,.88f,1);case 8:return new Color(.68f,.46f,1);case 9:return new Color(.68f,.91f,1);case 10:return new Color(1,.38f,.16f);case 11:return new Color(.72f,.61f,1);default:return new Color(1,.03f,.85f);}
+        }
         public static Color Metal(int world)
         {
-            switch(world){case 1:return new Color(.58f,.66f,.66f);case 2:return new Color(.45f,.40f,.31f);case 3:return new Color(.13f,.22f,.29f);case 4:return new Color(.48f,.38f,.39f);case 5:return new Color(.50f,.61f,.69f);case 6:return new Color(.19f,.30f,.26f);case 7:return new Color(.20f,.19f,.28f);case 8:return new Color(.11f,.12f,.16f);case 9:return new Color(.26f,.33f,.44f);case 10:return new Color(.46f,.32f,.22f);case 11:return new Color(.61f,.69f,.73f);default:return new Color(.24f,.31f,.39f);}
+            switch(world){case 1:return new Color(.66f,.73f,.73f);case 2:return new Color(.39f,.34f,.29f);case 3:return new Color(.16f,.29f,.38f);case 4:return new Color(.57f,.43f,.46f);case 5:return new Color(.52f,.61f,.74f);case 6:return new Color(.22f,.37f,.32f);case 7:return new Color(.25f,.22f,.36f);case 8:return new Color(.14f,.14f,.21f);case 9:return new Color(.22f,.34f,.53f);case 10:return new Color(.53f,.36f,.24f);case 11:return new Color(.64f,.74f,.78f);default:return new Color(.24f,.31f,.39f);}
         }
         static readonly Color Base=new Color(1,1,1,0),Trim=new Color(1,1,1,.25f),Seal=new Color(1,1,1,.55f),Light=new Color(1,1,1,1);
         public static Mesh Build(int world,bool cap)
@@ -43,11 +46,24 @@ namespace SkyPulse.Mobile
                 for(int rail=0;rail<rails;rail++)
                 {
                     float a=Mathf.PI*2*(rail+.5f)/rails;
-                    Channel(b,world,profile,a,-.475f,.475f,.095f,Seal,false);
-                    Channel(b,world,profile,a,-.455f,.455f,.025f,Light,false);
+                    bool forward=rails==6&&rail==4;
+                    Channel(b,world,profile,a,-.475f,.475f,forward?.13f:.095f,Seal,false);
+                    Channel(b,world,profile,a,-.455f,.455f,forward?.046f:.025f,Light,false);
+                }
+                // A recessed forward diffuser stays readable on the small
+                // portrait camera. It follows the barrel, not a flat overlay.
+                if(rails!=6)
+                {
+                    Channel(b,world,profile,-Mathf.PI*.5f,-.47f,.47f,.13f,Seal,false);
+                    Channel(b,world,profile,-Mathf.PI*.5f,-.455f,.455f,.046f,Light,false);
                 }
                 Band(b,world,profile,-.43f,.014f,Trim);Band(b,world,profile,.416f,.014f,Trim);
-                if(world==2||world==9)for(int i=0;i<3;i++)Band(b,world,profile,-.20f+i*.20f,.009f,Seal);
+                if(world==2||world==9)for(int i=0;i<3;i++)
+                {
+                    float y=-.20f+i*.20f;
+                    Band(b,world,profile,y,.009f,Seal);
+                    if(world==9)Band(b,world,profile,y+.010f,.0035f,Light);
+                }
             }
             return b.Finish(Names[world]+(cap?" / machined collar":" / continuous barrel"));
         }
@@ -92,7 +108,7 @@ namespace SkyPulse.Mobile
         {
             float c=Mathf.Cos(a),s=Mathf.Sin(a),r=1;
             if(world==5||world==8){int sides=world==5?8:12;float h=Mathf.PI/sides;float d=Mathf.Repeat(a,2*h)-h;r=Mathf.Cos(h)/Mathf.Cos(d);}
-            else if(world==2||world==9||world==10)r=.985f+.015f*Mathf.Cos(a*(world==9?8:12));
+            else if(world==2||world==9||world==10)r=.973f+.027f*Mathf.Cos(a*(world==9?8:12));
             if(world==7)return new Vector3(Mathf.Sign(c)*Mathf.Pow(Mathf.Abs(c),.68f)*p.x,p.y,Mathf.Sign(s)*Mathf.Pow(Mathf.Abs(s),.68f)*p.x);
             return new Vector3(c*p.x*r,p.y,s*p.x*r*(world==3?.90f:1));
         }
@@ -100,16 +116,28 @@ namespace SkyPulse.Mobile
         {
             if(cap)
             {
-                if(world==2||world==9)return P(.455f,-.5f,.490f,-.44f,.5f,-.34f,.478f,-.22f,.478f,-.12f,.498f,-.06f,.498f,.12f,.478f,.18f,.5f,.30f,.490f,.44f,.455f,.5f);
-                if(world==4||world==6)return P(.455f,-.5f,.484f,-.44f,.497f,-.32f,.5f,-.18f,.484f,.14f,.497f,.27f,.488f,.42f,.455f,.5f);
-                if(world==5||world==8)return P(.455f,-.5f,.5f,-.34f,.5f,-.24f,.48f,-.15f,.48f,.15f,.5f,.24f,.5f,.34f,.455f,.5f);
+                if(world==1)return P(.455f,-.5f,.482f,-.46f,.498f,-.36f,.498f,-.28f,.475f,-.22f,.475f,.13f,.490f,.19f,.498f,.29f,.488f,.43f,.455f,.5f);
+                if(world==2)return P(.455f,-.5f,.490f,-.44f,.5f,-.34f,.478f,-.22f,.478f,-.12f,.498f,-.06f,.498f,.12f,.478f,.18f,.5f,.30f,.490f,.44f,.455f,.5f);
+                if(world==3)return P(.455f,-.5f,.484f,-.44f,.5f,-.32f,.486f,-.22f,.474f,-.12f,.474f,.12f,.486f,.22f,.5f,.32f,.484f,.44f,.455f,.5f);
+                if(world==4)return P(.455f,-.5f,.484f,-.44f,.497f,-.32f,.5f,-.18f,.484f,.14f,.497f,.27f,.488f,.42f,.455f,.5f);
+                if(world==5)return P(.455f,-.5f,.5f,-.34f,.5f,-.24f,.48f,-.15f,.48f,.15f,.5f,.24f,.5f,.34f,.455f,.5f);
+                if(world==6)return P(.455f,-.5f,.486f,-.44f,.498f,-.30f,.481f,-.19f,.490f,-.08f,.490f,.08f,.481f,.19f,.498f,.30f,.486f,.44f,.455f,.5f);
+                if(world==7)return P(.455f,-.5f,.498f,-.37f,.498f,-.29f,.475f,-.18f,.475f,.18f,.498f,.29f,.498f,.37f,.455f,.5f);
+                if(world==8)return P(.455f,-.5f,.5f,-.36f,.5f,-.25f,.47f,-.16f,.47f,.16f,.495f,.25f,.495f,.37f,.455f,.5f);
+                if(world==9)return P(.455f,-.5f,.49f,-.43f,.5f,-.33f,.476f,-.23f,.496f,-.14f,.496f,.14f,.476f,.23f,.5f,.33f,.49f,.43f,.455f,.5f);
+                if(world==10)return P(.455f,-.5f,.488f,-.43f,.5f,-.32f,.484f,-.22f,.478f,0,.484f,.22f,.5f,.32f,.488f,.43f,.455f,.5f);
                 return P(.455f,-.5f,.486f,-.45f,.5f,-.34f,.5f,-.27f,.478f,-.21f,.478f,.17f,.498f,.22f,.5f,.33f,.486f,.45f,.455f,.5f);
             }
-            if(world==2||world==9)return P(.478f,-.5f,.495f,-.46f,.5f,-.42f,.482f,-.35f,.480f,-.05f,.493f,0,.480f,.05f,.482f,.35f,.5f,.42f,.495f,.46f,.478f,.5f);
-            if(world==5||world==8)return P(.475f,-.5f,.497f,-.45f,.5f,-.39f,.5f,.39f,.497f,.45f,.475f,.5f);
-            if(world==1||world==11)return P(.475f,-.5f,.494f,-.46f,.5f,-.37f,.487f,-.26f,.487f,.26f,.5f,.37f,.494f,.46f,.475f,.5f);
+            if(world==1)return P(.475f,-.5f,.494f,-.46f,.5f,-.37f,.487f,-.26f,.487f,.26f,.5f,.37f,.494f,.46f,.475f,.5f);
+            if(world==2)return P(.478f,-.5f,.495f,-.46f,.5f,-.42f,.482f,-.35f,.480f,-.05f,.493f,0,.480f,.05f,.482f,.35f,.5f,.42f,.495f,.46f,.478f,.5f);
+            if(world==3)return P(.475f,-.5f,.495f,-.44f,.5f,-.32f,.489f,-.18f,.483f,0,.489f,.18f,.5f,.32f,.495f,.44f,.475f,.5f);
             if(world==4)return P(.475f,-.5f,.493f,-.45f,.5f,-.34f,.488f,-.18f,.483f,.02f,.488f,.18f,.5f,.34f,.493f,.45f,.475f,.5f);
             if(world==6)return P(.475f,-.5f,.5f,-.40f,.483f,-.28f,.483f,-.10f,.497f,-.04f,.483f,.04f,.483f,.28f,.5f,.40f,.475f,.5f);
+            if(world==5)return P(.475f,-.5f,.497f,-.45f,.5f,-.39f,.49f,-.31f,.49f,.31f,.5f,.39f,.497f,.45f,.475f,.5f);
+            if(world==8)return P(.475f,-.5f,.497f,-.43f,.5f,-.37f,.482f,-.28f,.482f,.28f,.5f,.37f,.497f,.43f,.475f,.5f);
+            if(world==9)return P(.475f,-.5f,.498f,-.43f,.486f,-.34f,.486f,-.23f,.498f,-.19f,.486f,-.14f,.486f,.14f,.498f,.19f,.486f,.23f,.486f,.34f,.498f,.43f,.475f,.5f);
+            if(world==10)return P(.475f,-.5f,.498f,-.42f,.487f,-.31f,.480f,0,.487f,.31f,.498f,.42f,.475f,.5f);
+            if(world==11)return P(.475f,-.5f,.498f,-.43f,.498f,-.35f,.483f,-.29f,.483f,.29f,.498f,.35f,.498f,.43f,.475f,.5f);
             return P(.475f,-.5f,.496f,-.46f,.5f,-.39f,.484f,-.30f,.484f,.30f,.5f,.39f,.496f,.46f,.475f,.5f);
         }
         static Vector2[] P(params float[] xy){var p=new Vector2[xy.Length/2];for(int i=0;i<p.Length;i++)p[i]=new Vector2(Mathf.Min(.498f,xy[i*2]),xy[i*2+1]);return p;}

@@ -39,47 +39,79 @@ Shader "SkyPulse/Original Endless Neon Metal"
                 float broad=pow(saturate(1-abs(r.x*.83+r.y*.22-.20)*1.50),9);
                 float strip=pow(saturate(1-abs(r.x+.39)*1.8),38);
                 float spec=pow(saturate(dot(n,normalize(key+view))),96);
+                float secondaryBox=pow(saturate(1-abs(r.x-.57)*2.3),21);
                 float seal=step(.43,i.color.a)*(1-step(.73,i.color.a)),trim=step(.12,i.color.a)*(1-step(.43,i.color.a)),led=step(.80,i.color.a);
-                float3 colour=_MetalTone.rgb*(.29+ndl*.69)+float3(.11,.16,.22)*(broad*.74+fresnel*.42);
-                colour+=float3(.79,.88,1)*(strip*.34+spec*.51);
-                colour=lerp(colour,colour*1.12+float3(.11,.13,.16)*(broad*.75+spec),trim);
-                colour=lerp(colour,float3(.018,.028,.041)*(1+ndl*.3)+spec*.05,seal);
-                float grain=sin(i.world.y*228)*sin(i.local.x*316);float aa=saturate(1-fwidth(i.world.y*228));colour*=1+grain*.008*aa;
+                float ceramic=(_Theme<1.5||(_Theme>3.5&&_Theme<4.5)||(_Theme>5.5&&_Theme<6.5)||_Theme>10.5)?1:0;
+                float3 colour=_MetalTone.rgb*(.36+ndl*.68)+float3(.11,.16,.22)*(broad*.55+fresnel*.30);
+                colour+=float3(.79,.88,1)*(strip*.36+spec*.46)+_ThemeEnergy.rgb*secondaryBox*.09;
+                colour=lerp(colour,colour*1.08+float3(.10,.12,.15)*(broad*.75+spec),trim);
+                // Authored machined detail from the first world is retained as
+                // subtle surface relief, with each new housing's own materials.
+                float3 art=tex2D(_MainTex,_ArtRect.xy+saturate(uv)*_ArtRect.zw).rgb;
+                float authored=dot(art,float3(.2126,.7152,.0722));
+                float machined=lerp(.43,1.36,smoothstep(.035,.66,authored));
+                colour*=machined;
+                float angle=atan2(i.local.z,i.local.x),around=angle*.15915494+.5;
+                float panelBay=1-smoothstep(.36,.74,abs(cos(angle)));
+                float3 enamel=lerp(_MetalTone.rgb*.38+_ThemeAccent.rgb*.055,_MetalTone.rgb*.77,ceramic);
+                float3 coated=enamel*(.34+ndl*.62)+float3(.19,.25,.34)*broad+float3(.62,.78,.94)*spec*.36;
+                colour=lerp(colour,coated*machined,panelBay*(1-_Cutout)*.72);
+                float panel=abs(frac(around*8)-.5);
+                float panelAA=max(fwidth(panel),.004);
+                float engraving=1-smoothstep(.012,.026+panelAA,panel);
+                colour*=1-engraving*(.055+ceramic*.035);
+                float brush=sin(i.world.y*228)*sin(i.local.x*316);float aa=saturate(1-fwidth(i.world.y*228));colour*=1+brush*.008*aa;
+                colour=lerp(colour,float3(.021,.031,.046)*(1+ndl*.3)+spec*.08,seal);
                 float path=lerp(i.world.y,-i.world.y,_ArtFlip)*.55;
-                float speed=.48+frac(_Theme*.137)*.35;
-                float packet=pow(saturate(1-abs(frac(path-_Clock*speed)-.5)*3.3),3);
-                if(_Theme<1.5)packet=.5+.40*sin(path*2.8-_Clock*.80);
-                else if(_Theme<2.5)packet=smoothstep(.25,.85,cos(path*5.1-_Clock*1.5));
-                else if(_Theme<3.5)packet=.5+.38*sin(path*3.4-_Clock*.94);
-                else if(_Theme<4.5)packet=.40+.24*sin(_Clock*.72+path*1.6);
-                else if(_Theme<5.5)packet=pow(saturate(cos(path*7.8-_Clock*1.2)),6);
-                else if(_Theme<6.5)packet=.42+.35*sin(path*3.7-_Clock*.78);
-                else if(_Theme<7.5)packet=pow(1-frac(path*1.8+_Clock*.72),3);
-                else if(_Theme<8.5)packet=pow(saturate(cos(path*2-_Clock*.45)),8);
-                else if(_Theme<9.5)packet=.18+.70*pow(saturate(sin(path*4.8-_Clock*1.5)),4);
-                else if(_Theme<10.5)packet=.44+.32*sin(path*2.4-_Clock*.45);
-                else packet=.5+.34*sin(path*2.8-_Clock*.56)*cos(path*.6+_Clock*.23);
-                float3 energy=lerp(_ThemeAccent.rgb,_ThemeEnergy.rgb,saturate((i.local.x+.4)*.8));
+                float packet;
+                if(_Theme<1.5)packet=.48+.44*sin(path*2.8-_Clock*1.05);
+                else if(_Theme<2.5)packet=smoothstep(.18,.86,cos(path*5.1-_Clock*1.8));
+                else if(_Theme<3.5)packet=.46+.43*sin(path*3.4-_Clock*1.1);
+                else if(_Theme<4.5)packet=.45+.39*sin(_Clock*.92+path*2.2);
+                else if(_Theme<5.5)packet=.12+.86*pow(saturate(cos(path*5.8-_Clock*1.6)),4);
+                else if(_Theme<6.5)packet=.44+.44*sin(path*3.7-_Clock*.98);
+                else if(_Theme<7.5)packet=.12+.84*pow(1-frac(path*1.25+_Clock*.82),3);
+                else if(_Theme<8.5)packet=.10+.88*pow(saturate(cos(path*2.5-_Clock*.68)),6);
+                else if(_Theme<9.5)packet=.13+.85*pow(saturate(sin(path*4.8-_Clock*1.8)),3);
+                else if(_Theme<10.5)packet=.45+.43*sin(path*2.4-_Clock*.71);
+                else packet=.46+.44*sin(path*2.8-_Clock*.83)*cos(path*.6+_Clock*.28);
+                float secondary=smoothstep(.05,.55,i.local.x);
+                float3 energy=lerp(_ThemeAccent.rgb,_ThemeEnergy.rgb,secondary);
                 float rails=(_Theme>1.5&&_Theme<2.5)||(_Theme>8.5&&_Theme<9.5)?6:(_Theme>4.5&&_Theme<5.5)||_Theme>10.5?3:4;
-                float angle=atan2(i.local.z,i.local.x);
                 float angularDistance=abs(frac(angle*rails/6.2831853)-.5)*6.2831853/rails;
+                float heroDistance=abs(atan2(sin(angle+1.5707963),cos(angle+1.5707963)));
+                angularDistance=min(angularDistance,heroDistance);
                 float channelAA=max(fwidth(angularDistance),.002);
-                float lens=(1-smoothstep(.043,.063+channelAA,angularDistance))*(1-_Cutout);
-                float channelGlow=(1-smoothstep(.055,.14+channelAA,angularDistance))*(1-_Cutout);
-                colour+=energy*channelGlow*.065;
-                colour=lerp(colour,energy*(.43+packet*.52)+float3(.6,.8,1)*spec*.14,max(led,lens));
-                // The cutout follows the existing tested lip contour. Its shaded
-                // well, rolled rim and side housing use independent materials.
+                float lens=(1-smoothstep(.031,.052+channelAA,angularDistance))*(1-_Cutout);
+                float halo=(1-smoothstep(.055,.23+channelAA,angularDistance))*(1-_Cutout);
+                colour+=energy*halo*(.10+packet*.07);
+                // A dark diffuser base and a moving white core keep motion
+                // readable without clipping every LED into a solid white line.
+                float3 diffuser=energy*(.31+packet*.67)+float3(.40,.56,.70)*pow(packet,6)*.20;
+                colour=lerp(colour,diffuser+float3(.6,.8,1)*spec*.12,max(led,lens));
                 if(_Cutout>.5)
                 {
                     float2 ellipse=(uv-float2(.5,.745))/float2(.46,.225);
-                    float d=length(ellipse);float inside=1-smoothstep(.87,1.03,d);
-                    float rolled=exp(-pow((d-1.03)*15,2));
-                    float rimLight=.42+.43*pow(saturate(1-abs(ellipse.x+.35)*.75),6);
-                    colour=lerp(colour,float3(.015,.028,.046)+_ThemeAccent.rgb*.025,inside*.94);
-                    colour+=rolled*(float3(.26,.34,.44)*rimLight+_ThemeAccent.rgb*(.31+packet*.22));
+                    float d=length(ellipse),edgeAA=max(fwidth(d),.012);
+                    float inside=1-smoothstep(.86,.94,d);
+                    float lip=exp(-pow((d-1.035)*8.5,2));
+                    float inner=exp(-pow((d-.935)*23,2));
+                    float rimAngle=atan2(ellipse.y,ellipse.x);
+                    float circulation=.5+.5*sin(rimAngle*2-_Clock*(.78+frac(_Theme*.117)));
+                    float3 rimEnergy=lerp(_ThemeAccent.rgb,_ThemeEnergy.rgb,.5+.5*sin(rimAngle+.5));
+                    float rimKey=.22+.60*pow(saturate(1-abs(ellipse.x+.32)*.72),5);
+                    float3 well=float3(.014,.025,.040)+rimEnergy*(.025+.035*saturate(ellipse.y));
+                    colour=lerp(colour,well,inside*.97);
+                    // Rolled metallic bezel, an inset luminous gasket, and a
+                    // travelling reflection are separate layers of the lip.
+                    colour+=lip*(float3(.30,.38,.48)*rimKey+_MetalTone.rgb*.13);
+                    colour+=inner*rimEnergy*(.32+circulation*.47);
+                    float rimScan=pow(saturate(cos(rimAngle-_Clock*.72)),16);
+                    colour+=lip*rimScan*float3(.52,.68,.82)*.20;
+                    float faceLine=1-smoothstep(edgeAA,edgeAA+.035,abs(d-1.19));
+                    colour+=faceLine*rimEnergy*.10;
                 }
-                return colour*lerp(float3(1,1,1),_LightTint.rgb,.05);
+                return colour*lerp(float3(1,1,1),_LightTint.rgb,.055);
             }
             fixed4 frag(vary i):SV_Target
             {

@@ -1,0 +1,441 @@
+{
+  "date": "2026-10-23",
+  "candidate": "Eleven themed sky palettes and detailed pipe housings; approved buildings and Neon reference preserved",
+  "baseCommit": "f18bc7c51e7ddaac48c6b0c4863f2d1e576eecc8",
+  "sourceChanges": {
+    "mobile/Assets/Scripts/SkyPulseRouteArchitecture.cs": {
+      "beforeSha256": "c435b6dfe76604508cb73db6b02c1a334e9f8613ad1b0896af24f316b0a2798b",
+      "afterSha256": "99c262e64889415741454be876c7374f7e468f4db14ee5443d2854ea2c5cae34"
+    },
+    "mobile/Assets/Scripts/SkyPulseFlightEnvironment.cs": {
+      "beforeSha256": "bedc62b52d5c460b5840cc0444adcd5f69c32e742b4651c0c8dbff28521e30d3",
+      "afterSha256": "6dfa91d9a31c5429612b3bfbbe9998497a13b1fc39256a9d190223d6fe1dee60"
+    },
+    "mobile/Assets/Resources/SkyPulse/Shaders/EndlessRouteMetal.shader": {
+      "beforeSha256": "cee35172d422ba5862ac447d343b3d12815a47fee3651777879149f7744ebfcd",
+      "afterSha256": "ec48ae2b3698d7052cc15b6331bceb9763fc49a9d120813de176657d9b349a09"
+    },
+    "mobile/Assets/Resources/SkyPulse/Shaders/WorldAtmosphere.shader": {
+      "beforeSha256": "a78955ddad59adca59914dd24a5ea7a424b18d73c6da32bc628f9f1311d293d7",
+      "afterSha256": "9bb18d4e789a6a26626b06d63cb030514e602800f995c4497d67a4ddf2830afd"
+    }
+  },
+  "approvedBuildingGeometry": {
+    "unchanged": true,
+    "sha256": "ad9c14f2c5d673801f796bebaad478fdc5d611c9f2c25dafa5e42cf28ca7e15d"
+  },
+  "neonReference": {
+    "skyChangedPixels": 0,
+    "pipeChangedPixels": 0,
+    "inspectionSize": [
+      512,
+      896
+    ],
+    "rgbSumTolerance": 3,
+    "originalPipeFragmentUnchanged": true,
+    "fragmentSha256": "9851690b14244617b235f27d0aa42a942063a872100a38d2429ba1e66cb4d3b4"
+  },
+  "targetedChecks": {
+    "passed": true,
+    "checkCount": 90,
+    "worlds": 12,
+    "motionChecked": true,
+    "reducedMotionChecked": true,
+    "simulatedRatesHz": [
+      30,
+      60,
+      120
+    ],
+    "transitionPairs": [
+      [
+        0,
+        1
+      ],
+      [
+        5,
+        6
+      ],
+      [
+        11,
+        0
+      ]
+    ],
+    "shaderCompileErrors": false,
+    "fixture": "mobile/Tools/SkyPulseWorldFinishChecks.cs",
+    "fixtureSha256": "6f54d52f6607f8b1b699a187f25698591234c5ee281282936c6a6f62e3360eab",
+    "logSha256": "f49a330574aa1cf21c54602580482bf7356a76eb11e59a2a1063e2b128d5d962",
+    "localLog": "artifacts/world-finish-20261023/material-checks.log"
+  },
+  "unityRegression": {
+    "passed": true,
+    "groupCount": 32,
+    "passedGroups": [
+      "SKYPULSE_BIRD_PROGRESSION_LIVE_PASS",
+      "SKYPULSE_BIRD_PROGRESSION_PURE_PASS",
+      "SKYPULSE_BLACKOUT_LIVE_PASS",
+      "SKYPULSE_BLACKOUT_PURE_PASS",
+      "SKYPULSE_CAP_CONTOUR_PASS",
+      "SKYPULSE_CINEMATIC_PASS",
+      "SKYPULSE_COPY_UI_PASS",
+      "SKYPULSE_DAILY_ROUTE_LIVE_PASS",
+      "SKYPULSE_DAILY_ROUTE_PURE_PASS",
+      "SKYPULSE_DEPTH_PASS",
+      "SKYPULSE_DESIGN_NORMALS_PASS",
+      "SKYPULSE_DIMENSIONAL_AUDIO_PASS",
+      "SKYPULSE_DIMENSIONAL_PASS",
+      "SKYPULSE_FLIGHT_ENVIRONMENT_PASS",
+      "SKYPULSE_FLIGHT_GAMEPLAY_CAPTURE_PASS",
+      "SKYPULSE_GUIDE_WORLD_PASS",
+      "SKYPULSE_HEIST_CAPTURE_PASS",
+      "SKYPULSE_MISSION_INTEGRATION_PASS",
+      "SKYPULSE_MISSION_LEGACY_PASS",
+      "SKYPULSE_MISSION_PURE_PASS",
+      "SKYPULSE_ONE_THUMB_LIVE_PASS",
+      "SKYPULSE_ONE_THUMB_PURE_PASS",
+      "SKYPULSE_PIPE_FINISH_PASS",
+      "SKYPULSE_PLAYER_GOALS_PASS",
+      "SKYPULSE_PRESENTATION_CAPTURES_PASS",
+      "SKYPULSE_PURPOSE_LIVE_PASS",
+      "SKYPULSE_RELAY_MESH_PASS",
+      "SKYPULSE_ROUTE_FADE_PASS",
+      "SKYPULSE_SCORE_FINISH_PASS",
+      "SKYPULSE_STATION_DEPTH_PASS",
+      "SKYPULSE_TOUCH_COMFORT_PASS",
+      "SKYPULSE_WORLD_STYLES_PASS"
+    ],
+    "noCSharpOrShaderCompileErrors": true,
+    "shippingScriptAndShaderFilesMatched": 62,
+    "logSha256": "c9520d363692d770bec2aaa5025778a8bdace89ab2b156354b9d5e9f18e06f00",
+    "localLog": "artifacts/world-finish-20261023/unity-regression.log",
+    "knownDiagnostics": [
+      "Existing UnityEditor.Search.SearchDatabase startup indexing exception; test runner completed and exited 0.",
+      "Save-failure diagnostics are deliberately injected by existing persistence tests."
+    ]
+  },
+  "localGuards": {
+    "preservation": {
+      "baseCommit": "a343aef",
+      "unchangedFiles": {
+        "mobile/Assets/Scripts/SkyPulseMissionModels.cs": "2966173db2cd29644df19e99126a13d93f528897bf7153a0ff80938efc874605",
+        "mobile/Assets/Scripts/SkyPulseDailyMissions.cs": "10157b808de4de3ee309b00a019ee43b4faeb11be50f8276f46d2c105b7ea8be",
+        "mobile/Assets/Scripts/SkyPulseBirdProgression.cs": "1a1c01342e7b24452835109d624ac88d1d392067284ac0cd9be358a68465ccc0",
+        "mobile/Assets/Scripts/SkyPulseInputFence.cs": "ccf585a47e7bb3d401c4358d792209b548185f755b27b494a368ce7838ec7b25",
+        "mobile/Assets/Scripts/SkyPulseRelayGate.cs": "745e48b7500df3581847860531d88dfd16427491242ab42a68d131365d4b2598",
+        "mobile/Assets/Scripts/SkyPulsePrism.cs": "68e619ebc3729f03a8dadba7b2e20f8095a53a245895b234ecb49d8d06a12021",
+        "mobile/Assets/Scripts/SkyPulseBlackoutCampaign.cs": "37e6fdc0b2dce5c978a0cb1d075e53bfae1f48dfb4a76e4685e17408f815d083",
+        "mobile/Assets/Resources/SkyPulse/audio/flap.wav": "1ed6fefec6d5e1b3623a4942ad653893769dcc74c49e863ba4332247510a9b9a",
+        "mobile/Assets/Resources/SkyPulse/audio/score.wav": "716c509700cd94b00ecae271a806083942684cb1fb7bfbbf93e79f1d5b294649",
+        "mobile/Assets/Resources/SkyPulse/audio/crystal.wav": "07f2d25eab664bec43d65ff6565bea2fb3fdef5057efb40b76bdb84db8c84a8d",
+        "mobile/Assets/Resources/SkyPulse/audio/crash.wav": "d1ef6b95713b0df4c19218df11fb331af2eb95fad0ea2b3887be5715269eb36d",
+        "mobile/Assets/Resources/SkyPulse/audio/unlock.wav": "e117b2599f5269c5228506ad53e3f6e426e904ff03de8103a716c806703a83d2",
+        "mobile/Assets/Scenes/SkyPulse.unity": "559ca9680dcb6f841f1d6e68f273e068d6af595b7e047619c853b2e2175aea15",
+        "mobile/Assets/Scenes/SkyPulse.unity.meta": "517caf9b9d042a7e98de0d54877713e383b57cf9098e94bb81ca59a4f04bfec9"
+      },
+      "unchangedMethods": {
+        "CreateCamera": "e5ee6cd25c8a8a5cfbd5e3f60303a6666948213ca3070da271ba022118fa86f2",
+        "SimulateFlight": "5767b7e90e1bc0da2d2874139a4fcf688025b129ad4407a0c7d614fb8c161d39",
+        "UpdateBird": "36bfdebbb6e9da3bc7822f5b6952cb000abeefced13bcde1348c4ae125b528d5",
+        "Flap": "78f20fe6276e2d5c4d5442750310a7dbec672e40e3afc3942b1e49d7ddc58c1c",
+        "CollidersOverlap": "817b7019108b03139df919a5f90f65e481bf0acb0736ece53dfcaf4961f7f1ce",
+        "BirdCollidesWithPipe": "6cadc010df5471c012522e463ddd693eb0520beb40cf9e2a9a197becd0539978",
+        "RoutePipeSpacing": "dc32e8640f88955dc09c5d8a457f2a438e487f657843eaaeec7ba53529d7f5ad",
+        "GetViewportWidth": "58b987a0239323791deeb9ec1128347009ddc7e73eccd2894426c66982ae6cb3",
+        "UpdatePipes": "addb789f64a993c534bb3b3299cb94a3d6a7869d8c3e8e65b532a8d3532448ac",
+        "ConfigurePipe": "c1d04679b6892ee548ccb67a4f40d71473832f91b4ace16db795892d58ffe4fe",
+        "BeginWorldTransition": "a1be2bc452d27b9be4bb2d7bc6af75f2c404c3b08bc0c72ad0bdb9fe7e4594fd",
+        "UpdateWorldTransition": "769d8fff91c80a622b58208102e9f0b75acc79e0f964a4f7fe7b04aca9978a5f",
+        "CollectCrystalPickup": "8377643e706ec6f4e8b2a5ef2ede3acec798b0e43def97fc759d730a7d89868a",
+        "EndFlight": "d20666b1bef6fb7ce6784e2281a777f6d110e5f01999938669f6cdf0aad81b82",
+        "BankCollectedCrystals": "85ec101d6e92c45fbde5c903f1960b9fc593abce52678444daec2cb875f08a98",
+        "SaveProgress": "ce698364177ad0c7549953cb60a9f294fe5f0705f65d433a04bc7b72ee5cf3ff",
+        "SimulateRelay": "9ac5717e01b1f15cc68bf231a637b4ab81c4b1e6dd75684721da3bd8578e0322",
+        "RelayPlaneContact": "a082e73f15584e9e8bb261dd533416124f00bbc9dbf2b03f2b188f8b792d9bb5",
+        "RelayCellContact": "865073dcd37f41eecdda96c74809bc58b9288fbb3de2815117b736e81e7ec0fd",
+        "RelayUnlocked": "bacd9c8f38fdbaa3922ad9d24a580e029c4e063ead89ea30c2079a56c63ab947",
+        "FinalizeMission": "d76030fddf65b2be939870854c077a69677b7de70f3af6f6692a015e38aa8850",
+        "ClaimDaily": "434c11d7af1aa2510b1e956fcd143902933b875cd13fbf1e48fabe101943c6d5",
+        "TouchBlackoutNode": "ca78a1c01ef5ca5e6ae303556566e2b386645c039c34d6394c53cdd0b63c331d",
+        "ActivateNextBlackoutPuzzle": "a2d8be9f19912df1d60d684ecfc2f0f03b75b64551d8a21539875bc9dbc3c0f2",
+        "RestartBlackoutVault": "11c57caae9e4b576f7a4060f4e45b6fd88c3cac8f7cf50681dda4c5554adae58",
+        "SaveBlackoutAttempt": "710fa360bbe42d2a0dcd80bf79ce3a63debc34f6cfec999f58b986d9f08df804",
+        "ToggleBlackoutPreview": "869081ed3d773ac7170390bfc1cfd9dec26135835881a54a08a1c1c535a67983",
+        "CancelBlackoutPreview": "c2ecddb9460073077c12214b95efcd7e6c41adbbae12d13bab22ae5d5a4586b6",
+        "PreviewBlackoutNode": "b93ac79c7853708caa0ea3a26481467e06e1dce322863be80c4df1f1f6ea1b1f",
+        "CommitBlackoutPreview": "0388922d3623e14d679d7d44857141d495bc8cbca06d28f5fa4bfa87737f997d",
+        "ResetBlackoutEffects": "a7df504cebf35687d546efdd7a0df27ec80a8f6f1fb8ad3e55d0609bf0c8b212"
+      },
+      "uniqueUnityGuids": 243,
+      "presentationOnlyFlightHook": true,
+      "newRunFeedbackReset": true,
+      "savedAudioPreferenceHook": true,
+      "passed": true
+    },
+    "copy": {
+      "passed": true,
+      "sourceFiles": 48,
+      "resourceJsonFiles": 3,
+      "stringsChecked": 2743,
+      "negativeControlsPassed": 5,
+      "legitimateCopyControlsPassed": 4,
+      "findings": [],
+      "limitations": [
+        "Does not certify typography, image text, every possible dynamic state or future edits."
+      ]
+    },
+    "artwork": {
+      "passed": true,
+      "imagesCovered": 145,
+      "sha256AndSizesMatch": true,
+      "exactByteDuplicateGroups": [],
+      "ownerReferenceStatementRecorded": true,
+      "exclusiveRightsCertified": false,
+      "appleSimilarityResolved": false,
+      "limitations": [
+        "Exact byte checks do not compare against other apps or certify copyright.",
+        "Owner attestations and published terms do not authenticate every original export."
+      ]
+    }
+  },
+  "videos": {
+    "Pipe-Lighting-in-Motion.mp4": {
+      "sha256": "797d4b3ee941adce5051a70c4bb416e1a0ca81022ecb5f63ca3c7df2a5d29b64",
+      "decodedFrames": 30,
+      "capturedFps": 15,
+      "seconds": 2,
+      "width": 1440,
+      "height": 2050
+    },
+    "Worlds-in-Motion.mp4": {
+      "sha256": "15ff08ed55360f7c36d1b9d88ad9c24ce4e170ce7868cc9f9a49d687ad04ca5f",
+      "decodedFrames": 20,
+      "capturedFps": 10,
+      "seconds": 2,
+      "width": 1440,
+      "height": 2050
+    }
+  },
+  "images": {
+    "worlds/08-violet-rain.png": {
+      "sha256": "30d8560646455b433b9e1c6bb4256b0e0b636fe28bdc21a7029eba77dfb46cc8",
+      "width": 750,
+      "height": 1334
+    },
+    "worlds/04-midnight-tide.png": {
+      "sha256": "866e193a7e4488d72aa926586f5729dd592f0fa492e11e878ed10f1fb4712a58",
+      "width": 750,
+      "height": 1334
+    },
+    "worlds/10-cobalt-storm.png": {
+      "sha256": "e534e49dcfa10205f1adfb7ab52babb08e979a26359f6fd989f1a1975be3bc51",
+      "width": 750,
+      "height": 1334
+    },
+    "worlds/05-velvet-dawn.png": {
+      "sha256": "93dc3a97114c48b7c72b8e0778dac5baa9ad9cf30f55a66ad494c457671fe3b7",
+      "width": 750,
+      "height": 1334
+    },
+    "worlds/07-jade-horizon.png": {
+      "sha256": "877434b1fb5e709a0427617de159fd554cd786642dd385ce68754d1e7c1fa806",
+      "width": 750,
+      "height": 1334
+    },
+    "worlds/01-neon-city.png": {
+      "sha256": "38935f4e23a6fa58ef5eaa4e17567682ddf0a80c9778d429f20b8aa4ba98da94",
+      "width": 750,
+      "height": 1334
+    },
+    "worlds/02-aurora-rise.png": {
+      "sha256": "f23ab76854b05780f5f58ab41504ba85b0e4d41197903da7e821981d649f68dc",
+      "width": 750,
+      "height": 1334
+    },
+    "worlds/06-crystal-night.png": {
+      "sha256": "dea830a25654d07147b2bb99a160b8fec756f4eb05696dbabe3c62d6e99b1f54",
+      "width": 750,
+      "height": 1334
+    },
+    "worlds/09-eclipse.png": {
+      "sha256": "a703ce4a2f0a6ee3b2849bbfa48c08410a7d345db714b0d2dd7004bcf4177bf6",
+      "width": 750,
+      "height": 1334
+    },
+    "worlds/11-amber-skies.png": {
+      "sha256": "8b94d1a5125cbdfda49c7dc268843494e7831890508e5e6bc94bc6e074ee8b7b",
+      "width": 750,
+      "height": 1334
+    },
+    "worlds/03-solar-drift.png": {
+      "sha256": "462a2de216a63b46d9af982aed87dba3b355116bb8e0e59889b89a2053a63f13",
+      "width": 750,
+      "height": 1334
+    },
+    "worlds/12-polar-glow.png": {
+      "sha256": "1cf628d50152e0942464bb5d946926643ca4e7d4d0cad00e2458619e28a63cd8",
+      "width": 750,
+      "height": 1334
+    },
+    "pipes/08-violet-rain.png": {
+      "sha256": "ffe8adbb927fc179d896289dedfdbe22fb48fa5ce1980a5b66dccc0e01717e8b",
+      "width": 512,
+      "height": 896
+    },
+    "pipes/04-midnight-tide.png": {
+      "sha256": "5dd26fa41f91bac33aafb48fd5cbc70fdc71ba016ea5bd303d1fa6a0a32724b3",
+      "width": 512,
+      "height": 896
+    },
+    "pipes/10-cobalt-storm.png": {
+      "sha256": "4146f6ac7453ba0fde5d9eabd0910e24737f4ce9a6a5de0e42efc8447d430a33",
+      "width": 512,
+      "height": 896
+    },
+    "pipes/05-velvet-dawn.png": {
+      "sha256": "9b7ecbe37bab5a998173843016ea2ecc8c266f39dcc9690eec5ef668f489fc52",
+      "width": 512,
+      "height": 896
+    },
+    "pipes/07-jade-horizon.png": {
+      "sha256": "ef708e48960080b3f8c4a4b9ae93ff7600a9128bfa0ae6dadf69457ddc9206ef",
+      "width": 512,
+      "height": 896
+    },
+    "pipes/01-neon-city.png": {
+      "sha256": "b54b3a9ff4a1c6e71747bc63458eb25e0183e5e4fe07d6251a6947da05a2f289",
+      "width": 512,
+      "height": 896
+    },
+    "pipes/02-aurora-rise.png": {
+      "sha256": "35923fef43a9e8b592043ebc8778bb7b6fcdc6ad61d2e9b29ebc5b944c720b66",
+      "width": 512,
+      "height": 896
+    },
+    "pipes/06-crystal-night.png": {
+      "sha256": "7cedd7a52f2c764582b7124d2bfbe02bc385d5449ba65621b850ca690676a4fd",
+      "width": 512,
+      "height": 896
+    },
+    "pipes/09-eclipse.png": {
+      "sha256": "a73950c067ecef73212518673e9830b27608b5b13336a3ef677fe336cbfeb366",
+      "width": 512,
+      "height": 896
+    },
+    "pipes/11-amber-skies.png": {
+      "sha256": "00f6bae8a329ddc94efe2267d1381e089dbd1bd6627cb092b88a8bcdd4d0aaed",
+      "width": 512,
+      "height": 896
+    },
+    "pipes/03-solar-drift.png": {
+      "sha256": "e9ef3ba50e49f781a7aafaaea5d129443b809e18ac9eedc5d1d32740198045b0",
+      "width": 512,
+      "height": 896
+    },
+    "pipes/12-polar-glow.png": {
+      "sha256": "96e2b8a216d385ba1d899e004fab3c76a35949a4ef5251b8ccbc4ebcc540e380",
+      "width": 512,
+      "height": 896
+    },
+    "skies/08-violet-rain.png": {
+      "sha256": "a649b75206afe038bfdb2ef8d99c9d1ee992adb0e5c3f63c20604b7606daaec3",
+      "width": 512,
+      "height": 896
+    },
+    "skies/04-midnight-tide.png": {
+      "sha256": "1224152a10f780886735a041091b7b5e73cea78b6c74a986c0f1be2609920b9d",
+      "width": 512,
+      "height": 896
+    },
+    "skies/10-cobalt-storm.png": {
+      "sha256": "98a939eda61a4f8ed7c012d98a167a181af588db03215f989247585d4751fb85",
+      "width": 512,
+      "height": 896
+    },
+    "skies/05-velvet-dawn.png": {
+      "sha256": "4f2c8cc0427b38cb8164caee0e12cbe8603ef9542d4e5071ef004fd9ec77b090",
+      "width": 512,
+      "height": 896
+    },
+    "skies/07-jade-horizon.png": {
+      "sha256": "c95410660eafb7526e5479da47948350cf8c2795d69cfd6b062caf7e4d08e1fa",
+      "width": 512,
+      "height": 896
+    },
+    "skies/01-neon-city.png": {
+      "sha256": "3b3f96b43776b505a666ae80281e9a4eb1eed1003b102dc2d3aee5b64945273b",
+      "width": 512,
+      "height": 896
+    },
+    "skies/02-aurora-rise.png": {
+      "sha256": "29d0ee3777ffd88801b60ea2aca1e4f9c59de2cf349bf6486517f6b1acf6bc8e",
+      "width": 512,
+      "height": 896
+    },
+    "skies/06-crystal-night.png": {
+      "sha256": "ed5629b91a78b12b5b0920bb7b374115c8d97096a1b17798569fab4662e904f1",
+      "width": 512,
+      "height": 896
+    },
+    "skies/09-eclipse.png": {
+      "sha256": "8c65ec61a5d809644e7c356f9ab2570de08eb508bcc728a93075b675bc567cca",
+      "width": 512,
+      "height": 896
+    },
+    "skies/11-amber-skies.png": {
+      "sha256": "68ceb2c4f050e1aefe82225f79a631843f541438d9761765c632112b7da5870d",
+      "width": 512,
+      "height": 896
+    },
+    "skies/03-solar-drift.png": {
+      "sha256": "d12ed5fcbb692eb97ddfe021c0917cba427ee36b6c935c4a1464d18c28e48b89",
+      "width": 512,
+      "height": 896
+    },
+    "skies/12-polar-glow.png": {
+      "sha256": "32028e0d24c712fc559fb0a10a37b9822e3163fa07a3da29a984475760390ba3",
+      "width": 512,
+      "height": 896
+    },
+    "Atmospheres.png": {
+      "sha256": "2e329af68da61957683fb707e36fc8608496c37f172e50211e553e653f7598be",
+      "width": 1440,
+      "height": 2050
+    },
+    "Pipe-Finishes.png": {
+      "sha256": "f95192b34057aa763eb29cb4683994d3a123b0e2cb93f7c02233df34697c108b",
+      "width": 1440,
+      "height": 2050
+    },
+    "Before-and-After.png": {
+      "sha256": "62fd0d8b37052e7466e18d5c5b18320026853432c54f8e3f1dba0e52e40b020e",
+      "width": 1536,
+      "height": 1040
+    },
+    "Worlds-and-Pipes.png": {
+      "sha256": "b45a5116f99abaa80f10f72a4b3f8a95a085821a80b74268e485c6db319c415c",
+      "width": 1440,
+      "height": 2050
+    },
+    "Pipe-Lighting-in-Motion.decoded.png": {
+      "sha256": "b2bb52809b964bc4f4a10fa3854892605b516d536541f77f2c3203fff8a5916c",
+      "width": 1440,
+      "height": 2050
+    },
+    "Worlds-in-Motion.decoded.png": {
+      "sha256": "084af8e00c7545185ddd1a0cb4f39612bfbf6ec6b7a94d2e249a2f3c5dff6089",
+      "width": 1440,
+      "height": 2050
+    }
+  },
+  "delivery": {
+    "nativeBuildCreatedForThisPass": false,
+    "phoneInstalled": false,
+    "testFlightUploaded": false,
+    "publicReviewSubmitted": false,
+    "mainMerged": false
+  },
+  "remainingChecks": [
+    "Owner visual acceptance on the physical phone.",
+    "Sustained iPhone FPS, GPU cost, peak memory, thermals and battery with the new shader work.",
+    "Full natural twelve-world run."
+  ]
+}

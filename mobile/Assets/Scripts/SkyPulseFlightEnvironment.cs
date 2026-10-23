@@ -92,6 +92,7 @@ namespace SkyPulse.Mobile
             SetBank(1,world,Travel,clock,(previous==world?1:transition)*entry,tint,haze);
             float blend=previous==world?1:Mathf.Clamp01(transition);
             skyMaterial.SetTexture("_SkyA",reflections[previous]!=null?reflections[previous]:Texture2D.grayTexture);skyMaterial.SetTexture("_SkyB",reflections[world]!=null?reflections[world]:Texture2D.grayTexture);skyMaterial.SetFloat("_Blend",blend);
+            skyMaterial.SetFloat("_WorldA",previous);skyMaterial.SetFloat("_WorldB",world);
             skyMaterial.SetColor(Tint,Color.Lerp(previousTint,tint,blend));skyMaterial.SetColor(Haze,Color.Lerp(previousHaze,haze,blend));skyMaterial.SetFloat(Clock,clock);skyMaterial.SetFloat("_World",Mathf.Lerp(previous,world,blend));
         }
         void SetBank(int bank,int theme,float distance,float clock,float visibility,Color tint,Color haze)

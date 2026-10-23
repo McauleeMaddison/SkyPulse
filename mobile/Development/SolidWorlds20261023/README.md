@@ -1,6 +1,9 @@
 # Solid architecture and integrated pipe designs — 23 October 2026
 
-This is the current local visual candidate. The earlier all-glass district and
+The building models in this package remain current and owner-approved. Updated
+sky colours and pipe finishes are in [WorldFinish20261023](../WorldFinish20261023/PREVIEW_INDEX.md).
+The world/pipe images below preserve the earlier material pass for comparison.
+The earlier all-glass district and
 simple monument previews are superseded. Images and movies here come from Unity,
 not generated concept art. This candidate has not replaced the phone build.
 
