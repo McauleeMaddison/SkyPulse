@@ -250,9 +250,9 @@ namespace SkyPulse.Mobile
             CircuitSprite(missionWorld,"Station atmosphere veil",Vector2.zero,new Vector2(GetViewportWidth()+1,22),new Color(.005f,.035f,.065f,.24f),-30);
             WorldGlow(missionWorld,"Station atmosphere",new Vector2(1,2),new Vector2(20,26),new Color(.1f,.68f,.83f,.31f),-28);
             WorldGlow(missionWorld,"Gold horizon",new Vector2(0,-7),new Vector2(18,7),new Color(1,.6f,.12f,.16f),-27);
-            relayEnvironment=new GameObject("Living orbital station depth").AddComponent<SkyPulseRelayEnvironment>();relayEnvironment.transform.SetParent(missionWorld,false);relayEnvironment.Build(GetViewportWidth());
+            relayEnvironment=new GameObject("Living orbital station depth").AddComponent<SkyPulseRelayEnvironment>();relayEnvironment.transform.SetParent(missionWorld,false);relayEnvironment.Build(GetViewportWidth(),LoadSprite(RelayStationPath).texture);
             for(int i=-3;i<=3;i++)WorldLine(missionWorld,"Perspective bus",new Vector2(i*3,-9),new Vector2(i*.65f,3),.008f,new Color(.1f,.6f,.7f,.07f),-24);
-            var deck=new GameObject("Relay runway · ground collision edge").AddComponent<SkyPulseRelayDeck>();deck.transform.SetParent(missionWorld,false);deck.transform.localPosition=new Vector3(0,GroundY,0);deck.Build(GetViewportWidth()+4);relayDeck=deck;
+            var deck=new GameObject("Relay runway · ground collision edge").AddComponent<SkyPulseRelayDeck>();deck.transform.SetParent(missionWorld,false);deck.transform.localPosition=new Vector3(0,GroundY,0);deck.Build(GetViewportWidth()+4,LoadSprite(RelayStationPath).texture);relayDeck=deck;
             for(int i=0;i<relaySession.Mission.RelayCount;i++)
             {
                 float y=relaySession.Mission.RelayY[i];var gate=new GameObject("Relay "+(i+1)).transform;gate.SetParent(missionWorld,false);relayShutters.Add(gate);

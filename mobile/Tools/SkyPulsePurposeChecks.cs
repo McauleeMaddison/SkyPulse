@@ -74,6 +74,11 @@ public static class SkyPulsePurposeCapture
     static IEnumerator Capture()
     {
         var game=UnityEngine.Object.FindAnyObjectByType<SkyPulseNativeGame>();if(game==null)game=new GameObject("QA game").AddComponent<SkyPulseNativeGame>();game.enabled=false;
+        if(Environment.GetEnvironmentVariable("SKYPULSE_PREVIEW_RELAY_ONLY")=="1")
+        {
+            yield return SkyPulseCinematicChecks.Live(game);yield return SkyPulseRelayGateChecks.Live(game);
+            Debug.Log("SKYPULSE_RELAY_FINISH_PASS");EditorApplication.Exit(0);yield break;
+        }
         yield return SkyPulseBlackoutChecks.Captures(game);Debug.Log("SKYPULSE_PURPOSE_CAPTURE_PASS");EditorApplication.Exit(0);
     }
 }

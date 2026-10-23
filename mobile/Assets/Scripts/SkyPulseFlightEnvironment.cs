@@ -86,34 +86,48 @@ namespace SkyPulse.Mobile
         {
             // Chamfered curtain-wall tower: recessed glazing, stepped crown,
             // thin floor reveals and a foundation extending below the viewport.
-            var plan=new[]{new Vector2(-.40f,-.50f),new Vector2(.40f,-.50f),new Vector2(.50f,-.40f),new Vector2(.50f,.40f),new Vector2(.40f,.50f),new Vector2(-.40f,.50f),new Vector2(-.50f,.40f),new Vector2(-.50f,-.40f)};
-            var profile=new[]{new Vector2(1.04f,-1.8f),new Vector2(1.04f,.08f),new Vector2(.96f,.13f),new Vector2(.96f,height*.82f),new Vector2(.79f,height*.87f),new Vector2(.79f,height),new Vector2(.68f,height+.07f)};
-            for(int j=1;j<profile.Length;j++)for(int side=0;side<8;side++)
+            const int sides=32;
+            var plan=new Vector2[sides];
+            for(int side=0;side<sides;side++)
             {
-                var a=plan[side];var c=plan[(side+1)%8];var low=profile[j-1];var high=profile[j];
-                var colour=j==3&&(side==0||side==4)?Glass:Metal;
-                b.Quad(centre+new Vector3(a.x*width*low.x,low.y,a.y*depth*low.x),centre+new Vector3(c.x*width*low.x,low.y,c.y*depth*low.x),
-                    centre+new Vector3(c.x*width*high.x,high.y,c.y*depth*high.x),centre+new Vector3(a.x*width*high.x,high.y,a.y*depth*high.x),colour);
-                if(j==profile.Length-1)b.Face(centre+new Vector3(0,high.y,0),centre+new Vector3(a.x*width*high.x,high.y,a.y*depth*high.x),centre+new Vector3(c.x*width*high.x,high.y,c.y*depth*high.x),Metal);
+                float angle=side*Mathf.PI*2/sides,c=Mathf.Cos(angle),sn=Mathf.Sin(angle);
+                plan[side]=new Vector2(Mathf.Sign(c)*Mathf.Pow(Mathf.Abs(c),.70f)*.5f,Mathf.Sign(sn)*Mathf.Pow(Mathf.Abs(sn),.70f)*.5f);
             }
-            float front=-depth*.48f-.003f;
+            var profile=new[]{new Vector2(.98f,-1.8f),new Vector2(.98f,.08f),new Vector2(.94f,.15f),new Vector2(.94f,height*.88f),new Vector2(.90f,height*.94f),new Vector2(.77f,height),new Vector2(.65f,height+.04f)};
+            float lean=variant%2==0?.09f:-.07f;
+            for(int j=1;j<profile.Length;j++)for(int side=0;side<sides;side++)
+            {
+                var a=plan[side];var c=plan[(side+1)%sides];var low=profile[j-1];var high=profile[j];
+                var na=new Vector3(a.x/(width*width),0,a.y/(depth*depth)).normalized;var nc=new Vector3(c.x/(width*width),0,c.y/(depth*depth)).normalized;
+                float lowerSweep=lean*Mathf.Pow(Mathf.Max(0,low.y/height),2),upperSweep=lean*Mathf.Pow(Mathf.Max(0,high.y/height),2);
+                b.SmoothQuad(centre+new Vector3(a.x*width*low.x+lowerSweep,low.y,a.y*depth*low.x),centre+new Vector3(c.x*width*low.x+lowerSweep,low.y,c.y*depth*low.x),
+                    centre+new Vector3(c.x*width*high.x+upperSweep,high.y,c.y*depth*high.x),centre+new Vector3(a.x*width*high.x+upperSweep,high.y,a.y*depth*high.x),na,nc,j==3?Glass:Metal);
+                if(j==profile.Length-1)b.Face(centre+new Vector3(upperSweep,high.y,0),centre+new Vector3(a.x*width*high.x+upperSweep,high.y,a.y*depth*high.x),centre+new Vector3(c.x*width*high.x+upperSweep,high.y,c.y*depth*high.x),Metal);
+            }
             for(int row=0;row<12;row++)
             {
-                float y=.23f+row*(height*.56f/12);
-                b.Box(centre+new Vector3(0,y,front),new Vector3(width*.73f,.009f,.009f),Metal);
-                for(int column=0;column<3;column++)
+                float y=.23f+row*(height*.61f/12),sweep=lean*Mathf.Pow(y/height,2);
+                for(int side=17;side<31;side++)
                 {
-                    float x=(column-1)*width*.22f;
-                    bool lit=Hash(variant*97+row*11+column*7)>.34f;
-                    var hue=lit?new Color(.30f,.61f,.77f,.82f):new Color(.06f,.12f,.18f,.30f);
-                    b.Box(centre+new Vector3(x,y+.035f,front-.004f),new Vector3(width*.13f,.026f,.004f),hue);
+                    var a=Vector2.Lerp(plan[side],plan[(side+1)%sides],.15f);var c=Vector2.Lerp(plan[side],plan[(side+1)%sides],.78f);
+                    bool lit=Hash(variant*97+row*11+side*7)>.28f;var hue=lit?new Color(.30f,.64f,.82f,.86f):new Color(.10f,.20f,.29f,.30f);
+                    b.Quad(centre+new Vector3(a.x*width*.946f+sweep,y,a.y*depth*.946f),centre+new Vector3(c.x*width*.946f+sweep,y,c.y*depth*.946f),
+                        centre+new Vector3(c.x*width*.946f+sweep,y+.022f,c.y*depth*.946f),centre+new Vector3(a.x*width*.946f+sweep,y+.022f,a.y*depth*.946f),hue);
                 }
             }
-            for(int side=-1;side<=1;side+=2)
-                b.Box(centre+new Vector3(side*width*.39f,height*.44f,front-.004f),new Vector3(.009f,height*.66f,.010f),Light);
-            b.Box(centre+new Vector3(0,height+.073f,0),new Vector3(width*.55f,.012f,depth*.45f),new Color(.35f,.65f,.83f,.85f));
-            if(variant%3==0)b.Box(centre+new Vector3(width*.18f,height+.17f,0),new Vector3(.012f,.20f,.012f),Metal);
+            // Continuous curved light reveals wrap the crown and glass facade.
+            for(int band=0;band<3;band++)
+            {
+                float y=band==2?height+.015f:height*(band==0?.20f:.78f),radius=band==2?.72f:.947f,sweep=lean*Mathf.Pow(y/height,2);
+                for(int side=0;side<sides;side++)
+                {
+                    var a=plan[side];var c=plan[(side+1)%sides];
+                    b.Quad(centre+new Vector3(a.x*width*radius+sweep,y,a.y*depth*radius),centre+new Vector3(c.x*width*radius+sweep,y,c.y*depth*radius),
+                        centre+new Vector3(c.x*width*radius+sweep,y+.010f,c.y*depth*radius),centre+new Vector3(a.x*width*radius+sweep,y+.010f,a.y*depth*radius),Light);
+                }
+            }
         }
+
         void OnDestroy()
         {
             foreach(var mesh in silhouettes)if(mesh!=null)Destroy(mesh);

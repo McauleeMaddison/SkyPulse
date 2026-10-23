@@ -28,11 +28,13 @@ component on the scene; do not attach each partial file separately.
 | Tapered exhaust, soft trail and passage sparks | `SkyPulseFlightEffects.cs`, `SkyPulseNativeGame.Cinematic.cs` |
 | Pooled 3D scenery during Endless flight | `SkyPulseFlightEnvironment.cs`, `SkyPulseNativeGame.Environment.cs`, `Resources/SkyPulse/Shaders/FlightArchitecture.shader` |
 | Relay station ribs, turbines and drones | `SkyPulseRelayEnvironment.cs` |
+| Relay's fixed ground guide and pooled 3D deck panels | `SkyPulseRelayDeck.cs`, `Resources/SkyPulse/Shaders/RelayRunway.shader` |
 | Six audio voices, optional cue fallbacks and saved sound switch | `SkyPulseNativeGame.Audio.cs` |
 | How to Play topics and route-map entry | `SkyPulseNativeGame.Guide.cs` |
 | Three Home layouts and mode input | `SkyPulseNativeGame.Controls.cs`, `.Presentation.cs` |
 | Relay gate rules | `SkyPulseMissionModels.cs` → `RelaySession` |
 | Signal Heist puzzle rules / presentation | `SkyPulseBlackoutCampaign.cs`, `SkyPulseNativeGame.Blackout.cs`, `SkyPulseHeistBoard.cs` |
+| Blackout's city-restoration ribbon and objective telemetry | `SkyPulseBlackoutGraphic.cs` → `Network`, `SkyPulseNativeGame.Blackout.cs` → `BlackoutNetworkCaption` |
 
 Paths in the table are relative to `mobile/Assets/Scripts`, except the shaders,
 which are relative to `mobile/Assets`.
@@ -62,6 +64,23 @@ lights on. Change the finish without changing pipe collision dimensions.
 The collar material sets `_Cutout` to 1 so transparent artwork corners write
 neither dark pixels nor depth. Keep that contour handling when editing its shader;
 the solid shaft deliberately leaves `_Cutout` at 0.
+
+The Endless skyline uses rounded curtain-wall meshes and the current world's
+artwork for reflected color. `SkyPulseFlightEnvironment.Building` owns the
+profiles, windows and crown reveals. Keep it below the route and retain the
+pooled banks and absolute-distance parallax. Relay shares the reflection finish
+on its swept ribs and rounded service craft, but keeps its separate station art.
+These are real mesh layers over a distant authored sky, not a replacement camera.
+
+`SkyPulseRelayDeck` draws all bevelled runway panels in one static mesh. Its
+shader wraps panel centers using `_Distance`; the front light remains fixed at
+the existing `GroundY`. Do not move that light or add collision shapes for visual
+polish. Reduced Motion supplies zero distance/clock through the existing path.
+
+Blackout's enlarged opening optics use projected, fixed touch targets. The
+city ribbon reads existing saved medals, while partial illumination reads the
+live cores and uplink. Planning must never write city completion. Budget,
+solutions, saves and immediate progression remain in the existing campaign code.
 
 For the Tech Tree, change text/cues in `BuildTechTree`, and geometry in
 `SkyPulseTechTreeView`. Keep fixed touch targets, direct two-axis dragging and

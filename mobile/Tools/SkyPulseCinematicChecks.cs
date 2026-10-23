@@ -24,6 +24,15 @@ public static class SkyPulseCinematicChecks
         Check(firstPrism.Shell.GetComponent<MeshFilter>().sharedMesh.bounds.size.z>.3f&&firstPrism.Shell.sharedMaterial.shader.isSupported,"Crystal has optical depth and supported shader");
         var bird=(SpriteRenderer)Get(game,"birdRenderer");Check(bird.sprite.vertices.Length>100&&bird.sharedMaterial.shader.isSupported,"Registered bird pose has a flexible articulated mesh and supported lighting shader");
         var environment=(SkyPulseRelayEnvironment)Get(game,"relayEnvironment");Check(environment!=null&&environment.GetComponentsInChildren<MeshRenderer>().Length==10,"Layered station contains shared-mesh machinery and maintenance drones");
+        var deck=(SkyPulseRelayDeck)Get(game,"relayDeck");var deckMesh=deck.GetComponent<MeshFilter>().sharedMesh;
+        Check(deckMesh.vertexCount>100&&deckMesh.bounds.size.z>=3&&deck.GetComponentsInChildren<MeshRenderer>().Length==1,"Runway has a real bevelled panel volume in one pooled mesh draw");
+        Check(deck.GetComponent<MeshRenderer>().sharedMaterial.shader.isSupported&&deck.GetComponentsInChildren<Collider>().Length==0&&deck.GetComponentsInChildren<Collider2D>().Length==0,"New floor material compiles without adding gameplay colliders");
+        var deckMaterial=deck.GetComponent<MeshRenderer>().sharedMaterial;
+        Check(deckMaterial.GetTexture("_Environment")!=null,"Deck uses the station artwork for coherent reflected lighting");
+        for(int i=0;i<5;i++){environment.SetVisual(i,.1f*i);deck.SetVisual(i,.1f*i);}
+        long environmentBefore=GC.GetAllocatedBytesForCurrentThread();for(int i=0;i<120;i++){environment.SetVisual(i/30f,i/60f);deck.SetVisual(i/30f,i/60f);}
+        Check(GC.GetAllocatedBytesForCurrentThread()==environmentBefore,"Warmed station and shader-pooled deck animation allocate no managed memory");
+        Check(Mathf.Abs(deck.transform.position.y+8.45f)<.0001f,"Panel animation never moves the authoritative ground guide height");
         float oldY=(float)Get(game,"birdY"),oldV=(float)Get(game,"birdVelocity"),oldD=session.Distance;
         var present=(Action<float>)Delegate.CreateDelegate(typeof(Action<float>),game,typeof(SkyPulseNativeGame).GetMethod("UpdateCinematicPresentation",F));
         for(int i=0;i<5;i++)present(1f/60);long before=GC.GetAllocatedBytesForCurrentThread();for(int i=0;i<120;i++)present(1f/60);
