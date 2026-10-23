@@ -1,0 +1,116 @@
+{
+  "fullRegressionSourceCommit": "cc90b9b",
+  "fullRegressionExitCode": 0,
+  "fullRegressionGroups": [
+    "SKYPULSE_BIRD_PROGRESSION_LIVE_PASS",
+    "SKYPULSE_BIRD_PROGRESSION_PURE_PASS",
+    "SKYPULSE_BLACKOUT_LIVE_PASS",
+    "SKYPULSE_BLACKOUT_PURE_PASS",
+    "SKYPULSE_CAP_CONTOUR_PASS",
+    "SKYPULSE_CINEMATIC_PASS",
+    "SKYPULSE_COPY_UI_PASS",
+    "SKYPULSE_DAILY_ROUTE_LIVE_PASS",
+    "SKYPULSE_DAILY_ROUTE_PURE_PASS",
+    "SKYPULSE_DEPTH_PASS",
+    "SKYPULSE_DIMENSIONAL_AUDIO_PASS",
+    "SKYPULSE_DIMENSIONAL_PASS",
+    "SKYPULSE_FLIGHT_ENVIRONMENT_PASS",
+    "SKYPULSE_FLIGHT_GAMEPLAY_CAPTURE_PASS",
+    "SKYPULSE_GUIDE_WORLD_PASS",
+    "SKYPULSE_HEIST_CAPTURE_PASS",
+    "SKYPULSE_MISSION_INTEGRATION_PASS",
+    "SKYPULSE_MISSION_LEGACY_PASS",
+    "SKYPULSE_MISSION_PURE_PASS",
+    "SKYPULSE_ONE_THUMB_LIVE_PASS",
+    "SKYPULSE_ONE_THUMB_PURE_PASS",
+    "SKYPULSE_PIPE_FINISH_PASS",
+    "SKYPULSE_PRESENTATION_CAPTURES_PASS",
+    "SKYPULSE_PURPOSE_LIVE_PASS",
+    "SKYPULSE_RELAY_MESH_PASS",
+    "SKYPULSE_ROUTE_FADE_PASS",
+    "SKYPULSE_SCORE_FINISH_PASS",
+    "SKYPULSE_TOUCH_COMFORT_PASS"
+  ],
+  "finalShippingSourceCommit": "33bc4ac053f188192fac54c8da3e5828410312a9",
+  "finalShaderPixelComparison": {
+    "changedPixels": 0,
+    "size": "512x896",
+    "referenceShader": "Unlit/Texture",
+    "shippingShader": "SkyPulse/Live World Composite"
+  },
+  "rendering": "Live constructed perspective scenery composited behind the original orthographic flight camera; no flat city illustration displayed in Endless Home or gameplay.",
+  "backgroundRenderTarget": {
+    "width": 720,
+    "height": "Viewport-dependent, capped at 1920",
+    "msaa": 2,
+    "depthBits": 16
+  },
+  "gameplayCameraInputCollisionsSavesEconomyPreserved": true,
+  "worldsVerified": 12,
+  "copySourceAudit": {
+    "passed": true,
+    "sourceFiles": 46,
+    "resourceJsonFiles": 3,
+    "stringsChecked": 2675,
+    "negativeControlsPassed": 5,
+    "legitimateCopyControlsPassed": 4,
+    "findings": [],
+    "limitations": [
+      "Does not certify typography, image text, every possible dynamic state or future edits."
+    ]
+  },
+  "copyVisibleUiAudit": {
+    "screenStatesChecked": 51,
+    "textValuesChecked": 1555,
+    "placeholderFindings": 0
+  },
+  "uniqueUnityGuids": 242,
+  "nativeUnityExportPassed": true,
+  "nativeReleaseBuildPassed": true,
+  "nativeSignatureVerified": true,
+  "phoneInstallationPerformed": false,
+  "phoneVisualAcceptancePassed": false,
+  "physicalFpsMemoryThermalsMeasured": false,
+  "testFlightUploadPerformed": false,
+  "publicReviewSubmitted": false,
+  "mainMerged": false,
+  "previews": {
+    "Three-Homes.mp4": {
+      "framesDecoded": 40,
+      "fps": 10,
+      "seconds": 4.0,
+      "width": 1536,
+      "height": 1206
+    },
+    "Endless-3D-World.mp4": {
+      "framesDecoded": 360,
+      "fps": 30,
+      "seconds": 12.0,
+      "width": 750,
+      "height": 1334
+    }
+  },
+  "mediaSha256": {
+    "Three-Homes.decoded.png": "65f8a9b5606d7fbe982b86fc6ac8847e900b9100c5c84a9b1500bc2477b66a61",
+    "Endless-3D-World.mp4": "f25b0292e17ce5541de10bf6fa0f908feea4f7008a694c1bf36d35a508bb3dfe",
+    "Three-Homes.mp4": "499e3e0b67a72d2a000774ac58bb57aa5a7d57eeb53a8f1c14e7bbd71dc58faf",
+    "home-endless.png": "e8a8e42f1f3aeff9cc03b0ebd87fe9a7eb37bea38ef02bb82af9de31c8573ea5",
+    "home-relay.png": "65ffba0e4d03141f6487313a2100bb046d810cbde9f8e2359e1f0f1ff6b2b756",
+    "Endless-3D-World.decoded.png": "af4134b23ad9563f5254bb017b030ec9ace91d562983d4bafb2a911c5388fc4e",
+    "home-blackout.png": "9ef57dde476bd28390c4ca608847b058d1e663886073f1b05afd2a1bbf7ce65c",
+    "Twelve-Worlds.png": "1a1173af00c23fe5ee92de6de18a56745a0f058feecb2a9d2ac20e2d51f6bd6f",
+    "Three-Homes.png": "ac1c5fc12102d9e8a664715145ec8ef81fb27dbc54d7b80cff3d5f221aea63d9"
+  },
+  "warnings": "Pre-existing Editor Search indexing exception and Unity-generated native toolchain warnings remain recorded; no perfect-build claim.",
+  "version": "1.0.0",
+  "localBuild": "18",
+  "bundleId": "com.mcauleemaddison.skypulse",
+  "nativeExportCreatedUtc": "2026-10-23T14:27:12.1808620Z",
+  "nativeSourceManifestSha256": "5e8cac2711f8138a6310867cf1cd0b802cc9bdebeef50daf2bffea663608dcdb",
+  "nativeSourceFilesVerified": 467,
+  "qaAssetsMatchNativeSourceManifest": true,
+  "nativeBinarySha256": {
+    "SkyPulse": "aba8c6b5ad92acac8f020c2b1ae4fece59b53f0cce1da3e32f6cdd8feca76382",
+    "Frameworks/UnityFramework.framework/UnityFramework": "ed53810d0a72a3cffbd396e2d4a755803d44d805b1ab3211568a7ed960dcb622"
+  }
+}
