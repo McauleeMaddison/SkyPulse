@@ -22,8 +22,10 @@ public static class SkyPulseConstructedWorldChecks
         var game=UnityEngine.Object.FindAnyObjectByType<SkyPulseNativeGame>();if(game==null)game=new GameObject("QA game").AddComponent<SkyPulseNativeGame>();
         game.enabled=false;typeof(SkyPulseNativeGame).GetField("hapticsEnabled",BindingFlags.Instance|BindingFlags.NonPublic).SetValue(game,false);
         CompositeCheck(game);
+        if(Environment.GetEnvironmentVariable("SKYPULSE_WORLD_QA_ONLY")=="1")yield return SkyPulseDimensionalChecks.Environment(game);
         yield return SkyPulsePresentationChecks.Captures(game);
         StationCheck(game);
+        if(Environment.GetEnvironmentVariable("SKYPULSE_CAPTURE_ENDLESS")=="1")yield return SkyPulseFlightPolishChecks.Capture(game);
         var flags=BindingFlags.Instance|BindingFlags.NonPublic;
         foreach(var mode in new[]{SkyPulseMode.EndlessRoute,SkyPulseMode.PulseRelay,SkyPulseMode.BlackoutProtocol})
         {

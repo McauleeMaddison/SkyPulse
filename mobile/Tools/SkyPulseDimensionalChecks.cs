@@ -81,7 +81,7 @@ public static class SkyPulseDimensionalChecks
         var score=(AudioClip)Get(game,"scoreSound");Check(fallback.Invoke(null,new object[]{"missing-test-cue",score})==score,"Absent optional sound safely falls back to an existing clip");
         Debug.Log("SKYPULSE_DIMENSIONAL_AUDIO_PASS");yield return null;
     }
-    static IEnumerator Environment(SkyPulseNativeGame game)
+    public static IEnumerator Environment(SkyPulseNativeGame game)
     {
         Call(game,"SetHomeProtocol",SkyPulseMode.EndlessRoute);Call(game,"StartFlight");Call(game,"UpdateCinematicPresentation",1f);
         var env=(SkyPulseFlightEnvironment)Get(game,"flightEnvironment");var camera=(Camera)Get(game,"flightCamera");

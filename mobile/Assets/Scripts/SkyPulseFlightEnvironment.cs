@@ -48,8 +48,8 @@ namespace SkyPulse.Mobile
                     scenery[bank,i]=renderer.transform;
                 }
             }
-            // A real enclosing mesh, not a city illustration on a background
-            // sprite. Its procedural sky is lit from the current world's palette.
+            // The original sky colour lives on an enclosing dome. The city
+            // illustration is cropped away and replaced by inhabited mesh islands.
             var dome=new SkyPulseMeshBuilder();const int slices=40,rings=24;
             for(int row=0;row<rings;row++)for(int side=0;side<slices;side++)
             {
@@ -78,7 +78,7 @@ namespace SkyPulse.Mobile
             float aspect=Mathf.Max(.3f,width/18f);if(worldImage!=null&&Mathf.Abs(viewAspect-aspect)<.001f)return;viewAspect=aspect;
             if(worldImage!=null){worldImage.Release();Destroy(worldImage);}
             worldImage=new RenderTexture(720,Mathf.Clamp(Mathf.RoundToInt(720/aspect),720,1920),16,RenderTextureFormat.ARGB32){name="Live Endless perspective world",antiAliasing=2};worldImage.Create();
-            worldCamera.targetTexture=worldImage;worldCamera.aspect=aspect;compositeMaterial.mainTexture=worldImage;composite.localScale=new Vector3(width+.04f,18.04f,1);
+            worldCamera.targetTexture=worldImage;worldCamera.aspect=aspect;skyMaterial.SetFloat("_Aspect",aspect);compositeMaterial.mainTexture=worldImage;composite.localScale=new Vector3(width+.04f,18.04f,1);
         }
         public void Render(){if(worldCamera!=null&&gameObject.activeInHierarchy)worldCamera.Render();}
         void OnEnable(){if(worldScene!=null)worldScene.gameObject.SetActive(true);}

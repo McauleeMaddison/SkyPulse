@@ -1,6 +1,6 @@
 Shader "SkyPulse/Constructed World Atmosphere"
 {
-    Properties { _Tint("World light",Color)=(.2,.6,1,1) _Haze("Horizon",Color)=(.03,.08,.16,1) _Clock("Clock",Float)=0 _World("World",Float)=0 _SkyA("Outgoing sky art",2D)="gray"{} _SkyB("Incoming sky art",2D)="gray"{} _Blend("Sky transition",Float)=1 }
+    Properties { _Tint("World light",Color)=(.2,.6,1,1) _Haze("Horizon",Color)=(.03,.08,.16,1) _Clock("Clock",Float)=0 _World("World",Float)=0 _SkyA("Outgoing sky art",2D)="gray"{} _SkyB("Incoming sky art",2D)="gray"{} _Blend("Sky transition",Float)=1 _Aspect("Sky camera aspect",Float)=.46 }
     SubShader
     {
         Tags {"Queue"="Transparent" "RenderType"="Opaque"}
@@ -14,7 +14,7 @@ Shader "SkyPulse/Constructed World Atmosphere"
             #include "UnityCG.cginc"
             struct app {float4 vertex:POSITION;};
             struct vary {float4 pos:SV_POSITION;float3 direction:TEXCOORD0;};
-            float4 _Tint,_Haze;float _Clock,_World,_Blend;sampler2D _SkyA,_SkyB;
+            float4 _Tint,_Haze;float _Clock,_World,_Blend,_Aspect;sampler2D _SkyA,_SkyB;
             vary vert(app v){vary o;o.pos=UnityObjectToClipPos(v.vertex);o.direction=v.vertex.xyz;return o;}
             float hash(float3 p){return frac(sin(dot(p,float3(127.1,311.7,74.7)))*43758.5453);}
             float noise(float3 p)
@@ -24,11 +24,13 @@ Shader "SkyPulse/Constructed World Atmosphere"
             }
             fixed4 frag(vary i):SV_Target
             {
-                float3 d=normalize(i.direction);float y=saturate(d.y*2+.50);
+                float3 d=normalize(i.direction);
                 // Only the original sky is mapped onto the enclosing volume.
                 // Its illustrated buildings are cropped out: inhabited islands
                 // in front are real meshes with independent depth and travel.
-                float2 uv=float2(.5+d.x*2.7,.44+d.y*1.24);
+                // Keep the painted sky inside its horizontal extent on tablets
+                // as well as narrow phones; clamped edge columns form stripes.
+                float2 uv=float2(.5+d.x*(1.24/max(.3,_Aspect)),.44+d.y*1.24);
                 uv+=float2(sin(_Clock*.017)*.006,cos(_Clock*.013)*.004);
                 uv.y=clamp(uv.y,.30,.985);uv.x=saturate(uv.x);
                 float3 sky=lerp(tex2D(_SkyA,uv).rgb,tex2D(_SkyB,uv).rgb,_Blend)*.90;
@@ -40,7 +42,10 @@ Shader "SkyPulse/Constructed World Atmosphere"
                 sky+=lerp(float3(.95,.25,.18),_Tint.rgb,.18)*sunset*.27;
                 float sea=1-smoothstep(-.18,.045,d.y);
                 float billow=noise(float3(d.x*29,d.y*36,_Clock*.009))* .6+noise(float3(d.x*57,d.y*70,4))*.4;
-                sky=lerp(sky,lerp(float3(.15,.075,.32),float3(.63,.25,.52),billow)+float3(.45,.22,.12)*sunset,sea);
+                float signature=smoothstep(0,1,_World)*.88;
+                float3 cloudShadow=lerp(float3(.15,.075,.32),_Haze.rgb*.7+_Tint.rgb*.085,signature);
+                float3 cloudLight=lerp(float3(.63,.25,.52),_Tint.rgb*.48+_Haze.rgb*.4,signature);
+                sky=lerp(sky,lerp(cloudShadow,cloudLight,billow)+lerp(float3(.45,.22,.12),_Tint.rgb*.23,signature)*sunset,sea);
                 float3 starCell=floor(d*720);float seed=hash(starCell);
                 float star=step(.9988,seed)*pow(saturate(1-length(frac(d*720)-.5)*1.8),8);
                 sky+=float3(.70,.86,1)*star*.75;
