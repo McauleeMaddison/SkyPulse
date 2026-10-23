@@ -1,6 +1,6 @@
 # SkyPulse Arcade
 
-> **Installed local reference: build 18, source `f71eb7d` (22 October).** [Current Relay and Signal Heist previews](mobile/Development/PhoneReference20261022/README.md) are actual Unity renders matched to the installed candidate's source manifest. The old 12 October prototype image has been archived. [Newer pipe, LED, scenery and retry-feedback repairs](mobile/Development/PipeFinish20261022/README.md) remain on the upgrade branch and have not been installed on the phone. Device acceptance remains open. Build 17 was last verified in internal TestFlight; local build 18 has not been uploaded.
+> **Installed local candidate: build 18, source `6692cd6` (23 October).** The [pipe, LED, scenery and retry-feedback repairs](mobile/Development/PipeFinish20261022/README.md) were rebuilt, signed, installed and launched on the iPhone. **The owner reported an issue; device acceptance remains open.** [Native build evidence and remaining checks](mobile/Development/LocalDevice20261023/README.md). The [Relay and Signal Heist previews](mobile/Development/PhoneReference20261022/README.md) are actual Unity renders from the earlier installed source `f71eb7d`, not new phone footage. The old 12 October prototype is archived. Build 17 was last verified in internal TestFlight; local build 18 has not been uploaded.
 
 For manual work in Unity and VS Code, start with the [handoff guide and checklist prompt](mobile/MANUAL_HANDOFF.md) and [editing map](mobile/EDITING_GUIDE.md).
 

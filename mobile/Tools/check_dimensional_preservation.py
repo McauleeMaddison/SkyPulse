@@ -16,7 +16,7 @@ def body(source,name):
         if depth==0:return source[found.start():i+1].strip()
     raise AssertionError('Unbalanced method '+name)
 report={'baseCommit':BASE,'unchangedFiles':{},'unchangedMethods':{}}
-files=['SkyPulseMissionModels.cs','SkyPulseDailyMissions.cs','SkyPulseBirdProgression.cs','SkyPulseInputFence.cs','SkyPulseRelayGate.cs','SkyPulsePrism.cs','SkyPulseNativeGame.Blackout.cs']
+files=['SkyPulseMissionModels.cs','SkyPulseDailyMissions.cs','SkyPulseBirdProgression.cs','SkyPulseInputFence.cs','SkyPulseRelayGate.cs','SkyPulsePrism.cs','SkyPulseBlackoutCampaign.cs']
 for name in files:
     path='mobile/Assets/Scripts/'+name;data=(ROOT/path).read_bytes();assert data==old(path),'Protected rules changed: '+name;report['unchangedFiles'][path]=digest(data)
 for name in ['flap','score','crystal','crash','unlock']:
@@ -26,7 +26,11 @@ for path in (ROOT/'mobile/Assets/Scenes').glob('*'):
         rel=path.relative_to(ROOT).as_posix();assert path.read_bytes()==old(rel),'Scene changed';report['unchangedFiles'][rel]=digest(path.read_bytes())
 for filename,names in {
  'SkyPulseNativeGame.cs':['CreateCamera','SimulateFlight','UpdateBird','Flap','CollidersOverlap','BirdCollidesWithPipe','RoutePipeSpacing','GetViewportWidth','UpdatePipes','ConfigurePipe','BeginWorldTransition','UpdateWorldTransition','CollectCrystalPickup','EndFlight','BankCollectedCrystals','SaveProgress'],
- 'SkyPulseNativeGame.Missions.cs':['SimulateRelay','RelayPlaneContact','RelayCellContact','RelayUnlocked','FinalizeMission','ClaimDaily']
+ 'SkyPulseNativeGame.Missions.cs':['SimulateRelay','RelayPlaneContact','RelayCellContact','RelayUnlocked','FinalizeMission','ClaimDaily'],
+ # The owner requested Blackout objective/presentation changes on 23 October.
+ # Protect each input, save and progression entry point as well as the complete
+ # campaign simulator above, while allowing its existing UI to be redesigned.
+ 'SkyPulseNativeGame.Blackout.cs':['TouchBlackoutNode','ActivateNextBlackoutPuzzle','RestartBlackoutVault','SaveBlackoutAttempt','ToggleBlackoutPreview','CancelBlackoutPreview','PreviewBlackoutNode','CommitBlackoutPreview','ResetBlackoutEffects']
 }.items():
     path='mobile/Assets/Scripts/'+filename;a=old(path).decode();b=(ROOT/path).read_text()
     for name in names:

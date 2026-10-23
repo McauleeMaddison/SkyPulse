@@ -36,6 +36,7 @@ namespace SkyPulse.Mobile
             }
             float blend=worldTransitionTimer>0?Mathf.SmoothStep(0,1,1-worldTransitionTimer/WorldTransitionSeconds):1;
             var world=routeWorld??equippedWorld;
+            if(flightEnvironment.ReflectionWorld!=routeWorldIndex)flightEnvironment.SetReflection(routeWorldIndex,LoadSprite(world.BackgroundPath).texture);
             flightEnvironment.Present(routeWorldIndex,sceneryTravel,cinematicClock,blend,world.Accent,world.Floor,reduceMotionEnabled,reduceMotionEnabled?1:Mathf.SmoothStep(0,1,sceneryEntry));
         }
     }

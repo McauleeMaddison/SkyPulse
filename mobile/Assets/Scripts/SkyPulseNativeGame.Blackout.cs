@@ -13,9 +13,9 @@ namespace SkyPulse.Mobile
         readonly List<Text> blackoutNodeLabels=new List<Text>();
         readonly List<SkyPulsePressTarget> blackoutPressTargets=new List<SkyPulsePressTarget>();
         readonly Vector2[] blackoutPositions=new Vector2[49];
-        SkyPulseBlackoutGraphic blackoutTraceGauge,blackoutHomeBackdrop;
+        SkyPulseBlackoutGraphic blackoutTraceGauge,blackoutHomeBackdrop,blackoutNetwork;
         SkyPulseHeistBoard blackoutBoard;
-        Text blackoutVaultText,blackoutBriefing,blackoutCompletionToast;
+        Text blackoutVaultText,blackoutBriefing,blackoutCompletionToast,blackoutObjectiveTitle;
         Button blackoutPlanButton,blackoutCommitButton,blackoutRestartButton;
         BlackoutSession blackoutPreview;
         bool blackoutPlanning;
@@ -119,7 +119,7 @@ namespace SkyPulse.Mobile
             {
                 blackoutLabBuilt=true;var root=(RectTransform)blackoutScreen.transform;root.SetParent(safeAreaRoot,false);root.anchorMin=root.anchorMax=new Vector2(.5f,.5f);root.sizeDelta=new Vector2(1080,1680);
                 var header=BlackoutPanel(root,"Signal heist command deck",new Vector2(0,747),new Vector2(1010,160));
-                var title=MissionText(header,"SIGNAL HEIST",47,39,BlackoutIce,730,50);title.rectTransform.anchoredPosition+=Vector2.left*110;
+                blackoutObjectiveTitle=MissionText(header,"",47,35,BlackoutIce,730,50);blackoutObjectiveTitle.rectTransform.anchoredPosition+=Vector2.left*110;
                 blackoutVaultText=MissionText(header,"",-5,26,BlackoutMint,730,38);blackoutVaultText.rectTransform.anchoredPosition+=Vector2.left*110;
                 blackoutCompletionToast=MissionText(header,"",-49,24,BlackoutIce,730,35);blackoutCompletionToast.rectTransform.anchoredPosition+=Vector2.left*110;
                 blackoutPlanButton=BlackoutButton(header,"Plan",405,0,180,ToggleBlackoutPreview,150);
@@ -135,14 +135,17 @@ namespace SkyPulse.Mobile
                     var button=hit.gameObject.AddComponent<Button>();button.targetGraphic=hit.GetComponent<Image>();button.transition=Selectable.Transition.None;blackoutNodeButtons.Add(button);
                     var press=hit.gameObject.AddComponent<SkyPulsePressTarget>();press.Tile=i;press.Press=HandleBlackoutPress;press.Release=ReleaseGameplayPointer;blackoutPressTargets.Add(press);
                 }
-                blackoutStatusText=MissionText(root,"",-560,28,BlackoutIce,1010,60);
-                blackoutBriefing=MissionText(root,"",-638,26,Hex("#9fc1ca"),1010,78);
+                blackoutStatusText=MissionText(root,"",-560,26,BlackoutIce,1010,42);
+                blackoutNetwork=BlackoutGraphic(root,"City restoration network",new Vector2(0,-616),new Vector2(1000,58),BlackoutSurface.Network);
+                blackoutBriefing=MissionText(root,"",-678,24,Hex("#9fc1ca"),1010,54);
                 blackoutRestartButton=BlackoutButton(root,"Restart",-260,-760,490,RestartBlackoutVault,150);
                 blackoutCommitButton=BlackoutButton(root,"SELECT A PRISM",-260,-760,490,CommitBlackoutPreview,150);
                 BlackoutButton(root,"Pause",260,-760,490,PauseFlight,150);
             }
             float stride=155,vertical=160,top=(p.Height-1)*vertical*.5f;
-            blackoutVaultText.text="VAULT "+(selectedMission+1).ToString("00")+" / 08 · "+p.Name;blackoutCompletionToast.text=SkyPulseBlackoutCampaign.Objective(selectedMission);blackoutBriefing.text="Light all "+p.CoreCount+" cores and connect the uplink.\nPLAN previews a rotation without spending trace.";
+            blackoutObjectiveTitle.text="RESTORE "+SkyPulseBlackoutCampaign.Systems[selectedMission].ToUpperInvariant();
+            blackoutVaultText.text="SIGNAL HEIST · "+(selectedMission+1).ToString("00")+" / 08 · "+p.Name;
+            blackoutCompletionToast.text=BlackoutNetworkCaption();blackoutBriefing.text=p.Briefing;
             for(int i=0;i<49;i++)
             {
                 bool used=i<p.Count;blackoutNodeButtons[i].gameObject.SetActive(used);if(!used)continue;
@@ -150,25 +153,39 @@ namespace SkyPulse.Mobile
                 ((RectTransform)blackoutNodeButtons[i].transform).anchoredPosition=blackoutPositions[i];blackoutPressTargets[i].Generation=blackoutGeneration;
             }
             blackoutBoard.Bind(blackoutSession,blackoutPositions);
-            for(int i=0;i<p.Count;i++)((RectTransform)blackoutNodeButtons[i].transform).anchoredPosition=blackoutPositions[i];
+            for(int i=0;i<p.Count;i++)
+            {
+                var hit=(RectTransform)blackoutNodeButtons[i].transform;hit.anchoredPosition=blackoutPositions[i];hit.sizeDelta=Vector2.one*(150*blackoutBoard.OpticScale);
+                blackoutNodeLabels[i].rectTransform.anchoredPosition=new Vector2(0,-59*blackoutBoard.OpticScale);
+            }
             FitBlackoutToSafeArea();UpdateBlackoutPresentation();RefreshBlackoutLab();
             if(blackoutSession.State==MissionSessionState.Succeeded||blackoutSession.State==MissionSessionState.Failed)FinalizeMission();
         }
         void RefreshBlackoutLab()
         {
             if(blackoutSession==null||blackoutBoard==null)return;var s=blackoutSession;var p=s.Puzzle;
+            int core=0;
             for(int i=0;i<p.Count;i++)
             {
                 char c=p.Tile(i);
                 blackoutNodeButtons[i].interactable=state==FlightState.Playing&&s.State==MissionSessionState.Playing&&p.Rotatable(i);
-                blackoutNodeLabels[i].text=c=='S'?"SOURCE":c=='E'?"UPLINK":c=='C'?"CORE":c=='R'?"RELAY A":c=='Q'?"RELAY B":c=='G'?"A":c=='H'?"B":c=='!'?"SENSOR":"";
+                blackoutNodeLabels[i].text=c=='S'?"SOURCE":c=='E'?"UPLINK":c=='C'?"CORE "+(++core).ToString("00"):c=='R'?"RELAY A":c=='Q'?"RELAY B":c=='G'?"A":c=='H'?"B":c=='!'?"SENSOR":"";
                 blackoutNodeLabels[i].color=c=='!'?Hex("#ff8992"):s.Powered[i]?BlackoutIce:Hex("#718d9d");
             }
             blackoutDataText.text=s.CoresPowered+" / "+p.CoreCount;blackoutTraceText.text=s.Remaining+" / "+p.TraceLimit;blackoutUplinkText.text=s.UplinkPowered?"LIVE":"OFFLINE";blackoutUplinkText.color=s.UplinkPowered?BlackoutMint:Hex("#9bb9c6");
             blackoutTraceGauge.TraceFraction=s.Trace/(float)p.TraceLimit;blackoutTraceGauge.SetVerticesDirty();blackoutBoard.Tick(0);
-            blackoutStatusText.text=s.Alarms>0?"Sensor live · Plan shows which turns cost 3 trace":s.CoresPowered==p.CoreCount?"All cores lit. Connect the uplink.":"Tap a mirror to redirect the light";
+            int mask=0;for(int i=0;i<8;i++)if(blackoutCampaign.Data.medals[i]>0)mask|=1<<i;
+            blackoutNetwork.RestoredMask=mask;blackoutNetwork.ActiveVault=selectedMission;blackoutNetwork.LivePower=(s.CoresPowered/(float)p.CoreCount+(s.UplinkPowered?1:0))*.5f;blackoutNetwork.SetVerticesDirty();
+            if(blackoutToastRemaining<=0)blackoutCompletionToast.text=BlackoutNetworkCaption();
+            int remaining=p.CoreCount-s.CoresPowered;
+            blackoutStatusText.text=s.Alarms>0?"SENSOR HIT · EACH TURN NOW COSTS 3 TRACE":remaining==0?"CORES ONLINE → CONNECT THE AMBER UPLINK":s.CoresPowered>0?remaining+(remaining==1?" CORE":" CORES")+" STILL OFFLINE · KEEP LIVE CORES CONNECTED":"TURN THE MIRRORS → POWER EVERY CORE → CONNECT THE UPLINK";
             blackoutStatusText.color=s.Alarms>0?Hex("#ff8992"):BlackoutIce;
             RefreshBlackoutPreviewControls();
+        }
+        string BlackoutNetworkCaption()
+        {
+            int restored=0;for(int i=0;i<8;i++)if(blackoutCampaign.Data.medals[i]>0)restored++;
+            return "CITY NETWORK "+restored+" / 8 ONLINE · GOLD ≤ "+blackoutSession.Puzzle.Par+" TRACE";
         }
         void ToggleBlackoutPreview()
         {
@@ -217,7 +234,7 @@ namespace SkyPulse.Mobile
         void UpdateBlackoutActionAnimation(float dt)
         {
             if(state!=FlightState.Playing||blackoutSession==null)return;
-            if(blackoutToastRemaining>0){blackoutToastRemaining=Mathf.Max(0,blackoutToastRemaining-dt);if(blackoutToastRemaining==0)blackoutCompletionToast.text=SkyPulseBlackoutCampaign.Objective(selectedMission);}
+            if(blackoutToastRemaining>0){blackoutToastRemaining=Mathf.Max(0,blackoutToastRemaining-dt);if(blackoutToastRemaining==0)blackoutCompletionToast.text=BlackoutNetworkCaption();}
         }
         void ActivateNextBlackoutPuzzle(int completed)
         {

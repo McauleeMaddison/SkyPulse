@@ -3,13 +3,15 @@ using UnityEngine.UI;
 
 namespace SkyPulse.Mobile
 {
-    public enum BlackoutSurface { Backdrop, Deck=2, Trace=5, MiniMap }
+    public enum BlackoutSurface { Backdrop, Deck=2, Trace=5, MiniMap, Network }
     public sealed class SkyPulseBlackoutGraphic : MaskableGraphic
     {
         public BlackoutSurface Surface;
         public bool ReducedMotion,MotionPaused,Animate=true;
         public float TraceFraction;
         public BlackoutPuzzle Miniature;
+        public int RestoredMask,ActiveVault;
+        public float LivePower;
         public float Phase { get; private set; }
         bool previousReduced;
         float Clock=>ReducedMotion?0:Phase;
@@ -27,6 +29,7 @@ namespace SkyPulse.Mobile
                 case BlackoutSurface.Backdrop:Backdrop(vh,r);break;
                 case BlackoutSurface.Deck:Deck(vh,r);break;
                 case BlackoutSurface.Trace:Trace(vh,r);break;
+                case BlackoutSurface.Network:Network(vh,r);break;
                 default:MiniMap(vh,r);break;
             }
         }
@@ -76,6 +79,30 @@ namespace SkyPulse.Mobile
                 char c=Miniature.Tile(i);if(c=='#')continue;var p=r.center+new Vector2((i%Miniature.Width-(Miniature.Width-1)*.5f)*step,((Miniature.Height-1)*.5f-i/Miniature.Width)*step);
                 Color hue=c=='S'?Ice:c=='E'?Amber:c=='!'?Red:c=='Q'||c=='H'?Violet:Mint;
                 if(c=='M')Line(vh,p-new Vector2(step*.23f,step*.23f),p+new Vector2(step*.23f,step*.23f),1.5f,hue);else Diamond(vh,p,step*.22f,A(hue,c=='.'?.15f:.7f));
+            }
+        }
+        void Network(VertexHelper vh,Rect r)
+        {
+            // Each district represents a persisted vault completion. The active
+            // district also responds to live core/uplink power before extraction.
+            float step=r.width/8;
+            for(int i=0;i<8;i++)
+            {
+                bool restored=(RestoredMask&(1<<i))!=0,active=i==ActiveVault;
+                var point=new Vector2(r.xMin+step*(i+.5f),-3);
+                var hue=restored?Mint:active?Amber:Ice;
+                if(i<7)Line(vh,point+Vector2.right*25,point+Vector2.right*(step-25),2,A(restored?Mint:Ice,restored?.60f:.10f));
+                float power=restored?1:active?.20f+LivePower*.55f:.07f;
+                if(active){Ring(vh,point,25,1.3f,A(hue,.65f));if(!ReducedMotion)Glow(vh,point,31,A(hue,.05f+.035f*Mathf.Sin(Clock*6.28f)));}
+                for(int tower=0;tower<3;tower++)
+                {
+                    float x=point.x+(tower-1)*10,h=tower==1?29:20;
+                    var face=new Rect(x-4,-13,8,h);
+                    Gradient(vh,face,new Color(.02f,.04f,.06f,.8f),A(hue,.10f+power*.22f));
+                    Line(vh,new Vector2(x-4,-13),new Vector2(x-4,-13+h),1,A(hue,.20f+power*.45f));
+                    for(int floor=0;floor<3;floor++)Quad(vh,new Rect(x-1,-8+floor*6,3,2),A(hue,power));
+                }
+                Line(vh,point+new Vector2(-18,-16),point+new Vector2(18,-16),1.5f,A(hue,.18f+power*.55f));
             }
         }
 

@@ -12,11 +12,14 @@ namespace SkyPulse.Mobile
         readonly Transform[,] scenery=new Transform[2,Layers*PerLayer];
         readonly Material[] surfaces=new Material[2];
         readonly int[] bankTheme={-1,-1};
+        readonly Texture[] reflections=new Texture[Themes];
         static readonly int Visibility=Shader.PropertyToID("_Visibility"), Clock=Shader.PropertyToID("_Clock"), Tint=Shader.PropertyToID("_Tint"), Haze=Shader.PropertyToID("_Haze");
         float span; int current=-1,previous;
         Color currentTint,currentHaze,previousTint,previousHaze;
         public int CurrentWorld=>current;
         public float Travel { get; private set; }
+        public int ReflectionWorld {get;private set;}=-1;
+        public void SetReflection(int world,Texture image){world=Mathf.Clamp(world,0,Themes-1);reflections[world]=image;ReflectionWorld=world;}
         public void Build(float viewWidth)
         {
             span=Mathf.Max(18,viewWidth+12);
@@ -46,6 +49,7 @@ namespace SkyPulse.Mobile
         {
             bool changed=bankTheme[bank]!=theme;bankTheme[bank]=theme;
             var material=surfaces[bank];material.SetFloat(Visibility,visibility);material.SetFloat(Clock,clock);material.SetColor(Tint,tint);material.SetColor(Haze,haze);
+            if(changed)material.SetTexture("_Environment",reflections[theme]!=null?reflections[theme]:Texture2D.grayTexture);
             for(int i=0;i<Layers*PerLayer;i++)
             {
                 var item=scenery[bank,i];bool visible=visibility>.0001f;
@@ -53,85 +57,63 @@ namespace SkyPulse.Mobile
                 if(changed)item.GetComponent<MeshFilter>().sharedMesh=silhouettes[theme];
                 if(!visible)continue;
                 int layer=i/PerLayer,slot=i%PerLayer;
-                float seed=Hash(theme*43+i*17),scale=(.44f+layer*.28f)*(.80f+seed*.35f);
+                float seed=Hash(theme*43+i*17),scale=(.34f+layer*.15f)*(.88f+seed*.20f);
                 float x=Mathf.Repeat(slot*span/PerLayer+seed*1.4f-distance*(.10f+layer*.16f)+span*.5f,span)-span*.5f;
-                // City/dock forms belong on the lower horizon. Only symmetrical
-                // orbital machinery can frame the upper edge; no dangling towers.
-                bool upper=(theme%6==1||theme%6==3)&&slot%3==0;
-                float y=layer==0?(upper?8.9f:-7.3f):layer==1?(upper?9.6f:-8.1f):(upper?11.2f:-9.1f);
-                // Architecture frames the horizon rather than filling the route.
-                y+=Mathf.Sin(clock*(.15f+seed*.1f)+seed*6)*.065f;
+                // The skyline is anchored below the route. Architecture never
+                // bobs, flips upside down or floats on exposed circular plates.
+                float y=layer==0?-7.65f:layer==1?-8.45f:-9.35f;
                 item.localPosition=new Vector3(x,y,14-layer*4);
-                item.localScale=new Vector3(scale,upper?-scale:scale,scale);
-                item.localRotation=Quaternion.Euler(3+seed*5,12+seed*24,Mathf.Sin(clock*.12f+seed*5)*.4f);
+                item.localScale=Vector3.one*scale;
+                item.localRotation=Quaternion.Euler(0,14+seed*18,0);
             }
         }
         static float Hash(int n){uint x=(uint)n*747796405u+2891336453u;x=((x>>((int)(x>>28)+4))^x)*277803737u;return ((x>>22)^x)/4294967295f;}
-        static readonly Color Metal=new Color(.27f,.36f,.48f,0),Light=new Color(.28f,.74f,.88f,.85f);
+        // Vertex alpha selects metal, glazing or a lit window in the shared
+        // material. These are authored mesh details, not runtime spawned props.
+        static readonly Color Metal=new Color(.28f,.40f,.53f,0),Glass=new Color(.16f,.32f,.45f,.34f),Light=new Color(.38f,.77f,.92f,1);
         static Mesh Architecture(int theme)
         {
-            var b=new SkyPulseMeshBuilder();int kind=theme%6;
-            // Rounded machined forms, not triangular spires or inverted landforms.
-            // Shared geometry is built only once; no new objects during flight.
-            int count=3+theme%2;float height=1.65f+theme*.035f;
-            if(kind==0 || kind==5)
+            var b=new SkyPulseMeshBuilder();int count=2+theme%3;
+            for(int i=0;i<count;i++)
             {
-                for(int i=0;i<count;i++)
-                {
-                    float x=(i-(count-1)*.5f)*.60f,h=height*(.72f+Hash(theme*23+i)*.30f);
-                    RoundedPod(b,new Vector3(x,0,i%2*.18f),kind==5?.27f:.23f,h);
-                    for(int j=0;j<3;j++)b.Box(new Vector3(x-.09f+j*.09f,h*.48f,-.225f),new Vector3(.012f,h*.40f,.012f),Light);
-                }
-                RoundedPod(b,new Vector3(0,-.12f,.10f),1.15f,.18f);
+                float seed=Hash(theme*31+i*53),width=.46f+seed*.24f;
+                float x=(i-(count-1)*.5f)*.62f,height=1.8f+seed*1.3f+(theme%4)*.10f;
+                Building(b,new Vector3(x,0,(i%2)*.26f),width,.55f+seed*.21f,height,theme+i);
             }
-            else if(kind==1 || kind==3)
-            {
-                float radius=kind==1?.83f:1.05f;
-                RoundedRing(b,new Vector3(0,.8f,0),radius,.085f,Metal);
-                RoundedRing(b,new Vector3(0,.8f,-.08f),radius,.012f,Light);
-                RoundedPod(b,new Vector3(0,-.18f,.22f),1.13f,.22f);
-                for(int i=0;i<2;i++)RoundedPod(b,new Vector3((i==0?-1:1)*.68f,0,.25f),.16f,.52f);
-                if(theme>5)RoundedRing(b,new Vector3(0,.8f,.3f),radius*.72f,.055f,Metal);
-            }
-            else
-            {
-                // Low, layered terraces and lenticular sky docks; broad rounded
-                // shoulders give depth without hanging a pointed pyramid below.
-                for(int i=0;i<3;i++)
-                {
-                    float radius=1.2f-i*.26f;
-                    RoundedPod(b,new Vector3(0,i*.27f,0),radius,.18f);
-                    b.Box(new Vector3(0,i*.27f+.085f,-radius*.88f),new Vector3(radius*.86f,.014f,.014f),Light);
-                }
-                if(kind==2)for(int i=0;i<3;i++)RoundedPod(b,new Vector3((i-1)*.4f,.71f,0),.13f,.40f+theme*.018f);
-                else RoundedRing(b,new Vector3(0,1.1f,.12f),.46f+theme*.015f,.045f,Metal);
-            }
-            return b.Finish("Rounded world architecture "+theme);
+            return b.Finish("Glazed skyline architecture "+theme);
         }
-        static void RoundedPod(SkyPulseMeshBuilder b,Vector3 centre,float radius,float height)
+        static void Building(SkyPulseMeshBuilder b,Vector3 centre,float width,float depth,float height,int variant)
         {
-            const int sides=32;
-            var profile=new[]{new Vector2(0,0),new Vector2(.82f,0),new Vector2(.96f,.07f),new Vector2(1,.16f),new Vector2(1,.18f),new Vector2(1,.20f),new Vector2(1,.80f),new Vector2(1,.82f),new Vector2(1,.84f),new Vector2(.96f,.93f),new Vector2(.82f,1),new Vector2(0,1)};
-            for(int i=0;i<sides;i++)for(int j=1;j<profile.Length;j++)
+            // Chamfered curtain-wall tower: recessed glazing, stepped crown,
+            // thin floor reveals and a foundation extending below the viewport.
+            var plan=new[]{new Vector2(-.40f,-.50f),new Vector2(.40f,-.50f),new Vector2(.50f,-.40f),new Vector2(.50f,.40f),new Vector2(.40f,.50f),new Vector2(-.40f,.50f),new Vector2(-.50f,.40f),new Vector2(-.50f,-.40f)};
+            var profile=new[]{new Vector2(1.04f,-1.8f),new Vector2(1.04f,.08f),new Vector2(.96f,.13f),new Vector2(.96f,height*.82f),new Vector2(.79f,height*.87f),new Vector2(.79f,height),new Vector2(.68f,height+.07f)};
+            for(int j=1;j<profile.Length;j++)for(int side=0;side<8;side++)
             {
-                float a=i*Mathf.PI*2/sides,c=(i+1)*Mathf.PI*2/sides;
-                var p=profile[j-1];var q=profile[j];float dy=(q.y-p.y)*height,dr=(q.x-p.x)*radius;
-                var na=new Vector3(Mathf.Cos(a)*dy,-dr,Mathf.Sin(a)*dy).normalized;var nc=new Vector3(Mathf.Cos(c)*dy,-dr,Mathf.Sin(c)*dy).normalized;
-                b.SmoothQuad(centre+new Vector3(Mathf.Cos(a)*radius*p.x,p.y*height,Mathf.Sin(a)*radius*p.x),centre+new Vector3(Mathf.Cos(c)*radius*p.x,p.y*height,Mathf.Sin(c)*radius*p.x),
-                    centre+new Vector3(Mathf.Cos(c)*radius*q.x,q.y*height,Mathf.Sin(c)*radius*q.x),centre+new Vector3(Mathf.Cos(a)*radius*q.x,q.y*height,Mathf.Sin(a)*radius*q.x),na,nc,j==5||j==7?Light:Metal);
+                var a=plan[side];var c=plan[(side+1)%8];var low=profile[j-1];var high=profile[j];
+                var colour=j==3&&(side==0||side==4)?Glass:Metal;
+                b.Quad(centre+new Vector3(a.x*width*low.x,low.y,a.y*depth*low.x),centre+new Vector3(c.x*width*low.x,low.y,c.y*depth*low.x),
+                    centre+new Vector3(c.x*width*high.x,high.y,c.y*depth*high.x),centre+new Vector3(a.x*width*high.x,high.y,a.y*depth*high.x),colour);
+                if(j==profile.Length-1)b.Face(centre+new Vector3(0,high.y,0),centre+new Vector3(a.x*width*high.x,high.y,a.y*depth*high.x),centre+new Vector3(c.x*width*high.x,high.y,c.y*depth*high.x),Metal);
             }
-        }
-        static void RoundedRing(SkyPulseMeshBuilder b,Vector3 centre,float radius,float tube,Color colour)
-        {
-            const int segments=40,sides=8;
-            for(int i=0;i<segments;i++)for(int j=0;j<sides;j++)
+            float front=-depth*.48f-.003f;
+            for(int row=0;row<12;row++)
             {
-                float a=i*Mathf.PI*2/segments,c=(i+1)*Mathf.PI*2/segments,u=j*Mathf.PI*2/sides,w=(j+1)*Mathf.PI*2/sides,m=(u+w)*.5f;
-                var na=new Vector3(Mathf.Cos(a)*Mathf.Cos(m),Mathf.Sin(a)*Mathf.Cos(m),Mathf.Sin(m));var nc=new Vector3(Mathf.Cos(c)*Mathf.Cos(m),Mathf.Sin(c)*Mathf.Cos(m),Mathf.Sin(m));
-                b.SmoothQuad(centre+RingPoint(a,u,radius,tube),centre+RingPoint(c,u,radius,tube),centre+RingPoint(c,w,radius,tube),centre+RingPoint(a,w,radius,tube),na,nc,colour);
+                float y=.23f+row*(height*.56f/12);
+                b.Box(centre+new Vector3(0,y,front),new Vector3(width*.73f,.009f,.009f),Metal);
+                for(int column=0;column<3;column++)
+                {
+                    float x=(column-1)*width*.22f;
+                    bool lit=Hash(variant*97+row*11+column*7)>.34f;
+                    var hue=lit?new Color(.30f,.61f,.77f,.82f):new Color(.06f,.12f,.18f,.30f);
+                    b.Box(centre+new Vector3(x,y+.035f,front-.004f),new Vector3(width*.13f,.026f,.004f),hue);
+                }
             }
+            for(int side=-1;side<=1;side+=2)
+                b.Box(centre+new Vector3(side*width*.39f,height*.44f,front-.004f),new Vector3(.009f,height*.66f,.010f),Light);
+            b.Box(centre+new Vector3(0,height+.073f,0),new Vector3(width*.55f,.012f,depth*.45f),new Color(.35f,.65f,.83f,.85f));
+            if(variant%3==0)b.Box(centre+new Vector3(width*.18f,height+.17f,0),new Vector3(.012f,.20f,.012f),Metal);
         }
-        static Vector3 RingPoint(float a,float u,float radius,float tube)=>new Vector3(Mathf.Cos(a)*(radius+Mathf.Cos(u)*tube),Mathf.Sin(a)*(radius+Mathf.Cos(u)*tube),Mathf.Sin(u)*tube);
         void OnDestroy()
         {
             foreach(var mesh in silhouettes)if(mesh!=null)Destroy(mesh);

@@ -119,13 +119,13 @@ public static class SkyPulseBlackoutChecks
     public static IEnumerator Captures(SkyPulseNativeGame game)
     {
         if(Application.companyName!="SkyPulseQA20261006")throw new Exception("Disposable QA required");
-        game.enabled=false;Call(game,"ResetToMenu");Set(game,"reduceMotionEnabled",false);var campaign=new BlackoutCampaignProgress(new Store());
-        for(int i=0;i<8;i++)campaign.Complete(i,3,SkyPulseBlackoutCampaign.MinimumTrace[i]);Set(game,"blackoutCampaign",campaign);
+        game.enabled=false;Call(game,"ResetToMenu");Set(game,"reduceMotionEnabled",false);
         var camera=(Camera)Get(game,"flightCamera");var canvas=((GameObject)Get(game,"uiRoot")).GetComponent<Canvas>();canvas.renderMode=RenderMode.ScreenSpaceCamera;canvas.worldCamera=camera;canvas.planeDistance=1;
         string folder=System.IO.Path.Combine(Environment.GetEnvironmentVariable("SKYPULSE_QA_OUTPUT"),"signal-heist");System.IO.Directory.CreateDirectory(folder);
         var rt=RenderTexture.GetTemporary(750,1334,24);camera.targetTexture=rt;Call(game,"RefreshViewportDecor");
         for(int vault=0;vault<8;vault++)
         {
+            Set(game,"blackoutCampaign",CaptureCampaign(vault));
             Call(game,"LaunchMission",SkyPulseMode.BlackoutProtocol,vault);Call(game,"RestartBlackoutVault");var session=(BlackoutSession)Get(game,"blackoutSession");var path=SkyPulseMissionChecks.Solve(session.Puzzle);
             // Configure a real reachable mid-puzzle position; stop before extraction.
             var previewPath=path.Skip(path.Count-1).Concat(path.Take(path.Count-1)).ToArray();
@@ -137,15 +137,18 @@ public static class SkyPulseBlackoutChecks
         // entry first so the viewer sees the beam changing during each turn.
         foreach(int vault in new[]{0,2})
         {
+            Set(game,"blackoutCampaign",CaptureCampaign(vault));
             Call(game,"LaunchMission",SkyPulseMode.BlackoutProtocol,vault);Call(game,"RestartBlackoutVault");var session=(BlackoutSession)Get(game,"blackoutSession");var path=SkyPulseMissionChecks.Solve(session.Puzzle);
             int entry=path[path.Count-1];var sequence=path.Where(t=>t==entry).Concat(path.Where(t=>t!=entry)).ToArray();
             string clip=System.IO.Path.Combine(folder,vault==0?"first-light":"split-signal");System.IO.Directory.CreateDirectory(clip);int turn=0;
-            for(int frame=0;frame<90;frame++)
+            var board=(SkyPulseHeistBoard)Get(game,"blackoutBoard");
+            for(int frame=0;frame<270;frame++)
             {
-                if(frame>=15&&(frame-15)%10==0&&turn<sequence.Length)Call(game,"TouchBlackoutNode",sequence[turn++]);
-                Call(game,"UpdateProtocolPresentation",.1f);yield return new WaitForSecondsRealtime(.1f);
+                if(frame>=45&&(frame-45)%30==0&&turn<sequence.Length)Call(game,"TouchBlackoutNode",sequence[turn++]);
+                Call(game,"UpdateProtocolPresentation",1f/30);board.MotionPaused=false;board.Tick(1f/30);board.MotionPaused=true;yield return null;
                 Canvas.ForceUpdateCanvases();Call(game,"FitBlackoutToSafeArea");Save(camera,rt,System.IO.Path.Combine(clip,frame.ToString("000")+".png"));
             }
+            board.MotionPaused=false;
             Check(session.State==MissionSessionState.Succeeded,"Preview uses real prism turns and successful extraction");
         }
         // Screen points (pixels / device pixel ratio) remain at least 44pt on
@@ -155,15 +158,29 @@ public static class SkyPulseBlackoutChecks
         {
             rt=RenderTexture.GetTemporary(size.x,size.y,24);camera.targetTexture=rt;Call(game,"RefreshViewportDecor");Call(game,"LaunchMission",SkyPulseMode.BlackoutProtocol,7);Call(game,"RestartBlackoutVault");
             yield return null;Canvas.ForceUpdateCanvases();Call(game,"ApplySafeArea");Call(game,"FitInterfaceToSafeArea");Call(game,"FitBlackoutToSafeArea");Canvas.ForceUpdateCanvases();
+            var touchRects=new List<Rect>();
             foreach(var button in ((GameObject)Get(game,"blackoutScreen")).GetComponentsInChildren<Button>())
             {
                 if(!button.interactable)continue;var corners=new Vector3[4];((RectTransform)button.transform).GetWorldCorners(corners);
                 var a=RectTransformUtility.WorldToScreenPoint(camera,corners[0]);var b=RectTransformUtility.WorldToScreenPoint(camera,corners[2]);float ratio=size.x==640?2:size.x==1320?3:2;
                 Check(Mathf.Min(b.x-a.x,b.y-a.y)/ratio>=44f,"Active puzzle touch target is >=44 points at "+size.x+": "+button.name+" size="+(b-a)+" ratio="+ratio+" safe="+((RectTransform)Get(game,"safeAreaRoot")).rect+" scale="+button.transform.lossyScale);
+                Check(a.x>=-.5f&&a.y>=-.5f&&b.x<=size.x+.5f&&b.y<=size.y+.5f,"Puzzle control stays within the visible screen: "+button.name);
+                var rectangle=Rect.MinMaxRect(a.x,a.y,b.x,b.y);
+                Check(!touchRects.Any(other=>Mathf.Min(other.xMax,rectangle.xMax)-Mathf.Max(other.xMin,rectangle.xMin)>.5f&&Mathf.Min(other.yMax,rectangle.yMax)-Mathf.Max(other.yMin,rectangle.yMin)>.5f),"Adjacent puzzle controls cannot overlap: "+button.name);
+                touchRects.Add(rectangle);
             }
             Save(camera,rt,System.IO.Path.Combine(folder,size.x+"-seven-wide.png"));camera.targetTexture=null;RenderTexture.ReleaseTemporary(rt);
         }
         Call(game,"InitializeMissionServices");Call(game,"ResetToMenu");Debug.Log("SKYPULSE_HEIST_CAPTURE_PASS");
+    }
+    static BlackoutCampaignProgress CaptureCampaign(int completed)
+    {
+        // QA-only legacy access lets us inspect every vault without depicting
+        // eight completed systems during the opening puzzle.
+        var store=new Store();store.Set("skypulse.blackout-campaign.v2","{\"version\":2,\"medals\":[3,3,3,3,3,3,3,3]}");
+        var campaign=new BlackoutCampaignProgress(store);
+        for(int i=0;i<completed;i++)campaign.Complete(i,3,SkyPulseBlackoutCampaign.MinimumTrace[i]);
+        return campaign;
     }
     static void Save(Camera camera,RenderTexture rt,string file)
     {

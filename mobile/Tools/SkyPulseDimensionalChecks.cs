@@ -37,6 +37,8 @@ public static class SkyPulseDimensionalChecks
         yield return SkyPulsePipeFinishChecks.Live(game);
         SkyPulseMissionChecks.IntegrationChecks(game);
         yield return SkyPulseOneThumbChecks.Live(game);
+        yield return SkyPulseBlackoutChecks.Live(game);
+        yield return SkyPulsePurposeChecks.Live(game);
         yield return SkyPulseDailyRouteChecks.Live(game);
         var founders=(Array)typeof(SkyPulseNativeGame).GetField("Skins",BindingFlags.Static|BindingFlags.NonPublic).GetValue(null);
         Set(game,"equippedSkin",founders.GetValue(0));Call(game,"ApplyEquippedVisuals");
@@ -46,6 +48,7 @@ public static class SkyPulseDimensionalChecks
         yield return SkyPulseCinematicChecks.Live(game);
         yield return SkyPulseRelayGateChecks.Live(game);
         yield return SkyPulsePresentationChecks.Captures(game);
+        yield return SkyPulseBlackoutChecks.Captures(game);
         if(System.Environment.GetEnvironmentVariable("SKYPULSE_CAPTURE_ENDLESS")=="1")yield return SkyPulseFlightPolishChecks.Capture(game);
         Debug.Log("SKYPULSE_DIMENSIONAL_PASS");EditorApplication.Exit(0);
     }

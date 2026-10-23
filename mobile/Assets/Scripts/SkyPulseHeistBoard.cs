@@ -22,11 +22,13 @@ namespace SkyPulse.Mobile
         readonly Module[] modules=new Module[49];
         readonly Vector3[] beamVertices=new Vector3[Capacity];readonly Color[] beamColours=new Color[Capacity];
         readonly List<Mesh> meshes=new List<Mesh>();readonly List<Material> materials=new List<Material>();
+        readonly Mesh[] platens=new Mesh[8],channels=new Mesh[8];
         MaterialPropertyBlock properties;
         static readonly int EnergyId=Shader.PropertyToID("_Energy"),GlowId=Shader.PropertyToID("_GlowColor");
         Transform scene,console;Camera opticalCamera;RenderTexture texture;Mesh beamMesh;Material metal,accent,glass,dark,light,whiteGlass,contact;
         Mesh baseMesh,ringMesh,mirrorMesh,splitterMesh,coreMesh,lensMesh,doorMesh,sensorMesh,contactMesh;
-        int beamUsed;float clock;
+        MeshRenderer platenRenderer,channelRenderer;
+        int beamUsed;float clock,pitch=1.55f;
         public bool ReducedMotion,MotionPaused;
         public BlackoutSession Circuit {get;private set;}
         public BlackoutSession Preview {get;private set;}
@@ -35,6 +37,7 @@ namespace SkyPulse.Mobile
         public float Reveal;
         public RenderTexture Texture=>texture;
         public int PooledModules=>modules.Length;
+        public float OpticScale {get;private set;}=1;
         public float VisualAngle(int tile)=>modules[tile].Angle;
         static Color Mint=>new Color(.14f,1,.78f);
         static Color Tint(char c)=>c=='!'?new Color(1,.2f,.18f):c=='Q'||c=='H'?new Color(.63f,.39f,1):c=='E'?new Color(1,.68f,.27f):Mint;
@@ -45,13 +48,17 @@ namespace SkyPulse.Mobile
             texture=new RenderTexture(1080,1080,24,RenderTextureFormat.ARGB32){name="Signal Heist 3D console",antiAliasing=4};texture.Create();view.texture=texture;view.raycastTarget=false;
             var composite=new Material(Resources.Load<Shader>("SkyPulse/Shaders/TechTreeField")){name="Optical console premultiplied compositing"};materials.Add(composite);view.material=composite;
             var cameraObject=new GameObject("Optical console camera",typeof(Camera));opticalCamera=cameraObject.GetComponent<Camera>();cameraObject.transform.SetParent(scene,false);cameraObject.transform.localPosition=new Vector3(0,0,-20);
-            opticalCamera.orthographic=true;opticalCamera.orthographicSize=5.4f;opticalCamera.nearClipPlane=.1f;opticalCamera.farClipPlane=40;opticalCamera.cullingMask=1<<Layer;opticalCamera.clearFlags=CameraClearFlags.SolidColor;opticalCamera.backgroundColor=Color.clear;opticalCamera.targetTexture=texture;opticalCamera.allowHDR=false;opticalCamera.allowMSAA=true;
+            opticalCamera.orthographic=true;opticalCamera.orthographicSize=5.5f;opticalCamera.nearClipPlane=.1f;opticalCamera.farClipPlane=40;opticalCamera.cullingMask=1<<Layer;opticalCamera.clearFlags=CameraClearFlags.SolidColor;opticalCamera.backgroundColor=Color.clear;opticalCamera.targetTexture=texture;opticalCamera.allowHDR=false;opticalCamera.allowMSAA=true;
             metal=Material("Brushed titanium",new Color(.105f,.17f,.205f),.27f);accent=Material("Satin nickel accents",new Color(.20f,.30f,.34f),.24f);dark=Material("Graphite ceramic",new Color(.014f,.028f,.039f),.65f);
             glass=Material("Optical cyan glass",new Color(.12f,.64f,.79f,.75f),.08f,true);whiteGlass=Material("Silver mirror coating",new Color(.48f,.72f,.79f),.04f,true);
             light=new Material(Resources.Load<Shader>("SkyPulse/Shaders/FlightLight")){name="Heist optical fibre"};materials.Add(light);
-            console=new GameObject("Angled physical optical desk").transform;console.SetParent(scene,false);console.localRotation=Quaternion.Euler(20,-10,0);
+            console=new GameObject("Angled physical optical desk").transform;console.SetParent(scene,false);console.localRotation=Quaternion.Euler(14,-4,0);
             contact=Material("Soft optical contact shadow",new Color(0,0,0,.35f),1);contact.SetFloat("_ContactShadow",1);contact.SetFloat("_ZWrite",0);contact.renderQueue=2990;
             BuildMeshes();
+            var platenMaterial=Material("Precision optical frame",new Color(.09f,.19f,.23f),.44f);
+            platenRenderer=Part(console,"Open optical console frame",platens[0],platenMaterial);platenRenderer.transform.localPosition=new Vector3(0,0,.23f);
+            var channelMaterial=Material("Recessed signal guides",new Color(.12f,.24f,.29f),.6f);
+            channelRenderer=Part(console,"Etched possible signal channels",channels[0],channelMaterial);channelRenderer.transform.localPosition=new Vector3(0,0,.12f);
             for(int i=0;i<49;i++)
             {
                 var m=new Module();m.Root=new GameObject("Optical module "+i).transform;m.Root.SetParent(console,false);
@@ -88,16 +95,44 @@ namespace SkyPulse.Mobile
             b=new SkyPulseMeshBuilder();b.Torus(.29f,.018f,48,new Color(.5f,.8f,1,.4f));var lens=new Vector2[6];for(int i=0;i<6;i++)lens[i]=new Vector2(Mathf.Cos(i*Mathf.PI/3),Mathf.Sin(i*Mathf.PI/3))*.205f;b.ExtrudePrism(lens,-.29f,.08f);lensMesh=Keep(b,"Faceted uplink receiver and suspended light guide");
             b=new SkyPulseMeshBuilder();b.Box(Vector3.zero,new Vector3(.34f,.67f,.18f),new Color(1,1,1,0));for(int i=-2;i<=2;i++)b.Box(new Vector3(0,i*.10f,-.10f),new Vector3(.28f,.018f,.02f),new Color(.7f,.8f,.9f,1));doorMesh=Keep(b,"Vented interlocking relay shutter");
             b=new SkyPulseMeshBuilder();b.Torus(.22f,.04f,48,new Color(1,1,1,1));b.Box(new Vector3(0,.025f,-.10f),new Vector3(.035f,.19f,.06f),new Color(1,1,1,1));b.Box(new Vector3(0,-.13f,-.10f),new Vector3(.035f,.035f,.06f),new Color(1,1,1,1));sensorMesh=Keep(b,"Machined security warning lens");
+            // Eight fixed work surfaces are cached once. Smaller opening vaults
+            // use larger optics and the same camera, rather than a tiny diagram.
+            for(int vault=0;vault<8;vault++)
+            {
+                var p=SkyPulseBlackoutCampaign.Stages[vault];float step=Pitch(p);
+                b=new SkyPulseMeshBuilder();
+                float halfWidth=((p.Width-1)*step+1.15f)*.5f,halfHeight=((p.Height-1)*step*1.025f+1.15f)*.5f,cut=.18f;
+                var rim=new[]{new Vector2(-halfWidth+cut,-halfHeight),new Vector2(halfWidth-cut,-halfHeight),new Vector2(halfWidth,-halfHeight+cut),new Vector2(halfWidth,halfHeight-cut),new Vector2(halfWidth-cut,halfHeight),new Vector2(-halfWidth+cut,halfHeight),new Vector2(-halfWidth,halfHeight-cut),new Vector2(-halfWidth,-halfHeight+cut)};
+                for(int edge=0;edge<8;edge++)
+                {
+                    var a=rim[edge];var c=rim[(edge+1)%8];var insideA=a-new Vector2(Mathf.Sign(a.x)*.018f,Mathf.Sign(a.y)*.018f);var insideC=c-new Vector2(Mathf.Sign(c.x)*.018f,Mathf.Sign(c.y)*.018f);
+                    b.Quad(new Vector3(a.x,a.y,0),new Vector3(c.x,c.y,0),new Vector3(insideC.x,insideC.y,0),new Vector3(insideA.x,insideA.y,0),new Color(.7f,.9f,1,0));
+                    b.Quad(new Vector3(a.x,a.y,0),new Vector3(a.x,a.y,.025f),new Vector3(c.x,c.y,.025f),new Vector3(c.x,c.y,0),new Color(.3f,.5f,.6f,0));
+                }
+                platens[vault]=Keep(b,"Open precision frame "+vault);
+                b=new SkyPulseMeshBuilder();
+                for(int tile=0;tile<p.Count;tile++)
+                {
+                    if(p.Tile(tile)=='#')continue;var point=Point(p,tile,step);
+                    if(tile%p.Width<p.Width-1&&p.Tile(tile+1)!='#')b.Box(new Vector3(point.x+step*.5f,point.y,0),new Vector3(step,.009f,.007f),new Color(.6f,.8f,1,0));
+                    if(tile/p.Width<p.Height-1&&p.Tile(tile+p.Width)!='#')b.Box(new Vector3(point.x,point.y-step*.5125f,0),new Vector3(.009f,step*1.025f,.007f),new Color(.6f,.8f,1,0));
+                }
+                channels[vault]=Keep(b,"Recessed route channels "+vault);
+            }
         }
         public void Bind(BlackoutSession session,Vector2[] positions)
         {
             Circuit=session;Preview=null;PreviewTile=-1;var p=session.Puzzle;
+            pitch=Pitch(p);OpticScale=Mathf.Min(1.3f,pitch/1.55f);
+            int vault=System.Array.IndexOf(SkyPulseBlackoutCampaign.Stages,p);if(vault<0)vault=0;
+            platenRenderer.GetComponent<MeshFilter>().sharedMesh=platens[vault];channelRenderer.GetComponent<MeshFilter>().sharedMesh=channels[vault];
             for(int i=0;i<49;i++)
             {
                 var m=modules[i];bool on=i<p.Count&&p.Tile(i)!='#'&&p.Tile(i)!='.';m.Root.gameObject.SetActive(on);if(!on)continue;
-                m.Kind=p.Tile(i);m.Root.localPosition=new Vector3(positions[i].x*.01f,positions[i].y*.01f,0);m.Target=session.Rotations[i];m.Angle=m.Target*90;m.Power=0;m.Hit=m.Door=0;
+                var at=Point(p,i,pitch);m.Kind=p.Tile(i);m.Root.localPosition=new Vector3(at.x,at.y,0);m.Root.localScale=Vector3.one*OpticScale;m.Target=session.Rotations[i];m.Angle=m.Target*90;m.Power=0;m.Hit=m.Door=0;
                 float socketScale=p.Rotatable(i)?1:.68f;m.Base.transform.localScale=m.Collar.transform.localScale=Vector3.one*socketScale;m.Ring.transform.localScale=Vector3.one*(socketScale*.82f);
                 m.Mirror.gameObject.SetActive(m.Kind=='M');m.Splitter.gameObject.SetActive(m.Kind=='Y');m.Core.gameObject.SetActive(m.Kind=='C'||m.Kind=='R'||m.Kind=='Q');m.Lens.gameObject.SetActive(m.Kind=='S'||m.Kind=='E');m.Sensor.gameObject.SetActive(m.Kind=='!');m.LeftDoor.gameObject.SetActive(m.Kind=='G'||m.Kind=='H');m.RightDoor.gameObject.SetActive(m.Kind=='G'||m.Kind=='H');
+                m.Core.localScale=Vector3.one*1.2f;m.Lens.localScale=Vector3.one*1.15f;
             }
             Tick(0);
             // Touch sockets follow the true camera projection of the angled desk.
@@ -123,6 +158,7 @@ namespace SkyPulse.Mobile
                 m.Rotor.localRotation=Quaternion.Euler(0,0,m.Angle);m.Rotor.localScale=Vector3.one*(1+(ReducedMotion?0:Mathf.Sin(m.Hit*Mathf.PI)*.035f));
                 var hue=i==PreviewTile?new Color(.7f,.85f,1):Tint(m.Kind);properties.Clear();properties.SetColor(GlowId,hue);properties.SetFloat(EnergyId,.06f+m.Power*.45f+(ReducedMotion?0:m.Hit*.15f)+(i==PreviewTile?.35f:0));m.Ring.SetPropertyBlock(properties);m.Glass.SetPropertyBlock(properties);
                 m.LensRenderer.SetPropertyBlock(properties);m.MirrorRenderer.SetPropertyBlock(properties);m.SplitterRenderer.SetPropertyBlock(properties);
+                properties.SetFloat(EnergyId,p.Rotatable(i)?.12f:.025f);m.Collar.SetPropertyBlock(properties);
                 if(m.Kind=='C'||m.Kind=='R'||m.Kind=='Q')
                 {
                     m.Core.localRotation=Quaternion.Euler(ReducedMotion?14:14+Mathf.Sin(clock*.9f+i)*7,ReducedMotion?-16:-16+Mathf.Sin(clock*.7f+i)*10,ReducedMotion?0:Mathf.Sin(clock*.5f+i)*8);
@@ -150,7 +186,9 @@ namespace SkyPulse.Mobile
             }
             beamMesh.vertices=beamVertices;beamMesh.colors=beamColours;
         }
-        Vector2 Point(int tile){var p=Circuit.Puzzle;return new Vector2((tile%p.Width-(p.Width-1)*.5f)*1.55f,((p.Height-1)*.5f-tile/p.Width)*1.60f);}
+        static float Pitch(BlackoutPuzzle p)=>Mathf.Min(2.30f,9.30f/Mathf.Max(p.Width-1,p.Height-1));
+        static Vector2 Point(BlackoutPuzzle p,int tile,float step)=>new Vector2((tile%p.Width-(p.Width-1)*.5f)*step,((p.Height-1)*.5f-tile/p.Width)*step*1.025f);
+        Vector2 Point(int tile)=>Point(Circuit.Puzzle,tile,pitch);
         static Vector2 Direction(int d)=>d==0?Vector2.right:d==1?Vector2.up:d==2?Vector2.left:Vector2.down;
         void Line(Vector2 a,Vector2 b,float width,Color colour)
         {

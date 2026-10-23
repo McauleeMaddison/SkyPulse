@@ -1,0 +1,1816 @@
+{
+    "files": [
+        {
+            "path": "Assets/Branding.meta",
+            "sha256": "08a07b84ea640e3cba7673b4645c857dcc0c4cabcfbbd03b8f24d9515341618a"
+        },
+        {
+            "path": "Assets/Branding/SkyPulseAppIcon.png",
+            "sha256": "6cbc6acd07a0f1de1b07ff757e010abdf9c1b5d1befe8a61e3c6d4b6d22b0887"
+        },
+        {
+            "path": "Assets/Branding/SkyPulseAppIcon.png.meta",
+            "sha256": "5b7d0af8b6d7d194a043a7caa750814fc836d7f5155d22163b6190d454643066"
+        },
+        {
+            "path": "Assets/Editor.meta",
+            "sha256": "bec855db644f6c94b9bdbf534b6369c0a014ca82306cea0f2f660fe07059ebba"
+        },
+        {
+            "path": "Assets/Editor/SkyPulseBirdEdgeCleanup.cs",
+            "sha256": "16815450d75a18df335ef2a1b5816fb5b0154c430568861ecddada3246eb3814"
+        },
+        {
+            "path": "Assets/Editor/SkyPulseBirdEdgeCleanup.cs.meta",
+            "sha256": "8fb1dfb92f51d50cb1c433d73d3069e610f2ba8816ad91cd37f036e28ed7fb69"
+        },
+        {
+            "path": "Assets/Editor/SkyPulseIosPostprocess.cs",
+            "sha256": "74d6b2b044f02efff534ed4b0ee9eea4fc0244aa93a982eedd361b743251fe46"
+        },
+        {
+            "path": "Assets/Editor/SkyPulseIosPostprocess.cs.meta",
+            "sha256": "0af91fb85403e39934ed1f3e55f2c5bb934ac084244981d83174661aba42d772"
+        },
+        {
+            "path": "Assets/Editor/SkyPulseMobileArtSetup.cs",
+            "sha256": "c6caf49778f7a7f97366ca5a26e3d8939a2e3fc4c6086a6bba02ebf8a85cdd09"
+        },
+        {
+            "path": "Assets/Editor/SkyPulseMobileArtSetup.cs.meta",
+            "sha256": "b435155dfcec297e51088bec1fc1dbc4a62a1049b6b3efa4daabf9551b4b8f66"
+        },
+        {
+            "path": "Assets/Editor/SkyPulsePlaytestChecklist.cs",
+            "sha256": "aa15c9a23013a92b437d4659ed62bd0665cca479f57c8e654b2e26435cbf0d24"
+        },
+        {
+            "path": "Assets/Editor/SkyPulsePlaytestChecklist.cs.meta",
+            "sha256": "5558c05ad17b6d60962b7126b5967a794637520c05a643f59cb567e6c6aedb0e"
+        },
+        {
+            "path": "Assets/Editor/SkyPulseReleaseBuild.cs",
+            "sha256": "c3a8f01c07908bea27056312189c2551b663fb0def1f0e2bdb4b25ea4444b149"
+        },
+        {
+            "path": "Assets/Editor/SkyPulseReleaseBuild.cs.meta",
+            "sha256": "be76f76bbc8bf5aa1f885015fc710d97888cda3ccd669d4bf772f3d7139170ab"
+        },
+        {
+            "path": "Assets/Resources.meta",
+            "sha256": "1261116e9dac44cc01bdc89276c56006e5f4e6b92154a123bd17914e7f5b21e4"
+        },
+        {
+            "path": "Assets/Resources/PipeBody.png",
+            "sha256": "e9ec8f201a7cb00398393dc70c450822bed13c3b672e910cfd8bfc921aa93d6a"
+        },
+        {
+            "path": "Assets/Resources/PipeBody.png.meta",
+            "sha256": "c31c80a89e60fbb82aa93d02650f906c60b4e21f7fd1b4f4edb803c4832cbd16"
+        },
+        {
+            "path": "Assets/Resources/PipeCap.png",
+            "sha256": "b98b4c7ada9dde398bc7bbf2d03e6f6856dddea18e6b688041d87dcb4d64e587"
+        },
+        {
+            "path": "Assets/Resources/PipeCap.png.meta",
+            "sha256": "aebc9664deca12e866b26cb52d928562fc7d5ace32b02c4916fc416356f66a83"
+        },
+        {
+            "path": "Assets/Resources/PipeGlow.png",
+            "sha256": "213e43ccef58de13b5710ed67eecefa086ec8651fa6be86e7bbc75bee61c827c"
+        },
+        {
+            "path": "Assets/Resources/PipeGlow.png.meta",
+            "sha256": "688d2ad9bd1e1190f15dc7dc91ab6b9c180ac38bdec32d82b1c0036a775a08dd"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse.meta",
+            "sha256": "377c392230594e9ac86846273cfc0816113a8a9d328633112479c61388d3b194"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/Shaders.meta",
+            "sha256": "4d01080cdd86a0aba7d36204bcdbba570138831bac29b413fabefbb527b93a7f"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/Shaders/EndlessRouteMetal.shader",
+            "sha256": "7fd57bc436d949a2dd082daa9baf27540ff350700e6040cde91accff2b870006"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/Shaders/EndlessRouteMetal.shader.meta",
+            "sha256": "581b1473507242b155ad506cf72cc409c2ab639829aa6252969880ffa2bf0cc4"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/Shaders/FlightArchitecture.shader",
+            "sha256": "25129ebd37a97d99c93d12e5f3ff43ee93cd897f2051b9e565b51a05905ebbec"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/Shaders/FlightArchitecture.shader.meta",
+            "sha256": "643bd2b2919623d5be783eb38bf61bc38ccffdaf8734d1bc1c62e6729ff2a820"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/Shaders/FlightLight.shader",
+            "sha256": "e56ee5daceea1445c278bb3413c602fd854702c727070db13e7a9acb2d90230e"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/Shaders/FlightLight.shader.meta",
+            "sha256": "493d8dfdaadf4bb8458266d6241a9fc54014063913d756fdc097898be700c972"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/Shaders/HeistOptics.shader",
+            "sha256": "180d649d67ba1e59ff83d4531849634a53912c8c10a3495b83a6f3c6b361898a"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/Shaders/HeistOptics.shader.meta",
+            "sha256": "a5ed277f2688a2f1970138620bdd9e6368e39a2a13959fa2327e9a310328ff12"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/Shaders/HolographicText.shader",
+            "sha256": "b20e1139f13665eb7d62c7a85168928c357d3075128045a457c247be4c9e1e56"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/Shaders/HolographicText.shader.meta",
+            "sha256": "c6c2b0708e9330e667811c97a2291f4f88e38db2713ee74b68c997cfdf89af4d"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/Shaders/HolographicTree.shader",
+            "sha256": "a0a2b17d67ec35578e1a0e7b250ba44f44f8ef82cf198e64eb00ad723b027154"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/Shaders/HolographicTree.shader.meta",
+            "sha256": "db95adeb1394b69f1a899119c1b07400b7460eb4dfd8c068708c6b23abf20e13"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/Shaders/MechanicalBird.shader",
+            "sha256": "464ba1e6945601efbf3baedb05d4452a0c02897eeb244c44865e854793e7f9c4"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/Shaders/MechanicalBird.shader.meta",
+            "sha256": "a514475a96e227c4c18ca7279666844630ed706a4088f36898e8d25a91042c29"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/Shaders/Prism.shader",
+            "sha256": "eb30c40bd235c49b6e719e35562a832eaa35b256b62d7096318c91c108478597"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/Shaders/Prism.shader.meta",
+            "sha256": "1387a66508c729fbdd201d8d16e0643f054d83f9e32d279d9dbb8384bbcb4e27"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/Shaders/RelayRunway.shader",
+            "sha256": "abba68e8c771ccb84b9d1c9d40331c0922b828f9e1645b3949d6419c26c91078"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/Shaders/RelayRunway.shader.meta",
+            "sha256": "31f3d3eae27cfb6b5be471bd364b98c2c1cdbe3a4c578e8faf50cf42c750db12"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/Shaders/RelayTitanium.shader",
+            "sha256": "9bd37433cedaec73541e7223c0100acfff90bc7fae1bf031d6f9d757830d8ca7"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/Shaders/RelayTitanium.shader.meta",
+            "sha256": "5be10b141232cebf83cedaba7085e6f42e67f921ff3cc917d6b62821e1cb8d88"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/Shaders/TechTreeField.shader",
+            "sha256": "9f76c0d9ffb0e1636816694b3eaaa62fa30e31708690e4d7a7f33fddc177e846"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/Shaders/TechTreeField.shader.meta",
+            "sha256": "1472ee56ffdbc83d0d06b9f759ee43db4d213c44f0caa90ddf6ca96da1ddebdf"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/art.meta",
+            "sha256": "8dd1dc1af149150e42b3dc7a40c2b37f799aa64663cbf9ba8fb65b0e679be2a7"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/art/pipes.meta",
+            "sha256": "6df9e16ca67477f223d390363eb69a3c36729f2aecbd0e70d0ca1175bb7123c7"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/art/pipes/pipe-collar-neon-v1.png",
+            "sha256": "18b0c531c4a26e3a29730f490aded9a9577d56a54e2e19adb4538487c3898c0c"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/art/pipes/pipe-collar-neon-v1.png.meta",
+            "sha256": "bc2065883d2542fd60a29481d0bfec57e35b1ebfc3b5404bec87da4c421587cc"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/art/pipes/pipe-shaft-neon-v1.png",
+            "sha256": "dd87f2c32680724fbd7ae99c730a0c56dd3e25b6fde989c5abab165917034074"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/art/pipes/pipe-shaft-neon-v1.png.meta",
+            "sha256": "92f76937b560e2d26ba82d46e086847eb5805cc8de92a30d2efb42cf8d3f99c4"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/art/powerups.meta",
+            "sha256": "f653dc7b7638ad0ec0100d042e7d1987e6cfa8f80f08392ee64b44bf0e925140"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/art/powerups/generated.meta",
+            "sha256": "e03779e6ebacef1de54adc3206077615fc0ca2929bbc54db2885bfaaa8564d62"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/art/powerups/generated/crystal-prism-neon-v4.png",
+            "sha256": "ded25cacbbb2933c6d2e2be77ec84450ead880739f8a8326f338ff5472849497"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/art/powerups/generated/crystal-prism-neon-v4.png.meta",
+            "sha256": "ad5b1c2bae0523888d1800b959fc0f3e3ad18d6f2baac7f882658cc0b06071fb"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/art/powerups/generated/magnet-halo-v3.png",
+            "sha256": "ef492da42c278c6d2d065bb7beca36d152be80521a5e12131e0c35731ba2452c"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/art/powerups/generated/magnet-halo-v3.png.meta",
+            "sha256": "c3e4f83b141bda30fc15817a00782cccaf8ebc6a8e78ec92b53c82a29e397dda"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/art/powerups/generated/pulse-shield-v3.png",
+            "sha256": "758b83a3174bb901683b3d69260715ceb2663504e37213dbe8712357093dff4b"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/art/powerups/generated/pulse-shield-v3.png.meta",
+            "sha256": "d49f2044b86dfa03bebca4cd1c5cd1cec46879a1fe27dde16300d0ea59a27e06"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/art/powerups/generated/slow-field-v3.png",
+            "sha256": "4a0fddaae8c21334a73c1fddb5ae250a2bd87dc7e3c29d6708ce283fbe8ff347"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/art/powerups/generated/slow-field-v3.png.meta",
+            "sha256": "f193ced88cbf36e67e1ac83bc05f96e16b1c556d8d829d1469ffe23b01dbc91d"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/art/relays.meta",
+            "sha256": "3b5de83e56cca2dd8316e426cba844413aed3e6e9f7cdd9bf2e5a02ac974cbf4"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/art/relays/pulse-relay-gate-v2.png",
+            "sha256": "a1ed06332efaa07d12f37b701e35c7aced3a9aa2127c47e84ca33ed06c098b8e"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/art/relays/pulse-relay-gate-v2.png.meta",
+            "sha256": "249ab0079d9a2bf00ff6a091b0d115d2bd69a637e859f5b18431d60f8c740265"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/audio.meta",
+            "sha256": "0e6451944354832baeb91fae34067e0457305e197361195f692d8f02e9871633"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/audio/crash.wav",
+            "sha256": "d1ef6b95713b0df4c19218df11fb331af2eb95fad0ea2b3887be5715269eb36d"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/audio/crash.wav.meta",
+            "sha256": "00c546e138af60b73a45aa508612dd29dbe5515528d50bfdc246319dd88350a0"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/audio/crystal.wav",
+            "sha256": "07f2d25eab664bec43d65ff6565bea2fb3fdef5057efb40b76bdb84db8c84a8d"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/audio/crystal.wav.meta",
+            "sha256": "5bea402d3115407b2cedfb91cb71972d72230408a19557754e43327f0a83fb93"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/audio/flap.wav",
+            "sha256": "1ed6fefec6d5e1b3623a4942ad653893769dcc74c49e863ba4332247510a9b9a"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/audio/flap.wav.meta",
+            "sha256": "b85ceb96eece6d1b3371de9f9f36342ff346909af6be91d15aab93a919361fd9"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/audio/prism.wav",
+            "sha256": "bce76e4efd9a8b9be2bac2f2c2ab0c370cdd8b3c6d2b09b78c91c684844c4a5b"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/audio/prism.wav.meta",
+            "sha256": "0a442164c565c60298bb9d863f8613572e9bdd1fbb7bec7b97e7e3a4b5e883ac"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/audio/score.wav",
+            "sha256": "716c509700cd94b00ecae271a806083942684cb1fb7bfbbf93e79f1d5b294649"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/audio/score.wav.meta",
+            "sha256": "deebf78df3494eb74903aa5b200ad08877cd46000630b25ec189ff24e37d6697"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/audio/sensor.wav",
+            "sha256": "fd38d885fcc1196a8173c17fcb7d780fc73a1dcd647b46c1bed8c45c8fddb781"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/audio/sensor.wav.meta",
+            "sha256": "8aad8aa4666810dd87e8be14903afc1feb439d8d515d16ab62f92e659d521b4a"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/audio/unlock.wav",
+            "sha256": "e117b2599f5269c5228506ad53e3f6e426e904ff03de8103a716c806703a83d2"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/audio/unlock.wav.meta",
+            "sha256": "09575c9815697f9ea3fe1b00eb20b1b5fb87d41d69ae09b792edfacddc28820a"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/backgrounds.meta",
+            "sha256": "6b3908b460a6930c436ccf38cf2e34a80f3292105c4cee2ea25dd57c711b7212"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/backgrounds/blackout-core-v1.png",
+            "sha256": "f7d62626df0ba4e39ad382a7113cf86ef052f3241ed5395f2304d8b83a340af4"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/backgrounds/blackout-core-v1.png.meta",
+            "sha256": "6dc4f58518ca080a5ee9b1893785917f78604d6b5e81851f6ce3c574e16e860a"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/backgrounds/neon-flightdeck-v2.png",
+            "sha256": "b8fc2ac8ae1702ca4f001b42e2a8a5cf81b5fd9c527939aaa4eca80864c3dd28"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/backgrounds/neon-flightdeck-v2.png.meta",
+            "sha256": "440d664baff4d44f8714d66407e8d2e50fbc67e3d52a40b7a2255208b464b6a4"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/backgrounds/pulse-relay-station-v1.png",
+            "sha256": "9f769c1556d0bba058b6a285444c6d6f89f849d0f95f16f4505ff151c19c80d3"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/backgrounds/pulse-relay-station-v1.png.meta",
+            "sha256": "96aaf917d435f06b333f05cde9932761cc3d09fae13f7f410c472a1e42a35986"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/backgrounds/themes.meta",
+            "sha256": "bbaff7a8c5e82081590f75495ab75d96f985dd28710efaa88640b1ea59ff9ff5"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/backgrounds/themes/amber-skies-user-20260929.jpeg",
+            "sha256": "bacddfd2a922f87f6e1b23d9f05041ad3953acba4c43814b0a4469f68990fa49"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/backgrounds/themes/amber-skies-user-20260929.jpeg.meta",
+            "sha256": "85e8faac470f9dcf3332c681a8ad9eb72357c32f430cee0ee4463fefc4944042"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/backgrounds/themes/aurora-rise-v3.png",
+            "sha256": "80aca85829ecc61b960fc480301fc04c1142a6ed1e9288239c47bda88f9d17ad"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/backgrounds/themes/aurora-rise-v3.png.meta",
+            "sha256": "61bf246dae696f707e341a780e9cac817f7d82272abbc2657b0ba40c92a0ccff"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/backgrounds/themes/cobalt-storm-user-20260929.jpeg",
+            "sha256": "3a97856e3cfa510362a50e7ca64f1a4c547e9b266888f23a56ddea5b45852b26"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/backgrounds/themes/cobalt-storm-user-20260929.jpeg.meta",
+            "sha256": "08ae7665bbf6aa2c9d56308e6fa0a6837c18b6db8ebeaaaf638f7f95f1a308f1"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/backgrounds/themes/crystal-night-user-20260929.jpeg",
+            "sha256": "0ca74942f0e588f4a6a944f00c7a4f9ea86f807fdaefa27e19bb8181864065a8"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/backgrounds/themes/crystal-night-user-20260929.jpeg.meta",
+            "sha256": "a03c6203e94baf22bfd388184064b01bf04239a11e5cc48bd01302e20d75f69d"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/backgrounds/themes/eclipse-user-20260929.jpeg",
+            "sha256": "bd5c8d7f004952807409e07d8c95f700ef2e5d9f4afc0ab69cb8df9c515e69a2"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/backgrounds/themes/eclipse-user-20260929.jpeg.meta",
+            "sha256": "95e78789190c0ed17193fdfc83a79013cd1277d156a10efefe5fe673ef8f5869"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/backgrounds/themes/jade-horizon-v2.png",
+            "sha256": "c7c81eb3c74860ae815b2096fc78c0871e28d51b41540152e7b347a0b0051d6b"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/backgrounds/themes/jade-horizon-v2.png.meta",
+            "sha256": "899c0331f2455fa0dca996e143acd196cf37a98c7e7dba48fa7189ee476caafc"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/backgrounds/themes/midnight-tide-v2.png",
+            "sha256": "d2adf1a47b2920d7bcf80367ae1ba7034dfa96fc9b01e25785bb30a59a180347"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/backgrounds/themes/midnight-tide-v2.png.meta",
+            "sha256": "c82589d0f569a0b4ee4af6ef65f91bfa14d16e08e5f035439a29596970abb265"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/backgrounds/themes/polar-glow-user-20260929.jpeg",
+            "sha256": "b527b2938af7e731a2dd21184a919d3a9e71be8a22a94541b9012bbccef4f451"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/backgrounds/themes/polar-glow-user-20260929.jpeg.meta",
+            "sha256": "fda306542ed6026d6465a8f8ff96e2e3c3f7231cf0fa4b4531d27f9797025645"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/backgrounds/themes/solar-drift-v3.png",
+            "sha256": "fd39e125201e2a9827dd6a335b5588e9670ece58d347e3abfedee47a90a579ca"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/backgrounds/themes/solar-drift-v3.png.meta",
+            "sha256": "55189fc1c9bddfaad524bc0a70874d5f7384dd0825f61531580592946e087db6"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/backgrounds/themes/velvet-dawn-v2.png",
+            "sha256": "67fc9ccce11e49a9f0a0cb2008b94d0e75fe1d205003584aeb423b403c64b856"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/backgrounds/themes/velvet-dawn-v2.png.meta",
+            "sha256": "d4a8e17fae23056ee712603e1bec273f38d2e3434cdbb3c1f317ee4f05ae0a02"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/backgrounds/themes/violet-rain-v2.png",
+            "sha256": "65746466c446b77bb62f531ff5c342845376bf16ed7db699c9193f38a72d911e"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/backgrounds/themes/violet-rain-v2.png.meta",
+            "sha256": "56e4e9946b1a55c2778244e69c54814d985614bf4168c3cdc72ca1e326349eca"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters.meta",
+            "sha256": "b87f61c8b1042ac048a3afe52f1ab78fa12d1ab38c24be21ce9502156a09f0b9"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/bird-frame-registration.json",
+            "sha256": "7995a18c02761c0e8bb341c7e44ac470f1cb112954c2be41034faede5e237e3a"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/bird-frame-registration.json.meta",
+            "sha256": "8c8a9eb2acdede80f64da7e13bf4c9e5af53ae1cae46fa79eef5e29dc79e2794"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/bird-pose-bounds.json",
+            "sha256": "8fd6b4c988212c0f7cbe7f836d0d753e05d8f6c398b0ffe9675cb091b3d183d1"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/bird-pose-bounds.json.meta",
+            "sha256": "d22208e73b290e829208211d991e74c94e61515957bcf6f723e4dbe3b86df394"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster.meta",
+            "sha256": "280bc2702b0820393ee9b61c38e9ca8811aaa3620be0b7da0f5d5e484ad67fed"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/cinder-frame-01-v1.png",
+            "sha256": "0f8f2625406f0682b0ad93bbdbdfae1a13d696821859b5ff7dfef54df7487937"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/cinder-frame-01-v1.png.meta",
+            "sha256": "e979560ab211bbceea4e69a537836a0da1b7b558f2184ece5f5dfebcd958e008"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/cinder-frame-02-v1.png",
+            "sha256": "244cca4a04f17cfa5e3f0427a4f9f75fff286c6a7a232c5d949b202637d82731"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/cinder-frame-02-v1.png.meta",
+            "sha256": "d723df1e212c5f272ebb093b05a610dc8163e5639c0a383e9f632bccd9416d43"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/cinder-frame-03-v1.png",
+            "sha256": "7b89fe90ed797ae014490c7c7139722746a8939d7f84db2fd271f31c1cb46d2c"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/cinder-frame-03-v1.png.meta",
+            "sha256": "3e1ea60b570956114ca4e62236b42df5929326737131560a2d72235d00f92351"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/cinder-frame-04-v1.png",
+            "sha256": "cc5dd44de865f64124427219744c5220b655004894a82f45ab21c3fcf3371ce7"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/cinder-frame-04-v1.png.meta",
+            "sha256": "23e6fdcdffda58dc2c003c1c515fbefa36cfd08036ed7fbe0bdee657adc8d8e1"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/cinder-frame-05-v1.png",
+            "sha256": "9e06a4b70f257c9ebe9e5616cba13854cd811108142a15767f4573e8730424be"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/cinder-frame-05-v1.png.meta",
+            "sha256": "64b02bfe54f234d493ad1cc13961e4e25fd7aaec22d25ffd0c73c0fd58ea6ccb"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/cinder-frame-06-v1.png",
+            "sha256": "87137b0c18cc7f7a30db382bb64cc6cb6e3b27cb5e55604a7e4e787794e0cb90"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/cinder-frame-06-v1.png.meta",
+            "sha256": "2b42cbea4954e1e7511b88116241215708a68c9c0df153cac9223792a11c5ddf"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/cinder-frame-07-v1.png",
+            "sha256": "86e7c755eda616ca16a3294be782d7b0112afdcab106cb6de842190284471cf4"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/cinder-frame-07-v1.png.meta",
+            "sha256": "bc04117610578a2766a6977f24fa802e5e726b9c24c1f3d8fae068340bf6c4d0"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/cinder-frame-08-v1.png",
+            "sha256": "541c26d9b560ac539e16e3cddc34ac2965741d9051dc52b60364d88c96e479b9"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/cinder-frame-08-v1.png.meta",
+            "sha256": "cb03cf4668b2d5eef55b39335dde84aaa63c30b25764414b84aa84641f5431f5"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird01-frame-01.png",
+            "sha256": "c350232a1e2ea9e6ea50375dbdfc0c8639c07148ee2de8eb5d065d1061e1e495"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird01-frame-01.png.meta",
+            "sha256": "ed1a2b9d28758b9ae67648017eb7b8cd55c6d7dc05b72c0b8e83273fd3eb14af"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird01-frame-02.png",
+            "sha256": "4db960f871cc3565ec14e7be04f55d96bf4fb5431c58d3ab08f9b4916597f3a0"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird01-frame-02.png.meta",
+            "sha256": "eefea1e874bbc3736abe324e263d0fef9f8596d23677671601d302a4c25b3ccd"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird01-frame-03.png",
+            "sha256": "82f54d53c946833b1d11472ea6bc9cd447a1e33e6ca771f455f652f48c093072"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird01-frame-03.png.meta",
+            "sha256": "4dbf72fca67999ed5147b8d2501311dbba446c1fb4a513698fa98bceeb89e05c"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird01-frame-04.png",
+            "sha256": "763250724cd7e8af48ad84b1485d83cd82c377528d7cec75b6f4e575d6b6846f"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird01-frame-04.png.meta",
+            "sha256": "14e23703d1d2ac6c4028fae5cdeacec8e77583d34adc7cde6717bdc708250719"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird01-frame-05.png",
+            "sha256": "9bc4faa81bcae558e666dbefe39f67b65b508b38a5fabdad052fdc158d990248"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird01-frame-05.png.meta",
+            "sha256": "f9ce8146a6ef1ad2da4072bbe92e180bee3b562575b0c43a8ac083fc7ec82557"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird01-frame-06.png",
+            "sha256": "87e4c1ef6cb7175aef61e19a20357b2948389ba7f75f5c729bf0b6cedf0b491f"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird01-frame-06.png.meta",
+            "sha256": "86002109803bd8dcd69ccb2a85cbdc5ca6f0385756ff3a55fbad0edb873d3237"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird01-frame-07.png",
+            "sha256": "a109a957494bfa8a837bc6d79856420ad154d39318c99b318d1fddf5b8512fc2"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird01-frame-07.png.meta",
+            "sha256": "24f7040a7a885c4e1adf50d636bee98310f050cf508854adc918ee070c3fa21f"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird01-frame-08.png",
+            "sha256": "7c8ec15ae5692b17d6b68cd63e2fb63b487ac3807adedbd8f890a6b09a2ba695"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird01-frame-08.png.meta",
+            "sha256": "5dfe8464e1ccfa1e8f5e87b145ea2c22ee1aa87dccbfd99b2699737a9148a490"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird02-frame-01.png",
+            "sha256": "011707e3a33d8b1e203a46a3d906650d32b68639727c7540207bae5aad09c1db"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird02-frame-01.png.meta",
+            "sha256": "7c664008954fb65206c04eaa3d935c3a6638e656d00cc104c5eb958f164105d0"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird02-frame-02.png",
+            "sha256": "07d75cc48b23de8fecd1cc38f53665e38be9276e5ed611f9dde022caf5b1e183"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird02-frame-02.png.meta",
+            "sha256": "c5c8b65a5dbb9c717557a4478437f70696c07da95a0db1a31a04e123c6961d0e"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird02-frame-03.png",
+            "sha256": "ef6599d9bee3313c5feabee4767d7eec8bb97aa5e3f559f0364bb703fd960fdf"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird02-frame-03.png.meta",
+            "sha256": "82c42b97f7d81d25275e1b225e19889474d24af88f526ab0fb1b2544814e9f09"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird02-frame-04.png",
+            "sha256": "a6c951cc281e336f4342f6684a77f76a193c1e83fdeea472b619e6d9466a131a"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird02-frame-04.png.meta",
+            "sha256": "02b5d0fa2a72744328a3e3c9a2ec186cc5a958a9eac62bd339775045000782fa"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird02-frame-05.png",
+            "sha256": "d84cee1e3a178ddd13b469d1ee35805ed53c02148e6abd713e98287a7f922645"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird02-frame-05.png.meta",
+            "sha256": "1c46d626f3a910efb74f5f197fe54ee0a0bd029a23fe6e34ba714e5840017b7f"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird02-frame-06.png",
+            "sha256": "3004d76228a03116fb84ef71cda1a3a385a19205db5d85b76c97479a27fc159f"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird02-frame-06.png.meta",
+            "sha256": "bce3efca2251a0db6bf4ffd4ad16dd76c3133c5224c2a70912c517ca78373c26"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird02-frame-07.png",
+            "sha256": "3cf7ed0d54db527cd18a4341d5bbd2e4fcf0bca4cd71e76af1fff6d57fc9ec15"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird02-frame-07.png.meta",
+            "sha256": "a30fd7af5b9b94c5467760ed1ebb29bbc862c461953f9d5b3bf829a36810c753"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird02-frame-08.png",
+            "sha256": "1f7e8fe70c19129b3d3b47c3abe10a14807cd19e2e882182e9d2c728da064e8e"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird02-frame-08.png.meta",
+            "sha256": "9d555e71196e9b24d2f4529068e1e91402032cb4d89b113317dffb204276a28e"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird03-frame-01.png",
+            "sha256": "8df7bdf56bb122ae1e7fd0270f6f5e8780b1d291fc48257ec478edd22b2dbf8a"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird03-frame-01.png.meta",
+            "sha256": "8c2b383558d6ae03db718a269a1c793117f7948e5d47dc7a7e1a3ad99927874f"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird03-frame-02.png",
+            "sha256": "ee51743246588a081ddb2f22faac63ce2e5d5850eed8189a63c87dc2b2ffc492"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird03-frame-02.png.meta",
+            "sha256": "6acd3a5ad22440f78930b15894b9a17e9b1b7a3fd8e2034684257860547b175d"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird03-frame-03.png",
+            "sha256": "7e342c1fd151de15957b3db005ec7da6df1efc48a6a2dc4de5ca316ccf7dff7d"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird03-frame-03.png.meta",
+            "sha256": "4d9fefc146f733d0ff02430f95bb70ebafe489a0c9462c5f7fa91b5c0c37bdb7"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird03-frame-04.png",
+            "sha256": "b9b42ad6eb83f00dd6b31f573677b635cb8175d83a9c51d009a534994d8188c2"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird03-frame-04.png.meta",
+            "sha256": "575b974c2091a8ba5f48254f761cc1f3bad520eaba4a9408bd0352cc4f2833d6"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird03-frame-05.png",
+            "sha256": "7606680833297134d41f732e0cd9f8bf1caea498c152f1d9cb7788bc2ea894cf"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird03-frame-05.png.meta",
+            "sha256": "56ede817283b6a99fa999b2eaf58ae6c7f44868d2c29e60739fe90d65391e959"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird03-frame-06.png",
+            "sha256": "2c6e2eb85c1a8e6bad02e6a8a46cdc66fefe9b887d9fb58d5122b437a222df88"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird03-frame-06.png.meta",
+            "sha256": "d55e3cd1340e95107d252dc25a748f54f7914cd9e69ef6fca896f4b4e2558d47"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird03-frame-07.png",
+            "sha256": "9f313166658d5e646c17fae0b86132f0f1b2c0e8bf577acadcb2c2bb6606ff1e"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird03-frame-07.png.meta",
+            "sha256": "2fa8afe8efd286514c5ce662cb1b6d49248c31fff86794a5df957738ab2c75a2"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird03-frame-08.png",
+            "sha256": "37404116c5003777b3c96f2c20c932de0c36b5cac73d0102e7fabdda96ae9657"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird03-frame-08.png.meta",
+            "sha256": "f40a4ee622bbe25eef7ed0dae7cd9596f237b081bb7802994eb72e6333ceed03"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird04-frame-01.png",
+            "sha256": "4638b7242fde7dc9eb91f2edee4fbf0a816ddb183a614f693dee18d8c56d00ab"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird04-frame-01.png.meta",
+            "sha256": "91af1c98ce5e128b4fd6b745527c71435cb51560c5730b09d96e24e7c80ae23f"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird04-frame-02.png",
+            "sha256": "d1e125f87c519ce70e21103082007d02f65516eb35ff39421b4015e5e7ccfbcb"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird04-frame-02.png.meta",
+            "sha256": "0189e898219fcd6be7123dcdbe35fc230e4ae94556e8954ce5c0513663353e96"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird04-frame-03.png",
+            "sha256": "06f67451510b73983a4d493b3d65a9d151aff399ca3e1fbef97d9dd19b0ac66d"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird04-frame-03.png.meta",
+            "sha256": "66a33c8213bd28def7d051c063663e54e681ce3280644ff5c3cd55642a4f6750"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird04-frame-04.png",
+            "sha256": "07ca3dc759a9b3c1744417fc39001a15d1f29532acd335ecda1fb33c58c04ec6"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird04-frame-04.png.meta",
+            "sha256": "da92d6c0134f04da519e3b163e19c0bd1485e8124c67567daae0ae849faf519a"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird04-frame-05.png",
+            "sha256": "8bf273ff79b1c22dcb9b5904cd99e831452553830fceaf2f4f1f2004728367e5"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird04-frame-05.png.meta",
+            "sha256": "97b710e643211bdaacdb99d3db11dbcd72ee98523c6badcc519aef1f81f2714f"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird04-frame-06.png",
+            "sha256": "5044c7d460d49cc59fbe4dd111c791abfcdb67fe5cdf9f132dd73d0c760be45b"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird04-frame-06.png.meta",
+            "sha256": "971da809e5a7da2785118e9e37fa3de43be491af49a27f5e7f1bdea38b1ed6ac"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird04-frame-07.png",
+            "sha256": "daf0bb202e4585aa2fb800d8da3438f2919660dc5a07bb1fd17394ab4ab2789a"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird04-frame-07.png.meta",
+            "sha256": "4965bc12c1911057f126c71621e90b2a865d393a2e86c11edea9c164ba9d95ef"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird04-frame-08.png",
+            "sha256": "b1caba2a95b22a2cfba12a5f62dbe95fb25009647e61fc5fb94dac27b2caf084"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird04-frame-08.png.meta",
+            "sha256": "150f0fc6741a9cddbb6c8156b97365cc89c5378323c51c142ca514c44c5052de"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird05-frame-01.png",
+            "sha256": "47d357521a3d8c17ec9bcba5182a5d323cd6b030cd689c6f1ea73e2b7f84bf92"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird05-frame-01.png.meta",
+            "sha256": "632466d13ef0cc782034740fd0f6d8e31ccd5e3b4fb7b6654546e995adf9a65d"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird05-frame-02.png",
+            "sha256": "3b8bf268e2fbcef6a660e29c68377de902e7141c59b792209a092548581594be"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird05-frame-02.png.meta",
+            "sha256": "199cde73fdd8696248cef1da9b022388eea2f610013531555b7cee8d58b72f3c"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird05-frame-03.png",
+            "sha256": "41b630933516c07fe9d777e59cec3f4ad50f411f6abeacf2afd5ee8601f922db"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird05-frame-03.png.meta",
+            "sha256": "39c2134c57fb6fca10bdfec90527b0a47ea24d2d78599b1c8f0f7ffe9d5d866c"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird05-frame-04.png",
+            "sha256": "905cd5da32196e84e7969b4fe05b8cb100811f048516af7dfa9901702d04fcab"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird05-frame-04.png.meta",
+            "sha256": "8bec277ed1af328e0f9ccb64d52c724730be6ba1ddea69ab90fa3459e25ab842"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird05-frame-05.png",
+            "sha256": "ea5edd00d8c7c714514d303047cfbf3e1f5b2511eed764ef960b77649d559df3"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird05-frame-05.png.meta",
+            "sha256": "496137bfa28f93430da550c632fdc0b482f5554247a8ace0b2fcdf40cd84496d"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird05-frame-06.png",
+            "sha256": "4028b7db2f2280a146e66852f7ea930fa6a882d9626ff5d1e6ca2d8b6b334f12"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird05-frame-06.png.meta",
+            "sha256": "81e9d9bc9c2e9ceb992fc2efe362f2e1245ac075efd63e17518d5e355c3e7691"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird05-frame-07.png",
+            "sha256": "639a3cbbe512940143a2e78c77efead719e5727400d56c72b157062143ba9e63"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird05-frame-07.png.meta",
+            "sha256": "4fefd70fa79eaaff911e348d01da963c36f20304b8bcf09214355837dd94e79d"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird05-frame-08.png",
+            "sha256": "2e6cee27863ba8cf08cc9e70c18f26f3d6565062f4b5c8e7af85446b1ed24d8b"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird05-frame-08.png.meta",
+            "sha256": "8d07f055d73cdd0f3727234541c5b867082c9e5b939d5919ff738b02c20a16e6"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird06-frame-01.png",
+            "sha256": "8824f4ad261cefd0af3eb34f13ac1c724a30f50eeb022aca8fe6bec879c08f82"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird06-frame-01.png.meta",
+            "sha256": "af320d3283f8706252d1ad1be9a2d6fd2aa2987e5b5f4e91a1555a78d64ff692"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird06-frame-02.png",
+            "sha256": "113d9466c2d1c691a66a83b614155fd0444b7b0ab57170e47a4a332648ba42d1"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird06-frame-02.png.meta",
+            "sha256": "794ef080378ea416553d95d24c40fbca55ac8522feee1fcdd84b7dd670e920ca"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird06-frame-03.png",
+            "sha256": "6daab4eba93f926e7a34cc6c0614e52a0ee24007d6545731e4aa962e533be3e1"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird06-frame-03.png.meta",
+            "sha256": "8a2ccdf979e61e4bdc6f47f698e730419965ed0e1a7f3661754bd25ecd020fe6"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird06-frame-04.png",
+            "sha256": "a45faf2bf9f304183917b069364cef61d9b64fc52a3e73eb7e3c052c353d334f"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird06-frame-04.png.meta",
+            "sha256": "0f683ec01c91dd18defc3f60b8f266e701c6fd6db866e58338bd4abb1bc8671d"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird06-frame-05.png",
+            "sha256": "28b5594fc4abc22eec34f01236955f420a37eef4a787d320dfeb74c7f25763cf"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird06-frame-05.png.meta",
+            "sha256": "fd42b58a20af8c561109d19023d78fddc0435ef3139b5f58bca99033fa5554a7"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird06-frame-06.png",
+            "sha256": "60e07538066ef4ffe3261409cb26ba885cfb116a5348701c929432dea7cc6647"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird06-frame-06.png.meta",
+            "sha256": "a062fa5f4611a13214d02f4a7d53bb2b59ae467b069250b6d41533bb66456640"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird06-frame-07.png",
+            "sha256": "1bd574b87772c8c172f1d550d514e082025a18b74a658c701b6aac1cd5f19356"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird06-frame-07.png.meta",
+            "sha256": "e0c80627803fbff565bef66d37305af17f8193dd2f85b2b6ec89bedeb375f7ec"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird06-frame-08.png",
+            "sha256": "90bbe56c2d587a973aa7749f1129626fe8812a060446941ca5785349e1336019"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird06-frame-08.png.meta",
+            "sha256": "dffbd6a277b16853dc1e94d4c83de435492fc8707bfe9f2d23023ae6072c95c9"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird07-frame-01.png",
+            "sha256": "04c75ebbe4e22510f55389d7ac46264205b1a6fd1f86e47e987f61665515781f"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird07-frame-01.png.meta",
+            "sha256": "0dd949cbe67b41239d6347411731c7768d030ef9c4ebefef766aa526ec6578a8"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird07-frame-02.png",
+            "sha256": "4d735ec3561587c96c15e7ddd748def681720614ee46b2b66b63b5374e47be0d"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird07-frame-02.png.meta",
+            "sha256": "876505432110381ba7df27c7a8913748a3a8291fee66cc41ecbab4ae45478c0a"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird07-frame-03.png",
+            "sha256": "e0fb52fb2212fbcba460b399416ce38cae9e4b82840279ebe77f5ce9cfd73914"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird07-frame-03.png.meta",
+            "sha256": "b6f877321b59f0090763074a18a199292a5a9444d96735f857d52eabb9600bd0"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird07-frame-04.png",
+            "sha256": "e323abf2470e3d4563d43ea7e03b728c41e38e923d17d32a5420a0b112f9e682"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird07-frame-04.png.meta",
+            "sha256": "fc743df70e5e7da85c670f009de0d214d416ab048636cecae0c688a0aa7ecf5e"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird07-frame-05.png",
+            "sha256": "62e519cf01d2db59d6cb42d69fe0638c26c702b417ac2ce1e02b197530c8bbcd"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird07-frame-05.png.meta",
+            "sha256": "9413c50b8e9792926fb3ba3a766f98793bc2632290afcbde8cd7fac308c6c1f4"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird07-frame-06.png",
+            "sha256": "2270711809c460a4abf66df8d3103699ef4d3aedf85dd9e639d46f65f1b2fcaf"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird07-frame-06.png.meta",
+            "sha256": "59e455f6b9d7396aa6e3666ddc06afbe0915e9501d233b70b6933646bb0464d3"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird07-frame-07.png",
+            "sha256": "1065a90e8d858291bf938d9070989425b19e1e87052b9e5116aa610439e296e7"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird07-frame-07.png.meta",
+            "sha256": "14e4139c1cecf6fed93d38c6702dbca95cf8c3b47732fdedf64bff81ba531313"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird07-frame-08.png",
+            "sha256": "8c32204981d9b46cc22ab645a18562826d155441bddf586018c5020f80cf103b"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird07-frame-08.png.meta",
+            "sha256": "aba7bde4447d4211cfad16b2fc1612217ad62c0f8d4b84d482a7c0505c75bcee"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird08-frame-01.png",
+            "sha256": "9824f822a208f4548035ebfd097e873fbdfa121f2067e6f71f910a224ae81793"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird08-frame-01.png.meta",
+            "sha256": "a9630425044dd76751ce33e70daa655ed84082e5abf9bfeee80480dd0cd8444f"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird08-frame-02.png",
+            "sha256": "0b62ebd89d4a6bbf296585dbbdd84e887006fafe757b7a6327bb85f3b3a91195"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird08-frame-02.png.meta",
+            "sha256": "4a3e9a0ff7fa7865d7fddf89e996d8ab8cdb3ab173254596206b35a732ee7637"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird08-frame-03.png",
+            "sha256": "91c97062db1eb5b97d824d88f087a6e291c597069a52fcc30f5ce3803cc952b8"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird08-frame-03.png.meta",
+            "sha256": "174ade2fe75d887297d144202ecd04a88b64cc38f4a4a971e12cde6c9cd603b3"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird08-frame-04.png",
+            "sha256": "4442b032364673c3344a08aa14ec3fd566822b02d43c6728f3dc3869c309938f"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird08-frame-04.png.meta",
+            "sha256": "e36d93cbca494cdd6f8f765b343445eefeeb425906248dba234bc93943c568d4"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird08-frame-05.png",
+            "sha256": "23e74128176e11f62e960664fd5d1af13375f47c48313317ae2f4b00651329b5"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird08-frame-05.png.meta",
+            "sha256": "88f1d9a134ad2fb7615a0c788a04a8ae7a8952b4b970b742507eb2bae72ccef0"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird08-frame-06.png",
+            "sha256": "493280e4db5ce336f530960d785e03197e1b6893a8c860a8bec5d62cd6a7690a"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird08-frame-06.png.meta",
+            "sha256": "1c785d96c79e62efdf63df91bea15238f979f1ea78fde8a3eef4c06d2aaf657a"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird08-frame-07.png",
+            "sha256": "b8aeb87cd1eff147dd0ee86a52cefe3da69507759c1063c78558b20ade8ea1be"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird08-frame-07.png.meta",
+            "sha256": "688c36db6074322160e89c4043a5856f64c9b0aaf909dcfa607058cdf7ffdc63"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird08-frame-08.png",
+            "sha256": "cbc6092ae870abdcad3705044c406eac3abdf79bda3fa59b4b798c65c20fdb49"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird08-frame-08.png.meta",
+            "sha256": "929239916ec98e915e079bf8aef0d400b9cdf41506971a3667ac60621f2c3d8b"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird09-frame-01.png",
+            "sha256": "265b20eacdbd4681a88aea8c306e4ab3f5ea62ee06f5319420f0491cad5afd6e"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird09-frame-01.png.meta",
+            "sha256": "3da2a2a9625bf454414676d415688337e07a0304ff4b1ba4dec5eabcf6fcc3f6"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird09-frame-02.png",
+            "sha256": "4257a771a86b7797ffcf19876dd41f4ad01b14ff4755058c213ca1a299899195"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird09-frame-02.png.meta",
+            "sha256": "932cfdaf11d441463de15b5e520e4206681f179fcb17dae90618829912fad7ce"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird09-frame-03.png",
+            "sha256": "956170d9792681401b91f163ecdb48a6517f2e5a71d1d49fb14b654dc5be7ee9"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird09-frame-03.png.meta",
+            "sha256": "aee3220c3aac9f0190a971f9a2eacdcfd304d835d81a08a6a7cb1c1be79e528e"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird09-frame-04.png",
+            "sha256": "01183124eac3d94b38915608a4bdc3c7cc67236e783bda062886dc6491c44c6a"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird09-frame-04.png.meta",
+            "sha256": "6049ff300463d1a2637f7ddb5e81b505269ab9e831d9448800beb3010068a586"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird09-frame-05.png",
+            "sha256": "bb19916ee32c8ca6aef518e32a9c396c3145305d6d6c00de3a681214123002fa"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird09-frame-05.png.meta",
+            "sha256": "19974b750b69a4389dcfbb3bd128af32ddcdfc9d476b3b7b32872c8140cb3d68"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird09-frame-06.png",
+            "sha256": "226080020599327238d23934d8887ca718b08b0be084048a6cc3509d8faf4419"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird09-frame-06.png.meta",
+            "sha256": "4ae272f7cc37ab7e88f2d7b44d3ec2a236dfeb6168bd586b48c8107a497abbf3"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird09-frame-07.png",
+            "sha256": "3619b4aa616a4e750092bb7661ef6fd5db927f72e72d989df1a66348666241e9"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird09-frame-07.png.meta",
+            "sha256": "88898adba599d8336f44e7c69de2cc5ec744842b4084415e1e39e6ea4b68d8f3"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird09-frame-08.png",
+            "sha256": "0c514e69c4ce68e1f5f9b201ad81ae0517fde1017b1a1c32fed70ed803d6419c"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird09-frame-08.png.meta",
+            "sha256": "0ed04fac711b469535615ff02a432f4e42fd7088b33758b347619af6eb5fb2ba"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird10-frame-01.png",
+            "sha256": "97f867903ab705c64a78104a6f48c011e3a4c7f20f51660802036e0068b697f7"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird10-frame-01.png.meta",
+            "sha256": "be39a34552fbd3feac0a48b3c20c67a713e8e0e7348781202a5f203803f9dbe6"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird10-frame-02.png",
+            "sha256": "31a0d48d946af26d9ddad81b1536bbaa57e31f827f5db3e2ebd8f558381670fe"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird10-frame-02.png.meta",
+            "sha256": "7983b5da1a7499d27aaf6ea41506b2cc17a6d8dbf81a78a6f6483704aa790c2d"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird10-frame-03.png",
+            "sha256": "ca7c9bf6d48fc4d3e7386564c65698a580f78747556db21af3e360de5f971d48"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird10-frame-03.png.meta",
+            "sha256": "5c95d5418047256ca7596f6e5081564cb71ef9c76ece5556c45c5aca57364a25"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird10-frame-04.png",
+            "sha256": "6c7380ead2a5129be78fa8ea40d048beb64b8e41b829ede1467bb2ce5416a84a"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird10-frame-04.png.meta",
+            "sha256": "2db7673ea2096d2c166fe5e848bc667c475299304f8d2f45677b8208bd041dfb"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird10-frame-05.png",
+            "sha256": "f08b9922a51b55e98528c8a23aa0a68e5748d349789044a5346c3f2dbce8c4f5"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird10-frame-05.png.meta",
+            "sha256": "a9dc9d6c5945f19c9aaa776a4a1ff9a4b8df1101f9b90801d457e48a550c3dcf"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird10-frame-06.png",
+            "sha256": "209fca31f35c8b6465f3610e67590d041a7963f6e1cb9ebe2360ac4406f036d3"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird10-frame-06.png.meta",
+            "sha256": "900816913db798d1c39baaefba926387a0eabc7988e069bb8f5ddcece23e998c"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird10-frame-07.png",
+            "sha256": "f4e5cc2fa82196d480e5371a68c946f039ebc246272cb545d4f3c4d92051a6a5"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird10-frame-07.png.meta",
+            "sha256": "7164fcc08d57cdb9d93b96c7bb9c8f24367b90fc0582be4dc1f43960bde40cde"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird10-frame-08.png",
+            "sha256": "a5c39a2ec92b71e21c8dedc4d26feedbdfa760d1ee45b04fc82aad8afb267410"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/newbird10-frame-08.png.meta",
+            "sha256": "94b4f4070d5184e0c94f61245b7de11d000ad0f29d5f864f1972c125bd2252a4"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/prism-frame-01-v1.png",
+            "sha256": "1f678cfd6be03e526d389816bb1d0d57d9789a4c443b20529a9c1f3177515762"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/prism-frame-01-v1.png.meta",
+            "sha256": "c5db053d416ef5ce810c78665b10e8c26f2702ea84e86d6d5189e108caf881e3"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/prism-frame-02-v1.png",
+            "sha256": "d493903cbf1c325b999a26788928968a2984ae4cacce2508a13b5cda52ed1532"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/prism-frame-02-v1.png.meta",
+            "sha256": "1b3fb2303e6af7cd562b15494cd48df5c668433d6d7384d173e314ceb8314efe"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/prism-frame-03-v1.png",
+            "sha256": "a9719a2bf01c5c96db146585242a4b7ec31d44a9987690b389e508d3eb331087"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/prism-frame-03-v1.png.meta",
+            "sha256": "e0c28b1af1622b11a5cfab62d2f02f3b9df22a3e4f4d4b41757b5c94ddbc2174"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/prism-frame-04-v1.png",
+            "sha256": "4f0135985aa1622443a0b5550164d15133b45d830f3c1ab98642063f8265a901"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/prism-frame-04-v1.png.meta",
+            "sha256": "1ea3c13208c19228f24a5e091505851a998b50b01c1f90c30f34ee1fa6a94be2"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/prism-frame-05-v1.png",
+            "sha256": "54ec7e77dd4cdeb5b24911a781283bd091e8588a8d0197b2f0d1eefbc24dc52f"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/prism-frame-05-v1.png.meta",
+            "sha256": "dd8f89dbe5aa76b89e692ccacf7579597748f053f9d537c839a67f0d1839621d"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/prism-frame-06-v1.png",
+            "sha256": "89272d174c012476caa8773e1a4d21a4a8982c1fa2a17011b93fe03cf7e1dfbe"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/prism-frame-06-v1.png.meta",
+            "sha256": "98a2aa8146d8878c1307542273afc574cac7ea34f5dea62e8c97413316013e5e"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/prism-frame-07-v1.png",
+            "sha256": "09c013415bada0bdf2374599c9ddfcee0d5694f9e670e2280b9b11adbd331904"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/prism-frame-07-v1.png.meta",
+            "sha256": "2e72314c9ac7a344c9e2f2905cc69aa408fc93da78a7bde0ee6dc4b1cf5f0c91"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/prism-frame-08-v1.png",
+            "sha256": "e72e45ede86f2d20b1dcb00140b6b53ffa8a1518ac8705f9f45f50db7749b93c"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/prism-frame-08-v1.png.meta",
+            "sha256": "024ccdf814530a16b9d7d7633301e53d1e17551605d42e39364428c182db7d6e"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/steel-frame-01-v1.png",
+            "sha256": "1fab3d7a25f0231499d0ee7b14bfbfa88be08c306fdfa0134b12760e351dadf4"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/steel-frame-01-v1.png.meta",
+            "sha256": "2accc6e1088b10dead98e6e2aa9c73867c86446f478cb7176c53ff1cc628c848"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/steel-frame-02-v1.png",
+            "sha256": "0d80630c26ac68b5a4e36beaa863e4f947f6832156a4338492a1160774fbe6cb"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/steel-frame-02-v1.png.meta",
+            "sha256": "a57780abcdbccb5549e8257912dc7283c4557b5e3a77b6f8d0c78d0b4de96565"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/steel-frame-03-v1.png",
+            "sha256": "9a73e2bf7974bf0df25d381498bac1402fff26639effa7c81a58b8bbdc616cc6"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/steel-frame-03-v1.png.meta",
+            "sha256": "2fd96fc83bfdd9798f9bdcc1e1a9cada93f597ca2af1d06db4728f679d8f6784"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/steel-frame-04-v1.png",
+            "sha256": "d5cce46857916f5fcbb5067491a0b27337b68b92d1e4d552d1880628f5484d28"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/steel-frame-04-v1.png.meta",
+            "sha256": "4cbcbef3c8aa0071a0eb30a09236a285fa13057dfe15e46f15323cdf9b196429"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/steel-frame-05-v1.png",
+            "sha256": "7ca65c0c4ca9ddbc7eb5d8edc49462ba65796689b8f5861e38a5068b0909908b"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/steel-frame-05-v1.png.meta",
+            "sha256": "163c71624a4adcab4e334588a537ee285f70c1c85081f16d1806e899d3bef6d3"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/steel-frame-06-v1.png",
+            "sha256": "1363d2abd5cf95c2213667b4a9f6e1f1a981e78314f160ebcbf251ebe4782ef1"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/steel-frame-06-v1.png.meta",
+            "sha256": "675b8620fe8f01e95f4f8ca765dfe56bc8629c52da87d590da97b3acb8276264"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/steel-frame-07-v1.png",
+            "sha256": "da1af966db6299d1b515cc6cfc33ff34d3f2608ad7d14895261511596c9209a8"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/steel-frame-07-v1.png.meta",
+            "sha256": "228765642d10c1573a91a5e3d29389e0f80698142c4d53493f3cb34e020fa9c1"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/steel-frame-08-v1.png",
+            "sha256": "340792c41d679ff948be8cc354e0f1c1de603513a4fade04754bfcc868abd068"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/steel-frame-08-v1.png.meta",
+            "sha256": "0d1aba2dd5319047bd8d1b575bd792867d89e79d9c476aa09408cfa34dc6948f"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/verdant-frame-01-v1.png",
+            "sha256": "bfa185f31c14c37541f3b9bd06f533444819445aec7c281bef32318ab5bf9edd"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/verdant-frame-01-v1.png.meta",
+            "sha256": "a310ae95697c666b201596fdfee94def5e91aa2cb739172dc32a6a1411e4e68c"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/verdant-frame-02-v1.png",
+            "sha256": "f06ae7c29042963d677aa008b8e8d4c2ef5a63a6ab7fd15cac7ba1fc0d068339"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/verdant-frame-02-v1.png.meta",
+            "sha256": "e93d5107221ad59e275add4e20ef77d76dd48dfe48f25b21fc345d7cbc15f2cb"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/verdant-frame-03-v1.png",
+            "sha256": "eae390ea9cef0137569e5c752403cb9fe2a9272f9a831b84b5e5a5e434f05b44"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/verdant-frame-03-v1.png.meta",
+            "sha256": "bd946b7eb2401889f39db9f8a24313c7e2ed16181a5e8e64be2b7a3e81829d0b"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/verdant-frame-04-v1.png",
+            "sha256": "1228d8b459799613bd3b5886e2397a917b09d2bec10caa27bff8bb5f855eced4"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/verdant-frame-04-v1.png.meta",
+            "sha256": "dc2462a74437ae40f99bc92900f68a0edeb079c2fa38b107670480f731b74b9f"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/verdant-frame-05-v1.png",
+            "sha256": "66089357a258fb934205405c7f638d313b6069936dadfe071fdcb69d9d7d3f88"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/verdant-frame-05-v1.png.meta",
+            "sha256": "1803cb378f69c81bfe4211854b46dc9f243a02e93126b65099c4c34cd5d1a831"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/verdant-frame-06-v1.png",
+            "sha256": "a993fc1d700cf33cfc13f4d8e6c50de1cbd607b0e96a61b8ec08f0b8231e4b6b"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/verdant-frame-06-v1.png.meta",
+            "sha256": "63a1eba639b1f7fffa672fefb1d7e5f9454a72fb75252722a764d1d0b0b15ebf"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/verdant-frame-07-v1.png",
+            "sha256": "d29131a8e407625e6771333699fab385f578963b9a8abfa602344a5b257174c7"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/verdant-frame-07-v1.png.meta",
+            "sha256": "ab71b2e7e598c057444aeac8b5fe7435057f5aad2ca12ec588469cf9273c72fb"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/verdant-frame-08-v1.png",
+            "sha256": "8e0008744595dc7f4a8dc00775ea6143416a688986ae23b63e4703de0de42a47"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/verdant-frame-08-v1.png.meta",
+            "sha256": "a95454768de1c372dd755cc54b8227bed0fb990009b1700d11bff33250252e6d"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/volt-frame-01-v1.png",
+            "sha256": "1f3d4ce98929e3b7e0570141c63b83d30007a921e7a40ad6ccbdbc264185afca"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/volt-frame-01-v1.png.meta",
+            "sha256": "67c9354c1ab0223d8e27fe59f696cf5282690a8099fe92ade77733e814fb4b80"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/volt-frame-02-v1.png",
+            "sha256": "f95a5e1ca25280161a7728189670d0d78e63331662db3f7877e458b57c83c232"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/volt-frame-02-v1.png.meta",
+            "sha256": "1e5dc8fac445f679134ea5268d731e98a281d5bbbb0e6812dd26c81f713ee191"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/volt-frame-03-v1.png",
+            "sha256": "50fc40a913b5449cbcc8c60640f2d891268f7ee427b2801e36edf7bf18c7f54f"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/volt-frame-03-v1.png.meta",
+            "sha256": "a9d087f134c5d7614ee9bce4bf2b7d8d3ad2cd301f05f1bc19cd116972bce00c"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/volt-frame-04-v1.png",
+            "sha256": "7ec34f0b427554f628250a54ea53de7c72a1583dbff29e2ca546eab2840c9daf"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/volt-frame-04-v1.png.meta",
+            "sha256": "e0d9fc91196dfabfd2fefe9452c7bb8367ce1c35bd7df57a1dbaa37bacbcfc4a"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/volt-frame-05-v1.png",
+            "sha256": "a2a090ff515fc7c260f264dd478990c29ef1836e8ec37d818a07eedf862013db"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/volt-frame-05-v1.png.meta",
+            "sha256": "3ee9c2d2ca76aef29f15312d1f87eccf36264f7be66b1931c8e1721ea7a91920"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/volt-frame-06-v1.png",
+            "sha256": "0fd4fe10f62452a00b350b501910c67b3def85078570aef4ba89fe82329d2d93"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/volt-frame-06-v1.png.meta",
+            "sha256": "701fe473672fd9e4bb601cd48b488dd16b008de0a568d3ecc3268943ea9ef74e"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/volt-frame-07-v1.png",
+            "sha256": "7a7fa36b7f592aa079dc4b6d0dc5c915bc24ef6783798f143ac0d9d15d2506fe"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/volt-frame-07-v1.png.meta",
+            "sha256": "61fb2f3f85af92a7d1ae011b75226ca1a0634af24d6d31e7cba5ce29042510ef"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/volt-frame-08-v1.png",
+            "sha256": "013c903b23d86a768ce3998be49b9ae1655777ed45025e4877eddfd94415f610"
+        },
+        {
+            "path": "Assets/Resources/SkyPulse/characters/roster/volt-frame-08-v1.png.meta",
+            "sha256": "d0ca9d42eba968c3bc52774d9bf8261d619bee75f265e80b893f499434612fac"
+        },
+        {
+            "path": "Assets/Resources/SkyPulsePublicLinks.json",
+            "sha256": "7723d668b279f7826a962b3cfb386f47eea2ce6b1fed090d53ebb7eb0493a476"
+        },
+        {
+            "path": "Assets/Resources/SkyPulsePublicLinks.json.meta",
+            "sha256": "8b45031efadf9ba80feaab59653b75837461e9b8e75f4b5cdb06c84ed2ea8acc"
+        },
+        {
+            "path": "Assets/Scenes.meta",
+            "sha256": "1d35e050602970f2aa065f42611ae621f4fb7d8704fabeee983a23bd5f23db64"
+        },
+        {
+            "path": "Assets/Scenes/SkyPulse.unity",
+            "sha256": "559ca9680dcb6f841f1d6e68f273e068d6af595b7e047619c853b2e2175aea15"
+        },
+        {
+            "path": "Assets/Scenes/SkyPulse.unity.meta",
+            "sha256": "517caf9b9d042a7e98de0d54877713e383b57cf9098e94bb81ca59a4f04bfec9"
+        },
+        {
+            "path": "Assets/Scripts.meta",
+            "sha256": "25b4d1a1bef77ee0fae9ef6d7a48df624f0b53c837df527c641a4dbe1fb63604"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseBirdProgression.cs",
+            "sha256": "1a1c01342e7b24452835109d624ac88d1d392067284ac0cd9be358a68465ccc0"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseBirdProgression.cs.meta",
+            "sha256": "66904742a4d81fbdabc2b957c22060fe1e8b79c0e7aedaf41b53da60816da0ee"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseBirdRig.cs",
+            "sha256": "34d222c47cad692e1fd83a6c76004aee08f587dc0b79f97704c7dd144ce3ff73"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseBirdRig.cs.meta",
+            "sha256": "1e98a83dc12de9225d08174e52644e385ecb9147e008bdda4014415ecd11edac"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseBlackoutCampaign.cs",
+            "sha256": "37e6fdc0b2dce5c978a0cb1d075e53bfae1f48dfb4a76e4685e17408f815d083"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseBlackoutCampaign.cs.meta",
+            "sha256": "96d99b3a2cc4de80e39fcd37e1a1d64226767d97245a615f0e6693d5eca1b13a"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseBlackoutGraphic.cs",
+            "sha256": "356b565e022cb186785270a6e2cd33a502a9f376285ed0cee816993c64a1befa"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseBlackoutGraphic.cs.meta",
+            "sha256": "e1f22aef1b02e58a7f877a5f29ef61a82efad0f589b9187edfc1dd7938c8bcf1"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseBootstrap.cs",
+            "sha256": "ece7b674b01bc9b2a7df94a5842ef056d3cf4e30df2d0b63a042f7ac7f799f3c"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseBootstrap.cs.meta",
+            "sha256": "a76080b47a8afe7594f8665aefa5fe4a4171c58df3685a414f59873c539d247a"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseButtonFeedback.cs",
+            "sha256": "d61cfd21b8b37a1cc73217e5a1ac8aaed9b1843f0fb8deaebc76108f9f8cd6df"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseButtonFeedback.cs.meta",
+            "sha256": "d4835a766dd50da0ecdaadc45c13b154c1d2a9b0c7b85600aa51a7a25bd382a2"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseCircuitGraphic.cs",
+            "sha256": "9ceb6adb83ffc3f6671770881853e4b315030ebfc9e448f5f9e4bd9643e86616"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseCircuitGraphic.cs.meta",
+            "sha256": "402dd28d03215260c5f583e1056ee93104cd1b0f7f6b10ae825126f9a6fa0d8a"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseDailyMissions.cs",
+            "sha256": "10157b808de4de3ee309b00a019ee43b4faeb11be50f8276f46d2c105b7ea8be"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseDailyMissions.cs.meta",
+            "sha256": "6c8a1635b7b269df038aef757e444e28c2aa88a89b174b3e6290105ff738e7df"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseDailyRelay.cs",
+            "sha256": "ad7eb4a45b75de015cb1c3ecbd4dc5169765a9293613ada55042f23d9eebf2e2"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseDailyRelay.cs.meta",
+            "sha256": "fa4563e75326a902550c4d08b75479022dc5e226b7dc24eaf200f7631953ddfc"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseDepthStage.cs",
+            "sha256": "b707f7f666d297213823f406cca93db9ed61c95b1ad0dee84e8932d804cff5a2"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseDepthStage.cs.meta",
+            "sha256": "57370145f25f688240df0c4cc9f06c625d095a4616b8fbbd7f1839ed5d417d6e"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseFlightEffects.cs",
+            "sha256": "4b8bf951efd78b814939cfa73566285151c953132e18ae546a8a0948c491d197"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseFlightEffects.cs.meta",
+            "sha256": "5b4cec2309a91e0d4ad0cfda950221e988ba51834bfc26a2c16af7c2fd2c1ef2"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseFlightEnvironment.cs",
+            "sha256": "8c73624ba5c294d03151621d3755cf50a2513920fe7bf7db17a5a02da9688a18"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseFlightEnvironment.cs.meta",
+            "sha256": "f50eff85cebb424ef9a97e656c664b09ff0d7de20e358e028716d607f69ec019"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseHeistBoard.cs",
+            "sha256": "6da33a1a25d73f229d183312de000e7512a90a955f9533b336d87eae2794dd3d"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseHeistBoard.cs.meta",
+            "sha256": "e3e890bf9e525c1a10610d1e88fd29aba7fd9cab565136b13eeabc09faee66ed"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseHolographicText.cs",
+            "sha256": "9e95ba55720431817ede483d700b561e410d23b5e63a63072956b226b3d2296e"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseHolographicText.cs.meta",
+            "sha256": "75c85d917eb4d7c1f1146b627692a4debac387b5b27101eaa23a4dbe70faa301"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseInputFence.cs",
+            "sha256": "ccf585a47e7bb3d401c4358d792209b548185f755b27b494a368ce7838ec7b25"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseInputFence.cs.meta",
+            "sha256": "4348aa168d079c9a6e8068b49cb5064fec68833057a8ab19c8e71cb892ba6d78"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseMissionModels.cs",
+            "sha256": "2966173db2cd29644df19e99126a13d93f528897bf7153a0ff80938efc874605"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseMissionModels.cs.meta",
+            "sha256": "5a7bbf2377fe79a43154512431f0ecba882124b6839c32b7fa7241456a8f3167"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseNativeGame.Audio.cs",
+            "sha256": "1921d6827272eb8a9f97fc6786be310ed7a245d4b2eb5e484bc60a629a29f746"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseNativeGame.Audio.cs.meta",
+            "sha256": "9b23edf6217a692cd96c0d4f4ded1683c7afb392a9f8069b37de041460691ab6"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseNativeGame.BirdProgression.cs",
+            "sha256": "1f69852413054c30072410832ca9f688f4095fd3c37a5cff288d330e3337b871"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseNativeGame.BirdProgression.cs.meta",
+            "sha256": "7fbc6197145331357d865525311bc9bd32fa1bcdc4a3efaa201f634d5e560c58"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseNativeGame.Blackout.cs",
+            "sha256": "9507b45b75c0652880cecee8043f864328ab47cc62ccb4ce03707b7f3844fcd0"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseNativeGame.Blackout.cs.meta",
+            "sha256": "4beff279f5cdfe6a584eee043507eb6487f2a17ccc1af72a72398931614e3ae7"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseNativeGame.Cinematic.cs",
+            "sha256": "aecaceb4a02206b3f402e43698b89d80448348cda0732beeed9360ac5bc58777"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseNativeGame.Cinematic.cs.meta",
+            "sha256": "c5424b1319fefdd6947453e1f4db174fdad7f947ca32683bf3f3f392b70eaad3"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseNativeGame.Controls.cs",
+            "sha256": "b5b9653b97dcfa8f07731f1ba930c3382b9f71bae6050359ee2e165887334da3"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseNativeGame.Controls.cs.meta",
+            "sha256": "9c8cd80add90539187c326b3f3f3df42626ff97dc709c052a67ec865615f4266"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseNativeGame.Depth.cs",
+            "sha256": "89d30d35bc35c2da878fc4347940e07f0ad252a1549522702081918b2de6d0e6"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseNativeGame.Depth.cs.meta",
+            "sha256": "679c621c18400744ac69c474bb8f56acbdfa3caf0e5ffcb4b5c9821b02f0823d"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseNativeGame.Environment.cs",
+            "sha256": "1a2fe849abd4e02be08b40c65d05de5832cbaaa1fdd870345899a4c0128cd8ec"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseNativeGame.Environment.cs.meta",
+            "sha256": "1f1f044eed2c41ad190baf3152998626605c798608f939ab2d787cb10e28fc28"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseNativeGame.Guide.cs",
+            "sha256": "f664766d08520bc88247e6cf2b5373dbfe5e14796c95dba3cfc9f1de1a7921b1"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseNativeGame.Guide.cs.meta",
+            "sha256": "c25b2a04f036ef41ae3106d3d37831e898d9e450e2d58625a9b0f8dee527a838"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseNativeGame.Hangar.cs",
+            "sha256": "2ef1db7ae03b6b0c003258c2aba91f2b5cd2b142233f4595ac7b777e92cc7ef1"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseNativeGame.Hangar.cs.meta",
+            "sha256": "a670b06fd2b0369c81d116e04e19b7819f5c5e50e6af53d9e5c5f4265722c92c"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseNativeGame.Missions.cs",
+            "sha256": "96e1929ceee2a45f969be85662e9bf29bd901490561d170044b4072468bade95"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseNativeGame.Missions.cs.meta",
+            "sha256": "38d9d2a006a1c16bab4680611fee202499efc6425e3f17b6a09cddb5227c5a1b"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseNativeGame.PipeVisuals.cs",
+            "sha256": "220ad836e8fd35437db921692adc9c131b63e01ad052ce956fce25cd6237a8b3"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseNativeGame.PipeVisuals.cs.meta",
+            "sha256": "c8fd71ff69f10e4fad0d9507e6189d90dad7c1bf04e17577bca39c57322b76ba"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseNativeGame.Presentation.cs",
+            "sha256": "338ae6fb20461098446af5cabd305a03ac4637c10a0f7dd7a7597fe16050a5a3"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseNativeGame.Presentation.cs.meta",
+            "sha256": "6049f739f9813153af4769f7d17cf7afbc1e06f4e375fa32a11b3c40d335ddaf"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseNativeGame.TechTree.cs",
+            "sha256": "536affe3244aea498e88e969ca013ae1b91afb3b687aa7bce7cdd2ca2118d4d2"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseNativeGame.TechTree.cs.meta",
+            "sha256": "08e2f949d81bfa62d455948a38dfca0c16df4a6beb11d95a3390a8f2d85d33d1"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseNativeGame.cs",
+            "sha256": "60474881f6e3c8db763b51d505fe8101197ebe1bfbe195f1f3ae20ceeb8f704a"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseNativeGame.cs.meta",
+            "sha256": "11b7da5f32a8552e040471c8292e3c9af80e83afe6cbc6856de6a5ed6dec7c9a"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulsePressTarget.cs",
+            "sha256": "c796bcf41af73bb8198709a13d6b43605fe38a9636cd9645e28616e64831d73d"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulsePressTarget.cs.meta",
+            "sha256": "dce82eddd5f3f6d52667e8b7508a7c452f30f9ec14e2201ab376775e9cd2764a"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulsePrism.cs",
+            "sha256": "68e619ebc3729f03a8dadba7b2e20f8095a53a245895b234ecb49d8d06a12021"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulsePrism.cs.meta",
+            "sha256": "1fe1108062ab3835a8bc6ab4743d2f0e104256fa8b8d9aaae134219da21e3168"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseProgressionStage.cs",
+            "sha256": "eb94617d7268e57be922e91ec5389d740c1530c8978a8bd9fed5f285bee71db8"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseProgressionStage.cs.meta",
+            "sha256": "882386610d7485262828d595869971e6e7bd52b2ab264f98bceb5d13ec41ee01"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseProgressionSurface.cs",
+            "sha256": "fae7611677b1df140d690e8941ed54bb4073f7b339b62aca8c984be069f3adbe"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseProgressionSurface.cs.meta",
+            "sha256": "29905d56eb213d5443d253c6e4d482f78f84170fa1cb50acdab4a64200adca31"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulsePublicLinks.cs",
+            "sha256": "8427bb1103414ea4610f23293834270c4f230b9335ebd550f79c6d80e198b3b0"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulsePublicLinks.cs.meta",
+            "sha256": "051e82c1fb96aecb652660abd84b0b34ce3b559e48e2865643011722092924a6"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseRelayDeck.cs",
+            "sha256": "49e1a08623dbe93f51f7deeadb6430d44da161700d7750b4d626b6560a1ee0c1"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseRelayDeck.cs.meta",
+            "sha256": "bac75ebfea12a55df8ec4f29863fd18be4c3dfcf26e6207647e3a3f08086c978"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseRelayEnvironment.cs",
+            "sha256": "2bfa17446109ada25f7a5badbb64cd01efb811e6381b531e3ac93c882199fa0d"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseRelayEnvironment.cs.meta",
+            "sha256": "72e9b78607404976d07c964600b98eadd1026f39ae37fd7e39efea70090cfa93"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseRelayGate.cs",
+            "sha256": "745e48b7500df3581847860531d88dfd16427491242ab42a68d131365d4b2598"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseRelayGate.cs.meta",
+            "sha256": "bb18922e759d5fbb2389c10ec95aebb7ee2af3a407808cda38abfda925049740"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseRoundStartSurface.cs",
+            "sha256": "379650ff3d28470bf3eae7abbdb0eada594ce98b865ba97d1149265fa68e4671"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseRoundStartSurface.cs.meta",
+            "sha256": "bb2a62de7a6b40f9dfc8537546e2d3ee851f5fc82e1dd2d17054c7e7eee82bff"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseTechTreeView.cs",
+            "sha256": "266add12b5db099ccd4a35d8c26bf010db3a0b80a48472e7b183fc066a860f8b"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseTechTreeView.cs.meta",
+            "sha256": "61866c771d394d3c4fd1a259a5688b65b6ca4d110623ff0ed8cc72a971e51de4"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseTreePanInput.cs",
+            "sha256": "f41ebf56abc259d66d777f919cf6308c35839171b132bb0e8abc6d18e00a22db"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseTreePanInput.cs.meta",
+            "sha256": "2d52555a3d7d474050677b6820fad54b40cdbe25d8c5a6a812313911520abfd8"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseTreeTouchFeedback.cs",
+            "sha256": "a8a0c101b3f285cea358677bb62297a6c391801f9c1aa8da449582c65df292ca"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseTreeTouchFeedback.cs.meta",
+            "sha256": "4b49f900e263f68d283a0675ef56abb5e3090e51c8cfd5c79e17f0c9a3c26246"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseUiGlyph.cs",
+            "sha256": "53e22a71da5f9f651c61afa05a4201579be880be620e74f294358d19a7928088"
+        },
+        {
+            "path": "Assets/Scripts/SkyPulseUiGlyph.cs.meta",
+            "sha256": "533bed9f82f744e831b808ef10538fb616d3673615ee883525e683947564a785"
+        },
+        {
+            "path": "Assets/Settings.meta",
+            "sha256": "1e9b419222bcb1e2264e689221f93820cb7fc977a9ad89c480806e00081ed49f"
+        },
+        {
+            "path": "Assets/Settings/Build Profiles.meta",
+            "sha256": "3a67215d0b1522a11dfed62f58f363c93aa2a33bf8442ad9eaa79aae7d12869c"
+        },
+        {
+            "path": "Assets/Settings/Build Profiles/New iOS Profile.asset",
+            "sha256": "287aa2b9c3bd4407f689719fc43b2fc13e9f8f0fdac7dfcb5c53e89284dc33de"
+        },
+        {
+            "path": "Assets/Settings/Build Profiles/New iOS Profile.asset.meta",
+            "sha256": "ad6c6e63443aa99722ab503932875aa708346dcfde1dd62cfc1cbb691e866c5f"
+        },
+        {
+            "path": "Packages/manifest.json",
+            "sha256": "305adebb069106097b4ef2e0e68aa47c588ea1848f16a8e07de47d6d497e40d9"
+        },
+        {
+            "path": "ProjectSettings/ProjectSettings.asset",
+            "sha256": "3796879633d396050e618ce09a78584cc3755e0a69d12e877520e4a92a0cc73d"
+        }
+    ]
+}

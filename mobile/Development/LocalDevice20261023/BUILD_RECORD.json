@@ -1,0 +1,58 @@
+{
+  "sourceCommit": "6692cd61aecbddde3b34fd65031186ef2b8cd358",
+  "version": "1.0.0",
+  "build": "18",
+  "bundleId": "com.mcauleemaddison.skypulse",
+  "unityVersion": "6000.6.0f1",
+  "nativeExportUtc": "2026-10-23T11:34:02.9665180Z",
+  "sourceManifestEntriesChecked": 453,
+  "unityExportExitCode": 0,
+  "xcodeBuildExitCode": 0,
+  "codesignDeepStrictVerificationPassed": true,
+  "existingAutomatedQaRecord": "../PipeFinish20261022/QA_RECORD.json",
+  "automatedPassGroups": 23,
+  "metadataCopyUnitTestsPassed": 11,
+  "artworkImagesCovered": 145,
+  "artworkExactByteDuplicateGroups": 0,
+  "originalRulesAndScenesPreserved": true,
+  "uniqueUnityGuids": 235,
+  "deviceInstallSucceeded": true,
+  "deviceLaunchSucceeded": true,
+  "physicalDeviceAcceptance": "failed presentation acceptance; owner requested a follow-up scenery and Blackout objective pass",
+  "sustainedDeviceFrameRateMeasured": false,
+  "deviceMemoryAndThermalsMeasured": false,
+  "appleUploadPerformed": false,
+  "publicReviewSubmitted": false,
+  "mainMerged": false,
+  "warnings": [
+    "Unity-generated native C++ toolchain emits libc++ platform-availability warnings.",
+    "Unity-generated GameAssembly Run Script has no declared outputs.",
+    "Additional Unity-generated native deprecation and framework warnings remain in the saved Xcode log."
+  ],
+  "limitations": [
+    "Automated simulation at 30/60/120 steps does not measure sustained device FPS.",
+    "Artwork coverage and copy checks do not certify exclusive rights or resolve Apple's private similarity comparison."
+  ],
+  "sourceManifestSha256": "c0be15fd4f0e0e879a4e50ae0de4f62fd86a7930d822d256aabf5057a8b4ab3a",
+  "deviceModel": "iPhone 17 Pro Max",
+  "deviceOsVersion": "27.2",
+  "deviceConnection": "localNetwork",
+  "installedOverExistingApp": true,
+  "appUninstalled": false,
+  "installedBinarySha256": {
+    "SkyPulse": "0d1d26862c654da06bc3f7260c9babd5d920d42b4aa1de2feae4368e641581bd",
+    "Frameworks/UnityFramework.framework/UnityFramework": "bf7cda4ddb759eb20e87f7a9bc3142834d62ff95e3469f7c760f0d15a65af595"
+  },
+  "nativeLogSha256": {
+    "unity-export.log": "690e970a4549fc0b02933ea67066196051afa311be23819e8aee77c0fa20f1ab",
+    "xcode-build.log": "64526b4fde5200d0af0bb72f655abbeea55b8e81b04916556d707c06c0c04120"
+  },
+  "ownerReportedIssue": true,
+  "allExportedSourceHashesMatchedAtExport": true,
+  "existingQaRuntimeHashesMatchedAtExport": true,
+  "ownerReportedIssueDetails": [
+    "Endless: added 3D buildings are not polished or visually consistent.",
+    "Blackout: puzzle presentation feels random and lacks an engaging visible objective."
+  ],
+  "ownerRecordingSha256": "fe5e384a8e7d2fbd2be8d0b1d7c687577bfcd4a92317ab90bf49fb592cecf701"
+}
