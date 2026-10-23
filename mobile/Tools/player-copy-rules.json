@@ -1,0 +1,3 @@
+{
+  "pattern": "\\b(?:placeholders?|new\\s+(?:text|label)|your\\s+title\\s+here|lorem\\s+ipsum|todo|fixme|tbd|coming\\s+soon|work\\s+in\\s+progress|under\\s+construction|untitled|insert\\s+(?:text|title|name)|sample\\s+(?:text|title)|temp(?:orary)?\\s+(?:text|label)|demo\\s+text|template\\s+(?:text|title|copy))\\b|\\[(?:your\\s+name|insert\\s+text|title\\s+here)\\]"
+}

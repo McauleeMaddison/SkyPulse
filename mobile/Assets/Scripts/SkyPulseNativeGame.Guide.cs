@@ -28,14 +28,14 @@ namespace SkyPulse.Mobile
             bool relay = homeProtocol == SkyPulseMode.PulseRelay;
             MissionText(modeGuideScreen.transform, "HOW TO PLAY", 865, 46, accent);
             MissionText(modeGuideScreen.transform, endless ? "ENDLESS ROUTE" : relay ? "PULSE RELAY" : "BLACKOUT PROTOCOL", 792, 27, Hex("#bdcfdd"), 870, 60);
-            int topics = endless ? 5 : relay ? 2 : 1;
+            int topics = endless ? 5 : 2;
             for (int i = 0; i < modeGuideTabs.Length; i++) modeGuideTabs[i] = null;
             if (topics > 1)
             {
                 for (int i = 0; i < topics; i++)
                 {
                     int page = i;
-                    string label = endless ? endlessGuideTopics[i] : i == 0 ? "FLIGHT" : "YOUR BIRDS";
+                    string label = endless ? endlessGuideTopics[i] : relay ? (i == 0 ? "FLIGHT" : "YOUR BIRDS") : (i == 0 ? "ROUTING" : "YOUR MISSION");
                     float x = endless ? (i % 3 - 1) * 310 : i == 0 ? -235 : 235;
                     modeGuideTabs[i] = MissionButton(modeGuideScreen.transform, label, x, 642 - (endless ? i / 3 * 170 : 0), endless ? 292 : 450, () => ShowModeGuidePage(page), accent, 148);
                     var marker = CreateImage(modeGuideTabs[i].transform, "Current topic", new Vector2(0, -52), new Vector2(104, 3), accent);
@@ -53,7 +53,7 @@ namespace SkyPulse.Mobile
         void ShowModeGuidePage(int page)
         {
             bool endless = homeProtocol == SkyPulseMode.EndlessRoute, relay = homeProtocol == SkyPulseMode.PulseRelay;
-            modeGuidePage = Mathf.Clamp(page, 0, endless ? 4 : relay ? 1 : 0);
+            modeGuidePage = Mathf.Clamp(page, 0, endless ? 4 : 1);
             foreach (Transform child in modeGuideBody) { child.gameObject.SetActive(false); Destroy(child.gameObject); }
             for (int i = 0; i < modeGuideTabs.Length; i++)
             {
@@ -66,16 +66,25 @@ namespace SkyPulse.Mobile
             }
             if (!endless && !relay)
             {
-                GuideStep(0, "ROTATE THE LIGHT", "Tap a silver prism to rotate its mirror. Power every CORE and the UPLINK together. Crystal splitters send the beam forward and left.");
-                GuideStep(1, "PLAN BEFORE YOU SPEND", "Open PLAN to inspect the next beam and trace cost without spending. Apply the preview when ready. Power RELAY A or B to open its shutter; keep that relay connected.");
-                GuideStep(2, "RESTORE THE NETWORK", "Each rotation costs 1 trace, or 3 at a lit red sensor. Extract before trace runs out. Cleared vaults save a restored system and open the next puzzle immediately.");
+                if (modeGuidePage == 0)
+                {
+                    GuideStep(0, "ROUTE LIVE ENERGY", "Tap a silver mirror to turn it. Power every numbered core and the amber uplink together. All targets must stay live to restore this city system.");
+                    GuideStep(1, "SPLIT AND UNLOCK", "Splitters send light forward and left. Match their input to the arriving beam. Power RELAY A or B to open its matching shutter; keep that relay connected.");
+                    GuideStep(2, "PLAN BEFORE YOU SPEND", "Open PLAN and tap an optic to inspect its next beam and exact trace cost. Confirm ROTATE to spend once. Closing Plan leaves the live circuit unchanged.");
+                }
+                else
+                {
+                    GuideStep(0, "RESTORE EIGHT CITY SYSTEMS", "Each vault restores a named city system. The skyline ribbon responds to live core power; a cleared district stays online in your saved campaign.");
+                    GuideStep(1, "PROTECT YOUR TRACE", "Each turn costs 1 trace, or 3 while a red sensor is powered. Light every core and the uplink before the budget runs out, or restart the vault.");
+                    GuideStep(2, "CHASE GOLD, KEEP MOVING", "Meet the displayed Gold trace target for the top medal. Cleared vaults save once and activate the next puzzle immediately; the eighth completes the network.");
+                }
             }
             else if (relay)
             {
                 if (modeGuidePage == 0)
                 {
-                    GuideStep(0, "ONE TAP, ONE FLAP", "Tap anywhere in the flight area to flap. Pause and menu controls never flap. Stay above the ground and line up with each hoop opening.");
-                    GuideStep(1, "CRYSTALS OPEN GATES", "Collect both randomly placed crystals for the matching numbered gate. At 2/2 its red lasers turn blue and the lock opens immediately. No PULSE button is needed.");
+                    GuideStep(0, "ONE TAP, ONE FLAP", "Tap anywhere in the flight area to flap. Pause and menu controls never flap. Stay above the illuminated deck edge and fly through each hoop opening.");
+                    GuideStep(1, "CRYSTALS OPEN GATES", "Collect both randomly placed crystals for the matching numbered gate. At 2/2 its red lasers turn blue and the lock opens immediately. Fly through the clear opening.");
                     GuideStep(2, "CLEAR TODAY'S CIRCUITS", "Fly through the open hoops and the green exit. Choose the next circuit from the result screen. Four new circuits arrive each UTC day; today's medals reset at refresh.");
                 }
                 else

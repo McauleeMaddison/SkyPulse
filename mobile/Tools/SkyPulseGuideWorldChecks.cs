@@ -33,7 +33,7 @@ public static class SkyPulseGuideWorldChecks
                 Call(game,"SetHomeProtocol",mode);Call(game,"ResetToMenu");
                 var button=(Button)Get(game,"modeHomeGuide");Check(button.gameObject.activeInHierarchy,"Home opens How to Play in "+mode);button.onClick.Invoke();
                 var root=(GameObject)Get(game,"modeGuideScreen");Check(root.activeSelf,"Guide opens from its actual Home button");
-                int pages=mode==SkyPulseMode.EndlessRoute?5:mode==SkyPulseMode.PulseRelay?2:1;
+                int pages=mode==SkyPulseMode.EndlessRoute?5:2;
                 for(int page=0;page<pages;page++)
                 {
                     Call(game,"ShowModeGuidePage",page);yield return null;Canvas.ForceUpdateCanvases();
@@ -43,7 +43,8 @@ public static class SkyPulseGuideWorldChecks
                     if(mode==SkyPulseMode.EndlessRoute&&page==3)Check(Labels(root).Contains("2%")&&Labels(root).Contains("flight handling stays the same"),"Training guide describes its actual benefit without inventing handling changes");
                     if(mode==SkyPulseMode.EndlessRoute&&page==4)Check(Labels(root).Contains("Both parents stay")||Labels(root).Contains("keep both parents"),"Breeding guide explains parent retention");
                     if(mode==SkyPulseMode.PulseRelay&&page==0)Check(Labels(root).Contains("opens immediately")&&Labels(root).Contains("UTC"),"Relay guide covers automatic gates and daily refresh");
-                    if(mode==SkyPulseMode.BlackoutProtocol)Check(Labels(root).Contains("PLAN")&&Labels(root).Contains("immediately"),"Heist guide covers non-spending planning and instant progression");
+                    if(mode==SkyPulseMode.BlackoutProtocol&&page==0)Check(Labels(root).Contains("PLAN")&&Labels(root).Contains("Closing Plan leaves"),"Routing guide explains non-spending planning and unchanged live state");
+                    if(mode==SkyPulseMode.BlackoutProtocol&&page==1)Check(Labels(root).Contains("immediately")&&Labels(root).Contains("Gold")&&Labels(root).Contains("city system"),"Mission guide covers city restoration, trace, Gold and instant progression");
                     if(size.x==640)SkyPulsePlayerExperienceChecks.CaptureUi(game,"guide-"+mode+"-"+page);
                 }
                 if(mode==SkyPulseMode.EndlessRoute)

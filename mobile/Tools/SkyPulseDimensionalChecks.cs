@@ -44,6 +44,7 @@ public static class SkyPulseDimensionalChecks
         Set(game,"equippedSkin",founders.GetValue(0));Call(game,"ApplyEquippedVisuals");
         yield return SkyPulseBirdProgressionChecks.Live(game);
         yield return SkyPulseGuideWorldChecks.Live(game);
+        yield return SkyPulseCopyChecks.Live(game);
         yield return SkyPulseDepthChecks.Live(game);
         yield return SkyPulseCinematicChecks.Live(game);
         yield return SkyPulseRelayGateChecks.Live(game);
