@@ -84,11 +84,15 @@ public static class SkyPulseDimensionalChecks
     {
         Call(game,"SetHomeProtocol",SkyPulseMode.EndlessRoute);Call(game,"StartFlight");Call(game,"UpdateCinematicPresentation",1f);
         var env=(SkyPulseFlightEnvironment)Get(game,"flightEnvironment");var camera=(Camera)Get(game,"flightCamera");
-        Check(env!=null&&env.GetComponentsInChildren<MeshRenderer>(true).Length==36,"Active flight uses two pooled 18-piece real mesh banks");
+        Check(env!=null&&env.WorldScene.GetComponentsInChildren<MeshRenderer>(true).Length==38,"Active flight uses two pooled 18-piece mesh banks plus a constructed sky dome and spherical moon");
+        Check(!((SpriteRenderer)Get(game,"backgroundRenderer")).enabled&&!((SpriteRenderer)Get(game,"incomingBackground")).enabled&&!((SpriteRenderer)Get(game,"backgroundVeil")).enabled,"Endless displays its constructed world instead of the flat city images");
         Check(camera.orthographic&&camera.transform.position==new Vector3(0,0,-10)&&camera.nearClipPlane<1&&camera.farClipPlane>30,"Original orthographic camera contains the architecture depth range");
-        Check(env.GetComponentsInChildren<Collider>(true).Length==0&&env.GetComponentsInChildren<Collider2D>(true).Length==0&&env.GetComponentsInChildren<Camera>(true).Length==0,"Scenery owns no colliders or extra camera");
-        foreach(var r in env.GetComponentsInChildren<MeshRenderer>(true))Check(r.sortingOrder<0&&r.sharedMaterial.shader.isSupported,"All scenery stays behind gameplay with supported shader");
+        Check(env.WorldScene.GetComponentsInChildren<Collider>(true).Length==0&&env.WorldScene.GetComponentsInChildren<Collider2D>(true).Length==0,"Scenery owns no collision shapes");
+        Check(env.WorldCamera!=camera&&!env.WorldCamera.orthographic&&env.WorldCamera.cullingMask==(1<<30)&&env.WorldImage.width==720,"Dedicated perspective scenery camera has a bounded mobile render target");
+        foreach(var r in env.WorldScene.GetComponentsInChildren<MeshRenderer>(true))Check(r.sortingOrder<0&&r.sharedMaterial.shader.isSupported,"All scenery stays behind gameplay with supported shader");
         var meshes=(Mesh[])Get(env,"silhouettes");Check(meshes.Length==12&&new HashSet<Mesh>(meshes).Count==12&&meshes.All(m=>m.bounds.size.z>.2f),"Twelve unique mesh signatures have genuine volume");
+        Check(meshes.All(m=>m.bounds.size.y>25),"District foundations extend beneath the camera instead of showing floating cut ends");
+        Check(meshes.All(m=>m.bounds.max.y>7),"Full-height skyline landmarks occupy the visible world, not a thin bottom strip");
         foreach(int fps in new[]{30,60,120})
         {
             env.ResetView();for(int frame=0;frame<=fps;frame++)env.Present(0,frame*4f/fps,frame/(float)fps,1,Color.cyan,Color.black,false);
@@ -96,6 +100,7 @@ public static class SkyPulseDimensionalChecks
             env.Present(0,4,1,1,Color.cyan,Color.black,false);Check((expected-transforms[1,7].localPosition).sqrMagnitude<.000001f,"Absolute-distance parallax agrees at "+fps+" FPS");
         }
         var items=(Transform[,])Get(env,"scenery");env.Present(0,20,4,1,Color.cyan,Color.black,true);var reduced=items[1,7].localPosition;env.Present(0,30,8,1,Color.cyan,Color.black,true);Check(reduced==items[1,7].localPosition,"Reduced Motion freezes scenery travel and idle drift");
+        Check(items[1,7].localPosition.z!=items[1,1].localPosition.z&&items[1,13].localPosition.z!=items[1,7].localPosition.z,"The three city layers occupy distinct physical depths");
         for(int world=0;world<12;world++)
         {
             env.Present(world,10,1,0,Color.cyan,Color.black,false);env.Present(world,10,1,.5f,Color.cyan,Color.black,false);
@@ -113,7 +118,7 @@ public static class SkyPulseDimensionalChecks
         Check(!((Text)Get(game,"menuHangarProgressText")).gameObject.activeSelf&&!((Text)Get(game,"menuCrystalText")).transform.parent.gameObject.activeSelf,"Relay removes duplicate collection/wallet clutter");
         Check(home.transform.Find("Button · MISSION CONTROL").gameObject.activeSelf&&home.transform.Find("Button · PRIVACY").gameObject.activeSelf,"Mission Control and privacy remain accessible");
         yield return null;SkyPulsePlayerExperienceChecks.CaptureUi(game,"relay-home-refined");
-        Call(game,"SetHomeProtocol",SkyPulseMode.EndlessRoute);Call(game,"ResetToMenu");Check(hangar.anchoredPosition==new Vector2(-187,-355)&&((RectTransform)guide.transform).sizeDelta==new Vector2(660,96),"Switching restores original Endless layout");
+        Call(game,"SetHomeProtocol",SkyPulseMode.EndlessRoute);Call(game,"ResetToMenu");Check(hangar.anchoredPosition==new Vector2(-187,-355)&&((RectTransform)guide.transform).sizeDelta==new Vector2(660,144),"Switching preserves Endless's hangar placement and restores the accessible guide/footer layout");
         var cleanup=new GameObject("Scenery lifecycle fixture");var owned=cleanup.AddComponent<SkyPulseFlightEnvironment>();owned.Build(12);
         var ownedMeshes=(Mesh[])Get(owned,"silhouettes");var ownedMaterials=(Material[])Get(owned,"surfaces");
         UnityEngine.Object.Destroy(cleanup);yield return null;yield return null;
@@ -130,9 +135,10 @@ public static class SkyPulseDimensionalChecks
         {
             Set(game,"routeWorld",worlds.GetValue(world));Set(game,"routeWorldIndex",world);
             var accent=(Color)Get(worlds.GetValue(world),"Accent");var haze=(Color)Get(worlds.GetValue(world),"Floor");
+            env.SetViewport((float)Call(game,"GetViewportWidth"));
             env.Present(world,4,2,1,accent,haze,false);yield return null;
             env.gameObject.SetActive(false);camera.Render();RenderTexture.active=target;image.ReadPixels(new Rect(0,0,750,1334),0,0);image.Apply();var without=image.GetPixels32();
-            env.gameObject.SetActive(true);camera.Render();image.ReadPixels(new Rect(0,0,750,1334),0,0);image.Apply();var with=image.GetPixels32();
+            env.gameObject.SetActive(true);env.Render();camera.Render();image.ReadPixels(new Rect(0,0,750,1334),0,0);image.Apply();var with=image.GetPixels32();
             int differences=0;for(int i=0;i<with.Length;i++)if(Math.Abs(with[i].r-without[i].r)+Math.Abs(with[i].g-without[i].g)+Math.Abs(with[i].b-without[i].b)>8)differences++;
             Check(differences>250,"Real architecture contributes visible camera pixels in world "+world+": "+differences);
             var folder=System.IO.Path.Combine(System.Environment.GetEnvironmentVariable("SKYPULSE_QA_OUTPUT"),"architecture");System.IO.Directory.CreateDirectory(folder);

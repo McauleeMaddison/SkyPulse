@@ -13,6 +13,7 @@ namespace SkyPulse.Mobile
         public SkyPulseSurface Surface;
         public bool Hologram;
         public bool Ambient, ReducedMotion, MotionPaused, Primary, CinematicUnderlay, SoftGlass;
+        public bool ProjectedGlass;
         private float phase;
         private bool previousReduced;
         private float Motion => ReducedMotion ? 0f : phase;
@@ -29,6 +30,15 @@ namespace SkyPulse.Mobile
         protected override void OnPopulateMesh(VertexHelper vh)
         {
             vh.Clear();var r=rectTransform.rect;
+            if(Surface==SkyPulseSurface.Panel&&ProjectedGlass)
+            {
+                var v=UIVertex.simpleVert;v.color=color;v.uv1=new Vector4(r.width,r.height,0,0);
+                v.position=new Vector3(r.xMin,r.yMin);v.uv0=new Vector2(0,0);vh.AddVert(v);
+                v.position=new Vector3(r.xMin,r.yMax);v.uv0=new Vector2(0,1);vh.AddVert(v);
+                v.position=new Vector3(r.xMax,r.yMax);v.uv0=new Vector2(1,1);vh.AddVert(v);
+                v.position=new Vector3(r.xMax,r.yMin);v.uv0=new Vector2(1,0);vh.AddVert(v);
+                vh.AddTriangle(0,1,2);vh.AddTriangle(0,2,3);return;
+            }
             if(Surface==SkyPulseSurface.Backdrop)Backdrop(vh,r);
             else if(Surface==SkyPulseSurface.Panel)Panel(vh,r);
             else if(Surface==SkyPulseSurface.Atmosphere)Atmosphere(vh,r);

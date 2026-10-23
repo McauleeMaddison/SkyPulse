@@ -58,6 +58,13 @@ public static class SkyPulseTouchComfortChecks
             foreach(var mode in new[]{SkyPulseMode.EndlessRoute,SkyPulseMode.PulseRelay,SkyPulseMode.BlackoutProtocol})
             {
                 Call(game,"SetHomeProtocol",mode);Call(game,"ResetToMenu");Fit(game,size);yield return null;
+                var home=(GameObject)Get(game,"homeScreen");
+                var homeControls=home.GetComponentsInChildren<Button>();
+                for(int control=0;control<homeControls.Length;control++)
+                {
+                    Target(homeControls[control],camera,ratio,safe);
+                    for(int other=control+1;other<homeControls.Length;other++)Check(!Bounds(homeControls[control],camera).Overlaps(Bounds(homeControls[other],camera)),"Home touch targets remain disjoint: "+homeControls[control].name+" / "+homeControls[other].name);
+                }
                 var badge=((Text)Get(game,"difficultyText")).GetComponentInParent<Button>();Target(badge,camera,ratio,safe);
                 Call(game,"ShowProtocolDropdown");Call(game,"UpdateProtocolPresentation",1f);Fit(game,size);yield return null;
                 var rows=((RectTransform)Get(game,"modeDropdownClip")).GetComponentsInChildren<Button>();

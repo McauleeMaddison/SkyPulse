@@ -9,6 +9,10 @@ namespace SkyPulse.Mobile
         // stay in their original mode files. Edit the glass shader for finish.
         Material scoreGlassMaterial,scoreTypographyMaterial;
         float scoreFinishClock;
+        Material ScoreGlassFinish
+        {
+            get {if(scoreGlassMaterial==null)scoreGlassMaterial=new Material(Resources.Load<Shader>("SkyPulse/Shaders/ScoreGlass")){name="Shared SkyPulse result glass"};return scoreGlassMaterial;}
+        }
         bool IsResultContent(Transform root)=>missionResultScreen!=null&&(root==missionResultScreen.transform||root.IsChildOf(missionResultScreen.transform));
         RectTransform HolographicScorePanel(Transform parent,string name,Vector2 at,Vector2 size,Color accent)
         {
@@ -19,11 +23,10 @@ namespace SkyPulse.Mobile
         {
             var image=panel.GetComponent<Image>();if(image!=null){image.color=Color.clear;image.raycastTarget=false;}
             foreach(var outline in panel.GetComponents<Outline>())outline.enabled=false;
-            if(scoreGlassMaterial==null)scoreGlassMaterial=new Material(Resources.Load<Shader>("SkyPulse/Shaders/ScoreGlass")){name="Shared SkyPulse result glass"};
             var obj=new GameObject("Holographic result finish",typeof(RectTransform),typeof(CanvasRenderer),typeof(SkyPulseScoreGlass));obj.transform.SetParent(panel,false);obj.transform.SetAsFirstSibling();
             var face=obj.GetComponent<SkyPulseScoreGlass>();var rect=face.rectTransform;
             rect.anchorMin=Vector2.zero;rect.anchorMax=Vector2.one;rect.offsetMin=rect.offsetMax=Vector2.zero;
-            face.color=accent;face.material=scoreGlassMaterial;face.raycastTarget=false;
+            face.color=accent;face.material=ScoreGlassFinish;face.raycastTarget=false;
             face.canvas.additionalShaderChannels|=AdditionalCanvasShaderChannels.TexCoord1;
             return face;
         }

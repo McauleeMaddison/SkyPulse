@@ -28,6 +28,8 @@ component on the scene; do not attach each partial file separately.
 | Original pipe artwork placement / collider anchors | `SkyPulseNativeGame.PipeVisuals.cs` |
 | Tapered exhaust, soft trail and passage sparks | `SkyPulseFlightEffects.cs`, `SkyPulseNativeGame.Cinematic.cs` |
 | Pooled 3D scenery during Endless flight | `SkyPulseFlightEnvironment.cs`, `SkyPulseNativeGame.Environment.cs`, `Resources/SkyPulse/Shaders/FlightArchitecture.shader` |
+| Endless's live perspective world, sky dome and lit moon | `SkyPulseFlightEnvironment.cs` → `Build`, `SetViewport`, `Architecture`; `WorldAtmosphere.shader`, `WorldMoon.shader` under `Resources/SkyPulse/Shaders/` |
+| Mode titles, glass Home controls and footer spacing | `SkyPulseNativeGame.Home.cs` → `ApplyHomeIdentity` |
 | Relay station ribs, turbines and drones | `SkyPulseRelayEnvironment.cs` |
 | Relay's fixed ground guide and pooled 3D deck panels | `SkyPulseRelayDeck.cs`, `Resources/SkyPulse/Shaders/RelayRunway.shader` |
 | Six audio voices, optional cue fallbacks and saved sound switch | `SkyPulseNativeGame.Audio.cs` |

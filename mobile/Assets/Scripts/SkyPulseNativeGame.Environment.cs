@@ -5,7 +5,7 @@ namespace SkyPulse.Mobile
     public sealed partial class SkyPulseNativeGame
     {
         SkyPulseFlightEnvironment flightEnvironment;
-        float sceneryTravel,sceneryAnchorX,sceneryEntry;
+        float sceneryTravel,sceneryAnchorX,sceneryEntry,sceneryHomeTravel;
         int scenerySequence=int.MinValue;
         void ResetFlightEnvironment()
         {
@@ -14,7 +14,11 @@ namespace SkyPulse.Mobile
         }
         void UpdateFlightEnvironment(float dt)
         {
-            bool show=activeMode==SkyPulseMode.EndlessRoute&&(state==FlightState.Playing||state==FlightState.Paused||state==FlightState.Impact||state==FlightState.GameOver);
+            bool home=homeScreen!=null&&homeScreen.activeInHierarchy&&homeProtocol==SkyPulseMode.EndlessRoute;
+            bool show=home||activeMode==SkyPulseMode.EndlessRoute&&(state==FlightState.Playing||state==FlightState.Paused||state==FlightState.Impact||state==FlightState.GameOver);
+            // The original illustrations remain available to the world guide
+            // and material reflections, but never flatten the constructed view.
+            backgroundRenderer.enabled=!show;incomingBackground.enabled=!show;backgroundVeil.enabled=!show;
             if(flightEnvironment==null)
             {
                 var root=new GameObject("Pooled in-flight world architecture");root.transform.SetParent(transform,false);
@@ -22,6 +26,7 @@ namespace SkyPulse.Mobile
             }
             if(flightEnvironment.gameObject.activeSelf!=show)flightEnvironment.gameObject.SetActive(show);
             if(!show||state==FlightState.Paused)return;
+            if(home&&!reduceMotionEnabled)sceneryHomeTravel+=Mathf.Max(0,dt)*.45f;
             if(state==FlightState.Playing)
             {
                 var anchor=pipePool[0];
@@ -37,7 +42,8 @@ namespace SkyPulse.Mobile
             float blend=worldTransitionTimer>0?Mathf.SmoothStep(0,1,1-worldTransitionTimer/WorldTransitionSeconds):1;
             var world=routeWorld??equippedWorld;
             if(flightEnvironment.ReflectionWorld!=routeWorldIndex)flightEnvironment.SetReflection(routeWorldIndex,LoadSprite(world.BackgroundPath).texture);
-            flightEnvironment.Present(routeWorldIndex,sceneryTravel,cinematicClock,blend,world.Accent,world.Floor,reduceMotionEnabled,reduceMotionEnabled?1:Mathf.SmoothStep(0,1,sceneryEntry));
+            flightEnvironment.Present(routeWorldIndex,home?sceneryHomeTravel:sceneryTravel,cinematicClock,blend,world.Accent,world.Floor,reduceMotionEnabled,home||reduceMotionEnabled?1:Mathf.SmoothStep(0,1,sceneryEntry));
+            flightEnvironment.SetViewport(GetViewportWidth());flightEnvironment.Render();
         }
     }
 }

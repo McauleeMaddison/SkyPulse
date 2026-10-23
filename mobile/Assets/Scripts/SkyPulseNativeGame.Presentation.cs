@@ -146,6 +146,7 @@ namespace SkyPulse.Mobile
             if(homeBestCaption!=null)homeBestCaption.text=homeProtocol==SkyPulseMode.EndlessRoute?"PERSONAL BEST":"ENDLESS BEST";
             ApplyHomePlayerView();
             ApplyModeHomeLayout();
+            ApplyHomeIdentity();
         }
         private void ApplyHomePlayerView()
         {
