@@ -6,6 +6,15 @@ not generated concept art. This candidate has not replaced the phone build.
 
 ## Preview files
 
+- `PREVIEW_INDEX.md`: the complete labelled index, with full-size images for all
+  twelve worlds and both building arrangements in each world (24 model views).
+- `Models-Civic.png` / `Models-Residential.png`: the two complete model galleries.
+  Every district is fitted inside the neutral inspection camera, including its
+  roofs and terrain. This is not the gameplay camera.
+- `All-Models-in-Motion.mp4`: all twelve civic models rotating together, 90
+  captured frames at 30 FPS (three seconds).
+- `models/`: full-size 1000 × 1200 model inspections, two per world.
+- `architecture/`: full-size background views for each world, without HUD/pipes.
 - `Worlds-and-Pipes.png` / `Worlds-in-Motion.mp4`: twelve gameplay views, including
   each world's pipe housing and lighting. The movie is twenty captured frames at
   10 FPS: two seconds per tile after the normal district entry reveal.
@@ -20,6 +29,9 @@ not generated concept art. This candidate has not replaced the phone build.
 
 Capture frame rate is not measured iPhone performance. QA selects each milestone
 world directly for its short vignette; the gallery is not a natural 180-gate run.
+`PREVIEW_VALIDATION.json` records the additional complete-model capture, image
+counts, framing checks and video decoding. The shipping scripts and shaders are
+unchanged by this preview-only addition.
 
 ## The design change
 

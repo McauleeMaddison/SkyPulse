@@ -35,24 +35,53 @@ public static class SkyPulseDistrictDetailChecks
         camera.backgroundColor=new Color(.025f,.039f,.064f);var rt=new RenderTexture(1000,1200,24){antiAliasing=2};rt.Create();camera.targetTexture=rt;
         var image=new Texture2D(1000,1200,TextureFormat.RGB24,false);var worlds=(Array)typeof(SkyPulseNativeGame).GetField("Worlds",BindingFlags.Static|BindingFlags.NonPublic).GetValue(null);
         string folder=Path.Combine(Environment.GetEnvironmentVariable("SKYPULSE_QA_OUTPUT"),"district-detail");Directory.CreateDirectory(folder);
-        foreach(int world in new[]{0,4,7,8,10})
+        // Include both arrangements actually used by flight, rather than only
+        // the five examples from the first visual review. Inspection cameras
+        // never change the game's camera or the owner's save.
+        for(int variant=0;variant<2;variant++)
+        for(int world=0;world<worlds.Length;world++)
         {
             var definition=worlds.GetValue(world);var type=definition.GetType();
             material.SetColor("_Tint",(Color)type.GetField("Accent").GetValue(definition));material.SetColor("_Haze",(Color)type.GetField("Floor").GetValue(definition));
             material.SetFloat("_Design",world);material.SetFloat("_Visibility",1);material.SetFloat("_Clock",2);
             var sprite=(Sprite)Call(game,"LoadSprite",(string)type.GetField("BackgroundPath").GetValue(definition));material.SetTexture("_Environment",sprite.texture);
-            proxy.GetComponent<MeshFilter>().sharedMesh=((Mesh[])Get(env,"silhouettes"))[world];
-            int frames=world==0||world==4?90:1;
-            string motion=Path.Combine(folder,world.ToString("00"));Directory.CreateDirectory(motion);
+            var mesh=((Mesh[])Get(env,variant==0?"silhouettes":"residential"))[world];
+            if(mesh==null||mesh.vertexCount==0)throw new Exception("Missing district model: "+world+" / "+variant);
+            proxy.GetComponent<MeshFilter>().sharedMesh=mesh;
+            FrameModel(camera,env.WorldScene,mesh.bounds);
+            int frames=variant==0?90:1;
+            string arrangement=variant==0?"civic":"residential";
+            string variantFolder=Path.Combine(folder,arrangement);Directory.CreateDirectory(variantFolder);
+            string motion=Path.Combine(variantFolder,world.ToString("00"));Directory.CreateDirectory(motion);
             for(int frame=0;frame<frames;frame++)
             {
                 proxy.transform.localRotation=Quaternion.Euler(0,-22+frame*.48f,0);material.SetFloat("_Clock",2+frame/30f);camera.Render();
                 var prior=RenderTexture.active;RenderTexture.active=rt;image.ReadPixels(new Rect(0,0,1000,1200),0,0);image.Apply();RenderTexture.active=prior;
-                File.WriteAllBytes(Path.Combine(motion,frame.ToString("000")+".png"),image.EncodeToPNG());if(frame==0)File.WriteAllBytes(Path.Combine(folder,"world-"+world.ToString("00")+".png"),image.EncodeToPNG());yield return null;
+                var png=image.EncodeToPNG();File.WriteAllBytes(Path.Combine(motion,frame.ToString("000")+".png"),png);if(frame==0)File.WriteAllBytes(Path.Combine(variantFolder,"world-"+world.ToString("00")+".png"),png);yield return null;
             }
+            Debug.Log("DISTRICT_PREVIEW_CAPTURE: "+world.ToString("00")+" / "+arrangement+" / "+mesh.vertexCount+" vertices / "+frames+" frames");
         }
         foreach(var message in ShaderUtil.GetShaderMessages(material.shader))if(message.severity.ToString()=="Error")throw new Exception(message.message);
         camera.targetTexture=null;rt.Release();UnityEngine.Object.Destroy(rt);UnityEngine.Object.Destroy(image);UnityEngine.Object.Destroy(material);UnityEngine.Object.Destroy(proxy);
         Debug.Log("SKYPULSE_DISTRICT_DETAIL_PASS");EditorApplication.Exit(0);
+    }
+    static void FrameModel(Camera camera,Transform scene,Bounds bounds)
+    {
+        // Fit the entire rotating model, including the tallest roofs and island
+        // underside. This changes only the neutral inspection camera.
+        var target=scene.TransformPoint(bounds.center);
+        var direction=new Vector3(7.5f,4.8f,-14.8f).normalized;
+        camera.transform.position=target+direction;camera.transform.LookAt(target);
+        float vertical=Mathf.Tan(camera.fieldOfView*.5f*Mathf.Deg2Rad)*.87f;
+        float horizontal=vertical*camera.aspect,distance=1;
+        for(int angle=0;angle<=8;angle++)
+        for(int corner=0;corner<8;corner++)
+        {
+            var local=bounds.center+Vector3.Scale(bounds.extents,new Vector3((corner&1)==0?-1:1,(corner&2)==0?-1:1,(corner&4)==0?-1:1));
+            var point=scene.TransformPoint(Quaternion.Euler(0,Mathf.Lerp(-22,22,angle/8f),0)*local)-target;
+            float depth=Vector3.Dot(point,camera.transform.forward);
+            distance=Mathf.Max(distance,Mathf.Abs(Vector3.Dot(point,camera.transform.up))/vertical-depth,Mathf.Abs(Vector3.Dot(point,camera.transform.right))/horizontal-depth);
+        }
+        camera.transform.position=target+direction*distance;
     }
 }

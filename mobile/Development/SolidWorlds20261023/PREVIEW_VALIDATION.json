@@ -1,0 +1,595 @@
+{
+  "date": "2026-10-23",
+  "type": "Preview-only addition; no shipping Assets or settings changes",
+  "productionSourceCommit": "4794af1ca9c10da41c81efcd4dbdc23a62c761f8",
+  "captureFixture": "mobile/Tools/SkyPulseDistrictDetailChecks.cs",
+  "fixtureSha256": "896bca02160d009db76cbcaade68d7e1bf60462061a4551cee9a4581168dd864",
+  "unityVersion": "6000.6.0f1",
+  "isolatedCompanyName": "SkyPulseQA20261006",
+  "shippingScriptsAndShadersMatched": 62,
+  "modelInspection": {
+    "worlds": 12,
+    "arrangementsPerWorld": 2,
+    "fullSizeImages": 24,
+    "allModelsFullyFramed": true,
+    "civicFramesPerWorld": 90,
+    "residentialFramesPerWorld": 1,
+    "neutralBackdrop": true,
+    "sameProductionMeshesAndMaterials": true,
+    "cameraIsInspectionOnly": true,
+    "captures": [
+      {
+        "worldIndex": 0,
+        "arrangement": "civic",
+        "vertices": 38652,
+        "frames": 90
+      },
+      {
+        "worldIndex": 1,
+        "arrangement": "civic",
+        "vertices": 30552,
+        "frames": 90
+      },
+      {
+        "worldIndex": 2,
+        "arrangement": "civic",
+        "vertices": 29576,
+        "frames": 90
+      },
+      {
+        "worldIndex": 3,
+        "arrangement": "civic",
+        "vertices": 36640,
+        "frames": 90
+      },
+      {
+        "worldIndex": 4,
+        "arrangement": "civic",
+        "vertices": 49176,
+        "frames": 90
+      },
+      {
+        "worldIndex": 5,
+        "arrangement": "civic",
+        "vertices": 38040,
+        "frames": 90
+      },
+      {
+        "worldIndex": 6,
+        "arrangement": "civic",
+        "vertices": 29712,
+        "frames": 90
+      },
+      {
+        "worldIndex": 7,
+        "arrangement": "civic",
+        "vertices": 45304,
+        "frames": 90
+      },
+      {
+        "worldIndex": 8,
+        "arrangement": "civic",
+        "vertices": 47800,
+        "frames": 90
+      },
+      {
+        "worldIndex": 9,
+        "arrangement": "civic",
+        "vertices": 39096,
+        "frames": 90
+      },
+      {
+        "worldIndex": 10,
+        "arrangement": "civic",
+        "vertices": 33764,
+        "frames": 90
+      },
+      {
+        "worldIndex": 11,
+        "arrangement": "civic",
+        "vertices": 33060,
+        "frames": 90
+      },
+      {
+        "worldIndex": 0,
+        "arrangement": "residential",
+        "vertices": 34592,
+        "frames": 1
+      },
+      {
+        "worldIndex": 1,
+        "arrangement": "residential",
+        "vertices": 28928,
+        "frames": 1
+      },
+      {
+        "worldIndex": 2,
+        "arrangement": "residential",
+        "vertices": 28892,
+        "frames": 1
+      },
+      {
+        "worldIndex": 3,
+        "arrangement": "residential",
+        "vertices": 37452,
+        "frames": 1
+      },
+      {
+        "worldIndex": 4,
+        "arrangement": "residential",
+        "vertices": 46740,
+        "frames": 1
+      },
+      {
+        "worldIndex": 5,
+        "arrangement": "residential",
+        "vertices": 35604,
+        "frames": 1
+      },
+      {
+        "worldIndex": 6,
+        "arrangement": "residential",
+        "vertices": 29028,
+        "frames": 1
+      },
+      {
+        "worldIndex": 7,
+        "arrangement": "residential",
+        "vertices": 42056,
+        "frames": 1
+      },
+      {
+        "worldIndex": 8,
+        "arrangement": "residential",
+        "vertices": 46176,
+        "frames": 1
+      },
+      {
+        "worldIndex": 9,
+        "arrangement": "residential",
+        "vertices": 38284,
+        "frames": 1
+      },
+      {
+        "worldIndex": 10,
+        "arrangement": "residential",
+        "vertices": 33764,
+        "frames": 1
+      },
+      {
+        "worldIndex": 11,
+        "arrangement": "residential",
+        "vertices": 30624,
+        "frames": 1
+      }
+    ]
+  },
+  "worldPreviews": {
+    "gameplayAndPipes": 12,
+    "backgroundViews": 12,
+    "source": "Previously validated current world captures; unchanged, not re-rendered in this addition"
+  },
+  "compilation": {
+    "csharpOrShaderErrors": false,
+    "passMarker": "SKYPULSE_DISTRICT_DETAIL_PASS",
+    "logSha256": "17850a8a0ec66a993f8de0b6ceb645443b12756a96a2b420ad3d6115fb18aae8",
+    "knownEditorIssue": "Existing UnityEditor.Search.SearchDatabase startup ArgumentOutOfRangeException; capture completed and exited 0"
+  },
+  "video": {
+    "file": "All-Models-in-Motion.mp4",
+    "decodedFrames": 90,
+    "capturedFps": 30,
+    "seconds": 3,
+    "width": 1600,
+    "height": 1640,
+    "sha256": "82bdc63b01b3b83be00005b9a5580e4eb28e0c4645d6fa0ab3eab2770866b9eb",
+    "devicePerformanceMeasured": false
+  },
+  "images": {
+    "models/01-neon-city-civic.png": {
+      "sha256": "c42463f943239474e62bb2758b660a2a460a32fec83decdae40911853f5c6653",
+      "width": 1000,
+      "height": 1200,
+      "contentBounds": [
+        254,
+        171,
+        750,
+        1006
+      ]
+    },
+    "models/01-neon-city-residential.png": {
+      "sha256": "b31ab0b8891b1f152d83a7efcf5725ec6f568ff272389a2763a01c54fd91308b",
+      "width": 1000,
+      "height": 1200,
+      "contentBounds": [
+        232,
+        186,
+        773,
+        996
+      ]
+    },
+    "models/02-aurora-rise-civic.png": {
+      "sha256": "2db9b5e05d234862fab3f23d43f7324a07245336e4b919aa47668ba8f81ffbce",
+      "width": 1000,
+      "height": 1200,
+      "contentBounds": [
+        265,
+        168,
+        739,
+        1009
+      ]
+    },
+    "models/02-aurora-rise-residential.png": {
+      "sha256": "2c1324e21220f694d5a65123e9d8097f66d081d9be98c146dd5383fd484b725d",
+      "width": 1000,
+      "height": 1200,
+      "contentBounds": [
+        244,
+        183,
+        762,
+        998
+      ]
+    },
+    "models/03-solar-drift-civic.png": {
+      "sha256": "d1cff86a95c0c6415d40cea9b4ebc39400e37f9c49c126fb39e57598ed75d3f1",
+      "width": 1000,
+      "height": 1200,
+      "contentBounds": [
+        211,
+        188,
+        780,
+        963
+      ]
+    },
+    "models/03-solar-drift-residential.png": {
+      "sha256": "e28a2890549e952c27392d0987c7cda05f3ce7ab41504b35b6ed3dc3d22cc941",
+      "width": 1000,
+      "height": 1200,
+      "contentBounds": [
+        211,
+        188,
+        781,
+        963
+      ]
+    },
+    "models/04-midnight-tide-civic.png": {
+      "sha256": "04b4706f04f64b6f634f2864fa4be8ed185dd26f9e6d1336bed5d8ad386e2994",
+      "width": 1000,
+      "height": 1200,
+      "contentBounds": [
+        250,
+        170,
+        747,
+        997
+      ]
+    },
+    "models/04-midnight-tide-residential.png": {
+      "sha256": "e0d84907923f236d15f47b8dca3a63d0057acce3d801685a6ff0d4a7253228b8",
+      "width": 1000,
+      "height": 1200,
+      "contentBounds": [
+        248,
+        170,
+        749,
+        996
+      ]
+    },
+    "models/05-velvet-dawn-civic.png": {
+      "sha256": "99944f79a080e5aed60294fde878372a84f1ba63cba31440c9c829852bc6adbd",
+      "width": 1000,
+      "height": 1200,
+      "contentBounds": [
+        244,
+        182,
+        766,
+        997
+      ]
+    },
+    "models/05-velvet-dawn-residential.png": {
+      "sha256": "2b7b51052461e1c90e6d478f03b6f7a48eedb7cec9a782a1b5c65fa5e4eb2ab7",
+      "width": 1000,
+      "height": 1200,
+      "contentBounds": [
+        244,
+        182,
+        766,
+        997
+      ]
+    },
+    "models/06-crystal-night-civic.png": {
+      "sha256": "83ac5f590e3d88118799ae6b505cb894a77953e5c9dda108983a34bef2cb35b2",
+      "width": 1000,
+      "height": 1200,
+      "contentBounds": [
+        268,
+        159,
+        733,
+        1018
+      ]
+    },
+    "models/06-crystal-night-residential.png": {
+      "sha256": "a210e76312e709d8fc8bbcd067dd9399a99b4b1d69a8503c15a2c553fbfac6ce",
+      "width": 1000,
+      "height": 1200,
+      "contentBounds": [
+        251,
+        170,
+        751,
+        1010
+      ]
+    },
+    "models/07-jade-horizon-civic.png": {
+      "sha256": "46d3c6e107aecf0dd5b74e73274f7fcc2bd4ff8455ba2468f6100c0f52ae050f",
+      "width": 1000,
+      "height": 1200,
+      "contentBounds": [
+        237,
+        184,
+        766,
+        1000
+      ]
+    },
+    "models/07-jade-horizon-residential.png": {
+      "sha256": "4b0c9d865c74075da70732b35a990fb3148557cf02c24ffdd074ea1f122e6009",
+      "width": 1000,
+      "height": 1200,
+      "contentBounds": [
+        231,
+        188,
+        772,
+        997
+      ]
+    },
+    "models/08-violet-rain-civic.png": {
+      "sha256": "ba21f091a8d5acf99083a68fbbed232bebd6d33473127215af0ba119491c496c",
+      "width": 1000,
+      "height": 1200,
+      "contentBounds": [
+        264,
+        156,
+        730,
+        991
+      ]
+    },
+    "models/08-violet-rain-residential.png": {
+      "sha256": "350290b064ec26b5a0e196cbb9b2d069b5de98477bfd121431c4c890f20d2f7b",
+      "width": 1000,
+      "height": 1200,
+      "contentBounds": [
+        254,
+        162,
+        740,
+        985
+      ]
+    },
+    "models/09-eclipse-civic.png": {
+      "sha256": "59fa01f3018d7d1993b1b37045511598c78fe6ca111c1506cba2ac8e59708315",
+      "width": 1000,
+      "height": 1200,
+      "contentBounds": [
+        254,
+        169,
+        743,
+        1008
+      ]
+    },
+    "models/09-eclipse-residential.png": {
+      "sha256": "0cd122d1d4cfb00e9ed24dee168d162f40e60f0cb3efdffbab5f6af420b68ec6",
+      "width": 1000,
+      "height": 1200,
+      "contentBounds": [
+        237,
+        181,
+        759,
+        1000
+      ]
+    },
+    "models/10-cobalt-storm-civic.png": {
+      "sha256": "b3cd3a2cac8e8cf10dacfabd1ecfb6cefc62bed48cd73054a2f3f54096ceb3f8",
+      "width": 1000,
+      "height": 1200,
+      "contentBounds": [
+        244,
+        168,
+        749,
+        980
+      ]
+    },
+    "models/10-cobalt-storm-residential.png": {
+      "sha256": "55c66a2519da2485c99ae4b0fd9a1fdabca860cd773032fd83731bb810ecb16f",
+      "width": 1000,
+      "height": 1200,
+      "contentBounds": [
+        253,
+        163,
+        741,
+        985
+      ]
+    },
+    "models/11-amber-skies-civic.png": {
+      "sha256": "643d36689bd04522ea5f25a7c290e9f48d560c957e66a47462718759ac54197b",
+      "width": 1000,
+      "height": 1200,
+      "contentBounds": [
+        223,
+        190,
+        783,
+        988
+      ]
+    },
+    "models/11-amber-skies-residential.png": {
+      "sha256": "145df5a65ee735409cd13774673f099ae573dd1acbca5130cda5292302ee17f4",
+      "width": 1000,
+      "height": 1200,
+      "contentBounds": [
+        218,
+        193,
+        788,
+        985
+      ]
+    },
+    "models/12-polar-glow-civic.png": {
+      "sha256": "09fc1bb050380a80e43eb6d0c7f55c15efc42cf3eb46bbe8c812561eb2dadadc",
+      "width": 1000,
+      "height": 1200,
+      "contentBounds": [
+        239,
+        189,
+        763,
+        1004
+      ]
+    },
+    "models/12-polar-glow-residential.png": {
+      "sha256": "8b74aebad3dd1582e53475a4973876b8c1c59a7b9c8dfb8f9eefb4906e0fd5a6",
+      "width": 1000,
+      "height": 1200,
+      "contentBounds": [
+        239,
+        189,
+        763,
+        1004
+      ]
+    },
+    "worlds/01-neon-city.png": {
+      "sha256": "7f2f1bbb97ececcb0dd66ab72cc09955e33a3d0cddefafacdd1e6881a99e0744",
+      "width": 750,
+      "height": 1334
+    },
+    "worlds/02-aurora-rise.png": {
+      "sha256": "99c2e71db5e3fb035356558dfb10b545033d646e4519ef6bf6980c500152c7fe",
+      "width": 750,
+      "height": 1334
+    },
+    "worlds/03-solar-drift.png": {
+      "sha256": "b326ca2ca83b7514b70aa21de12f4dc5be3163e7e1d62847d149a532d45a455c",
+      "width": 750,
+      "height": 1334
+    },
+    "worlds/04-midnight-tide.png": {
+      "sha256": "427ee986123b29deedae23b310f78b608f9322cb27584ed7b388b1856cd4d129",
+      "width": 750,
+      "height": 1334
+    },
+    "worlds/05-velvet-dawn.png": {
+      "sha256": "70799d9e35a8489850440753e1875e8191ee452d24c6910651d015be91ead27e",
+      "width": 750,
+      "height": 1334
+    },
+    "worlds/06-crystal-night.png": {
+      "sha256": "38c073b219b08785e6dfdc892059ef01afb7769d3c4058abfc91633face18777",
+      "width": 750,
+      "height": 1334
+    },
+    "worlds/07-jade-horizon.png": {
+      "sha256": "203dff4c4fa5f83b62ac37aa10ab1cc71e40569366f472e591bf961bdb8aa93d",
+      "width": 750,
+      "height": 1334
+    },
+    "worlds/08-violet-rain.png": {
+      "sha256": "8827b49612cadfe6f554827af781fb31faec62feb269871f118decf1d2e9d45a",
+      "width": 750,
+      "height": 1334
+    },
+    "worlds/09-eclipse.png": {
+      "sha256": "caaf8a480161e0e493351f217dfc00cd80dd37eaec1ed2ac8aac44ade4470fb3",
+      "width": 750,
+      "height": 1334
+    },
+    "worlds/10-cobalt-storm.png": {
+      "sha256": "987fbe3783ee91764b69a1cf7541ee51543d3c8d99335ff02e5ed97ef7b5e874",
+      "width": 750,
+      "height": 1334
+    },
+    "worlds/11-amber-skies.png": {
+      "sha256": "f1b1938ac91b19f8122dcb4669a53801ed5255dd8be530595772c37ae9b052f5",
+      "width": 750,
+      "height": 1334
+    },
+    "worlds/12-polar-glow.png": {
+      "sha256": "9c77aad2433e5fca3c959157d37ce94c85730db8418028929920363b9688b44f",
+      "width": 750,
+      "height": 1334
+    },
+    "architecture/01-neon-city.png": {
+      "sha256": "a144ff4a5f33e0ee3770fb88acd982a9250daa520da31c1b73bed1dd3b8d3737",
+      "width": 750,
+      "height": 1334
+    },
+    "architecture/02-aurora-rise.png": {
+      "sha256": "1b1d30e21c1c2548ebe5ff1f6bbaf28f3d351cce4e79c873c3365502f56c4df1",
+      "width": 750,
+      "height": 1334
+    },
+    "architecture/03-solar-drift.png": {
+      "sha256": "f4dccc28dd7653eddd10c3522334f73762bf0c3b9e7c6fd3b9bbc45cc4b74153",
+      "width": 750,
+      "height": 1334
+    },
+    "architecture/04-midnight-tide.png": {
+      "sha256": "39f7fa0b9c7c323cb45fb322e3783b01e7643f23bc8a68660d8ba30479174202",
+      "width": 750,
+      "height": 1334
+    },
+    "architecture/05-velvet-dawn.png": {
+      "sha256": "39b2eb6872b553be12ae0c1de144367d33d0b5477bab148003695ab88abdc8b9",
+      "width": 750,
+      "height": 1334
+    },
+    "architecture/06-crystal-night.png": {
+      "sha256": "3bc920e5f5357956867864d0dc0228f0872fb7f1c1fdde0eee94b703bc465e40",
+      "width": 750,
+      "height": 1334
+    },
+    "architecture/07-jade-horizon.png": {
+      "sha256": "2fb4a1a421958102df0f341bd08ec3107168b8ed6be2d94ef1313609d7893de5",
+      "width": 750,
+      "height": 1334
+    },
+    "architecture/08-violet-rain.png": {
+      "sha256": "325a05b9b4bb773a2bf7c567a252c51ab13cde1f0edfa0df921be6b22b7625d1",
+      "width": 750,
+      "height": 1334
+    },
+    "architecture/09-eclipse.png": {
+      "sha256": "9b05082850ca35549ce5989cd7a518f64634b6862953b9dcd9dff3e8533bdcb8",
+      "width": 750,
+      "height": 1334
+    },
+    "architecture/10-cobalt-storm.png": {
+      "sha256": "71f9f1167ac307c9875f7eb8e52ad45dc0a85df983d4e19d7db12bc17e0d60a2",
+      "width": 750,
+      "height": 1334
+    },
+    "architecture/11-amber-skies.png": {
+      "sha256": "33a41b3c4439b093d9bd02a0441320d886c26b4e2322189b881c1e84b91de2e0",
+      "width": 750,
+      "height": 1334
+    },
+    "architecture/12-polar-glow.png": {
+      "sha256": "2db2a6bad07f3f8a42c613226487226035243ffe5f4ba27fba93a748a7c83315",
+      "width": 750,
+      "height": 1334
+    },
+    "Models-Civic.png": {
+      "sha256": "27a52a97d0b40b7926d5845417d3e87079bc2394a955bc5015719bfbc9906f60",
+      "width": 1600,
+      "height": 1640
+    },
+    "Models-Residential.png": {
+      "sha256": "5b91082dbe9cacf27f3f4379a1abe8ee939db1e02516787214660daa83fea04b",
+      "width": 1600,
+      "height": 1640
+    },
+    "All-Models-in-Motion.decoded.png": {
+      "sha256": "2a160e230b00ed6e25991b1fe8ad7498d734bcf8fe53921a6c27e738fdaa11d4",
+      "width": 1600,
+      "height": 1640
+    }
+  },
+  "delivery": {
+    "phoneInstalled": false,
+    "testFlightUploaded": false,
+    "submittedForPublicReview": false,
+    "mainMerged": false
+  }
+}
