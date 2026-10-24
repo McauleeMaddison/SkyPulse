@@ -412,7 +412,7 @@ namespace SkyPulse.Mobile
             for(int side=-1;side<=1;side+=2)Beam(b,at+new Vector3(side*width*.46f,.08f,-depth*.55f),at+new Vector3(side*width*.46f,height-.045f,-depth*.55f),.030f,.045f,Edge);
             CapturePart("Pavilion",b,false);
         }
-        static void WindowBay(SkyPulseMeshBuilder b,Vector3 at,Vector3 p,Vector3 q,Vector3 r,Vector3 s,Vector3 na,Vector3 nb,Color wall,Color glass)
+        internal static void WindowBay(SkyPulseMeshBuilder b,Vector3 at,Vector3 p,Vector3 q,Vector3 r,Vector3 s,Vector3 na,Vector3 nb,Color wall,Color glass)
         {
             const float left=.13f,right=.87f,bottom=.19f,top=.76f;
             var l0=Vector3.Lerp(p,q,left);var l1=Vector3.Lerp(s,r,left);var r0=Vector3.Lerp(p,q,right);var r1=Vector3.Lerp(s,r,right);
@@ -623,7 +623,7 @@ namespace SkyPulse.Mobile
             CapturePart("Solar array",b,false);
         }
         static Vector3 Plan(float a,float width,float depth)=>new Vector3(Mathf.Sign(Mathf.Cos(a))*Mathf.Pow(Mathf.Abs(Mathf.Cos(a)),.38f)*width*.5f,0,Mathf.Sign(Mathf.Sin(a))*Mathf.Pow(Mathf.Abs(Mathf.Sin(a)),.38f)*depth*.5f);
-        static void RoundedSlab(SkyPulseMeshBuilder b,Vector3 centre,float width,float depth,float height,Color colour)
+        internal static void RoundedSlab(SkyPulseMeshBuilder b,Vector3 centre,float width,float depth,float height,Color colour)
         {
             int sides=width<.3f||depth<.16f?8:16;float bevel=Mathf.Min(height*.23f,.035f);
             for(int side=0;side<sides;side++)
@@ -661,7 +661,7 @@ namespace SkyPulse.Mobile
             CapturePart("Architectural arch",b,false);
         }
         static Vector3 Arc(float a,float u,float rx,float ry,float t)=>new Vector3(Mathf.Cos(a)*(rx+Mathf.Cos(u)*t),Mathf.Sin(a)*(ry+Mathf.Cos(u)*t),Mathf.Sin(u)*t);
-        static void Beam(SkyPulseMeshBuilder b,Vector3 from,Vector3 to,float width,float height,Color colour)
+        internal static void Beam(SkyPulseMeshBuilder b,Vector3 from,Vector3 to,float width,float height,Color colour)
         {
             var direction=(to-from).normalized;var side=Vector3.Cross(direction,Vector3.up).normalized*width*.5f;if(side.sqrMagnitude<.000001f)side=Vector3.right*width*.5f;var up=Vector3.Cross(direction,side.normalized).normalized*height*.5f;
             b.Quad(from-side-up,to-side-up,to+side-up,from+side-up,colour);b.Quad(from-side+up,from+side+up,to+side+up,to-side+up,colour);

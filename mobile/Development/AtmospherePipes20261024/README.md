@@ -1,5 +1,9 @@
 # SkyPulse — reusable pipes and atmosphere
 
+The subsequent fully modelled Relay world and its dedicated editing folder are
+documented in `../RelayWorld20261024/README.md`. The Relay images in this earlier
+checkpoint show the previous station-illustration version.
+
 Local Unity work dated 24 October 2026. Open the live project at
 `/Users/mcauleemaddison/Desktop/SkyPulse/mobile`.
 

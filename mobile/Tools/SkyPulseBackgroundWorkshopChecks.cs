@@ -72,7 +72,7 @@ public static class SkyPulseBackgroundWorkshopChecks
     }
     static void CheckRelay(SkyPulseBackgroundAuthoring root)
     {
-        var rail=root.transform.Find("Parallax structural rib 0");var before=rail.localPosition;rail.localPosition+=Vector3.right*.75f;SkyPulseBackgroundWorkshop.Bake(root);
+        var rail=root.transform.Find("Autonomous maintenance drone 0");var before=rail.localPosition;rail.localPosition+=Vector3.right*.75f;SkyPulseBackgroundWorkshop.Bake(root);
         var runner=new GameObject("Relay authoring verification");var source=runner.AddComponent<SkyPulseRelayEnvironment>();
         try
         {
@@ -85,11 +85,7 @@ public static class SkyPulseBackgroundWorkshopChecks
         }
         finally
         {
-            foreach(string field in new[]{"railMesh","turbineMesh","droneMesh","quad","material","backdrop","feed","image","scene"})
-            {
-                var owned=typeof(SkyPulseRelayEnvironment).GetField(field,BindingFlags.Instance|BindingFlags.NonPublic).GetValue(source) as UnityEngine.Object;
-                if(owned is Transform transform)UnityEngine.Object.DestroyImmediate(transform.gameObject);else if(owned!=null)UnityEngine.Object.DestroyImmediate(owned);
-            }
+            source.ReleaseAuthoringResources();
             UnityEngine.Object.DestroyImmediate(runner);
         }
         rail.gameObject.SetActive(true);rail.localPosition=before;SkyPulseBackgroundWorkshop.Bake(root);

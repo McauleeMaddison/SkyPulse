@@ -1,5 +1,10 @@
 # SkyPulse — visual background workshop
 
+For the current fully modelled Relay station, open the dedicated
+`Assets/Editor/SkyPulseBackgroundWorkshop/Pulse Relay World` folder and see
+`../RelayWorld20261024/EDITING_GUIDE.md`. The original district scenes remain
+available as described below.
+
 For the additional reusable pipe assemblies and distant skylines added on
 24 October, see `../AtmospherePipes20261024/EDITING_GUIDE.md`. The original
 district and Relay editing scenes described below remain available.

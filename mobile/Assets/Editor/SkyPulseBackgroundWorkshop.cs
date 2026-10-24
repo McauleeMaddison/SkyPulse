@@ -27,8 +27,28 @@ public static class SkyPulseBackgroundWorkshop
     static int piece;
     static T Field<T>(object source,string name)=>(T)source.GetType().GetField(name,BindingFlags.Instance|BindingFlags.NonPublic).GetValue(source);
     static void DirectoryFor(string path){Directory.CreateDirectory(path);AssetDatabase.Refresh();}
+    [MenuItem("Tools/SkyPulse/Background Workshop/Repair Pulse Relay asset names")]
+    public static void RepairPulseRelayAssetNames()=>RepairAssetNames(Folder+"/Pulse Relay World/");
+    [MenuItem("Tools/SkyPulse/Background Workshop/Repair workshop asset names")]
+    public static void RepairWorkshopAssetNames()=>RepairAssetNames(Folder+"/");
+    static void RepairAssetNames(string prefix)
+    {
+        int repaired=0;
+        foreach(string path in AssetDatabase.GetAllAssetPaths())
+        {
+            if(!path.StartsWith(prefix,StringComparison.Ordinal)||!(path.EndsWith(".asset",StringComparison.Ordinal)||path.EndsWith(".mat",StringComparison.Ordinal)))continue;
+            if(path.Contains(" 2.asset"))continue; // Local numbered copies are not part of the shared workshop.
+            var asset=AssetDatabase.LoadMainAssetAtPath(path);if(!(asset is Mesh)&&!(asset is Material))continue;
+            string expected=Path.GetFileNameWithoutExtension(path);if(asset.name==expected)continue;
+            asset.name=expected;EditorUtility.SetDirty(asset);AssetDatabase.SaveAssetIfDirty(asset);repaired++;
+        }
+        AssetDatabase.SaveAssets();Debug.Log("SKYPULSE_RELAY_ASSET_NAMES_REPAIRED: "+repaired+" assets; scene labels and GUID references preserved.");
+    }
     static T Save<T>(T value,string path) where T:UnityEngine.Object
     {
+        // Unity checks the main object's name against its asset filename on
+        // reimport. Keep descriptive labels on scene objects, not asset roots.
+        value.name=Path.GetFileNameWithoutExtension(path);
         var existing=AssetDatabase.LoadAssetAtPath<T>(path);
         if(existing!=null){EditorUtility.CopySerialized(value,existing);UnityEngine.Object.DestroyImmediate(value);EditorUtility.SetDirty(existing);return existing;}
         AssetDatabase.CreateAsset(value,path);return value;
@@ -142,8 +162,24 @@ public static class SkyPulseBackgroundWorkshop
         var item=new GameObject("Authoring preview camera",typeof(Camera));UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(item,scene);
         item.transform.position=position;item.transform.LookAt(target);var camera=item.GetComponent<Camera>();camera.fieldOfView=38;camera.clearFlags=CameraClearFlags.SolidColor;camera.backgroundColor=new Color(.025f,.039f,.064f);
     }
-    static void CreateRelay()
+    [MenuItem("Tools/SkyPulse/Background Workshop/Create Pulse Relay world scene")]
+    public static void CreateOrbitalWorld()
     {
+        if(EditorApplication.isPlaying)throw new InvalidOperationException("Stop Play mode before creating the station workshop.");
+        string folder=Folder+"/Pulse Relay World";
+        if(Directory.Exists(folder+"/Scenes")&&Directory.GetFiles(folder+"/Scenes","*.unity").Length>0)throw new InvalidOperationException("The Relay world workshop exists. Open it instead of replacing saved edits.");
+        foreach(string part in new[]{"Scenes","Meshes","Materials","Prefabs"})DirectoryFor(folder+"/"+part);
+        if(string.IsNullOrEmpty(UnityEngine.SceneManagement.SceneManager.GetActiveScene().path))
+        {
+            if(!Application.isBatchMode)throw new InvalidOperationException("Save the current scene before creating the Relay workshop.");
+            EditorSceneManager.SaveScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene(),"Assets/Editor/Orbital workshop QA.unity");
+        }
+        CreateRelay(folder,true);AssetDatabase.SaveAssets();
+        Debug.Log("SKYPULSE_ORBITAL_WORKSHOP_CREATED: separate station towers, concourses, sky bridges, planet and atmosphere.");
+    }
+    static void CreateRelay(string destination=null,bool orbital=false)
+    {
+        string folder=destination??Folder;
         var scene=EditorSceneManager.NewScene(NewSceneSetup.EmptyScene,NewSceneMode.Additive);
         var runner=new GameObject("Relay export source");UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(runner,scene);
         var source=runner.AddComponent<SkyPulseRelayEnvironment>();var image=Resources.Load<Texture2D>("SkyPulse/backgrounds/pulse-relay-station-v1");source.Build(18f*9/16,image);
@@ -154,22 +190,20 @@ public static class SkyPulseBackgroundWorkshop
             var filter=renderer.GetComponent<MeshFilter>();if(filter==null)continue;
             var item=new GameObject(renderer.name,typeof(MeshFilter),typeof(MeshRenderer));item.transform.SetParent(root.transform,false);
             item.transform.localPosition=renderer.transform.localPosition;item.transform.localRotation=renderer.transform.localRotation;item.transform.localScale=renderer.transform.localScale;
-            if(!meshes.TryGetValue(filter.sharedMesh,out var mesh)){mesh=Save(UnityEngine.Object.Instantiate(filter.sharedMesh),Folder+"/Meshes/relay-"+meshes.Count+".asset");meshes.Add(filter.sharedMesh,mesh);}
-            if(!materials.TryGetValue(renderer.sharedMaterial,out var mat)){mat=Save(UnityEngine.Object.Instantiate(renderer.sharedMaterial),Folder+"/Materials/relay-"+materials.Count+".mat");materials.Add(renderer.sharedMaterial,mat);}
+            if(!meshes.TryGetValue(filter.sharedMesh,out var mesh)){mesh=Save(UnityEngine.Object.Instantiate(filter.sharedMesh),folder+"/Meshes/relay-"+meshes.Count+".asset");meshes.Add(filter.sharedMesh,mesh);}
+            if(!materials.TryGetValue(renderer.sharedMaterial,out var mat)){mat=Save(UnityEngine.Object.Instantiate(renderer.sharedMaterial),folder+"/Materials/relay-"+materials.Count+".mat");materials.Add(renderer.sharedMaterial,mat);}
             item.GetComponent<MeshFilter>().sharedMesh=mesh;item.GetComponent<MeshRenderer>().sharedMaterial=mat;
         }
-        // The distant artwork stays a separate reference layer. The station's
-        // selectable metal ribs, motors and drones are actual mesh objects.
+        // Each structural mesh is selectable; no panoramic background quad is
+        // exported. Sky/planet materials remain separate from station hardware.
         var editable=root.GetComponentsInChildren<MeshFilter>().Where(f=>f.name!="Distant station artwork").Select(f=>f.transform).ToArray();
         authoring.OriginalNames=editable.Select(t=>t.name).ToArray();authoring.OriginalPositions=editable.Select(t=>t.localPosition).ToArray();authoring.OriginalRotations=editable.Select(t=>t.localRotation).ToArray();authoring.OriginalScales=editable.Select(t=>t.localScale).ToArray();
-        // Release the temporary runtime owner's resources safely in Edit mode.
-        foreach(string field in new[]{"railMesh","turbineMesh","droneMesh","quad","material","backdrop","feed","image","scene"})
-        {
-            var owned=typeof(SkyPulseRelayEnvironment).GetField(field,BindingFlags.Instance|BindingFlags.NonPublic).GetValue(source) as UnityEngine.Object;
-            if(owned is Transform transform)UnityEngine.Object.DestroyImmediate(transform.gameObject);else if(owned!=null)UnityEngine.Object.DestroyImmediate(owned);
-        }
-        UnityEngine.Object.DestroyImmediate(runner);PrefabUtility.SaveAsPrefabAsset(root,Folder+"/Prefabs/relay.prefab");Camera(scene,new Vector3(0,0,-18),Vector3.zero);
-        EditorSceneManager.SaveScene(scene,Folder+"/Scenes/25 Pulse Relay Station.unity");EditorSceneManager.CloseScene(scene,true);
+        // Non-ExecuteAlways behaviours do not receive normal Play-mode teardown
+        // during an Edit-mode export. Release the temporary owner explicitly.
+        source.ReleaseAuthoringResources();
+        UnityEngine.Object.DestroyImmediate(runner);PrefabUtility.SaveAsPrefabAsset(root,folder+"/Prefabs/relay.prefab");Camera(scene,new Vector3(0,0,-18),Vector3.zero);
+        var view=scene.GetRootGameObjects().First(g=>g.GetComponent<UnityEngine.Camera>()!=null).GetComponent<UnityEngine.Camera>();view.farClipPlane=190;
+        EditorSceneManager.SaveScene(scene,folder+"/Scenes/"+(orbital?"Pulse Relay Orbital World":"25 Pulse Relay Station")+".unity");EditorSceneManager.CloseScene(scene,true);
     }
     [MenuItem("Tools/SkyPulse/Background Workshop/Create distant skyline scenes")]
     public static void CreateHorizons()
@@ -231,13 +265,15 @@ public static class SkyPulseBackgroundWorkshop
     }
     static void BakeRelay(SkyPulseBackgroundAuthoring root)
     {
-        var layout=ScriptableObject.CreateInstance<SkyPulseRelayBackgroundEdits>();var parts=new List<SkyPulseRelayBackgroundEdits.Part>();
+        var layout=ScriptableObject.CreateInstance<SkyPulseRelayBackgroundEdits>();var parts=new List<SkyPulseRelayBackgroundEdits.Part>();var materials=new Dictionary<Material,Material>();
         foreach(var filter in root.GetComponentsInChildren<MeshFilter>().Where(f=>f.gameObject.activeInHierarchy&&f.sharedMesh!=null&&f.name!="Distant station artwork"))
         {
             int index=Array.IndexOf(root.OriginalNames,filter.name);var t=filter.transform;
             if(t.parent!=root.transform)throw new InvalidOperationException("Keep Relay structures directly under the station root so their animation offsets remain clear.");
             var mesh=Save(UnityEngine.Object.Instantiate(filter.sharedMesh),Output+"/relay-part-"+parts.Count.ToString("00")+".asset");
-            parts.Add(new SkyPulseRelayBackgroundEdits.Part{Name=filter.name,Mesh=mesh,AdditionalStructure=index<0,
+            var originalMaterial=filter.GetComponent<MeshRenderer>().sharedMaterial;
+            if(!materials.TryGetValue(originalMaterial,out var bakedMaterial)){bakedMaterial=Save(UnityEngine.Object.Instantiate(originalMaterial),Output+"/relay-material-"+materials.Count.ToString("00")+".mat");materials.Add(originalMaterial,bakedMaterial);}
+            parts.Add(new SkyPulseRelayBackgroundEdits.Part{Name=filter.name,Mesh=mesh,Material=bakedMaterial,AdditionalStructure=index<0,
                 PositionOffset=index<0?t.localPosition:t.localPosition-root.OriginalPositions[index],
                 RotationOffset=index<0?t.localRotation:t.localRotation*Quaternion.Inverse(root.OriginalRotations[index]),
                 ScaleMultiplier=index<0?t.localScale:new Vector3(t.localScale.x/root.OriginalScales[index].x,t.localScale.y/root.OriginalScales[index].y,t.localScale.z/root.OriginalScales[index].z)});

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "auditDate": "2026-10-13",
+  "auditDate": "2026-10-24",
   "creator": "Mcaulee Maddison",
   "ownerStatements": [
     "Artwork includes owner-generated ChatGPT and ARTA outputs",
@@ -8,7 +8,7 @@
     "All references were own images or generated outputs"
   ],
   "scope": "Every image source file currently under mobile/Assets; excludes .meta files and historical evidence outside Assets",
-  "imageCount": 145,
+  "imageCount": 146,
   "exactByteDuplicateGroups": [],
   "providerTerms": {
     "arta": "https://aiby.mobi/ai_art_ios/terms/en/",
@@ -1610,6 +1610,17 @@
       "evidenceNote": "mobile/Release/Provenance/OWNER_STATEMENT.md",
       "firstPathCommit": "2ac8972a5bd8d0a3dce903efb7d300fa5e2a647b",
       "references": "Owner confirmed own images or generated outputs on 2026-10-13; original records not independently inspected",
+      "exclusiveRightsVerified": false
+    },
+    {
+      "path": "mobile/Assets/Resources/SkyPulse/materials/orbital-alloy-v1.png",
+      "sha256": "97ffda311bd725d0acaed638409f83e1bb26b9888835e1f9cfc904fba990d503",
+      "bytes": 2655676,
+      "providerEvidence": "OpenAI built-in imagegen tool; original generated output retained in local generated_images",
+      "useRightsBasis": "Provider output terms; reference is the existing owner-confirmed SkyPulse station illustration",
+      "evidenceNote": "mobile/Development/RelayWorld20261024/MATERIAL_PROVENANCE.md",
+      "firstPathCommit": "created-2026-10-24-development-checkpoint",
+      "references": "mobile/Assets/Resources/SkyPulse/backgrounds/pulse-relay-station-v1.png; owner confirmed own/generated references",
       "exclusiveRightsVerified": false
     }
   ]

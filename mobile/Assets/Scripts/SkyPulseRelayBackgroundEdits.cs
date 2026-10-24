@@ -11,6 +11,7 @@ namespace SkyPulse.Mobile
         {
             public string Name;
             public Mesh Mesh;
+            public Material Material;
             public Vector3 PositionOffset,ScaleMultiplier=Vector3.one;
             public Quaternion RotationOffset=Quaternion.identity;
             public bool AdditionalStructure,Hidden;

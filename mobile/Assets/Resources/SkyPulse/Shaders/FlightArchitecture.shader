@@ -13,6 +13,9 @@ Shader "SkyPulse/Flight Architecture"
         _WindowGlow("Occupied window illumination",Range(0,1))=1
         _Backdrop("Distant skyline haze",Range(0,1))=0
         _BeaconGlow("Star LED light spill",Range(0,1))=1
+        _SurfaceTex("Machined alloy surface",2D)="gray"{}
+        _SurfaceAmount("Surface detail",Range(0,1))=0
+        _SurfaceScale("Surface scale",Float)=.3
     }
     SubShader
     {
@@ -29,7 +32,7 @@ Shader "SkyPulse/Flight Architecture"
             struct vary {float4 pos:SV_POSITION;float3 world:TEXCOORD0;float3 normal:TEXCOORD1;float4 color:COLOR;float3 local:TEXCOORD2;};
             float _Visibility,_Clock,_Architecture,_Geology,_Design,_WindowGlow,_BeaconGlow,_Backdrop;float4 _Tint,_Haze;
             float4 _BeaconPoints[5],_BeaconColours[5];
-            sampler2D _Environment;
+            sampler2D _Environment,_SurfaceTex;float _SurfaceAmount,_SurfaceScale;
             vary vert(app v){vary o;o.pos=UnityObjectToClipPos(v.vertex);o.world=mul(unity_ObjectToWorld,v.vertex).xyz;o.normal=UnityObjectToWorldNormal(v.normal);o.color=v.color;o.local=v.vertex.xyz;return o;}
             float hash21(float2 p){return frac(sin(dot(p,float2(127.1,311.7)))*43758.5453);}
             float facadeLine(float value,float width){float aa=max(fwidth(value),.001);return 1-smoothstep(width,width+aa,abs(frac(value)-.5));}
@@ -56,6 +59,12 @@ Shader "SkyPulse/Flight Architecture"
                 float3 surfaceColour=lerp(i.color.rgb,float3(.035,.055,.085)+i.color.rgb*.04,neon);
                 float3 colour=surfaceColour*(.24+ndl*.80)*lerp(float3(.92,.98,1.05),_Tint.rgb,.06);
                 colour+=ambient*(.19+glass*.56+fresnel*.46)+float3(.87,.91,1)*(spec*.46+softbox*(.12+glass*.34))*lerp(1,.15,stone);
+                if(_SurfaceAmount>.001)
+                {
+                    float3 axis=pow(abs(mul((float3x3)unity_WorldToObject,n)),4);axis/=max(dot(axis,1),.001);float3 p=i.local*_SurfaceScale;
+                    float3 detail=tex2D(_SurfaceTex,p.yz).rgb*axis.x+tex2D(_SurfaceTex,p.xz).rgb*axis.y+tex2D(_SurfaceTex,p.xy).rgb*axis.z;
+                    colour=lerp(colour,detail*(.38+ndl*.82)+ambient*.19+float3(.87,.91,1)*(spec*.46+softbox*.20),_SurfaceAmount*(1-glass)*(1-light));
+                }
                 // Facade bays are glazing with dark reveals and a few occupied
                 // warm interiors. They are not continuous glowing floor discs.
                 float2 grid=float2((i.local.x+i.local.z*.61)*9.5,i.local.y*4.1);
