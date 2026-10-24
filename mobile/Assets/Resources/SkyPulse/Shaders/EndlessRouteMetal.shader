@@ -13,6 +13,8 @@ Shader "SkyPulse/Original Endless Neon Metal"
         _ThemeAmount("World finish",Float)=0
         _ThemeAccent("Primary inlay",Color)=(.02,.85,1,1)
         _ThemeEnergy("Secondary inlay",Color)=(1,.03,.85,1)
+        _Detail("Housing detail",Range(0,1.5))=1
+        _LightRate("LED flow rate",Range(.4,1.6))=1
         _MetalTone("Anodised metal",Color)=(.31,.43,.62,1)
     }
     SubShader
@@ -28,10 +30,11 @@ Shader "SkyPulse/Original Endless Neon Metal"
             #include "UnityCG.cginc"
             struct app { float4 vertex:POSITION;float3 normal:NORMAL;fixed4 color:COLOR; };
             struct vary { float4 pos:SV_POSITION;float3 local:TEXCOORD0;float3 normal:TEXCOORD1;float3 world:TEXCOORD2;fixed4 color:COLOR; };
-            sampler2D _MainTex;float4 _ArtRect;float _ArtFlip,_Clock,_Cutout,_Visibility,_Theme,_ThemeAmount;fixed4 _LightTint,_ThemeAccent,_ThemeEnergy,_MetalTone;
+            sampler2D _MainTex;float4 _ArtRect;float _ArtFlip,_Clock,_Cutout,_Visibility,_Theme,_ThemeAmount,_Detail,_LightRate;fixed4 _LightTint,_ThemeAccent,_ThemeEnergy,_MetalTone;
             vary vert(app v){vary o;o.pos=UnityObjectToClipPos(v.vertex);o.local=v.vertex.xyz;o.normal=UnityObjectToWorldNormal(v.normal);o.world=mul(unity_ObjectToWorld,v.vertex).xyz;o.color=v.color;return o;}
             float3 hardware(vary i,float2 uv)
             {
+                float time=_Clock*_LightRate;
                 float3 n=normalize(i.normal),view=unity_OrthoParams.w>.5?float3(0,0,-1):normalize(_WorldSpaceCameraPos.xyz-i.world);
                 if(dot(n,view)<0)n=-n;
                 float3 key=normalize(float3(-.65,.78,-.83)),r=reflect(-view,n);
@@ -78,21 +81,37 @@ Shader "SkyPulse/Original Endless Neon Metal"
                 colour=lerp(colour,float3(.13,.17,.22)+float3(.32,.39,.48)*(ndl*.38+broad*.25)+spec*.16,bolt*front*.65);
                 colour+=boltRim*front*(float3(.16,.21,.27)+_ThemeAccent.rgb*.025);
                 colour*=1-bolt*slot*front*.22;
+                // Flush enamel skins and recessed channels vary by world.
+                // Broad material transitions survive small portrait screens;
+                // micromachining is antialiased and never changes the opening.
+                float longitudinal=1-smoothstep(.31,.43+fwidth(uv.y),abs(uv.y-.5));
+                float edge=pow(saturate(1-abs(abs(cos(angle))-.29)*11),3)*(1-_Cutout);
+                colour+=edge*longitudinal*_Detail*(float3(.22,.29,.36)*(.25+broad*.45)+_ThemeAccent.rgb*.035);
+                float ventCell=abs(frac(uv.y*18)-.5),ventAA=max(fwidth(uv.y*18),.035);
+                float vent=1-smoothstep(.12,.17+ventAA,ventCell);
+                float serviceSide=smoothstep(.32,.55,abs(cos(angle)))*(1-smoothstep(.68,.88,abs(cos(angle))));
+                float thermal=(_Theme>1.5&&_Theme<2.5)||(_Theme>8.5&&_Theme<9.5)?1:0;
+                colour*=1-vent*serviceSide*longitudinal*thermal*_Detail*.21*(1-_Cutout);
+                float facet=(_Theme>4.5&&_Theme<5.5)||(_Theme>7.5&&_Theme<8.5)?1:0;
+                colour+=facet*pow(saturate(1-abs(sin(angle*4))*.95),18)*longitudinal*_Detail*float3(.10,.13,.17)*(broad*.5+spec);
+                float organic=(_Theme>2.5&&_Theme<3.5)||(_Theme>5.5&&_Theme<6.5)?1:0;
+                float tide=1-smoothstep(.005,.012+fwidth(uv.y),abs(frac(uv.y*4+sin(angle*3)*.08)-.5));
+                colour+=organic*tide*serviceSide*_Detail*_ThemeEnergy.rgb*.052*(1-_Cutout);
                 float brush=sin(i.world.y*228)*sin(i.local.x*316);float aa=saturate(1-fwidth(i.world.y*228));colour*=1+brush*.008*aa;
                 colour=lerp(colour,float3(.021,.031,.046)*(1+ndl*.3)+spec*.08,seal);
                 float path=lerp(i.world.y,-i.world.y,_ArtFlip)*.55;
                 float packet;
-                if(_Theme<1.5)packet=.48+.44*sin(path*2.8-_Clock*1.05);
-                else if(_Theme<2.5)packet=smoothstep(.18,.86,cos(path*5.1-_Clock*1.8));
-                else if(_Theme<3.5)packet=.46+.43*sin(path*3.4-_Clock*1.1);
-                else if(_Theme<4.5)packet=.45+.39*sin(_Clock*.92+path*2.2);
-                else if(_Theme<5.5)packet=.12+.86*pow(saturate(cos(path*5.8-_Clock*1.6)),4);
-                else if(_Theme<6.5)packet=.44+.44*sin(path*3.7-_Clock*.98);
-                else if(_Theme<7.5)packet=.12+.84*pow(1-frac(path*1.25+_Clock*.82),3);
-                else if(_Theme<8.5)packet=.10+.88*pow(saturate(cos(path*2.5-_Clock*.68)),6);
-                else if(_Theme<9.5)packet=.13+.85*pow(saturate(sin(path*4.8-_Clock*1.8)),3);
-                else if(_Theme<10.5)packet=.45+.43*sin(path*2.4-_Clock*.71);
-                else packet=.46+.44*sin(path*2.8-_Clock*.83)*cos(path*.6+_Clock*.28);
+                if(_Theme<1.5)packet=.48+.44*sin(path*2.8-time*1.05);
+                else if(_Theme<2.5)packet=smoothstep(.18,.86,cos(path*5.1-time*1.8));
+                else if(_Theme<3.5)packet=.46+.43*sin(path*3.4-time*1.1);
+                else if(_Theme<4.5)packet=.45+.39*sin(time*.92+path*2.2);
+                else if(_Theme<5.5)packet=.12+.86*pow(saturate(cos(path*5.8-time*1.6)),4);
+                else if(_Theme<6.5)packet=.44+.44*sin(path*3.7-time*.98);
+                else if(_Theme<7.5)packet=.12+.84*pow(1-frac(path*1.25+time*.82),3);
+                else if(_Theme<8.5)packet=.10+.88*pow(saturate(cos(path*2.5-time*.68)),6);
+                else if(_Theme<9.5)packet=.13+.85*pow(saturate(sin(path*4.8-time*1.8)),3);
+                else if(_Theme<10.5)packet=.45+.43*sin(path*2.4-time*.71);
+                else packet=.46+.44*sin(path*2.8-time*.83)*cos(path*.6+time*.28);
                 float secondary=smoothstep(.05,.55,i.local.x);
                 float3 energy=lerp(_ThemeAccent.rgb,_ThemeEnergy.rgb,secondary);
                 float rails=(_Theme>1.5&&_Theme<2.5)||(_Theme>8.5&&_Theme<9.5)?6:(_Theme>4.5&&_Theme<5.5)||_Theme>10.5?3:4;
@@ -115,7 +134,7 @@ Shader "SkyPulse/Original Endless Neon Metal"
                     float lip=exp(-pow((d-1.035)*8.5,2));
                     float inner=exp(-pow((d-.935)*23,2));
                     float rimAngle=atan2(ellipse.y,ellipse.x);
-                    float circulation=.5+.5*sin(rimAngle*2-_Clock*(.78+frac(_Theme*.117)));
+                    float circulation=.5+.5*sin(rimAngle*2-time*(.78+frac(_Theme*.117)));
                     float3 rimEnergy=lerp(_ThemeAccent.rgb,_ThemeEnergy.rgb,.5+.5*sin(rimAngle+.5));
                     float rimKey=.22+.60*pow(saturate(1-abs(ellipse.x+.32)*.72),5);
                     float3 well=float3(.014,.025,.040)+rimEnergy*(.025+.035*saturate(ellipse.y));
@@ -124,7 +143,7 @@ Shader "SkyPulse/Original Endless Neon Metal"
                     // travelling reflection are separate layers of the lip.
                     colour+=lip*(float3(.30,.38,.48)*rimKey+_MetalTone.rgb*.13);
                     colour+=inner*rimEnergy*(.32+circulation*.47);
-                    float rimScan=pow(saturate(cos(rimAngle-_Clock*.72)),16);
+                    float rimScan=pow(saturate(cos(rimAngle-time*.72)),16);
                     colour+=lip*rimScan*float3(.52,.68,.82)*.20;
                     float faceLine=1-smoothstep(edgeAA,edgeAA+.035,abs(d-1.19));
                     colour+=faceLine*rimEnergy*.10;
@@ -163,8 +182,8 @@ Shader "SkyPulse/Original Endless Neon Metal"
                 float shaftPath=lerp(i.world.y,-i.world.y,_ArtFlip)*.48;
                 float rimPath=atan2((uv.y-.75)*3.4,uv.x-.5)*.15915494+.5;
                 float path=lerp(shaftPath,rimPath,_Cutout);
-                float packet=pow(saturate(1-abs(frac(path-_Clock*.55)-.5)*5),2);
-                float3 ledColour=lerp(float3(.01,.85,1),float3(1,.03,.85),pink/(cyan+pink+.001));
+                float packet=pow(saturate(1-abs(frac(path-_Clock*_LightRate*.55)-.5)*5),2);
+                float3 ledColour=lerp(_ThemeAccent.rgb,_ThemeEnergy.rgb,pink/(cyan+pink+.001));
                 // The original Neon City finish remains exact. Other worlds
                 // share its authored metal detail but have matching anodisation,
                 // two-colour inlays and their own continuous lighting rhythm.
@@ -180,6 +199,9 @@ Shader "SkyPulse/Original Endless Neon Metal"
                 float3 relief=_MetalTone.rgb*(.20+diffuse*.39)+_LightTint.rgb*spec*.55;
                 relief=lerp(relief,ledColour*(.45+packet*.42)+_LightTint.rgb*spec*.12,luminous);
                 tint=lerp(tint,relief,decoration);
+                // Keep the original first-world artwork and cyan/pink identity,
+                // adding only a narrow optical core and quieter metal sheen.
+                tint+=_Detail*(ledColour*led*pow(packet,4)*.045+float3(.40,.56,.73)*spec*(1-led)*.028);
                 return fixed4(tint,lerp(1,saturate((art.a-.02)/.6),_Cutout*(1-decoration)));
             }
             ENDCG

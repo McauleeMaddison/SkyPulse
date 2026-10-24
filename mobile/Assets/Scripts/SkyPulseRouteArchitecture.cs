@@ -6,6 +6,16 @@ namespace SkyPulse.Mobile
     // surface; there are no front-facing plates or floating sticker decorations.
     internal static class SkyPulseRouteArchitecture
     {
+#if UNITY_EDITOR
+        internal static System.Action<object> EditorMeshCapture;
+#endif
+        static Mesh Finish(SkyPulseMeshBuilder builder,string name)
+        {
+#if UNITY_EDITOR
+            EditorMeshCapture?.Invoke(builder);
+#endif
+            return builder.Finish(name);
+        }
         public static readonly string[] Names={"Neon precision alloy","Aurora ceramic channels","Solar collector housing","Tidal titanium seals","Rose ceramic alloy","Prismatic silver shell","Jade bioceramic housing","Violet arcology alloy","Obsidian precision crown","Cobalt induction housing","Amber bronze housing","Polar insulated shell"};
         public static Color Accent(int world)
         {
@@ -22,6 +32,7 @@ namespace SkyPulse.Mobile
         static readonly Color Base=new Color(1,1,1,0),Trim=new Color(1,1,1,.25f),Seal=new Color(1,1,1,.55f),Light=new Color(1,1,1,1);
         public static Mesh Build(int world,bool cap)
         {
+            world=Mathf.Clamp(world,0,11);if(world==0)return BuildOriginal(cap);
             var b=new SkyPulseMeshBuilder();var profile=Profile(world,cap);const int sides=64;
             for(int row=1;row<profile.Length;row++)for(int side=0;side<sides;side++)
             {
@@ -65,7 +76,24 @@ namespace SkyPulse.Mobile
                     if(world==9)Band(b,world,profile,y+.010f,.0035f,Light);
                 }
             }
-            return b.Finish(Names[world]+(cap?" / machined collar":" / continuous barrel"));
+            return Finish(b,Names[world]+(cap?" / machined collar":" / continuous barrel"));
+        }
+        static Mesh BuildOriginal(bool cap)
+        {
+            var b=new SkyPulseMeshBuilder();int segments=48;var profile=cap?new[]{new Vector2(.46f,-.5f),new Vector2(.50f,-.39f),new Vector2(.50f,.39f),new Vector2(.46f,.5f)}:new[]{new Vector2(.47f,-.5f),new Vector2(.5f,-.48f),new Vector2(.5f,.48f),new Vector2(.47f,.5f)};
+            for(int i=0;i<segments;i++)
+            {
+                float a=i*Mathf.PI*2/segments,c=(i+1)*Mathf.PI*2/segments;
+                for(int j=1;j<profile.Length;j++)
+                {
+                    var p=profile[j-1];var q=profile[j];Color colour=cap?new Color(.7f,.9f,1,j==2?0:1):new Color(.85f,.95f,1,i%12==0?1:0);
+                    float dy=q.y-p.y,dr=q.x-p.x;
+                    var na=new Vector3(Mathf.Cos(a)*dy,-dr,Mathf.Sin(a)*dy).normalized;var nb=new Vector3(Mathf.Cos(c)*dy,-dr,Mathf.Sin(c)*dy).normalized;
+                    b.SmoothQuad(new Vector3(Mathf.Cos(a)*p.x,p.y,Mathf.Sin(a)*p.x),new Vector3(Mathf.Cos(c)*p.x,p.y,Mathf.Sin(c)*p.x),new Vector3(Mathf.Cos(c)*q.x,q.y,Mathf.Sin(c)*q.x),new Vector3(Mathf.Cos(a)*q.x,q.y,Mathf.Sin(a)*q.x),na,nb,colour);
+                }
+                foreach(int side in new[]{-1,1})b.Face(new Vector3(0,side*.5f,0),new Vector3(Mathf.Cos(a)*.46f,side*.5f,Mathf.Sin(a)*.46f),new Vector3(Mathf.Cos(c)*.46f,side*.5f,Mathf.Sin(c)*.46f),new Color(.9f,.95f,1,.2f));
+            }
+            return Finish(b,cap?"Extruded precision gate collar":"Reflective cylindrical Endless column");
         }
         static void Channel(SkyPulseMeshBuilder b,int world,Vector2[] profile,float angle,float bottom,float top,float width,Color colour,bool cap)
         {

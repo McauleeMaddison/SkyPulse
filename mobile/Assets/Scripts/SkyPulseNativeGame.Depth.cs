@@ -14,6 +14,7 @@ namespace SkyPulse.Mobile
         readonly List<RouteDepth> routeDepth=new List<RouteDepth>(8);
         Mesh routeBodyMesh,routeCapMesh;Material routeMetal,routeCapMetal;
         readonly Mesh[] routeBodyThemes=new Mesh[12],routeCapThemes=new Mesh[12];
+        readonly SkyPulsePipeTheme[] authoredPipeThemes=new SkyPulsePipeTheme[12];
         int routeDepthTheme=-1;
         SkyPulseDepthStage DepthStage(Transform parent,SkyPulseMode mode,Vector2 position,Vector2 size)
         {
@@ -47,7 +48,9 @@ namespace SkyPulse.Mobile
                 {
                     var material=i==0?routeMetal:routeCapMetal;
                     material.SetFloat("_Theme",theme);material.SetFloat("_ThemeAmount",theme==0?0:1);
-                    material.SetColor("_ThemeAccent",SkyPulseRouteArchitecture.Accent(theme));material.SetColor("_ThemeEnergy",SkyPulseRouteArchitecture.Secondary(theme));material.SetColor("_MetalTone",SkyPulseRouteArchitecture.Metal(theme));
+                    var authored=authoredPipeThemes[theme];
+                    material.SetColor("_ThemeAccent",authored!=null?authored.Accent:SkyPulseRouteArchitecture.Accent(theme));material.SetColor("_ThemeEnergy",authored!=null?authored.Energy:SkyPulseRouteArchitecture.Secondary(theme));material.SetColor("_MetalTone",authored!=null?authored.Metal:SkyPulseRouteArchitecture.Metal(theme));
+                    material.SetFloat("_LightRate",authored!=null?authored.LightRate:1);material.SetFloat("_Detail",authored!=null?authored.Detail:1);
                 }
             }
             var sceneTint=SceneLightTint();routeMetal.SetColor("_LightTint",sceneTint);routeCapMetal.SetColor("_LightTint",sceneTint);
@@ -78,8 +81,13 @@ namespace SkyPulse.Mobile
         {
             routeMetal=OriginalRouteMaterial(pipeBodySprite,"Original neon shaft on 3D metal");
             routeCapMetal=OriginalRouteMaterial(pipeCapSprite,"Original neon collar on 3D metal",true);
-            routeBodyMesh=RouteCylinder(false);routeCapMesh=RouteCylinder(true);routeBodyThemes[0]=routeBodyMesh;routeCapThemes[0]=routeCapMesh;
-            for(int i=1;i<12;i++){routeBodyThemes[i]=SkyPulseRouteArchitecture.Build(i,false);routeCapThemes[i]=SkyPulseRouteArchitecture.Build(i,true);}
+            for(int i=0;i<12;i++)
+            {
+                var authored=Resources.Load<SkyPulsePipeTheme>("SkyPulse/PipeEdits/world-"+i.ToString("00"));authoredPipeThemes[i]=authored;
+                routeBodyThemes[i]=authored!=null&&authored.Barrel!=null?Instantiate(authored.Barrel):SkyPulseRouteArchitecture.Build(i,false);
+                routeCapThemes[i]=authored!=null&&authored.Collar!=null?Instantiate(authored.Collar):SkyPulseRouteArchitecture.Build(i,true);
+            }
+            routeBodyMesh=routeBodyThemes[0];routeCapMesh=routeCapThemes[0];
             var properties=new MaterialPropertyBlock();
             foreach(var pair in pipePool)foreach(var s in new[]{pair.Top,pair.Bottom})
             {
@@ -95,23 +103,7 @@ namespace SkyPulse.Mobile
             var rect=artwork.rect;var texture=artwork.texture;
             material.mainTexture=texture;material.SetVector("_ArtRect",new Vector4(rect.x/texture.width,rect.y/texture.height,rect.width/texture.width,rect.height/texture.height));return material;
         }
-        Mesh RouteCylinder(bool cap)
-        {
-            var b=new SkyPulseMeshBuilder();int segments=48;var profile=cap?new[]{new Vector2(.46f,-.5f),new Vector2(.50f,-.39f),new Vector2(.50f,.39f),new Vector2(.46f,.5f)}:new[]{new Vector2(.47f,-.5f),new Vector2(.5f,-.48f),new Vector2(.5f,.48f),new Vector2(.47f,.5f)};
-            for(int i=0;i<segments;i++)
-            {
-                float a=i*Mathf.PI*2/segments,c=(i+1)*Mathf.PI*2/segments;
-                for(int j=1;j<profile.Length;j++)
-                {
-                    var p=profile[j-1];var q=profile[j];Color colour=cap?new Color(.7f,.9f,1,j==2?0:1):new Color(.85f,.95f,1,i%12==0?1:0);
-                    float dy=q.y-p.y,dr=q.x-p.x;
-                    var na=new Vector3(Mathf.Cos(a)*dy,-dr,Mathf.Sin(a)*dy).normalized;var nb=new Vector3(Mathf.Cos(c)*dy,-dr,Mathf.Sin(c)*dy).normalized;
-                    b.SmoothQuad(new Vector3(Mathf.Cos(a)*p.x,p.y,Mathf.Sin(a)*p.x),new Vector3(Mathf.Cos(c)*p.x,p.y,Mathf.Sin(c)*p.x),new Vector3(Mathf.Cos(c)*q.x,q.y,Mathf.Sin(c)*q.x),new Vector3(Mathf.Cos(a)*q.x,q.y,Mathf.Sin(a)*q.x),na,nb,colour);
-                }
-                foreach(int side in new[]{-1,1})b.Face(new Vector3(0,side*.5f,0),new Vector3(Mathf.Cos(a)*.46f,side*.5f,Mathf.Sin(a)*.46f),new Vector3(Mathf.Cos(c)*.46f,side*.5f,Mathf.Sin(c)*.46f),new Color(.9f,.95f,1,.2f));
-            }
-            return b.Finish(cap?"Extruded precision gate collar":"Reflective cylindrical Endless column");
-        }
+        Mesh RouteCylinder(bool cap)=>SkyPulseRouteArchitecture.Build(0,cap);
         void OnDestroy()
         {
             if(scoreGlassMaterial!=null)Destroy(scoreGlassMaterial);

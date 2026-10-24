@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: relay-1
-  m_Shader: {fileID: 4800000, guid: 5fe50c2f1e694d99af53c9ab91fcf0c7, type: 3}
+  m_Shader: {fileID: 4800000, guid: 17cb6ef035d5143598e9f900562ea138, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []

@@ -211,6 +211,53 @@ namespace SkyPulse.Mobile
             }
             return b.Finish(Styles[world%12]+(variant==0?" / civic district":" / residential district"));
         }
+        // Separate low-detail skyline behind the inhabited islands. Reuses the
+        // same tower profiles and normals, without drawing full window meshes
+        // at a distance where they would be subpixel geometry.
+        internal static Mesh BuildHorizon(int world)
+        {
+            world=Mathf.Clamp(world,0,11);var b=new SkyPulseMeshBuilder();
+            for(int i=0;i<7;i++)
+            {
+                float x=(i-3)*1.75f,z=.40f+Hash(world*61+i*23)*1.40f;
+                float height=2.8f+Hash(world*173+i*31)*2.6f;
+                int form=world==4||world==10?2:world==5||world==8?3:world==1||world==3?1:0;
+                if(world==6)height*=.72f;
+                DistantTower(b,new Vector3(x,.22f,z),.85f+(i%3)*.15f,.80f,height,world==1||world==3?(i%2==0?.45f:-.25f):.12f,form,world);
+                if(i%2==0)RoundedSlab(b,new Vector3(x,.05f,z),1.9f,1.65f,.22f,Frame);
+                if(i>0&&(world==0||world==1||world==7||world==9))
+                    Beam(b,new Vector3(x-1.75f,1.35f,z),new Vector3(x,1.35f,z),.17f,.10f,Edge);
+            }
+            if(world==4||world==8||world==10)
+                Arch(b,new Vector3(0,.16f,.20f),5.4f,1.25f,.15f,0,180,Quaternion.identity,Shell(world));
+            if(world==2||world==9)
+                for(int i=-2;i<=2;i++)SolarWing(b,new Vector3(i*2.6f,.12f,-1.20f),world,true);
+            return b.Finish(Styles[world]+" / distant skyline");
+        }
+        static void DistantTower(SkyPulseMeshBuilder b,Vector3 at,float width,float depth,float height,float lean,int form,int world)
+        {
+            CapturePart("Distant building",b,true);
+            const int sides=12,rows=5;
+            for(int row=0;row<rows;row++)for(int side=0;side<sides;side++)
+            {
+                float a=side*Mathf.PI*2/sides,c=(side+1f)*Mathf.PI*2/sides,y=row/(float)rows,u=(row+1f)/rows;
+                var p=TowerPoint(a,y,width,depth,height,lean,form);var q=TowerPoint(c,y,width,depth,height,lean,form);
+                var r=TowerPoint(c,u,width,depth,height,lean,form);var t=TowerPoint(a,u,width,depth,height,lean,form);
+                var n=TowerNormal(a,y,width,depth,height,lean,form);var m=TowerNormal(c,y,width,depth,height,lean,form);
+                // The fixed gameplay camera sees the front arc. Spend distant
+                // window geometry there so the horizon reads as occupied.
+                if(row>0&&side>=7&&side<=10)
+                {
+                    var colour=side%2==0?SkyPulseRouteArchitecture.Secondary(world):Light(world);colour.a=.48f;
+                    WindowBay(b,at,p,q,r,t,n,m,Shell(world),colour);
+                }
+                else b.SmoothQuad(at+p,at+q,at+r,at+t,n,m,Shell(world));
+            }
+            var crown=at+new Vector3(lean,height,0);RoundedSlab(b,crown,width*.66f,depth*.70f,.10f,Edge);
+            Beam(b,crown,crown+Vector3.up*.23f,.018f,.018f,Light(world));
+            if(world==4||world==10)Dome(b,crown+Vector3.up*.04f,width*.30f,.30f,depth*.30f,Shell(world),12,4);
+            CapturePart("Distant building",b,false);
+        }
         // Solid framed towers with recessed window bays. Profile changes are setbacks and
         // rounded shoulders. Floor sills follow the facade instead of intersecting
         // it as circular discs, which made the previous buildings look like toys.
@@ -555,11 +602,23 @@ namespace SkyPulse.Mobile
             }
             CapturePart("Sky bridge",b,false);
         }
-        static void SolarWing(SkyPulseMeshBuilder b,Vector3 at,int world)
+        static void SolarWing(SkyPulseMeshBuilder b,Vector3 at,int world,bool distant=false)
         {
             CapturePart("Solar array",b,true);
             RoundedSlab(b,at,1.26f,1.55f,.085f,Frame);
-            for(int x=0;x<4;x++)for(int z=0;z<5;z++)RoundedSlab(b,at+new Vector3((x-1.5f)*.285f,.055f,(z-2)*.285f),.26f,.26f,.018f,new Color(.06f,.12f,.23f,.34f));
+            // Distant panels retain their framed silhouette without spending
+            // foreground geometry on cells that are smaller than one pixel.
+            int columns=distant?2:4,rows=distant?2:5;
+            for(int x=0;x<columns;x++)for(int z=0;z<rows;z++)
+            {
+                var cell=at+new Vector3((x-(columns-1)*.5f)*(distant?.57f:.285f),.055f,(z-(rows-1)*.5f)*(distant?.71f:.285f));var colour=new Color(.06f,.12f,.23f,.34f);
+                if(distant)
+                {
+                    cell.y+=.009f;
+                    b.Quad(cell+new Vector3(-.27f,0,-.335f),cell+new Vector3(-.27f,0,.335f),cell+new Vector3(.27f,0,.335f),cell+new Vector3(.27f,0,-.335f),colour);
+                }
+                else RoundedSlab(b,cell,.26f,.26f,.018f,colour);
+            }
             Beam(b,at+new Vector3(-.58f,.08f,-.68f),at+new Vector3(.58f,.08f,-.68f),.018f,.012f,Light(world));
             CapturePart("Solar array",b,false);
         }

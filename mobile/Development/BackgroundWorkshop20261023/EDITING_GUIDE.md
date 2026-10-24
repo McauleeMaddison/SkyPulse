@@ -1,5 +1,9 @@
 # SkyPulse — visual background workshop
 
+For the additional reusable pipe assemblies and distant skylines added on
+24 October, see `../AtmospherePipes20261024/EDITING_GUIDE.md`. The original
+district and Relay editing scenes described below remain available.
+
 This workshop lets you edit the real 3D structures in Unity's Scene view. You do
 not need to edit C# to move, rotate, resize, duplicate or remove a building,
 island, bridge or Relay structure. Code still handles flight, animation,

@@ -112,7 +112,7 @@ public static class SkyPulseDimensionalChecks
     {
         Call(game,"SetHomeProtocol",SkyPulseMode.EndlessRoute);Call(game,"StartFlight");Call(game,"UpdateCinematicPresentation",1f);
         var env=(SkyPulseFlightEnvironment)Get(game,"flightEnvironment");var camera=(Camera)Get(game,"flightCamera");
-        Check(env!=null&&env.WorldScene.GetComponentsInChildren<MeshRenderer>(true).Length==25,"Active flight uses two pooled twelve-district mesh banks and one atmosphere dome");
+        Check(env!=null&&env.WorldScene.GetComponentsInChildren<MeshRenderer>(true).Length==33,"Active flight uses two district banks, eight pooled distant-atmosphere surfaces and one sky dome");
         Check(!((SpriteRenderer)Get(game,"backgroundRenderer")).enabled&&!((SpriteRenderer)Get(game,"incomingBackground")).enabled&&!((SpriteRenderer)Get(game,"backgroundVeil")).enabled,"Endless displays its constructed world instead of the flat city images");
         Check(camera.orthographic&&camera.transform.position==new Vector3(0,0,-10)&&camera.nearClipPlane<1&&camera.farClipPlane>30,"Original orthographic camera contains the architecture depth range");
         Check(env.WorldScene.GetComponentsInChildren<Collider>(true).Length==0&&env.WorldScene.GetComponentsInChildren<Collider2D>(true).Length==0,"Scenery owns no collision shapes");

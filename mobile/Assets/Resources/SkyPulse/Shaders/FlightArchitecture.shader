@@ -11,6 +11,7 @@ Shader "SkyPulse/Flight Architecture"
         _Geology("Mineral strata",Float)=0
         _Design("District identity",Float)=0
         _WindowGlow("Occupied window illumination",Range(0,1))=1
+        _Backdrop("Distant skyline haze",Range(0,1))=0
         _BeaconGlow("Star LED light spill",Range(0,1))=1
     }
     SubShader
@@ -26,7 +27,7 @@ Shader "SkyPulse/Flight Architecture"
             #include "UnityCG.cginc"
             struct app {float4 vertex:POSITION;float3 normal:NORMAL;float4 color:COLOR;};
             struct vary {float4 pos:SV_POSITION;float3 world:TEXCOORD0;float3 normal:TEXCOORD1;float4 color:COLOR;float3 local:TEXCOORD2;};
-            float _Visibility,_Clock,_Architecture,_Geology,_Design,_WindowGlow,_BeaconGlow;float4 _Tint,_Haze;
+            float _Visibility,_Clock,_Architecture,_Geology,_Design,_WindowGlow,_BeaconGlow,_Backdrop;float4 _Tint,_Haze;
             float4 _BeaconPoints[5],_BeaconColours[5];
             sampler2D _Environment;
             vary vert(app v){vary o;o.pos=UnityObjectToClipPos(v.vertex);o.world=mul(unity_ObjectToWorld,v.vertex).xyz;o.normal=UnityObjectToWorldNormal(v.normal);o.color=v.color;o.local=v.vertex.xyz;return o;}
@@ -99,7 +100,9 @@ Shader "SkyPulse/Flight Architecture"
                 float distanceToCamera=length(_WorldSpaceCameraPos.xyz-i.world);
                 float mist=saturate((distanceToCamera-25)/35)*.51;
                 float3 atmosphere=lerp(float3(.13,.15,.24),max(_Haze.rgb,_Tint.rgb*.23),.46);
-                return lerp(colour,atmosphere,mist);
+                float3 distantLight=lerp(atmosphere,max(_Haze.rgb*.55+_Tint.rgb*.22,float3(.07,.09,.14)),.55);
+                float distanceVeil=lerp(mist,.45+mist*.25,_Backdrop);
+                return lerp(colour,lerp(atmosphere,distantLight,_Backdrop),distanceVeil);
             }
             fixed4 frag(vary i):SV_Target
             {

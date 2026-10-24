@@ -1,0 +1,327 @@
+{
+  "date": "2026-10-24",
+  "passed": true,
+  "branch": "codex/dimensional-flight-20261022",
+  "unityVersion": "6000.6.0f1",
+  "newPipeScenes": 12,
+  "newDistantSkylineScenes": 12,
+  "originalDistrictAndRelayScenesPreserved": true,
+  "automated": {
+    "regression": {
+      "groups": [
+        "SKYPULSE_BIRD_PROGRESSION_LIVE_PASS",
+        "SKYPULSE_BIRD_PROGRESSION_PURE_PASS",
+        "SKYPULSE_BLACKOUT_LIVE_PASS",
+        "SKYPULSE_BLACKOUT_PURE_PASS",
+        "SKYPULSE_CAP_CONTOUR_PASS",
+        "SKYPULSE_CINEMATIC_PASS",
+        "SKYPULSE_COPY_UI_PASS",
+        "SKYPULSE_DAILY_ROUTE_LIVE_PASS",
+        "SKYPULSE_DAILY_ROUTE_PURE_PASS",
+        "SKYPULSE_DEPTH_PASS",
+        "SKYPULSE_DIMENSIONAL_AUDIO_PASS",
+        "SKYPULSE_DIMENSIONAL_PASS",
+        "SKYPULSE_FLIGHT_ENVIRONMENT_PASS",
+        "SKYPULSE_GUIDE_WORLD_PASS",
+        "SKYPULSE_HEIST_CAPTURE_PASS",
+        "SKYPULSE_MISSION_INTEGRATION_PASS",
+        "SKYPULSE_MISSION_LEGACY_PASS",
+        "SKYPULSE_MISSION_PURE_PASS",
+        "SKYPULSE_ONE_THUMB_LIVE_PASS",
+        "SKYPULSE_ONE_THUMB_PURE_PASS",
+        "SKYPULSE_PIPE_FINISH_PASS",
+        "SKYPULSE_PLAYER_GOALS_PASS",
+        "SKYPULSE_PRESENTATION_CAPTURES_PASS",
+        "SKYPULSE_PURPOSE_LIVE_PASS",
+        "SKYPULSE_RELAY_MESH_PASS",
+        "SKYPULSE_ROUTE_FADE_PASS",
+        "SKYPULSE_SCORE_FINISH_PASS",
+        "SKYPULSE_STATION_DEPTH_PASS",
+        "SKYPULSE_TOUCH_COMFORT_PASS"
+      ],
+      "assertions": [],
+      "logSha256": "2affa3b3f4f6ba7db81a664b7440517b1482645f364c91d1b897ad18e624e0d2",
+      "csharpErrors": 0,
+      "shaderErrors": 0,
+      "blackoutSerializationWarnings": 0,
+      "editorSearchStartupException": true
+    },
+    "focused": {
+      "groups": [
+        "SKYPULSE_ATMOSPHERE_PIPE_AUTHORING_PASS",
+        "SKYPULSE_ATMOSPHERE_PIPE_LIVE_PASS",
+        "SKYPULSE_ATMOSPHERE_PREVIEWS_PASS",
+        "SKYPULSE_DESIGN_NORMALS_PASS",
+        "SKYPULSE_PRESENTATION_CAPTURES_PASS",
+        "SKYPULSE_WORLD_STYLES_PASS"
+      ],
+      "assertions": [
+        "Both reusable pipe parts bake: 0",
+        "Bake retains tested pipe dimensions: 0",
+        "LED-rate edits survive saving: 0",
+        "Both reusable pipe parts bake: 1",
+        "Bake retains tested pipe dimensions: 1",
+        "LED-rate edits survive saving: 1",
+        "Both reusable pipe parts bake: 2",
+        "Bake retains tested pipe dimensions: 2",
+        "LED-rate edits survive saving: 2",
+        "Both reusable pipe parts bake: 3",
+        "Bake retains tested pipe dimensions: 3",
+        "LED-rate edits survive saving: 3",
+        "Both reusable pipe parts bake: 4",
+        "Bake retains tested pipe dimensions: 4",
+        "LED-rate edits survive saving: 4",
+        "Both reusable pipe parts bake: 5",
+        "Bake retains tested pipe dimensions: 5",
+        "LED-rate edits survive saving: 5",
+        "Both reusable pipe parts bake: 6",
+        "Bake retains tested pipe dimensions: 6",
+        "LED-rate edits survive saving: 6",
+        "Both reusable pipe parts bake: 7",
+        "Bake retains tested pipe dimensions: 7",
+        "LED-rate edits survive saving: 7",
+        "Both reusable pipe parts bake: 8",
+        "Bake retains tested pipe dimensions: 8",
+        "LED-rate edits survive saving: 8",
+        "Both reusable pipe parts bake: 9",
+        "Bake retains tested pipe dimensions: 9",
+        "LED-rate edits survive saving: 9",
+        "Both reusable pipe parts bake: 10",
+        "Bake retains tested pipe dimensions: 10",
+        "LED-rate edits survive saving: 10",
+        "Both reusable pipe parts bake: 11",
+        "Bake retains tested pipe dimensions: 11",
+        "LED-rate edits survive saving: 11",
+        "Distant skyline bakes: 0",
+        "Distant skyline bakes: 1",
+        "Distant skyline bakes: 2",
+        "Distant skyline bakes: 3",
+        "Distant skyline bakes: 4",
+        "Distant skyline bakes: 5",
+        "Distant skyline bakes: 6",
+        "Distant skyline bakes: 7",
+        "Distant skyline bakes: 8",
+        "Distant skyline bakes: 9",
+        "Distant skyline bakes: 10",
+        "Distant skyline bakes: 11",
+        "Twelve bounded low-detail distant skylines",
+        "Nine LED sky stars use one tiny cached mesh per world",
+        "Hidden incoming world binds its own geometry: 0",
+        "Hidden incoming world binds its own geometry: 1",
+        "Hidden incoming world binds its own geometry: 2",
+        "Hidden incoming world binds its own geometry: 3",
+        "Hidden incoming world binds its own geometry: 4",
+        "Hidden incoming world binds its own geometry: 5",
+        "Hidden incoming world binds its own geometry: 6",
+        "Hidden incoming world binds its own geometry: 7",
+        "Hidden incoming world binds its own geometry: 8",
+        "Hidden incoming world binds its own geometry: 9",
+        "Hidden incoming world binds its own geometry: 10",
+        "Hidden incoming world binds its own geometry: 11",
+        "Atmospheric parallax agrees at 30 Hz",
+        "Atmospheric parallax agrees at 60 Hz",
+        "Atmospheric parallax agrees at 120 Hz",
+        "Reduced Motion freezes atmospheric travel and LED shimmer",
+        "Steady scenery updates allocate no managed memory",
+        "Retry reuses the twelve cached pipe assemblies",
+        "Runtime owns a fitted copy of the authored pipe mesh",
+        "Baked LED speed reaches the actual gameplay material",
+        "Switching from an unfinished Endless dissolve cannot overlay Relay's station",
+        "Blackout also excludes the previous world's dissolve",
+        "Every gate binds a shared cached pipe mesh",
+        "Supported mobile shader: AtmosphereStars",
+        "Supported mobile shader: AtmosphereVeil",
+        "Supported mobile shader: OrbitalStructure",
+        "Supported mobile shader: FlightArchitecture",
+        "Supported mobile shader: EndlessRouteMetal",
+        "Atmosphere destruction releases all owned meshes and materials"
+      ],
+      "logSha256": "92b50a2ad4dd2d11a8690bdfd113e3d483b342e48bd8a477a3e8b70f631af5c1",
+      "csharpErrors": 0,
+      "shaderErrors": 0,
+      "blackoutSerializationWarnings": 0,
+      "editorSearchStartupException": true
+    },
+    "preservation": {
+      "baseCommit": "a343aef",
+      "unchangedFiles": {
+        "mobile/Assets/Scripts/SkyPulseMissionModels.cs": "2966173db2cd29644df19e99126a13d93f528897bf7153a0ff80938efc874605",
+        "mobile/Assets/Scripts/SkyPulseDailyMissions.cs": "10157b808de4de3ee309b00a019ee43b4faeb11be50f8276f46d2c105b7ea8be",
+        "mobile/Assets/Scripts/SkyPulseBirdProgression.cs": "1a1c01342e7b24452835109d624ac88d1d392067284ac0cd9be358a68465ccc0",
+        "mobile/Assets/Scripts/SkyPulseInputFence.cs": "ccf585a47e7bb3d401c4358d792209b548185f755b27b494a368ce7838ec7b25",
+        "mobile/Assets/Scripts/SkyPulseRelayGate.cs": "745e48b7500df3581847860531d88dfd16427491242ab42a68d131365d4b2598",
+        "mobile/Assets/Scripts/SkyPulsePrism.cs": "68e619ebc3729f03a8dadba7b2e20f8095a53a245895b234ecb49d8d06a12021",
+        "mobile/Assets/Scripts/SkyPulseBlackoutCampaign.cs": "37e6fdc0b2dce5c978a0cb1d075e53bfae1f48dfb4a76e4685e17408f815d083",
+        "mobile/Assets/Scenes/SkyPulse.unity": "559ca9680dcb6f841f1d6e68f273e068d6af595b7e047619c853b2e2175aea15",
+        "mobile/Assets/Scenes/SkyPulse.unity.meta": "517caf9b9d042a7e98de0d54877713e383b57cf9098e94bb81ca59a4f04bfec9"
+      },
+      "unchangedMethods": {
+        "CreateCamera": "e5ee6cd25c8a8a5cfbd5e3f60303a6666948213ca3070da271ba022118fa86f2",
+        "SimulateFlight": "5767b7e90e1bc0da2d2874139a4fcf688025b129ad4407a0c7d614fb8c161d39",
+        "UpdateBird": "36bfdebbb6e9da3bc7822f5b6952cb000abeefced13bcde1348c4ae125b528d5",
+        "Flap": "78f20fe6276e2d5c4d5442750310a7dbec672e40e3afc3942b1e49d7ddc58c1c",
+        "CollidersOverlap": "817b7019108b03139df919a5f90f65e481bf0acb0736ece53dfcaf4961f7f1ce",
+        "BirdCollidesWithPipe": "6cadc010df5471c012522e463ddd693eb0520beb40cf9e2a9a197becd0539978",
+        "RoutePipeSpacing": "dc32e8640f88955dc09c5d8a457f2a438e487f657843eaaeec7ba53529d7f5ad",
+        "GetViewportWidth": "58b987a0239323791deeb9ec1128347009ddc7e73eccd2894426c66982ae6cb3",
+        "UpdatePipes": "addb789f64a993c534bb3b3299cb94a3d6a7869d8c3e8e65b532a8d3532448ac",
+        "ConfigurePipe": "c1d04679b6892ee548ccb67a4f40d71473832f91b4ace16db795892d58ffe4fe",
+        "BeginWorldTransition": "a1be2bc452d27b9be4bb2d7bc6af75f2c404c3b08bc0c72ad0bdb9fe7e4594fd",
+        "UpdateWorldTransition": "769d8fff91c80a622b58208102e9f0b75acc79e0f964a4f7fe7b04aca9978a5f",
+        "CollectCrystalPickup": "8377643e706ec6f4e8b2a5ef2ede3acec798b0e43def97fc759d730a7d89868a",
+        "EndFlight": "d20666b1bef6fb7ce6784e2281a777f6d110e5f01999938669f6cdf0aad81b82",
+        "BankCollectedCrystals": "85ec101d6e92c45fbde5c903f1960b9fc593abce52678444daec2cb875f08a98",
+        "SaveProgress": "ce698364177ad0c7549953cb60a9f294fe5f0705f65d433a04bc7b72ee5cf3ff",
+        "SimulateRelay": "9ac5717e01b1f15cc68bf231a637b4ab81c4b1e6dd75684721da3bd8578e0322",
+        "RelayPlaneContact": "a082e73f15584e9e8bb261dd533416124f00bbc9dbf2b03f2b188f8b792d9bb5",
+        "RelayCellContact": "865073dcd37f41eecdda96c74809bc58b9288fbb3de2815117b736e81e7ec0fd",
+        "RelayUnlocked": "bacd9c8f38fdbaa3922ad9d24a580e029c4e063ead89ea30c2079a56c63ab947",
+        "FinalizeMission": "d76030fddf65b2be939870854c077a69677b7de70f3af6f6692a015e38aa8850",
+        "ClaimDaily": "434c11d7af1aa2510b1e956fcd143902933b875cd13fbf1e48fabe101943c6d5",
+        "TouchBlackoutNode": "ca78a1c01ef5ca5e6ae303556566e2b386645c039c34d6394c53cdd0b63c331d",
+        "ActivateNextBlackoutPuzzle": "a2d8be9f19912df1d60d684ecfc2f0f03b75b64551d8a21539875bc9dbc3c0f2",
+        "RestartBlackoutVault": "11c57caae9e4b576f7a4060f4e45b6fd88c3cac8f7cf50681dda4c5554adae58",
+        "SaveBlackoutAttempt": "710fa360bbe42d2a0dcd80bf79ce3a63debc34f6cfec999f58b986d9f08df804",
+        "ToggleBlackoutPreview": "869081ed3d773ac7170390bfc1cfd9dec26135835881a54a08a1c1c535a67983",
+        "CancelBlackoutPreview": "c2ecddb9460073077c12214b95efcd7e6c41adbbae12d13bab22ae5d5a4586b6",
+        "PreviewBlackoutNode": "b93ac79c7853708caa0ea3a26481467e06e1dce322863be80c4df1f1f6ea1b1f",
+        "CommitBlackoutPreview": "0388922d3623e14d679d7d44857141d495bc8cbca06d28f5fa4bfa87737f997d",
+        "ResetBlackoutEffects": "a7df504cebf35687d546efdd7a0df27ec80a8f6f1fb8ad3e55d0609bf0c8b212"
+      },
+      "authoredAudio": {
+        "mobile/Assets/Resources/SkyPulse/audio/flap.wav": {
+          "sha256": "135937e425d8c14b0b958ca9be1304a5391d742e41828a3cbfbe752659bb9316",
+          "metaSha256": "b85ceb96eece6d1b3371de9f9f36342ff346909af6be91d15aab93a919361fd9",
+          "matchesGenerator": true
+        },
+        "mobile/Assets/Resources/SkyPulse/audio/score.wav": {
+          "sha256": "cda7c93f64c53c38898c79fdd17d267fae1544e6adcc0a0ca7b15467103b63a8",
+          "metaSha256": "deebf78df3494eb74903aa5b200ad08877cd46000630b25ec189ff24e37d6697",
+          "matchesGenerator": true
+        },
+        "mobile/Assets/Resources/SkyPulse/audio/crystal.wav": {
+          "sha256": "5b32feba4d5632b346592bb0c0f78e0f173204910d77f14fab36152b61c1e1f1",
+          "metaSha256": "5bea402d3115407b2cedfb91cb71972d72230408a19557754e43327f0a83fb93",
+          "matchesGenerator": true
+        },
+        "mobile/Assets/Resources/SkyPulse/audio/crash.wav": {
+          "sha256": "0859d670b7a5ed45627b2ce9912e49bb69bb93bf4a054bb5199a5c051142e09f",
+          "metaSha256": "00c546e138af60b73a45aa508612dd29dbe5515528d50bfdc246319dd88350a0",
+          "matchesGenerator": true
+        },
+        "mobile/Assets/Resources/SkyPulse/audio/unlock.wav": {
+          "sha256": "2fed971cbf0892c97825197aaf62153c94bc5ea84f94176f2ea0e78f5d739994",
+          "metaSha256": "09575c9815697f9ea3fe1b00eb20b1b5fb87d41d69ae09b792edfacddc28820a",
+          "matchesGenerator": true
+        },
+        "mobile/Assets/Resources/SkyPulse/audio/prism.wav": {
+          "sha256": "5f4d2950b17ebb8cad1e175942aa2de41f5bbe959eefe40457a44db1ae0a045f",
+          "metaSha256": "0a442164c565c60298bb9d863f8613572e9bdd1fbb7bec7b97e7e3a4b5e883ac",
+          "matchesGenerator": true
+        },
+        "mobile/Assets/Resources/SkyPulse/audio/sensor.wav": {
+          "sha256": "ad4f0a91fd613f687470921d5cc67f605ae6721acf49649ad25c6599fb48dd83",
+          "metaSha256": "8aad8aa4666810dd87e8be14903afc1feb439d8d515d16ab62f92e659d521b4a",
+          "matchesGenerator": true
+        }
+      },
+      "uniqueUnityGuids": 847,
+      "presentationOnlyFlightHook": true,
+      "newRunFeedbackReset": true,
+      "savedAudioPreferenceHook": true,
+      "passed": true
+    },
+    "playerCopy": {
+      "passed": true,
+      "sourceFiles": 54,
+      "resourceJsonFiles": 3,
+      "stringsChecked": 2827,
+      "negativeControlsPassed": 5,
+      "legitimateCopyControlsPassed": 4,
+      "findings": [],
+      "limitations": [
+        "Does not certify typography, image text, every possible dynamic state or future edits."
+      ]
+    },
+    "artworkLedger": {
+      "passed": true,
+      "imagesCovered": 145,
+      "sha256AndSizesMatch": true,
+      "exactByteDuplicateGroups": [],
+      "ownerReferenceStatementRecorded": true,
+      "exclusiveRightsCertified": false,
+      "appleSimilarityResolved": false,
+      "limitations": [
+        "Exact byte checks do not compare against other apps or certify copyright.",
+        "Owner attestations and published terms do not authenticate every original export."
+      ]
+    }
+  },
+  "deviceTestsCompleted": false,
+  "appStoreSubmitted": false,
+  "phoneBuildInstalled": false,
+  "mainMerged": false,
+  "notes": [
+    "Unity Editor QuickSearch throws during startup in the disposable test copy; all gameplay assertions complete and both runs exit successfully. This is an Editor indexing issue, not a clean-log certification.",
+    "Final focused checks and previews include the last distant-scale adjustment; full gameplay regression also covers the mode-layer fix.",
+    "30/60/120 checks exercise deterministic updates; real-device FPS, heat and visual comfort remain unverified.",
+    "Videos are silent Unity QA captures at 10 captured frames/second, not iPhone screen recordings.",
+    "Nineteen additional numbered mesh copies were preserved locally and excluded from this change."
+  ],
+  "videos": {
+    "Twelve-Worlds-Motion.mp4": {
+      "frames": 240,
+      "decodedFrames": 240,
+      "width": 750,
+      "height": 1334,
+      "fps": 10,
+      "seconds": 24
+    },
+    "Pulse-Relay-Motion.mp4": {
+      "frames": 40,
+      "decodedFrames": 40,
+      "width": 750,
+      "height": 1630,
+      "fps": 10,
+      "seconds": 4
+    }
+  },
+  "artifacts": {
+    "Pulse-Relay-Motion-Poster.png": {
+      "bytes": 1398823,
+      "sha256": "2502cd6ace553be6e56134b914f137da63cd52d1767ce785736f780d05115b50"
+    },
+    "Twelve-Worlds-Motion-Poster.png": {
+      "bytes": 801667,
+      "sha256": "e07f1ae9fd25997556b1fd3063aa74bdb4e9a0b81d72c04881e5940336511172"
+    },
+    "unity-focused.log.gz": {
+      "bytes": 39536,
+      "sha256": "60535df1bbeb2618da01dc55af73c014b6d50063d938dfe0388df485ccafabac"
+    },
+    "Pulse-Relay-Home.png": {
+      "bytes": 4574370,
+      "sha256": "39522c1c2860c42144d30cdab4a7b84dcbc7d3b9ac4bf0797b180deeac9f838c"
+    },
+    "Pulse-Relay-Motion.mp4": {
+      "bytes": 1666591,
+      "sha256": "1436ce625eb2b6ae7f27193c48960f251222c9279f2a78633c4e8ab5b608e8da"
+    },
+    "Pulse-Relay.png": {
+      "bytes": 4063757,
+      "sha256": "ee0179e3cc5895c1edab794960950f85a4e486cad95f92cdda0c39622992dd54"
+    },
+    "unity-regression.log.gz": {
+      "bytes": 324598,
+      "sha256": "60cbf800572be0111cb2ba9210aa4d2ae73dece7139d315921e3485f96d0292e"
+    },
+    "Twelve-Worlds-Motion.mp4": {
+      "bytes": 9018092,
+      "sha256": "e97ffdc8f52a5c4a2f5939542a2477425d6cd9a25d69d78b26deb705f4119054"
+    },
+    "Twelve-Worlds.png": {
+      "bytes": 4623695,
+      "sha256": "90982da5c6103087b6f5794f90fa95b67ee313b335a200214aae037da9b60218"
+    }
+  }
+}

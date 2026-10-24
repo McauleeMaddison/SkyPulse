@@ -16,7 +16,7 @@ namespace SkyPulse.Mobile
         readonly Material[] surfaces=new Material[2];
         readonly int[] bankTheme={-1,-1};
         readonly Texture[] reflections=new Texture[Themes];
-        Mesh skyMesh;Material skyMaterial;Transform sky;
+        Mesh skyMesh;Material skyMaterial;Transform sky;SkyPulseAtmosphereDepth atmosphereDepth;
         Transform worldScene,composite;Camera worldCamera;RenderTexture worldImage;Mesh compositeMesh;Material compositeMaterial;float viewAspect;
         public Transform WorldScene=>worldScene;
         public Camera WorldCamera=>worldCamera;
@@ -59,6 +59,7 @@ namespace SkyPulse.Mobile
                     scenery[bank,i]=renderer.transform;
                 }
             }
+            atmosphereDepth=new GameObject("Layered distant atmosphere").AddComponent<SkyPulseAtmosphereDepth>();atmosphereDepth.Build(worldScene);
             // The original sky colour lives on an enclosing dome. The city
             // illustration is cropped away and replaced by inhabited mesh islands.
             var dome=new SkyPulseMeshBuilder();const int slices=40,rings=24;
@@ -100,6 +101,8 @@ namespace SkyPulse.Mobile
             Travel=reduced?0:distance; clock=reduced?0:clock;
             SetBank(0,previous,Travel,clock,previous==world?0:(1-transition)*entry,previousTint,previousHaze);
             SetBank(1,world,Travel,clock,(previous==world?1:transition)*entry,tint,haze);
+            atmosphereDepth.Present(0,previous,Travel,clock,previous==world?0:(1-transition)*entry,previousTint,previousHaze);
+            atmosphereDepth.Present(1,world,Travel,clock,(previous==world?1:transition)*entry,tint,haze);
             float blend=previous==world?1:Mathf.Clamp01(transition);
             skyMaterial.SetTexture("_SkyA",reflections[previous]!=null?reflections[previous]:Texture2D.grayTexture);skyMaterial.SetTexture("_SkyB",reflections[world]!=null?reflections[world]:Texture2D.grayTexture);skyMaterial.SetFloat("_Blend",blend);
             skyMaterial.SetFloat("_WorldA",previous);skyMaterial.SetFloat("_WorldB",world);

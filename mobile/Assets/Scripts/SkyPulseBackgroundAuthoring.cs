@@ -1,13 +1,13 @@
 #if UNITY_EDITOR
 using UnityEngine;
 
-// This component and its scenes live under Editor and are not shipped.
+// This component is compiled only in the Editor; its scenes live under Editor.
 // Moving child MeshFilters changes the structure, not the game's flight rules.
 [ExecuteAlways]
 public sealed class SkyPulseBackgroundAuthoring : MonoBehaviour
 {
     [HideInInspector] public int World,Variant;
-    [HideInInspector] public bool Relay;
+    [HideInInspector] public bool Relay,Horizon;
     [HideInInspector] public string[] OriginalNames;
     [HideInInspector] public Vector3[] OriginalPositions,OriginalScales;
     [HideInInspector] public Quaternion[] OriginalRotations;
@@ -31,7 +31,7 @@ public sealed class SkyPulseBackgroundAuthoring : MonoBehaviour
     }
     void Update()
     {
-        if(Relay||BeaconColours==null||OriginalBeaconPoints==null||OriginalBeaconPoints.Length!=5)return;
+        if(Relay||Horizon||BeaconColours==null||OriginalBeaconPoints==null||OriginalBeaconPoints.Length!=5)return;
         var points=BeaconPoints();
         foreach(var renderer in GetComponentsInChildren<MeshRenderer>())
         {

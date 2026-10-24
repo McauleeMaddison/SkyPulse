@@ -65,7 +65,7 @@ namespace SkyPulse.Mobile
                 Hull(drone,new Vector3(side*.45f,-.025f,-.07f),new Vector3(.07f,.018f,.028f),new Color(.30f,.80f,.94f,1));
             }
             droneMesh=drone.Finish("Streamlined ceramic service craft with optical nacelles");
-            material=new Material(Resources.Load<Shader>("SkyPulse/Shaders/FlightArchitecture")){name="Reflected orbital titanium"};
+            material=new Material(Resources.Load<Shader>("SkyPulse/Shaders/OrbitalStructure")){name="Reflected orbital titanium"};
             material.SetColor("_Tint",new Color(.23f,.66f,.82f));material.SetColor("_Haze",new Color(.02f,.07f,.11f));material.SetTexture("_Environment",reflection!=null?reflection:Texture2D.grayTexture);
             for(int i=0;i<6;i++)rails[i]=SkyPulseMeshBuilder.Surface(scene,"Parallax structural rib "+i,railMesh,material,-23+i/2*3).transform;
             for(int i=0;i<2;i++){turbines[i]=SkyPulseMeshBuilder.Surface(scene,"Distant air recycler "+i,turbineMesh,material,-25).transform;drones[i]=SkyPulseMeshBuilder.Surface(scene,"Autonomous maintenance drone "+i,droneMesh,material,-15).transform;}

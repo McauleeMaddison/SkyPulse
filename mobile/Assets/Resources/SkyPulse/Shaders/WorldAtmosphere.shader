@@ -88,8 +88,11 @@ Shader "SkyPulse/Constructed World Atmosphere"
                 float polar=world<1.5||world>10.5?1:0;
                 sky+=lerp(glow,float3(.52,.27,.95),saturate(d.x+.45))*aurora*polar*.19;
                 // Soft volumetric cloud banks sit below the occupied districts.
-                float cloudFace=.30+billow*.33;
+                float cloudFace=.24+billow*.48;
                 float3 seaColour=lerp(shadow,light,cloudFace)+glow*horizon*.12;
+                float wisps=pow(saturate(1-abs(mist-.57)*6),3);
+                sky+=lerp(glow,light,.35)*wisps*.085;
+                seaColour+=light*pow(saturate(1-abs(billow-.62)*5),3)*.055;
                 // Low-contrast banks avoid coarse dark patches; full coverage
                 // below the horizon also hides buildings painted into sky art.
                 float sea=1-smoothstep(-.21,.045,d.y);sky=lerp(sky,seaColour,sea);

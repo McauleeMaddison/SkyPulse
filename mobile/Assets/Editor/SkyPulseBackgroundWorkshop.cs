@@ -171,6 +171,40 @@ public static class SkyPulseBackgroundWorkshop
         UnityEngine.Object.DestroyImmediate(runner);PrefabUtility.SaveAsPrefabAsset(root,Folder+"/Prefabs/relay.prefab");Camera(scene,new Vector3(0,0,-18),Vector3.zero);
         EditorSceneManager.SaveScene(scene,Folder+"/Scenes/25 Pulse Relay Station.unity");EditorSceneManager.CloseScene(scene,true);
     }
+    [MenuItem("Tools/SkyPulse/Background Workshop/Create distant skyline scenes")]
+    public static void CreateHorizons()
+    {
+        if(EditorApplication.isPlaying)throw new InvalidOperationException("Stop Play mode before authoring scenery.");
+        string folder=Folder+"/Distant Scenes";
+        if(Directory.Exists(folder)&&Directory.GetFiles(folder,"*.unity").Length>0)throw new InvalidOperationException("Distant scenes already exist. Open them rather than replacing edits.");
+        DirectoryFor(folder);
+        if(string.IsNullOrEmpty(UnityEngine.SceneManagement.SceneManager.GetActiveScene().path))
+        {
+            if(!Application.isBatchMode)throw new InvalidOperationException("Save the current scene before creating distant scenes.");
+            EditorSceneManager.SaveScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene(),"Assets/Editor/Workshop Bootstrap.unity");
+        }
+        for(int world=0;world<12;world++)
+        {
+            var scene=EditorSceneManager.NewScene(NewSceneSetup.EmptyScene,NewSceneMode.Additive);Mesh original=null;
+            try
+            {
+                district=new GameObject(Worlds[world]+" · Distant skyline");UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(district,scene);
+                var root=district.AddComponent<SkyPulseBackgroundAuthoring>();root.Horizon=true;root.World=world;
+                var source=AssetDatabase.LoadAssetAtPath<Material>(Folder+"/Materials/world-"+world.ToString("00")+"-0.mat");
+                districtMaterial=UnityEngine.Object.Instantiate(source);districtMaterial.name=Worlds[world]+" distant atmosphere";districtMaterial.SetFloat("_Backdrop",1);districtMaterial.SetFloat("_BeaconGlow",0);
+                districtMaterial=Save(districtMaterial,Folder+"/Materials/world-"+world.ToString("00")+"-horizon.mat");
+                assetPrefix=Folder+"/Meshes/world-"+world.ToString("00")+"-horizon";piece=0;depth=0;ranges.Clear();builder=null;
+                Capture.SetValue(null,(Action<string,object,bool>)CapturePart);original=(Mesh)Architecture.GetMethod("BuildHorizon",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,new object[]{world});
+                var indices=Field<List<int>>(builder,"t");int from=0;
+                foreach(var range in ranges){if(range.x>from)AddPart("Distant support",builder,from,range.x);from=range.y;}
+                if(from<indices.Count)AddPart("Distant support",builder,from,indices.Count);
+                PrefabUtility.SaveAsPrefabAsset(district,Folder+"/Prefabs/world-"+world.ToString("00")+"-horizon.prefab");Camera(scene,new Vector3(16,7,-20),new Vector3(0,2,0));
+                EditorSceneManager.SaveScene(scene,folder+"/"+(world+1).ToString("00")+" "+Worlds[world]+" Atmosphere.unity");
+            }
+            finally{Capture.SetValue(null,null);if(original!=null)UnityEngine.Object.DestroyImmediate(original);EditorSceneManager.CloseScene(scene,true);}
+        }
+        AssetDatabase.SaveAssets();Debug.Log("SKYPULSE_HORIZON_WORKSHOP_CREATED: twelve separate editable distant skylines; existing district scenes preserved.");
+    }
     [MenuItem("Tools/SkyPulse/Background Workshop/Bake selected background")]
     public static void BakeSelected()
     {
@@ -189,9 +223,9 @@ public static class SkyPulseBackgroundWorkshop
             var mesh=new Mesh{name=Worlds[root.World]+(root.Variant==0?" / civic district":" / residential district")};
             mesh.CombineMeshes(parts.Select(f=>new CombineInstance{mesh=f.sharedMesh,transform=root.transform.worldToLocalMatrix*f.transform.localToWorldMatrix}).ToArray(),true,true);
             if(mesh.vertexCount>=60000){UnityEngine.Object.DestroyImmediate(mesh);throw new InvalidOperationException("This district exceeds the mobile budget of 60,000 vertices. Simplify it before baking.");}
-            string id="world-"+root.World.ToString("00")+"-"+(root.Variant==0?"civic":"residential");
+            string id="world-"+root.World.ToString("00")+"-"+(root.Horizon?"horizon":root.Variant==0?"civic":"residential");
             Save(mesh,Output+"/"+id+".asset");
-            var lighting=ScriptableObject.CreateInstance<SkyPulseBackgroundLighting>();lighting.Points=(Vector4[])root.BeaconPoints().Clone();lighting.Colours=(Vector4[])root.BeaconColours.Clone();Save(lighting,Output+"/"+id+"-lighting.asset");
+            if(!root.Horizon){var lighting=ScriptableObject.CreateInstance<SkyPulseBackgroundLighting>();lighting.Points=(Vector4[])root.BeaconPoints().Clone();lighting.Colours=(Vector4[])root.BeaconColours.Clone();Save(lighting,Output+"/"+id+"-lighting.asset");}
         }
         AssetDatabase.SaveAssets();Debug.Log("WORKSHOP_BAKED: "+root.name+". Restart Play mode to load the saved background.");
     }

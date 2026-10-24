@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: world-11-horizon
+  m_Shader: {fileID: 4800000, guid: 5fe50c2f1e694d99af53c9ab91fcf0c7, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _Environment:
+        m_Texture: {fileID: 2800000, guid: f7983965bf68462c9f519aca18e856d8, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _Architecture: 1
+    - _Backdrop: 0
+    - _BeaconGlow: 0
+    - _Clock: 2
+    - _Design: 11
+    - _Geology: 0
+    - _Visibility: 1
+    - _WindowGlow: 1
+    m_Colors:
+    - _Haze: {r: 0.015686275, g: 0.09803922, b: 0.14509805, a: 1}
+    - _Tint: {r: 0.44705883, g: 0.9137255, b: 0.92941177, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

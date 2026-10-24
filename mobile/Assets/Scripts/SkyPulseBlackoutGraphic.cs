@@ -9,7 +9,8 @@ namespace SkyPulse.Mobile
         public BlackoutSurface Surface;
         public bool ReducedMotion,MotionPaused,Animate=true;
         public float TraceFraction;
-        public BlackoutPuzzle Miniature;
+        // Assigned by the menu at runtime; puzzle definitions are not scene data.
+        [System.NonSerialized] public BlackoutPuzzle Miniature;
         public int RestoredMask,ActiveVault;
         public float LivePower;
         public float Phase { get; private set; }

@@ -31,7 +31,9 @@ namespace SkyPulse.Mobile
             bool show=home||activeMode==SkyPulseMode.EndlessRoute&&(state==FlightState.Playing||state==FlightState.Paused||state==FlightState.Impact||state==FlightState.GameOver);
             // The original illustrations remain available to the world guide
             // and material reflections, but never flatten the constructed view.
-            backgroundRenderer.enabled=!show;incomingBackground.enabled=!show;backgroundVeil.enabled=!show;
+            bool modeHome=homeScreen!=null&&homeScreen.activeInHierarchy&&homeProtocol!=SkyPulseMode.EndlessRoute;
+            bool legacyWorld=!show&&activeMode==SkyPulseMode.EndlessRoute&&!modeHome;
+            backgroundRenderer.enabled=legacyWorld;incomingBackground.enabled=legacyWorld&&worldTransitionTimer>0;backgroundVeil.enabled=legacyWorld;
             if(flightEnvironment==null)
             {
                 var root=new GameObject("Pooled in-flight world architecture");root.transform.SetParent(transform,false);
