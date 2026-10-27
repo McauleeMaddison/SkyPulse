@@ -6,27 +6,14 @@ Open **`mobile/` in Unity Hub** and the repository folder in VS Code. The shippi
 scene is `mobile/Assets/Scenes/SkyPulse.unity`. Start with the
 [editing map](EDITING_GUIDE.md) before changing code.
 
-## Current state — 22 October 2026
+## Current state — local Build 19
 
-- Runtime source: `3bb62d2e9a83ffaaeb34187df80110a0f6418809`.
-- Current local candidate: **1.0.0 (18)**. Last uploaded TestFlight build: **17**.
-- Current polish includes clean pipe joins, a soft banked trail, fades for departing
-  3D pipes, shared world-light transitions and expanded How to Play topics.
-- All twelve backgrounds and 36 transition sequences passed in Editor checks.
-- Candidate App Store draft text is saved; build 15 and old media remain selected.
-  Website support/privacy/guide pages are published and backed up separately.
-- [Current release guide](Release/HolographicPolish20261022/README.md),
-  [release contract](Release/CURRENT_RELEASE.json) and
-  [verification record](Release/HolographicPolish20261022/QA_RECORD.json) identify
-  the actual source, checks and limits. Older release folders are historical.
-- [Moving gameplay preview](Release/HolographicPolish20261022/endless-flight-preview.mp4):
-  12 seconds of the real Unity Editor flight simulation with a QA tap driver,
-  six wing poses and six earned points. It is not physical-device footage.
-- Focused Unity checks, iOS IL2CPP export and metadata consistency checks passed.
-  Physical iPhone/iPad validation of build 18 remains pending.
-- **Public App Review stays on hold** pending Apple's clarification, current
-  device/media validation and renewed owner authorization. Do not submit it as
-  part of visual editing or checklist preparation.
+- Runtime source: `f6221f68314a864b898a7c7bbe9693bb528316e2`; Unity 6000.6.0f1.
+- **SkyPulse 1.0.0 (19) is installed and launched on the paired iPhone.** It replaced the phone's Build 17 directly; TestFlight was not uploaded.
+- The twelve-world/Relay model-detail pass and raised Blackout board are included.
+- Full automated gameplay/world validation and signed native compilation passed. Physical visual/gameplay acceptance, sustained FPS, memory, thermals and retained-progress confirmation remain pending with the owner.
+- [Current device checklist](Release/DeviceBuild19/DEVICE_CHECKLIST.md), [build/installation record](Release/DeviceBuild19/RELEASE_RECORD.json), [QA](Release/DeviceBuild19/QA_RECORD.json) and [release contract](Release/CURRENT_RELEASE.json) identify the actual candidate. Older release folders are historical.
+- **Public App Review stays on hold.** No App Store Connect copy/media/build selection or submission was changed in this session.
 
 ## Preserve while editing
 

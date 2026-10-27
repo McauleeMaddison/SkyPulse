@@ -1,0 +1,34 @@
+{
+  "candidate": "SkyPulse 1.0.0 (19)",
+  "verifiedRuntimeCommit": "f6221f68314a864b898a7c7bbe9693bb528316e2",
+  "branch": "main",
+  "installation": "Direct signed development install over existing SkyPulse, without uninstall",
+  "previousPhoneBuild": "17",
+  "installedPhoneBuild": "19",
+  "phoneModel": "iPhone 17 Pro Max",
+  "deviceInstallSucceeded": true,
+  "deviceLaunchSucceeded": true,
+  "ownerTestingStatus": "Testing deferred; feedback expected next session",
+  "savedProgressAcceptance": "Owner verification pending; same bundle, company/product, save schema and keys retained",
+  "unityExportExitCode": 0,
+  "xcodeBuildExitCode": 0,
+  "codeSignatureDeepStrictVerified": true,
+  "binarySha256": {
+    "SkyPulse": "89d40c19a4673a64b9715d31a4d818b25ae440e3776e222a43110dd270a932e6",
+    "Frameworks/UnityFramework.framework/UnityFramework": "52004a5604d3a1d15c95fc0b8a30aba8da405f889c0a3d65140bd232ff71aa44"
+  },
+  "allExportedSourceHashesMatch": true,
+  "exportedSourceEntries": 1682,
+  "testFlightUploaded": false,
+  "lastObservedTestFlightBuild": "17",
+  "publicReviewSubmitted": false,
+  "appStoreConnectChangedThisSession": false,
+  "nativeWarnings": "Unity-generated libc++ availability, deprecation and script-output warnings remain; native build succeeded",
+  "localArtifactFolder": "artifacts/device-build19/",
+  "logSha256": {
+    "qa-final.log": "0b1bec1f8c392ab2dc56bec5ede291cbb49bf5318c8eb63091e314ba9504f164",
+    "models-final.log": "02fe8bee91facb44c07a3b24c095c027fce3452ca0a440349bc68fbb4e530267",
+    "unity-export-final.log": "c4ce4efb196f9ae377d02a7c612973cdc76c0cae4b5cb5c8643f3bd62a744343",
+    "xcode-build.log": "e800dc53f0783bce9e5e7f14a2dbdad6b9c9bd9f9396b2c99a1d25c06681cb4d"
+  }
+}

@@ -5,14 +5,14 @@
   "bundleId": "com.mcauleemaddison.skypulse",
   "appleTeamId": "TX54JLQ8VF",
   "version": "1.0.0",
-  "build": "18",
-  "runtimeSourceCommit": "3bb62d2e9a83ffaaeb34187df80110a0f6418809",
-  "metadata": "mobile/Release/HolographicPolish20261022/metadata.json",
-  "qaRecord": "mobile/Release/HolographicPolish20261022/QA_RECORD.json",
-  "sourceManifest": "mobile/Release/HolographicPolish20261022/SOURCE_MANIFEST.json",
-  "releaseRecord": "mobile/Release/HolographicPolish20261022/RELEASE_RECORD.json",
+  "build": "19",
+  "runtimeSourceCommit": "f6221f68314a864b898a7c7bbe9693bb528316e2",
+  "metadata": "mobile/Release/DeviceBuild19/metadata.json",
+  "qaRecord": "mobile/Release/DeviceBuild19/QA_RECORD.json",
+  "sourceManifest": "mobile/Release/DeviceBuild19/SOURCE_MANIFEST.json",
+  "releaseRecord": "mobile/Release/DeviceBuild19/RELEASE_RECORD.json",
   "artworkLedger": "mobile/Release/IdentityRights20261013/ARTWORK_LEDGER.json",
-  "testFlightStatus": "Local build 18 is not uploaded; build 17 remains Testing in SkyPulse Internal",
+  "testFlightStatus": "Build 19 installed directly on the paired iPhone; no upload. Build 17 was last observed in TestFlight; App Store Connect was not rechecked this session.",
   "publicAppReview": "On hold pending Apple's clarification, current device/media validation and renewed owner authorization",
-  "appStoreDraftStatus": "Candidate text saved and verified; historical build 15 selected, current media/device validation and local build 18 upload/selection remain pending"
+  "appStoreDraftStatus": "Unchanged this session. Build 19 media, device acceptance and renewed public-submission authorization remain pending."
 }
