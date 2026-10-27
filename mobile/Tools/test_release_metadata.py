@@ -2,8 +2,11 @@
 """Focused guards against stale or misleading release copy; no Unity save access."""
 import copy
 import json
+import hashlib
+import tempfile
+from pathlib import Path
 import unittest
-from check_release_metadata import CURRENT, ROOT, validate_copy
+from check_release_metadata import CURRENT, ROOT, validate_copy, validate_asset_inventory
 
 
 class CurrentReleaseCopyTests(unittest.TestCase):
@@ -56,6 +59,33 @@ class CurrentReleaseCopyTests(unittest.TestCase):
         old = json.loads((ROOT / 'mobile/Release/PremiumTestFlight20261012/metadata.json').read_text())
         validate_copy(old, self.contract, current=False)
 
+
+
+class AssetInventoryTests(unittest.TestCase):
+    def test_recorded_editor_study_and_changed_content(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            name = 'Assets/Editor/local-study.asset'
+            file = root / name
+            file.parent.mkdir(parents=True)
+            file.write_bytes(b'local study')
+            exclusions = {name: hashlib.sha256(file.read_bytes()).hexdigest()}
+            self.assertEqual(validate_asset_inventory({'Assets/game.asset'}, {'Assets/game.asset', name}, exclusions, root), {name})
+            file.write_bytes(b'changed')
+            with self.assertRaises(AssertionError):
+                validate_asset_inventory(set(), {name}, exclusions, root)
+
+    def test_runtime_exclusion_rejected(self):
+        with self.assertRaises(AssertionError):
+            validate_asset_inventory(set(), {'Assets/Resources/unexported.asset'}, {'Assets/Resources/unexported.asset': 'hash'}, Path('/unused'))
+
+    def test_unknown_editor_asset_rejected(self):
+        with self.assertRaises(AssertionError):
+            validate_asset_inventory(set(), {'Assets/Editor/unknown.asset'}, {}, Path('/unused'))
+
+    def test_missing_candidate_asset_rejected(self):
+        with self.assertRaises(AssertionError):
+            validate_asset_inventory({'Assets/game.asset'}, set(), {}, Path('/unused'))
 
 if __name__ == '__main__':
     unittest.main()

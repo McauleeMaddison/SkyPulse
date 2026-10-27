@@ -303,7 +303,48 @@ namespace SkyPulse.Mobile
             FacadeStructure(b,at,width,depth,height,lean,form,world);
             Entrance(b,at,width,depth,height,world);
             RoofDetails(b,centre,Shape(cap,form)*width,Shape(cap,form)*depth,world);
+            ServiceDetail(b,at,width,depth,height,lean,form,world);
             CapturePart("Building",b,false);
+        }
+        static void ServiceDetail(SkyPulseMeshBuilder b,Vector3 at,float width,float depth,float height,float lean,int form,int world)
+        {
+            if(height<1.8f)return;int theme=world%12;float t=.43f+(theme%3)*.055f;
+            var face=at+TowerPoint(-Mathf.PI*.5f,t,width,depth,height,lean,form);float span=width*Shape(t,form)*.55f;
+            // A legible service floor, kept within the existing massing and
+            // entrance envelope. Its construction follows the world's purpose.
+            if(theme==4||theme==8||theme==10)
+            {
+                float rise=Mathf.Min(.28f,height*.10f);
+                Arch(b,face+new Vector3(0,-rise*.4f,-.035f),span*.35f,rise,.025f,0,180,Quaternion.identity,theme==8?Edge:Shell(world),16);
+                for(int side=-1;side<=1;side+=2)Beam(b,face+new Vector3(side*span*.44f,-rise*.45f,-.04f),face+new Vector3(side*span*.44f,rise*.72f,-.04f),.045f,.055f,Shell(world));
+                Beam(b,face+new Vector3(-span*.40f,-rise*.48f,-.06f),face+new Vector3(span*.40f,-rise*.48f,-.06f),.025f,.014f,Light(world));
+            }
+            else if(theme==2||theme==5||theme==9||theme==11)
+            {
+                for(int slat=0;slat<5;slat++)
+                {
+                    float y=(slat-2)*.045f;float offset=theme==5?slat*.006f:0;
+                    Beam(b,face+new Vector3(-span*.43f,y,-.055f-offset),face+new Vector3(span*.43f,y,-.055f-offset),.038f,.018f,slat==2?Edge:Frame);
+                }
+                for(int side=-1;side<=1;side+=2)Beam(b,face+new Vector3(side*span*.49f,-.12f,-.035f),face+new Vector3(side*span*.49f,.12f,-.035f),.032f,.035f,Edge);
+                Beam(b,face+new Vector3(-span*.44f,-.14f,-.05f),face+new Vector3(span*.44f,-.14f,-.05f),.018f,.012f,Light(world));
+            }
+            else
+            {
+                RoundedSlab(b,face+new Vector3(0,-.11f,-.045f),span,.16f,.045f,theme==6?new Color(.19f,.28f,.21f,0):Frame);
+                Beam(b,face+new Vector3(-span*.48f,.13f,-.08f),face+new Vector3(span*.48f,.13f,-.08f),.09f,.025f,Shell(world));
+                for(int side=-1;side<=1;side+=2)
+                {
+                    Beam(b,face+new Vector3(side*span*.44f,-.09f,-.08f),face+new Vector3(side*span*.44f,.14f,-.08f),.025f,.025f,Edge);
+                    if(theme==7)Beam(b,face+new Vector3(side*span*.44f,-.09f,-.085f),face+new Vector3(-side*span*.44f,.13f,-.085f),.014f,.014f,Edge);
+                }
+                Beam(b,face+new Vector3(-span*.43f,-.07f,-.13f),face+new Vector3(span*.43f,-.07f,-.13f),.012f,.012f,Light(world));
+                if(theme==6)for(int leaf=0;leaf<4;leaf++)
+                {
+                    var root=face+new Vector3((leaf-1.5f)*span*.19f,-.07f,-.07f);
+                    b.Face(root,root+new Vector3(.035f,.13f,-.02f),root+new Vector3(.07f,.04f,.01f),new Color(.25f,.44f,.28f,0));
+                }
+            }
         }
         static void FacadeStructure(SkyPulseMeshBuilder b,Vector3 at,float width,float depth,float height,float lean,int form,int world)
         {
@@ -410,6 +451,13 @@ namespace SkyPulse.Mobile
                 RoundedSlab(b,p+new Vector3(0,0,-.019f),width*.111f,.012f,height*.43f,WindowGlass(world,Mathf.RoundToInt(at.y*137+at.x*127),i+3,3));
             }
             for(int side=-1;side<=1;side+=2)Beam(b,at+new Vector3(side*width*.46f,.08f,-depth*.55f),at+new Vector3(side*width*.46f,height-.045f,-depth*.55f),.030f,.045f,Edge);
+            if(world%12==6)
+                for(int side=-1;side<=1;side+=2)for(int fin=0;fin<3;fin++)
+                {
+                    float z=(fin-1)*depth*.25f;
+                    Beam(b,at+new Vector3(side*width*.50f,height*.45f,z),at+new Vector3(side*width*.50f,height+.04f,z),.023f,.035f,Frame);
+                    Beam(b,at+new Vector3(side*width*.50f,height+.05f,z-.04f),at+new Vector3(side*width*.50f,height+.05f,z+.04f),.014f,.012f,Light(world));
+                }
             CapturePart("Pavilion",b,false);
         }
         internal static void WindowBay(SkyPulseMeshBuilder b,Vector3 at,Vector3 p,Vector3 q,Vector3 r,Vector3 s,Vector3 na,Vector3 nb,Color wall,Color glass)
@@ -648,10 +696,10 @@ namespace SkyPulse.Mobile
             }
             CapturePart("Roof dome",b,false);
         }
-        static void Arch(SkyPulseMeshBuilder b,Vector3 at,float rx,float ry,float thickness,float start,float sweep,Quaternion rotation,Color colour)
+        static void Arch(SkyPulseMeshBuilder b,Vector3 at,float rx,float ry,float thickness,float start,float sweep,Quaternion rotation,Color colour,int steps=64)
         {
             CapturePart("Architectural arch",b,true);
-            const int steps=64,sides=8;
+            const int sides=8;
             for(int i=0;i<steps;i++)for(int j=0;j<sides;j++)
             {
                 float a=(start+sweep*i/steps)*Mathf.Deg2Rad,c=(start+sweep*(i+1f)/steps)*Mathf.Deg2Rad,u=j*Mathf.PI/4,v=(j+1f)*Mathf.PI/4;

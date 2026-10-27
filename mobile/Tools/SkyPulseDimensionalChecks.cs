@@ -40,6 +40,7 @@ public static class SkyPulseDimensionalChecks
         SkyPulseMissionChecks.IntegrationChecks(game);
         yield return SkyPulseOneThumbChecks.Live(game);
         yield return SkyPulseBlackoutChecks.Live(game);
+        yield return SkyPulseHeistDepthChecks.Live(game);
         yield return SkyPulsePurposeChecks.Live(game);
         yield return SkyPulseDailyRouteChecks.Live(game);
         var founders=(Array)typeof(SkyPulseNativeGame).GetField("Skins",BindingFlags.Static|BindingFlags.NonPublic).GetValue(null);

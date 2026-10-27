@@ -28,7 +28,7 @@ namespace SkyPulse.Mobile
         static Vector3 Normal(float a,float y){float dr=Radius(y+.001f)-Radius(y-.001f);return new Vector3(Mathf.Cos(a)*.036f,-dr,Mathf.Sin(a)*.036f).normalized;}
         public static Mesh Tower(bool distant)
         {
-            var b=new SkyPulseMeshBuilder();int sides=distant?24:48,floors=distant?8:12;
+            var b=new SkyPulseMeshBuilder();int sides=distant?24:40,floors=distant?8:12;
             for(int row=0;row<floors;row++)for(int side=0;side<sides;side++)
             {
                 float a=side*Mathf.PI*2/sides,c=(side+1f)*Mathf.PI*2/sides,y=row/(float)floors,u=(row+1f)/floors;
@@ -58,6 +58,25 @@ namespace SkyPulse.Mobile
             Deck(b,18.10f,1.25f,.99f,.16f,64);
             if(!distant)
             {
+                // One recognisable observation/service level interrupts the
+                // repeated window floors. Its gallery remains inside the
+                // existing collar envelope and joins the hull with braces.
+                float serviceRadius=Radius(12.25f/18)+.35f;
+                Deck(b,12.25f,serviceRadius,.44f,.20f,72);
+                for(int bay=0;bay<12;bay++)
+                {
+                    float a=bay*Mathf.PI/6,c=(bay+.78f)*Mathf.PI/6;var n=new Vector3(Mathf.Cos(a),0,Mathf.Sin(a));var m=new Vector3(Mathf.Cos(c),0,Mathf.Sin(c));
+                    float r=serviceRadius-.08f;
+                    SkyPulseWorldArchitecture.WindowBay(b,Vector3.zero,n*r+Vector3.up*11.52f,m*r+Vector3.up*11.52f,m*r+Vector3.up*12.16f,n*r+Vector3.up*12.16f,n,m,Hull,bay%4==0?Warm:Dark);
+                    SkyPulseWorldArchitecture.Beam(b,n*(r-.03f)+Vector3.up*11.48f,n*(r-.28f)+Vector3.up*11.10f,.075f,.07f,Edge);
+                    SkyPulseWorldArchitecture.Beam(b,n*(r+.025f)+Vector3.up*12.18f,m*(r+.025f)+Vector3.up*12.18f,.025f,.025f,Led);
+                }
+                for(int fin=0;fin<8;fin++)
+                {
+                    float a=fin*Mathf.PI/4;var n=new Vector3(Mathf.Cos(a),0,Mathf.Sin(a));
+                    SkyPulseWorldArchitecture.Beam(b,n*1.18f+Vector3.up*18.12f,n*.82f+Vector3.up*18.72f,.11f,.075f,Hull);
+                    SkyPulseWorldArchitecture.Beam(b,n*1.20f+Vector3.up*18.19f,n*.84f+Vector3.up*18.74f,.018f,.018f,Led);
+                }
                 // External service ribs follow the stepped hull instead of
                 // hovering beside it. Recessed vents break up large wall bays.
                 for(int side=0;side<12;side++)for(int row=1;row<11;row++)

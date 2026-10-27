@@ -38,6 +38,17 @@ def validate_copy(meta, contract, current=False):
     return limits
 
 
+def validate_asset_inventory(recorded, actual, exclusions, asset_root):
+    """Allow only hash-recorded, local Editor studies outside the built candidate."""
+    assert recorded <= actual, 'Exported candidate assets are missing'
+    extra = actual - recorded
+    for path in extra:
+        assert path.startswith('Assets/Editor/') and '/..' not in path, 'Unexported runtime asset: ' + path
+        assert path in exclusions, 'Unrecorded local asset: ' + path
+        assert hashlib.sha256((asset_root / path).read_bytes()).hexdigest() == exclusions[path], 'Local authoring study changed: ' + path
+    return extra
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--metadata', type=Path, help='Historical override; default follows CURRENT_RELEASE.json')
@@ -81,7 +92,8 @@ def main():
         manifest = json.loads((ROOT / contract['sourceManifest']).read_text())['files']
         recorded_assets = {row['path'] for row in manifest if row['path'].startswith('Assets/')}
         actual_assets = {p.relative_to(ROOT / 'mobile').as_posix() for p in (ROOT / 'mobile/Assets').rglob('*') if p.is_file() and not p.name.startswith('.')}
-        assert actual_assets == recorded_assets, 'Assets added/removed since exported candidate'
+        local = validate_asset_inventory(recorded_assets, actual_assets, qa.get('localEditorOnlyExclusions', {}), ROOT / 'mobile')
+        report['localEditorOnlyFilesExcludedFromCandidate'] = len(local)
         for row in manifest:
             assert hashlib.sha256((ROOT / 'mobile' / row['path']).read_bytes()).hexdigest() == row['sha256'], 'Candidate source changed: ' + row['path']
         report['sourceManifestMatchesCandidate'] = len(manifest)

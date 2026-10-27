@@ -13,6 +13,7 @@ Shader "SkyPulse/Heist Optical Materials"
         _ContactShadow("Soft contact pool",Float)=0
         _Hologram("Projected optical volume",Float)=0
         _Clock("Projection clock",Float)=0
+        _BoardDeck("Optical worktop finish",Float)=0
     }
     SubShader
     {
@@ -27,7 +28,7 @@ Shader "SkyPulse/Heist Optical Materials"
             #include "UnityCG.cginc"
             struct app {float4 vertex:POSITION;float3 normal:NORMAL;fixed4 color:COLOR;UNITY_VERTEX_INPUT_INSTANCE_ID};
             struct vary {float4 pos:SV_POSITION;float3 normal:TEXCOORD0;float3 world:TEXCOORD1;float3 local:TEXCOORD2;fixed4 color:COLOR;};
-            fixed4 _BaseColor,_GlowColor,_LightTint;float _Energy,_Glass,_Roughness,_PanelMode,_ContactShadow,_Hologram,_Clock;
+            fixed4 _BaseColor,_GlowColor,_LightTint;float _Energy,_Glass,_Roughness,_PanelMode,_ContactShadow,_Hologram,_Clock,_BoardDeck;
             vary vert(app v){UNITY_SETUP_INSTANCE_ID(v);vary o;o.pos=UnityObjectToClipPos(v.vertex);o.normal=UnityObjectToWorldNormal(v.normal);o.world=mul(unity_ObjectToWorld,v.vertex).xyz;o.local=v.vertex.xyz;o.color=v.color;return o;}
             fixed4 frag(vary i):SV_Target
             {
@@ -39,6 +40,10 @@ Shader "SkyPulse/Heist Optical Materials"
                 float rim=pow(1-saturate(dot(n,v)),3),spec=pow(saturate(dot(n,normalize(light+v))),lerp(150,24,_Roughness));
                 float brushed=sin(i.local.y*72)*.006;
                 float3 metal=_BaseColor.rgb*i.color.rgb*(diffuse+brushed)*lerp(float3(1,1,1),_LightTint.rgb,.36)+_LightTint.rgb*(spec*.65+strip*(1-_Roughness)*.30+rim*.12);
+                // The deck stays darker and rougher than the interactive optics.
+                // Narrow grazing reflections reveal its bevelled physical rim.
+                float3 worktop=_BaseColor.rgb*i.color.rgb*(.56+diffuse*.40)+_LightTint.rgb*(spec*.14+strip*.035+rim*.045);
+                metal=lerp(metal,worktop,_BoardDeck);
                 // A recessed longitudinal rail and fine collar seams give the
                 // original collision-matched columns a readable manufactured form.
                 float rail=pow(saturate(1-abs(i.local.x+.19)*32),3)*step(.45,abs(n.z));
