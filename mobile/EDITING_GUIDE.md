@@ -150,3 +150,17 @@ the complete target from tap-to-flap. Do not apply this indiscriminately to dens
 controls: expanded targets must not overlap. The mode list and shared Pause rows
 instead reserve explicit layout space. Their actual raycasts and safe-area bounds
 are covered by `Tools/SkyPulseTouchComfortChecks.cs` in the disposable QA product.
+
+## Bird silhouettes and safe Editor iteration
+
+SkyPulseBirdRig.PrepareSprite queues the measured flap mesh. FlushPending runs
+from LateUpdate before rendering; never invoke its native geometry operation
+from Awake or an Editor callback. Measured coverage lives in
+Resources/SkyPulse/characters/bird-silhouette-coverage.json and is reproducible
+with Tools/bake_bird_shapes.swift. Original art, registration and gameplay
+collision dimensions stay intact. Simple bird UI images use the same mesh.
+
+Assets/Editor/SkyPulsePlaySessionGuard.cs ends Editor Play before compilation.
+Wait and press Play again; existing progress loads through ordinary startup.
+Tools/SkyPulseReloadChecks.cs verifies a real compile, fresh update loop and
+reopening Hangar/Tech Tree in the isolated QA product.

@@ -16,11 +16,12 @@ namespace SkyPulse.Mobile
         readonly Material[] surfaces=new Material[2];
         readonly int[] bankTheme={-1,-1};
         readonly Texture[] reflections=new Texture[Themes];
-        Mesh skyMesh;Material skyMaterial;Transform sky;SkyPulseAtmosphereDepth atmosphereDepth;
+        Mesh skyMesh;Material skyMaterial;Texture3D cloudNoise;Transform sky;SkyPulseAtmosphereDepth atmosphereDepth;
         Transform worldScene,composite;Camera worldCamera;RenderTexture worldImage;Mesh compositeMesh;Material compositeMaterial;float viewAspect;
         public Transform WorldScene=>worldScene;
         public Camera WorldCamera=>worldCamera;
         public RenderTexture WorldImage=>worldImage;
+        public Texture3D CloudNoise=>cloudNoise;
         static int nextScene;
         static readonly int Visibility=Shader.PropertyToID("_Visibility"), Clock=Shader.PropertyToID("_Clock"), Tint=Shader.PropertyToID("_Tint"), Haze=Shader.PropertyToID("_Haze");
         float span; int current=-1,previous;
@@ -69,6 +70,7 @@ namespace SkyPulse.Mobile
                 dome.Quad(Sphere(a,u),Sphere(c,u),Sphere(c,w),Sphere(a,w),Color.white);
             }
             skyMesh=dome.Finish("Constructed atmospheric sky dome");skyMaterial=new Material(Resources.Load<Shader>("SkyPulse/Shaders/WorldAtmosphere")){name="Endless physical sky palette"};
+            cloudNoise=BuildCloudNoise();skyMaterial.SetTexture("_CloudNoise",cloudNoise);
             sky=SkyPulseMeshBuilder.Surface(worldScene,"3D atmospheric sky dome",skyMesh,skyMaterial,-48).transform;
             // The camera sits inside the dome, so each ray crosses one sky
             // surface. An outside view of both halves produced latitude bands.
@@ -80,6 +82,26 @@ namespace SkyPulse.Mobile
             compositeMaterial=new Material(Resources.Load<Shader>("SkyPulse/Shaders/WorldComposite")){name="Live 3D world feed"};compositeMaterial.renderQueue=3000;
             composite=SkyPulseMeshBuilder.Surface(transform,"Live constructed background",compositeMesh,compositeMaterial,-48).transform;composite.localPosition=new Vector3(0,0,24);
             SetViewport(viewWidth);
+        }
+        static Texture3D BuildCloudNoise()
+        {
+            // One small, deterministic volume serves all twelve worlds. It is
+            // created only with the environment, never while flying or changing
+            // palettes. R8 is 32 KiB; older devices use a bounded RGBA fallback.
+            const int size=32;bool singleChannel=SystemInfo.SupportsTextureFormat(TextureFormat.R8);
+            var volume=new Texture3D(size,size,size,singleChannel?TextureFormat.R8:TextureFormat.RGBA32,false)
+            {name="Shared 32 cubed cloud density noise",wrapMode=TextureWrapMode.Repeat,filterMode=FilterMode.Bilinear};
+            // Integer noise avoids floating-point sine precision producing
+            // correlated rows at the large seeds used by a complete 3D grid.
+            var density=new byte[size*size*size];uint state=0x6d2b79f5;
+            for(int i=0;i<density.Length;i++){state^=state<<13;state^=state>>17;state^=state<<5;density[i]=(byte)state;}
+            if(singleChannel)volume.SetPixelData(density,0);
+            else
+            {
+                var values=new Color32[density.Length];for(int i=0;i<values.Length;i++){byte value=density[i];values[i]=new Color32(value,value,value,255);}
+                volume.SetPixels32(values);
+            }
+            volume.Apply(false,true);return volume;
         }
         static Vector3 Sphere(float a,float b)=>new Vector3(Mathf.Sin(b)*Mathf.Cos(a),Mathf.Cos(b),Mathf.Sin(b)*Mathf.Sin(a))*34;
         public void SetViewport(float width)
@@ -120,25 +142,32 @@ namespace SkyPulse.Mobile
             for(int i=0;i<Layers*PerLayer;i++)
             {
                 var item=scenery[bank,i];bool visible=visibility>.0001f;
+                int layer=i/PerLayer,slot=i%PerLayer;
                 if(item.gameObject.activeSelf!=visible)item.gameObject.SetActive(visible);
                 if(changed)
                 {
-                    int variant=(i+theme)%2;item.GetComponent<MeshFilter>().sharedMesh=variant==0?silhouettes[theme]:residential[theme];
+                    int variant=(slot+layer+theme)%2;item.GetComponent<MeshFilter>().sharedMesh=variant==0?silhouettes[theme]:residential[theme];
                     item.GetComponent<MeshRenderer>().SetPropertyBlock(authoredLighting[theme,variant]);
                 }
                 if(!visible)continue;
-                int layer=i/PerLayer,slot=i%PerLayer;
-                float seed=Hash(theme*43+i*17),scale=(.48f+layer*.25f)*(.86f+seed*.24f);
-                float x=Mathf.Repeat(slot*span/PerLayer+seed*2.1f+layer*1.7f-distance*(.09f+layer*.15f)+span*.5f,span)-span*.5f;
-                // Stagger inhabited islands above the cloud sea; near landforms
-                // travel faster while distant cities keep the flight path legible.
+                float seed=Hash(theme*43+i*17),depth=Hash(theme*71+i*47);
+                float scale=layer==0?.40f+seed*.10f:layer==1?.65f+seed*.13f:.91f+seed*.14f;
+                float spacing=span*(layer==0?1.13f:layer==1?1.02f:1.10f);
+                float x=Mathf.Repeat(slot*spacing/PerLayer+(seed-.5f)*(layer==2?1.1f:2.2f)+layer*2.1f-distance*(.09f+layer*.15f)+spacing*.5f,spacing)-spacing*.5f;
+                // Stage inhabited districts at genuinely different depths rather
+                // than repeating one row of identically viewed island stamps.
+                // Near hero islands have breathing room; distant cities keep
+                // their smaller silhouette and slower absolute-distance travel.
                 bool floating=theme<3;
-                float y=(floating?(layer==0?-.8f:layer==1?-3.2f:-6.0f):(layer==0?-2.5f:layer==1?-3.8f:-5.4f))+seed*(floating?(layer==0?2.6f:1.7f):.6f)+Mathf.Sin(clock*.13f+i)*(floating?.025f:0);
-                item.localPosition=new Vector3(x,y,27-layer*8);
-                // Small differences in the occupied floor area and skyline
-                // proportions break the old repeated-stamp silhouette.
-                item.localScale=new Vector3(scale*(.88f+Hash(i*31+theme)*.24f),scale*(.86f+Hash(i*53+theme)*.28f),scale);
-                item.localRotation=Quaternion.Euler(0,-34+seed*38,0);
+                float y=(floating?(layer==0?-.35f:layer==1?-3.0f:-6.2f):(layer==0?-2.4f:layer==1?-3.8f:-5.65f))
+                    +(seed-.35f)*(floating?(layer==0?2.0f:layer==1?1.6f:1.0f):.65f)
+                    +Mathf.Sin(clock*.13f+i)*(floating?.025f:0);
+                float z=(layer==0?31f:layer==1?20f:10.5f)+(depth-.5f)*(layer==0?6f:layer==1?4f:2f);
+                item.localPosition=new Vector3(x,y,z);
+                // Preserve the approved building proportions. Depth, orientation
+                // and the alternating district identity supply the variation.
+                item.localScale=new Vector3(scale*(.94f+Hash(i*31+theme)*.12f),scale*(.95f+Hash(i*53+theme)*.10f),scale);
+                item.localRotation=Quaternion.Euler(0,-44+Hash(theme*59+i*67)*68,0);
             }
         }
         static float Hash(int n){uint x=(uint)n*747796405u+2891336453u;x=((x>>((int)(x>>28)+4))^x)*277803737u;return ((x>>22)^x)/4294967295f;}
@@ -154,7 +183,7 @@ namespace SkyPulse.Mobile
             foreach(var mesh in silhouettes)if(mesh!=null)Destroy(mesh);
             foreach(var mesh in residential)if(mesh!=null)Destroy(mesh);
             foreach(var material in surfaces)if(material!=null)Destroy(material);
-            if(skyMesh!=null)Destroy(skyMesh);if(skyMaterial!=null)Destroy(skyMaterial);
+            if(skyMesh!=null)Destroy(skyMesh);if(skyMaterial!=null)Destroy(skyMaterial);if(cloudNoise!=null)Destroy(cloudNoise);
             if(worldScene!=null)Destroy(worldScene.gameObject);if(worldImage!=null){worldImage.Release();Destroy(worldImage);}if(compositeMesh!=null)Destroy(compositeMesh);if(compositeMaterial!=null)Destroy(compositeMaterial);
         }
     }

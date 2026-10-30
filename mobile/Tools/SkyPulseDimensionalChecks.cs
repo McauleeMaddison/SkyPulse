@@ -28,6 +28,7 @@ public static class SkyPulseDimensionalChecks
     static IEnumerator Execute()
     {
         if(Application.companyName!="SkyPulseQA20261006")throw new Exception("Isolated QA only");
+        yield return SkyPulseBirdShapeChecks.Live();
         SkyPulseBirdProgressionChecks.Pure();SkyPulseDailyRouteChecks.Pure();SkyPulseMissionChecks.PureChecks();SkyPulseOneThumbChecks.Pure();SkyPulseBlackoutChecks.Pure();
         var game=UnityEngine.Object.FindAnyObjectByType<SkyPulseNativeGame>();if(game==null)game=new GameObject("QA game").AddComponent<SkyPulseNativeGame>();game.enabled=false;
         Set(game,"hapticsEnabled",false);
@@ -45,6 +46,7 @@ public static class SkyPulseDimensionalChecks
         yield return SkyPulseDailyRouteChecks.Live(game);
         var founders=(Array)typeof(SkyPulseNativeGame).GetField("Skins",BindingFlags.Static|BindingFlags.NonPublic).GetValue(null);
         Set(game,"equippedSkin",founders.GetValue(0));Call(game,"ApplyEquippedVisuals");
+        yield return SkyPulseTechTreeChecks.Live(game);
         yield return SkyPulseBirdProgressionChecks.Live(game);
         yield return SkyPulseGuideWorldChecks.Live(game);
         yield return SkyPulseCopyChecks.Live(game);
@@ -56,6 +58,7 @@ public static class SkyPulseDimensionalChecks
         yield return SkyPulseBlackoutChecks.Captures(game);
         if(System.Environment.GetEnvironmentVariable("SKYPULSE_CAPTURE_ENDLESS")=="1")yield return SkyPulseFlightPolishChecks.Capture(game);
         if(System.Environment.GetEnvironmentVariable("SKYPULSE_WORLD_PIPE_PREVIEW")=="1")yield return SkyPulseWorldStyleChecks.Capture(game);
+        yield return SkyPulsePolishCapture.Live(game);
         Debug.Log("SKYPULSE_DIMENSIONAL_PASS");EditorApplication.Exit(0);
     }
     public static void PlayerGoals(SkyPulseNativeGame game)
@@ -119,6 +122,10 @@ public static class SkyPulseDimensionalChecks
         Check(env.WorldScene.GetComponentsInChildren<Collider>(true).Length==0&&env.WorldScene.GetComponentsInChildren<Collider2D>(true).Length==0,"Scenery owns no collision shapes");
         Check(env.WorldCamera!=camera&&!env.WorldCamera.orthographic&&env.WorldCamera.cullingMask==(1<<30)&&env.WorldImage.width==720,"Dedicated perspective scenery camera has a bounded mobile render target");
         foreach(var r in env.WorldScene.GetComponentsInChildren<MeshRenderer>(true))Check(r.sortingOrder<0&&r.sharedMaterial.shader.isSupported,"All scenery stays behind gameplay with supported shader");
+        foreach(var message in ShaderUtil.GetShaderMessages(Resources.Load<Shader>("SkyPulse/Shaders/WorldAtmosphere")))Check(message.severity.ToString()!="Error","Cloud volume shader compiles: "+message.message);
+        var cloudNoise=env.CloudNoise;
+        Check(cloudNoise!=null&&cloudNoise.width==32&&cloudNoise.height==32&&cloudNoise.depth==32&&!cloudNoise.isReadable,"Cloud atmosphere uses one bounded cached 3D density texture with its CPU upload released");
+        Check(((Material)Get(env,"skyMaterial")).GetTexture("_CloudNoise")==cloudNoise,"Sky material binds the real three-dimensional density volume");
         var meshes=(Mesh[])Get(env,"silhouettes");Check(meshes.Length==12&&new HashSet<Mesh>(meshes).Count==12&&meshes.All(m=>m.bounds.size.z>.2f),"Twelve unique mesh signatures have genuine volume");
         Check(meshes.Select(m=>m.vertexCount).Distinct().Count()>=9,"Worlds use different structural geometry, not twelve copies of one city mesh");
         foreach(var mesh in meshes)Debug.Log("DISTRICT_MESH: "+mesh.name+" / "+mesh.vertexCount+" vertices / "+mesh.bounds);
@@ -142,6 +149,7 @@ public static class SkyPulseDimensionalChecks
             var mats=(Material[])Get(env,"surfaces");Check(Mathf.Abs(mats[1].GetFloat("_Visibility")-.5f)<.001f||world==0,"Incoming geometry follows world dissolve");
             env.Present(world,10,1,1,Color.cyan,Color.black,false);Check(env.CurrentWorld==world,"World signature committed "+world);
         }
+        Check(env.CloudNoise==cloudNoise,"World switches reuse the same density texture instead of allocating new volumes");
         env.Present(0,10,1,1,Color.cyan,Color.black,false);for(int i=0;i<3;i++)env.Present(0,10,1,1,Color.cyan,Color.black,false);
         long before=GC.GetAllocatedBytesForCurrentThread();for(int i=0;i<120;i++)env.Present(0,i/30f,i/60f,1,Color.cyan,Color.black,false);Check(GC.GetAllocatedBytesForCurrentThread()==before,"Warmed architecture update has zero managed allocations");
         yield return RenderEnvironment(game,env,camera);
@@ -163,6 +171,9 @@ public static class SkyPulseDimensionalChecks
     static IEnumerator RenderEnvironment(SkyPulseNativeGame game,SkyPulseFlightEnvironment env,Camera camera)
     {
         var prior=camera.targetTexture;var active=RenderTexture.active;
+        // These are architecture inspection frames, not scored gameplay. Hide
+        // stale HUD text while selecting worlds directly in the QA fixture.
+        var hud=(GameObject)Get(game,"hudScreen");bool hadHud=hud.activeSelf;hud.SetActive(false);
         var target=RenderTexture.GetTemporary(750,1334,24);camera.targetTexture=target;
         var image=new Texture2D(750,1334,TextureFormat.RGB24,false);
         var worlds=(Array)typeof(SkyPulseNativeGame).GetField("Worlds",BindingFlags.Static|BindingFlags.NonPublic).GetValue(null);
@@ -180,7 +191,7 @@ public static class SkyPulseDimensionalChecks
             var folder=System.IO.Path.Combine(System.Environment.GetEnvironmentVariable("SKYPULSE_QA_OUTPUT"),"architecture");System.IO.Directory.CreateDirectory(folder);
             System.IO.File.WriteAllBytes(System.IO.Path.Combine(folder,"world-"+world.ToString("00")+".png"),image.EncodeToPNG());
         }
-        camera.targetTexture=prior;RenderTexture.active=active;RenderTexture.ReleaseTemporary(target);UnityEngine.Object.Destroy(image);
+        hud.SetActive(hadHud);camera.targetTexture=prior;RenderTexture.active=active;RenderTexture.ReleaseTemporary(target);UnityEngine.Object.Destroy(image);
     }
 
 }

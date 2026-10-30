@@ -21,17 +21,21 @@ Shader "SkyPulse/Orbital Atmosphere"
             {
                 float3 d=normalize(i.ray);float horizon=pow(saturate(1-abs(d.y+.19)),4);
                 float3 colour=lerp(_Zenith.rgb,_Horizon.rgb,horizon);
+                // A quiet illuminated centre separates the active flight lane
+                // from darker structures at the edges of the station.
+                float corridor=exp2(-pow((d.x+d.y*.12)*3.8,2));
+                colour+=corridor*float3(.015,.038,.048);
                 float2 p=d.xy*5+float2(d.z*2,_Clock*.0007);float mist=noise(p+noise(p*.55)*1.2);
                 colour+=pow(saturate(mist-.20),2)*float3(.07,.19,.24);
                 float shaft=pow(saturate(.5+.5*sin(d.x*22+d.y*8+d.z*4)),18)*pow(saturate(-d.y+.6),2);
-                colour+=shaft*float3(.025,.075,.09);
+                colour+=shaft*float3(.012,.035,.045);
                 float warm=pow(saturate(dot(d,normalize(float3(-.7,-.35,1)))),18);
                 colour+=warm*_Warm.rgb;
                 // Layered, slowly drifting dust wisps add scale behind the
                 // modelled station; bright navigation lenses are separate.
                 float filament=noise(d.xy*16+noise(d.xy*7+d.z)*2+float2(_Clock*.0004,0));
                 float band=exp2(-pow((d.x+d.y*.42-.12)*4.5,2));
-                colour+=smoothstep(.42,.81,filament)*band*float3(.035,.10,.14);
+                colour+=smoothstep(.42,.81,filament)*band*float3(.030,.085,.12);
                 float fineDust=pow(noise(d.xy*52+d.z*9),6);
                 colour+=fineDust*band*float3(.08,.15,.18);
                 float2 grid=d.xy*190;float2 cell=floor(grid);float star=step(.991,hash(cell));float distance=length(frac(grid)-.5);

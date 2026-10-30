@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -10,7 +11,12 @@ using SkyPulse.Mobile;
 public static class SkyPulsePipeWorkshop
 {
     public const string Folder="Assets/Editor/SkyPulsePipeWorkshop";
-    const string Output="Assets/Resources/SkyPulse/PipeEdits";
+    public const string Output="Assets/Resources/SkyPulse/PipeEdits";
+    public const string StructureVersion="Structural details · v1";
+    public static readonly string[] DetailNames={"Rolled cap bezel","Recessed cap bore","Barrel support ribs","Inset light guides"};
+    static readonly string[] DetailFiles={"cap-bezel","cap-bore","shaft-supports","light-guides"};
+    public static string ScenePath(int world)=>Folder+"/Scenes/"+(world+1).ToString("00")+" "+Names[world]+" Pipes.unity";
+    public static string PrefabPath(int world)=>Folder+"/Prefabs/"+(world+1).ToString("00")+" "+Names[world]+".prefab";
     static readonly Type Factory=typeof(SkyPulseNativeGame).Assembly.GetType("SkyPulse.Mobile.SkyPulseRouteArchitecture");
     static readonly string[] Names={"Neon City","Aurora Rise","Solar Drift","Midnight Tide","Velvet Dawn","Crystal Night","Jade Horizon","Violet Rain","Eclipse","Cobalt Storm","Amber Skies","Polar Glow"};
     static object captured;
@@ -58,7 +64,8 @@ public static class SkyPulsePipeWorkshop
                     material.SetColor("_ThemeAccent",authoring.Accent);material.SetColor("_ThemeEnergy",authoring.Energy);material.SetColor("_MetalTone",authoring.Metal);
                     AssetDatabase.CreateAsset(material,Folder+"/Materials/"+id+".mat");item.GetComponent<MeshRenderer>().sharedMaterial=material;
                 }
-                PrefabUtility.SaveAsPrefabAsset(root,Folder+"/Prefabs/"+(world+1).ToString("00")+" "+Names[world]+".prefab");
+                AddStructuralDetails(authoring);
+                PrefabUtility.SaveAsPrefabAsset(root,PrefabPath(world));
                 var camera=new GameObject("Pipe inspection camera",typeof(Camera));UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(camera,scene);camera.transform.position=new Vector3(2.5f,.7f,-6.5f);camera.transform.LookAt(new Vector3(0,-1.4f,0));camera.GetComponent<Camera>().fieldOfView=34;camera.GetComponent<Camera>().backgroundColor=new Color(.025f,.039f,.064f);
                 EditorSceneManager.SaveScene(scene,Folder+"/Scenes/"+(world+1).ToString("00")+" "+Names[world]+" Pipes.unity");
             }
@@ -66,11 +73,100 @@ public static class SkyPulsePipeWorkshop
         }
         AssetDatabase.SaveAssets();Debug.Log("SKYPULSE_PIPE_WORKSHOP_CREATED: twelve reusable pipe assemblies; gameplay is changed only by Bake.");
     }
+    [MenuItem("Tools/SkyPulse/Pipe Workshop/Open selected world scene")]
+    public static void OpenSelectedWorld()
+    {
+        if(EditorApplication.isPlaying)throw new InvalidOperationException("Stop Play mode first.");
+        var selected=Selection.activeGameObject!=null?Selection.activeGameObject.GetComponentInParent<SkyPulsePipeAuthoring>():null;
+        int world=selected!=null?selected.World:0;
+        if(!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())return;
+        var scene=EditorSceneManager.OpenScene(ScenePath(world),OpenSceneMode.Single);
+        var root=scene.GetRootGameObjects().Select(g=>g.GetComponent<SkyPulsePipeAuthoring>()).First(a=>a!=null);
+        Selection.activeGameObject=root.gameObject;SceneView.lastActiveSceneView?.FrameSelected();
+    }
+    [MenuItem("Tools/SkyPulse/Pipe Workshop/Add editable structural details to selected pipe")]
+    public static void AddSelectedDetails()
+    {
+        var root=Selection.activeGameObject!=null?Selection.activeGameObject.GetComponentInParent<SkyPulsePipeAuthoring>():null;
+        if(root==null)throw new InvalidOperationException("Select a pipe assembly, Barrel, Collar or one of its children first.");
+        if(EditorUtility.IsPersistent(root))throw new InvalidOperationException("Open the world scene or prefab before adding details.");
+        AddStructuralDetails(root);EditorSceneManager.MarkSceneDirty(root.gameObject.scene);
+        Selection.activeGameObject=root.transform.Find("Collar/"+StructureVersion).gameObject;
+        SceneView.lastActiveSceneView?.FrameSelected();
+    }
+    public static int AddStructuralDetails(SkyPulsePipeAuthoring root)
+    {
+        if(EditorApplication.isPlaying)throw new InvalidOperationException("Stop Play mode first.");
+        if(root==null||root.World<0||root.World>=Names.Length)throw new InvalidOperationException("Choose one of the twelve pipe worlds.");
+        int added=0;
+        for(int index=0;index<DetailNames.Length;index++)
+        {
+            var parent=root.transform.Find(index<2?"Collar":"Barrel");
+            if(parent==null||parent.GetComponent<MeshFilter>()==null||parent.GetComponent<MeshRenderer>()==null)
+                throw new InvalidOperationException("Keep the named Barrel and Collar mesh objects.");
+            var group=parent.Find(StructureVersion);
+            if(group==null)
+            {
+                var created=new GameObject(StructureVersion);created.transform.SetParent(parent,false);group=created.transform;
+                if(!Application.isBatchMode)Undo.RegisterCreatedObjectUndo(created,"Add editable pipe structure");
+            }
+            // Existing meshes, local transforms and custom details are never
+            // regenerated. A missing named part is added once and remains editable.
+            if(group.Find(DetailNames[index])!=null)continue;
+            string path=Folder+"/Meshes/world-"+root.World.ToString("00")+"-"+DetailFiles[index]+".asset";
+            var mesh=AssetDatabase.LoadAssetAtPath<Mesh>(path);
+            if(mesh==null)
+            {
+                var method=Factory.GetMethod("Hardware",BindingFlags.Public|BindingFlags.Static);
+                if(method==null)throw new InvalidOperationException("The pipe structural factory is unavailable.");
+                mesh=(Mesh)method.Invoke(null,new object[]{root.World,index});mesh.name=Path.GetFileNameWithoutExtension(path);AssetDatabase.CreateAsset(mesh,path);
+            }
+            var detail=new GameObject(DetailNames[index],typeof(MeshFilter),typeof(MeshRenderer));detail.transform.SetParent(group,false);
+            detail.GetComponent<MeshFilter>().sharedMesh=mesh;
+            var material=parent.GetComponent<MeshRenderer>().sharedMaterial;detail.GetComponent<MeshRenderer>().sharedMaterial=material;
+            detail.GetComponent<MeshRenderer>().shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;
+            if(material!=null&&material.HasProperty("_StructuralDetails"))
+            {
+                if(!Application.isBatchMode)Undo.RecordObject(material,"Enable pipe structure finish");
+                material.SetFloat("_StructuralDetails",1);EditorUtility.SetDirty(material);
+            }
+            if(!Application.isBatchMode)Undo.RegisterCreatedObjectUndo(detail,"Add editable pipe structure");
+            added++;
+        }
+        return added;
+    }
+    // Explicit migration entry point used in a disposable QA project. It adds
+    // children in place, retaining existing serialized objects and asset IDs.
+    public static void UpgradeReusableAssemblies()
+    {
+        if(!Application.isBatchMode)throw new InvalidOperationException("Use Add editable structural details in your open scene; bulk migration runs in isolated QA.");
+        for(int world=0;world<Names.Length;world++)
+        {
+            var root=PrefabUtility.LoadPrefabContents(PrefabPath(world));
+            try{AddStructuralDetails(root.GetComponent<SkyPulsePipeAuthoring>());PrefabUtility.SaveAsPrefabAsset(root,PrefabPath(world));}
+            finally{PrefabUtility.UnloadPrefabContents(root);}
+            var scene=EditorSceneManager.OpenScene(ScenePath(world),OpenSceneMode.Additive);
+            try
+            {
+                var authoring=scene.GetRootGameObjects().Select(g=>g.GetComponent<SkyPulsePipeAuthoring>()).First(a=>a!=null);
+                AddStructuralDetails(authoring);EditorSceneManager.SaveScene(scene);
+            }
+            finally{EditorSceneManager.CloseScene(scene,true);}
+        }
+        AssetDatabase.SaveAssets();
+    }
     static Mesh BakePart(SkyPulsePipeAuthoring root,string name,Bounds expected)
     {
-        var part=root.transform.Find(name);if(part==null)throw new InvalidOperationException("Keep the named Barrel and Collar objects.");var filter=part.GetComponent<MeshFilter>();
-        if(filter==null||filter.sharedMesh==null||!filter.sharedMesh.isReadable)throw new InvalidOperationException(name+" requires a readable mesh for baking.");
-        var mesh=new Mesh{name=Names[root.World]+" / authored "+name};mesh.CombineMeshes(new[]{new CombineInstance{mesh=filter.sharedMesh,transform=root.transform.worldToLocalMatrix*part.localToWorldMatrix}},true,true);
+        var part=root.transform.Find(name);if(part==null)throw new InvalidOperationException("Keep the named Barrel and Collar objects.");
+        var filters=part.GetComponentsInChildren<MeshFilter>();var combine=new List<CombineInstance>(filters.Length);
+        foreach(var filter in filters)
+        {
+            if(filter.sharedMesh==null||!filter.sharedMesh.isReadable)throw new InvalidOperationException(filter.name+" requires a readable mesh for baking.");
+            for(int submesh=0;submesh<filter.sharedMesh.subMeshCount;submesh++)
+                combine.Add(new CombineInstance{mesh=filter.sharedMesh,subMeshIndex=submesh,transform=root.transform.worldToLocalMatrix*filter.transform.localToWorldMatrix});
+        }
+        if(combine.Count==0)throw new InvalidOperationException(name+" requires at least one active mesh.");
+        var mesh=new Mesh{name=Names[root.World]+" / authored "+name+" / structure-v1"};mesh.CombineMeshes(combine.ToArray(),true,true);
         var bounds=mesh.bounds;if(bounds.size.x<.01f||bounds.size.y<.01f||bounds.size.z<.01f||mesh.vertexCount>24000){UnityEngine.Object.DestroyImmediate(mesh);throw new InvalidOperationException("Keep a complete pipe under 24,000 vertices per part.");}
         var fit=new Vector3(expected.size.x/bounds.size.x,expected.size.y/bounds.size.y,expected.size.z/bounds.size.z);var vertices=mesh.vertices;var normals=mesh.normals;
         for(int i=0;i<vertices.Length;i++){vertices[i]=Vector3.Scale(vertices[i]-bounds.center,fit)+expected.center;normals[i]=new Vector3(normals[i].x/fit.x,normals[i].y/fit.y,normals[i].z/fit.z).normalized;}
@@ -101,7 +197,11 @@ public sealed class SkyPulsePipeAuthoringInspector : Editor
 {
     public override void OnInspectorGUI()
     {
-        DrawDefaultInspector();EditorGUILayout.HelpBox("Edit the separate Barrel and Collar objects or the finish above. Bake fits the art to the original dimensions; flight gaps and colliders stay unchanged.",MessageType.Info);
+        DrawDefaultInspector();EditorGUILayout.HelpBox("Expand Barrel or Collar → Structural details · v1. Move, rotate or scale the separate bezel, bore, supports and light guides in Unity. Existing objects and edits are preserved. Bake combines active child meshes and fits the result to the original collision dimensions. The finish controls above determine the runtime material.",MessageType.Info);
+        if(GUILayout.Button("Add missing editable structural details",GUILayout.Height(28)))
+        {
+            var root=(SkyPulsePipeAuthoring)target;SkyPulsePipeWorkshop.AddStructuralDetails(root);EditorSceneManager.MarkSceneDirty(root.gameObject.scene);
+        }
         if(GUILayout.Button("Bake this pipe theme into gameplay",GUILayout.Height(34)))SkyPulsePipeWorkshop.Bake((SkyPulsePipeAuthoring)target);
     }
 }

@@ -16,11 +16,31 @@ public static class SkyPulseTechTreeChecks
     static void Set(object o,string n,object v)=>o.GetType().GetField(n,F).SetValue(o,v);
     static object Call(object o,string n,params object[] a)=>o.GetType().GetMethod(n,F).Invoke(o,a);
     static void Check(bool ok,string message){if(!ok)throw new Exception(message);Debug.Log("TREE_CHECK: "+message);}
+    sealed class Store : IMissionStore
+    {
+        readonly Dictionary<string,string> values=new Dictionary<string,string>();
+        readonly Dictionary<string,int> numbers=new Dictionary<string,int>();
+        public string Get(string key,string fallback)=>values.TryGetValue(key,out var value)?value:fallback;
+        public int GetInt(string key,int fallback)=>numbers.TryGetValue(key,out var value)?value:fallback;
+        public void Set(string key,string value)=>values[key]=value;
+        public void SetInt(string key,int value)=>numbers[key]=value;
+        public void Flush(){}
+    }
     public static IEnumerator Live(SkyPulseNativeGame game)
     {
-        game.enabled=false;Call(game,"SetHomeProtocol",SkyPulseMode.EndlessRoute);Call(game,"ResetToMenu");
+        if(Application.companyName!="SkyPulseQA20261006")throw new Exception("Disposable QA required");
+        game.enabled=false;Call(game,"ClosePurchaseModal");Call(game,"SetHomeProtocol",SkyPulseMode.EndlessRoute);Call(game,"ResetToMenu");
         var levels=(Dictionary<string,int>)Get(game,"upgradeLevels");var saved=new Dictionary<string,int>(levels);levels.Clear();
-        int balance=(int)Get(game,"crystals");Set(game,"crystals",5000);
+        var ownedUpgrades=(HashSet<string>)Get(game,"ownedUpgradeIds");var savedOwned=new HashSet<string>(ownedUpgrades);ownedUpgrades.Clear();
+        var previousStore=Get(game,"missionStore");var previousDaily=Get(game,"dailyMissions");var previousProgress=Get(game,"birdProgression");var previousSkin=Get(game,"equippedSkin");
+        int balance=(int)Get(game,"crystals");
+        // Each live suite owns its transaction state. Earlier suites may leave
+        // a discounted Core or pending wallet recovery; neither is this fixture.
+        var store=new Store();store.SetInt(SkyPulseDailyMissions.WalletKey,5000);
+        Set(game,"missionStore",store);Set(game,"dailyMissions",new SkyPulseDailyMissions(store,()=>new DateTime(2026,10,30,0,0,0,DateTimeKind.Utc)));
+        Call(game,"InitializeBirdProgression");
+        var skins=(Array)typeof(SkyPulseNativeGame).GetField("Skins",BindingFlags.Static|BindingFlags.NonPublic).GetValue(null);
+        Set(game,"equippedSkin",skins.GetValue(0));Set(game,"crystals",5000);
         Call(game,"OpenUpgrades");Canvas.ForceUpdateCanvases();yield return null;
         var content=(RectTransform)Get(game,"customizeContent");var scroll=(ScrollRect)Get(game,"customizeScroll");var tree=(SkyPulseTechTreeView)Get(game,"holographicTree");
         Call(game,"StartRoundFromCustomize");Check(((GameObject)Get(game,"customizeScreen")).activeInHierarchy,"Blank tree taps do not launch an accidental flight");
@@ -43,8 +63,18 @@ public static class SkyPulseTechTreeChecks
         var coreControl=(RectTransform)Get(game,"techCoreControl");
         Check(coreControl.rect.width>=168&&coreControl.rect.height>=168&&coreControl.GetComponent<Button>()!=null,"Core locator has a generous fixed touch target");
         Check(coreControl.parent==((GameObject)Get(game,"customizeScreen")).transform,"Core locator lives in the fixed header and cannot cover the tree's level labels");
+        var nextControl=(RectTransform)Get(game,"techNextControl");
+        Check(nextControl!=null&&nextControl.rect.width>=168&&nextControl.parent==coreControl.parent,"Available-level locator has a generous fixed header target");
+        int beforeFocus=(int)Get(game,"crystals");
+        nextControl.GetComponent<Button>().onClick.Invoke();tree.Tick(1);
+        Check(!tree.IsFocusing&&content.anchoredPosition!=Vector2.zero&&(int)Get(game,"crystals")==beforeFocus&&!((GameObject)Get(game,"purchaseModal")).activeSelf,"Next locator centres an available upgrade without opening or spending");
+        var identities=content.GetComponentsInChildren<Text>().Where(t=>t.name.EndsWith(" identity")).ToArray();
+        Check(identities.Length==27&&identities.All(t=>t.fontSize==26&&t.preferredWidth<=t.rectTransform.rect.width+1&&t.preferredHeight<=t.rectTransform.rect.height+1),"All 27 concise upgrade identities fit at a readable single-line size");
         foreach(int fps in new[]{30,60,120})
         {
+            tree.FocusCore();tree.Tick(1);tree.FocusPoint(new Vector2(-690,-1070));
+            for(int frame=0;frame<fps;frame++)tree.Tick(1f/fps);
+            Check(Vector2.Distance(content.anchoredPosition,new Vector2(650,345))<.01f&&!tree.IsFocusing,"Next-level focus lands within both pan limits at "+fps+" FPS");
             content.anchoredPosition=new Vector2(300,900);scroll.velocity=new Vector2(20,30);tree.FocusCore();
             Check(scroll.velocity==Vector2.zero,"Return-to-core clears inertia at "+fps+" FPS");
             for(int frame=0;frame<fps;frame++)tree.Tick(1f/fps);
@@ -134,6 +164,10 @@ public static class SkyPulseTechTreeChecks
             RenderTexture.active=rt;var image=new Texture2D(750,1334,TextureFormat.RGB24,false);image.ReadPixels(new Rect(0,0,750,1334),0,0);image.Apply();File.WriteAllBytes(Path.Combine(folder,frame.ToString("000")+".png"),image.EncodeToPNG());UnityEngine.Object.Destroy(image);RenderTexture.active=null;
             yield return null;
         }
-        tree.MotionPaused=false;camera.targetTexture=null;RenderTexture.ReleaseTemporary(rt);levels.Clear();foreach(var pair in saved)levels[pair.Key]=pair.Value;Set(game,"crystals",balance);Call(game,"SaveProgress");Call(game,"ResetToMenu");Debug.Log("SKYPULSE_TECH_TREE_PASS");
+        tree.MotionPaused=false;camera.targetTexture=null;RenderTexture.ReleaseTemporary(rt);
+        Call(game,"ClosePurchaseModal");levels.Clear();foreach(var pair in saved)levels[pair.Key]=pair.Value;
+        ownedUpgrades.Clear();foreach(var id in savedOwned)ownedUpgrades.Add(id);
+        Set(game,"missionStore",previousStore);Set(game,"dailyMissions",previousDaily);Set(game,"birdProgression",previousProgress);Set(game,"equippedSkin",previousSkin);Call(game,"RebuildBirdRoster");
+        Set(game,"crystals",balance);Call(game,"SaveProgress");Call(game,"ResetToMenu");Debug.Log("SKYPULSE_TECH_TREE_PASS");
     }
 }

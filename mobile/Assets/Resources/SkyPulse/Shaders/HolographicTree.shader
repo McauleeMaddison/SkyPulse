@@ -31,7 +31,10 @@ Shader "SkyPulse/Holographic Tree"
                 float diffuse=.29+.48*saturate(dot(n,light));
                 float spec=pow(saturate(dot(n,normalize(light+v))),62);
                 float body=step(1.5,i.uv.y)*(1-step(3.5,i.uv.y));
-                float3 glass=i.color.rgb*(diffuse+edge*.22)+float3(.67,.88,1)*spec*.52;
+                // Dark optical conductors retain volume; narrow live veins carry
+                // the bright colour so distant locked limbs stay subordinate.
+                float3 glass=lerp(float3(.025,.06,.09),i.color.rgb*.64,diffuse)
+                    + i.color.rgb*edge*.16 + float3(.67,.88,1)*spec*.42;
                 float3 energy=lerp(i.color.rgb,float3(.82,.97,1),.2+moving*.5)*( .78+moving*.7+touch*.55 );
                 float3 tint=lerp(energy,glass,body)+i.color.rgb*touch*.35;
                 return fixed4(tint*_Tint.rgb, i.color.a*_Reveal*_Tint.a);

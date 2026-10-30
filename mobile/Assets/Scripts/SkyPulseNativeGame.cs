@@ -999,7 +999,6 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
         private Image hangarHeroBirdImage;
         private Sprite[] hangarHeroWingFrames;
         private Image hangarHeroAura;
-        private float hangarArrivalPulseTime = -1f;
         private const float HangarArrivalPulseDuration = .28f;
         private RectTransform hangarGlassShimmer;
         private Image hangarGlassShimmerImage;
@@ -5213,6 +5212,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
                 || rect.xMax > source.texture.width || rect.yMax > source.texture.height) return source;
             var pose = Sprite.Create(source.texture, rect, new Vector2(.5f, .5f), source.pixelsPerUnit);
             pose.name = source.name + " presentation";
+            SkyPulseBirdRig.PrepareSprite(pose, path);
             registeredFlapSpriteCache[key] = pose;
             return pose;
         }
@@ -5254,6 +5254,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
                 new Vector2(Mathf.Clamp01(pivot.x), Mathf.Clamp01(pivot.y)),
                 source.pixelsPerUnit * scale);
             registered.name = source.name + " registered";
+            SkyPulseBirdRig.PrepareSprite(registered, path);
             registeredFlapSpriteCache[path] = registered;
             return registered;
         }
@@ -6078,6 +6079,8 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             sprite = Resources.Load<Sprite>(path);
             if (sprite != null)
             {
+                if (path.StartsWith("SkyPulse/characters/", StringComparison.Ordinal))
+                    SkyPulseBirdRig.PrepareSprite(sprite, path);
                 spriteCache[path] = sprite;
                 return sprite;
             }
@@ -6095,6 +6098,8 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
 #endif
             if (texture == null) return null;
             sprite = CreateSprite(texture);
+            if (path.StartsWith("SkyPulse/characters/", StringComparison.Ordinal))
+                SkyPulseBirdRig.PrepareSprite(sprite, path);
             spriteCache[path] = sprite;
             return sprite;
         }
@@ -6449,6 +6454,9 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             rect.anchoredPosition = position;
             rect.sizeDelta = size;
             var image = objectRoot.GetComponent<Image>();
+            // Simple bird portraits honour their cleaned silhouette mesh. Sliced
+            // panels and generated UI sprites retain their existing geometry.
+            image.useSpriteMesh = true;
             image.color = color;
             return image;
         }

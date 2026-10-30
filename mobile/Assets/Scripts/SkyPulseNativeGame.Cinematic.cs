@@ -25,7 +25,7 @@ namespace SkyPulse.Mobile
 
         // Late presentation observes the final physics/pose of the rendered frame.
         // No protected Endless simulation or input methods need modification.
-        void LateUpdate(){UpdateCinematicPresentation(Mathf.Min(Time.unscaledDeltaTime,MaximumSimulationCatchup));}
+        void LateUpdate(){UpdateCinematicPresentation(Mathf.Min(Time.unscaledDeltaTime,MaximumSimulationCatchup));SkyPulseBirdRig.FlushPending();}
         void UpdateCinematicPresentation(float dt)
         {
             UpdateDepthPresentation(dt);

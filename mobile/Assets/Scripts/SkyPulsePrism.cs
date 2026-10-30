@@ -77,7 +77,7 @@ namespace SkyPulse.Mobile
                 Quad(new Vector3(a.x,a.y,-depth*.65f),new Vector3(c.x,c.y,-depth*.65f),new Vector3(c.x,c.y,0),new Vector3(a.x,a.y,0),new Color(.45f,.6f,.7f,0));
             }
         }
-        public Mesh Finish(string name){var m=new Mesh{name=name};m.SetVertices(v);m.SetNormals(n);m.SetColors(c);m.SetTriangles(t,0);m.RecalculateBounds();m.UploadMeshData(true);return m;}
+        public Mesh Finish(string name,bool readable=false){var m=new Mesh{name=name};m.SetVertices(v);m.SetNormals(n);m.SetColors(c);m.SetTriangles(t,0);m.RecalculateBounds();m.UploadMeshData(!readable);return m;}
         public static MeshRenderer Surface(Transform parent,string name,Mesh mesh,Material material,int order)
         {
             var g=new GameObject(name,typeof(MeshFilter),typeof(MeshRenderer));g.transform.SetParent(parent,false);g.GetComponent<MeshFilter>().sharedMesh=mesh;

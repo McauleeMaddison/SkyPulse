@@ -6,6 +6,12 @@ Open **`mobile/` in Unity Hub** and the repository folder in VS Code. The shippi
 scene is `mobile/Assets/Scenes/SkyPulse.unity`. Start with the
 [editing map](EDITING_GUIDE.md) before changing code.
 
+## Local visual polish after Build 19 — 30 October 2026
+
+The source includes the [world/Home/Hangar/Tech Tree and bird-shape pass](Development/VisualPolish20261030/README.md). Validation and actual Editor previews are saved there. **These changes are newer than the installed iPhone Build 19**; a new signed device candidate and owner acceptance are still required. Do not describe these previews as installed-phone footage.
+
+The Editor safely stops Play before C# recompilation. Wait for compilation, then start a fresh Play session. No owner save reset or App Store action is part of this pass.
+
 ## Current state — local Build 19
 
 - Runtime source: `f6221f68314a864b898a7c7bbe9693bb528316e2`; Unity 6000.6.0f1.

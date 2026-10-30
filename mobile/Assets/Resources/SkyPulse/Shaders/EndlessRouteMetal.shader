@@ -6,6 +6,7 @@ Shader "SkyPulse/Original Endless Neon Metal"
         _ArtRect("Artwork UV rectangle",Vector)=(0,0,1,1)
         _ArtFlip("Invert upper pipe",Float)=0
         _Cutout("Respect collar silhouette",Float)=0
+        _StructuralDetails("Physical pipe hardware",Float)=0
         _LightTint("World key colour",Color)=(.8,.9,1,1)
         _Clock("Energy clock",Float)=0
         _Visibility("World departure coverage",Range(0,1))=1
@@ -30,8 +31,13 @@ Shader "SkyPulse/Original Endless Neon Metal"
             #include "UnityCG.cginc"
             struct app { float4 vertex:POSITION;float3 normal:NORMAL;fixed4 color:COLOR; };
             struct vary { float4 pos:SV_POSITION;float3 local:TEXCOORD0;float3 normal:TEXCOORD1;float3 world:TEXCOORD2;fixed4 color:COLOR; };
-            sampler2D _MainTex;float4 _ArtRect;float _ArtFlip,_Clock,_Cutout,_Visibility,_Theme,_ThemeAmount,_Detail,_LightRate;fixed4 _LightTint,_ThemeAccent,_ThemeEnergy,_MetalTone;
-            vary vert(app v){vary o;o.pos=UnityObjectToClipPos(v.vertex);o.local=v.vertex.xyz;o.normal=UnityObjectToWorldNormal(v.normal);o.world=mul(unity_ObjectToWorld,v.vertex).xyz;o.color=v.color;return o;}
+            sampler2D _MainTex;float4 _ArtRect;float _ArtFlip,_Clock,_Cutout,_Visibility,_Theme,_ThemeAmount,_Detail,_LightRate,_StructuralDetails;fixed4 _LightTint,_ThemeAccent,_ThemeEnergy,_MetalTone;
+            vary vert(app v){vary o;
+                // Only the appended physical cap components mirror for an upper
+                // pipe. Original collision-fitted housing geometry stays intact.
+                float capHardware=_StructuralDetails*step(.70,v.color.a)*(1-step(.80,v.color.a));
+                float flip=lerp(1,1-2*_ArtFlip,capHardware);v.vertex.y*=flip;v.normal.y*=flip;
+                o.pos=UnityObjectToClipPos(v.vertex);o.local=v.vertex.xyz;o.normal=UnityObjectToWorldNormal(v.normal);o.world=mul(unity_ObjectToWorld,v.vertex).xyz;o.color=v.color;return o;}
             float3 hardware(vary i,float2 uv)
             {
                 float time=_Clock*_LightRate;
@@ -150,6 +156,23 @@ Shader "SkyPulse/Original Endless Neon Metal"
                 }
                 return colour*lerp(float3(1,1,1),_LightTint.rgb,.055);
             }
+            float3 structuralHardware(vary i)
+            {
+                float3 n=normalize(i.normal),view=unity_OrthoParams.w>.5?float3(0,0,-1):normalize(_WorldSpaceCameraPos.xyz-i.world);
+                if(dot(n,view)<0)n=-n;
+                float3 key=normalize(float3(-.55,.78,-.80)),r=reflect(-view,n);
+                float diffuse=saturate(dot(n,key)),spec=pow(saturate(dot(n,normalize(key+view))),74);
+                float softbox=pow(saturate(1-abs(r.x*.78+r.y*.32+.18)*1.65),16);
+                float3 metal=_MetalTone.rgb*(.28+diffuse*.72)+float3(.62,.75,.90)*(softbox*.25+spec*.43);
+                float3 energy=lerp(_ThemeAccent.rgb,_ThemeEnergy.rgb,smoothstep(-.18,.18,i.local.x));
+                if(i.color.a>.735&&i.color.a<.755)metal=metal*.48+energy*.025;
+                if(i.color.a>.755&&i.color.a<.775)metal=float3(.008,.015,.026)+energy*.012+spec*.025;
+                float guide=(1-step(.003,abs(i.color.a-.67)))+step(.775,i.color.a);
+                float path=lerp(i.world.y,-i.world.y,_ArtFlip)*.7;
+                float packet=.5+.5*sin(path*4-_Clock*_LightRate*1.35);
+                metal=lerp(metal,energy*(.36+packet*.47)+float3(.35,.52,.68)*pow(packet,5)*.10,saturate(guide));
+                return metal*lerp(float3(1,1,1),_LightTint.rgb,.055);
+            }
             fixed4 frag(vary i):SV_Target
             {
                 // Stable screen-door coverage fades opaque depth-writing meshes
@@ -163,9 +186,20 @@ Shader "SkyPulse/Original Endless Neon Metal"
                 // The collar is an elliptical cutout. Transparent source pixels
                 // must write neither dark colour nor depth at its outer corners.
                 // MSAA coverage softens the contour without a black fringe.
+                float capHardware=step(.70,i.color.a)*(1-step(.80,i.color.a));
+                float shaftHardware=1-step(.003,min(abs(i.color.a-.68),abs(i.color.a-.67)));
+                float physical=_StructuralDetails*saturate(capHardware+shaftHardware);
+                if(_StructuralDetails>.5&&_Cutout>.5&&capHardware<.5&&i.local.z<0)
+                {
+                    // Remove the old front wall inside the real recess. The
+                    // bore and rolled lip now provide actual depth and normals.
+                    float2 opening=(uv-float2(.5,.745))/float2(.46,.195);
+                    clip(length(opening)-1.10);
+                }
                 float decoration=_ThemeAmount*step(.1,i.color.a);
-                float capCoverage=_ThemeAmount>.5?_Cutout:_Cutout*(1-decoration);
+                float capCoverage=(_ThemeAmount>.5?_Cutout:_Cutout*(1-decoration))*(1-physical);
                 clip(lerp(1,art.a-.02,capCoverage));
+                if(physical>.5)return fixed4(structuralHardware(i),1);
                 if(_ThemeAmount>.5)return fixed4(hardware(i,uv),lerp(1,saturate((art.a-.02)/.6),capCoverage));
                 float3 n=normalize(i.normal),v=normalize(_WorldSpaceCameraPos.xyz-i.world),l=normalize(float3(-.5,.7,-1));
                 float diffuse=.84+.22*saturate(dot(n,l));

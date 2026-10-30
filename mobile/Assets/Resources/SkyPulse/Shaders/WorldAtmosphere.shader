@@ -1,6 +1,6 @@
 Shader "SkyPulse/Constructed World Atmosphere"
 {
-    Properties { _Tint("World light",Color)=(.2,.6,1,1) _Haze("Horizon",Color)=(.03,.08,.16,1) _Clock("Clock",Float)=0 _World("World",Float)=0 _SkyA("Outgoing sky art",2D)="gray"{} _SkyB("Incoming sky art",2D)="gray"{} _Blend("Sky transition",Float)=1 _Aspect("Sky camera aspect",Float)=.46 _WorldA("Outgoing world identity",Float)=0 _WorldB("Incoming world identity",Float)=0 }
+    Properties { _CloudNoise("Shared cloud density volume",3D)="white"{} _Tint("World light",Color)=(.2,.6,1,1) _Haze("Horizon",Color)=(.03,.08,.16,1) _Clock("Clock",Float)=0 _World("World",Float)=0 _SkyA("Outgoing sky art",2D)="gray"{} _SkyB("Incoming sky art",2D)="gray"{} _Blend("Sky transition",Float)=1 _Aspect("Sky camera aspect",Float)=.46 _WorldA("Outgoing world identity",Float)=0 _WorldB("Incoming world identity",Float)=0 }
     SubShader
     {
         Tags {"Queue"="Transparent" "RenderType"="Opaque"}
@@ -13,14 +13,49 @@ Shader "SkyPulse/Constructed World Atmosphere"
             #pragma target 3.0
             #include "UnityCG.cginc"
             struct app {float4 vertex:POSITION;};
-            struct vary {float4 pos:SV_POSITION;float3 direction:TEXCOORD0;};
-            float4 _Tint,_Haze;float _Clock,_World,_WorldA,_WorldB,_Blend,_Aspect;sampler2D _SkyA,_SkyB;
-            vary vert(app v){vary o;o.pos=UnityObjectToClipPos(v.vertex);o.direction=v.vertex.xyz;return o;}
+            struct vary {float4 pos:SV_POSITION;float3 direction:TEXCOORD0;float3 cloudRay:TEXCOORD1;};
+            float4 _Tint,_Haze;float _Clock,_World,_WorldA,_WorldB,_Blend,_Aspect;sampler2D _SkyA,_SkyB;sampler3D _CloudNoise;
+            vary vert(app v){vary o;o.pos=UnityObjectToClipPos(v.vertex);o.direction=v.vertex.xyz;o.cloudRay=mul(unity_ObjectToWorld,v.vertex).xyz-_WorldSpaceCameraPos.xyz;return o;}
             float hash(float3 p){return frac(sin(dot(p,float3(127.1,311.7,74.7)))*43758.5453);}
             float noise(float3 p)
             {
                 float3 a=floor(p),f=frac(p);f=f*f*(3-2*f);
                 return lerp(lerp(lerp(hash(a),hash(a+float3(1,0,0)),f.x),lerp(hash(a+float3(0,1,0)),hash(a+float3(1,1,0)),f.x),f.y),lerp(lerp(hash(a+float3(0,0,1)),hash(a+float3(1,0,1)),f.x),lerp(hash(a+float3(0,1,1)),hash(a+1),f.x),f.y),f.z);
+            }
+            float3 cloudVolume(float3 ray,float3 behind)
+            {
+                // A finite slab below the inhabited city, evaluated once after
+                // the sky palettes blend. The upper cosmos has no volume work.
+                if(ray.y>=-.075)return behind;
+                const float top=-1,bottom=-12,originHeight=6.4,maxDistance=96;
+                float start=max(0,(top-originHeight)/ray.y);
+                float finish=min(maxDistance,(bottom-originHeight)/ray.y);
+                if(finish<=start)return behind;
+                float stepLength=(finish-start)*.125;
+                float3 origin=float3(0,originHeight,0),wind=float3(_Clock*.00042,0,_Clock*.00013);
+                float3 shadow=lerp(float3(.13,.19,.29),max(_Haze.rgb,float3(.08,.12,.21)),.18);
+                float3 lit=lerp(float3(.76,.83,.93),max(_Tint.rgb,float3(.40,.48,.60)),.18);
+                float transmittance=1;float3 scattering=0;
+                [unroll] for(int stepIndex=0;stepIndex<8;stepIndex++)
+                {
+                    float3 sampleAt=origin+ray*(start+(stepIndex+.45)*stepLength);
+                    float3 uv=sampleAt*.0105+float3(.17,.43,.29)+wind;
+                    float coarse=tex3Dlod(_CloudNoise,float4(uv,0)).r;
+                    float fine=tex3Dlod(_CloudNoise,float4(uv*4.27+float3(.37,.11,.61),0)).r;
+                    float height=saturate((sampleAt.y-bottom)/(top-bottom));
+                    float envelope=smoothstep(0,.23,height)*(1-smoothstep(.62,1,height));
+                    float density=smoothstep(.49,.68,coarse*.68+fine*.32)*envelope;
+                    // One upper-light probe supplies self-shadowing. This is a
+                    // bounded 8-step volume, not a second shadow raymarch.
+                    float upper=tex3Dlod(_CloudNoise,float4(uv+float3(-.022,.075,-.028),0)).r;
+                    float sunlight=saturate(.55+(coarse-upper)*2.3);
+                    float illumination=saturate(.29+sunlight*.48+height*.16);
+                    float3 colour=lerp(shadow,lit,illumination);
+                    float opacity=1-exp2(-density*min(stepLength,4)*.28);
+                    scattering+=colour*(transmittance*opacity);
+                    transmittance*=1-opacity;
+                }
+                return behind*transmittance+scattering;
             }
             float3 neonSky(float3 direction,sampler2D artwork)
             {
@@ -35,25 +70,23 @@ Shader "SkyPulse/Constructed World Atmosphere"
                 uv.y=clamp(uv.y,.30,.985);uv.x=saturate(uv.x);
                 float3 sky=tex2D(artwork,uv).rgb*.90;
                 float3 p=d*5+float3(0*.17,_Clock*.0015,0);
-                float cloud=noise(p)*.6+noise(p*2.1)*.28+noise(p*4.2)*.12;
+                float cloud=noise(p)*.65+noise(p*2.1)*.35;
                 float band=exp(-pow((d.x+d.y*.65+.08)*4,2));
                 sky+=lerp(float3(.28,.055,.43),_Tint.rgb,.15)*smoothstep(.38,.86,cloud)*(.06+band*.15);
                 float sunset=exp(-pow((d.y+.11)*9,2));
                 sky+=lerp(float3(.95,.25,.18),_Tint.rgb,.18)*sunset*.27;
-                float sea=1-smoothstep(-.18,.045,d.y);
-                float billow=noise(float3(d.x*29,d.y*36,_Clock*.009))* .6+noise(float3(d.x*57,d.y*70,4))*.4;
-                float signature=smoothstep(0,1,0)*.88;
-                float3 cloudShadow=lerp(float3(.15,.075,.32),_Haze.rgb*.7+_Tint.rgb*.085,signature);
-                float3 cloudLight=lerp(float3(.63,.25,.52),_Tint.rgb*.48+_Haze.rgb*.4,signature);
-                sky=lerp(sky,lerp(cloudShadow,cloudLight,billow)+lerp(float3(.45,.22,.12),_Tint.rgb*.23,signature)*sunset,sea);
+                // Cloud holes reveal clean distant air, never buildings from
+                // the cropped source illustration. The upper art stays intact.
+                float lower=1-smoothstep(-.18,.035,d.y);
+                float3 deepAir=lerp(float3(.035,.055,.13),_Haze.rgb*.45+_Tint.rgb*.025,.22);
+                sky=lerp(sky,deepAir,lower);
                 float3 starCell=floor(d*720);float seed=hash(starCell);
                 float star=step(.9988,seed)*pow(saturate(1-length(frac(d*720)-.5)*1.8),8);
                 sky+=float3(.70,.86,1)*star*.75;
                 return sky;
             }
 
-            // Deliberate art direction for worlds 2–12. The original Neon City
-            // path above remains untouched; palettes blend by world identity,
+            // Deliberate art direction for worlds 2–12. Palettes blend by world identity,
             // rather than sliding through unrelated intermediate colour themes.
             void palette(float world,out float3 zenith,out float3 middle,out float3 shadow,out float3 light,out float3 glow)
             {
@@ -69,7 +102,7 @@ Shader "SkyPulse/Constructed World Atmosphere"
                 else if(world<10.5){zenith=float3(.027,.024,.08);middle=float3(.19,.095,.14);shadow=float3(.14,.065,.095);light=float3(.78,.39,.23);glow=float3(1,.61,.27);}
                 else{zenith=float3(.012,.030,.11);middle=float3(.045,.16,.24);shadow=float3(.035,.10,.17);light=float3(.35,.62,.70);glow=float3(.27,.88,.83);}
             }
-            float3 themedSky(float3 d,float world,sampler2D artwork,float mist,float billow)
+            float3 themedSky(float3 d,float world,sampler2D artwork,float mist)
             {
                 if(world<.5)return neonSky(d,artwork);
                 float3 zenith,middle,shadow,light,glow;palette(world,zenith,middle,shadow,light,glow);
@@ -87,15 +120,9 @@ Shader "SkyPulse/Constructed World Atmosphere"
                 float aurora=pow(saturate(1-abs(d.y-.13-curtain*.065)*13),3)*smoothstep(-.2,.18,d.y);
                 float polar=world<1.5||world>10.5?1:0;
                 sky+=lerp(glow,float3(.52,.27,.95),saturate(d.x+.45))*aurora*polar*.19;
-                // Soft volumetric cloud banks sit below the occupied districts.
-                float cloudFace=.24+billow*.48;
-                float3 seaColour=lerp(shadow,light,cloudFace)+glow*horizon*.12;
-                float wisps=pow(saturate(1-abs(mist-.57)*6),3);
-                sky+=lerp(glow,light,.35)*wisps*.085;
-                seaColour+=light*pow(saturate(1-abs(billow-.62)*5),3)*.055;
-                // Low-contrast banks avoid coarse dark patches; full coverage
-                // below the horizon also hides buildings painted into sky art.
-                float sea=1-smoothstep(-.21,.045,d.y);sky=lerp(sky,seaColour,sea);
+                float sea=1-smoothstep(-.18,.035,d.y);
+                float3 deepAir=lerp(float3(.035,.055,.13),shadow*.42+glow*.025,.26);
+                sky=lerp(sky,deepAir,sea);
                 float3 cell=floor(d*720);float seed=hash(cell+world*3);
                 float star=step(.9985,seed)*pow(saturate(1-length(frac(d*720)-.5)*1.8),8);
                 sky+=lerp(float3(.70,.84,1),glow,.20)*star*.64*(1-sea*.8);
@@ -107,16 +134,18 @@ Shader "SkyPulse/Constructed World Atmosphere"
             fixed4 frag(vary i):SV_Target
             {
                 float3 d=normalize(i.direction);
-                if(_WorldB<.5&&(_Blend>.9999||_WorldA<.5))return fixed4(neonSky(d,_SkyB),1);
-                if(_WorldA<.5&&_Blend<.0001)return fixed4(neonSky(d,_SkyA),1);
-                // Share the five cloud-noise samples across both new palettes
-                // while dissolving; no second full cloud pass for worlds 2–12.
-                float3 p=d*5+float3(_World*.47,_Clock*.002,_World*.19);
-                float mist=noise(p)*.56+noise(p*2.07)*.29+noise(p*4.11)*.15;
-                float billow=noise(float3(d.x*17+mist*.6,d.y*30,_Clock*.007+_World))*.64+noise(float3(d.x*34+mist,d.y*61,_World+4))*.36;
-                if(_Blend>.9999)return fixed4(themedSky(d,_WorldB,_SkyB,mist,billow),1);
-                if(_Blend<.0001)return fixed4(themedSky(d,_WorldA,_SkyA,mist,billow),1);
-                return fixed4(lerp(themedSky(d,_WorldA,_SkyA,mist,billow),themedSky(d,_WorldB,_SkyB,mist,billow),_Blend),1);
+                float3 sky;
+                if(_WorldB<.5&&(_Blend>.9999||_WorldA<.5))sky=neonSky(d,_SkyB);
+                else if(_WorldA<.5&&_Blend<.0001)sky=neonSky(d,_SkyA);
+                else
+                {
+                    float3 p=d*5+float3(_World*.47,_Clock*.002,_World*.19);
+                    float mist=noise(p)*.65+noise(p*2.07)*.35;
+                    if(_Blend>.9999)sky=themedSky(d,_WorldB,_SkyB,mist);
+                    else if(_Blend<.0001)sky=themedSky(d,_WorldA,_SkyA,mist);
+                    else sky=lerp(themedSky(d,_WorldA,_SkyA,mist),themedSky(d,_WorldB,_SkyB,mist),_Blend);
+                }
+                return fixed4(cloudVolume(normalize(i.cloudRay),sky),1);
             }
             ENDCG
         }

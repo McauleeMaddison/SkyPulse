@@ -7,7 +7,9 @@ namespace SkyPulse.Mobile
     public sealed partial class SkyPulseNativeGame
     {
         SkyPulseTechTreeView holographicTree;
-        RectTransform techCoreControl;
+        RectTransform techCoreControl, techNextControl;
+        readonly List<Vector2> techAvailableLevels = new List<Vector2>(9);
+        int techNextFocus;
         Material techBackdropMaterial;
         Material techTypographyMaterial;
         // Authored space, not a row/column grid: the three uninterrupted limbs
@@ -23,6 +25,8 @@ namespace SkyPulse.Mobile
             var insignia = customizeScreen != null ? customizeScreen.transform.Find("Hangar flight insignia") : null;
             if (insignia != null) insignia.gameObject.SetActive(true);
             if (techCoreControl != null) { techCoreControl.gameObject.SetActive(false); Destroy(techCoreControl.gameObject); techCoreControl = null; }
+            if (techNextControl != null) { techNextControl.gameObject.SetActive(false); Destroy(techNextControl.gameObject); techNextControl = null; }
+            techAvailableLevels.Clear();
             if (holographicTree == null) return;
             // Disable the isolated scene now; Destroy completes at frame end.
             holographicTree.gameObject.SetActive(false);
@@ -32,6 +36,7 @@ namespace SkyPulse.Mobile
 
         private void BuildTechTree()
         {
+            techAvailableLevels.Clear(); techNextFocus = 0;
             var branches = new List<HolographicBranch>(39);
             var roots = new List<HolographicRoot>(40);
             var families = new[] { "COLLECTION", "RECOVERY", "MASTERY" };
@@ -82,17 +87,23 @@ namespace SkyPulse.Mobile
                         var labelAt=leaf+new Vector2(side*40,-3);
                         if(next)
                         {
-                            var plaque=ProgressionSurface(customizeContent,"Next-level glass · "+upgrade.Id,labelAt+Vector2.down*24,new Vector2(198,130),SkyPulseProgressionSurface.Finish.Quiet);
+                            techAvailableLevels.Add(leaf + new Vector2(side * 40, 0));
+                            var plaque=ProgressionSurface(customizeContent,"Next-level glass · "+upgrade.Id,labelAt+Vector2.down*8,new Vector2(198,164),SkyPulseProgressionSurface.Finish.Quiet);
                             plaque.Capsule=true;plaque.Accent=colour;plaque.rectTransform.anchorMin=plaque.rectTransform.anchorMax=new Vector2(.5f,1);
                         }
-                        var rank=TechLabel("LEVEL "+(index+1),labelAt,new Vector2(188,42),31,next?Hex("#f4fcff"):done?colour:Hex("#94a7bc"));
+                        // Each leaf keeps its upgrade identity when its hub is outside the
+                        // free-pan view. Only the next purchase has a glass focus.
+                        var identity = TechLabel(TechLevelIdentity(upgrade), labelAt + new Vector2(0, 49), new Vector2(194, 34), 26,
+                            next ? Hex("#d9f4fa") : done ? Hex("#98bdca") : Hex("#6e8498"));
+                        identity.gameObject.name = upgrade.Name + " · level " + (index + 1) + " identity";
+                        var rank=TechLabel("LEVEL "+(index+1),labelAt,new Vector2(188,42),31,next?Hex("#f4fcff"):done?colour:Hex("#8294a9"));
                         rank.GetComponent<SkyPulseHolographicText>().Emphasis=next?1:done?.5f:0;
                         rank.gameObject.name=upgrade.Name+" · level "+(index+1)+" label";
                         TechLabel(done?"INSTALLED":next?"NEXT · "+UpgradeCrystalPrice(upgrade,index)+" ✦":"LOCKED",labelAt+new Vector2(0,-38),new Vector2(194,32),22,next?colour:done?Hex("#aac6d3"):Hex("#8295aa"));
                         if(next)
                         {
                             TechLabel("VIEW UPGRADE ›",labelAt+new Vector2(0,-67),new Vector2(194,26),19,Hex("#c8e5ef"));
-                            var marker=CreateUiGlyph(customizeContent,"Next available · "+upgrade.Id,leaf+new Vector2(side*40,61),new Vector2(36,36),colour,SkyPulseUiGlyph.Kind.UpgradePoint);
+                            var marker=CreateUiGlyph(customizeContent,"Next available · "+upgrade.Id,labelAt+new Vector2(-100,1),new Vector2(26,26),colour,SkyPulseUiGlyph.Kind.UpgradePoint);
                             marker.rectTransform.anchorMin=marker.rectTransform.anchorMax=new Vector2(.5f,1);marker.raycastTarget=false;
                         }
                     }
@@ -128,6 +139,25 @@ namespace SkyPulse.Mobile
             CreateTechCoreControl();
         }
 
+        static string TechLevelIdentity(Upgrade upgrade)
+        {
+            // Short, unique leaf identities stay readable on a phone; hub and
+            // inspector retain the full catalogue name and exact effect.
+            switch (upgrade.Id)
+            {
+                case "crystal_resonator": return "RESONATOR";
+                case "prism_conduit": return "CONDUIT";
+                case "gravity_well": return "GRAVITY WELL";
+                case "salvage_codec": return "SALVAGE";
+                case "recovery_cache": return "RECOVERY";
+                case "archive_engine": return "ARCHIVE";
+                case "precision_harvester": return "PRECISION";
+                case "streak_capacitor": return "STREAK";
+                case "apex_matrix": return "APEX";
+                default: return upgrade.Name;
+            }
+        }
+
         Text TechLabel(string copy, Vector2 position, Vector2 size, int fontSize, Color colour)
         {
             var label = CreateText(customizeContent, copy, position, size, fontSize, colour, TextAnchor.MiddleCenter, FontStyle.Bold);
@@ -151,7 +181,7 @@ namespace SkyPulse.Mobile
                 techBackdropMaterial.SetFloat("_Backdrop", 1);
             }
             veil.material = tech ? techBackdropMaterial : null;
-            veil.color = tech ? Color.white : new Color(.006f, .012f, .036f, .74f);
+            veil.color = tech ? Color.white : new Color(.006f, .012f, .036f, .86f);
             customizeScroll.viewport.GetComponent<RectMask2D>().softness = tech ? new Vector2Int(24,24) : Vector2Int.zero;
             customizeTitle.fontSize = tech ? 46 : 52;
             customizeTitle.fontStyle = tech ? FontStyle.Normal : FontStyle.Bold;
@@ -167,28 +197,28 @@ namespace SkyPulse.Mobile
             {
                 // Keep the established controls and targets; replace their
                 // chamfered neon trim only while viewing the tree.
-                var shell = tab.GetComponent<Image>(); shell.color = tech ? Color.clear : Hex("#090e1e");
-                var outline = tab.GetComponent<Outline>(); if (outline != null) outline.enabled = !tech;
+                var shell = tab.GetComponent<Image>(); shell.color = Color.clear;
+                var outline = tab.GetComponent<Outline>(); if (outline != null) outline.enabled = false;
                 var face = (Image)tab.targetGraphic;
-                face.sprite = tech ? roundedPanelSprite : interfacePanelSprite;
+                face.sprite = roundedPanelSprite;
                 tab.GetComponent<SkyPulseButtonFeedback>().ReducedMotion = reduceMotionEnabled;
                 var keyline = tab.transform.Find("Flight control keyline");
-                if (keyline != null) keyline.gameObject.SetActive(!tech);
+                if (keyline != null) keyline.gameObject.SetActive(false);
                 var text = tab.GetComponentInChildren<Text>();
                 text.fontSize = tech ? 27 : 22;
                 var shadow = text.GetComponent<Shadow>(); if (shadow != null) shadow.enabled = !tech;
             }
             var menu = customizeScreen.transform.Find("Button · ‹  MENU");
-            var menuShell = menu.GetComponent<Image>(); menuShell.color = tech ? Color.clear : Hex("#090e1e");
-            menu.GetComponent<Outline>().enabled = !tech;
-            ((Image)menu.GetComponent<Button>().targetGraphic).sprite = tech ? roundedPanelSprite : interfacePanelSprite;
-            menu.Find("Flight control keyline").gameObject.SetActive(!tech);
+            var menuShell = menu.GetComponent<Image>(); menuShell.color = Color.clear;
+            menu.GetComponent<Outline>().enabled = false;
+            ((Image)menu.GetComponent<Button>().targetGraphic).sprite = roundedPanelSprite;
+            menu.Find("Flight control keyline").gameObject.SetActive(false);
             menu.GetComponent<SkyPulseButtonFeedback>().ReducedMotion = reduceMotionEnabled;
             var menuLabel = menu.GetComponentInChildren<Text>(); menuLabel.fontSize = tech ? 27 : 22; menuLabel.GetComponent<Shadow>().enabled = !tech;
             var chip = customizeCrystalText.transform.parent;
-            chip.GetComponent<Image>().sprite = tech ? roundedPanelSprite : interfacePanelSprite;
-            chip.GetComponent<Outline>().enabled = !tech;
-            chip.Find("Flight telemetry keyline").gameObject.SetActive(!tech);
+            chip.GetComponent<Image>().sprite = roundedPanelSprite;
+            chip.GetComponent<Outline>().enabled = false;
+            chip.Find("Flight telemetry keyline").gameObject.SetActive(false);
         }
 
         void StyleTechInspector(bool tech)
@@ -253,13 +283,30 @@ namespace SkyPulse.Mobile
             var control = CreateImage(customizeScreen.transform, "Return to tree core", Vector2.zero, new Vector2(190, 168), Color.clear);
             techCoreControl = control.rectTransform;
             techCoreControl.anchorMin = techCoreControl.anchorMax = new Vector2(.5f, .5f);
-            techCoreControl.anchoredPosition = new Vector2(0, 756);
+            techCoreControl.anchoredPosition = new Vector2(techAvailableLevels.Count > 0 ? -96 : 0, 756);
             var button = control.gameObject.AddComponent<Button>(); button.targetGraphic = control;
             button.transition = Selectable.Transition.None;
             button.navigation = new Navigation { mode = Navigation.Mode.None };
             button.onClick.AddListener(() => { if (holographicTree != null) holographicTree.FocusCore(); });
             CreateUiGlyph(techCoreControl, "Core locator", new Vector2(0, 46), new Vector2(52, 52), Hex("#b3f8ff"), SkyPulseUiGlyph.Kind.CircuitHex);
             CreateText(techCoreControl, "CORE", new Vector2(0,10), new Vector2(190, 28), 24, Hex("#d9faff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            if (techAvailableLevels.Count == 0) return;
+            // A fixed locator visits each available purchase in order. It only
+            // moves the view; the existing inspector still confirms spending.
+            var next = CreateImage(customizeScreen.transform, "Find next upgrade", Vector2.zero, new Vector2(168, 168), Color.clear);
+            techNextControl = next.rectTransform;
+            techNextControl.anchorMin = techNextControl.anchorMax = new Vector2(.5f, .5f);
+            techNextControl.anchoredPosition = new Vector2(96, 756);
+            var nextButton = next.gameObject.AddComponent<Button>(); nextButton.targetGraphic = next;
+            nextButton.transition = Selectable.Transition.None;
+            nextButton.navigation = new Navigation { mode = Navigation.Mode.None };
+            nextButton.onClick.AddListener(() => {
+                if (holographicTree == null || techAvailableLevels.Count == 0) return;
+                holographicTree.FocusPoint(techAvailableLevels[techNextFocus]);
+                techNextFocus = (techNextFocus + 1) % techAvailableLevels.Count;
+            });
+            CreateUiGlyph(techNextControl, "Next upgrade locator", new Vector2(0, 46), new Vector2(46, 46), Hex("#8ef4ff"), SkyPulseUiGlyph.Kind.UpgradePoint);
+            CreateText(techNextControl, "NEXT", new Vector2(0,10), new Vector2(168,28), 24, Hex("#d9faff"), TextAnchor.MiddleCenter, FontStyle.Bold);
         }
 
         void InspectTechLevel(Upgrade upgrade, int index)

@@ -84,8 +84,8 @@ namespace SkyPulse.Mobile
             for(int i=0;i<12;i++)
             {
                 var authored=Resources.Load<SkyPulsePipeTheme>("SkyPulse/PipeEdits/world-"+i.ToString("00"));authoredPipeThemes[i]=authored;
-                routeBodyThemes[i]=authored!=null&&authored.Barrel!=null?Instantiate(authored.Barrel):SkyPulseRouteArchitecture.Build(i,false);
-                routeCapThemes[i]=authored!=null&&authored.Collar!=null?Instantiate(authored.Collar):SkyPulseRouteArchitecture.Build(i,true);
+                routeBodyThemes[i]=RouteThemeMesh(authored!=null?authored.Barrel:null,i,false);
+                routeCapThemes[i]=RouteThemeMesh(authored!=null?authored.Collar:null,i,true);
             }
             routeBodyMesh=routeBodyThemes[0];routeCapMesh=routeCapThemes[0];
             var properties=new MaterialPropertyBlock();
@@ -96,10 +96,16 @@ namespace SkyPulse.Mobile
                 routeDepth.Add(new RouteDepth{Surface=s,Body=body.transform,Cap=cap.transform,BodyRenderer=body,CapRenderer=cap,BodyFilter=body.GetComponent<MeshFilter>(),CapFilter=cap.GetComponent<MeshFilter>(),Retired=new[]{s.Artwork,s.Outer,s.Panel,s.Shade,s.RailLeft,s.RailRight,s.Core,s.CorePulse,s.Highlight,s.Energy,s.Scan,s.Beacon,s.CapGlow,s.CapOuter,s.CapAccent,s.CapPanel,s.CapEnergy}});
             }
         }
+        Mesh RouteThemeMesh(Mesh authored,int world,bool cap)
+        {
+            if(authored==null)return SkyPulseRouteArchitecture.Build(world,cap);
+            var copy=Instantiate(authored);var enriched=SkyPulseRouteArchitecture.Enrich(copy,world,cap);
+            if(enriched!=copy)Destroy(copy);return enriched;
+        }
         Material OriginalRouteMaterial(Sprite artwork,string label,bool cutout=false)
         {
             var material=new Material(Resources.Load<Shader>("SkyPulse/Shaders/EndlessRouteMetal")){name=label};
-            material.SetFloat("_Cutout",cutout?1:0);
+            material.SetFloat("_Cutout",cutout?1:0);material.SetFloat("_StructuralDetails",1);
             var rect=artwork.rect;var texture=artwork.texture;
             material.mainTexture=texture;material.SetVector("_ArtRect",new Vector4(rect.x/texture.width,rect.y/texture.height,rect.width/texture.width,rect.height/texture.height));return material;
         }

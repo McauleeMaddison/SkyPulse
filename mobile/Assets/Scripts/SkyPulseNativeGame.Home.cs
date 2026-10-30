@@ -29,6 +29,9 @@ namespace SkyPulse.Mobile
             menuTitleText.fontSize=58;menuTitleText.rectTransform.anchoredPosition=new Vector2(0,817);menuTitleText.color=Hex("#e5f7ff");
             if(homeArcade!=null){homeArcade.fontSize=20;homeArcade.rectTransform.anchoredPosition=new Vector2(0,755);homeArcade.color=Hex("#a1c2d2");}
             if(homeAtmosphere!=null)homeAtmosphere.gameObject.SetActive(!endless);
+            // The real mode exhibit supplies the hero identity. Retire the
+            // generic illustrated radar rings behind the dimensional equipment.
+            if(homeProtocolGraphic!=null)homeProtocolGraphic.gameObject.SetActive(false);
             foreach(string name in new[]{"Brand wing port","Brand wing starboard","Title energy rule","Flight deck"}){var decor=homeScreen.transform.Find(name);if(decor!=null)decor.gameObject.SetActive(false);}
             if(!relay)
             {
@@ -41,17 +44,27 @@ namespace SkyPulse.Mobile
             foreach(var face in homeScreen.GetComponentsInChildren<SkyPulseCircuitGraphic>(true))
             {
                 if(face.Surface!=SkyPulseSurface.Panel)continue;
-                face.ProjectedGlass=true;face.SoftGlass=true;face.Ambient=false;face.material=HomeGlassFinish;face.canvas.additionalShaderChannels|=AdditionalCanvasShaderChannels.TexCoord1;
-                face.color=Color.Lerp(accent,relay?Hex("#e7b76d"):Hex("#72c9ff"),face.Primary?.05f:.22f);face.SetVerticesDirty();
+                face.ProjectedGlass=true;face.SoftGlass=true;face.Hologram=false;face.Ambient=false;face.material=HomeGlassFinish;face.canvas.additionalShaderChannels|=AdditionalCanvasShaderChannels.TexCoord1;
+                var finish=Color.Lerp(accent,relay?Hex("#e7b76d"):Hex("#72c9ff"),face.Primary?.05f:.22f);
+                finish.a=face.Primary?1f:.72f;face.color=finish;face.SetVerticesDirty();
             }
             foreach(var button in homeScreen.GetComponentsInChildren<Button>(true))
             {
                 SetComfortHitTarget(button);
                 var face=button.targetGraphic as SkyPulseCircuitGraphic;
                 if(face!=null){face.rectTransform.sizeDelta=((RectTransform)button.transform).sizeDelta;face.SetVerticesDirty();}
-                var text=button.GetComponentInChildren<Text>();if(text!=null)text.color=Hex("#e6f5ff");
+                var text=button.GetComponentInChildren<Text>();
+                if(text!=null)
+                {
+                    text.color=button==homeLaunchButton?Hex("#f2fdff"):Hex("#bed5e2");
+                    var optics=text.GetComponent<SkyPulseHolographicText>();
+                    if(optics!=null)optics.Emphasis=button==homeLaunchButton?.62f:.22f;
+                }
                 foreach(var glyph in button.GetComponentsInChildren<SkyPulseUiGlyph>())glyph.color=new Color(accent.r,accent.g,accent.b,.7f);
             }
+            menuEquippedText.color=Hex("#b2d0db");
+            homeBestCaption.color=Color.Lerp(accent,Hex("#b8d2dc"),.5f);
+            menuBestText.color=Hex("#edfaff");
             difficultyText.color=accent;
         }
     }

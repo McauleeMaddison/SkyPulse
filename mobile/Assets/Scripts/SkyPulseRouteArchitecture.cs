@@ -76,7 +76,8 @@ namespace SkyPulse.Mobile
                     if(world==9)Band(b,world,profile,y+.010f,.0035f,Light);
                 }
             }
-            return Finish(b,Names[world]+(cap?" / machined collar":" / continuous barrel"));
+            AddHardware(b,world,cap?0:2);AddHardware(b,world,cap?1:3);
+            return Finish(b,Names[world]+(cap?" / machined collar":" / continuous barrel")+" / structure-v1");
         }
         static Mesh BuildOriginal(bool cap)
         {
@@ -93,8 +94,107 @@ namespace SkyPulse.Mobile
                 }
                 foreach(int side in new[]{-1,1})b.Face(new Vector3(0,side*.5f,0),new Vector3(Mathf.Cos(a)*.46f,side*.5f,Mathf.Sin(a)*.46f),new Vector3(Mathf.Cos(c)*.46f,side*.5f,Mathf.Sin(c)*.46f),new Color(.9f,.95f,1,.2f));
             }
-            return Finish(b,cap?"Extruded precision gate collar":"Reflective cylindrical Endless column");
+            AddHardware(b,0,cap?0:2);AddHardware(b,0,cap?1:3);
+            return Finish(b,(cap?"Extruded precision gate collar":"Reflective cylindrical Endless column")+" / structure-v1");
         }
+        // Four physical parts are shared by runtime meshes and the editable
+        // workshop children. Their XY extents stay inside the tested housing.
+        public static Mesh Hardware(int world,int part)
+        {
+            var b=new SkyPulseMeshBuilder();AddHardware(b,Mathf.Clamp(world,0,11),part);
+            string[] names={"Rolled cap bezel","Recessed cap bore","Barrel support ribs","Inset light guides"};
+            return b.Finish(names[Mathf.Clamp(part,0,3)]+" / structure-v1",true);
+        }
+        public static bool HasStructuralDetails(Mesh mesh)
+        {
+            if(mesh==null)return false;if(mesh.name.Contains("structure-v1"))return true;
+            if(!mesh.isReadable)return false;
+            foreach(var colour in mesh.colors)if(Mathf.Abs(colour.a-.72f)<.0005f||Mathf.Abs(colour.a-.68f)<.0005f)return true;
+            return false;
+        }
+        public static Mesh Enrich(Mesh source,int world,bool cap)
+        {
+            if(source==null||HasStructuralDetails(source))return source;
+            // Workshop/baked meshes keep readable buffers for model editing.
+            // Copies are combined once; pooled gates share the resulting mesh.
+            var first=Hardware(world,cap?0:2);var second=Hardware(world,cap?1:3);
+            var result=new Mesh{name=source.name+" / structure-v1"};
+            result.CombineMeshes(new[]{new CombineInstance{mesh=source,transform=Matrix4x4.identity},new CombineInstance{mesh=first,transform=Matrix4x4.identity},new CombineInstance{mesh=second,transform=Matrix4x4.identity}},true,true);
+            result.bounds=source.bounds;
+            if(Application.isPlaying){Object.Destroy(first);Object.Destroy(second);}else{Object.DestroyImmediate(first);Object.DestroyImmediate(second);}
+            return result;
+        }
+        static void AddHardware(SkyPulseMeshBuilder b,int world,int part)
+        {
+            const int sides=64;float depth=world==3?.90f:1;
+            Color bezel=new Color(1,1,1,.72f),wall=new Color(1,1,1,.74f),well=new Color(1,1,1,.76f);
+            if(part==0)
+            {
+                // A rolled elliptic metal lip with a real rounded cross-section.
+                // It sits within the original visible collar, not in the gap.
+                const int tubeSides=8;
+                for(int i=0;i<sides;i++)for(int j=0;j<tubeSides;j++)
+                {
+                    float a=i*Mathf.PI*2/sides,c=(i+1)*Mathf.PI*2/sides,u=j*Mathf.PI*2/tubeSides,v=(j+1)*Mathf.PI*2/tubeSides;
+                    b.SmoothQuad(Bezel(a,u,depth),Bezel(c,u,depth),Bezel(c,v,depth),Bezel(a,v,depth),BezelNormal(a,(u+v)*.5f),BezelNormal(c,(u+v)*.5f),j==4?new Color(1,1,1,.78f):bezel);
+                }
+            }
+            else if(part==1)
+            {
+                for(int i=0;i<sides;i++)
+                {
+                    float a=i*Mathf.PI*2/sides,c=(i+1)*Mathf.PI*2/sides;
+                    Vector3 p=Bore(a,-.458f,depth),q=Bore(c,-.458f,depth),r=Bore(c,-.235f,depth),t=Bore(a,-.235f,depth);
+                    b.SmoothQuad(p,q,r,t,new Vector3(-Mathf.Cos(a),-Mathf.Sin(a)*1.5f,-.08f).normalized,new Vector3(-Mathf.Cos(c),-Mathf.Sin(c)*1.5f,-.08f).normalized,wall);
+                    b.Face(new Vector3(0,.245f,-.235f*depth),r,t,well);
+                }
+            }
+            else
+            {
+                var profile=world==0?new[]{new Vector2(.47f,-.5f),new Vector2(.5f,-.48f),new Vector2(.5f,.48f),new Vector2(.47f,.5f)}:Profile(world,false);
+                if(part==2)
+                {
+                    // Paired load-bearing rails have side walls and bevelled
+                    // shoulders, leaving the original central LEDs exposed.
+                    for(int side=0;side<2;side++)for(int panel=0;panel<3;panel++)
+                    {
+                        float a=side==0?-2.15f:-.99f,lo=-.43f+panel*.29f,hi=lo+.255f;
+                        float r0=Mathf.Min(.497f,Radius(profile,lo)+.004f),r1=Mathf.Min(.497f,Radius(profile,hi)+.004f);
+                        float outer0=Mathf.Min(.499f,r0+.011f),outer1=Mathf.Min(.499f,r1+.011f),w=.045f;
+                        var p=Point(a-w,new Vector2(r0,lo),world,false);var q=Point(a+w,new Vector2(r0,lo),world,false);
+                        var t=Point(a-w,new Vector2(r1,hi),world,false);var r=Point(a+w,new Vector2(r1,hi),world,false);
+                        var p1=Point(a-w*.65f,new Vector2(outer0,lo+.009f),world,false);var q1=Point(a+w*.65f,new Vector2(outer0,lo+.009f),world,false);
+                        var t1=Point(a-w*.65f,new Vector2(outer1,hi-.009f),world,false);var r2=Point(a+w*.65f,new Vector2(outer1,hi-.009f),world,false);
+                        var colour=new Color(1,1,1,.68f);
+                        b.Quad(p,p1,t1,t,colour);b.Quad(q,r,r2,q1,colour);b.Quad(p,q,q1,p1,colour);b.Quad(t1,r2,r,t,colour);
+                        var normal=Normal(a,new Vector2(outer0,lo),world,false,1,0);b.SmoothQuad(p1,q1,r2,t1,normal,normal,colour);
+                    }
+                }
+                else if(part==3)
+                {
+                    // Narrow physical diffuser cores are recessed between the
+                    // rail shoulders. World colours and packets stay material-led.
+                    for(int side=0;side<2;side++)
+                    {
+                        float angle=side==0?-2.15f:-.99f;
+                        for(int segment=0;segment<16;segment++)
+                        {
+                            float lo=Mathf.Lerp(-.419f,.405f,segment/16f),hi=Mathf.Lerp(-.419f,.405f,(segment+1)/16f);
+                            float r0=Mathf.Min(.5f,Radius(profile,lo)+.0065f),r1=Mathf.Min(.5f,Radius(profile,hi)+.0065f),w=.008f;
+                            var normal=Normal(angle,new Vector2(r0,lo),world,false,1,0);
+                            b.SmoothQuad(Point(angle-w,new Vector2(r0,lo),world,false),Point(angle+w,new Vector2(r0,lo),world,false),Point(angle+w,new Vector2(r1,hi),world,false),Point(angle-w,new Vector2(r1,hi),world,false),normal,normal,new Color(1,1,1,.67f));
+                        }
+                    }
+                }
+            }
+        }
+        static Vector3 Bezel(float angle,float section,float depth)
+        {
+            float roll=Mathf.Cos(section)*.021f;
+            return new Vector3(Mathf.Cos(angle)*(.46f+roll),.245f+Mathf.Sin(angle)*(.195f+roll),(-.466f+Mathf.Sin(section)*.029f)*depth);
+        }
+        static Vector3 BezelNormal(float angle,float section)=>new Vector3(Mathf.Cos(angle)*Mathf.Cos(section),Mathf.Sin(angle)*Mathf.Cos(section)*1.25f,Mathf.Sin(section)).normalized;
+        static Vector3 Bore(float angle,float z,float depth)=>new Vector3(Mathf.Cos(angle)*.439f,.245f+Mathf.Sin(angle)*.174f,z*depth);
         static void Channel(SkyPulseMeshBuilder b,int world,Vector2[] profile,float angle,float bottom,float top,float width,Color colour,bool cap)
         {
             const int steps=24;

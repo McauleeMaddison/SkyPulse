@@ -52,6 +52,25 @@ public static class SkyPulseDepthChecks
             Check(home.transform.Find("Flight deck").GetComponent<Image>().color.a==0&&!home.transform.Find("Flight deck").GetComponentsInChildren<SkyPulseCircuitGraphic>().Any(g=>g.Surface==SkyPulseSurface.Panel&&g.transform.parent.name=="Flight deck"),"No enclosing black Home backplate");
             Check(!stage.StageCamera.transform.parent.GetComponentsInChildren<Transform>(true).Any(t=>t.name=="Hovering machined deck"||t.name=="Dock shoulder")&&!home.transform.Find("Home flight dock").gameObject.activeSelf,"Home has open geometry instead of dark support slabs and duplicate docks");
             Check(stage.StageCamera.backgroundColor.a==0&&home.GetComponentsInChildren<RawImage>().Any(r=>r.texture==stage.StageCamera.targetTexture&&r.material.shader.name=="SkyPulse/Tech Tree Field"),"Offscreen Home has transparent clear and premultiplied UI compositing");
+            if(mode==SkyPulseMode.BlackoutProtocol)
+            {
+                var exhibit=stage.StageCamera.transform.parent.Find("Blackout optical command chamber/Signal Heist tabletop demonstration");
+                Check(exhibit!=null&&Mathf.Abs(exhibit.localEulerAngles.x-42)<.01f,"Blackout Home exhibits a real angled Signal Heist console");
+                Check(!stage.StageCamera.orthographic&&exhibit.Find("Deep titanium console housing")!=null,"Blackout Home uses perspective foreshortening and a deep supported housing");
+                var housing=exhibit.Find("Raised optical worktop").GetComponent<MeshFilter>().sharedMesh;
+                Check(housing.bounds.size.z>=.29f&&exhibit.Find("Directional source housing/Raised source direction")!=null&&exhibit.Find("Uplink receiver housing/Four-post uplink crown")!=null,"Home source and uplink sit in physical machined housings with visible depth");
+                Check(exhibit.Find("Mirror socket 0/Signal-routing mirror 0")!=null&&exhibit.Find("Mirror socket 1/Signal-routing mirror 1")!=null&&exhibit.Find("Source to core to uplink light route")!=null,"Home demonstrates the real source, mirrors, core and uplink routing concept");
+                var packet=exhibit.Find("Travelling optical energy packet");Vector3 reference=Vector3.zero;
+                foreach(int fps in new[]{30,60,120})
+                {
+                    typeof(SkyPulseDepthStage).GetField("clock",F).SetValue(stage,0f);
+                    for(int frame=0;frame<fps;frame++)stage.Tick(1f/fps);
+                    if(fps==30)reference=packet.localPosition;
+                    Check(Vector3.Distance(reference,packet.localPosition)<.001f,"Home energy packet follows elapsed time at "+fps+" FPS");
+                }
+                stage.ReducedMotion=true;stage.Tick(0);var held=packet.localPosition;stage.Tick(1);
+                Check(packet.localPosition==held,"Reduced Motion keeps the Home optical route lit and still");stage.ReducedMotion=false;
+            }
             var badge=((Text)Get(game,"difficultyText")).rectTransform.parent as RectTransform;Check(badge.rect.width>=340,"Full mode name fits the mode badge");
             foreach(var label in home.GetComponentsInChildren<Text>())Check(!System.Text.RegularExpressions.Regex.IsMatch(label.text,@"\b(placeholder|lorem ipsum|coming soon|todo)\b",System.Text.RegularExpressions.RegexOptions.IgnoreCase),"Home contains finished player-facing copy");
             Check(!((Text)Get(game,"homeProtocolCaption")).gameObject.activeInHierarchy&&!((Text)Get(game,"homeActivityCopy")).gameObject.activeInHierarchy&&!((Text)Get(game,"menuModeDetailText")).gameObject.activeInHierarchy,"Home removes repeated marketing and instruction strips: "+mode);

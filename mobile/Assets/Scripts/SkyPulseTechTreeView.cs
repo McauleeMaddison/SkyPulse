@@ -40,7 +40,7 @@ namespace SkyPulse.Mobile
         public int CoreRank = 1;
         Mesh crystalMesh, orbitMesh, frameMesh;
         ScrollRect scroll;
-        Vector2 focusFrom, pressPoint;
+        Vector2 focusFrom, focusTarget, pressPoint;
         float focusTime, pressAge = 10, revealTime;
         bool focusing;
         public bool IsFocusing => focusing;
@@ -97,13 +97,13 @@ namespace SkyPulse.Mobile
                 var b = to + new Vector3(branch.Trunk ? 0 : -spread * .16f, gap * .27f, -.22f);
                 // A substantial shaded glass conductor carries a narrow light
                 // vein on its front face. Shared rings keep every curve seamless.
-                Tube(from, a, b, to, branch.Trunk ? .12f : .085f, branch.Colour,
-                    branch.Powered ? .94f : .58f, vertices, normals, colours, uv, triangles, 2);
+                Tube(from, a, b, to, branch.Trunk ? .14f : .078f, branch.Colour,
+                    branch.Powered ? .94f : .32f, vertices, normals, colours, uv, triangles, 2);
                 var front = new Vector3(0, 0, -.10f);
                 Tube(from+front, a+front, b+front, to+front, branch.Trunk ? .016f : .012f, branch.Colour,
-                    branch.Powered ? .92f : .25f, vertices, normals, colours, uv, triangles);
+                    branch.Powered ? .92f : .10f, vertices, normals, colours, uv, triangles);
                 Tube(from, a, b, to, branch.Trunk ? .18f : .13f, branch.Colour,
-                    branch.Powered ? .055f : .025f, vertices, normals, colours, uv, triangles, 4);
+                    branch.Powered ? .045f : .008f, vertices, normals, colours, uv, triangles, 4);
             }
             foreach (var root in roots)
             {
@@ -235,10 +235,21 @@ namespace SkyPulse.Mobile
         }
         static Vector3 ProjectorPoint(float angle,float side) => new Vector3(Mathf.Cos(angle)*(1+Mathf.Cos(side)*.055f),Mathf.Sin(angle)*(1+Mathf.Cos(side)*.055f),Mathf.Sin(side)*.05f);
 
-        public void FocusCore()
+        public void FocusCore() => Focus(Vector2.zero);
+        public void FocusPoint(Vector2 point)
+        {
+            // Centre the chosen leaf, keeping its full label within the existing
+            // ScrollRect limits. No separate pan/input implementation is used.
+            float reach = Mathf.Max(0, (content.rect.width - viewport.rect.width) * .5f);
+            float depth = Mathf.Max(0, content.rect.height - viewport.rect.height);
+            Focus(new Vector2(Mathf.Clamp(-point.x, -reach, reach),
+                Mathf.Clamp(-point.y - viewport.rect.height * .5f, 0, depth)));
+        }
+        void Focus(Vector2 target)
         {
             if (scroll != null) scroll.StopMovement();
-            if (ReducedMotion) { content.anchoredPosition=Vector2.zero; focusing=false; return; }
+            focusTarget=target;
+            if (ReducedMotion) { content.anchoredPosition=target; focusing=false; return; }
             focusFrom=content.anchoredPosition; focusTime=0; focusing=true;
         }
         public void CancelFocus() { focusing=false; }
@@ -259,9 +270,9 @@ namespace SkyPulse.Mobile
                 if (focusing)
                 {
                     focusTime+=dt;
-                    float progress=ReducedMotion?1:Mathf.Clamp01(focusTime/.52f);
+                    float progress=ReducedMotion?1:Mathf.Clamp01(focusTime/.42f);
                     float ease=1-Mathf.Pow(1-progress,3);
-                    content.anchoredPosition=Vector2.LerpUnclamped(focusFrom,Vector2.zero,ease);
+                    content.anchoredPosition=Vector2.LerpUnclamped(focusFrom,focusTarget,ease);
                     if (progress>=1) focusing=false;
                 }
             }

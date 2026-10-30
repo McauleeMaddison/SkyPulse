@@ -41,6 +41,8 @@ Shader "SkyPulse/Flight Architecture"
                 float3 n=normalize(i.normal),view=normalize(_WorldSpaceCameraPos.xyz-i.world);
                 if(dot(n,view)<0)n=-n;
                 float3 key=normalize(float3(-.64,.87,-.75)),halfway=normalize(key+view);
+                float fill=saturate(dot(n,normalize(float3(.72,.32,-.55))));
+                float skyFill=saturate(n.y*.5+.5);
                 float facing=saturate(dot(n,view)),ndl=saturate(dot(n,key));
                 float neon=smoothstep(.445,.465,i.color.a)*(1-smoothstep(.495,.515,i.color.a));
                 float glass=max(neon,smoothstep(.27,.32,i.color.a)*(1-smoothstep(.38,.43,i.color.a)));
@@ -57,13 +59,22 @@ Shader "SkyPulse/Flight Architecture"
                 float softbox=pow(saturate(1-abs(reflection.x*.72+reflection.y*.32-.19)*1.75),22);
                 float spec=pow(saturate(dot(n,halfway)),lerp(52,126,glass));
                 float3 surfaceColour=lerp(i.color.rgb,float3(.035,.055,.085)+i.color.rgb*.04,neon);
-                float3 colour=surfaceColour*(.24+ndl*.80)*lerp(float3(.92,.98,1.05),_Tint.rgb,.06);
+                // A warm key and cool sky fill expose the actual wall, sill and
+                // crown normals. Keep alloy solid rather than glowing glass.
+                float3 lighting=float3(.19,.23,.29)+float3(1,.92,.82)*ndl*.78+float3(.20,.31,.43)*fill*.22;
+                lighting+=float3(.07,.10,.14)*skyFill;
+                float3 colour=surfaceColour*lighting*lerp(float3(.96,.99,1.02),_Tint.rgb,.04);
                 colour+=ambient*(.19+glass*.56+fresnel*.46)+float3(.87,.91,1)*(spec*.46+softbox*(.12+glass*.34))*lerp(1,.15,stone);
                 if(_SurfaceAmount>.001)
                 {
                     float3 axis=pow(abs(mul((float3x3)unity_WorldToObject,n)),4);axis/=max(dot(axis,1),.001);float3 p=i.local*_SurfaceScale;
                     float3 detail=tex2D(_SurfaceTex,p.yz).rgb*axis.x+tex2D(_SurfaceTex,p.xz).rgb*axis.y+tex2D(_SurfaceTex,p.xy).rgb*axis.z;
-                    colour=lerp(colour,detail*(.38+ndl*.82)+ambient*.19+float3(.87,.91,1)*(spec*.46+softbox*.20),_SurfaceAmount*(1-glass)*(1-light));
+                    // Surface grain modulates the existing alloy colour instead of
+                    // painting unrelated image panels across each building.
+                    float grain=dot(detail,float3(.2126,.7152,.0722));
+                    colour*=lerp(1,.87+grain*.24,_SurfaceAmount*(1-glass)*(1-light));
+                    float3 detailedFinish=detail*(.38+ndl*.82)+ambient*.19+float3(.87,.91,1)*(spec*.46+softbox*.20);
+                    colour=lerp(colour,detailedFinish,_SurfaceAmount*.42*(1-glass)*(1-light));
                 }
                 // Facade bays are glazing with dark reveals and a few occupied
                 // warm interiors. They are not continuous glowing floor discs.
@@ -110,7 +121,9 @@ Shader "SkyPulse/Flight Architecture"
                 float mist=saturate((distanceToCamera-25)/35)*.51;
                 float3 atmosphere=lerp(float3(.13,.15,.24),max(_Haze.rgb,_Tint.rgb*.23),.46);
                 float3 distantLight=lerp(atmosphere,max(_Haze.rgb*.55+_Tint.rgb*.22,float3(.07,.09,.14)),.55);
-                float distanceVeil=lerp(mist,.45+mist*.25,_Backdrop);
+                // Distant windows stay subordinate to the occupied foreground
+                // islands; this preserves an open, readable flight corridor.
+                float distanceVeil=lerp(mist,.61+mist*.18,_Backdrop);
                 return lerp(colour,lerp(atmosphere,distantLight,_Backdrop),distanceVeil);
             }
             fixed4 frag(vary i):SV_Target

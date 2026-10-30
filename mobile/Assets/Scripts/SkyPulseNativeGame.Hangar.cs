@@ -10,282 +10,125 @@ namespace SkyPulse.Mobile
     // live in BirdProgression.cs; bird identities/art paths stay in the main catalogue.
     public sealed partial class SkyPulseNativeGame
     {
+        // The featured bird shares the existing 3D portrait studio used by training
+        // and breeding. Its cradle/rig are meshes, with one transparent render target.
+        private SkyPulseProgressionStage hangarPreviewStage;
+
         private void BuildBirdHangarPage()
         {
             if (BirdRoster == null || BirdRoster.Length == 0) return;
-
-            hangarPageIndex = Mathf.Clamp(
-                hangarPageIndex,
-                0,
-                BirdRoster.Length - 1);
-
+            hangarPageIndex = Mathf.Clamp(hangarPageIndex, 0, BirdRoster.Length - 1);
             var skin = BirdRoster[hangarPageIndex];
-            var owned = IsSkinOwned(skin);
-            int unlockPrice=BirdUnlockPrice(skin);
-            var equipped =
-                equippedSkin != null &&
-                equippedSkin.Id == skin.Id;
-
+            bool owned = IsSkinOwned(skin);
+            int unlockPrice = BirdUnlockPrice(skin);
+            bool equipped = equippedSkin != null && equippedSkin.Id == skin.Id;
             var profile = GetBirdHangarProfile(skin);
             var accent = skin.Accent;
+            int previousIndex = (hangarPageIndex + BirdRoster.Length - 1) % BirdRoster.Length;
+            int nextIndex = (hangarPageIndex + 1) % BirdRoster.Length;
 
-            var previousIndex = hangarPageIndex - 1;
-            if (previousIndex < 0)
-                previousIndex = BirdRoster.Length - 1;
-
-            var nextIndex = hangarPageIndex + 1;
-            if (nextIndex >= BirdRoster.Length)
-                nextIndex = 0;
-
-            customizeContent.sizeDelta =
-                new Vector2(0f, 1110f);
-
-            customizeContent.anchoredPosition =
-                Vector2.zero;
-
-            // Transparent container only.
-            // This is NOT another giant blue card.
-            var pageObject = new GameObject(
-                "Bird carousel page",
-                typeof(RectTransform));
-
-            pageObject.transform.SetParent(
-                customizeContent,
-                false);
-
-            hangarPageRoot =
-                pageObject.GetComponent<RectTransform>();
-
-            hangarPageRoot.anchorMin =
-                new Vector2(.5f, 1f);
-
-            hangarPageRoot.anchorMax =
-                new Vector2(.5f, 1f);
-
-            hangarPageRoot.pivot =
-                new Vector2(.5f, 1f);
-
-            hangarPageRoot.anchoredPosition =
-                new Vector2(0f, -12f);
-
-            hangarPageRoot.sizeDelta =
-                new Vector2(920f, 1080f);
-
-            // Page number.
-            hangarPageIndicatorText = CreateText(
-                hangarPageRoot,
+            customizeContent.sizeDelta = new Vector2(0, 1200);
+            customizeContent.anchoredPosition = Vector2.zero;
+            var page = new GameObject("Bird carousel page", typeof(RectTransform));
+            page.transform.SetParent(customizeContent, false);
+            hangarPageRoot = page.GetComponent<RectTransform>();
+            hangarPageRoot.anchorMin = hangarPageRoot.anchorMax = new Vector2(.5f, 1);
+            hangarPageRoot.pivot = new Vector2(.5f, 1);
+            hangarPageRoot.anchoredPosition = new Vector2(0, -12);
+            hangarPageRoot.sizeDelta = new Vector2(920, 1080);
+            hangarPageIndicatorText = HangarLabel(hangarPageRoot,
                 $"BAY {hangarPageIndex + 1:00}  /  {BirdRoster.Length:00}",
-                new Vector2(0f, 502f),
-                new Vector2(500f, 38f),
-                23,
-                Hex("#a9d8ea"),
-                TextAnchor.MiddleCenter,
-                FontStyle.Bold);
+                new Vector2(0, 492), new Vector2(500, 38), 24, Hex("#b6d6e3"));
 
-            // ==========================================================
-            // REAL CAROUSEL TRACK
-            // ==========================================================
+            var track = new GameObject("Bird carousel track", typeof(RectTransform));
+            track.transform.SetParent(hangarPageRoot, false);
+            hangarCarouselTrack = track.GetComponent<RectTransform>();
+            hangarCarouselTrack.sizeDelta = new Vector2(1250, 420);
+            hangarCarouselTrack.anchoredPosition = new Vector2(0, 255);
+            hangarPreviousBirdRoot = CreateHangarCarouselBird(hangarCarouselTrack, BirdRoster[previousIndex], -HangarCarouselSpacing, false, ShowPreviousHangarBird);
+            hangarNextBirdRoot = CreateHangarCarouselBird(hangarCarouselTrack, BirdRoster[nextIndex], HangarCarouselSpacing, false, ShowNextHangarBird);
+            hangarCurrentBirdRoot = CreateHangarCarouselBird(hangarCarouselTrack, skin, 0, true, null);
+            hangarPreviousBirdCanvas = hangarPreviousBirdRoot.GetComponent<CanvasGroup>();
+            hangarCurrentBirdCanvas = hangarCurrentBirdRoot.GetComponent<CanvasGroup>();
+            hangarNextBirdCanvas = hangarNextBirdRoot.GetComponent<CanvasGroup>();
 
-            var trackObject = new GameObject(
-                "Bird carousel track",
-                typeof(RectTransform));
+            var swipe = CreateImage(hangarPageRoot, "Hangar swipe surface", new Vector2(0, 255),
+                new Vector2(900, 420), new Color(1, 1, 1, .001f));
+            swipe.raycastTarget = true;
+            var trigger = swipe.gameObject.AddComponent<EventTrigger>();
+            AddHangarSwipeEvent(trigger, EventTriggerType.BeginDrag, OnHangarBeginDrag);
+            AddHangarSwipeEvent(trigger, EventTriggerType.Drag, OnHangarDrag);
+            AddHangarSwipeEvent(trigger, EventTriggerType.EndDrag, OnHangarEndDrag);
+            // Explicit controls remain above the swipe surface: neighbour artwork
+            // can never hide the only way to browse the collection.
+            HangarBrowseButton("‹", -390, ShowPreviousHangarBird);
+            HangarBrowseButton("›", 390, ShowNextHangarBird);
+            HangarLabel(hangarPageRoot, "SWIPE TO EXPLORE", new Vector2(0, 37),
+                new Vector2(560, 36), 21, Hex("#91b9ca"));
 
-            trackObject.transform.SetParent(
-                hangarPageRoot,
-                false);
-
-            hangarCarouselTrack =
-                trackObject.GetComponent<RectTransform>();
-
-            hangarCarouselTrack.anchorMin =
-                new Vector2(.5f, .5f);
-
-            hangarCarouselTrack.anchorMax =
-                new Vector2(.5f, .5f);
-
-            hangarCarouselTrack.pivot =
-                new Vector2(.5f, .5f);
-
-            hangarCarouselTrack.sizeDelta =
-                new Vector2(1250f, 420f);
-
-            hangarCarouselTrack.anchoredPosition =
-                new Vector2(0f, 245f);
-
-            // Previous bird first, so it renders behind centre.
-            hangarPreviousBirdRoot = CreateHangarCarouselBird(
-            hangarCarouselTrack,
-            BirdRoster[previousIndex],
-            -HangarCarouselSpacing,
-            false,
-            ShowPreviousHangarBird);
-
-            hangarNextBirdRoot = CreateHangarCarouselBird(
-                hangarCarouselTrack,
-                BirdRoster[nextIndex],
-                HangarCarouselSpacing,
-                false,
-                ShowNextHangarBird);
-
-            hangarCurrentBirdRoot = CreateHangarCarouselBird(
-                hangarCarouselTrack,
-                skin,
-                0f,
-                true,
-                null);
-            hangarPreviousBirdCanvas =
-hangarPreviousBirdRoot != null
-    ? hangarPreviousBirdRoot.GetComponent<CanvasGroup>()
-    : null;
-
-            hangarCurrentBirdCanvas =
-                hangarCurrentBirdRoot != null
-                    ? hangarCurrentBirdRoot.GetComponent<CanvasGroup>()
-                    : null;
-
-            hangarNextBirdCanvas =
-                hangarNextBirdRoot != null
-                    ? hangarNextBirdRoot.GetComponent<CanvasGroup>()
-                    : null;
-
-            var swipeSurface = CreateImage(
-            hangarPageRoot,
-            "Hangar swipe surface",
-            new Vector2(0f, 245f),
-            new Vector2(900f, 420f),
-            new Color(1f, 1f, 1f, .001f));
-
-            swipeSurface.sprite = whiteSprite;
-            swipeSurface.raycastTarget = true;
-
-            var swipeTrigger = swipeSurface.gameObject.AddComponent<EventTrigger>();
-
-            AddHangarSwipeEvent(
-                swipeTrigger,
-                EventTriggerType.BeginDrag,
-                OnHangarBeginDrag);
-
-            AddHangarSwipeEvent(
-                swipeTrigger,
-                EventTriggerType.Drag,
-                OnHangarDrag);
-
-            AddHangarSwipeEvent(
-                swipeTrigger,
-                EventTriggerType.EndDrag,
-                OnHangarEndDrag);
-
-            // ==========================================================
-            // FLOATING GLASS INFORMATION CONSOLE
-            // ==========================================================
-
-            var informationGlass = CreateHangarGlassPanel(
-                hangarPageRoot,
-                "Flight profile glass",
-                new Vector2(0f, -225f),
-                new Vector2(790f, 470f),
-                accent,
-                .11f,
-                .34f);
-            hangarInformationCanvas =
-        informationGlass.gameObject.AddComponent<CanvasGroup>();
-            hangarInformationCanvas.alpha =
-            hangarInformationFadeTime >= 0f ? 0f : 1f;
-            var shimmer = CreateImage(informationGlass, "Glass travelling reflection",
-            new Vector2(-315f, 0f),
-            new Vector2(105f, 390f),
-            new Color(.82f, .96f, 1f, .055f));
-
-            shimmer.sprite = softCircleSprite;
-            shimmer.raycastTarget = false;
-
-            hangarGlassShimmer = shimmer.rectTransform;
-            hangarGlassShimmerImage = shimmer;
-
-            hangarGlassShimmer.localRotation =
-                Quaternion.Euler(
-                    0f,
-                    0f,
-                    -9f);
-
-            var birdName = CreateText(
-                informationGlass,
-                skin.Name,
-                new Vector2(0f, 172f),
-                new Vector2(680f, 60f),
-                44,
-                Hex("#f5fbff"),
-                TextAnchor.MiddleCenter,
-                FontStyle.Bold);
-
-            birdName.resizeTextForBestFit = true;
-            birdName.resizeTextMinSize = 30;
-            birdName.resizeTextMaxSize = 44;
-
-            CreateText(
-                informationGlass,
-                profile.Rarity,
-                new Vector2(0f, 126f),
-                new Vector2(420f, 34f),
-                25,
-                profile.RarityColour,
-                TextAnchor.MiddleCenter,
-                FontStyle.Bold);
-
-            var description = CreateText(
-                informationGlass,
-                "LEVEL "+BirdLevel(skin)+" · "+(BredBird(skin)?"BRED LINEAGE":"FOUNDER BIRD"),
-                new Vector2(0f, 82f),
-                new Vector2(660f, 44f),
-                21,
-                Hex("#b7cede"),
-                TextAnchor.MiddleCenter,
-                FontStyle.Normal);
-
-            description.resizeTextForBestFit = true;
-            description.resizeTextMinSize = 17;
-            description.resizeTextMaxSize = 21;
-
-            // Reward specialisations vary; tested flight handling stays shared.
-            var traits=CreateText(informationGlass, BirdTraitSummary(skin), new Vector2(0f, 10f), new Vector2(690f, 42f), 25, Hex("#d2def0"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            traits.resizeTextForBestFit=true;traits.resizeTextMinSize=20;traits.resizeTextMaxSize=25;
-            CreateText(informationGlass, $"YOUR CRYSTALS · {crystals:N0}", new Vector2(0f, -48f), new Vector2(690f, 42f), 27, accent, TextAnchor.MiddleCenter, FontStyle.Bold);
-            var unlockProgress = owned ? "BIRD UNLOCK SAVINGS · "+birdProgression.BirdUnlockDiscountPercent+"%"
+            var glass = ProgressionSurface(hangarPageRoot, "Flight profile glass",
+                new Vector2(0, -225), new Vector2(800, 470), SkyPulseProgressionSurface.Finish.Quiet);
+            glass.Accent = accent;
+            hangarInformationCanvas = glass.gameObject.AddComponent<CanvasGroup>();
+            hangarInformationCanvas.alpha = hangarInformationFadeTime >= 0 ? 0 : 1;
+            HangarLabel(glass.transform, skin.Name, new Vector2(0, 175), new Vector2(720, 62), 44, Hex("#effaff"));
+            HangarLabel(glass.transform, profile.Rarity + "  /  LEVEL " + BirdLevel(skin),
+                new Vector2(0, 121), new Vector2(700, 40), 24, profile.RarityColour);
+            HangarLabel(glass.transform, BredBird(skin) ? "INHERITED LINEAGE" : "FOUNDER BIRD",
+                new Vector2(0, 83), new Vector2(700, 32), 20, Hex("#9ebac9"));
+            var genome = birdProgression.Genome(skin.Id);
+            HangarTrait(glass.transform, genome, (BirdTrait)genome.primary, -190, accent);
+            HangarTrait(glass.transform, genome, (BirdTrait)genome.secondary, 190, accent);
+            string saving = owned
+                ? "TRAINING SAVES " + birdProgression.BirdUnlockDiscountPercent + "% ON NEW BIRDS"
                 : crystals >= unlockPrice ? BirdUnlockSaving(skin)
-                : $"NEED {unlockPrice-crystals:N0} ✦ · TRAINING SAVINGS {birdProgression.BirdUnlockDiscountPercent}%";
-            CreateText(informationGlass, unlockProgress, new Vector2(0f, -106f), new Vector2(710f, 42f), 23, Hex("#adc6dd"), TextAnchor.MiddleCenter, FontStyle.Normal);
+                : $"NEED {unlockPrice - crystals:N0} MORE ✦  /  BALANCE {crystals:N0}";
+            HangarLabel(glass.transform, saving, new Vector2(0, -108), new Vector2(740, 42), 23, Hex("#accbd9"));
+            string action = equipped ? "EQUIPPED" : owned ? "EQUIP BIRD" : $"UNLOCK · {unlockPrice:N0} ✦";
+            var select = CreateNeonButton(glass.transform, action, new Vector2(0, -182), new Vector2(620, 88), accent);
+            select.GetComponentInChildren<Text>().fontSize = 29;
+            select.interactable = !equipped;
+            if (!equipped) select.onClick.AddListener(() => SelectSkin(skin));
+            var train = ProgressionButton(hangarPageRoot, "TRAIN BIRD", new Vector2(-205, -550),
+                new Vector2(380, 152), () => OpenBirdTraining(skin));
+            var breed = ProgressionButton(hangarPageRoot, "BREED", new Vector2(205, -550),
+                new Vector2(380, 152), () => OpenBreeding(skin));
+            train.interactable = breed.interactable = owned;
+            HangarLabel(hangarPageRoot, owned ? "TRAIN FOR STRONGER TRAITS  /  BREED A NEW BIRD" : "UNLOCK TO TRAIN AND BREED",
+                new Vector2(0, -658), new Vector2(850, 42), 21, Hex("#a3c0d1"));
+        }
 
-            var actionLabel =
-                equipped
-                    ? "EQUIPPED"
-                    : owned
-                        ? "EQUIP BIRD"
-                        : $"UNLOCK   ·   {unlockPrice:N0} ✦";
+        Text HangarLabel(Transform parent, string copy, Vector2 at, Vector2 size, int font, Color colour)
+        {
+            var text = ProgressionLabel(parent, copy, at, size, font, colour, TextAnchor.MiddleCenter);
+            text.resizeTextForBestFit = true;
+            text.resizeTextMinSize = Mathf.Max(19, font - 6);
+            text.resizeTextMaxSize = font;
+            text.fontStyle = FontStyle.Normal;
+            return text;
+        }
 
-            var actionButton = CreateNeonButton(
-                informationGlass,
-                actionLabel,
-                new Vector2(0f, -182f),
-                new Vector2(570f, 72f),
-                equipped
-                    ? Hex("#45eaff")
-                    : accent);
+        void HangarTrait(Transform parent, BirdGenome genome, BirdTrait trait, float x, Color accent)
+        {
+            var tile = ProgressionSurface(parent, "Bird trait · " + trait, new Vector2(x, -16),
+                new Vector2(350, 126), SkyPulseProgressionSurface.Finish.Quiet);
+            tile.Accent = accent;
+            HangarLabel(tile.transform, trait.ToString().ToUpperInvariant(), new Vector2(0, 38),
+                new Vector2(330, 30), 20, Hex("#a3bdcd"));
+            HangarLabel(tile.transform, TraitValue(trait, SkyPulseBirdProgression.Points(genome, trait)), Vector2.zero,
+                new Vector2(330, 46), 34, accent);
+            HangarLabel(tile.transform, TraitContext(trait), new Vector2(0, -42),
+                new Vector2(330, 35), 21, Hex("#c5dce5"));
+        }
 
-            actionButton
-                .GetComponentInChildren<Text>()
-                .fontSize = 29;
-
-            if (equipped)
-            {
-                actionButton.interactable = false;
-            }
-            else
-            {
-                actionButton.onClick.AddListener(
-                    () => SelectSkin(skin));
-            }
-            var train=ProgressionButton(hangarPageRoot,"TRAIN BIRD",new Vector2(-205,-550),new Vector2(380,96),()=>OpenBirdTraining(skin));train.interactable=owned;
-            var breed=ProgressionButton(hangarPageRoot,"BREED",new Vector2(205,-550),new Vector2(380,96),()=>OpenBreeding(skin));breed.interactable=owned;
+        void HangarBrowseButton(string label, float x, Action browse)
+        {
+            var control = ProgressionButton(hangarPageRoot, label, new Vector2(x, 255),
+                new Vector2(152, 168), () => { if (!hangarDragging && !hangarSwipeAnimating) browse(); });
+            ((SkyPulseProgressionSurface)control.targetGraphic).Style = SkyPulseProgressionSurface.Finish.Quiet;
+            control.GetComponentInChildren<Text>().fontSize = 48;
+            control.GetComponentInChildren<Text>().resizeTextMinSize = 48;
+            control.GetComponentInChildren<Text>().resizeTextMaxSize = 48;
         }
 
         private void AddHangarSwipeEvent(
@@ -387,149 +230,33 @@ hangarPreviousBirdRoot != null
 
         private void UpdateHangarHeroPresentation()
         {
-            if (state != FlightState.Customize)
-                return;
-
-            if (cosmeticCategory != CosmeticCategory.Birds)
-                return;
-
-            if (hangarHeroBirdArt == null)
-                return;
-
-            hangarHeroAnimationTime += Time.unscaledDeltaTime;
-            if (hangarHeroBirdImage != null &&
-            hangarHeroWingFrames != null &&
-            hangarHeroWingFrames.Length > 0)
+            if (state != FlightState.Customize || cosmeticCategory != CosmeticCategory.Birds) return;
+            if (hangarPreviewStage != null)
             {
-                // Ping-pong through the authored flight poses so the loop
-                // returns smoothly rather than snapping from last to first.
-                var frameCount = hangarHeroWingFrames.Length;
-
-                var cycleLength =
-                    Mathf.Max(1, frameCount * 2 - 2);
-
-                var normalized =
-                    Mathf.Repeat(
-                        hangarHeroAnimationTime /
-                        SharedWingAnimationSeconds,
-                        1f);
-
-                var sequenceIndex =
-                    Mathf.FloorToInt(
-                        normalized * cycleLength);
-
-                sequenceIndex =
-                    Mathf.Clamp(
-                        sequenceIndex,
-                        0,
-                        cycleLength - 1);
-
-                var frameIndex =
-                    sequenceIndex < frameCount
-                        ? sequenceIndex
-                        : cycleLength - sequenceIndex;
-
-                var frame =
-                    hangarHeroWingFrames[frameIndex];
-
-                if (frame != null)
-                    hangarHeroBirdImage.sprite = frame;
-                if (hangarInformationFadeTime >= 0f &&
-hangarInformationCanvas != null)
-                {
-                    hangarInformationFadeTime +=
-                        Time.unscaledDeltaTime;
-
-                    var fadeProgress =
-                        Mathf.Clamp01(
-                            hangarInformationFadeTime /
-                            HangarInformationFadeDuration);
-
-                    fadeProgress =
-                        fadeProgress *
-                        fadeProgress *
-                        (3f - 2f * fadeProgress);
-
-                    hangarInformationCanvas.alpha =
-                        fadeProgress;
-
-                    if (fadeProgress >= 1f)
-                    {
-                        hangarInformationCanvas.alpha = 1f;
-                        hangarInformationFadeTime = -1f;
-                    }
-                }
+                hangarPreviewStage.ReducedMotion = reduceMotionEnabled;
+                hangarPreviewStage.MotionPaused = birdProgressionScreen != null && birdProgressionScreen.activeInHierarchy;
             }
-
-            // Very slow vertical hover.
-            var hover =
-                Mathf.Sin(hangarHeroAnimationTime * 1.65f) * 7f;
-
-            // Tiny aircraft-like bank. Keep this subtle.
-            var bank =
-                Mathf.Sin(hangarHeroAnimationTime * 1.15f) * 1.25f;
-
-            // Small breathing scale keeps the bird alive without looking cartoony.
-            var breathe =
-                1f +
-                Mathf.Sin(hangarHeroAnimationTime * 1.35f) * .012f;
-            var arrivalScale = 1f;
-
-            if (hangarArrivalPulseTime >= 0f)
+            if (!reduceMotionEnabled) hangarHeroAnimationTime += Time.unscaledDeltaTime;
+            if (progressionTypographyMaterial != null)
             {
-                hangarArrivalPulseTime += Time.unscaledDeltaTime;
-
-                var arrivalProgress =
-                    Mathf.Clamp01(
-                        hangarArrivalPulseTime /
-                        HangarArrivalPulseDuration);
-
-                arrivalScale =
-                    1f +
-                    Mathf.Sin(
-                        arrivalProgress * Mathf.PI) *
-                    .035f;
-
-                if (arrivalProgress >= 1f)
-                    hangarArrivalPulseTime = -1f;
+                progressionTypographyMaterial.SetFloat("_Clock", hangarHeroAnimationTime);
+                progressionTypographyMaterial.SetFloat("_Motion", reduceMotionEnabled ? 0 : 1);
             }
-
-            hangarHeroBirdArt.anchoredPosition =
-                hangarHeroBirdBasePosition +
-                new Vector2(0f, hover);
-
-            hangarHeroBirdArt.localRotation =
-                Quaternion.Euler(
-                    0f,
-                    0f,
-                    bank);
-
-            hangarHeroBirdArt.localScale =
-            Vector3.one *
-            breathe *
-            arrivalScale;
+            // Information responds even when a bird has a single authored pose.
+            if (hangarInformationFadeTime >= 0 && hangarInformationCanvas != null)
+            {
+                hangarInformationFadeTime += Time.unscaledDeltaTime;
+                float progress = reduceMotionEnabled ? 1 : Mathf.Clamp01(hangarInformationFadeTime / HangarInformationFadeDuration);
+                hangarInformationCanvas.alpha = Mathf.SmoothStep(0, 1, progress);
+                if (progress >= 1) hangarInformationFadeTime = -1;
+            }
             if (hangarHeroAura != null)
             {
-                var auraPulse =
-                    .94f +
-                    Mathf.Sin(
-                        hangarHeroAnimationTime * 1.8f) *
-                    .06f;
-
-                hangarHeroAura.rectTransform.localScale =
-                    Vector3.one * auraPulse;
-
-                var auraColour = hangarHeroAura.color;
-
-                auraColour.a =
-                    .13f +
-                    (
-                        Mathf.Sin(
-                            hangarHeroAnimationTime * 1.55f)
-                        * .5f + .5f
-                    ) * .07f;
-
-                hangarHeroAura.color = auraColour;
+                float t = reduceMotionEnabled ? 0 : hangarHeroAnimationTime;
+                hangarHeroAura.rectTransform.localScale = Vector3.one * (.98f + Mathf.Sin(t * 1.2f) * .025f);
+                var colour = hangarHeroAura.color;
+                colour.a = .08f + Mathf.Sin(t * .9f) * .015f;
+                hangarHeroAura.color = colour;
             }
         }
 
@@ -721,7 +448,7 @@ hangarInformationCanvas != null)
 
             var elapsed = 0f;
 
-            while (elapsed < HangarSwipeDuration)
+            while (!reduceMotionEnabled && elapsed < HangarSwipeDuration)
             {
                 elapsed += Time.unscaledDeltaTime;
 
@@ -763,7 +490,6 @@ hangarInformationCanvas != null)
                 RebuildCustomizeGrid();
 
                 // Tiny arrival settle on the new centre bird.
-                hangarArrivalPulseTime = 0f;
             }
             else
             {
@@ -831,130 +557,6 @@ hangarInformationCanvas != null)
             // Snap has completely finished.
             // New swipe input is allowed again.
             hangarSwipeAnimating = false;
-        }
-
-        private RectTransform CreateHangarGlassPanel(
-            Transform parent,
-            string name,
-            Vector2 position,
-            Vector2 size,
-            Color accent,
-            float fillAlpha,
-            float edgeAlpha)
-        {
-            var glass = CreateImage(
-                parent,
-                name,
-                position,
-                size,
-                new Color(
-                    .015f,
-                    .030f,
-                    .050f,
-                    Mathf.Clamp01(fillAlpha)));
-
-            // Rounded glass instead of a square slab.
-            glass.sprite = roundedPanelSprite;
-            glass.type = Image.Type.Sliced;
-            glass.raycastTarget = false;
-
-            AddOutline(
-                glass.gameObject,
-                new Color(
-                    accent.r,
-                    accent.g,
-                    accent.b,
-                    edgeAlpha),
-                1.15f);
-
-            // Soft depth below the floating glass.
-            var shadow = glass.gameObject.AddComponent<Shadow>();
-            shadow.effectColor = new Color(0f, 0f, 0f, .38f);
-            shadow.effectDistance = new Vector2(0f, -7f);
-
-            // Large subtle coloured atmosphere.
-            var atmosphere = CreateImage(
-                glass.rectTransform,
-                "Glass ambient glow",
-                new Vector2(0f, 12f),
-                new Vector2(
-                    size.x * .90f,
-                    size.y * .78f),
-                new Color(
-                    accent.r,
-                    accent.g,
-                    accent.b,
-                    .035f));
-
-            atmosphere.sprite = softCircleSprite;
-            atmosphere.raycastTarget = false;
-
-            // Thin bright reflection across the upper glass edge.
-            var reflection = CreateImage(
-                glass.rectTransform,
-                "Glass upper reflection",
-                new Vector2(
-                    0f,
-                    size.y * .5f - 10f),
-                new Vector2(
-                    size.x - 50f,
-                    3f),
-                new Color(
-                    .80f,
-                    .96f,
-                    1f,
-                    .28f));
-
-            reflection.sprite = whiteSprite;
-            reflection.raycastTarget = false;
-
-            // Secondary inner edge gives the panel physical thickness.
-            var innerFrame = CreateImage(
-                glass.rectTransform,
-                "Glass inner frame",
-                Vector2.zero,
-                new Vector2(
-                    size.x - 18f,
-                    size.y - 18f),
-                new Color(
-                    accent.r,
-                    accent.g,
-                    accent.b,
-                    .035f));
-
-            innerFrame.sprite = roundedPanelSprite;
-            innerFrame.type = Image.Type.Sliced;
-            innerFrame.raycastTarget = false;
-
-            AddOutline(
-                innerFrame.gameObject,
-                new Color(
-                    .70f,
-                    .92f,
-                    1f,
-                    .10f),
-                .7f);
-
-            // Bottom edge reflection, much dimmer.
-            var lowerReflection = CreateImage(
-                glass.rectTransform,
-                "Glass lower reflection",
-                new Vector2(
-                    0f,
-                    -size.y * .5f + 10f),
-                new Vector2(
-                    size.x - 72f,
-                    2f),
-                new Color(
-                    accent.r,
-                    accent.g,
-                    accent.b,
-                    .12f));
-
-            lowerReflection.sprite = whiteSprite;
-            lowerReflection.raycastTarget = false;
-
-            return glass.rectTransform;
         }
 
         private RectTransform CreateHangarCarouselBird(
@@ -1156,6 +758,25 @@ hangarInformationCanvas != null)
                 }
             }
 
+            if (selected)
+            {
+                // The original pose remains the layout/registration reference;
+                // the visible hero is rendered with physical cradle and rig meshes.
+                preview.enabled = false;
+                root.Find("Hero scanner").gameObject.SetActive(false);
+                root.Find("Hero docking platform").gameObject.SetActive(false);
+                root.Find("Hero horizon").gameObject.SetActive(false);
+                var studioObject = new GameObject("Hangar three-dimensional studio", typeof(RectTransform), typeof(RawImage));
+                studioObject.transform.SetParent(root, false);
+                var view = studioObject.GetComponent<RawImage>();
+                view.rectTransform.sizeDelta = new Vector2(530, 420);
+                hangarPreviewStage = studioObject.AddComponent<SkyPulseProgressionStage>();
+                hangarPreviewStage.ReducedMotion = reduceMotionEnabled;
+                hangarPreviewStage.Build(view, new[] {
+                    ProgressionPortrait(skin, new Vector2(0, 28), new Vector2(440, 265))
+                }, false);
+            }
+
             // Side birds only need a subtle identity label.
             if (!selected)
             {
@@ -1181,6 +802,7 @@ hangarInformationCanvas != null)
         {
             if (BirdRoster == null || BirdRoster.Length == 0) return;
 
+            hangarInformationFadeTime = reduceMotionEnabled ? -1 : 0;
             hangarPageIndex--;
 
             if (hangarPageIndex < 0)
@@ -1193,6 +815,7 @@ hangarInformationCanvas != null)
         {
             if (BirdRoster == null || BirdRoster.Length == 0) return;
 
+            hangarInformationFadeTime = reduceMotionEnabled ? -1 : 0;
             hangarPageIndex++;
 
             if (hangarPageIndex >= BirdRoster.Length)

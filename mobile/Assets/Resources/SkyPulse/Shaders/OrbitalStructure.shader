@@ -24,8 +24,12 @@ Shader "SkyPulse/Orbital Station Hardware"
                 float broad=pow(saturate(1-abs(reflection.x*.75+reflection.y*.3-.18)*1.8),12);
                 float spec=pow(saturate(dot(n,normalize(key+view))),96);
                 float3 reflected=tex2D(_Environment,saturate(reflection.xy*.28+float2(.5,.42))).rgb;
-                float3 metal=i.colour.rgb*(.28+ndl*.72)+reflected*(.18+fresnel*.15);
-                metal+=float3(.76,.84,.92)*(broad*.38+spec*.72)+_Tint.rgb*fresnel*.10;
+                float fill=saturate(dot(n,normalize(float3(.70,.25,-.65))));
+                float skyFill=saturate(n.y*.5+.5);
+                float3 lighting=float3(.23,.28,.34)+float3(1,.91,.78)*ndl*.72+float3(.16,.29,.40)*fill*.28;
+                lighting+=float3(.045,.075,.10)*skyFill;
+                float3 metal=i.colour.rgb*lighting+reflected*(.13+fresnel*.13);
+                metal+=float3(.76,.84,.92)*(broad*.31+spec*.66)+_Tint.rgb*fresnel*.08;
                 float seam=1-smoothstep(.012,.024+fwidth(i.local.z*2),abs(frac(i.local.z*2)-.5));
                 metal*=1-seam*.08;
                 // The wide concourse is solid machined metal. Flush service
@@ -49,12 +53,17 @@ Shader "SkyPulse/Orbital Station Hardware"
                     float3 axis=pow(abs(mul((float3x3)unity_WorldToObject,n)),4);axis/=max(dot(axis,1),.001);
                     float3 p=i.local*_SurfaceScale;
                     float3 detail=tex2D(_SurfaceTex,p.yz).rgb*axis.x+tex2D(_SurfaceTex,p.xz).rgb*axis.y+tex2D(_SurfaceTex,p.xy).rgb*axis.z;
-                    metal=lerp(metal,detail*(.38+ndl*.82)+reflected*.10+float3(.68,.80,.88)*(broad*.28+spec*.52),_SurfaceAmount*(1-glazing));
+                    // Preserve the modelled frame colour and broad lighting. Fine
+                    // alloy variation must not turn every deck into busy tiles.
+                    float grain=dot(detail,float3(.2126,.7152,.0722));
+                    metal*=lerp(1,.86+grain*.25,_SurfaceAmount*(1-glazing));
+                    float3 detailedFinish=detail*(.38+ndl*.82)+reflected*.10+float3(.68,.80,.88)*(broad*.28+spec*.52);
+                    metal=lerp(metal,detailedFinish,_SurfaceAmount*.38*(1-glazing));
                 }
                 if(_Apron>.5&&i.colour.a>.55&&i.colour.a<.70)
                 {
                     float3 floorReflection=tex2D(_Environment,float2(saturate(.5+i.local.x*.018),.08+saturate(i.local.z/30)*.17)).rgb;
-                    float3 coatedDeck=float3(.12,.19,.24)*(.45+ndl*.65)+floorReflection*.12;
+                    float3 coatedDeck=float3(.15,.22,.27)*(.55+ndl*.60)+floorReflection*.065;
                     metal=lerp(metal,coatedDeck,.60)+float3(.56,.71,.78)*(broad*.12+spec*.22);
                     float panelLine=1-smoothstep(.01,.035,min(abs(frac(i.local.x/3.75)-.5),abs(frac(i.local.z/3.75)-.5)));
                     metal*=1-panelLine*.22;
@@ -62,8 +71,11 @@ Shader "SkyPulse/Orbital Station Hardware"
                 float light=step(.8,i.colour.a),phase=.84+.12*sin(_Clock*.72-i.local.z*.45+atan2(i.local.y,i.local.x)*1.8);
                 float3 diffuser=i.colour.rgb*phase+float3(.40,.58,.70)*pow(saturate(phase),8)*.19;
                 float3 colour=lerp(metal,diffuser,light);
-                float distanceFog=saturate((length(_WorldSpaceCameraPos.xyz-i.world)-28)/50)*.36;
-                return float4(lerp(colour,_Haze.rgb+_Tint.rgb*.10,distanceFog),1);
+                // Depth separation is shared by the whole station, including
+                // its physical bridges. Near hardware retains crisp edges.
+                float distanceFog=saturate((length(_WorldSpaceCameraPos.xyz-i.world)-27)/62)*.49;
+                float3 distanceLight=_Haze.rgb+_Tint.rgb*.105;
+                return float4(lerp(colour,distanceLight,distanceFog),1);
             }
             ENDCG
         }
