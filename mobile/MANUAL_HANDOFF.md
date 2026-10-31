@@ -6,9 +6,11 @@ Open **`mobile/` in Unity Hub** and the repository folder in VS Code. The shippi
 scene is `mobile/Assets/Scenes/SkyPulse.unity`. Start with the
 [editing map](EDITING_GUIDE.md) before changing code.
 
-## Local visual polish after Build 19 — 30 October 2026
+## Local visual repairs after Build 19 — 30–31 October 2026
 
-The source includes the [world/Home/Hangar/Tech Tree and bird-shape pass](Development/VisualPolish20261030/README.md). Validation and actual Editor previews are saved there. **These changes are newer than the installed iPhone Build 19**; a new signed device candidate and owner acceptance are still required. Do not describe these previews as installed-phone footage.
+The source includes the [world/Home/Hangar/Tech Tree and bird-shape pass](Development/VisualPolish20261030/README.md), followed by visual regression repairs. **These changes are newer than the installed iPhone Build 19**; a new signed device candidate and owner acceptance are still required. Do not describe Editor previews as installed-phone footage. Refer to the dated QA record for the exact source that each capture and check covers.
+
+The original articulated bird artwork is restored; the rejected sculpted replacement has been removed. Pipe collars use a real hollow mouth and separately editable structural parts; see [the Unity pipe editing steps](EDITING_GUIDE.md#edit-the-actual-3d-pipes-in-unity). The game starts in the Editor only from `Assets/Scenes/SkyPulse.unity`. Workshop Play remains an inspection session, preventing its static pipe and camera from appearing in actual gameplay.
 
 The Editor safely stops Play before C# recompilation. Wait for compilation, then start a fresh Play session. No owner save reset or App Store action is part of this pass.
 
@@ -28,8 +30,8 @@ second game component or a parallel implementation. Keep the existing script
 GUID, `.meta` files, catalogue IDs, company/bundle identity and save keys.
 
 Keep the tested flight width, handling, pipe spacing and collision dimensions.
-Visual pipe shoulders are trimmed; physical collision shapes intentionally
-overlap. Relay crystals open their matching gate automatically before collision
+The visible shaft seats inside its modelled collar; physical collision shapes
+intentionally overlap. Relay crystals open their matching gate automatically before collision
 resolution. Blackout's intermediate puzzles activate immediately without a
 Continue button. Preserve those behaviours, input/UI separation, economy,
 once-only rewards and saved progress when changing graphics.

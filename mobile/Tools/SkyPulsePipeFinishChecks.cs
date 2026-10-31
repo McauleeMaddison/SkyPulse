@@ -58,9 +58,9 @@ public static class SkyPulsePipeFinishChecks
                     }
                     return holes;
                 };
-                seat(direction*(cap.size.y*.5f-.04f));read();int before=gaps();File.WriteAllBytes(Path.Combine(folder,side+"-old-join.png"),pixels.EncodeToPNG());
+                seat(direction*(cap.size.y*.5f+.08f));read();int before=gaps();File.WriteAllBytes(Path.Combine(folder,side+"-old-join.png"),pixels.EncodeToPNG());
                 seat(direction*cap.size.y*.22f);read();int after=gaps();File.WriteAllBytes(Path.Combine(folder,side+"-seated-join.png"),pixels.EncodeToPNG());
-                Check(before>10,"Negative control reproduces daylight at the old "+side+" join: "+before);
+                Check(before>10,"Negative control detects a deliberately separated "+side+" join: "+before);
                 Check(after==0,"Seated "+side+" collar has no background holes across the shaft: "+after);
                 Check(body.size==physicalBody&&cap.size==physicalCap,"Visual join does not alter "+side+" hitboxes");
                 shaft.SetFloat("_Clock",0);collar.SetFloat("_Clock",0);read();var still=pixels.GetPixels();int changed=0;

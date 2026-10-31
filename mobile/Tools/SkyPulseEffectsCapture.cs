@@ -77,7 +77,7 @@ public static class SkyPulseEffectsCapture
                     ((SpriteRenderer)Get(pickup,"Glow")).color=effect=="aegis"?new Color(.38f,1f,.70f):effect=="time"?new Color(.69f,.49f,1f):new Color(.27f,.92f,1f);
                     Call(game,"CollectPowerUp",pickup); Call(game,"UpdateBirdPowerUpVisuals");
                 }
-                foreach(var r in UnityEngine.Object.FindObjectsByType<Renderer>(FindObjectsSortMode.None))
+                foreach(var r in UnityEngine.Object.FindObjectsByType<Renderer>())
                     if(r.name.StartsWith("Trail ")||r.name.StartsWith("Rear thrust ")) throw new Exception("Trail/thrust remains: "+r.name);
                 var camera=(Camera)Get(game,"flightCamera");
                 var frame=0;

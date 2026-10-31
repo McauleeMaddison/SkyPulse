@@ -51,7 +51,7 @@ namespace SkyPulse.Mobile
             {
                 // Construction-time refresh only. Warm animation never searches
                 // the scene or allocates: reused poses leave the queue empty.
-                foreach(var image in UnityEngine.Object.FindObjectsByType<Image>(FindObjectsSortMode.None))
+                foreach(var image in UnityEngine.Object.FindObjectsByType<Image>())
                     if(image.useSpriteMesh && image.sprite!=null && prepared.Contains(image.sprite))image.SetVerticesDirty();
             }
             return changed;

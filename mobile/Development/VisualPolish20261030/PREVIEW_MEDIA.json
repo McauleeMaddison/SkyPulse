@@ -1,0 +1,170 @@
+[
+  {
+    "audioTracks": 0,
+    "distinctDecodedSamples": 3,
+    "durationSeconds": 9,
+    "expectedDurationSeconds": 9,
+    "file": "Blackout-First-Light.mp4",
+    "height": 1334,
+    "nominalFrameRate": 30.000001907348633,
+    "note": "Decoded sample diversity verifies motion exists; encoding rate does not measure device gameplay FPS.",
+    "sampleDigests": [
+      "23e3037647179303",
+      "04968bb02cc780df",
+      "aacd9cdf651cd6dd"
+    ],
+    "sampleTimesSeconds": [
+      0,
+      4.5,
+      8.966666668785942
+    ],
+    "sourceFolder": "/private/tmp/skypulse-repair-20261031/captures/signal-heist/first-light",
+    "sourceFrameCount": 270,
+    "width": 750,
+    "sha256": "bacc377ceee43b4be978bda8904b2659901f370b7b0bd69b6f52cc521cbace32"
+  },
+  {
+    "audioTracks": 0,
+    "distinctDecodedSamples": 3,
+    "durationSeconds": 4,
+    "expectedDurationSeconds": 4,
+    "file": "Blackout-Home-Motion.mp4",
+    "height": 2868,
+    "nominalFrameRate": 10,
+    "note": "Decoded sample diversity verifies motion exists; encoding rate does not measure device gameplay FPS.",
+    "sampleDigests": [
+      "68d28d2e5a712d8b",
+      "873c3d9063bd5e92",
+      "d46b478da55387e1"
+    ],
+    "sampleTimesSeconds": [
+      0,
+      2,
+      3.9
+    ],
+    "sourceFolder": "/private/tmp/skypulse-repair-20261031/captures/motion/home-blackout",
+    "sourceFrameCount": 40,
+    "width": 1320,
+    "sha256": "a4b251dc1ea293867112884efed0b94645b5f3433d1772581225f17bb7c22951"
+  },
+  {
+    "audioTracks": 0,
+    "distinctDecodedSamples": 3,
+    "durationSeconds": 9,
+    "expectedDurationSeconds": 9,
+    "file": "Blackout-Split-Signal.mp4",
+    "height": 1334,
+    "nominalFrameRate": 30.000001907348633,
+    "note": "Decoded sample diversity verifies motion exists; encoding rate does not measure device gameplay FPS.",
+    "sampleDigests": [
+      "038300eb6e8e38b4",
+      "3a7200305aacf3e5",
+      "adf33be18dadfd87"
+    ],
+    "sampleTimesSeconds": [
+      0,
+      4.5,
+      8.966666668785942
+    ],
+    "sourceFolder": "/private/tmp/skypulse-repair-20261031/captures/signal-heist/split-signal",
+    "sourceFrameCount": 270,
+    "width": 750,
+    "sha256": "bacb2a2f3d6ed17d3e72ab0d12c8a37612cd181855d925ebb1e8648c87ae25b9"
+  },
+  {
+    "audioTracks": 0,
+    "distinctDecodedSamples": 3,
+    "durationSeconds": 4,
+    "expectedDurationSeconds": 4,
+    "file": "Endless-Flight.mp4",
+    "height": 2868,
+    "nominalFrameRate": 10,
+    "note": "Decoded sample diversity verifies motion exists; encoding rate does not measure device gameplay FPS.",
+    "sampleDigests": [
+      "cb57064e6a71e0ea",
+      "64a8a00188386d7a",
+      "aa505c966f759926"
+    ],
+    "sampleTimesSeconds": [
+      0,
+      2,
+      3.9
+    ],
+    "sourceFolder": "/private/tmp/skypulse-repair-20261031/captures/motion/endless-flight",
+    "sourceFrameCount": 40,
+    "width": 1320,
+    "sha256": "3503636614e9eeef530ed426d85312cf9428182537f5ddc86c73f2ddb8d2ce8c"
+  },
+  {
+    "audioTracks": 0,
+    "distinctDecodedSamples": 3,
+    "durationSeconds": 3,
+    "expectedDurationSeconds": 3,
+    "file": "Hangar-Motion.mp4",
+    "height": 1334,
+    "nominalFrameRate": 29.999998092651367,
+    "note": "Decoded sample diversity verifies motion exists; encoding rate does not measure device gameplay FPS.",
+    "sampleDigests": [
+      "7780dd28c7169ef5",
+      "4f6e8bf89396210d",
+      "41357ec8c3ab05af"
+    ],
+    "sampleTimesSeconds": [
+      0,
+      1.5,
+      2.9666666645473905
+    ],
+    "sourceFolder": "/private/tmp/skypulse-repair-20261031/captures/player-experience/hangar-motion",
+    "sourceFrameCount": 90,
+    "width": 750,
+    "sha256": "1045073b1c1c21da96dbd0f8cf10309eaf7c970cc9d38448b20716e1558a27f9"
+  },
+  {
+    "audioTracks": 0,
+    "distinctDecodedSamples": 3,
+    "durationSeconds": 4,
+    "expectedDurationSeconds": 4,
+    "file": "Relay-Flight.mp4",
+    "height": 2868,
+    "nominalFrameRate": 10,
+    "note": "Decoded sample diversity verifies motion exists; encoding rate does not measure device gameplay FPS.",
+    "sampleDigests": [
+      "4526062f8678a553",
+      "8f686a3349839547",
+      "acba0603b1969220"
+    ],
+    "sampleTimesSeconds": [
+      0,
+      2,
+      3.9
+    ],
+    "sourceFolder": "/private/tmp/skypulse-repair-20261031/captures/motion/relay-flight",
+    "sourceFrameCount": 40,
+    "width": 1320,
+    "sha256": "5ad9207c8460a69615e5695ede98326f4ed09cd24d0aed9345b012ee4dd0e365"
+  },
+  {
+    "audioTracks": 0,
+    "distinctDecodedSamples": 3,
+    "durationSeconds": 8,
+    "expectedDurationSeconds": 8,
+    "file": "Tech-Tree-Motion.mp4",
+    "height": 1334,
+    "nominalFrameRate": 30,
+    "note": "Decoded sample diversity verifies motion exists; encoding rate does not measure device gameplay FPS.",
+    "sampleDigests": [
+      "e05b7dddc8b3c35c",
+      "835b357f10646d1b",
+      "478455d7acad98a0"
+    ],
+    "sampleTimesSeconds": [
+      0,
+      4,
+      7.966666666666667
+    ],
+    "sourceFolder": "/private/tmp/skypulse-repair-20261031/captures/holographic-tree",
+    "sourceFrameCount": 240,
+    "width": 750,
+    "sha256": "6b27ff822942f3fbfd247e8af30fe811b23be8c398c388efa80853f5b09b5be4"
+  }
+]

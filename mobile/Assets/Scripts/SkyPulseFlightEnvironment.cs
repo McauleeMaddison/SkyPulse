@@ -143,31 +143,33 @@ namespace SkyPulse.Mobile
             {
                 var item=scenery[bank,i];bool visible=visibility>.0001f;
                 int layer=i/PerLayer,slot=i%PerLayer;
-                if(item.gameObject.activeSelf!=visible)item.gameObject.SetActive(visible);
+                // Seven composed districts use the existing twelve-item pool:
+                // three small skyline accents, two middle districts and two
+                // hero islands. Reserve instances stay cached, not duplicated.
+                int districtCount=layer==0?3:2;bool show=visible&&slot<districtCount;
+                if(item.gameObject.activeSelf!=show)item.gameObject.SetActive(show);
                 if(changed)
                 {
                     int variant=(slot+layer+theme)%2;item.GetComponent<MeshFilter>().sharedMesh=variant==0?silhouettes[theme]:residential[theme];
                     item.GetComponent<MeshRenderer>().SetPropertyBlock(authoredLighting[theme,variant]);
                 }
                 if(!visible)continue;
-                float seed=Hash(theme*43+i*17),depth=Hash(theme*71+i*47);
-                float scale=layer==0?.40f+seed*.10f:layer==1?.65f+seed*.13f:.91f+seed*.14f;
-                float spacing=span*(layer==0?1.13f:layer==1?1.02f:1.10f);
-                float x=Mathf.Repeat(slot*spacing/PerLayer+(seed-.5f)*(layer==2?1.1f:2.2f)+layer*2.1f-distance*(.09f+layer*.15f)+spacing*.5f,spacing)-spacing*.5f;
-                // Stage inhabited districts at genuinely different depths rather
-                // than repeating one row of identically viewed island stamps.
-                // Near hero islands have breathing room; distant cities keep
-                // their smaller silhouette and slower absolute-distance travel.
-                bool floating=theme<3;
-                float y=(floating?(layer==0?-.35f:layer==1?-3.0f:-6.2f):(layer==0?-2.4f:layer==1?-3.8f:-5.65f))
-                    +(seed-.35f)*(floating?(layer==0?2.0f:layer==1?1.6f:1.0f):.65f)
-                    +Mathf.Sin(clock*.13f+i)*(floating?.025f:0);
-                float z=(layer==0?31f:layer==1?20f:10.5f)+(depth-.5f)*(layer==0?6f:layer==1?4f:2f);
+                float seed=Hash(theme*43+layer*17+slot*101);
+                float scale=layer==0?.38f:layer==1?.68f:.88f;
+                float spacing=span*(layer==0?1.60f:layer==1?1.25f:.82f);
+                float phase=layer==0?-.10f:layer==1?.07f:-.25f;
+                float speed=layer==0?.06f:layer==1?.16f:.31f;
+                float x=Mathf.Repeat(slot*spacing/districtCount+phase*spacing-distance*speed+spacing*.5f,spacing)-spacing*.5f;
+                // A stable staggered skyline leaves air around the hero island.
+                // Foundations and building proportions remain the owner's mesh;
+                // distant groups are genuinely smaller and farther from camera.
+                // No independent random X/Y scale or rocking city silhouettes.
+                float y=(layer==0?.70f:layer==1?-2.75f:-5.80f)+(slot%2==0?-.16f:.30f);
+                float z=(layer==0?48f:layer==1?26f:12.5f)+(slot%2==0?0:2.4f);
                 item.localPosition=new Vector3(x,y,z);
-                // Preserve the approved building proportions. Depth, orientation
-                // and the alternating district identity supply the variation.
-                item.localScale=new Vector3(scale*(.94f+Hash(i*31+theme)*.12f),scale*(.95f+Hash(i*53+theme)*.10f),scale);
-                item.localRotation=Quaternion.Euler(0,-44+Hash(theme*59+i*67)*68,0);
+                item.localScale=Vector3.one*(scale*(.98f+seed*.04f));
+                float orientation=(slot%2==0?-12f:9f)+(theme%3-1)*3;
+                item.localRotation=Quaternion.Euler(0,orientation,0);
             }
         }
         static float Hash(int n){uint x=(uint)n*747796405u+2891336453u;x=((x>>((int)(x>>28)+4))^x)*277803737u;return ((x>>22)^x)/4294967295f;}

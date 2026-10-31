@@ -97,13 +97,14 @@ namespace SkyPulse.Mobile
                 var b = to + new Vector3(branch.Trunk ? 0 : -spread * .16f, gap * .27f, -.22f);
                 // A substantial shaded glass conductor carries a narrow light
                 // vein on its front face. Shared rings keep every curve seamless.
-                Tube(from, a, b, to, branch.Trunk ? .14f : .078f, branch.Colour,
-                    branch.Powered ? .94f : .32f, vertices, normals, colours, uv, triangles, 2);
-                var front = new Vector3(0, 0, -.10f);
+                Tube(from, a, b, to, branch.Trunk ? .155f : .086f, branch.Colour,
+                    branch.Powered ? .94f : .27f, vertices, normals, colours, uv, triangles, 2);
+                var front = new Vector3(0, 0, branch.Trunk ? -.142f : -.079f);
                 Tube(from+front, a+front, b+front, to+front, branch.Trunk ? .016f : .012f, branch.Colour,
                     branch.Powered ? .92f : .10f, vertices, normals, colours, uv, triangles);
-                Tube(from, a, b, to, branch.Trunk ? .18f : .13f, branch.Colour,
-                    branch.Powered ? .045f : .008f, vertices, normals, colours, uv, triangles, 4);
+                // The curved optical jacket provides its own edge reflection.
+                // An extra expanded glow tube blurred the shape and compounded
+                // overlaps; one jacket plus its inset live fibre is sufficient.
             }
             foreach (var root in roots)
             {

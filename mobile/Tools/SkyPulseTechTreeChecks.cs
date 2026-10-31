@@ -141,7 +141,7 @@ public static class SkyPulseTechTreeChecks
         for(int i=0;i<20;i++)tree.Tick(1f/60);long before=GC.GetAllocatedBytesForCurrentThread();for(int i=0;i<120;i++)tree.Tick(1f/60);Check(GC.GetAllocatedBytesForCurrentThread()-before==0,"Warmed holographic animation and camera tracking allocate zero managed bytes");
         Call(game,"OpenHangar");yield return null;Check(Get(game,"holographicTree")==null&&!scroll.horizontal&&!scroll.vertical,"Hangar restores its original paging and releases the tree");
         Check(veil.material.shader.name!="SkyPulse/Tech Tree Field"&&scroll.viewport.sizeDelta==new Vector2(950,1280),"Hangar restores its own backdrop and viewport dimensions");
-        Check(!UnityEngine.Object.FindObjectsByType<Camera>(FindObjectsSortMode.None).Any(c=>c.name=="Holographic viewport camera"&&c.isActiveAndEnabled),"No orphan tree camera renders in the Hangar");
+        Check(!UnityEngine.Object.FindObjectsByType<Camera>().Any(c=>c.name=="Holographic viewport camera"&&c.isActiveAndEnabled),"No orphan tree camera renders in the Hangar");
         Call(game,"OpenUpgrades");yield return null;
         tree=(SkyPulseTechTreeView)Get(game,"holographicTree");content=(RectTransform)Get(game,"customizeContent");
         coreControl=(RectTransform)Get(game,"techCoreControl");

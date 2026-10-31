@@ -230,7 +230,7 @@ public static class SkyPulseMissionChecks
                     foreach(var action in Solve(puzzle.Puzzle).Take(2)){Call(game,"TouchBlackoutNode",action);}
                 }
                 if(screen=="mission-control")Call(game,"OpenMissionControl");
-                yield return null;Canvas.ForceUpdateCanvases();Call(game,"ApplySafeArea");Call(game,"FitInterfaceToSafeArea");Canvas.ForceUpdateCanvases();foreach(var stage in UnityEngine.Object.FindObjectsByType<SkyPulseHeistBoard>(FindObjectsSortMode.None))stage.Render();foreach(var depth in UnityEngine.Object.FindObjectsByType<SkyPulseDepthStage>(FindObjectsSortMode.None))depth.Render();camera.Render();
+                yield return null;Canvas.ForceUpdateCanvases();Call(game,"ApplySafeArea");Call(game,"FitInterfaceToSafeArea");Canvas.ForceUpdateCanvases();foreach(var stage in UnityEngine.Object.FindObjectsByType<SkyPulseHeistBoard>())stage.Render();foreach(var depth in UnityEngine.Object.FindObjectsByType<SkyPulseDepthStage>())depth.Render();camera.Render();
                 Check(camera.rect==expectedViewport && Mathf.Abs(2f*camera.orthographicSize*camera.aspect-expectedCameraWidth)<.001f,"Shared Endless camera width: "+screen+" at "+size.x);
                 Check(((RectTransform)Get(game,"interfaceContentRoot")).rect.width==expectedContentWidth,"Shared Endless interface width: "+screen);
                 if(screen=="home-relay" || screen=="home-blackout")

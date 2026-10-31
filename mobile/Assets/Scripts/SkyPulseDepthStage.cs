@@ -8,7 +8,7 @@ namespace SkyPulse.Mobile
     // camera is isolated from gameplay, so depth/parallax cannot alter hitboxes.
     public sealed class SkyPulseDepthStage : MonoBehaviour
     {
-        Transform scene,endless,relay,blackout,core,orbit,platform;SkyPulseRelayGate hoop;Camera camera3D;RenderTexture image;
+        Transform scene,endless,relay,blackout,core,orbit;SkyPulseRelayGate hoop;Camera camera3D;RenderTexture image;
         Material metal,glass,composite,obsidian,signalLight,opticHousing,silver;Mesh ring,crystal;readonly List<Mesh> owned=new List<Mesh>();float clock;static int nextStage;
         Transform relayChargeA,relayChargeB,heistDesk,signalPacket;
         readonly MeshRenderer[] networkLights=new MeshRenderer[8];MaterialPropertyBlock networkProperties;
@@ -30,9 +30,8 @@ namespace SkyPulse.Mobile
             // 3D scene. Blackout previews a real source-to-uplink optical route.
             BuildCommandConsole();
             var h=new GameObject("Relay Home hollow titanium hoop");h.transform.SetParent(relay,false);h.transform.localPosition=new Vector3(1.8f,.15f,.6f);h.transform.localScale=Vector3.one*.82f;hoop=h.AddComponent<SkyPulseRelayGate>();hoop.Build(false);
-            b=new SkyPulseMeshBuilder();Tube(b,Vector3.zero,3.8f,1.12f,.045f,12,168,Color.white);Tube(b,new Vector3(0,-.20f,.12f),3.8f,1.12f,.020f,12,168,new Color(.55f,.9f,1,1));
-            var launchRail=b.Finish("Open curved skyway launch rail");owned.Add(launchRail);
-            platform=SkyPulseMeshBuilder.Surface(endless,"Swept skyway observation rail",launchRail,glass,0).transform;platform.localPosition=new Vector3(0,-1.35f,1.1f);platform.localRotation=Quaternion.Euler(70,0,0);
+            // Endless Home leaves the original bird silhouette unobstructed.
+            // The former blue observation rail read as a stray line behind it.
             b=new SkyPulseMeshBuilder();Tube(b,new Vector3(1.8f,.15f,1.2f),2.24f,2.30f,.075f,35,145,Color.white);Tube(b,new Vector3(1.8f,.15f,1.8f),2.24f,2.30f,.045f,215,325,Color.white);
             var gantry=b.Finish("Swept orbital launch cradle");owned.Add(gantry);SkyPulseMeshBuilder.Surface(relay,"Orbital launch cradle",gantry,metal,0);
             var chargeProperties=new MaterialPropertyBlock();chargeProperties.SetColor("_GlowColor",new Color(.30f,.88f,1));chargeProperties.SetFloat("_Energy",.45f);
@@ -147,7 +146,6 @@ namespace SkyPulse.Mobile
             core.localRotation=Quaternion.Euler(10,25+Mathf.Sin(t*.55f)*12,4);
             core.localPosition=new Vector3(.60f,.66f+(ReducedMotion?0:Mathf.Sin(t*1.1f)*.025f),-.58f);
             orbit.localRotation=Quaternion.Euler(0,0,t*8);
-            platform.localRotation=Quaternion.Euler(70,Mathf.Sin(t*.25f)*3,0);
             relayChargeA.localRotation=Quaternion.Euler(12,t*22,8);relayChargeB.localRotation=Quaternion.Euler(-8,45-t*19,-12);
             float demo=ReducedMotion?4:Mathf.Repeat(t,7);
             hoop.SetCharge(demo<1.5f?0:demo<3?1:2,demo>=3,t*.3f,0);

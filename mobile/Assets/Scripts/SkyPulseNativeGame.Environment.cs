@@ -10,7 +10,9 @@ namespace SkyPulse.Mobile
         int scenerySequence=int.MinValue;
         void ResetFlightEnvironment()
         {
-            sceneryTravel=sceneryEntry=0;scenerySequence=int.MinValue;
+            // Home already shows this city. Keep it solid when entering or
+            // retrying flight instead of flashing a dithered construction reveal.
+            sceneryTravel=0;sceneryEntry=1;scenerySequence=int.MinValue;
             if(flightEnvironment!=null)flightEnvironment.ResetView();
         }
         void UpdateFlightEnvironment(float dt)

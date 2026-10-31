@@ -184,7 +184,7 @@ public static class SkyPulseBlackoutChecks
     }
     static void Save(Camera camera,RenderTexture rt,string file)
     {
-        foreach(var board in UnityEngine.Object.FindObjectsByType<SkyPulseHeistBoard>(FindObjectsSortMode.None))board.Render();
+        foreach(var board in UnityEngine.Object.FindObjectsByType<SkyPulseHeistBoard>())board.Render();
         camera.Render();RenderTexture.active=rt;var image=new Texture2D(rt.width,rt.height,TextureFormat.RGB24,false);image.ReadPixels(new Rect(0,0,rt.width,rt.height),0,0);image.Apply();System.IO.File.WriteAllBytes(file,image.EncodeToPNG());UnityEngine.Object.Destroy(image);RenderTexture.active=null;
     }
 

@@ -64,16 +64,26 @@ For pipe LEDs, `packet` in `EndlessRouteMetal.shader` controls the moving bright
 section; `_Clock * .48` controls its speed. Cyan/pink masks keep the effect on
 the original coloured strips. Reduced Motion freezes the clock and keeps the
 lights on. Change the finish without changing pipe collision dimensions.
-The collar material sets `_Cutout` to 1 so transparent artwork corners write
-neither dark pixels nor depth. Keep that contour handling when editing its shader;
-the solid shaft deliberately leaves `_Cutout` at 0.
+The collar now has a modelled inclined circular mouth, annular shoulder and
+inner bore. Its mesh defines the opening and silhouette; it is not a hole painted
+onto a flat cap. The shared shader still uses `_Cutout` to distinguish collars from shafts,
+while structural meshes bypass the old artwork
+alpha cutout. `_ArtFlip` mirrors the collar for upper pipes; keep that
+orientation handling when editing the shader.
 
-The Endless skyline uses rounded curtain-wall meshes and the current world's
-artwork for reflected color. `SkyPulseFlightEnvironment.Building` owns the
-profiles, windows and crown reveals. Keep it below the route and retain the
-pooled banks and absolute-distance parallax. Relay shares the reflection finish
-on its swept ribs and rounded service craft, but keeps its separate station art.
-These are real mesh layers over a distant authored sky, not a replacement camera.
+The twelve Endless worlds use individually authored civic/residential district
+meshes from `Resources/SkyPulse/BackgroundEdits`, viewed by a dedicated perspective
+scenery camera behind the unchanged flight camera. Edit the workshop scenes under
+`Assets/Editor/SkyPulseBackgroundWorkshop`; bake only the world you intend to
+change. `SkyPulseFlightEnvironment` reuses two district banks with three depth
+layers. Keep absolute-distance parallax and the collider-free background.
+
+`WorldAtmosphere.shader` grades the authored upper sky and evaluates a bounded
+cloud volume below the islands. `SkyPulseFlightEnvironment.BuildCloudNoise`
+creates its shared 32-cubed density texture once. World transitions reuse it;
+Reduced Motion freezes the cloud clock. Physical iPhone GPU/thermal checks remain
+required after changing the volume sampling budget. Relay has its own editable
+station structure and materials; it does not reuse Endless's floating districts.
 
 `SkyPulseRelayDeck` draws all bevelled runway panels in one static mesh. Its
 shader wraps panel centers using `_Distance`; the front light remains fixed at
@@ -103,7 +113,7 @@ migration deliberately if the save format ever changes.
 2. Play the affected screen/mode. Check pause, retry and Reduced Motion.
 3. For prices, test insufficient and exact balances, repeated confirmation,
    and reopening saved progress.
-4. Run `python3 mobile/Tools/run_modes_qa.py --output artifacts/my-change-qa`
+4. Run `python3 mobile/Tools/run_dimensional_qa.py --output artifacts/my-change-qa`
    from the repository root for the isolated regression suite. Use a fresh output
    directory. It creates its own project/save identity; do not copy its save-reset
    helpers into the shipping project.
@@ -124,10 +134,11 @@ avoid per-frame allocations. Plume length/width are presentation values only.
 existing Signal Heist fibres keep their finish. Reduced Motion removes the
 history/sparks and leaves a compact, static, feathered plume.
 
-In `SkyPulseNativeGame.Depth.cs`, the visible shaft seats 28% of the collar height inside
-the far shoulder, bridging its curved alpha outline. Collision shapes still overlap for reliable gameplay;
-do not trim those colliders when adjusting the visible join. The original collar
-cutout and cyan/pink LED material remain in use.
+In `SkyPulseNativeGame.Depth.cs`, the visible shaft seats inside the collar at
+22% of its height toward the far shoulder. The hollow collar and shaft meet as
+separate 3D meshes. Collision shapes still overlap for reliable gameplay; do not
+trim those colliders when adjusting the visible join. The original cyan/pink
+artwork and animated LED material remain in use.
 
 ## How to Play and world crossfades
 
@@ -159,8 +170,41 @@ from Awake or an Editor callback. Measured coverage lives in
 Resources/SkyPulse/characters/bird-silhouette-coverage.json and is reproducible
 with Tools/bake_bird_shapes.swift. Original art, registration and gameplay
 collision dimensions stay intact. Simple bird UI images use the same mesh.
+The original articulated bird artwork is the current appearance; the rejected
+sculpted replacement has been removed.
 
 Assets/Editor/SkyPulsePlaySessionGuard.cs ends Editor Play before compilation.
 Wait and press Play again; existing progress loads through ordinary startup.
 Tools/SkyPulseReloadChecks.cs verifies a real compile, fresh update loop and
 reopening Hangar/Tech Tree in the isolated QA product.
+
+## Edit the actual 3D pipes in Unity
+
+Open `Assets/Editor/SkyPulsePipeWorkshop/Scenes/01 Neon City Pipes.unity`, or any
+of the other eleven named world scenes. Prefabs are beside them in `Prefabs`.
+Expand the world assembly and then:
+
+- `Collar / Structural details · v1`: **Rolled cap bezel** and **Recessed cap bore**.
+- `Barrel / Structural details · v1`: **Barrel support ribs** and **Inset light guides**.
+
+These are separate readable mesh objects. Select them with Unity's Move, Rotate
+and Scale tools; hide an object to omit it. Select the assembly root to adjust
+its two light colours, metal finish, LED speed and detail. The cap mouth and
+inner wall are real mesh surfaces: keep the bezel and bore aligned with the
+inclined collar opening, and check the complete assembly from the gameplay view.
+
+Save the scene, then select its assembly root and use **Bake this pipe theme into
+gameplay** in the Inspector. This updates only that world's reusable meshes and
+finish in `Assets/Resources/SkyPulse/PipeEdits`. Runtime uses that bake exactly;
+it does not restore hidden details. Baking fits the visible assembly back to the
+original collision dimensions, so it preserves flight width, gaps and spacing.
+The gameplay collider remains authoritative: decorative reshaping must not imply
+a new passable area.
+
+Workshop scenes are for inspecting and editing models. Pressing Play there does
+not start SkyPulse: the Editor bootstrap excludes workshop scenes so their static
+pipes and inspection cameras cannot leak into a run. Open
+`Assets/Scenes/SkyPulse.unity`, then press Play to test actual gameplay.
+
+Existing scenes are never regenerated by the Create menu. The Add missing details
+button adds only absent named children; it preserves existing objects and edits.

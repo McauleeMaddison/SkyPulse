@@ -1,0 +1,18 @@
+{
+    "result": "PASS",
+    "workshopScene": "Assets/Editor/SkyPulsePipeWorkshop/Scenes/01 Neon City Pipes.unity",
+    "gameScene": "Assets/Scenes/SkyPulse.unity",
+    "workshopGameCount": 0,
+    "workshopInspectionCameras": 1,
+    "shippingGameCount": 1,
+    "shippingInspectionCameras": 0,
+    "shippingNormalFrames": 120,
+    "validation": [
+        "all twelve pipe scene paths excluded by Editor bootstrap policy",
+        "background workshop scene path excluded",
+        "actual workshop Play contains no game or gameplay colliders",
+        "fresh shipping Play creates one normal game and no authoring camera",
+        "regular shipping Update/LateUpdate for at least two seconds and 120 frames",
+        "disposable QA product only; no owner preferences reset"
+    ]
+}

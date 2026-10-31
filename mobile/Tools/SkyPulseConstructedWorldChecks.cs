@@ -11,7 +11,7 @@ using SkyPulse.Mobile;
 public static class SkyPulseConstructedWorldChecks
 {
     static SkyPulseConstructedWorldChecks(){EditorApplication.update+=Tick;}
-    public static void Run(){if(Application.companyName!="SkyPulseQA20261006")throw new Exception("Isolated QA required");PlayerPrefs.DeleteAll();PlayerPrefs.Save();SessionState.SetBool("ConstructedQa",true);EditorApplication.EnterPlaymode();}
+    public static void Run(){if(Application.companyName!="SkyPulseQA20261006")throw new Exception("Isolated QA required");UnityEditor.SceneManagement.EditorSceneManager.OpenScene("Assets/Scenes/SkyPulse.unity");PlayerPrefs.DeleteAll();PlayerPrefs.Save();SessionState.SetBool("ConstructedQa",true);EditorApplication.EnterPlaymode();}
     static void Tick()
     {
         if(!SessionState.GetBool("ConstructedQa",false)||!EditorApplication.isPlaying)return;

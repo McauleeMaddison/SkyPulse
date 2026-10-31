@@ -19,7 +19,7 @@ public static class SkyPulsePolishCapture
     public static void Run()
     {
         if(Application.companyName!="SkyPulseQA20261006")throw new Exception("Disposable QA required");
-        PlayerPrefs.DeleteAll();PlayerPrefs.Save();SessionState.SetBool("PolishCapture",true);EditorApplication.EnterPlaymode();
+        UnityEditor.SceneManagement.EditorSceneManager.OpenScene("Assets/Scenes/SkyPulse.unity");PlayerPrefs.DeleteAll();PlayerPrefs.Save();SessionState.SetBool("PolishCapture",true);EditorApplication.EnterPlaymode();
     }
     static void Tick()
     {

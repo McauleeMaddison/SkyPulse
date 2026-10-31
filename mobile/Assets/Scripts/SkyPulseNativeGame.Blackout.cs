@@ -65,7 +65,7 @@ namespace SkyPulse.Mobile
                 blackoutHomeBackdrop=BlackoutGraphic(homeProtocolBackdrop.transform,"Blackout Home chamber",Vector2.zero,Vector2.zero,BlackoutSurface.Backdrop);var r=blackoutHomeBackdrop.rectTransform;r.anchorMin=Vector2.zero;r.anchorMax=Vector2.one;r.offsetMin=r.offsetMax=Vector2.zero;
             }
             bool on=homeProtocol==SkyPulseMode.BlackoutProtocol;blackoutHomeBackdrop.gameObject.SetActive(on);
-            if(on){int n=0;foreach(int medal in blackoutCampaign.Data.medals)if(medal>0)n++;menuEquippedText.text="BRING THE CITY'S SIGNAL GRID ONLINE";homeProtocolCaption.text="BLACKOUT PROTOCOL · SIGNAL HEIST";homeBestCaption.text="SYSTEMS RESTORED";menuBestText.text=n+" / 8";}
+            if(on){int n=0;foreach(int medal in blackoutCampaign.Data.medals)if(medal>0)n++;menuEquippedText.text=n==8?"CITY ONLINE · REFINE YOUR BEST TRACE":"BRING THE CITY'S SIGNAL GRID ONLINE";homeProtocolCaption.text="BLACKOUT PROTOCOL · SIGNAL HEIST";homeBestCaption.text="SYSTEMS RESTORED";menuBestText.text=n+" / 8";}
         }
         void UpdateBlackoutPresentation()
         {
@@ -123,7 +123,7 @@ namespace SkyPulse.Mobile
                 blackoutObjectiveTitle=MissionText(header,"",47,35,BlackoutIce,730,50);blackoutObjectiveTitle.rectTransform.anchoredPosition+=Vector2.left*110;
                 blackoutVaultText=MissionText(header,"",-5,26,BlackoutMint,730,38);blackoutVaultText.rectTransform.anchoredPosition+=Vector2.left*110;
                 blackoutCompletionToast=MissionText(header,"",-49,24,BlackoutIce,730,35);blackoutCompletionToast.rectTransform.anchoredPosition+=Vector2.left*110;
-                blackoutPlanButton=BlackoutButton(header,"Plan",405,0,180,ToggleBlackoutPreview,150);
+                blackoutPlanButton=BlackoutButton(header,"Preview",405,0,180,ToggleBlackoutPreview,150);
                 var telemetry=BlackoutPanel(root,"Optical telemetry",new Vector2(0,610),new Vector2(1010,112));
                 blackoutDataText=BlackoutReadout(telemetry,"Cores lit",-338,BlackoutMint);blackoutTraceText=BlackoutReadout(telemetry,"Trace left",0,BlackoutIce);blackoutUplinkText=BlackoutReadout(telemetry,"Uplink",338,Hex("#ffc478"));
                 blackoutTraceGauge=BlackoutGraphic(root,"Trace budget rail",new Vector2(0,539),new Vector2(1010,8),BlackoutSurface.Trace,false);
@@ -144,7 +144,7 @@ namespace SkyPulse.Mobile
                 BlackoutButton(root,"Pause",260,-760,490,PauseFlight,150);
             }
             float stride=155,vertical=160,top=(p.Height-1)*vertical*.5f;
-            blackoutObjectiveTitle.text="RESTORE "+SkyPulseBlackoutCampaign.Systems[selectedMission].ToUpperInvariant();
+            blackoutObjectiveTitle.text=(blackoutCampaign.Data.medals[selectedMission]>0?"REFINE ":"RESTORE ")+SkyPulseBlackoutCampaign.Systems[selectedMission].ToUpperInvariant();
             blackoutVaultText.text="SIGNAL HEIST · "+(selectedMission+1).ToString("00")+" / 08 · "+p.Name;
             blackoutCompletionToast.text=BlackoutNetworkCaption();blackoutBriefing.text=p.Briefing;
             for(int i=0;i<49;i++)
@@ -179,14 +179,17 @@ namespace SkyPulse.Mobile
             blackoutNetwork.RestoredMask=mask;blackoutNetwork.ActiveVault=selectedMission;blackoutNetwork.LivePower=(s.CoresPowered/(float)p.CoreCount+(s.UplinkPowered?1:0))*.5f;blackoutNetwork.SetVerticesDirty();
             if(blackoutToastRemaining<=0)blackoutCompletionToast.text=BlackoutNetworkCaption();
             int remaining=p.CoreCount-s.CoresPowered;
-            blackoutStatusText.text=s.Alarms>0?"SENSOR HIT · EACH TURN NOW COSTS 3 TRACE":remaining==0?"CORES ONLINE → CONNECT THE AMBER UPLINK":s.CoresPowered>0?remaining+(remaining==1?" CORE":" CORES")+" STILL OFFLINE · KEEP LIVE CORES CONNECTED":"TURN THE MIRRORS → POWER EVERY CORE → CONNECT THE UPLINK";
+            blackoutStatusText.text=s.Alarms>0?"SENSOR TRIGGERED · ROTATION COSTS 3 TRACE":remaining==0?"ALL CORES LIVE · CONNECT THE AMBER UPLINK":s.CoresPowered>0?remaining+(remaining==1?" CORE":" CORES")+" STILL DARK · KEEP THE LIVE ROUTE CONNECTED":"KEEP "+p.CoreCount+(p.CoreCount==1?" CORE":" CORES")+" AND THE UPLINK POWERED";
             blackoutStatusText.color=s.Alarms>0?Hex("#ff8992"):BlackoutIce;
             RefreshBlackoutPreviewControls();
         }
         string BlackoutNetworkCaption()
         {
             int restored=0;for(int i=0;i<8;i++)if(blackoutCampaign.Data.medals[i]>0)restored++;
-            return "CITY NETWORK "+restored+" / 8 ONLINE · GOLD ≤ "+blackoutSession.Puzzle.Par+" TRACE";
+            // A replay improves a recorded solve; it cannot restore a ninth system.
+            int medal=blackoutCampaign.Data.medals[selectedMission],best=blackoutCampaign.Data.bestTrace[selectedMission];
+            if(medal>0&&best>0)return "BEST "+best+" TRACE · "+(medal==3?"GOLD SECURED":"GOLD ≤ "+blackoutSession.Puzzle.Par+" TRACE");
+            return restored+" / 8 SYSTEMS ONLINE · GOLD ≤ "+blackoutSession.Puzzle.Par+" TRACE";
         }
         void ToggleBlackoutPreview()
         {
@@ -206,7 +209,7 @@ namespace SkyPulse.Mobile
         void RefreshBlackoutPreviewControls()
         {
             if(blackoutPlanButton==null)return;bool selected=blackoutPlanning&&blackoutPreviewTile>=0;
-            blackoutPlanButton.GetComponentInChildren<Text>().text=blackoutPlanning?"Close plan":"Plan";
+            blackoutPlanButton.GetComponentInChildren<Text>().text=blackoutPlanning?"Done":"Preview";
             blackoutCommitButton.gameObject.SetActive(blackoutPlanning);
             blackoutRestartButton.gameObject.SetActive(!blackoutPlanning);
             blackoutCommitButton.interactable=selected&&state==FlightState.Playing;
@@ -214,7 +217,7 @@ namespace SkyPulse.Mobile
             var action=blackoutCommitButton.targetGraphic as SkyPulseProgressionSurface;action.Style=selected?SkyPulseProgressionSurface.Finish.Action:SkyPulseProgressionSurface.Finish.Inset;action.SetVerticesDirty();
             blackoutCommitButton.GetComponentInChildren<Text>().color=selected?Hex("#06281f"):BlackoutIce;
             if(!blackoutPlanning)return;
-            blackoutStatusText.text=selected?"PREVIEW · "+blackoutPreview.CoresPowered+" / "+blackoutSession.Puzzle.CoreCount+" CORES · "+(blackoutPreview.State==MissionSessionState.Succeeded?"SYSTEM RESTORED":blackoutPreview.State==MissionSessionState.Failed?"TRACE WOULD RUN OUT":blackoutPreview.Alarms>0?"SENSOR HIT · COSTS 3 TRACE":"COSTS 1 TRACE"):"PLAN MODE · Tap a prism to preview its next rotation";
+            blackoutStatusText.text=selected?"PREVIEW · "+blackoutPreview.CoresPowered+" / "+blackoutSession.Puzzle.CoreCount+" CORES · "+(blackoutPreview.State==MissionSessionState.Succeeded?"ROUTE COMPLETE":blackoutPreview.State==MissionSessionState.Failed?"TRACE WOULD RUN OUT":blackoutPreview.Alarms>0?"SENSOR HIT · COSTS 3 TRACE":"COSTS 1 TRACE"):"FREE PREVIEW · TAP AN OPTIC TO SEE ITS NEXT ROUTE";
             blackoutStatusText.color=selected&&(blackoutPreview.Alarms>0||blackoutPreview.State==MissionSessionState.Failed)?Hex("#ff9b91"):Hex("#a9d8ff");
         }
         void CommitBlackoutPreview()

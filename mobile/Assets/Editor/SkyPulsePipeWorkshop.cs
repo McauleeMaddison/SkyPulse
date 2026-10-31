@@ -28,7 +28,9 @@ public static class SkyPulsePipeWorkshop
         var hook=Factory.GetField("EditorMeshCapture",BindingFlags.Static|BindingFlags.NonPublic);Mesh generated=null;hook.SetValue(null,(Action<object>)Capture);
         try
         {
-            generated=(Mesh)Factory.GetMethod("Build").Invoke(null,new object[]{world,cap});
+            // The structural pieces are separate editable children, so their
+            // geometry must not also be embedded in the base housing.
+            generated=(Mesh)Factory.GetMethod("BuildBase").Invoke(null,new object[]{world,cap});
             var mesh=new Mesh{name=generated.name};mesh.SetVertices(Field<List<Vector3>>("v"));mesh.SetNormals(Field<List<Vector3>>("n"));mesh.SetColors(Field<List<Color>>("c"));mesh.SetTriangles(Field<List<int>>("t"),0);mesh.RecalculateBounds();return mesh;
         }
         finally{hook.SetValue(null,null);captured=null;if(generated!=null)UnityEngine.Object.DestroyImmediate(generated);}
@@ -66,7 +68,7 @@ public static class SkyPulsePipeWorkshop
                 }
                 AddStructuralDetails(authoring);
                 PrefabUtility.SaveAsPrefabAsset(root,PrefabPath(world));
-                var camera=new GameObject("Pipe inspection camera",typeof(Camera));UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(camera,scene);camera.transform.position=new Vector3(2.5f,.7f,-6.5f);camera.transform.LookAt(new Vector3(0,-1.4f,0));camera.GetComponent<Camera>().fieldOfView=34;camera.GetComponent<Camera>().backgroundColor=new Color(.025f,.039f,.064f);
+                var camera=new GameObject("Pipe inspection camera",typeof(Camera));UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(camera,scene);camera.transform.position=new Vector3(2.5f,.7f,-6.5f);camera.transform.LookAt(new Vector3(0,-1.4f,0));camera.GetComponent<Camera>().fieldOfView=34;camera.GetComponent<Camera>().clearFlags=CameraClearFlags.SolidColor;camera.GetComponent<Camera>().backgroundColor=new Color(.025f,.039f,.064f);
                 EditorSceneManager.SaveScene(scene,Folder+"/Scenes/"+(world+1).ToString("00")+" "+Names[world]+" Pipes.unity");
             }
             finally{EditorSceneManager.CloseScene(scene,true);}
@@ -135,6 +137,23 @@ public static class SkyPulsePipeWorkshop
         }
         return added;
     }
+    // Update generated mesh contents in isolated QA while retaining every
+    // scene object, transform, mesh asset GUID and owner material binding.
+    public static void RefreshPhysicalStructureMeshes()
+    {
+        if(!Application.isBatchMode)throw new InvalidOperationException("Bulk mesh refresh runs in isolated QA; edit scene objects in Unity.");
+        for(int world=0;world<Names.Length;world++)
+        {
+            var collar=Readable(world,true);
+            Save(collar,Folder+"/Meshes/world-"+world.ToString("00")+"-collar.asset");
+            for(int part=0;part<DetailNames.Length;part++)
+            {
+                var mesh=(Mesh)Factory.GetMethod("Hardware",BindingFlags.Public|BindingFlags.Static).Invoke(null,new object[]{world,part});
+                Save(mesh,Folder+"/Meshes/world-"+world.ToString("00")+"-"+DetailFiles[part]+".asset");
+            }
+        }
+        AssetDatabase.SaveAssets();
+    }
     // Explicit migration entry point used in a disposable QA project. It adds
     // children in place, retaining existing serialized objects and asset IDs.
     public static void UpgradeReusableAssemblies()
@@ -149,7 +168,10 @@ public static class SkyPulsePipeWorkshop
             try
             {
                 var authoring=scene.GetRootGameObjects().Select(g=>g.GetComponent<SkyPulsePipeAuthoring>()).First(a=>a!=null);
-                AddStructuralDetails(authoring);EditorSceneManager.SaveScene(scene);
+                AddStructuralDetails(authoring);
+                var inspection=scene.GetRootGameObjects().Select(g=>g.GetComponent<Camera>()).FirstOrDefault(c=>c!=null&&c.name=="Pipe inspection camera");
+                if(inspection!=null&&inspection.clearFlags==CameraClearFlags.Skybox)inspection.clearFlags=CameraClearFlags.SolidColor;
+                EditorSceneManager.SaveScene(scene);
             }
             finally{EditorSceneManager.CloseScene(scene,true);}
         }
@@ -166,7 +188,11 @@ public static class SkyPulsePipeWorkshop
                 combine.Add(new CombineInstance{mesh=filter.sharedMesh,subMeshIndex=submesh,transform=root.transform.worldToLocalMatrix*filter.transform.localToWorldMatrix});
         }
         if(combine.Count==0)throw new InvalidOperationException(name+" requires at least one active mesh.");
-        var mesh=new Mesh{name=Names[root.World]+" / authored "+name+" / structure-v1"};mesh.CombineMeshes(combine.ToArray(),true,true);
+        // A structure group records an explicit authored layout, including
+        // deliberately disabled parts. Runtime uses the baked layout as authored;
+        // missing details are added only through the workshop's explicit action.
+        bool authoredStructure=part.Find(StructureVersion)!=null;
+        var mesh=new Mesh{name=Names[root.World]+" / authored "+name+(authoredStructure?" / structure-v1":"")};mesh.CombineMeshes(combine.ToArray(),true,true);
         var bounds=mesh.bounds;if(bounds.size.x<.01f||bounds.size.y<.01f||bounds.size.z<.01f||mesh.vertexCount>24000){UnityEngine.Object.DestroyImmediate(mesh);throw new InvalidOperationException("Keep a complete pipe under 24,000 vertices per part.");}
         var fit=new Vector3(expected.size.x/bounds.size.x,expected.size.y/bounds.size.y,expected.size.z/bounds.size.z);var vertices=mesh.vertices;var normals=mesh.normals;
         for(int i=0;i<vertices.Length;i++){vertices[i]=Vector3.Scale(vertices[i]-bounds.center,fit)+expected.center;normals[i]=new Vector3(normals[i].x/fit.x,normals[i].y/fit.y,normals[i].z/fit.z).normalized;}
@@ -175,7 +201,12 @@ public static class SkyPulsePipeWorkshop
     static T Save<T>(T value,string path) where T:UnityEngine.Object
     {
         var previous=AssetDatabase.LoadAssetAtPath<T>(path);if(previous==null){AssetDatabase.CreateAsset(value,path);return value;}
-        EditorUtility.CopySerialized(value,previous);UnityEngine.Object.DestroyImmediate(value);EditorUtility.SetDirty(previous);return previous;
+        EditorUtility.CopySerialized(value,previous);
+        // CopySerialized updates CPU mesh data but can leave an already drawn
+        // mesh's GPU buffers stale until the next Editor process. Dirty and
+        // upload both vertex and index buffers so Bake previews update now.
+        if(previous is Mesh mesh)SkyPulsePipeAuthoring.UploadPreviewMesh(mesh);
+        UnityEngine.Object.DestroyImmediate(value);EditorUtility.SetDirty(previous);return previous;
     }
     public static void Bake(SkyPulsePipeAuthoring root)
     {
@@ -197,7 +228,7 @@ public sealed class SkyPulsePipeAuthoringInspector : Editor
 {
     public override void OnInspectorGUI()
     {
-        DrawDefaultInspector();EditorGUILayout.HelpBox("Expand Barrel or Collar → Structural details · v1. Move, rotate or scale the separate bezel, bore, supports and light guides in Unity. Existing objects and edits are preserved. Bake combines active child meshes and fits the result to the original collision dimensions. The finish controls above determine the runtime material.",MessageType.Info);
+        DrawDefaultInspector();EditorGUILayout.HelpBox("Model workshop only. Open Assets/Scenes/SkyPulse.unity to play the game.",MessageType.Info);EditorGUILayout.HelpBox("Expand Barrel or Collar → Structural details · v1. Move, rotate or scale the separate bezel, bore, supports and light guides in Unity. The mouth is genuinely hollow geometry. Move the recessed bore and rolled bezel together and keep them aligned with the collar shell. Existing objects and edits are preserved. Bake combines active child meshes and fits the result to the original collision dimensions. The finish controls above determine the runtime material.",MessageType.Info);
         if(GUILayout.Button("Add missing editable structural details",GUILayout.Height(28)))
         {
             var root=(SkyPulsePipeAuthoring)target;SkyPulsePipeWorkshop.AddStructuralDetails(root);EditorSceneManager.MarkSceneDirty(root.gameObject.scene);

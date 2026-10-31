@@ -75,7 +75,7 @@ public static class SkyPulsePresentationChecks
                 if(scene=="blackout-puzzle" && frame==18){var s=(BlackoutSession)Get(game,"blackoutSession");Call(game,"TouchBlackoutNode",SkyPulseMissionChecks.Solve(s.Puzzle)[0]);}
                 Set(game,"ambientTime",(float)Get(game,"ambientTime")+.1f);Call(game,"UpdateMenuBird",.1f);Call(game,"UpdateProtocolPresentation",.1f);Call(game,"UpdateCinematicPresentation",.1f);
                 yield return new WaitForSecondsRealtime(.1f);
-                Canvas.ForceUpdateCanvases();Call(game,"ApplySafeArea");Call(game,"FitInterfaceToSafeArea");Canvas.ForceUpdateCanvases();foreach(var stage in UnityEngine.Object.FindObjectsByType<SkyPulseHeistBoard>(FindObjectsSortMode.None))stage.Render();foreach(var depth in UnityEngine.Object.FindObjectsByType<SkyPulseDepthStage>(FindObjectsSortMode.None))depth.Render();camera.Render();
+                Canvas.ForceUpdateCanvases();Call(game,"ApplySafeArea");Call(game,"FitInterfaceToSafeArea");Canvas.ForceUpdateCanvases();foreach(var stage in UnityEngine.Object.FindObjectsByType<SkyPulseHeistBoard>())stage.Render();foreach(var depth in UnityEngine.Object.FindObjectsByType<SkyPulseDepthStage>())depth.Render();camera.Render();
                 RenderTexture.active=rt;var texture=new Texture2D(captureWidth,captureHeight,TextureFormat.RGB24,false);texture.ReadPixels(new Rect(0,0,captureWidth,captureHeight),0,0);texture.Apply();File.WriteAllBytes(Path.Combine(output,frame.ToString("000")+".png"),texture.EncodeToPNG());UnityEngine.Object.Destroy(texture);RenderTexture.active=null;
             }
         }

@@ -34,6 +34,7 @@ Material:
     - _Cutout: 1
     - _Detail: 1
     - _LightRate: 1
+    - _StructuralDetails: 1
     - _Theme: 3
     - _ThemeAmount: 1
     - _Visibility: 1

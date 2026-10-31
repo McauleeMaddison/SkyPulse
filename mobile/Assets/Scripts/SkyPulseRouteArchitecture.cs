@@ -30,72 +30,99 @@ namespace SkyPulse.Mobile
             switch(world){case 1:return new Color(.66f,.73f,.73f);case 2:return new Color(.39f,.34f,.29f);case 3:return new Color(.16f,.29f,.38f);case 4:return new Color(.57f,.43f,.46f);case 5:return new Color(.52f,.61f,.74f);case 6:return new Color(.22f,.37f,.32f);case 7:return new Color(.25f,.22f,.36f);case 8:return new Color(.14f,.14f,.21f);case 9:return new Color(.22f,.34f,.53f);case 10:return new Color(.53f,.36f,.24f);case 11:return new Color(.64f,.74f,.78f);default:return new Color(.24f,.31f,.39f);}
         }
         static readonly Color Base=new Color(1,1,1,0),Trim=new Color(1,1,1,.25f),Seal=new Color(1,1,1,.55f),Light=new Color(1,1,1,1);
-        public static Mesh Build(int world,bool cap)
+        public static Mesh Build(int world,bool cap)=>BuildShell(world,cap,true);
+        // Workshop base remains separate from editable hardware children.
+        public static Mesh BuildBase(int world,bool cap)=>BuildShell(world,cap,false);
+        static Mesh BuildShell(int world,bool cap,bool details)
         {
-            world=Mathf.Clamp(world,0,11);if(world==0)return BuildOriginal(cap);
-            var b=new SkyPulseMeshBuilder();var profile=Profile(world,cap);const int sides=64;
+            world=Mathf.Clamp(world,0,11);if(cap)return BuildPhysicalCap(world,details);if(world==0)return BuildOriginalBarrel(details);
+            var b=new SkyPulseMeshBuilder();var profile=Profile(world,false);const int sides=64;
             for(int row=1;row<profile.Length;row++)for(int side=0;side<sides;side++)
             {
                 float a=side*Mathf.PI*2/sides,c=(side+1f)*Mathf.PI*2/sides;var lo=profile[row-1];var hi=profile[row];
-                var p=Point(a,lo,world,cap);var q=Point(c,lo,world,cap);var r=Point(c,hi,world,cap);var t=Point(a,hi,world,cap);
-                float dy=hi.y-lo.y,dr=hi.x-lo.x;var na=Normal(a,lo,world,cap,dy,dr);var nb=Normal(c,lo,world,cap,dy,dr);
-                Color material=cap&&(row==2||row==profile.Length-2)?Trim:Base;
-                b.SmoothQuad(p,q,r,t,na,nb,material);
+                var p=Point(a,lo,world,false);var q=Point(c,lo,world,false);var r=Point(c,hi,world,false);var t=Point(a,hi,world,false);
+                float dy=hi.y-lo.y,dr=hi.x-lo.x;var na=Normal(a,lo,world,false,dy,dr);var nb=Normal(c,lo,world,false,dy,dr);
+                b.SmoothQuad(p,q,r,t,na,nb,Base);
                 if(row==1)b.Face(new Vector3(0,lo.y,0),q,p,Base);
                 if(row==profile.Length-1)b.Face(new Vector3(0,hi.y,0),t,r,Trim);
             }
-            if(cap)
+            int rails=world==2||world==9?6:world==5||world==11?3:4;
+            for(int rail=0;rail<rails;rail++)
             {
-                // Recessed dark seals and a single light reveal belong to the
-                // housing rather than crossing it as big surface-mounted bands.
-                Band(b,world,profile,-.28f,.018f,Seal);Band(b,world,profile,.24f,.012f,Light);
-                for(int i=0;i<8;i++)Channel(b,world,profile,i*Mathf.PI/4,-.17f,.12f,.028f,Trim,true);
+                float a=Mathf.PI*2*(rail+.5f)/rails;bool forward=rails==6&&rail==4;
+                Channel(b,world,profile,a,-.475f,.475f,forward?.13f:.095f,Seal,false);
+                Channel(b,world,profile,a,-.455f,.455f,forward?.046f:.025f,Light,false);
             }
-            else
+            if(rails!=6)
             {
-                int rails=world==2||world==9?6:world==5||world==11?3:4;
-                for(int rail=0;rail<rails;rail++)
-                {
-                    float a=Mathf.PI*2*(rail+.5f)/rails;
-                    bool forward=rails==6&&rail==4;
-                    Channel(b,world,profile,a,-.475f,.475f,forward?.13f:.095f,Seal,false);
-                    Channel(b,world,profile,a,-.455f,.455f,forward?.046f:.025f,Light,false);
-                }
-                // A recessed forward diffuser stays readable on the small
-                // portrait camera. It follows the barrel, not a flat overlay.
-                if(rails!=6)
-                {
-                    Channel(b,world,profile,-Mathf.PI*.5f,-.47f,.47f,.13f,Seal,false);
-                    Channel(b,world,profile,-Mathf.PI*.5f,-.455f,.455f,.046f,Light,false);
-                }
-                Band(b,world,profile,-.43f,.014f,Trim);Band(b,world,profile,.416f,.014f,Trim);
-                if(world==2||world==9)for(int i=0;i<3;i++)
-                {
-                    float y=-.20f+i*.20f;
-                    Band(b,world,profile,y,.009f,Seal);
-                    if(world==9)Band(b,world,profile,y+.010f,.0035f,Light);
-                }
+                Channel(b,world,profile,-Mathf.PI*.5f,-.47f,.47f,.13f,Seal,false);
+                Channel(b,world,profile,-Mathf.PI*.5f,-.455f,.455f,.046f,Light,false);
             }
-            AddHardware(b,world,cap?0:2);AddHardware(b,world,cap?1:3);
-            return Finish(b,Names[world]+(cap?" / machined collar":" / continuous barrel")+" / structure-v1");
+            Band(b,world,profile,-.43f,.014f,Trim);Band(b,world,profile,.416f,.014f,Trim);
+            if(world==2||world==9)for(int i=0;i<3;i++)
+            {
+                float y=-.20f+i*.20f;Band(b,world,profile,y,.009f,Seal);
+                if(world==9)Band(b,world,profile,y+.010f,.0035f,Light);
+            }
+            if(details){AddHardware(b,world,2);AddHardware(b,world,3);}
+            return Finish(b,Names[world]+" / continuous barrel"+(details?" / structure-v1":""));
         }
-        static Mesh BuildOriginal(bool cap)
+        static Mesh BuildOriginalBarrel(bool details)
         {
-            var b=new SkyPulseMeshBuilder();int segments=48;var profile=cap?new[]{new Vector2(.46f,-.5f),new Vector2(.50f,-.39f),new Vector2(.50f,.39f),new Vector2(.46f,.5f)}:new[]{new Vector2(.47f,-.5f),new Vector2(.5f,-.48f),new Vector2(.5f,.48f),new Vector2(.47f,.5f)};
+            var b=new SkyPulseMeshBuilder();const int segments=48;
+            var profile=new[]{new Vector2(.47f,-.5f),new Vector2(.5f,-.48f),new Vector2(.5f,.48f),new Vector2(.47f,.5f)};
             for(int i=0;i<segments;i++)
             {
                 float a=i*Mathf.PI*2/segments,c=(i+1)*Mathf.PI*2/segments;
                 for(int j=1;j<profile.Length;j++)
                 {
-                    var p=profile[j-1];var q=profile[j];Color colour=cap?new Color(.7f,.9f,1,j==2?0:1):new Color(.85f,.95f,1,i%12==0?1:0);
+                    var p=profile[j-1];var q=profile[j];Color colour=new Color(.85f,.95f,1,i%12==0?1:0);
                     float dy=q.y-p.y,dr=q.x-p.x;
                     var na=new Vector3(Mathf.Cos(a)*dy,-dr,Mathf.Sin(a)*dy).normalized;var nb=new Vector3(Mathf.Cos(c)*dy,-dr,Mathf.Sin(c)*dy).normalized;
                     b.SmoothQuad(new Vector3(Mathf.Cos(a)*p.x,p.y,Mathf.Sin(a)*p.x),new Vector3(Mathf.Cos(c)*p.x,p.y,Mathf.Sin(c)*p.x),new Vector3(Mathf.Cos(c)*q.x,q.y,Mathf.Sin(c)*q.x),new Vector3(Mathf.Cos(a)*q.x,q.y,Mathf.Sin(a)*q.x),na,nb,colour);
                 }
                 foreach(int side in new[]{-1,1})b.Face(new Vector3(0,side*.5f,0),new Vector3(Mathf.Cos(a)*.46f,side*.5f,Mathf.Sin(a)*.46f),new Vector3(Mathf.Cos(c)*.46f,side*.5f,Mathf.Sin(c)*.46f),new Color(.9f,.95f,1,.2f));
             }
-            AddHardware(b,0,cap?0:2);AddHardware(b,0,cap?1:3);
-            return Finish(b,(cap?"Extruded precision gate collar":"Reflective cylindrical Endless column")+" / structure-v1");
+            if(details){AddHardware(b,0,2);AddHardware(b,0,3);}
+            return Finish(b,"Reflective cylindrical Endless column"+(details?" / structure-v1":""));
+        }
+        // A real hollow collar: the inclined circular mouth, annular shoulder,
+        // inner wall and rolled edge share one physical construction. It is not
+        // an ellipse pasted over the front of a solid cylinder.
+        static Mesh BuildPhysicalCap(int world,bool details)
+        {
+            var b=new SkyPulseMeshBuilder();const int sides=64;
+            var shape=world==0?P(.455f,-.5f,.485f,-.45f,.5f,-.34f,.49f,-.17f):Profile(world,true);
+            var rows=new System.Collections.Generic.List<Vector2>();
+            foreach(var row in shape)if(row.y<=-.1f)rows.Add(row);
+            rows.Add(new Vector2(.49f,-.04f));rows.Add(new Vector2(.5f,.30f));
+            for(int row=1;row<rows.Count;row++)for(int side=0;side<sides;side++)
+            {
+                float a=side*Mathf.PI*2/sides,c=(side+1f)*Mathf.PI*2/sides;bool inclined=row==rows.Count-1;
+                var p=CapShellPoint(world,a,rows[row-1],false);var q=CapShellPoint(world,c,rows[row-1],false);
+                var r=CapShellPoint(world,c,rows[row],inclined);var t=CapShellPoint(world,a,rows[row],inclined);
+                var ta=CapShellPoint(world,a+.002f,rows[row],inclined)-CapShellPoint(world,a-.002f,rows[row],inclined);
+                var tc=CapShellPoint(world,c+.002f,rows[row],inclined)-CapShellPoint(world,c-.002f,rows[row],inclined);
+                var na=Vector3.Cross((t-p)*100,ta*100).normalized;var nc=Vector3.Cross((r-q)*100,tc*100).normalized;
+                b.SmoothQuad(p,q,r,t,na,nc,row==2?Trim:Base);
+            }
+            float depth=world==3?.9f:1;var mouthNormal=new Vector3(0,1,-.4f/depth).normalized;
+            for(int side=0;side<sides;side++)
+            {
+                float a=side*Mathf.PI*2/sides,c=(side+1f)*Mathf.PI*2/sides;
+                var outerA=CapShellPoint(world,a,new Vector2(.5f,.3f),true);var outerC=CapShellPoint(world,c,new Vector2(.5f,.3f),true);
+                var innerA=Bore(a,depth,false);var innerC=Bore(c,depth,false);
+                b.SmoothQuad(outerA,outerC,innerC,innerA,mouthNormal,mouthNormal,Trim);
+                b.Face(new Vector3(0,-.5f,0),CapShellPoint(world,c,rows[0],false),CapShellPoint(world,a,rows[0],false),Base);
+            }
+            if(details){AddHardware(b,world,0);AddHardware(b,world,1);}
+            return Finish(b,Names[world]+" / inclined hollow collar"+(details?" / structure-v2":""));
+        }
+        static Vector3 CapShellPoint(int world,float angle,Vector2 profile,bool inclined)
+        {
+            var p=Point(angle,profile,world,true);
+            if(inclined)p.y=.30f+.4f*p.z/(world==3?.9f:1);
+            return p;
         }
         // Four physical parts are shared by runtime meshes and the editable
         // workshop children. Their XY extents stay inside the tested housing.
@@ -105,38 +132,19 @@ namespace SkyPulse.Mobile
             string[] names={"Rolled cap bezel","Recessed cap bore","Barrel support ribs","Inset light guides"};
             return b.Finish(names[Mathf.Clamp(part,0,3)]+" / structure-v1",true);
         }
-        public static bool HasStructuralDetails(Mesh mesh)
-        {
-            if(mesh==null)return false;if(mesh.name.Contains("structure-v1"))return true;
-            if(!mesh.isReadable)return false;
-            foreach(var colour in mesh.colors)if(Mathf.Abs(colour.a-.72f)<.0005f||Mathf.Abs(colour.a-.68f)<.0005f)return true;
-            return false;
-        }
-        public static Mesh Enrich(Mesh source,int world,bool cap)
-        {
-            if(source==null||HasStructuralDetails(source))return source;
-            // Workshop/baked meshes keep readable buffers for model editing.
-            // Copies are combined once; pooled gates share the resulting mesh.
-            var first=Hardware(world,cap?0:2);var second=Hardware(world,cap?1:3);
-            var result=new Mesh{name=source.name+" / structure-v1"};
-            result.CombineMeshes(new[]{new CombineInstance{mesh=source,transform=Matrix4x4.identity},new CombineInstance{mesh=first,transform=Matrix4x4.identity},new CombineInstance{mesh=second,transform=Matrix4x4.identity}},true,true);
-            result.bounds=source.bounds;
-            if(Application.isPlaying){Object.Destroy(first);Object.Destroy(second);}else{Object.DestroyImmediate(first);Object.DestroyImmediate(second);}
-            return result;
-        }
         static void AddHardware(SkyPulseMeshBuilder b,int world,int part)
         {
             const int sides=64;float depth=world==3?.90f:1;
             Color bezel=new Color(1,1,1,.72f),wall=new Color(1,1,1,.74f),well=new Color(1,1,1,.76f);
             if(part==0)
             {
-                // A rolled elliptic metal lip with a real rounded cross-section.
+                // A rolled circular lip on the real inclined mouth plane.
                 // It sits within the original visible collar, not in the gap.
                 const int tubeSides=8;
                 for(int i=0;i<sides;i++)for(int j=0;j<tubeSides;j++)
                 {
                     float a=i*Mathf.PI*2/sides,c=(i+1)*Mathf.PI*2/sides,u=j*Mathf.PI*2/tubeSides,v=(j+1)*Mathf.PI*2/tubeSides;
-                    b.SmoothQuad(Bezel(a,u,depth),Bezel(c,u,depth),Bezel(c,v,depth),Bezel(a,v,depth),BezelNormal(a,(u+v)*.5f),BezelNormal(c,(u+v)*.5f),j==4?new Color(1,1,1,.78f):bezel);
+                    b.SmoothQuad(Bezel(a,u,depth),Bezel(c,u,depth),Bezel(c,v,depth),Bezel(a,v,depth),BezelNormal(a,(u+v)*.5f,depth),BezelNormal(c,(u+v)*.5f,depth),j==4?new Color(1,1,1,.78f):bezel);
                 }
             }
             else if(part==1)
@@ -144,9 +152,10 @@ namespace SkyPulse.Mobile
                 for(int i=0;i<sides;i++)
                 {
                     float a=i*Mathf.PI*2/sides,c=(i+1)*Mathf.PI*2/sides;
-                    Vector3 p=Bore(a,-.458f,depth),q=Bore(c,-.458f,depth),r=Bore(c,-.235f,depth),t=Bore(a,-.235f,depth);
-                    b.SmoothQuad(p,q,r,t,new Vector3(-Mathf.Cos(a),-Mathf.Sin(a)*1.5f,-.08f).normalized,new Vector3(-Mathf.Cos(c),-Mathf.Sin(c)*1.5f,-.08f).normalized,wall);
-                    b.Face(new Vector3(0,.245f,-.235f*depth),r,t,well);
+                    Vector3 p=Bore(a,depth,false),q=Bore(c,depth,false),r=Bore(c,depth,true),t=Bore(a,depth,true);
+                    var na=new Vector3(-Mathf.Cos(a),0,-Mathf.Sin(a)/depth).normalized;var nc=new Vector3(-Mathf.Cos(c),0,-Mathf.Sin(c)/depth).normalized;
+                    b.SmoothQuad(p,q,r,t,na,nc,wall);
+                    b.Face(new Vector3(0,-.245f,0),r,t,well);
                 }
             }
             else
@@ -190,11 +199,22 @@ namespace SkyPulse.Mobile
         }
         static Vector3 Bezel(float angle,float section,float depth)
         {
-            float roll=Mathf.Cos(section)*.021f;
-            return new Vector3(Mathf.Cos(angle)*(.46f+roll),.245f+Mathf.Sin(angle)*(.195f+roll),(-.466f+Mathf.Sin(section)*.029f)*depth);
+            const float radius=.465f,tube=.014f;
+            var radial=new Vector3(Mathf.Cos(angle),.4f*Mathf.Sin(angle),Mathf.Sin(angle)).normalized;
+            var normal=new Vector3(0,1,-.4f).normalized;
+            var p=new Vector3(Mathf.Cos(angle)*radius,.30f+.4f*Mathf.Sin(angle)*radius,Mathf.Sin(angle)*radius);
+            p+=(radial*Mathf.Cos(section)+normal*Mathf.Sin(section))*tube;p.z*=depth;return p;
         }
-        static Vector3 BezelNormal(float angle,float section)=>new Vector3(Mathf.Cos(angle)*Mathf.Cos(section),Mathf.Sin(angle)*Mathf.Cos(section)*1.25f,Mathf.Sin(section)).normalized;
-        static Vector3 Bore(float angle,float z,float depth)=>new Vector3(Mathf.Cos(angle)*.439f,.245f+Mathf.Sin(angle)*.174f,z*depth);
+        static Vector3 BezelNormal(float angle,float section,float depth)
+        {
+            var radial=new Vector3(Mathf.Cos(angle),.4f*Mathf.Sin(angle),Mathf.Sin(angle)).normalized;
+            var normal=new Vector3(0,1,-.4f).normalized;var n=radial*Mathf.Cos(section)+normal*Mathf.Sin(section);n.z/=depth;return n.normalized;
+        }
+        static Vector3 Bore(float angle,float depth,bool bottom)
+        {
+            float x=Mathf.Cos(angle)*.449f,z=Mathf.Sin(angle)*.449f;
+            return new Vector3(x,bottom?-.245f:.30f+.4f*z,z*depth);
+        }
         static void Channel(SkyPulseMeshBuilder b,int world,Vector2[] profile,float angle,float bottom,float top,float width,Color colour,bool cap)
         {
             const int steps=24;

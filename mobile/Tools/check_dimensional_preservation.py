@@ -20,7 +20,19 @@ def body(source,name):
 report={'baseCommit':BASE,'unchangedFiles':{},'unchangedMethods':{}}
 files=['SkyPulseMissionModels.cs','SkyPulseDailyMissions.cs','SkyPulseBirdProgression.cs','SkyPulseInputFence.cs','SkyPulseRelayGate.cs','SkyPulsePrism.cs','SkyPulseBlackoutCampaign.cs']
 for name in files:
-    path='mobile/Assets/Scripts/'+name;data=(ROOT/path).read_bytes();assert data==old(path),'Protected rules changed: '+name;report['unchangedFiles'][path]=digest(data)
+    path='mobile/Assets/Scripts/'+name;data=(ROOT/path).read_bytes()
+    if name=='SkyPulsePrism.cs':
+        # This file also contains the shared mesh builder. Unity authoring needs
+        # readable buffers; the original default still discards CPU buffers.
+        # Accept this exact helper overload only, preserving all prism rules and
+        # mesh vertices/normals/triangles byte-for-byte against the same base.
+        original='public Mesh Finish(string name){var m=new Mesh{name=name};m.SetVertices(v);m.SetNormals(n);m.SetColors(c);m.SetTriangles(t,0);m.RecalculateBounds();m.UploadMeshData(true);return m;}'
+        readable='public Mesh Finish(string name,bool readable=false){var m=new Mesh{name=name};m.SetVertices(v);m.SetNormals(n);m.SetColors(c);m.SetTriangles(t,0);m.RecalculateBounds();m.UploadMeshData(!readable);return m;}'
+        text=data.decode();assert text.count(readable)==1,'Mesh builder overload changed beyond authoring buffer policy'
+        assert text.replace(readable,original).encode()==old(path),'Protected prism rules or geometry changed'
+        report['readableMeshAuthoringHelper']={'path':path,'sha256':digest(data),'defaultCpuBufferReleasePreserved':True,'remainingFileMatchesBase':True}
+    else:
+        assert data==old(path),'Protected rules changed: '+name;report['unchangedFiles'][path]=digest(data)
 # The owner explicitly requested a new sound palette on 23 October. Keep the
 # resource names/GUIDs and require reproducible authored output, rather than
 # treating an old waveform as an immutable gameplay rule.

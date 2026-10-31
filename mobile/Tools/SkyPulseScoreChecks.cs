@@ -77,7 +77,7 @@ public static class SkyPulseScoreChecks
                 }
                 int score=(int)Get(game,"score"),wallet=(int)Get(game,"crystals");Call(game,"UpdateScoreFinish",.5f);
                 Check((int)Get(game,"score")==score&&(int)Get(game,"crystals")==wallet,"Finish cannot change scores or rewards");
-                foreach(var stage in UnityEngine.Object.FindObjectsByType<SkyPulseDepthStage>(FindObjectsSortMode.None))stage.Render();
+                foreach(var stage in UnityEngine.Object.FindObjectsByType<SkyPulseDepthStage>())stage.Render();
                 Save(camera,rt,Path.Combine(folder,scene+"-"+size.x+".png"));
                 if(size.x==640)
                 {

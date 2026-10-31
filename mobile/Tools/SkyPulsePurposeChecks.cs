@@ -43,6 +43,7 @@ public static class SkyPulsePurposeChecks
         for(int vault=0;vault<8;vault++)
         {
             var session=(BlackoutSession)Get(game,"blackoutSession");
+            Check(((Text)Get(game,"blackoutObjectiveTitle")).text.StartsWith("RESTORE "),"New vault has a restoration objective "+vault);
             Check(((Text)Get(game,"blackoutObjectiveTitle")).text.Contains(SkyPulseBlackoutCampaign.Systems[vault].ToUpperInvariant()),"Active objective identifies the system being restored "+vault);
             Check(((Text)Get(game,"blackoutBriefing")).text==session.Puzzle.Briefing,"Each vault exposes its specific optical challenge "+vault);
             Check(controls.All(b=>b.transform.localScale==Vector3.one),"Visual scale cannot move or animate UI hit targets");
@@ -53,6 +54,12 @@ public static class SkyPulsePurposeChecks
         }
         var reloaded=new BlackoutCampaignProgress(store);Check(reloaded.Data.medals.All(m=>m>0),"All eight restored systems survive campaign reload");
         Call(game,"LaunchMission",SkyPulseMode.BlackoutProtocol,7);Check(Mathf.Abs(board.OpticScale-1)<.001f&&network.RestoredMask==255,"Seven-wide challenge retains readable spacing and saved city state");
+        Check(((Text)Get(game,"blackoutObjectiveTitle")).text.StartsWith("REFINE "),"Previously solved vault has a truthful refinement objective");
+        string replay=(string)Call(game,"BlackoutNetworkCaption");
+        Check(replay.Contains("BEST "+campaign.Data.bestTrace[7]+" TRACE")&&replay.Contains("GOLD SECURED"),"Gold replay shows the actual saved trace record without inventing a new restoration");
+        campaign.Data.medals[7]=1;campaign.Data.bestTrace[7]=20;
+        replay=(string)Call(game,"BlackoutNetworkCaption");
+        Check(replay=="BEST 20 TRACE · GOLD ≤ "+SkyPulseBlackoutCampaign.Stages[7].Par+" TRACE","Lower-medal replay gives the actual existing Gold threshold");
         Call(game,"InitializeMissionServices");Call(game,"ResetToMenu");Debug.Log("SKYPULSE_PURPOSE_LIVE_PASS");
     }
 }

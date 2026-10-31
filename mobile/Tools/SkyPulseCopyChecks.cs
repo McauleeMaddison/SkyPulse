@@ -32,7 +32,7 @@ public static class SkyPulseCopyChecks
         {
             labels++;if(blocked.IsMatch(text.text))throw new Exception("Unfinished copy in "+context+": "+text.text);
         }
-        foreach(var text in UnityEngine.Object.FindObjectsByType<TextMesh>(FindObjectsSortMode.None))
+        foreach(var text in UnityEngine.Object.FindObjectsByType<TextMesh>())
         {
             labels++;if(blocked.IsMatch(text.text))throw new Exception("Unfinished world label in "+context+": "+text.text);
         }

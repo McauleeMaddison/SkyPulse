@@ -33,9 +33,9 @@ Shader "SkyPulse/Original Endless Neon Metal"
             struct vary { float4 pos:SV_POSITION;float3 local:TEXCOORD0;float3 normal:TEXCOORD1;float3 world:TEXCOORD2;fixed4 color:COLOR; };
             sampler2D _MainTex;float4 _ArtRect;float _ArtFlip,_Clock,_Cutout,_Visibility,_Theme,_ThemeAmount,_Detail,_LightRate,_StructuralDetails;fixed4 _LightTint,_ThemeAccent,_ThemeEnergy,_MetalTone;
             vary vert(app v){vary o;
-                // Only the appended physical cap components mirror for an upper
-                // pipe. Original collision-fitted housing geometry stays intact.
-                float capHardware=_StructuralDetails*step(.70,v.color.a)*(1-step(.80,v.color.a));
+                // Mirror the complete hollow collar for upper pipes. Its real
+                // mouth must face the opening; collision anchors remain intact.
+                float capHardware=_StructuralDetails*_Cutout;
                 float flip=lerp(1,1-2*_ArtFlip,capHardware);v.vertex.y*=flip;v.normal.y*=flip;
                 o.pos=UnityObjectToClipPos(v.vertex);o.local=v.vertex.xyz;o.normal=UnityObjectToWorldNormal(v.normal);o.world=mul(unity_ObjectToWorld,v.vertex).xyz;o.color=v.color;return o;}
             float3 hardware(vary i,float2 uv)
@@ -173,6 +173,29 @@ Shader "SkyPulse/Original Endless Neon Metal"
                 metal=lerp(metal,energy*(.36+packet*.47)+float3(.35,.52,.68)*pow(packet,5)*.10,saturate(guide));
                 return metal*lerp(float3(1,1,1),_LightTint.rgb,.055);
             }
+            float3 structuralHousing(vary i,float2 uv,fixed4 art)
+            {
+                // The editable rolled bezel is the opening. Projecting the old
+                // painted mouth onto the rear/top shell creates a second rim.
+                // Keep lower service-panel detail, with real surface lighting
+                // across the shoulder instead of another illustrated ellipse.
+                float3 n=normalize(i.normal),view=unity_OrthoParams.w>.5?float3(0,0,-1):normalize(_WorldSpaceCameraPos.xyz-i.world);
+                if(dot(n,view)<0)n=-n;
+                float3 key=normalize(float3(-.55,.78,-.80)),r=reflect(-view,n);
+                float diffuse=saturate(dot(n,key)),spec=pow(saturate(dot(n,normalize(key+view))),74);
+                float softbox=pow(saturate(1-abs(r.x*.78+r.y*.32+.18)*1.65),16);
+                float3 metal=_MetalTone.rgb*(.33+diffuse*.72)+float3(.62,.75,.90)*(softbox*.25+spec*.43);
+                float lowerDetail=1-smoothstep(.43,.56,uv.y);
+                float authored=dot(art.rgb,float3(.2126,.7152,.0722));
+                metal*=lerp(1,lerp(.58,1.30,smoothstep(.035,.66,authored)),lowerDetail*.82);
+                float seam=1-smoothstep(.004,.012+fwidth(uv.y),abs(uv.y-.225));
+                metal*=1-seam*.36;
+                float3 energy=lerp(_ThemeAccent.rgb,_ThemeEnergy.rgb,smoothstep(-.18,.18,i.local.x));
+                float gasket=1-smoothstep(.003,.009+fwidth(uv.y),abs(uv.y-.195));
+                float travel=.5+.5*sin(i.world.y*3-_Clock*_LightRate*1.1);
+                metal+=energy*gasket*(.10+travel*.10);
+                return metal*lerp(float3(1,1,1),_LightTint.rgb,.055);
+            }
             fixed4 frag(vary i):SV_Target
             {
                 // Stable screen-door coverage fades opaque depth-writing meshes
@@ -189,12 +212,11 @@ Shader "SkyPulse/Original Endless Neon Metal"
                 float capHardware=step(.70,i.color.a)*(1-step(.80,i.color.a));
                 float shaftHardware=1-step(.003,min(abs(i.color.a-.68),abs(i.color.a-.67)));
                 float physical=_StructuralDetails*saturate(capHardware+shaftHardware);
-                if(_StructuralDetails>.5&&_Cutout>.5&&capHardware<.5&&i.local.z<0)
+                if(_StructuralDetails>.5&&_Cutout>.5)
                 {
-                    // Remove the old front wall inside the real recess. The
-                    // bore and rolled lip now provide actual depth and normals.
-                    float2 opening=(uv-float2(.5,.745))/float2(.46,.195);
-                    clip(length(opening)-1.10);
+                    // A genuine hollow mesh now defines every edge, bore and
+                    // shoulder. No painted silhouette or shader-cut opening.
+                    return fixed4(capHardware>.5?structuralHardware(i):structuralHousing(i,uv,art),1);
                 }
                 float decoration=_ThemeAmount*step(.1,i.color.a);
                 float capCoverage=(_ThemeAmount>.5?_Cutout:_Cutout*(1-decoration))*(1-physical);

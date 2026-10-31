@@ -47,7 +47,7 @@ public static class SkyPulseDepthChecks
         foreach(var mode in new[]{SkyPulseMode.EndlessRoute,SkyPulseMode.PulseRelay,SkyPulseMode.BlackoutProtocol})
         {
             Call(game,"SetHomeProtocol",mode);Call(game,"ResetToMenu");Call(game,"UpdateDepthPresentation",0f);yield return null;
-            var home=(GameObject)Get(game,"homeScreen");var stage=(SkyPulseDepthStage)Get(game,"homeDepth");var all=UnityEngine.Object.FindObjectsByType<SkyPulseDepthStage>(FindObjectsInactive.Include,FindObjectsSortMode.None);
+            var home=(GameObject)Get(game,"homeScreen");var stage=(SkyPulseDepthStage)Get(game,"homeDepth");Check(((Transform)Get(stage,"scene")).GetComponentsInChildren<Transform>(true).All(t=>t.name!="Swept skyway observation rail"),"Endless Home has no stray blue observation rail behind the bird");var all=UnityEngine.Object.FindObjectsByType<SkyPulseDepthStage>(FindObjectsInactive.Include);
             Check(stage.Mode==mode&&stage.StageCamera.isActiveAndEnabled&&all.Count(s=>s.StageCamera!=null&&s.StageCamera.isActiveAndEnabled)==1,"Only the selected Home's 3D scene renders");
             Check(home.transform.Find("Flight deck").GetComponent<Image>().color.a==0&&!home.transform.Find("Flight deck").GetComponentsInChildren<SkyPulseCircuitGraphic>().Any(g=>g.Surface==SkyPulseSurface.Panel&&g.transform.parent.name=="Flight deck"),"No enclosing black Home backplate");
             Check(!stage.StageCamera.transform.parent.GetComponentsInChildren<Transform>(true).Any(t=>t.name=="Hovering machined deck"||t.name=="Dock shoulder")&&!home.transform.Find("Home flight dock").gameObject.activeSelf,"Home has open geometry instead of dark support slabs and duplicate docks");
@@ -80,7 +80,7 @@ public static class SkyPulseDepthChecks
     static Vector3 Rgb(Color c)=>new Vector3(c.r,c.g,c.b);
     static void CapSilhouette(SkyPulseNativeGame game,Material shaft,Material collar)
     {
-        Check(shaft.GetFloat("_Cutout")==0&&collar.GetFloat("_Cutout")==1,"Only the collar respects its elliptical artwork cutout; the solid shaft is preserved");
+        Check(shaft.GetFloat("_Cutout")==0&&collar.GetFloat("_Cutout")==1,"Collar orientation uses the physical mouth; the solid shaft remains in its own mode");
         var stage=new GameObject("Isolated collar contour QA");stage.transform.position=new Vector3(16000,16000,0);
         var cap=new GameObject("Original 3D collar",typeof(MeshFilter),typeof(MeshRenderer));cap.transform.SetParent(stage.transform,false);cap.layer=29;
         cap.GetComponent<MeshFilter>().sharedMesh=(Mesh)Get(game,"routeCapMesh");var renderer=cap.GetComponent<MeshRenderer>();renderer.sharedMaterial=collar;cap.transform.localScale=new Vector3(2.06f,.62f,2.06f);
@@ -92,19 +92,28 @@ public static class SkyPulseDepthChecks
         var pixels=new Texture2D(512,256,TextureFormat.RGB24,false);var block=new MaterialPropertyBlock();float clock=collar.GetFloat("_Clock");
         var previous=RenderTexture.active;
         Action read=()=>{camera.Render();RenderTexture.active=target;pixels.ReadPixels(new Rect(0,0,512,256),0,0);pixels.Apply();};
-        var points=new[]{new Vector3(-.45f,-.45f,0),new Vector3(.45f,-.45f,0),new Vector3(-.45f,.45f,0),new Vector3(.45f,.45f,0)};
+        var points=new[]{new Vector3(-.49f,-.49f,0),new Vector3(.49f,-.49f,0),new Vector3(-.49f,.49f,0),new Vector3(.49f,.49f,0)};
         var colours=new Color[4];var coords=new Vector2Int[4];
         try
         {
             renderer.enabled=false;read();var centre=pixels.GetPixel(256,128);var reference=pixels.GetPixels();
             for(int i=0;i<4;i++){var v=camera.WorldToViewportPoint(cap.transform.TransformPoint(points[i]));coords[i]=new Vector2Int(Mathf.RoundToInt(v.x*512),Mathf.RoundToInt(v.y*256));colours[i]=pixels.GetPixel(coords[i].x,coords[i].y);}
-            renderer.enabled=true;collar.SetFloat("_Cutout",0);read();
-            Check(Enumerable.Range(0,4).Any(i=>Vector3.Distance(Rgb(colours[i]),Rgb(pixels.GetPixel(coords[i].x,coords[i].y)))>.1f),"Negative control reproduces the original opaque black corners");
-            collar.SetFloat("_Cutout",1);
+            // A true hollow collar has a new physical silhouette, so the old
+            // painted-mouth corner coordinates are no longer its contour.
+            // A deliberately opaque rectangle must fail this depth probe.
+            var obstruction=GameObject.CreatePrimitive(PrimitiveType.Quad);obstruction.transform.SetParent(stage.transform,false);obstruction.layer=29;
+            obstruction.transform.localPosition=Vector3.back*.9f;obstruction.transform.localScale=new Vector3(2.06f,.62f,1);
+            var opaque=new Material(Shader.Find("Unlit/Color")){color=Color.black};obstruction.GetComponent<MeshRenderer>().sharedMaterial=opaque;
+            try
+            {
+                read();Check(Enumerable.Range(0,4).All(i=>Vector3.Distance(Rgb(colours[i]),Rgb(pixels.GetPixel(coords[i].x,coords[i].y)))>.1f),"Negative opaque rectangle fails the corner/background depth probe");
+            }
+            finally{UnityEngine.Object.DestroyImmediate(obstruction);UnityEngine.Object.DestroyImmediate(opaque);}
+            renderer.enabled=true;collar.SetFloat("_Cutout",1);
             foreach(int flip in new[]{0,1})foreach(float phase in new[]{0f,.7f,1.8f})
             {
                 block.SetFloat("_ArtFlip",flip);renderer.SetPropertyBlock(block);collar.SetFloat("_Clock",phase);read();
-                for(int i=0;i<4;i++)for(int y=-1;y<=1;y++)for(int x=-1;x<=1;x++)Check(Vector3.Distance(Rgb(colours[i]),Rgb(pixels.GetPixel(coords[i].x+x,coords[i].y+y)))<.025f,"Transparent collar corner preserves later-drawn scenery and depth · flip "+flip+" / phase "+phase);
+                for(int i=0;i<4;i++)for(int y=-1;y<=1;y++)for(int x=-1;x<=1;x++)Check(Vector3.Distance(Rgb(colours[i]),Rgb(pixels.GetPixel(coords[i].x+x,coords[i].y+y)))<.025f,"Outside the modelled collar silhouette preserves later-drawn scenery and depth · flip "+flip+" / phase "+phase);
                 Check(Vector3.Distance(Rgb(centre),Rgb(pixels.GetPixel(256,128)))>.1f,"Collar centre remains solid rather than hiding the whole mesh");
                 if(phase==0){var folder=Path.Combine(Environment.GetEnvironmentVariable("SKYPULSE_QA_OUTPUT"),"cap-contour");Directory.CreateDirectory(folder);File.WriteAllBytes(Path.Combine(folder,"collar-"+flip+".png"),pixels.EncodeToPNG());}
             }

@@ -1,35 +1,83 @@
-# SkyPulse — local visual polish, 30 October 2026
+# SkyPulse — local visual repairs, 31 October 2026
 
-This source revision is newer than the installed local iPhone Build 19. It has not been exported, installed, uploaded to TestFlight or submitted to public review. Build 19 and its original release evidence remain historical and unchanged.
+This source is newer than the installed iPhone **Build 19**. The repair pass has
+not been installed, uploaded to TestFlight or submitted to public App Review.
+Build 19 and its release records remain unchanged. **Public review stays on hold.**
 
-## What changed
+## Repair scope
 
-- The twelve existing editable Endless districts retain their models and palettes. Pooled districts use varied depth, orientation and spacing, quieter distant windows, coherent warm/cool lighting and restrained material detail.
-- Relay retains its connected bridges and floor. Surface detail, key/fill lighting and distant haze separate the station hardware from the flight corridor.
-- Blackout Home uses a real perspective optical desk with a deep housing, source, mirrors, core, receiver and live route. Its restoration beacons read the existing save. Relay Home's real hoop demonstrates charging and unlocking. Home-only glass distinguishes primary and secondary actions.
-- Hangar reuses the shared 3D bird studio with a modelled docking cradle, registered animated artwork, direct browse buttons, clearer trait values and a quieter profile panel.
-- Tech Tree level labels retain a concise upgrade identity. A fixed NEXT locator cycles available levels through interruptible, frame-independent focus. Purchases retain the existing inspector/confirmation.
-- Bird flap meshes omit disconnected sheet fragments using measured coverage for all 90 flap poses. Original PNGs are unchanged. The articulated bird art mesh has shallow relief and refined curved lighting; it is not a newly sculpted, fully round character model.
-- Editor compilation safely stops active SkyPulse Play before domain reload. The repeated Environment null exception followed Unity preserving scene objects while losing nonserializable runtime state. Fresh Play runs Awake and loads saved progress.
+- **Birds:** restored the original articulated artwork and removed the rejected
+  sculpted replacement. Measured flap silhouettes retain the connected feathers
+  and exhaust while excluding detached sheet fragments; original PNGs, bird IDs
+  and gameplay dimensions remain intact. Endless Home's stray blue rail is gone.
+- **Editor isolation:** workshop scenes remain model inspections. Starting Play
+  there no longer adds the game, pooled obstacles or gameplay cameras. Open
+  `Assets/Scenes/SkyPulse.unity` to play; this prevents an inspection pipe from
+  appearing alongside real obstacles or in Relay.
+- **Pipes:** all twelve themes have a genuinely hollow, inclined mouth, inner
+  bore and rolled lip. Separate bezels, bores, support ribs and light guides are
+  editable Unity objects. Runtime uses the authored bake, including hidden parts,
+  fitted to the existing collision dimensions. Moving LEDs respect Reduced Motion.
+- **Endless worlds:** seven composed districts per bank replace scattered tower
+  placement across all twelve worlds. Layered depth, quieter distant detail and
+  world-coloured sparse clouds retain each world's identity and flight corridor.
+  Existing milestone timing, handling and obstacle spacing remain unchanged.
+- **Relay:** cobalt/violet atmosphere, warm alloy structure and controlled cyan
+  lighting separate the connected towers, bridges and deck. The ocean planet,
+  crater moon and glacial moon have distinct materials. Gate/crystal rules and
+  immediate automatic unlocking remain in the existing gameplay path.
+- **Blackout:** smoked optical prisms, dark mounts, restrained beams and clearer
+  circuit feedback replace the opaque toy-like finish. Rapid taps retain immediate
+  response and forward rotation. Completed systems show truthful replay/refinement
+  goals using saved trace and medals. Completion, rewards and puzzle progression
+  stay in the existing campaign logic.
+- **Hangar and Tech Tree:** original animated birds remain in the 3D docking
+  cradle. Connected holographic branches, concise levels and CORE/NEXT locators
+  retain direct panning and confirmation before spending.
 
-## Evidence and limits
+## Actual previews
 
-QA_RECORD.json identifies completed checks and exact source hashes. Previews are actual Unity Editor camera captures using isolated saves. Videos come from those rendered frames. They are not iPhone recordings or proof of physical-device FPS.
+- [All twelve worlds and their pipes](Twelve-Worlds.png), with full-size captures
+  in `Worlds`.
+- [Three gameplay modes](Three-Modes.png), [three Homes](Three-Homes.png) and
+  [visual overview](Visual-Preview.png).
+- [Twelve editable pipe assemblies](Pipe-Assemblies.png), with individual workshop
+  renders in `Pipe-Assemblies`; [Relay celestial materials](Relay-Planets.png).
+- Silent motion: [Endless flight](Endless-Flight.mp4),
+  [Relay flight](Relay-Flight.mp4), [Blackout Home](Blackout-Home-Motion.mp4),
+  [First Light puzzle](Blackout-First-Light.mp4),
+  [Split Signal puzzle](Blackout-Split-Signal.mp4),
+  [Hangar](Hangar-Motion.mp4) and [Tech Tree](Tech-Tree-Motion.mp4).
 
-The maintained dimensional preservation check protects rules, save/economy/input methods, scene assets and audio identities. The historical Build 7 verifier predates later sound/world hooks and is not the current 3D preservation contract.
+These are actual Unity Editor camera captures using disposable QA saves, not
+phone recordings or App Store preview submissions. Galleries contain the source
+frames without stretching or repainting. Flight/Home clips are sampled at 10 FPS
+in simulation time; Hangar, tree and puzzle clips use 30 FPS capture sequences.
+Encoding or capture rate does not establish device performance.
 
-The coverage bake retains connected bird/feather/exhaust components and excludes detached sheet remnants. Hit/unlock particles remain authored. Geometry is prepared in Unity's player loop; loaders queue it because the tested runtime rejects overriding sprite geometry during Awake/Editor callbacks.
+## Evidence and remaining acceptance
 
-## Shared visual test
+`QA_RECORD.json` identifies the exact source, completed automated checks and their
+scope. Source manifests distinguish the full regression run from any subsequent
+focused visual checks. Earlier preview batches and single-change warning records
+are superseded; do not combine old evidence with the current source.
 
-1. Enter Play in Assets/Scenes/SkyPulse.unity after compilation. Use portrait Game view or the iOS Device Simulator.
-2. Check all three Homes: clear primary action, complete safe-area layout, distinct mode equipment and smooth animation.
-3. Endless: moving bird/trail, readable pipes and clean cap joins, distinct worlds and smooth transitions.
-4. Relay: coherent station/floor/bridges behind crystals/gates, one tap/one flap, automatic unlocking and pause/retry.
-5. Hangar: browse controls and swipe, trait values, equip/train/breed confirmations; check wing-down poses for detached blue fragments.
-6. Tech Tree: free drag, CORE/NEXT locators, identifiable levels, exact price/confirmation, interruptible focus and Reduced Motion.
-7. Close/reopen to check progress, then perform sustained iPhone FPS/memory/thermal checks on a newly installed candidate.
+The maintained preservation check covers protected gameplay, input, save and
+economy methods. Editor compilation stops active SkyPulse Play before domain
+reload; wait for compilation and start a fresh session. No owner save reset is
+part of this pass.
 
-If scripts change during Play, the Editor stops safely. Let compilation finish and press Play again. Saves/settings are not reset.
+Physical iPhone visual acceptance, one-thumb comfort, sustained frame times,
+memory and thermals remain pending on a newly built candidate. Check all three
+Homes, all twelve world transitions, original bird flap poses, pipe joins/LEDs,
+Relay charge/passages, Blackout rapid taps/progression, pause/retry, Reduced
+Motion and saved progress. These local checks cannot guarantee Apple acceptance.
 
-Public App Review remains on hold pending Apple's clarification and renewed authorization.
+## Edit the models
+
+Open a named scene under `Assets/Editor/SkyPulsePipeWorkshop/Scenes`. Expand
+`Barrel` or `Collar` → `Structural details · v1`, edit the individual objects,
+save, then use **Bake this pipe theme into gameplay** on the assembly root.
+Keep the physical bezel and bore aligned with the inclined mouth. Workshop Play
+is inspection only; return to `Assets/Scenes/SkyPulse.unity` for gameplay.
+See [the editing guide](../../EDITING_GUIDE.md) for world and pipe workflows.

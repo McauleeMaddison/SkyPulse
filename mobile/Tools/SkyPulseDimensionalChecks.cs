@@ -18,7 +18,7 @@ public static class SkyPulseDimensionalChecks
     static object Call(object o,string n,params object[] args)=>o.GetType().GetMethod(n,F).Invoke(o,args);
     static void Check(bool ok,string s){if(!ok)throw new Exception(s);Debug.Log("DIMENSIONAL_CHECK: "+s);}
     static SkyPulseDimensionalChecks(){EditorApplication.update+=Tick;}
-    public static void Run(){if(Application.companyName!="SkyPulseQA20261006")throw new Exception("Isolated QA only");PlayerPrefs.DeleteAll();PlayerPrefs.Save();SessionState.SetBool("DimensionalQa",true);EditorApplication.EnterPlaymode();}
+    public static void Run(){if(Application.companyName!="SkyPulseQA20261006")throw new Exception("Isolated QA only");UnityEditor.SceneManagement.EditorSceneManager.OpenScene("Assets/Scenes/SkyPulse.unity");PlayerPrefs.DeleteAll();PlayerPrefs.Save();SessionState.SetBool("DimensionalQa",true);EditorApplication.EnterPlaymode();}
     static void Tick()
     {
         if(!SessionState.GetBool("DimensionalQa",false)||!EditorApplication.isPlaying)return;
@@ -37,6 +37,7 @@ public static class SkyPulseDimensionalChecks
         yield return SkyPulseTouchComfortChecks.Live(game);
         yield return Environment(game);
         SkyPulseConstructedWorldChecks.StationCheck(game);
+        yield return SkyPulsePlanetPresentationChecks.Live(game);
         yield return SkyPulsePipeFinishChecks.Live(game);
         SkyPulseMissionChecks.IntegrationChecks(game);
         yield return SkyPulseOneThumbChecks.Live(game);
@@ -109,13 +110,14 @@ public static class SkyPulseDimensionalChecks
         Call(game,"StartFlight");play((AudioClip)Get(game,"flapSound"));Call(game,"PauseFlight");Check(voices.All(v=>!v.isPlaying),"Pause immediately stops audio tails");Call(game,"ResumeFlight");
         play((AudioClip)Get(game,"unlockSound"));Call(game,"OnApplicationFocus",false);Check(voices.All(v=>!v.isPlaying),"Focus loss stops audio");Call(game,"ResetToMenu");
         var fallback=typeof(SkyPulseNativeGame).GetMethod("LoadAudioCue",BindingFlags.Static|BindingFlags.NonPublic);
-        var score=(AudioClip)Get(game,"scoreSound");Check(fallback.Invoke(null,new object[]{"missing-test-cue",score})==score,"Absent optional sound safely falls back to an existing clip");
+        var score=(AudioClip)Get(game,"scoreSound");Check((AudioClip)fallback.Invoke(null,new object[]{"missing-test-cue",score})==score,"Absent optional sound safely falls back to an existing clip");
         Debug.Log("SKYPULSE_DIMENSIONAL_AUDIO_PASS");yield return null;
     }
     public static IEnumerator Environment(SkyPulseNativeGame game)
     {
         Call(game,"SetHomeProtocol",SkyPulseMode.EndlessRoute);Call(game,"StartFlight");Call(game,"UpdateCinematicPresentation",1f);
         var env=(SkyPulseFlightEnvironment)Get(game,"flightEnvironment");var camera=(Camera)Get(game,"flightCamera");
+        Check((float)Get(game,"sceneryEntry")==1,"Home-to-flight starts with a solid inhabited city instead of a stippled entry fade");
         Check(env!=null&&env.WorldScene.GetComponentsInChildren<MeshRenderer>(true).Length==33,"Active flight uses two district banks, eight pooled distant-atmosphere surfaces and one sky dome");
         Check(!((SpriteRenderer)Get(game,"backgroundRenderer")).enabled&&!((SpriteRenderer)Get(game,"incomingBackground")).enabled&&!((SpriteRenderer)Get(game,"backgroundVeil")).enabled,"Endless displays its constructed world instead of the flat city images");
         Check(camera.orthographic&&camera.transform.position==new Vector3(0,0,-10)&&camera.nearClipPlane<1&&camera.farClipPlane>30,"Original orthographic camera contains the architecture depth range");
@@ -137,24 +139,27 @@ public static class SkyPulseDimensionalChecks
         foreach(int fps in new[]{30,60,120})
         {
             env.ResetView();for(int frame=0;frame<=fps;frame++)env.Present(0,frame*4f/fps,frame/(float)fps,1,Color.cyan,Color.black,false);
-            var transforms=(Transform[,])Get(env,"scenery");var expected=transforms[1,7].localPosition;
-            env.Present(0,4,1,1,Color.cyan,Color.black,false);Check((expected-transforms[1,7].localPosition).sqrMagnitude<.000001f,"Absolute-distance parallax agrees at "+fps+" FPS");
+            var transforms=(Transform[,])Get(env,"scenery");var expected=transforms[1,5].localPosition;
+            env.Present(0,4,1,1,Color.cyan,Color.black,false);Check((expected-transforms[1,5].localPosition).sqrMagnitude<.000001f,"Absolute-distance parallax agrees at "+fps+" FPS");
         }
-        var items=(Transform[,])Get(env,"scenery");env.Present(0,20,4,1,Color.cyan,Color.black,true);var reduced=items[1,7].localPosition;env.Present(0,30,8,1,Color.cyan,Color.black,true);Check(reduced==items[1,7].localPosition,"Reduced Motion freezes scenery travel and idle drift");
+        var items=(Transform[,])Get(env,"scenery");env.Present(0,20,4,1,Color.cyan,Color.black,true);var reduced=items[1,5].localPosition;env.Present(0,30,8,1,Color.cyan,Color.black,true);Check(reduced==items[1,5].localPosition,"Reduced Motion freezes scenery travel and idle drift");
         Check(((Material[])Get(env,"surfaces"))[1].GetFloat("_Clock")==0,"Reduced Motion also freezes occupied-window and architectural lighting");
-        Check(items[1,7].localPosition.z!=items[1,1].localPosition.z&&items[1,9].localPosition.z!=items[1,7].localPosition.z,"The three city layers occupy distinct physical depths");
+        Check(items.GetLength(0)==2&&items.GetLength(1)==12&&items[1,5].gameObject.activeSelf,"The fixed two-bank twelve-district pool retains an active middle test subject");
+        Check(items[1,1].localPosition.z>items[1,5].localPosition.z&&items[1,5].localPosition.z>items[1,9].localPosition.z,"The active far, middle and near city groups occupy ordered physical depths");
         for(int world=0;world<12;world++)
         {
             env.Present(world,10,1,0,Color.cyan,Color.black,false);env.Present(world,10,1,.5f,Color.cyan,Color.black,false);
             var mats=(Material[])Get(env,"surfaces");Check(Mathf.Abs(mats[1].GetFloat("_Visibility")-.5f)<.001f||world==0,"Incoming geometry follows world dissolve");
             env.Present(world,10,1,1,Color.cyan,Color.black,false);Check(env.CurrentWorld==world,"World signature committed "+world);
+            var occupied=Enumerable.Range(0,12).Select(i=>items[1,i]).Where(t=>t.gameObject.activeSelf).ToArray();Check(occupied.Length==7,"Exactly seven composed incoming districts are active in world "+world);
+            Check(occupied.Select(t=>t.localPosition).Distinct().Count()==7&&occupied.All(t=>t.localPosition.z>=12.5f&&t.localPosition.z<=50.5f),"Composed districts have unique positions within the bounded depth range in world "+world);
         }
         Check(env.CloudNoise==cloudNoise,"World switches reuse the same density texture instead of allocating new volumes");
         env.Present(0,10,1,1,Color.cyan,Color.black,false);for(int i=0;i<3;i++)env.Present(0,10,1,1,Color.cyan,Color.black,false);
         long before=GC.GetAllocatedBytesForCurrentThread();for(int i=0;i<120;i++)env.Present(0,i/30f,i/60f,1,Color.cyan,Color.black,false);Check(GC.GetAllocatedBytesForCurrentThread()==before,"Warmed architecture update has zero managed allocations");
         yield return RenderEnvironment(game,env,camera);
-        Call(game,"PauseFlight");var frozen=items[1,7].localPosition;float frozenLight=((Material[])Get(env,"surfaces"))[1].GetFloat("_Clock");Call(game,"UpdateCinematicPresentation",1f);Check(frozen==items[1,7].localPosition,"Pause freezes flight scenery");Check(((Material[])Get(env,"surfaces"))[1].GetFloat("_Clock")==frozenLight,"Pause freezes window-light animation");Call(game,"ResumeFlight");
-        Call(game,"ResetToMenu");Call(game,"StartFlight");Call(game,"UpdateCinematicPresentation",0f);Check(env.Travel==0,"Retry resets scenery distance");
+        Call(game,"PauseFlight");var frozen=items[1,5].localPosition;float frozenLight=((Material[])Get(env,"surfaces"))[1].GetFloat("_Clock");Call(game,"UpdateCinematicPresentation",1f);Check(frozen==items[1,5].localPosition,"Pause freezes flight scenery");Check(((Material[])Get(env,"surfaces"))[1].GetFloat("_Clock")==frozenLight,"Pause freezes window-light animation");Call(game,"ResumeFlight");
+        Call(game,"ResetToMenu");Call(game,"StartFlight");Call(game,"UpdateCinematicPresentation",0f);Check(env.Travel==0,"Retry resets scenery distance");Check((float)Get(game,"sceneryEntry")==1,"Retry retains solid scenery while resetting travel");
         Call(game,"SetHomeProtocol",SkyPulseMode.PulseRelay);Call(game,"ResetToMenu");
         var home=(GameObject)Get(game,"homeScreen");var map=(Button)Get(game,"modeHomeMap");var guide=(Button)Get(game,"modeHomeGuide");var hangar=(RectTransform)Get(game,"homeHangar");
         Check(((RectTransform)map.transform).anchoredPosition.y==hangar.anchoredPosition.y&&((RectTransform)guide.transform).anchoredPosition.y==hangar.anchoredPosition.y,"Relay secondary actions occupy one calm row");

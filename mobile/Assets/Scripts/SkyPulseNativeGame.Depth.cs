@@ -61,10 +61,9 @@ namespace SkyPulse.Mobile
             for(int i=0;i<routeDepth.Count;i++)
             {
                 var visual=routeDepth[i];var surface=visual.Surface;visual.Body.gameObject.SetActive(show);visual.Cap.gameObject.SetActive(show);if(!show)continue;
-                // The collar's alpha silhouette curves upward at its shoulders.
-                // A fixed .04 overlap left daylight beside the shaft. Seat the
-                // shaft inside the solid lower wall, short of the open lip.
-                // This reads collision shapes; it never changes them.
+                // Seat the shaft inside the hollow collar's solid lower wall,
+                // below the open lip. The model follows the existing collision
+                // anchors without changing their dimensions.
                 var body=surface.BodyCollider;var cap=surface.CapCollider;
                 var bodyCentre=body.transform.localPosition+new Vector3(body.offset.x,body.offset.y,.10f);
                 var capCentre=cap.transform.localPosition+new Vector3(cap.offset.x,cap.offset.y,.10f);
@@ -99,8 +98,9 @@ namespace SkyPulse.Mobile
         Mesh RouteThemeMesh(Mesh authored,int world,bool cap)
         {
             if(authored==null)return SkyPulseRouteArchitecture.Build(world,cap);
-            var copy=Instantiate(authored);var enriched=SkyPulseRouteArchitecture.Enrich(copy,world,cap);
-            if(enriched!=copy)Destroy(copy);return enriched;
+            // Baked Unity assemblies are authoritative. Do not append generated
+            // hardware here: the owner may deliberately hide or remove a part.
+            return Instantiate(authored);
         }
         Material OriginalRouteMaterial(Sprite artwork,string label,bool cutout=false)
         {
@@ -109,7 +109,6 @@ namespace SkyPulse.Mobile
             var rect=artwork.rect;var texture=artwork.texture;
             material.mainTexture=texture;material.SetVector("_ArtRect",new Vector4(rect.x/texture.width,rect.y/texture.height,rect.width/texture.width,rect.height/texture.height));return material;
         }
-        Mesh RouteCylinder(bool cap)=>SkyPulseRouteArchitecture.Build(0,cap);
         void OnDestroy()
         {
             if(scoreGlassMaterial!=null)Destroy(scoreGlassMaterial);

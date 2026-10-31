@@ -22,36 +22,36 @@ Shader "SkyPulse/Constructed World Atmosphere"
                 float3 a=floor(p),f=frac(p);f=f*f*(3-2*f);
                 return lerp(lerp(lerp(hash(a),hash(a+float3(1,0,0)),f.x),lerp(hash(a+float3(0,1,0)),hash(a+float3(1,1,0)),f.x),f.y),lerp(lerp(hash(a+float3(0,0,1)),hash(a+float3(1,0,1)),f.x),lerp(hash(a+float3(0,1,1)),hash(a+1),f.x),f.y),f.z);
             }
+            void palette(float world,out float3 zenith,out float3 middle,out float3 shadow,out float3 light,out float3 glow);
             float3 cloudVolume(float3 ray,float3 behind)
             {
-                // A finite slab below the inhabited city, evaluated once after
-                // the sky palettes blend. The upper cosmos has no volume work.
-                if(ray.y>=-.075)return behind;
-                const float top=-1,bottom=-12,originHeight=6.4,maxDistance=96;
+                // Three sparse samples through a real distant volume, below
+                // the city. Air remains transparent: no neutral cloud floor.
+                // Upper cosmos rays do no density sampling at all.
+                if(ray.y>=-.12)return behind;
+                const float top=-3,bottom=-18,originHeight=6.4,maxDistance=96;
                 float start=max(0,(top-originHeight)/ray.y);
                 float finish=min(maxDistance,(bottom-originHeight)/ray.y);
                 if(finish<=start)return behind;
-                float stepLength=(finish-start)*.125;
-                float3 origin=float3(0,originHeight,0),wind=float3(_Clock*.00042,0,_Clock*.00013);
-                float3 shadow=lerp(float3(.13,.19,.29),max(_Haze.rgb,float3(.08,.12,.21)),.18);
-                float3 lit=lerp(float3(.76,.83,.93),max(_Tint.rgb,float3(.40,.48,.60)),.18);
+                float3 za,ma,sa,la,ga,zb,mb,sb,lb,gb;
+                palette(_WorldA,za,ma,sa,la,ga);palette(_WorldB,zb,mb,sb,lb,gb);
+                float blend=saturate(_Blend);
+                float3 shadow=lerp(sa,sb,blend)*.75+behind*.35;
+                float3 lit=lerp(la,lb,blend)*.72+lerp(ga,gb,blend)*.14+behind*.28;
+                float stepLength=(finish-start)/3;
+                float3 origin=float3(0,originHeight,0),wind=float3(_Clock*.00032,0,_Clock*.00011);
                 float transmittance=1;float3 scattering=0;
-                [unroll] for(int stepIndex=0;stepIndex<8;stepIndex++)
+                [unroll] for(int stepIndex=0;stepIndex<3;stepIndex++)
                 {
-                    float3 sampleAt=origin+ray*(start+(stepIndex+.45)*stepLength);
-                    float3 uv=sampleAt*.0105+float3(.17,.43,.29)+wind;
+                    float3 sampleAt=origin+ray*(start+(stepIndex+.5)*stepLength);
+                    float3 uv=sampleAt*.009+float3(.17,.43,.29)+wind;
                     float coarse=tex3Dlod(_CloudNoise,float4(uv,0)).r;
-                    float fine=tex3Dlod(_CloudNoise,float4(uv*4.27+float3(.37,.11,.61),0)).r;
+                    float fine=tex3Dlod(_CloudNoise,float4(uv*3.17+float3(.37,.11,.61),0)).r;
                     float height=saturate((sampleAt.y-bottom)/(top-bottom));
-                    float envelope=smoothstep(0,.23,height)*(1-smoothstep(.62,1,height));
-                    float density=smoothstep(.49,.68,coarse*.68+fine*.32)*envelope;
-                    // One upper-light probe supplies self-shadowing. This is a
-                    // bounded 8-step volume, not a second shadow raymarch.
-                    float upper=tex3Dlod(_CloudNoise,float4(uv+float3(-.022,.075,-.028),0)).r;
-                    float sunlight=saturate(.55+(coarse-upper)*2.3);
-                    float illumination=saturate(.29+sunlight*.48+height*.16);
-                    float3 colour=lerp(shadow,lit,illumination);
-                    float opacity=1-exp2(-density*min(stepLength,4)*.28);
+                    float envelope=smoothstep(0,.28,height)*(1-smoothstep(.60,1,height));
+                    float density=smoothstep(.43,.68,coarse*.76+fine*.24)*envelope;
+                    float3 colour=lerp(shadow,lit,saturate(height*.75+.18+coarse*.14));
+                    float opacity=1-exp2(-density*min(stepLength,8)*.10);
                     scattering+=colour*(transmittance*opacity);
                     transmittance*=1-opacity;
                 }
@@ -90,7 +90,8 @@ Shader "SkyPulse/Constructed World Atmosphere"
             // rather than sliding through unrelated intermediate colour themes.
             void palette(float world,out float3 zenith,out float3 middle,out float3 shadow,out float3 light,out float3 glow)
             {
-                if(world<1.5){zenith=float3(.012,.032,.12);middle=float3(.045,.18,.28);shadow=float3(.035,.105,.17);light=float3(.30,.67,.68);glow=float3(.12,.88,.65);}
+                if(world<.5){zenith=float3(.012,.020,.10);middle=float3(.035,.070,.22);shadow=float3(.045,.035,.12);light=float3(.38,.28,.68);glow=float3(.34,.34,.96);}
+                else if(world<1.5){zenith=float3(.012,.032,.12);middle=float3(.045,.18,.28);shadow=float3(.035,.105,.17);light=float3(.30,.67,.68);glow=float3(.12,.88,.65);}
                 else if(world<2.5){zenith=float3(.025,.025,.10);middle=float3(.21,.09,.18);shadow=float3(.16,.07,.14);light=float3(.84,.40,.19);glow=float3(1,.53,.17);}
                 else if(world<3.5){zenith=float3(.009,.027,.10);middle=float3(.02,.12,.24);shadow=float3(.022,.074,.14);light=float3(.17,.46,.59);glow=float3(.06,.58,.87);}
                 else if(world<4.5){zenith=float3(.040,.020,.12);middle=float3(.25,.075,.23);shadow=float3(.15,.05,.16);light=float3(.75,.32,.47);glow=float3(1,.36,.60);}

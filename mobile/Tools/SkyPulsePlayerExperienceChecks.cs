@@ -33,10 +33,10 @@ public static class SkyPulsePlayerExperienceChecks
     }
     static void Save(Camera camera,RenderTexture rt,string file)
     {
-        foreach(var b in UnityEngine.Object.FindObjectsByType<SkyPulseHeistBoard>(FindObjectsSortMode.None))b.Render();
-        foreach(var s in UnityEngine.Object.FindObjectsByType<SkyPulseDepthStage>(FindObjectsSortMode.None))s.Render();
-        foreach(var t in UnityEngine.Object.FindObjectsByType<SkyPulseTechTreeView>(FindObjectsSortMode.None))t.Render();
-        foreach(var s in UnityEngine.Object.FindObjectsByType<SkyPulseProgressionStage>(FindObjectsSortMode.None))s.Render();
+        foreach(var b in UnityEngine.Object.FindObjectsByType<SkyPulseHeistBoard>())b.Render();
+        foreach(var s in UnityEngine.Object.FindObjectsByType<SkyPulseDepthStage>())s.Render();
+        foreach(var t in UnityEngine.Object.FindObjectsByType<SkyPulseTechTreeView>())t.Render();
+        foreach(var s in UnityEngine.Object.FindObjectsByType<SkyPulseProgressionStage>())s.Render();
         camera.Render();var previous=RenderTexture.active;RenderTexture.active=rt;
         var image=new Texture2D(rt.width,rt.height,TextureFormat.RGB24,false);image.ReadPixels(new Rect(0,0,rt.width,rt.height),0,0);image.Apply();
         File.WriteAllBytes(file,image.EncodeToPNG());UnityEngine.Object.Destroy(image);RenderTexture.active=previous;
