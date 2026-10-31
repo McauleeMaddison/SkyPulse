@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e2bfc6c037449fe93278ea1b74e1716, type: 3}
+  m_Name: world-04-residential-lighting
+  m_EditorClassIdentifier: Assembly-CSharp::SkyPulse.Mobile.SkyPulseBackgroundLighting
+  Points:
+  - {x: -1.2663451, y: -0.6588336, z: -0.8337998, w: 0.14}
+  - {x: -0.5904276, y: -1.0225862, z: -1.015903, w: 0.105}
+  - {x: 0.09368384, y: -0.8022644, z: -1.2797638, w: 0.165}
+  - {x: 0.7470351, y: -0.97426504, z: -0.9765847, w: 0.105}
+  - {x: 1.3788571, y: -0.7055278, z: -0.8539794, w: 0.14}
+  Colours:
+  - {x: 1, y: 0.37, z: 0.62, w: 1}
+  - {x: 1, y: 0.78, z: 0.44, w: 1}
+  - {x: 1, y: 0.37, z: 0.62, w: 1}
+  - {x: 1, y: 0.37, z: 0.62, w: 1}
+  - {x: 1, y: 0.78, z: 0.44, w: 1}

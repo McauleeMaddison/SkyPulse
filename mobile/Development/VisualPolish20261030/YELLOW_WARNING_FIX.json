@@ -1,8 +1,0 @@
-{
-  "result": "PASS",
-  "date": "2026-10-31",
-  "runtime": "Unity6.6 bird image query uses current unsorted API",
-  "qa": "15 deprecated test API sites and explicit AudioClip assertion cast corrected",
-  "finalCompilationWarnings": 0,
-  "noWarningsSuppressed": true
-}

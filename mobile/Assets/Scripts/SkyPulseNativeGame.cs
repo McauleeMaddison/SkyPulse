@@ -5610,8 +5610,8 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             var installed = 0;
             var capacity = 0;
             foreach (var upgrade in Upgrades) { installed += GetUpgradeLevel(upgrade.Id); capacity += upgrade.MaxLevel; }
-            if (menuHangarProgressText != null) menuHangarProgressText.text = $"{owned} / {BirdRoster.Length} BIRDS OWNED";
-            if (menuTechProgressText != null) menuTechProgressText.text = $"{installed} / {capacity} TECH LEVELS";
+            if (menuHangarProgressText != null) menuHangarProgressText.text = $"{owned} / {BirdRoster.Length} OWNED";
+            if (menuTechProgressText != null) menuTechProgressText.text = $"{installed} / {capacity} LEVELS";
             if (hudModeText != null)
             {
                 hudModeText.text = RouteWorldName(routeWorldIndex);
@@ -5702,7 +5702,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             // impacts earn a single crisp pulse without rapid-fire vibration.
             if (!hapticsEnabled || Time.unscaledTime < hapticCooldownUntil) return;
             hapticCooldownUntil = Time.unscaledTime + cooldown;
-            Handheld.Vibrate();
+            SkyPulseTactileFeedback.Pulse(state == FlightState.Impact);
 #endif
         }
 

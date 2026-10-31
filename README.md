@@ -1,56 +1,78 @@
 # SkyPulse Arcade
 
-> **Constructed-world revision, 23 October:** [Live 3D Endless world and revised mode Homes](mobile/Development/ConstructedWorld20261023/README.md). A separate perspective camera renders actual buildings, skyways, a dome and moon behind the unchanged flight camera. Fresh moving previews and validation are included; this local revision is not installed or uploaded.
+Open `mobile/` in Unity Hub and the **SkyPulse** repository in VS Code. Start with
+[the editing guide](mobile/EDITING_GUIDE.md) for the actual game and model scenes,
+code map and preservation rules. [The handoff](mobile/MANUAL_HANDOFF.md) records
+the installed build and the work awaiting review.
 
-> **23 October development update:** [Fresh moving previews of all three modes, updated How to Play and copy-audit results](mobile/Development/OrbitalPolish20261023/README.md). Curved skyline meshes, rounded Relay objects and a pooled 3D deck accompany Blackout's visible city-restoration objective. Score/results cards now share a holographic glass finish; How to Play covers the current modes and progression. The complete local candidate is built for visual review; phone acceptance remains open.
+**Installed on the paired iPhone: version 1.0.0, build 19**, from source
+`f6221f68314a864b898a7c7bbe9693bb528316e2`. It was installed directly; build 17 was
+last observed in TestFlight. Follow [the current release record](mobile/Release/CURRENT_RELEASE.json)
+for its build, QA and device checklist. Owner device acceptance remains open.
 
-> **Installed local candidate: build 18, source `6692cd6` (23 October).** The [pipe, LED, scenery and retry-feedback repairs](mobile/Development/PipeFinish20261022/README.md) were rebuilt, signed, installed and launched on the iPhone. **The owner reported an issue; device acceptance remains open.** [Native build evidence and remaining checks](mobile/Development/LocalDevice20261023/README.md). The [Relay and Signal Heist previews](mobile/Development/PhoneReference20261022/README.md) are actual Unity renders from the earlier installed source `f71eb7d`, not new phone footage. The old 12 October prototype is archived. Build 17 was last verified in internal TestFlight; local build 18 has not been uploaded.
+**Newer local source: [31 October design candidate](mobile/Development/DesignUpgrade20261031/README.md).**
+This includes world and Relay presentation, Home labels, Hangar and Tech Tree
+finishes, and native tactile feedback work. It has not been installed or uploaded.
+Its source manifests and dated checks apply to that local candidate, not the
+installed build. The separate Neon Finch 3D workshop is an art-review prototype;
+review the current head revision before any further bird or roster work. Gameplay
+continues to use the original articulated bird artwork.
 
-For manual work in Unity and VS Code, start with the [handoff guide and checklist prompt](mobile/MANUAL_HANDOFF.md) and [editing map](mobile/EDITING_GUIDE.md).
+**Public App Review remains on hold** pending Apple's clarification, current
+device/media validation and renewed owner authorization. Local compilation and
+Editor previews do not establish phone performance or release acceptance.
+[Review status](mobile/Release/REVIEW_STATUS.md).
 
-> **App Review hold:** public submission remains on hold pending Apple's clarification, current device/media validation and renewed owner authorization. Candidate copy is prepared locally; the public draft is not a matching build 18 submission. [Review status](mobile/Release/REVIEW_STATUS.md).
+## Play and edit
 
-## Project layout
+1. Open `mobile/Assets/Scenes/SkyPulse.unity`, select a portrait Game view and press Play.
+2. Home starts on Endless Route. Tap the top-left mode badge to select Endless,
+   Pulse Relay or Blackout, then press **PLAY**. Flight uses tap, Space or Up Arrow;
+   pause uses the screen control, Escape or P. **HOW TO PLAY** covers the modes,
+   progression and world map.
+3. Use the [editing guide's scene map](mobile/EDITING_GUIDE.md#open-the-right-scene)
+   for worlds, atmosphere, Relay, pipes and Finch. Workshop Play inspects models;
+   gameplay starts from `SkyPulse.unity`.
 
-- `mobile/Assets/Scripts/`: game loop, UI glyphs, button feedback, tap handling, bootstrap and public links.
-- `mobile/Assets/Resources/`: runtime artwork, seven authored sound effects, bird registration data and privacy/support URLs.
-- `mobile/Assets/Editor/`: art import tools, playtest checklist and iOS release/export setup.
-- `mobile/Assets/Scenes/`: the shipping `SkyPulse.unity` scene.
+Endless keeps fixed handling for all 15 catalogue birds. Each passed gate awards
+one point. Its twelve worlds change every 15 gates: Neon City, Aurora Rise,
+Solar Drift, Midnight Tide, Velvet Dawn, Crystal Night, Jade Horizon, Violet Rain,
+Eclipse, Cobalt Storm, Amber Skies and Polar Glow; Neon City returns at score 180.
+Crystals bank during the run. Nine upgrade families have three connected level
+branches; temporary pickups provide Aegis, Time Pulse and Crystal Magnet.
+
+Pulse Relay has four finite circuits refreshed each UTC day; crystals open the
+matching gates automatically. Blackout has eight authored Signal Heist vaults,
+immediate optical rotation and instant intermediate progression. Their medals
+and completion data remain separate from the Endless best. Mission Control has
+four UTC-day tasks worth five crystals each, with journaled claim recovery.
+Training, Core and breeding rules and prices are documented in the editing guide.
+Reduced Motion freezes ambient effects. Existing save identifiers and migration
+paths must remain stable. There are no logins, ads, analytics or real-money purchases.
+
+## Project folders
+
+- `mobile/Assets/`: editable Unity scenes, scripts, workshop models and runtime resources.
 - `mobile/Packages/` and `mobile/ProjectSettings/`: reproducible Unity configuration.
-- `mobile/Tools/`: isolated QA harnesses and artwork checks; excluded from the shipping player.
-- `mobile/Release/`: App Review drafts, release evidence and historical design/provenance notes. Start with `REVIEW_STATUS.md` for the current review status; older verification applies only to its recorded build.
-- `public-site/`: separately versioned privacy/support website, ignored by this game's Git repository.
-- `artifacts/`: ignored local test captures and signed archives. Preserve archives and dSYMs for release diagnosis.
+- `mobile/Tools/`: isolated QA tools, excluded from the normal player.
+- `mobile/Development/DesignUpgrade20261031/`: current local previews and source-specific evidence.
+- `mobile/Release/`: installed-build records, release drafts and historical provenance.
+- `public-site/`: separately versioned privacy/support website, ignored by the game repository.
+- `artifacts/`: ignored local captures and archives; preserve release archives, symbols and owner evidence.
 
-The retired browser prototype and its root-level assets have been removed. Runtime assets belong inside the Unity project. Generated `Library`, `Builds`, `Logs`, `Temp` and `UserSettings` folders are ignored; Xcode exports are snapshots, not editable game source.
+Unity caches, logs and Xcode exports are generated outputs. Existing `.meta` files
+retain asset identities even when hidden in VS Code Explorer.
 
-## Play
+## Check a change
 
-1. Add `mobile/` in Unity Hub and open `Assets/Scenes/SkyPulse.unity`.
-2. Press Play and use a portrait Game view.
-3. Home starts on Endless Route. Tap its top-left badge to expand the three free modes, select one, then press **PLAY**. Flight uses tap/Space/Up Arrow; Relay crystals automatically open matching gates. Blackout uses immediate mirror/splitter rotation taps to power every core and the uplink. Use the pause control or Escape/P to pause. Open **HOW TO PLAY** for mode controls and, in Endless, Tech Tree, Core, training, breeding and the Worlds & Power-ups map.
-4. Open Bird Hangar to unlock cosmetic birds, or Tech Tree to explore the connected hologram by dragging in any direction and spend earned crystals.
+Follow [Check an edit](mobile/EDITING_GUIDE.md#check-an-edit) and
+[VISUAL_SMOKE.md](mobile/Tools/VISUAL_SMOKE.md). Run save-resetting QA helpers only
+in their disposable QA project. Useful read-only checks include
+`python3 mobile/Tools/check_player_copy.py` and
+`python3 mobile/Tools/verify_bird_registration.py`.
 
-Endless Route retains fixed handling for all 15 birds. Each passed gate awards one point. Neon City starts the run, Aurora Rise begins at score 15 and Solar Drift at 30; the route continues through Midnight Tide (45), Velvet Dawn (60), Crystal Night (75), Jade Horizon (90), Violet Rain (105), Eclipse (120), Cobalt Storm (135), Amber Skies (150) and Polar Glow (165), returning to Neon City at 180. Worlds change every 15 gates with the existing capped difficulty. The Worlds & Power-ups guide previews all 12 across four pages. Crystals bank during the run. Nine upgrade families, each with three connected level branches, affect collection/rewards, while three temporary pickups provide Aegis, Time Pulse and Crystal Magnet. No login, ads, analytics or real-money purchases are used.
-
-Pulse Relay offers four finite circuits refreshed each UTC day; Blackout Protocol has eight authored Signal Heist optical vaults with increasing trace costs and instant progression. Their separate medals and completion data never replace the Endless best. Mission Control tracks four UTC-day tasks worth five crystals each, up to 20 per period, with journaled claim recovery. Home changes its cinematic/circuit/terminal theme with the selected mode during the session; new launches begin on Endless. Relay uses actual 3D mesh hoops during flight, keeps its cinematic Home artwork, and Blackout uses a raised 3D optical console and a suspended data core. The old flat tile-walking implementation and disconnected upgrade-card renderer have been removed. Reduced Motion freezes ambient effects.
-
-Saved scores, crystals, owned birds, upgrade levels and preferences retain their existing keys and migration paths. New mode, daily and Home-protocol data uses separate versioned keys.
-
-## Verify changes
-
-Run `python3 mobile/Tools/check_release_metadata.py --online --require-build 18` for the current listing, identity, links and exact candidate source checks, `python3 mobile/Tools/test_release_metadata.py` for stale-copy guards, and `python3 mobile/Tools/check_artwork_ledger.py` for complete current image/hash coverage. Update `CURRENT_RELEASE.json` and matching evidence when a future candidate changes; historical metadata must be selected explicitly with `--metadata`. These checks do not certify exclusive rights or Apple's private comparison.
-
-Run `python3 mobile/Tools/check_player_copy.py` for unfinished player-copy guards.
-`run_dimensional_qa.py` also checks visible UI copy; its helpers run only in the
-isolated QA product. See the development report above for the current candidate's
-recorded checks; the canonical release record still requires a deliberate update
-after device acceptance.
-
-Run `python3 mobile/Tools/verify_bird_registration.py` to validate all 90 flight frames. For gameplay, persistence, purchases, scrolling and safe-area checks, follow `mobile/Tools/VISUAL_SMOKE.md`; run those harnesses only in an isolated QA project, because they reset the QA save. Use **SkyPulse → Playtest Checklist** for manual testing.
-
-The 29 September audit and world expansion are documented in [APPLE_4_3A_AUDIT.md](APPLE_4_3A_AUDIT.md) and [WorldExpansion/RELEASE_NOTES.md](mobile/Release/WorldExpansion/RELEASE_NOTES.md). They require a fresh candidate and device verification; the preserved build 6 does not contain this expansion.
-
-## Prepare a release
-
-Configure the iPhone and iPad release through **SkyPulse → Release**. Set an unused iOS build number and signing team, check the configured privacy/support pages, then export **App Store Candidate** into a fresh folder. Build and test that exported candidate on a physical iPhone before archiving and submitting it through Xcode/App Store Connect. Local checks do not establish App Review acceptance.
+The installed release contract still describes build 19. New source changes need
+fresh source-specific QA and a signed candidate tested on physical devices before
+updating that contract. Keep App Review submission on hold; local tests cannot
+promise Apple acceptance. The earlier [4.3(a) audit](APPLE_4_3A_AUDIT.md) and
+release folders apply only to their recorded sources and builds.

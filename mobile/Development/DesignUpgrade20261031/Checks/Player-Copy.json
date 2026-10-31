@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "sourceFiles": 58,
+  "resourceJsonFiles": 4,
+  "stringsChecked": 3325,
+  "negativeControlsPassed": 5,
+  "legitimateCopyControlsPassed": 4,
+  "findings": [],
+  "limitations": [
+    "Does not certify typography, image text, every possible dynamic state or future edits."
+  ]
+}

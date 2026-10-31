@@ -101,6 +101,7 @@ namespace SkyPulse.Mobile
             modeHomeGuide=MissionButton(homeScreen.transform,"HOW TO PLAY",0,-694,660,OpenModeGuide,Hex("#8fa7c4"),96);
             modeGuideScreen=MissionScreen("Mode field guide");
             modeHomeMap.gameObject.SetActive(false);modeHomeGuide.gameObject.SetActive(false);
+            SetupHomeActionProgress();
         }
         int HomeNextMission()
         {
@@ -117,9 +118,6 @@ namespace SkyPulse.Mobile
             if(modeHomeMap==null)return;
             bool endless=homeProtocol==SkyPulseMode.EndlessRoute,relay=homeProtocol==SkyPulseMode.PulseRelay;
             homeHangar.gameObject.SetActive(endless||relay);homeTech.SetActive(endless);homeWorldGuide.SetActive(false);
-            menuHangarProgressText.gameObject.SetActive(endless||relay);menuTechProgressText.gameObject.SetActive(endless);
-            homeHangar.anchoredPosition=endless?new Vector2(-187,-355):new Vector2(0,-507);
-            menuHangarProgressText.rectTransform.anchoredPosition=endless?new Vector2(-187,-436):new Vector2(0,-589);
             menuCrystalText.transform.parent.gameObject.SetActive(endless||relay);
             modeHomeMap.gameObject.SetActive(!endless);modeHomeGuide.gameObject.SetActive(true);
             // Instructions live in the guide. Home keeps identity, progress and
@@ -143,16 +141,12 @@ namespace SkyPulse.Mobile
             else{menuEquippedText.text="SIGNAL HEIST";menuRouteText.text=completed==8?"NETWORK RESTORED · REPLAY ANY VAULT":SkyPulseBlackoutCampaign.Objective(next).ToUpperInvariant();}
         }
         // One launch action, one secondary row, quiet footer. Changes are restored
-        // explicitly when switching modes; the tested Endless Home stays intact.
+        // explicitly when switching modes; collection cards own their own layout.
         void ApplyRelayHomeRefinement(bool relay)
         {
             var launch=(RectTransform)homeLaunchButton.transform;
             launch.anchoredPosition=new Vector2(0,relay?-220:-165);launch.sizeDelta=new Vector2(620,relay?136:104);
             homeLaunchButton.GetComponentInChildren<Text>().fontSize=relay?32:40;
-            homeHangar.anchoredPosition=relay?new Vector2(0,-440):homeHangar.anchoredPosition;
-            homeHangar.sizeDelta=new Vector2(relay?228:346,relay?144:112);
-            homeHangar.GetComponentInChildren<Text>().text=relay?"YOUR BIRD":"BIRD HANGAR";
-            menuHangarProgressText.gameObject.SetActive(homeProtocol==SkyPulseMode.EndlessRoute);
             menuCrystalText.transform.parent.gameObject.SetActive(homeProtocol==SkyPulseMode.EndlessRoute);
             SetHomeRect(modeHomeMap,relay?new Vector2(-250,-440):new Vector2(0,-355),relay?new Vector2(228,144):new Vector2(720,112));
             SetHomeRect(modeHomeGuide,relay?new Vector2(250,-440):new Vector2(0,-694),relay?new Vector2(228,144):new Vector2(660,96));
@@ -172,6 +166,7 @@ namespace SkyPulse.Mobile
                 var face=button.targetGraphic as SkyPulseCircuitGraphic;
                 if(face!=null){face.rectTransform.sizeDelta=((RectTransform)button.transform).sizeDelta;face.SetVerticesDirty();}
             }
+            ApplyHomeActionProgress();
         }
         static void SetHomeRect(Button button,Vector2 at,Vector2 size){var rect=(RectTransform)button.transform;rect.anchoredPosition=at;rect.sizeDelta=size;}
     }

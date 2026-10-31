@@ -2,6 +2,8 @@ Shader "SkyPulse/Orbital Planet"
 {
     Properties
     {
+        _SurfaceMap("Original geological albedo",2D)="white"{}
+        _SurfaceMapAmount("Authored surface blend",Range(0,1))=0
         _Clock("Presentation clock",Float)=0
         _Kind("Ocean world / crater moon / ice moon",Float)=0
         _Seed("Geological identity",Float)=0
@@ -22,7 +24,7 @@ Shader "SkyPulse/Orbital Planet"
             #pragma fragment frag
             #pragma target 3.0
             #include "UnityCG.cginc"
-            float _Clock,_Kind,_Seed,_Atmosphere;float4 _Deep,_Light,_Rim,_LightDirection;
+            float _Clock,_Kind,_Seed,_Atmosphere,_SurfaceMapAmount;float4 _Deep,_Light,_Rim,_LightDirection;sampler2D _SurfaceMap;
             struct app{float4 vertex:POSITION;};
             struct vary{float4 pos:SV_POSITION;float3 normal:TEXCOORD0;float3 world:TEXCOORD1;float3 local:TEXCOORD2;};
             vary vert(app v)
@@ -41,18 +43,21 @@ Shader "SkyPulse/Orbital Planet"
             {
                 // Circular impact basins with raised lips, not thresholded
                 // noise contours. Longitude wraps so no mesh seam appears.
-                float2 uv=float2(atan2(p.z,p.x)*.15915494+.5,asin(clamp(p.y,-1,1))*.31830989+.5)*float2(19,10);
+                float2 uv=float2(atan2(p.z,p.x)*.15915494+.5,asin(clamp(p.y,-1,1))*.31830989+.5)*float2(17,9);
                 float2 baseCell=floor(uv),local=frac(uv);float relief=0;
                 [unroll] for(int y=-1;y<=1;y++)[unroll] for(int x=-1;x<=1;x++)
                 {
-                    float2 offset=float2(x,y),cell=baseCell+offset;cell.x=fmod(cell.x+19,19);
+                    float2 offset=float2(x,y),cell=baseCell+offset;cell.x=fmod(cell.x+17,17);
                     float seed=hash(float3(cell,_Seed));
                     float2 centre=float2(seed,hash(float3(cell+7.31,_Seed)))*.54+.23;
-                    float radius=.16+hash(float3(cell-3.71,_Seed))*.24;
+                    float radius=.075+hash(float3(cell-3.71,_Seed))*.31;
                     float distance=length(local-offset-centre)/radius;
-                    float basin=1-smoothstep(.42,.94,distance);
-                    float lip=exp2(-pow((distance-.98)*9,2));
-                    relief+=-basin*.12+lip*.045;
+                    float basin=1-smoothstep(.66,.98,distance);
+                    float lip=exp2(-pow((distance-1)*15,2));
+                    float present=smoothstep(.27,.39,seed);
+                    // Shallow irregular basins with fine raised lips, rather
+                    // than identical embossed copper coins over every cell.
+                    relief+=(-basin*.055+lip*.012)*present;
                 }
                 return relief;
             }
@@ -84,17 +89,38 @@ Shader "SkyPulse/Orbital Planet"
                     albedo=lerp(ocean,ground,land)+float3(.015,.043,.045)*coast*.32;
                     float snow=smoothstep(.87,.975,abs(p.y)+(geology-.5)*.04);
                     albedo=lerp(albedo,float3(.47,.58,.66),snow*.84);
+                    if(_SurfaceMapAmount>.001)
+                    {
+                        float2 mapUv=float2(atan2(p.z,p.x)*.15915494+.5,asin(clamp(p.y,-1,1))*.31830989+.5);
+                        mapUv.y=clamp(mapUv.y,.001,.999);
+                        float3 authored=tex2D(_SurfaceMap,mapUv).rgb;
+                        // Close a possible painted longitudinal seam over a
+                        // narrow polar-safe band; the rest stays unaltered.
+                        float edge=min(mapUv.x,1-mapUv.x);
+                        if(edge<.012)
+                        {
+                            float3 other=tex2D(_SurfaceMap,float2(1-mapUv.x,mapUv.y)).rgb;
+                            authored=lerp((authored+other)*.5,authored,smoothstep(0,.012,edge));
+                        }
+                        float mappedLand=saturate((authored.r+authored.g*.60-authored.b*.60-.025)*4);
+                        float3 oceanTint=lerp(float3(1,1,1),clamp(_Deep.rgb/float3(.012,.105,.33),.15,2.5),.55);
+                        float3 landTint=lerp(float3(1,1,1),clamp(_Light.rgb/float3(.38,.55,.32),.15,2.5),.55);
+                        authored*=lerp(oceanTint,landTint,mappedLand);
+                        albedo=lerp(albedo,authored,_SurfaceMapAmount);
+                        land=lerp(land,mappedLand,_SurfaceMapAmount);
+                        relief=lerp(relief,max(0,dot(authored,float3(.2126,.7152,.0722))-.36)*mappedLand*.018,_SurfaceMapAmount);
+                    }
                     // High, stretched frequencies produce thin atmospheric
                     // wisps. Broad opaque white patches hid the surface design.
-                    float3 wind=p*float3(9,26,9)+id+float3(_Clock*.00065,1.8,-2.3);
+                    float3 wind=p*float3(5.2,13,5.2)+id+float3(_Clock*.00065,1.8,-2.3);
                     float curl=noise(p*7.1+id);
                     float weather=noise(wind+curl*.85)*.68+noise(wind*2.41+4.7)*.32;
-                    float circulation=.66+.34*sin(p.y*18+noise(p*5.2+id)*3.1);
-                    cloud=smoothstep(.56,.78,weather)*circulation*.70;
+                    float circulation=.56+.44*smoothstep(.12,.88,sin(p.y*11+noise(p*4.2+id)*2.2)*.5+.5);
+                    cloud=smoothstep(.53,.75,weather)*circulation*.46;
                     float shadow=smoothstep(.56,.78,noise(wind+sun*.14+curl*.85));
                     albedo*=1-shadow*.065*(1-cloud);
                     albedo=lerp(albedo,float3(.65,.76,.86),cloud);
-                    relief=(geology-.5)*land*.045;
+                    relief=lerp((geology-.5)*land*.045,relief,_SurfaceMapAmount);
                     roughness=lerp(.42,.91,saturate(land+cloud));
                 }
                 else if(_Kind<1.5)
@@ -102,20 +128,32 @@ Shader "SkyPulse/Orbital Planet"
                     relief=craters(p);
                     float maria=smoothstep(.40,.57,geology);
                     albedo=lerp(_Deep.rgb*.88,_Light.rgb,.40+geology*.24);
-                    albedo*=lerp(.82,1.02,maria)+relief*.60;
+                    float ancient=length(p-normalize(float3(-.38,.44,-.81)))/.36;
+                    float impact=(1-smoothstep(.72,1,ancient))*.045;
+                    relief-=impact;
+                    albedo*=lerp(.77,1.06,maria)+relief*.52;
+                    albedo=lerp(albedo,albedo*float3(.79,.68,.62),impact*4);
                     roughness=.95;
                 }
                 else
                 {
                     // Glacial shelves and narrow mineral fissures make the
                     // smaller icy moon clearly distinct from the ocean planet.
-                    float ridge=noise(p*13.7+id+geology*2.3);
-                    float fissure=1-smoothstep(.012,.034+fwidth(ridge),abs(ridge-.53));
-                    float shelf=smoothstep(.39,.67,geology);
-                    albedo=lerp(_Deep.rgb,_Light.rgb,shelf*.75+.20);
-                    albedo=lerp(albedo,_Deep.rgb*.62,fissure*.48);
-                    relief=(shelf-.5)*.05-fissure*.025;
-                    roughness=.86;
+                    // Long tectonic faults and broad glacial plates replace
+                    // repeated closed noise contours that read as a mosaic.
+                    float warp=(noise(p*5.2+id)-.5)*.025;
+                    float faultA=abs(p.x*.68+p.y*.36+sin(p.z*6.8+p.y*2)*.028-.13+warp);
+                    float faultB=abs(p.z*.57-p.y*.72+sin(p.x*7.1)*.021+.18+warp);
+                    float faultC=abs(p.x*.38+p.z*.67-p.y*.19-.39+warp);
+                    float fault=min(faultA,min(faultB,faultC));
+                    float fissure=1-smoothstep(.0025,.010+fwidth(fault),fault);
+                    float shelf=smoothstep(.28,.73,geology);
+                    albedo=lerp(_Deep.rgb,_Light.rgb,shelf*.54+.43);
+                    albedo=lerp(albedo,float3(.035,.26,.38),fissure*.70);
+                    float frost=pow(saturate(noise(p*21.4+id)-.42),2);
+                    albedo+=float3(.13,.20,.23)*frost;
+                    relief=(shelf-.5)*.025-fissure*.012;
+                    roughness=.90;
                 }
                 // Screen derivatives give surface relief real light response,
                 // while the analytic sphere normal keeps the limb round.
@@ -126,7 +164,7 @@ Shader "SkyPulse/Orbital Planet"
                 float diffuse=saturate(dot(reliefNormal,sun));
                 float3 halfVector=normalize(sun+view);
                 float spec=pow(saturate(dot(reliefNormal,halfVector)),lerp(110,22,roughness))*(1-roughness)*.34;
-                float3 colour=albedo*(float3(.065,.10,.18)+diffuse*float3(1,.94,.86))*day;
+                float3 colour=albedo*(float3(.08,.12,.20)+diffuse*float3(1.05,1,.91))*day;
                 // Nights remain dark enough to show a curved terminator. Only
                 // the inhabited world has a restrained city-light network.
                 float night=1-smoothstep(-.10,.16,ndl);

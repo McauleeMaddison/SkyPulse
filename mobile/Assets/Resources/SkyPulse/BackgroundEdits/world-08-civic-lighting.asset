@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e2bfc6c037449fe93278ea1b74e1716, type: 3}
+  m_Name: world-08-civic-lighting
+  m_EditorClassIdentifier: Assembly-CSharp::SkyPulse.Mobile.SkyPulseBackgroundLighting
+  Points:
+  - {x: -1.4608439, y: -0.8092056, z: -0.96058846, w: 0.14}
+  - {x: -0.480161, y: -1.1626035, z: -0.8699489, w: 0.105}
+  - {x: 0.076485395, y: -0.9010894, z: -1.2076253, w: 0.165}
+  - {x: 0.8712302, y: -1.2263331, z: -1.1378664, w: 0.105}
+  - {x: 1.3050073, y: -0.7394004, z: -0.7756779, w: 0.14}
+  Colours:
+  - {x: 0.98, y: 0.72, z: 0.36, w: 1}
+  - {x: 0.68, y: 0.46, z: 1, w: 1}
+  - {x: 0.98, y: 0.72, z: 0.36, w: 1}
+  - {x: 0.98, y: 0.72, z: 0.36, w: 1}
+  - {x: 0.68, y: 0.46, z: 1, w: 1}

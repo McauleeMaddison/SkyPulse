@@ -110,7 +110,8 @@ namespace SkyPulse.Mobile
             {
                 if (root.Size >= 30f) continue; // Larger roots use real animated optical sculptures.
                 var centre = new Vector3(root.At.x * .01f, root.At.y * .01f, -.16f);
-                float radius = root.Size * .0047f;
+                float radius = root.Size * .0053f;
+                float facetOpacity=root.Powered?(root.Size>=25?.94f:.70f):.32f;
                 // Floating double-pyramid lenses replace the circular node cages.
                 // Bevel faces catch different spectral light rather than solid fill.
                 for (int i = 0; i < 8; i++)
@@ -119,9 +120,9 @@ namespace SkyPulse.Mobile
                     var p = centre + new Vector3(Mathf.Cos(a) * radius, Mathf.Sin(a) * radius, 0);
                     var q = centre + new Vector3(Mathf.Cos(b) * radius, Mathf.Sin(b) * radius, 0);
                     Face(centre + Vector3.back * radius * 1.5f, q, p, root.Colour,
-                        root.Powered ? .72f : .44f, vertices, normals, colours, uv, triangles);
+                        facetOpacity, vertices, normals, colours, uv, triangles);
                     Face(centre + Vector3.forward * radius, p, q, root.Colour,
-                        .14f, vertices, normals, colours, uv, triangles);
+                        facetOpacity*.45f, vertices, normals, colours, uv, triangles);
                 }
             }
             mesh = new Mesh { name = "Unbroken spectral tree", indexFormat = UnityEngine.Rendering.IndexFormat.UInt32 };
@@ -167,14 +168,14 @@ namespace SkyPulse.Mobile
         {
             int start = v.Count; var normal = Vector3.Cross(b-a, d-a).normalized; colour.a = alpha;
             v.Add(a); v.Add(b); v.Add(d);
-            for (int i = 0; i < 3; i++) { n.Add(normal); c.Add(colour); uv.Add(new Vector2(i*.15f, 0)); triangles.Add(start+i); }
+            for (int i = 0; i < 3; i++) { n.Add(normal); c.Add(colour); uv.Add(new Vector2(i*.15f, 4)); triangles.Add(start+i); }
         }
         void BuildSculptures(List<HolographicRoot> roots)
         {
             crystalMaterial = new Material(Resources.Load<Shader>("SkyPulse/Shaders/HeistOptics")) { name = "Tree optical crystal", renderQueue = 3001 };
-            crystalMaterial.SetFloat("_Glass", 1); crystalMaterial.SetFloat("_Roughness", .14f); crystalMaterial.SetFloat("_ZWrite", 0);
+            crystalMaterial.SetFloat("_Glass", 1); crystalMaterial.SetFloat("_Roughness", .20f); crystalMaterial.SetFloat("_ZWrite", 0);crystalMaterial.SetFloat("_OpticFinish",1);crystalMaterial.SetFloat("_Hologram",.14f);
             projectorMaterial = new Material(Resources.Load<Shader>("SkyPulse/Shaders/HeistOptics")) { name = "Tree projector platinum" };
-            projectorMaterial.SetColor("_BaseColor", new Color(.09f,.16f,.21f)); projectorMaterial.SetFloat("_Roughness", .21f);
+            projectorMaterial.SetColor("_BaseColor", new Color(.12f,.20f,.25f)); projectorMaterial.SetFloat("_Roughness", .42f);projectorMaterial.SetFloat("_OpticFinish",1);
             coreHaloMaterial = new Material(material) {name="Core level halo"};
             coreHaloMaterial.SetColor("_Tint",SkyPulseBirdProgression.CoreColours[CoreRank-1]);
             var builder = new SkyPulseMeshBuilder();
@@ -272,7 +273,9 @@ namespace SkyPulse.Mobile
                 {
                     focusTime+=dt;
                     float progress=ReducedMotion?1:Mathf.Clamp01(focusTime/.42f);
-                    float ease=1-Mathf.Pow(1-progress,3);
+                    // Minimum-jerk focus starts and settles with zero velocity.
+                    // A fresh pointer still cancels it through the existing pan input.
+                    float ease=progress*progress*progress*(progress*(progress*6-15)+10);
                     content.anchoredPosition=Vector2.LerpUnclamped(focusFrom,focusTarget,ease);
                     if (progress>=1) focusing=false;
                 }
@@ -280,7 +283,9 @@ namespace SkyPulse.Mobile
             treeCamera.orthographicSize = viewport.rect.height*.005f;
             treeCamera.aspect = viewport.rect.width/Mathf.Max(1,viewport.rect.height);
             treeCamera.transform.localPosition = new Vector3(-content.anchoredPosition.x*.01f,-(viewport.rect.height*.5f+content.anchoredPosition.y)*.01f,-20);
-            float time=ReducedMotion?0:clock;
+            // The clock already stops under Reduced Motion. Keep its last pose
+            // instead of snapping all prisms and halos back to phase zero.
+            float time=clock;
             if(TypographyMaterial!=null){TypographyMaterial.SetFloat(ClockId,time);TypographyMaterial.SetFloat("_Motion",ReducedMotion?0:1);}
             material.SetFloat(ClockId,time);
             material.SetFloat(RevealId,ReducedMotion?1:.65f+.35f*Mathf.SmoothStep(0,1,revealTime/.6f));
@@ -290,7 +295,7 @@ namespace SkyPulse.Mobile
             {
                 var root=sculptures[i]; float t=time+root.Phase;
                 float response=ReducedMotion?0:Mathf.Max(0,1-pressAge*2)*Mathf.Max(0,1-Vector2.Distance((Vector2)root.Point,pressPoint)/1.2f);
-                root.Group.localScale=Vector3.one*(root.Size*(1+response*.045f));
+                root.Group.localScale=Vector3.one*(root.Size*(1+response*.025f));
                 root.Crystal.localRotation=Quaternion.Euler(8+Mathf.Sin(t*.32f)*1.4f,35+(root.IsCore?t*6:Mathf.Sin(t*.27f)*7),Mathf.Sin(t*.36f)*1.2f);
                 root.Crystal.localPosition=new Vector3(0,Mathf.Sin(t*.7f)*.018f,0);
                 root.Inner.localRotation=Quaternion.Euler(-12,-t*10,9);

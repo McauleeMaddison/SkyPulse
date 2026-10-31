@@ -107,8 +107,8 @@ public static class SkyPulseWorldExpansionChecks
         Check(Get(game, "state").ToString() == "Menu", "Guide keeps menu state");
         FindButton(guide, "BACK TO HOME").onClick.Invoke();
         Check(!guide.activeSelf, "Guide closes to Home");
-        Check(((Text)Get(game, "menuHangarProgressText")).text == "1 / 15 BIRDS OWNED", "Fresh save shows actual starting bird count");
-        Check(((Text)Get(game, "menuTechProgressText")).text == "0 / 27 TECH LEVELS", "Fresh save shows tech capacity");
+        Check(((Text)Get(game, "menuHangarProgressText")).text == "1 / 15 OWNED", "Fresh save shows actual starting bird count");
+        Check(((Text)Get(game, "menuTechProgressText")).text == "0 / 27 LEVELS", "Fresh save shows tech capacity");
         FindButton(home, "TECH TREE").onClick.Invoke();
         Check(((Text)Get(game, "customizeTitle")).text == "TECH TREE", "Home Tech Tree opens correct collection");
         Call(game, "ResetToMenu");

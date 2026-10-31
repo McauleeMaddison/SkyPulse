@@ -68,7 +68,10 @@ public static class SkyPulseBirdProgressionChecks
             if(fps==30){position=bird.transform.localPosition;rotation=bird.transform.localRotation;pose=bird.sprite;}
             Check(Vector3.Distance(position,bird.transform.localPosition)<.0001f&&Quaternion.Angle(rotation,bird.transform.localRotation)<.01f&&pose==bird.sprite,"Registered portrait motion matches at "+fps+" FPS");
         }
-        studio.ReducedMotion=true;studio.Tick(0);position=bird.transform.localPosition;rotation=bird.transform.localRotation;pose=bird.sprite;
+        position=bird.transform.localPosition;rotation=bird.transform.localRotation;pose=bird.sprite;
+        var cradle=studio.StageCamera.transform.parent.GetComponentsInChildren<Transform>().First(t=>t.name=="Machined levitation cradle");var cradleRotation=cradle.localRotation;
+        studio.ReducedMotion=true;studio.Tick(0);
+        Check(position==bird.transform.localPosition&&rotation==bird.transform.localRotation&&pose==bird.sprite&&cradleRotation==cradle.localRotation,"Enabling Reduced Motion preserves the existing bird and physical cradle pose");
         studio.Tick(1);Check(position==bird.transform.localPosition&&rotation==bird.transform.localRotation&&pose==bird.sprite,"Reduced Motion freezes the bird pose, dock and bob without blocking input");
         studio.ReducedMotion=false;studio.MotionPaused=true;float clock=studio.AnimationClock;studio.Tick(2);
         Check(clock==studio.AnimationClock,"Paused progression studio does not advance");studio.MotionPaused=false;

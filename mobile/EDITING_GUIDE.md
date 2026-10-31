@@ -1,15 +1,47 @@
 # Editing SkyPulse in VS Code
 
-Open the **SkyPulse** folder. Start with `mobile/Assets/Scripts/SkyPulseNativeGame.cs`.
-Its `#region` sections appear in VS Code’s Outline and can be folded. On Mac,
+Open the **SkyPulse** repository in VS Code and `mobile/` in Unity Hub.
+This is the main editing guide. The [current local design candidate](Development/DesignUpgrade20261031/README.md)
+is newer than installed iPhone build 19 (`f6221f6`) and has not been installed or
+uploaded. Use its source-specific records when reviewing previews. Physical
+phone acceptance remains pending; public App Review remains on hold.
+
+## Open the right scene
+
+Paths below are relative to `mobile/`. Open an existing scene rather than
+regenerating a workshop over saved edits.
+
+| Work | Scene or folder |
+|---|---|
+| Play the game | `Assets/Scenes/SkyPulse.unity` |
+| Twelve worlds, civic and residential models | `Assets/Editor/SkyPulseBackgroundWorkshop/Scenes/01 Neon City Civic.unity` and the other named Civic/Residential scenes |
+| Distant atmosphere for each world | `Assets/Editor/SkyPulseBackgroundWorkshop/Distant Scenes/01 Neon City Atmosphere.unity` and the other named atmosphere scenes |
+| Relay station, planet and moons | `Assets/Editor/SkyPulseBackgroundWorkshop/Pulse Relay World/Scenes/Pulse Relay Orbital World.unity` |
+| Twelve editable pipe themes | `Assets/Editor/SkyPulsePipeWorkshop/Scenes/01 Neon City Pipes.unity` and the other named pipe scenes |
+| First Neon Finch art review | `Assets/Editor/SkyPulseBirdWorkshop/Scenes/Neon Finch Art Review.unity` |
+| Gameplay and UI code | `Assets/Scripts/` |
+| Shared shaders and runtime resources | `Assets/Resources/SkyPulse/` |
+
+Workshop Play is model inspection. Return to `Assets/Scenes/SkyPulse.unity` to
+test gameplay. Preserve the existing scenes, prefabs, materials, animation and
+`.meta` identities. Numbered mesh copies are local studies, not cleanup targets.
+
+The Finch remains an isolated prototype. Current acceptance is **the head revision
+only**, with inset mechanical optics; keep its body, wings, tail, joints and
+animation intact. Stop further Finch or roster work until that head is reviewed.
+The prototype is not integrated into gameplay, which retains the original bird art.
+
+## Where to make a code change
+
+Start with `mobile/Assets/Scripts/SkyPulseNativeGame.cs`. All
+`SkyPulseNativeGame.*.cs` files extend **one partial game class**. Keep the existing
+`SkyPulseNativeGame.cs` component on the game scene; each partial supplies methods
+and fields for that same component. Follow calls across the partial files before
+changing behaviour.
+
+The `#region` sections appear in VS Code’s Outline and can be folded. On Mac,
 use **⌘P** to open a file, **⌘⇧O** to jump to a method, **F12** to follow a call,
 and **⇧F12** to find its references.
-
-## Where to make a change
-
-All `SkyPulseNativeGame.*.cs` files extend **one game class**. They are not
-separate games or duplicate components. Keep the original `SkyPulseNativeGame.cs`
-component on the scene; do not attach each partial file separately.
 
 | Change | File / search term |
 |---|---|
@@ -28,19 +60,20 @@ component on the scene; do not attach each partial file separately.
 | Original pipe artwork placement / collider anchors | `SkyPulseNativeGame.PipeVisuals.cs` |
 | Tapered exhaust, soft trail and passage sparks | `SkyPulseFlightEffects.cs`, `SkyPulseNativeGame.Cinematic.cs` |
 | Pooled 3D scenery during Endless flight | `SkyPulseFlightEnvironment.cs`, `SkyPulseNativeGame.Environment.cs`, `Resources/SkyPulse/Shaders/FlightArchitecture.shader` |
-| Endless's live perspective world, sky dome and lit moon | `SkyPulseFlightEnvironment.cs` → `Build`, `SetViewport`, `Architecture`; `WorldAtmosphere.shader`, `WorldMoon.shader` under `Resources/SkyPulse/Shaders/` |
+| Endless's live perspective world, sky dome and low clouds | `SkyPulseFlightEnvironment.cs` → `Build`, `SetViewport`, `Architecture`; `WorldAtmosphere.shader`, `WorldComposite.shader` under `Resources/SkyPulse/Shaders/` |
 | Mode titles, glass Home controls and footer spacing | `SkyPulseNativeGame.Home.cs` → `ApplyHomeIdentity` |
 | Relay station ribs, turbines and drones | `SkyPulseRelayEnvironment.cs` |
 | Relay's fixed ground guide and pooled 3D deck panels | `SkyPulseRelayDeck.cs`, `Resources/SkyPulse/Shaders/RelayRunway.shader` |
 | Six audio voices, optional cue fallbacks and saved sound switch | `SkyPulseNativeGame.Audio.cs` |
+| Native tactile cues and saved haptic switch | `SkyPulseTactileFeedback.cs`, `SkyPulseNativeGame.Controls.cs`, `Assets/Plugins/iOS/SkyPulseTactileFeedback.mm` |
 | How to Play topics and route-map entry | `SkyPulseNativeGame.Guide.cs` |
 | Three Home layouts and mode input | `SkyPulseNativeGame.Controls.cs`, `.Presentation.cs` |
 | Relay gate rules | `SkyPulseMissionModels.cs` → `RelaySession` |
 | Signal Heist puzzle rules / presentation | `SkyPulseBlackoutCampaign.cs`, `SkyPulseNativeGame.Blackout.cs`, `SkyPulseHeistBoard.cs` |
 | Blackout's city-restoration ribbon and objective telemetry | `SkyPulseBlackoutGraphic.cs` → `Network`, `SkyPulseNativeGame.Blackout.cs` → `BlackoutNetworkCaption` |
 
-Paths in the table are relative to `mobile/Assets/Scripts`, except the shaders,
-which are relative to `mobile/Assets`.
+Code paths in this table are relative to `mobile/Assets/Scripts`; shader paths
+start at `mobile/Assets`. The native plugin path starts at `mobile/`.
 
 ## Prices and progression
 
@@ -170,8 +203,9 @@ from Awake or an Editor callback. Measured coverage lives in
 Resources/SkyPulse/characters/bird-silhouette-coverage.json and is reproducible
 with Tools/bake_bird_shapes.swift. Original art, registration and gameplay
 collision dimensions stay intact. Simple bird UI images use the same mesh.
-The original articulated bird artwork is the current appearance; the rejected
-sculpted replacement has been removed.
+The original articulated bird artwork is the gameplay appearance. The separate
+Neon Finch workshop is for art review only; its current head-only acceptance
+hold is described in the opening scene map.
 
 Assets/Editor/SkyPulsePlaySessionGuard.cs ends Editor Play before compilation.
 Wait and press Play again; existing progress loads through ordinary startup.

@@ -13,6 +13,8 @@ namespace SkyPulse.Mobile
         readonly Mesh[] residential=new Mesh[Themes];
         readonly MaterialPropertyBlock[,] authoredLighting=new MaterialPropertyBlock[Themes,2];
         readonly Transform[,] scenery=new Transform[2,Layers*PerLayer];
+        readonly MeshRenderer[,] districtRenderers=new MeshRenderer[2,Layers*PerLayer];
+        readonly MaterialPropertyBlock[,] districtFinish=new MaterialPropertyBlock[2,Layers*PerLayer];
         readonly Material[] surfaces=new Material[2];
         readonly int[] bankTheme={-1,-1};
         readonly Texture[] reflections=new Texture[Themes];
@@ -25,6 +27,7 @@ namespace SkyPulse.Mobile
         static int nextScene;
         static readonly int Visibility=Shader.PropertyToID("_Visibility"), Clock=Shader.PropertyToID("_Clock"), Tint=Shader.PropertyToID("_Tint"), Haze=Shader.PropertyToID("_Haze");
         float span; int current=-1,previous;
+        float distanceOffset,clockOffset,presentationClock;bool hasPresentation,motionHeld;
         Color currentTint,currentHaze,previousTint,previousHaze;
         public int CurrentWorld=>current;
         public float Travel { get; private set; }
@@ -57,7 +60,7 @@ namespace SkyPulse.Mobile
                 {
                     int layer=i/PerLayer;
                     var renderer=SkyPulseMeshBuilder.Surface(worldScene,"Flight depth "+bank+" / "+layer+" / "+i,silhouettes[0],surfaces[bank],-27+layer*5);
-                    scenery[bank,i]=renderer.transform;
+                    scenery[bank,i]=renderer.transform;districtRenderers[bank,i]=renderer;districtFinish[bank,i]=new MaterialPropertyBlock();
                 }
             }
             atmosphereDepth=new GameObject("Layered distant atmosphere").AddComponent<SkyPulseAtmosphereDepth>();atmosphereDepth.Build(worldScene);
@@ -115,12 +118,35 @@ namespace SkyPulse.Mobile
         public void Render(){if(worldCamera!=null&&gameObject.activeInHierarchy)worldCamera.Render();}
         void OnEnable(){if(worldScene!=null)worldScene.gameObject.SetActive(true);}
         void OnDisable(){if(worldScene!=null)worldScene.gameObject.SetActive(false);}
-        public void ResetView(){current=-1;bankTheme[0]=bankTheme[1]=-1;}
+        public void ResetView(){current=-1;bankTheme[0]=bankTheme[1]=-1;distanceOffset=clockOffset=presentationClock=0;hasPresentation=motionHeld=false;}
+        // Handoffs operate in displayed coordinates; Reduced Motion may have
+        // rebased the input distance. Convert once rather than applying it twice.
+        public float InputDistanceForView(float displayed)=>displayed-distanceOffset;
+        public float PresentationClock=>presentationClock;
+        public void ResetView(float displayedDistance,float displayedClock)
+        {
+            ResetView();Travel=displayedDistance;presentationClock=displayedClock;
+            hasPresentation=true;motionHeld=true;
+        }
         public void Present(int world,float distance,float clock,float transition,Color tint,Color haze,bool reduced,float entry=1)
         {
             world=Mathf.Clamp(world,0,Themes-1);
             if(current!=world){previous=current<0?world:current;previousTint=current<0?tint:currentTint;previousHaze=current<0?haze:currentHaze;current=world;currentTint=tint;currentHaze=haze;}
-            Travel=reduced?0:distance; clock=reduced?0:clock;
+            // Enabling Reduced Motion holds the image the player is already
+            // looking at. Turning it off resumes from that position; neither
+            // preference change rewinds the city or its lighting to time zero.
+            if(!hasPresentation)
+            {
+                Travel=distance;presentationClock=clock;
+                hasPresentation=true;motionHeld=reduced;
+            }
+            else if(!reduced)
+            {
+                if(motionHeld){distanceOffset=Travel-distance;clockOffset=presentationClock-clock;motionHeld=false;}
+                Travel=distance+distanceOffset;presentationClock=clock+clockOffset;
+            }
+            else motionHeld=true;
+            clock=presentationClock;
             SetBank(0,previous,Travel,clock,previous==world?0:(1-transition)*entry,previousTint,previousHaze);
             SetBank(1,world,Travel,clock,(previous==world?1:transition)*entry,tint,haze);
             atmosphereDepth.Present(0,previous,Travel,clock,previous==world?0:(1-transition)*entry,previousTint,previousHaze);
@@ -150,29 +176,36 @@ namespace SkyPulse.Mobile
                 if(item.gameObject.activeSelf!=show)item.gameObject.SetActive(show);
                 if(changed)
                 {
-                    int variant=(slot+layer+theme)%2;item.GetComponent<MeshFilter>().sharedMesh=variant==0?silhouettes[theme]:residential[theme];
-                    item.GetComponent<MeshRenderer>().SetPropertyBlock(authoredLighting[theme,variant]);
+                    // The civic landmark leads the middle district; lower
+                    // residential silhouettes frame it, rather than every row
+                    // presenting the same tall building at the same strength.
+                    int variant=layer==1?(slot==0?0:1):layer==2?(slot==0?1:0):slot%2;
+                    item.GetComponent<MeshFilter>().sharedMesh=variant==0?silhouettes[theme]:residential[theme];
+                    var renderer=districtRenderers[bank,i];var finish=districtFinish[bank,i];
+                    renderer.SetPropertyBlock(authoredLighting[theme,variant]);renderer.GetPropertyBlock(finish);
+                    finish.SetFloat("_DistrictDepth",layer==0?.82f:layer==1?.34f:0);
+                    finish.SetFloat("_WindowGlow",layer==0?.28f:layer==1?.64f:1);
+                    finish.SetFloat("_BeaconGlow",layer==0?.24f:layer==1?.60f:1);
+                    finish.SetFloat("_Backdrop",layer==0?.16f:layer==1?.03f:0);
+                    renderer.SetPropertyBlock(finish);
                 }
                 if(!visible)continue;
-                float seed=Hash(theme*43+layer*17+slot*101);
-                float scale=layer==0?.38f:layer==1?.68f:.88f;
-                float spacing=span*(layer==0?1.60f:layer==1?1.25f:.82f);
-                float phase=layer==0?-.10f:layer==1?.07f:-.25f;
-                float speed=layer==0?.06f:layer==1?.16f:.31f;
+                // One asymmetric landmark composition repeats only beyond the
+                // camera edges. Slots share a coherent city plane, exact uniform
+                // proportions and calm orientations; travel is still absolute.
+                float scale=layer==0?(slot==1?.36f:.30f):layer==1?(slot==0?.72f:.53f):(slot==0?.76f:.98f);
+                float spacing=span*(layer==0?1.80f:layer==1?1.18f:.98f);
+                float phase=layer==0?-.09f:layer==1?.095f:-.28f;
+                float speed=layer==0?.055f:layer==1?.145f:.285f;
                 float x=Mathf.Repeat(slot*spacing/districtCount+phase*spacing-distance*speed+spacing*.5f,spacing)-spacing*.5f;
-                // A stable staggered skyline leaves air around the hero island.
-                // Foundations and building proportions remain the owner's mesh;
-                // distant groups are genuinely smaller and farther from camera.
-                // No independent random X/Y scale or rocking city silhouettes.
-                float y=(layer==0?.70f:layer==1?-2.75f:-5.80f)+(slot%2==0?-.16f:.30f);
+                float y=layer==0?-1.10f+(slot==1?.35f:0):layer==1?(slot==0?-2.80f:-4.35f):(slot==0?-6.15f:-5.85f);
                 float z=(layer==0?48f:layer==1?26f:12.5f)+(slot%2==0?0:2.4f);
                 item.localPosition=new Vector3(x,y,z);
-                item.localScale=Vector3.one*(scale*(.98f+seed*.04f));
-                float orientation=(slot%2==0?-12f:9f)+(theme%3-1)*3;
+                item.localScale=Vector3.one*scale;
+                float orientation=layer==0?(slot==1?-6:8):layer==1?(slot==0?-18:12):(slot==0?15:-16);
                 item.localRotation=Quaternion.Euler(0,orientation,0);
             }
         }
-        static float Hash(int n){uint x=(uint)n*747796405u+2891336453u;x=((x>>((int)(x>>28)+4))^x)*277803737u;return ((x>>22)^x)/4294967295f;}
         // Geometry construction is kept separate from the runtime camera/pool.
         static Mesh Architecture(int theme,int variant=0)
         {

@@ -1,0 +1,17 @@
+{
+    "passed": true,
+    "assertions": 1570,
+    "worlds": 12,
+    "districts": 24,
+    "maximumVertices": 51376,
+    "customMeshFixtures": 1,
+    "scope": [
+        "216 original source geometry comparisons; only known generated buffers eligible",
+        "original scene/prefab bytes, owner layouts and all existing GUIDs preserved",
+        "real saved custom mesh edit retained by refresh",
+        "same original part pivots keep moved structures registered",
+        "repeated refresh and bake byte-stable",
+        "24 mobile-budget district meshes and 12 real workshop camera renders",
+        "no player saves, controls, economy, colliders or App Store changes"
+    ]
+}

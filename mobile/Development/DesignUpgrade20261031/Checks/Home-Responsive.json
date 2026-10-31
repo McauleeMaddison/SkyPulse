@@ -1,0 +1,229 @@
+{
+    "labels": [
+        {
+            "viewport": "(640, 1136)",
+            "mode": "EndlessRoute",
+            "text": "BIRD HANGAR",
+            "authoredFontSize": 54,
+            "renderedFontPoints": 15.035064697265625,
+            "screenBounds": {
+                "serializedVersion": "2",
+                "x": 70.52547454833984,
+                "y": 348.0392150878906,
+                "width": 231.6549072265625,
+                "height": 43.435272216796875
+            }
+        },
+        {
+            "viewport": "(640, 1136)",
+            "mode": "EndlessRoute",
+            "text": "1 / 15 OWNED",
+            "authoredFontSize": 46,
+            "renderedFontPoints": 12.807647705078125,
+            "screenBounds": {
+                "serializedVersion": "2",
+                "x": 70.52547454833984,
+                "y": 310.17254638671875,
+                "width": 231.6549072265625,
+                "height": 36.7529296875
+            }
+        },
+        {
+            "viewport": "(640, 1136)",
+            "mode": "EndlessRoute",
+            "text": "TECH TREE",
+            "authoredFontSize": 54,
+            "renderedFontPoints": 15.035064697265625,
+            "screenBounds": {
+                "serializedVersion": "2",
+                "x": 337.819580078125,
+                "y": 348.0392150878906,
+                "width": 231.65496826171875,
+                "height": 43.435272216796875
+            }
+        },
+        {
+            "viewport": "(640, 1136)",
+            "mode": "EndlessRoute",
+            "text": "0 / 27 LEVELS",
+            "authoredFontSize": 46,
+            "renderedFontPoints": 12.807647705078125,
+            "screenBounds": {
+                "serializedVersion": "2",
+                "x": 337.819580078125,
+                "y": 310.17254638671875,
+                "width": 231.65496826171875,
+                "height": 36.7529296875
+            }
+        },
+        {
+            "viewport": "(1320, 2868)",
+            "mode": "EndlessRoute",
+            "text": "BIRD HANGAR",
+            "authoredFontSize": 54,
+            "renderedFontPoints": 21.9979248046875,
+            "screenBounds": {
+                "serializedVersion": "2",
+                "x": 112.44446563720703,
+                "y": 914.2223510742188,
+                "width": 508.4444580078125,
+                "height": 95.33331298828125
+            }
+        },
+        {
+            "viewport": "(1320, 2868)",
+            "mode": "EndlessRoute",
+            "text": "1 / 15 OWNED",
+            "authoredFontSize": 46,
+            "renderedFontPoints": 18.74178123474121,
+            "screenBounds": {
+                "serializedVersion": "2",
+                "x": 112.44446563720703,
+                "y": 831.1111450195313,
+                "width": 508.4444580078125,
+                "height": 80.666748046875
+            }
+        },
+        {
+            "viewport": "(1320, 2868)",
+            "mode": "EndlessRoute",
+            "text": "TECH TREE",
+            "authoredFontSize": 54,
+            "renderedFontPoints": 21.9979248046875,
+            "screenBounds": {
+                "serializedVersion": "2",
+                "x": 699.1111450195313,
+                "y": 914.2223510742188,
+                "width": 508.44439697265625,
+                "height": 95.33331298828125
+            }
+        },
+        {
+            "viewport": "(1320, 2868)",
+            "mode": "EndlessRoute",
+            "text": "0 / 27 LEVELS",
+            "authoredFontSize": 46,
+            "renderedFontPoints": 18.74178123474121,
+            "screenBounds": {
+                "serializedVersion": "2",
+                "x": 699.1111450195313,
+                "y": 831.1111450195313,
+                "width": 508.44439697265625,
+                "height": 80.666748046875
+            }
+        },
+        {
+            "viewport": "(1640, 2360)",
+            "mode": "EndlessRoute",
+            "text": "BIRD HANGAR",
+            "authoredFontSize": 54,
+            "renderedFontPoints": 31.2352294921875,
+            "screenBounds": {
+                "serializedVersion": "2",
+                "x": 301.7253723144531,
+                "y": 723.0391845703125,
+                "width": 481.2550354003906,
+                "height": 90.23529052734375
+            }
+        },
+        {
+            "viewport": "(1640, 2360)",
+            "mode": "EndlessRoute",
+            "text": "1 / 15 OWNED",
+            "authoredFontSize": 46,
+            "renderedFontPoints": 26.6077880859375,
+            "screenBounds": {
+                "serializedVersion": "2",
+                "x": 301.7253723144531,
+                "y": 644.37255859375,
+                "width": 481.2550354003906,
+                "height": 76.3529052734375
+            }
+        },
+        {
+            "viewport": "(1640, 2360)",
+            "mode": "EndlessRoute",
+            "text": "TECH TREE",
+            "authoredFontSize": 54,
+            "renderedFontPoints": 31.2352294921875,
+            "screenBounds": {
+                "serializedVersion": "2",
+                "x": 857.0195922851563,
+                "y": 723.0391845703125,
+                "width": 481.25494384765625,
+                "height": 90.23529052734375
+            }
+        },
+        {
+            "viewport": "(1640, 2360)",
+            "mode": "EndlessRoute",
+            "text": "0 / 27 LEVELS",
+            "authoredFontSize": 46,
+            "renderedFontPoints": 26.6077880859375,
+            "screenBounds": {
+                "serializedVersion": "2",
+                "x": 857.0195922851563,
+                "y": 644.37255859375,
+                "width": 481.25494384765625,
+                "height": 76.3529052734375
+            }
+        },
+        {
+            "viewport": "(1536, 2048)",
+            "mode": "EndlessRoute",
+            "text": "BIRD HANGAR",
+            "authoredFontSize": 54,
+            "renderedFontPoints": 27.10711669921875,
+            "screenBounds": {
+                "serializedVersion": "2",
+                "x": 318.2431640625,
+                "y": 627.4509887695313,
+                "width": 417.63134765625,
+                "height": 78.30584716796875
+            }
+        },
+        {
+            "viewport": "(1536, 2048)",
+            "mode": "EndlessRoute",
+            "text": "1 / 15 OWNED",
+            "authoredFontSize": 46,
+            "renderedFontPoints": 23.08984375,
+            "screenBounds": {
+                "serializedVersion": "2",
+                "x": 318.2431640625,
+                "y": 559.184326171875,
+                "width": 417.63134765625,
+                "height": 66.2587890625
+            }
+        },
+        {
+            "viewport": "(1536, 2048)",
+            "mode": "EndlessRoute",
+            "text": "TECH TREE",
+            "authoredFontSize": 54,
+            "renderedFontPoints": 27.10711669921875,
+            "screenBounds": {
+                "serializedVersion": "2",
+                "x": 800.12548828125,
+                "y": 627.4509887695313,
+                "width": 417.63134765625,
+                "height": 78.30584716796875
+            }
+        },
+        {
+            "viewport": "(1536, 2048)",
+            "mode": "EndlessRoute",
+            "text": "0 / 27 LEVELS",
+            "authoredFontSize": 46,
+            "renderedFontPoints": 23.08984375,
+            "screenBounds": {
+                "serializedVersion": "2",
+                "x": 800.12548828125,
+                "y": 559.184326171875,
+                "width": 417.63134765625,
+                "height": 66.2587890625
+            }
+        }
+    ],
+    "captures": 12
+}

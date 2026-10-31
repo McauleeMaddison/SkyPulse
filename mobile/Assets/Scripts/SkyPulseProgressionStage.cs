@@ -5,7 +5,7 @@ using UnityEngine.UI;
 namespace SkyPulse.Mobile
 {
     // One isolated render target for a training dock or the whole lineage display.
-    // Reuses registered artwork and the flight rig over real machined 3D plinths.
+    // Reuses registered artwork and the flight rig over open machined 3D cradles.
     public sealed class SkyPulseProgressionStage : MonoBehaviour
     {
         public struct Portrait
@@ -18,7 +18,7 @@ namespace SkyPulse.Mobile
         sealed class Pilot
         {
             public Portrait Data;public SpriteRenderer Bird;public SkyPulseBirdRig Rig;
-            public Transform Dock;public Vector3 Home;public float Phase;
+            public Transform Dock,Guide;public Vector3 Home;public float Phase;
         }
         readonly List<Pilot> pilots=new List<Pilot>(3);
         readonly List<Mesh> meshes=new List<Mesh>(4);
@@ -37,18 +37,31 @@ namespace SkyPulse.Mobile
             stage=new GameObject("Progression optical studio").transform;stage.position=new Vector3(12000+slot*64,12000,0);
             var c=new GameObject("Progression studio camera",typeof(Camera));c.transform.SetParent(stage,false);
             camera3D=c.GetComponent<Camera>();camera3D.transform.localPosition=new Vector3(0,0,-20);
-            camera3D.orthographic=true;camera3D.orthographicSize=view.rectTransform.rect.height*.005f;
+            // Match the registered portrait plane, while the physical cradle
+            // recedes behind it through a long-lens perspective camera.
+            camera3D.orthographic=false;camera3D.orthographicSize=view.rectTransform.rect.height*.005f;
+            camera3D.fieldOfView=2*Mathf.Atan(camera3D.orthographicSize/20)*Mathf.Rad2Deg;
             camera3D.aspect=view.rectTransform.rect.width/view.rectTransform.rect.height;
             camera3D.nearClipPlane=.1f;camera3D.farClipPlane=40;camera3D.cullingMask=1<<31;
             camera3D.clearFlags=CameraClearFlags.SolidColor;camera3D.backgroundColor=Color.clear;camera3D.allowHDR=false;camera3D.allowMSAA=true;
             int height=Mathf.RoundToInt(1024/camera3D.aspect);
             texture=new RenderTexture(1024,height,24,RenderTextureFormat.ARGB32){name="Bird progression studio",antiAliasing=4};texture.Create();camera3D.targetTexture=texture;view.texture=texture;view.raycastTarget=false;
             metal=new Material(Resources.Load<Shader>("SkyPulse/Shaders/HeistOptics")){name="Progression satin titanium"};
-            metal.SetColor("_BaseColor",new Color(.10f,.17f,.22f));metal.SetFloat("_Roughness",.23f);
-            light=new Material(metal){name="Progression optical light guides"};light.SetColor("_BaseColor",new Color(.19f,.38f,.45f));light.SetFloat("_Energy",.65f);
-            var b=new SkyPulseMeshBuilder();b.Profile(new[]{new Vector2(0,.10f),new Vector2(.91f,.10f),new Vector2(1,.025f),new Vector2(1,-.10f),new Vector2(.91f,-.16f),new Vector2(0,-.16f)});
-            var disk=b.Finish("Lathed titanium bird pedestal");meshes.Add(disk);
-            b=new SkyPulseMeshBuilder();b.Torus(.94f,.016f,80,Color.white);var ring=b.Finish("Recessed pedestal light rim");meshes.Add(ring);
+            metal.SetColor("_BaseColor",new Color(.14f,.20f,.25f));metal.SetFloat("_Roughness",.46f);metal.SetFloat("_OpticFinish",1);
+            light=new Material(metal){name="Progression inset optical conductors"};light.SetColor("_BaseColor",new Color(.10f,.22f,.27f));light.SetFloat("_Energy",.42f);
+            // An open annulus has a real inner wall and a small machined bevel.
+            // No opaque top disk can read as a flat plastic display stand.
+            var b=new SkyPulseMeshBuilder();b.Profile(new[]{new Vector2(.78f,-.035f),new Vector2(.80f,-.065f),new Vector2(.95f,-.065f),new Vector2(1,-.025f),new Vector2(1,.045f),new Vector2(.97f,.075f),new Vector2(.81f,.075f),new Vector2(.78f,.04f),new Vector2(.78f,-.035f)});
+            for(int i=0;i<8;i++)
+            {
+                float a=i*Mathf.PI*.25f;
+                b.Box(new Vector3(Mathf.Cos(a)*.89f,Mathf.Sin(a)*.89f,.11f),new Vector3(.055f,.055f,.09f),new Color(.63f,.72f,.79f,0));
+            }
+            var cradle=b.Finish("Open machined annular levitation cradle");meshes.Add(cradle);
+            b=new SkyPulseMeshBuilder();for(int i=0;i<8;i++)b.RingArc(.90f,.009f,12,i*45+6,31,Color.white);
+            var ring=b.Finish("Eight recessed optical conductor segments");meshes.Add(ring);
+            b=new SkyPulseMeshBuilder();b.RingArc(.90f,.012f,10,0,14,Color.white);b.RingArc(.90f,.012f,10,180,14,Color.white);
+            var travelling=b.Finish("Paired low-intensity cradle status markers");meshes.Add(travelling);
             foreach(var descriptor in birds)
             {
                 if(descriptor.Still==null)continue;
@@ -60,11 +73,15 @@ namespace SkyPulse.Mobile
                 var rig=go.AddComponent<SkyPulseBirdRig>();rig.Bind(bird);rig.PrepareFrames(descriptor.Frames);
                 var dock=new GameObject("Machined levitation cradle").transform;dock.SetParent(stage,false);
                 dock.localPosition=new Vector3(descriptor.At.x*.01f,(descriptor.At.y-descriptor.Size.y*.48f)*.01f,.75f);
-                dock.localRotation=Quaternion.Euler(65,-8,0);dock.localScale=Vector3.one*descriptor.Size.x*.0038f;
-                SkyPulseMeshBuilder.Surface(dock,"Bevelled pedestal body",disk,metal,0);
-                var rim=SkyPulseMeshBuilder.Surface(dock,"Embedded luminous rim",ring,light,1);rim.transform.localPosition=Vector3.back*.17f;
-                var props=new MaterialPropertyBlock();props.SetColor("_GlowColor",descriptor.Accent);rim.SetPropertyBlock(props);
-                var pilot=new Pilot{Data=descriptor,Bird=bird,Rig=rig,Dock=dock,Home=(Vector3)descriptor.At*.01f,Phase=pilots.Count*.53f};pilots.Add(pilot);
+                // The long-lens camera needs headroom for the tilted housing's
+                // nearest AABB corners as well as the visible rim. Keep the
+                // original bird plane/scale intact; size only its support.
+                dock.localRotation=Quaternion.Euler(65,-8,0);dock.localScale=Vector3.one*descriptor.Size.x*.0032f;
+                SkyPulseMeshBuilder.Surface(dock,"Open titanium cradle with a modelled inner wall",cradle,metal,0);
+                var rim=SkyPulseMeshBuilder.Surface(dock,"Inset segmented light guides",ring,light,1);rim.transform.localPosition=Vector3.back*.071f;
+                var guide=SkyPulseMeshBuilder.Surface(dock,"Slow optical status markers",travelling,light,2);guide.transform.localPosition=Vector3.back*.078f;
+                var props=new MaterialPropertyBlock();props.SetColor("_GlowColor",descriptor.Accent);rim.SetPropertyBlock(props);guide.SetPropertyBlock(props);
+                var pilot=new Pilot{Data=descriptor,Bird=bird,Rig=rig,Dock=dock,Guide=guide.transform,Home=(Vector3)descriptor.At*.01f,Phase=pilots.Count*.53f};pilots.Add(pilot);
             }
             if(connect&&birds.Length==3)BuildInheritance(birds);
             foreach(var t in stage.GetComponentsInChildren<Transform>())t.gameObject.layer=31;
@@ -98,24 +115,29 @@ namespace SkyPulse.Mobile
         public void Tick(float dt)
         {
             if(stage==null||MotionPaused)return;if(!ReducedMotion)clock+=Mathf.Max(0,dt);
-            float t=ReducedMotion?0:clock;
+            // Holding the current clock freezes the existing pose. Toggling a
+            // comfort preference must not snap wings or the cradle to time zero.
+            float t=clock;
             for(int i=0;i<pilots.Count;i++)
             {
                 var p=pilots[i];float phase=t+p.Phase;var frames=p.Data.Frames;
                 if(frames!=null&&frames.Length>1)
                 {
                     int count=(frames.Length*2)-2,step=Mathf.FloorToInt(Mathf.Repeat(phase*.55f,1)*count);
-                    p.Bird.sprite=ReducedMotion?p.Data.Still:frames[step<frames.Length?step:count-step];
+                    p.Bird.sprite=frames[step<frames.Length?step:count-step];
                 }
-                p.Bird.transform.localPosition=p.Home+Vector3.up*(ReducedMotion?0:Mathf.Sin(phase*1.3f)*.045f);
-                p.Bird.transform.localRotation=Quaternion.Euler(0,0,ReducedMotion?0:Mathf.Sin(phase*.7f)*1.4f);
-                p.Rig.Present(t,.15f,0,ReducedMotion,p.Data.Accent);
-                p.Dock.localRotation=Quaternion.Euler(65,-8+(ReducedMotion?0:Mathf.Sin(phase*.3f)*2),0);
+                p.Bird.transform.localPosition=p.Home+Vector3.up*(Mathf.Sin(phase*1.3f)*.038f);
+                p.Bird.transform.localRotation=Quaternion.Euler(0,0,Mathf.Sin(phase*.7f)*1.1f);
+                // The rig reads this frozen clock too, retaining its current
+                // feather relief instead of toggling its deformation off.
+                p.Rig.Present(t,.15f,0,false,Color.Lerp(Color.white,p.Data.Accent,.28f));
+                p.Dock.localRotation=Quaternion.Euler(65,-8+Mathf.Sin(phase*.3f)*1.2f,0);
+                p.Guide.localRotation=Quaternion.Euler(0,0,t*8+p.Phase*35);
             }
             if(lineage&&pilots.Count==3)for(int i=0;i<packets.Count;i++)
             {
                 var a=pilots[i].Dock.localPosition-Vector3.up*1.24f;var d=pilots[2].Dock.localPosition;a.z=d.z=1;
-                packets[i].localPosition=Route(a,d,ReducedMotion?.5f:Mathf.Repeat(t*.32f+i*.25f,1));
+                packets[i].localPosition=Route(a,d,Mathf.Repeat(t*.32f+i*.25f,1));
             }
         }
         public void Render(){if(camera3D!=null&&isActiveAndEnabled)camera3D.Render();}

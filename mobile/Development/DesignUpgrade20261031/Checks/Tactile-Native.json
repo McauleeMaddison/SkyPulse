@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "helperMatchesProtectedCooldownAndEnabledPolicy": true,
+  "managedNativeAbiMatches": true,
+  "editorAndOtherPlatformNativeExclusion": true,
+  "prewarmDoesNotWriteSave": true,
+  "nativeCompiled": true,
+  "physicalDeviceVerified": false,
+  "nativeTarget": "arm64-apple-ios15.0",
+  "arc": true,
+  "compilerWarningsAsErrors": true
+}

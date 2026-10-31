@@ -1,0 +1,9 @@
+{
+  "asset": "Assets/Resources/SkyPulse/materials/relay-ocean-albedo-v2.png",
+  "date": "2026-10-31",
+  "source": "Original fictional equirectangular surface map generated with the built-in OpenAI image-generation tool for this SkyPulse task",
+  "sha256": "958bcf064972522828c8db47d1f39be0b34f7a26ce11bc207fc176821541d039",
+  "usage": "Unlit RGB albedo on a true Unity sphere. Globe lighting, terminator, clouds and atmosphere are calculated separately in Unity. No stock/reference image used.",
+  "rightsNote": "This records generation provenance; it is not a guarantee of exclusive copyright or legal ownership.",
+  "import": "Mipmaps, no CPU readback, 2048 maximum, repeating longitude and clamped poles, iOS ASTC 6x6."
+}

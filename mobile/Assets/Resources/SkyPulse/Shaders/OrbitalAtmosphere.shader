@@ -1,6 +1,6 @@
 Shader "SkyPulse/Orbital Atmosphere"
 {
-    Properties { _Clock("Presentation clock",Float)=0 _Zenith("Deep space",Color)=(.025,.025,.095,1) _Horizon("Horizon atmosphere",Color)=(.045,.12,.25,1) _Warm("Distant sun scatter",Color)=(.70,.30,.12,1) }
+    Properties { _Clock("Presentation clock",Float)=0 _Zenith("Deep space",Color)=(.035,.020,.11,1) _Horizon("Horizon atmosphere",Color)=(.035,.15,.30,1) _Warm("Distant sun scatter",Color)=(.70,.30,.12,1) }
     SubShader
     {
         Tags {"Queue"="Transparent" "RenderType"="Opaque"}

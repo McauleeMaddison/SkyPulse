@@ -22,6 +22,11 @@ public static class SkyPulsePlanetPresentationChecks
         string[] names={"Distant blue planet","West distant moon","Lower distant moon"};
         var bodies=names.Select(n=>world.Find(n)).ToArray();var materials=bodies.Select(t=>t.GetComponent<MeshRenderer>().sharedMaterial).ToArray();
         Check(materials.Distinct().Count()==3,"Ocean world, crater moon and glacial moon use distinct materials");
+        var surface=materials[0].GetTexture("_SurfaceMap") as Texture2D;
+        Check(surface!=null&&surface==Resources.Load<Texture2D>("SkyPulse/materials/relay-ocean-albedo-v2")&&materials[0].GetFloat("_SurfaceMapAmount")==1,"Ocean sphere uses the shared original detailed geological albedo");
+        Check(surface.width<=2048&&surface.height*2==surface.width&&surface.mipmapCount>1&&!surface.isReadable,"Original planet map is a bounded mipmapped 2:1 texture with CPU readback disabled");
+        Check(surface.wrapModeU==TextureWrapMode.Repeat&&surface.wrapModeV==TextureWrapMode.Clamp,"Ocean map wraps longitude and clamps the polar rows");
+        Check(materials[1].GetFloat("_SurfaceMapAmount")==0&&materials[2].GetFloat("_SurfaceMapAmount")==0,"Airless and glacial moons keep their separate physical geology");
         for(int i=0;i<3;i++)Check(materials[i].GetFloat("_Kind")==i,"Geological identity is explicit: "+names[i]);
         Check(materials[0].GetFloat("_Atmosphere")>.01f&&materials[1].GetFloat("_Atmosphere")==0&&materials[2].GetFloat("_Atmosphere")<materials[0].GetFloat("_Atmosphere"),"Airless crater moon and thin glacial atmosphere differ from the ocean world");
         foreach(string shaderName in new[]{"OrbitalPlanet","OrbitalAtmosphere","OrbitalStructure"})
@@ -53,6 +58,18 @@ public static class SkyPulsePlanetPresentationChecks
                 Check(pixels.GetPixel(256,256).a>.95f,"Solid 3D globe writes a closed opaque centre: "+names[i]);
                 Check(bright>300&&dark>300&&maximum-minimum>.065f,"Curved sunlit and night hemispheres have visible contrast: "+names[i]+" / bright "+bright+" / dark "+dark);
                 File.WriteAllBytes(Path.Combine(folder,(i+1).ToString("00")+"-"+names[i].Replace(' ','-')+".png"),pixels.EncodeToPNG());
+                if(i==0)
+                {
+                    try
+                    {
+                        materials[0].SetFloat("_SurfaceMapAmount",0);camera.Render();pixels.ReadPixels(new Rect(0,0,512,512),0,0);pixels.Apply();
+                        var negative=pixels.GetPixels32();int changed=0;
+                        for(int pixel=0;pixel<data.Length;pixel++)
+                            if(Mathf.Abs(data[pixel].r-negative[pixel].r/255f)+Mathf.Abs(data[pixel].g-negative[pixel].g/255f)+Mathf.Abs(data[pixel].b-negative[pixel].b/255f)>.12f)changed++;
+                        Check(changed>2000,"Disabling the original surface map is a real rendered negative control, not a decorative unused binding: "+changed+" pixels");
+                    }
+                    finally{materials[0].SetFloat("_SurfaceMapAmount",1);}
+                }
             }
         }
         finally

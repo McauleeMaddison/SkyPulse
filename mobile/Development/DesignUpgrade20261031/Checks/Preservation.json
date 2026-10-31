@@ -1,0 +1,94 @@
+{
+  "baseCommit": "a343aef",
+  "unchangedFiles": {
+    "mobile/Assets/Scripts/SkyPulseMissionModels.cs": "2966173db2cd29644df19e99126a13d93f528897bf7153a0ff80938efc874605",
+    "mobile/Assets/Scripts/SkyPulseDailyMissions.cs": "10157b808de4de3ee309b00a019ee43b4faeb11be50f8276f46d2c105b7ea8be",
+    "mobile/Assets/Scripts/SkyPulseBirdProgression.cs": "1a1c01342e7b24452835109d624ac88d1d392067284ac0cd9be358a68465ccc0",
+    "mobile/Assets/Scripts/SkyPulseInputFence.cs": "ccf585a47e7bb3d401c4358d792209b548185f755b27b494a368ce7838ec7b25",
+    "mobile/Assets/Scripts/SkyPulseRelayGate.cs": "745e48b7500df3581847860531d88dfd16427491242ab42a68d131365d4b2598",
+    "mobile/Assets/Scripts/SkyPulseBlackoutCampaign.cs": "37e6fdc0b2dce5c978a0cb1d075e53bfae1f48dfb4a76e4685e17408f815d083",
+    "mobile/Assets/Scenes/SkyPulse.unity": "559ca9680dcb6f841f1d6e68f273e068d6af595b7e047619c853b2e2175aea15",
+    "mobile/Assets/Scenes/SkyPulse.unity.meta": "517caf9b9d042a7e98de0d54877713e383b57cf9098e94bb81ca59a4f04bfec9"
+  },
+  "unchangedMethods": {
+    "CreateCamera": "e5ee6cd25c8a8a5cfbd5e3f60303a6666948213ca3070da271ba022118fa86f2",
+    "SimulateFlight": "5767b7e90e1bc0da2d2874139a4fcf688025b129ad4407a0c7d614fb8c161d39",
+    "UpdateBird": "36bfdebbb6e9da3bc7822f5b6952cb000abeefced13bcde1348c4ae125b528d5",
+    "Flap": "78f20fe6276e2d5c4d5442750310a7dbec672e40e3afc3942b1e49d7ddc58c1c",
+    "CollidersOverlap": "817b7019108b03139df919a5f90f65e481bf0acb0736ece53dfcaf4961f7f1ce",
+    "BirdCollidesWithPipe": "6cadc010df5471c012522e463ddd693eb0520beb40cf9e2a9a197becd0539978",
+    "RoutePipeSpacing": "dc32e8640f88955dc09c5d8a457f2a438e487f657843eaaeec7ba53529d7f5ad",
+    "GetViewportWidth": "58b987a0239323791deeb9ec1128347009ddc7e73eccd2894426c66982ae6cb3",
+    "UpdatePipes": "addb789f64a993c534bb3b3299cb94a3d6a7869d8c3e8e65b532a8d3532448ac",
+    "ConfigurePipe": "c1d04679b6892ee548ccb67a4f40d71473832f91b4ace16db795892d58ffe4fe",
+    "BeginWorldTransition": "a1be2bc452d27b9be4bb2d7bc6af75f2c404c3b08bc0c72ad0bdb9fe7e4594fd",
+    "UpdateWorldTransition": "769d8fff91c80a622b58208102e9f0b75acc79e0f964a4f7fe7b04aca9978a5f",
+    "CollectCrystalPickup": "8377643e706ec6f4e8b2a5ef2ede3acec798b0e43def97fc759d730a7d89868a",
+    "EndFlight": "d20666b1bef6fb7ce6784e2281a777f6d110e5f01999938669f6cdf0aad81b82",
+    "BankCollectedCrystals": "85ec101d6e92c45fbde5c903f1960b9fc593abce52678444daec2cb875f08a98",
+    "SaveProgress": "ce698364177ad0c7549953cb60a9f294fe5f0705f65d433a04bc7b72ee5cf3ff",
+    "SimulateRelay": "9ac5717e01b1f15cc68bf231a637b4ab81c4b1e6dd75684721da3bd8578e0322",
+    "RelayPlaneContact": "a082e73f15584e9e8bb261dd533416124f00bbc9dbf2b03f2b188f8b792d9bb5",
+    "RelayCellContact": "865073dcd37f41eecdda96c74809bc58b9288fbb3de2815117b736e81e7ec0fd",
+    "RelayUnlocked": "bacd9c8f38fdbaa3922ad9d24a580e029c4e063ead89ea30c2079a56c63ab947",
+    "FinalizeMission": "d76030fddf65b2be939870854c077a69677b7de70f3af6f6692a015e38aa8850",
+    "ClaimDaily": "434c11d7af1aa2510b1e956fcd143902933b875cd13fbf1e48fabe101943c6d5",
+    "TouchBlackoutNode": "ca78a1c01ef5ca5e6ae303556566e2b386645c039c34d6394c53cdd0b63c331d",
+    "ActivateNextBlackoutPuzzle": "a2d8be9f19912df1d60d684ecfc2f0f03b75b64551d8a21539875bc9dbc3c0f2",
+    "RestartBlackoutVault": "11c57caae9e4b576f7a4060f4e45b6fd88c3cac8f7cf50681dda4c5554adae58",
+    "SaveBlackoutAttempt": "710fa360bbe42d2a0dcd80bf79ce3a63debc34f6cfec999f58b986d9f08df804",
+    "ToggleBlackoutPreview": "869081ed3d773ac7170390bfc1cfd9dec26135835881a54a08a1c1c535a67983",
+    "CancelBlackoutPreview": "c2ecddb9460073077c12214b95efcd7e6c41adbbae12d13bab22ae5d5a4586b6",
+    "PreviewBlackoutNode": "b93ac79c7853708caa0ea3a26481467e06e1dce322863be80c4df1f1f6ea1b1f",
+    "CommitBlackoutPreview": "0388922d3623e14d679d7d44857141d495bc8cbca06d28f5fa4bfa87737f997d",
+    "ResetBlackoutEffects": "a7df504cebf35687d546efdd7a0df27ec80a8f6f1fb8ad3e55d0609bf0c8b212"
+  },
+  "readableMeshAuthoringHelper": {
+    "path": "mobile/Assets/Scripts/SkyPulsePrism.cs",
+    "sha256": "4deaf7efad3c3d589e37a20f3dcca1f8c0db3b86d7fd555a78fa67fb70d55a38",
+    "defaultCpuBufferReleasePreserved": true,
+    "remainingFileMatchesBase": true
+  },
+  "authoredAudio": {
+    "mobile/Assets/Resources/SkyPulse/audio/flap.wav": {
+      "sha256": "135937e425d8c14b0b958ca9be1304a5391d742e41828a3cbfbe752659bb9316",
+      "metaSha256": "b85ceb96eece6d1b3371de9f9f36342ff346909af6be91d15aab93a919361fd9",
+      "matchesGenerator": true
+    },
+    "mobile/Assets/Resources/SkyPulse/audio/score.wav": {
+      "sha256": "cda7c93f64c53c38898c79fdd17d267fae1544e6adcc0a0ca7b15467103b63a8",
+      "metaSha256": "deebf78df3494eb74903aa5b200ad08877cd46000630b25ec189ff24e37d6697",
+      "matchesGenerator": true
+    },
+    "mobile/Assets/Resources/SkyPulse/audio/crystal.wav": {
+      "sha256": "5b32feba4d5632b346592bb0c0f78e0f173204910d77f14fab36152b61c1e1f1",
+      "metaSha256": "5bea402d3115407b2cedfb91cb71972d72230408a19557754e43327f0a83fb93",
+      "matchesGenerator": true
+    },
+    "mobile/Assets/Resources/SkyPulse/audio/crash.wav": {
+      "sha256": "0859d670b7a5ed45627b2ce9912e49bb69bb93bf4a054bb5199a5c051142e09f",
+      "metaSha256": "00c546e138af60b73a45aa508612dd29dbe5515528d50bfdc246319dd88350a0",
+      "matchesGenerator": true
+    },
+    "mobile/Assets/Resources/SkyPulse/audio/unlock.wav": {
+      "sha256": "2fed971cbf0892c97825197aaf62153c94bc5ea84f94176f2ea0e78f5d739994",
+      "metaSha256": "09575c9815697f9ea3fe1b00eb20b1b5fb87d41d69ae09b792edfacddc28820a",
+      "matchesGenerator": true
+    },
+    "mobile/Assets/Resources/SkyPulse/audio/prism.wav": {
+      "sha256": "5f4d2950b17ebb8cad1e175942aa2de41f5bbe959eefe40457a44db1ae0a045f",
+      "metaSha256": "0a442164c565c60298bb9d863f8613572e9bdd1fbb7bec7b97e7e3a4b5e883ac",
+      "matchesGenerator": true
+    },
+    "mobile/Assets/Resources/SkyPulse/audio/sensor.wav": {
+      "sha256": "ad4f0a91fd613f687470921d5cc67f605ae6721acf49649ad25c6599fb48dd83",
+      "metaSha256": "8aad8aa4666810dd87e8be14903afc1feb439d8d515d16ab62f92e659d521b4a",
+      "matchesGenerator": true
+    }
+  },
+  "uniqueUnityGuids": 1172,
+  "presentationOnlyFlightHook": true,
+  "newRunFeedbackReset": true,
+  "savedAudioPreferenceHook": true,
+  "passed": true
+}

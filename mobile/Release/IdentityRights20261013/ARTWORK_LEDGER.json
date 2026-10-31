@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "auditDate": "2026-10-24",
+  "auditDate": "2026-10-31",
   "creator": "Mcaulee Maddison",
   "ownerStatements": [
     "Artwork includes owner-generated ChatGPT and ARTA outputs",
@@ -8,7 +8,7 @@
     "All references were own images or generated outputs"
   ],
   "scope": "Every image source file currently under mobile/Assets; excludes .meta files and historical evidence outside Assets",
-  "imageCount": 146,
+  "imageCount": 147,
   "exactByteDuplicateGroups": [],
   "providerTerms": {
     "arta": "https://aiby.mobi/ai_art_ios/terms/en/",
@@ -1621,6 +1621,17 @@
       "evidenceNote": "mobile/Development/RelayWorld20261024/MATERIAL_PROVENANCE.md",
       "firstPathCommit": "created-2026-10-24-development-checkpoint",
       "references": "mobile/Assets/Resources/SkyPulse/backgrounds/pulse-relay-station-v1.png; owner confirmed own/generated references",
+      "exclusiveRightsVerified": false
+    },
+    {
+      "path": "mobile/Assets/Resources/SkyPulse/materials/relay-ocean-albedo-v2.png",
+      "sha256": "958bcf064972522828c8db47d1f39be0b34f7a26ce11bc207fc176821541d039",
+      "bytes": 3055079,
+      "providerEvidence": "OpenAI built-in imagegen tool; original fictional surface generated for SkyPulse on 2026-10-31",
+      "useRightsBasis": "Generated for the requested in-game asset; provenance records generation and does not certify exclusivity",
+      "evidenceNote": "mobile/Development/ArtSources/RelayOceanSurface-v2.json",
+      "firstPathCommit": "created-2026-10-31-development-checkpoint",
+      "references": "No stock or reference image used",
       "exclusiveRightsVerified": false
     }
   ]

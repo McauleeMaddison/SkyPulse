@@ -6,6 +6,7 @@ namespace SkyPulse.Mobile
     public sealed partial class SkyPulseNativeGame
     {
         Text homeIdentity;
+        Text homeHangarTitle,homeTechTitle;
         Material homeGlassMaterial;
         Material HomeGlassFinish
         {
@@ -66,6 +67,63 @@ namespace SkyPulse.Mobile
             homeBestCaption.color=Color.Lerp(accent,Hex("#b8d2dc"),.5f);
             menuBestText.color=Hex("#edfaff");
             difficultyText.color=accent;
+            ApplyHomeActionProgress();
+        }
+        // Reuse the existing labels and action roots so callbacks, ownership and
+        // navigation stay unchanged. This can run again after every mode switch.
+        void SetupHomeActionProgress()
+        {
+            if(homeHangar==null||homeTech==null||menuHangarProgressText==null||menuTechProgressText==null)return;
+            if(homeHangarTitle==null)homeHangarTitle=homeHangar.GetComponentInChildren<Text>(true);
+            if(homeTechTitle==null)homeTechTitle=homeTech.GetComponentInChildren<Text>(true);
+            if(menuHangarProgressText.transform.parent!=homeHangar)menuHangarProgressText.transform.SetParent(homeHangar,false);
+            if(menuTechProgressText.transform.parent!=homeTech.transform)menuTechProgressText.transform.SetParent(homeTech.transform,false);
+            menuHangarProgressText.name="Bird collection progress";
+            menuTechProgressText.name="Installed tech progress";
+        }
+        void ApplyHomeActionProgress()
+        {
+            SetupHomeActionProgress();
+            if(homeHangarTitle==null||homeTechTitle==null)return;
+            bool endless=homeProtocol==SkyPulseMode.EndlessRoute,relay=homeProtocol==SkyPulseMode.PulseRelay;
+            var tech=(RectTransform)homeTech.transform;
+            // 448 x 196 gives two clearly separate cards and a 54 pt authored
+            // title (15 pt on the smallest supported 320 x 568 pt phone).
+            if(endless)
+            {
+                homeHangar.anchoredPosition=new Vector2(-240,-390);homeHangar.sizeDelta=new Vector2(448,196);
+                tech.anchoredPosition=new Vector2(240,-390);tech.sizeDelta=new Vector2(448,196);
+            }
+            else if(relay){homeHangar.anchoredPosition=new Vector2(0,-440);homeHangar.sizeDelta=new Vector2(228,144);}
+            homeHangarTitle.text=relay?"YOUR BIRD":"BIRD HANGAR";
+            homeTechTitle.text="TECH TREE";
+            HomeActionLabel(homeHangarTitle,endless?new Vector2(0,34):Vector2.zero,
+                endless?new Vector2(416,78):new Vector2(204,116),endless?54:40,Hex("#eefbff"),FontStyle.Bold);
+            HomeActionLabel(homeTechTitle,new Vector2(0,34),new Vector2(416,78),54,Hex("#eefbff"),FontStyle.Bold);
+            HomeActionLabel(menuHangarProgressText,new Vector2(0,-40),new Vector2(416,66),46,Hex("#b8ceda"),FontStyle.Normal);
+            HomeActionLabel(menuTechProgressText,new Vector2(0,-40),new Vector2(416,66),46,Hex("#b8ceda"),FontStyle.Normal);
+            menuHangarProgressText.gameObject.SetActive(endless);menuTechProgressText.gameObject.SetActive(endless);
+            HomeActionSurface(homeHangar.GetComponent<Button>(),Hex("#7cb5c9"));
+            HomeActionSurface(homeTech.GetComponent<Button>(),Hex("#9aadc8"));
+        }
+        void HomeActionLabel(Text text,Vector2 position,Vector2 size,int fontSize,Color colour,FontStyle style)
+        {
+            var rect=text.rectTransform;
+            rect.anchorMin=rect.anchorMax=rect.pivot=new Vector2(.5f,.5f);
+            rect.localScale=Vector3.one;rect.anchoredPosition=position;rect.sizeDelta=size;
+            text.fontSize=fontSize;text.resizeTextForBestFit=false;text.fontStyle=style;text.alignment=TextAnchor.MiddleCenter;
+            text.horizontalOverflow=HorizontalWrapMode.Overflow;text.verticalOverflow=VerticalWrapMode.Truncate;
+            text.color=colour;PolishScoreLabel(text,style==FontStyle.Bold?.18f:.08f);
+        }
+        void HomeActionSurface(Button button,Color tint)
+        {
+            SetComfortHitTarget(button);
+            var face=button.targetGraphic as SkyPulseCircuitGraphic;
+            if(face==null)return;
+            // A denser individual satin face protects the lettering from busy
+            // city geometry without putting a slab behind the whole action row.
+            tint.a=1;face.color=tint;face.ProjectedGlass=true;face.SoftGlass=true;face.Hologram=false;
+            face.material=HomeGlassFinish;face.rectTransform.sizeDelta=((RectTransform)button.transform).sizeDelta;face.SetVerticesDirty();
         }
     }
 }

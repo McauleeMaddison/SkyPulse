@@ -71,11 +71,12 @@ namespace SkyPulse.Mobile
             glass.Accent = accent;
             hangarInformationCanvas = glass.gameObject.AddComponent<CanvasGroup>();
             hangarInformationCanvas.alpha = hangarInformationFadeTime >= 0 ? 0 : 1;
-            HangarLabel(glass.transform, skin.Name, new Vector2(0, 175), new Vector2(720, 62), 44, Hex("#effaff"));
+            var birdName=HangarLabel(glass.transform, skin.Name, new Vector2(0, 174), new Vector2(720, 62), 43, Hex("#effaff"));
+            birdName.fontStyle=FontStyle.Bold;
             HangarLabel(glass.transform, profile.Rarity + "  /  LEVEL " + BirdLevel(skin),
                 new Vector2(0, 121), new Vector2(700, 40), 24, profile.RarityColour);
-            HangarLabel(glass.transform, BredBird(skin) ? "INHERITED LINEAGE" : "FOUNDER BIRD",
-                new Vector2(0, 83), new Vector2(700, 32), 20, Hex("#9ebac9"));
+            // Rarity and level are the identity line. Actual reward traits
+            // below carry the useful difference, without another header row.
             var genome = birdProgression.Genome(skin.Id);
             HangarTrait(glass.transform, genome, (BirdTrait)genome.primary, -190, accent);
             HangarTrait(glass.transform, genome, (BirdTrait)genome.secondary, 190, accent);
@@ -86,7 +87,18 @@ namespace SkyPulse.Mobile
             HangarLabel(glass.transform, saving, new Vector2(0, -108), new Vector2(740, 42), 23, Hex("#accbd9"));
             string action = equipped ? "EQUIPPED" : owned ? "EQUIP BIRD" : $"UNLOCK · {unlockPrice:N0} ✦";
             var select = CreateNeonButton(glass.transform, action, new Vector2(0, -182), new Vector2(620, 88), accent);
+            var originalFace=select.targetGraphic;
+            var selectionFace=ProgressionSurface(select.transform,"Satin bird selection",Vector2.zero,new Vector2(620,88),equipped?SkyPulseProgressionSurface.Finish.Quiet:SkyPulseProgressionSurface.Finish.Action);
+            selectionFace.Capsule=true;selectionFace.Accent=accent;selectionFace.transform.SetAsFirstSibling();
+            originalFace.enabled=false;select.targetGraphic=selectionFace;
+            // Keep the transparent shell as the original full hit target while
+            // retiring its old rectangular border and interior decoration.
+            select.GetComponent<Image>().color=Color.clear;
+            foreach(var outline in select.GetComponents<Outline>())outline.enabled=false;
+            var oldKeyline=select.transform.Find("Flight control keyline");if(oldKeyline!=null)oldKeyline.gameObject.SetActive(false);
             select.GetComponentInChildren<Text>().fontSize = 29;
+            select.GetComponentInChildren<Text>().fontStyle=FontStyle.Bold;
+            select.GetComponentInChildren<Text>().color=equipped?Hex("#d5e8f0"):Hex("#06232b");
             select.interactable = !equipped;
             if (!equipped) select.onClick.AddListener(() => SelectSkin(skin));
             var train = ProgressionButton(hangarPageRoot, "TRAIN BIRD", new Vector2(-205, -550),
@@ -110,13 +122,13 @@ namespace SkyPulse.Mobile
 
         void HangarTrait(Transform parent, BirdGenome genome, BirdTrait trait, float x, Color accent)
         {
-            var tile = ProgressionSurface(parent, "Bird trait · " + trait, new Vector2(x, -16),
-                new Vector2(350, 126), SkyPulseProgressionSurface.Finish.Quiet);
+            var tile = ProgressionSurface(parent, "Bird trait · " + trait, new Vector2(x, 12),
+                new Vector2(350, 136), SkyPulseProgressionSurface.Finish.Quiet);
             tile.Accent = accent;
             HangarLabel(tile.transform, trait.ToString().ToUpperInvariant(), new Vector2(0, 38),
                 new Vector2(330, 30), 20, Hex("#a3bdcd"));
-            HangarLabel(tile.transform, TraitValue(trait, SkyPulseBirdProgression.Points(genome, trait)), Vector2.zero,
-                new Vector2(330, 46), 34, accent);
+            var value=HangarLabel(tile.transform, TraitValue(trait, SkyPulseBirdProgression.Points(genome, trait)), Vector2.zero,
+                new Vector2(330, 48), 37, accent);value.fontStyle=FontStyle.Bold;
             HangarLabel(tile.transform, TraitContext(trait), new Vector2(0, -42),
                 new Vector2(330, 35), 21, Hex("#c5dce5"));
         }
@@ -456,8 +468,9 @@ namespace SkyPulse.Mobile
                     Mathf.Clamp01(
                         elapsed / HangarSwipeDuration);
 
-                // Smooth ease-out.
-                t = 1f - Mathf.Pow(1f - t, 3f);
+                // Continuous acceleration and zero end velocity avoid a hard
+                // carousel launch or a visible bump into the selected bay.
+                t = t*t*t*(t*(t*6f-15f)+10f);
 
                 hangarCarouselTrack.anchoredPosition =
                     Vector2.Lerp(

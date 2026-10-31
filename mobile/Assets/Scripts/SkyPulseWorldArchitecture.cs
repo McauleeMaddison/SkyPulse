@@ -109,7 +109,23 @@ namespace SkyPulse.Mobile
         static Color Shell(int world)
         {
             world%=12;
-            return world==4?new Color(.57f,.49f,.44f,.12f):world==8?new Color(.24f,.22f,.29f,.12f):world==10?new Color(.50f,.36f,.24f,.12f):world==1||world==3||world==11?new Color(.54f,.59f,.61f,0):world==2?new Color(.40f,.36f,.29f,0):world==6?new Color(.30f,.36f,.30f,.12f):new Color(.29f,.33f,.39f,0);
+            // Solid facade palettes distinguish each civic family before any
+            // emissive window or post effect. These are not twelve grey shells.
+            switch(world)
+            {
+                case 0:return new Color(.24f,.35f,.46f,0); // midnight ceramic / titanium
+                case 1:return new Color(.58f,.67f,.70f,0); // pearl skyport
+                case 2:return new Color(.49f,.42f,.30f,0); // champagne research alloy
+                case 3:return new Color(.26f,.43f,.48f,0); // coastal blue stone
+                case 4:return new Color(.62f,.47f,.43f,.12f); // rose limestone
+                case 5:return new Color(.47f,.57f,.66f,0); // glacial ceramic
+                case 6:return new Color(.28f,.41f,.33f,.12f); // jade garden stone
+                case 7:return new Color(.30f,.28f,.44f,0); // violet architectural alloy
+                case 8:return new Color(.20f,.17f,.29f,.12f); // obsidian fortress
+                case 9:return new Color(.28f,.39f,.54f,0); // cobalt harbour steel
+                case 10:return new Color(.57f,.38f,.24f,.12f); // warm mesa sandstone
+                default:return new Color(.64f,.70f,.73f,0); // polar ivory habitat
+            }
         }
         public static Mesh Build(int world,int variant=0)
         {
@@ -270,7 +286,7 @@ namespace SkyPulse.Mobile
                 height*=.75f+seed*.36f;width*=1.18f-seed*.23f;depth*=.91f+seed*.16f;
                 lean=-lean*.73f;at.x+=Mathf.Lerp(-.10f,.10f,seed);
             }
-            const int sides=24;int floors=Mathf.CeilToInt(height/.38f);var shell=Shell(world);
+            const int sides=16;int floors=Mathf.CeilToInt(height/.38f);var shell=Shell(world);
             for(int row=0;row<floors;row++)
             {
                 float y=row/(float)floors,c=(row+1f)/floors;
@@ -303,6 +319,7 @@ namespace SkyPulse.Mobile
             FacadeStructure(b,at,width,depth,height,lean,form,world);
             Entrance(b,at,width,depth,height,world);
             RoofDetails(b,centre,Shape(cap,form)*width,Shape(cap,form)*depth,world);
+            ArchitecturalCrown(b,centre,Shape(cap,form)*width,Shape(cap,form)*depth,form,world);
             ServiceDetail(b,at,width,depth,height,lean,form,world);
             CapturePart("Building",b,false);
         }
@@ -359,7 +376,7 @@ namespace SkyPulse.Mobile
                     float t=.11f+section*.16f,u=t+.16f;
                     var from=at+TowerPoint(angle,t,width*1.06f,depth*1.06f,height,lean,form);
                     var to=at+TowerPoint(angle,u,width*1.06f,depth*1.06f,height,lean,form);
-                    Beam(b,from,to,form==4?.045f:.025f,form==4?.055f:.030f,form==4?Shell(world):Frame);
+                    Beam(b,from,to,form==4?.045f:.044f,form==4?.055f:.045f,form==4?Shell(world):Frame);
                 }
             }
             if(form==4)
@@ -379,7 +396,12 @@ namespace SkyPulse.Mobile
                 foreach(float t in new[]{.30f,.67f})
                 {
                     var p=at+TowerPoint(-Mathf.PI*.5f,t,width,depth,height,lean,form);
-                    Beam(b,p+new Vector3(-width*.31f,0,-.035f),p+new Vector3(width*.31f,0,-.035f),.16f,.032f,Edge);
+                    // A supported terrace and transparent parapet make this
+                    // a real occupied floor, not a pasted horizontal stripe.
+                    Beam(b,p+new Vector3(-width*.32f,0,-.075f),p+new Vector3(width*.32f,0,-.075f),.20f,.035f,Edge);
+                    Beam(b,p+new Vector3(-width*.32f,.11f,-.16f),p+new Vector3(width*.32f,.11f,-.16f),.015f,.055f,Glass(world));
+                    for(int side=-1;side<=1;side+=2)
+                        Beam(b,p+new Vector3(side*width*.29f,-.13f,.015f),p+new Vector3(side*width*.29f,0,-.12f),.025f,.025f,Frame);
                 }
                 if(world%12==7)
                 {
@@ -415,17 +437,59 @@ namespace SkyPulse.Mobile
             Beam(b,mast,mast+Vector3.up*.20f,.016f,.016f,Edge);
             Beam(b,mast+Vector3.up*.18f,mast+Vector3.up*.21f,.025f,.025f,Light(world));
         }
+        static void ArchitecturalCrown(SkyPulseMeshBuilder b,Vector3 at,float width,float depth,int form,int world)
+        {
+            int theme=world%12;if(form==4)return; // Castle parapets remain masonry.
+            if(theme==2||theme==5||theme==9||theme==11)
+            {
+                // A shaded technical crown has actual clearance, four posts,
+                // a thin fascia and a recessed luminous leading edge.
+                float y=.31f;
+                for(int x=-1;x<=1;x+=2)for(int z=-1;z<=1;z+=2)
+                    Beam(b,at+new Vector3(x*width*.32f,.08f,z*depth*.29f),at+new Vector3(x*width*.32f,y,z*depth*.29f),.026f,.026f,Frame);
+                RoundedSlab(b,at+Vector3.up*y,width*1.03f,depth*.97f,.045f,Shell(world));
+                RoundedSlab(b,at+Vector3.up*(y+.027f),width*.85f,depth*.80f,.012f,Glass(world));
+                Beam(b,at+new Vector3(-width*.49f,y-.018f,-depth*.47f),at+new Vector3(width*.49f,y-.018f,-depth*.47f),.012f,.014f,Light(world));
+            }
+            else if(theme==4||theme==8||theme==10)
+            {
+                // A solid lantern/observatory crown complements the world's
+                // citadel massing without replacing it with a glass skyscraper.
+                RoundedSlab(b,at+Vector3.up*.20f,width*.42f,depth*.46f,.24f,Shell(world));
+                for(int side=-1;side<=1;side+=2)
+                    Beam(b,at+new Vector3(side*width*.19f,.12f,-depth*.25f),at+new Vector3(side*width*.19f,.30f,-depth*.25f),.020f,.022f,Edge);
+                RoundedSlab(b,at+Vector3.up*.35f,width*.56f,depth*.60f,.055f,Frame);
+                Beam(b,at+new Vector3(-width*.25f,.34f,-depth*.30f),at+new Vector3(width*.25f,.34f,-depth*.30f),.012f,.013f,Light(world));
+            }
+            else
+            {
+                // Two structural shoulders converge around a dark open crown.
+                // Large clean lines survive phone scale better than more tiny
+                // window boxes or a generic antenna on every building.
+                for(int side=-1;side<=1;side+=2)
+                {
+                    var foot=at+new Vector3(side*width*.43f,.04f,-depth*.35f);
+                    var crest=at+new Vector3(side*width*.15f,.38f,-depth*.24f);
+                    Beam(b,foot,crest,.050f,.055f,Shell(world));
+                    Beam(b,foot+Vector3.back*.029f,crest+Vector3.back*.029f,.010f,.013f,Light(world));
+                    Beam(b,crest,crest+Vector3.forward*depth*.56f,.035f,.035f,Frame);
+                }
+                Beam(b,at+new Vector3(-width*.15f,.38f,-depth*.24f),at+new Vector3(width*.15f,.38f,-depth*.24f),.035f,.035f,Edge);
+            }
+        }
         static float Shape(float t,int form)
         {
             if(form==4)return t<.08f?1.14f:t<.82f?1:Mathf.Lerp(1,1.12f,Mathf.SmoothStep(0,1,(t-.82f)/.18f));
-            if(form==1)return 1-.62f*Mathf.Pow(t,2.4f); // sail with a softly closed crown
-            if(form==2)return t<.16f?1.08f-Mathf.SmoothStep(0,1,t/.16f)*.08f:t<.75f?1:1-.20f*Mathf.SmoothStep(0,1,(t-.75f)/.25f);
-            if(form==3)return 1-.46f*t; // bevelled prismatic research building
-            return t<.60f?1-.07f*t:t<.67f?Mathf.Lerp(.958f,.76f,(t-.60f)/.07f):t<.86f?.76f:Mathf.Lerp(.76f,.59f,(t-.86f)/.14f);
+            if(form==1)return 1-.42f*Mathf.Pow(t,2.8f); // a full-height aerodynamic sail
+            // Stable vertical walls, purposeful upper setbacks and a readable
+            // crown replace a continuously tapering pile of floor plates.
+            if(form==2)return t<.12f?Mathf.Lerp(1.08f,.96f,Mathf.SmoothStep(0,1,t/.12f)):t<.77f?.96f:Mathf.Lerp(.96f,.76f,Mathf.SmoothStep(0,1,(t-.77f)/.23f));
+            if(form==3)return t<.68f?1-.09f*t:Mathf.Lerp(.94f,.66f,(t-.68f)/.32f);
+            return t<.10f?Mathf.Lerp(1.06f,.98f,t/.10f):t<.64f?.98f:t<.73f?Mathf.Lerp(.98f,.77f,(t-.64f)/.09f):t<.88f?.77f:Mathf.Lerp(.77f,.62f,(t-.88f)/.12f);
         }
         static Vector3 TowerPoint(float a,float t,float width,float depth,float height,float lean,int form)
         {
-            float c=Mathf.Cos(a),s=Mathf.Sin(a),exponent=form==4?1:form==3?.58f:form==1?.65f:.24f,r=Shape(t,form);
+            float c=Mathf.Cos(a),s=Mathf.Sin(a),exponent=form==4?1:form==3?.26f:form==1?.55f:.16f,r=Shape(t,form);
             return new Vector3(Mathf.Sign(c)*Mathf.Pow(Mathf.Abs(c),exponent)*width*.5f*r+lean*t*t,t*height,Mathf.Sign(s)*Mathf.Pow(Mathf.Abs(s),exponent)*depth*.5f*r);
         }
         static Vector3 TowerNormal(float a,float t,float width,float depth,float height,float lean,int form)
@@ -611,7 +675,12 @@ namespace SkyPulse.Mobile
         }
         static Vector3 Rock(float a,float t,float rx,float rz,float depth,int world)
         {
-            float radius=(1-.58f*Mathf.Pow(t,1.18f))*(1+.10f*Mathf.Sin(a*5+world)+.055f*Mathf.Sin(a*11+t*4));
+            // Broad shoulders and broken lower cliff buttresses read as a
+            // landmass. The middle LED mounting band stays byte-for-byte in
+            // place, keeping authored beacon light positions registered.
+            float shoulder=(1-Mathf.SmoothStep(0,1,(t-.12f)/.12f))*.075f*Mathf.Clamp01(t/.10f);
+            float buttress=Mathf.SmoothStep(0,1,(t-.56f)/.32f)*(.14f+.045f*Mathf.Sin(a*3+world*.7f));
+            float radius=(1-.58f*Mathf.Pow(t,1.18f)+shoulder+buttress)*(1+.10f*Mathf.Sin(a*5+world)+.055f*Mathf.Sin(a*11+t*4));
             return new Vector3(Mathf.Cos(a)*rx*radius+.22f*t, -.04f-depth*t+.14f*Mathf.Sin(a*7+world)*t,Mathf.Sin(a)*rz*radius);
         }
         static Vector3 RockNormal(float a,float t,float rx,float rz,float depth,int world)

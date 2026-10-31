@@ -33,16 +33,30 @@ Shader "SkyPulse/Holographic Tree"
                 float radius=distance(i.local.xy,_Press.xy);
                 float touch=pow(saturate(1-abs(radius-_Press.z*5)*4),3)*saturate(1-_Press.z*1.7)*_Press.w;
                 float body=step(1.5,i.uv.y)*(1-step(3.5,i.uv.y));
+                float optic=step(3.5,i.uv.y);
                 // A crisp continuous optical jacket has a curved dark centre,
                 // narrow silver reflection and a restrained coloured rim. The
                 // live fibre carries pulses; no expanded haze layer is needed.
                 float3 jacket=float3(.018,.040,.062)+i.color.rgb*(.09+ndl*.18+edge*.23);
                 jacket+=float3(.60,.79,.92)*(reflection*.28+strip*.17+spec*.26);
                 float powered=smoothstep(.30,.88,i.color.a);
-                jacket*=lerp(.48,1,powered);
+                jacket*=lerp(.62,1,powered);
+                // Dark optical jackets remain physically readable when a branch
+                // is unpowered. Only the narrow inset fibre carries moving light.
+                jacket+=i.color.rgb*edge*.045;
                 float3 fibre=lerp(i.color.rgb,float3(.72,.94,1),.18+moving*.30)*(.61+moving*.75+touch*.6);
                 float3 tint=lerp(fibre,jacket,body)+i.color.rgb*touch*.26;
-                return fixed4(tint*_Tint.rgb,i.color.a*_Reveal*_Tint.a);
+                // Level lenses have their own real normal-based optical finish.
+                // Reusing the filament path made every facet a flat blue chip.
+                float fill=saturate(dot(n,normalize(float3(.72,.18,-.55))));
+                float3 facet=i.color.rgb*(.13+ndl*.40+fill*.16);
+                facet+=float3(.68,.84,.96)*(reflection*.23+strip*.13+spec*.30);
+                facet+=i.color.rgb*(edge*.24+touch*.14);
+                float available=smoothstep(.72,.92,i.color.a);
+                facet+=i.color.rgb*available*(.055+moving*.06);
+                tint=lerp(tint,facet,optic);
+                float alpha=lerp(i.color.a,saturate(.30+i.color.a*.68+edge*.12),optic);
+                return fixed4(tint*_Tint.rgb,alpha*_Reveal*_Tint.a);
             }
             ENDCG
         }

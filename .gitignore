@@ -35,3 +35,6 @@ artifacts/
 
 # Temporary sidecars created beside encoded previews by macOS AVFoundation.
 *.mp4.sb-*
+
+# Unity regenerates these uncustomized local scene-template defaults.
+mobile/ProjectSettings/SceneTemplateSettings.json

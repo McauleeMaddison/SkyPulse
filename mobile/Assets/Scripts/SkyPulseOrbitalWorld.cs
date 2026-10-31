@@ -59,6 +59,10 @@ namespace SkyPulse.Mobile
         public static void ConfigureCelestialMaterial(Material value,int kind)
         {
             value.SetFloat("_Kind",kind);value.SetVector("_LightDirection",new Vector4(-.66f,.58f,-.42f,0));
+            // One shared imported map supplies authored geology. Light and
+            // drifting clouds remain shader work on the real curved sphere.
+            var surface=kind==0?Resources.Load<Texture2D>("SkyPulse/materials/relay-ocean-albedo-v2"):null;
+            value.SetTexture("_SurfaceMap",surface);value.SetFloat("_SurfaceMapAmount",surface!=null?1:0);
             if(kind==1)
             {
                 value.SetFloat("_Seed",8.93f);value.SetColor("_Deep",new Color(.19f,.10f,.085f));value.SetColor("_Light",new Color(.64f,.43f,.29f));value.SetColor("_Rim",new Color(.13f,.44f,1f));value.SetFloat("_Atmosphere",0);

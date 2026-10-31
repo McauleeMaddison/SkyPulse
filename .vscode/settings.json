@@ -8,7 +8,10 @@
     "mobile/Obj": true,
     "mobile/Build": true,
     "mobile/Builds": true,
-    "mobile/UserSettings": true
+    "mobile/UserSettings": true,
+    "artifacts": true,
+    ".pnpm-store": true,
+    "**/*.meta": true
   },
   "search.exclude": {
     "mobile/Library": true,

@@ -29,13 +29,15 @@ public static class SkyPulseDimensionalChecks
     {
         if(Application.companyName!="SkyPulseQA20261006")throw new Exception("Isolated QA only");
         yield return SkyPulseBirdShapeChecks.Live();
-        SkyPulseBirdProgressionChecks.Pure();SkyPulseDailyRouteChecks.Pure();SkyPulseMissionChecks.PureChecks();SkyPulseOneThumbChecks.Pure();SkyPulseBlackoutChecks.Pure();
+        SkyPulseTactileFeedbackChecks.Pure();SkyPulseBirdProgressionChecks.Pure();SkyPulseDailyRouteChecks.Pure();SkyPulseMissionChecks.PureChecks();SkyPulseOneThumbChecks.Pure();SkyPulseBlackoutChecks.Pure();
         var game=UnityEngine.Object.FindAnyObjectByType<SkyPulseNativeGame>();if(game==null)game=new GameObject("QA game").AddComponent<SkyPulseNativeGame>();game.enabled=false;
         Set(game,"hapticsEnabled",false);
         PlayerGoals(game);
         yield return Audio(game);
         yield return SkyPulseTouchComfortChecks.Live(game);
+        yield return SkyPulseHomeProgressChecks.Live(game);
         yield return Environment(game);
+        yield return SkyPulsePresentationContinuityChecks.Live(game);
         SkyPulseConstructedWorldChecks.StationCheck(game);
         yield return SkyPulsePlanetPresentationChecks.Live(game);
         yield return SkyPulsePipeFinishChecks.Live(game);
@@ -48,6 +50,7 @@ public static class SkyPulseDimensionalChecks
         var founders=(Array)typeof(SkyPulseNativeGame).GetField("Skins",BindingFlags.Static|BindingFlags.NonPublic).GetValue(null);
         Set(game,"equippedSkin",founders.GetValue(0));Call(game,"ApplyEquippedVisuals");
         yield return SkyPulseTechTreeChecks.Live(game);
+        yield return SkyPulseTreeFinishChecks.Live(game);
         yield return SkyPulseBirdProgressionChecks.Live(game);
         yield return SkyPulseGuideWorldChecks.Live(game);
         yield return SkyPulseCopyChecks.Live(game);
@@ -142,8 +145,10 @@ public static class SkyPulseDimensionalChecks
             var transforms=(Transform[,])Get(env,"scenery");var expected=transforms[1,5].localPosition;
             env.Present(0,4,1,1,Color.cyan,Color.black,false);Check((expected-transforms[1,5].localPosition).sqrMagnitude<.000001f,"Absolute-distance parallax agrees at "+fps+" FPS");
         }
-        var items=(Transform[,])Get(env,"scenery");env.Present(0,20,4,1,Color.cyan,Color.black,true);var reduced=items[1,5].localPosition;env.Present(0,30,8,1,Color.cyan,Color.black,true);Check(reduced==items[1,5].localPosition,"Reduced Motion freezes scenery travel and idle drift");
-        Check(((Material[])Get(env,"surfaces"))[1].GetFloat("_Clock")==0,"Reduced Motion also freezes occupied-window and architectural lighting");
+        var items=(Transform[,])Get(env,"scenery");var heldPosition=items[1,5].localPosition;float heldTravel=env.Travel,heldClock=((Material[])Get(env,"surfaces"))[1].GetFloat("_Clock");
+        env.Present(0,20,4,1,Color.cyan,Color.black,true);Check(heldPosition==items[1,5].localPosition,"Enabling Reduced Motion preserves the skyline already on screen");var reduced=items[1,5].localPosition;env.Present(0,30,8,1,Color.cyan,Color.black,true);Check(reduced==items[1,5].localPosition,"Reduced Motion freezes scenery travel and idle drift");
+        Check(((Material[])Get(env,"surfaces"))[1].GetFloat("_Clock")==heldClock,"Reduced Motion holds occupied-window lighting at its existing phase");
+        env.Present(0,30,8,1,Color.cyan,Color.black,false);Check(reduced==items[1,5].localPosition,"Disabling Reduced Motion resumes from the same skyline position");env.Present(0,31,9,1,Color.cyan,Color.black,false);Check(Mathf.Abs(env.Travel-heldTravel-1)<.0001f,"Resumed scenery advances by actual distance without a catch-up jump");env.ResetView();
         Check(items.GetLength(0)==2&&items.GetLength(1)==12&&items[1,5].gameObject.activeSelf,"The fixed two-bank twelve-district pool retains an active middle test subject");
         Check(items[1,1].localPosition.z>items[1,5].localPosition.z&&items[1,5].localPosition.z>items[1,9].localPosition.z,"The active far, middle and near city groups occupy ordered physical depths");
         for(int world=0;world<12;world++)
@@ -159,14 +164,14 @@ public static class SkyPulseDimensionalChecks
         long before=GC.GetAllocatedBytesForCurrentThread();for(int i=0;i<120;i++)env.Present(0,i/30f,i/60f,1,Color.cyan,Color.black,false);Check(GC.GetAllocatedBytesForCurrentThread()==before,"Warmed architecture update has zero managed allocations");
         yield return RenderEnvironment(game,env,camera);
         Call(game,"PauseFlight");var frozen=items[1,5].localPosition;float frozenLight=((Material[])Get(env,"surfaces"))[1].GetFloat("_Clock");Call(game,"UpdateCinematicPresentation",1f);Check(frozen==items[1,5].localPosition,"Pause freezes flight scenery");Check(((Material[])Get(env,"surfaces"))[1].GetFloat("_Clock")==frozenLight,"Pause freezes window-light animation");Call(game,"ResumeFlight");
-        Call(game,"ResetToMenu");Call(game,"StartFlight");Call(game,"UpdateCinematicPresentation",0f);Check(env.Travel==0,"Retry resets scenery distance");Check((float)Get(game,"sceneryEntry")==1,"Retry retains solid scenery while resetting travel");
+        Call(game,"ResetToMenu");Call(game,"StartFlight");Call(game,"UpdateCinematicPresentation",0f);Check((float)Get(game,"sceneryTravel")==0,"Retry resets logical scenery travel without rewinding its visible district");Check((float)Get(game,"sceneryEntry")==1,"Retry retains solid scenery while resetting travel");
         Call(game,"SetHomeProtocol",SkyPulseMode.PulseRelay);Call(game,"ResetToMenu");
         var home=(GameObject)Get(game,"homeScreen");var map=(Button)Get(game,"modeHomeMap");var guide=(Button)Get(game,"modeHomeGuide");var hangar=(RectTransform)Get(game,"homeHangar");
         Check(((RectTransform)map.transform).anchoredPosition.y==hangar.anchoredPosition.y&&((RectTransform)guide.transform).anchoredPosition.y==hangar.anchoredPosition.y,"Relay secondary actions occupy one calm row");
         Check(!((Text)Get(game,"menuHangarProgressText")).gameObject.activeSelf&&!((Text)Get(game,"menuCrystalText")).transform.parent.gameObject.activeSelf,"Relay removes duplicate collection/wallet clutter");
         Check(home.transform.Find("Button · MISSION CONTROL").gameObject.activeSelf&&home.transform.Find("Button · PRIVACY").gameObject.activeSelf,"Mission Control and privacy remain accessible");
         yield return null;SkyPulsePlayerExperienceChecks.CaptureUi(game,"relay-home-refined");
-        Call(game,"SetHomeProtocol",SkyPulseMode.EndlessRoute);Call(game,"ResetToMenu");Check(hangar.anchoredPosition==new Vector2(-187,-355)&&((RectTransform)guide.transform).sizeDelta==new Vector2(660,144),"Switching preserves Endless's hangar placement and restores the accessible guide/footer layout");
+        Call(game,"SetHomeProtocol",SkyPulseMode.EndlessRoute);Call(game,"ResetToMenu");Check(hangar.anchoredPosition==new Vector2(-240,-390)&&((RectTransform)guide.transform).sizeDelta==new Vector2(660,144),"Switching preserves Endless's hangar placement and restores the accessible guide/footer layout");
         var cleanup=new GameObject("Scenery lifecycle fixture");var owned=cleanup.AddComponent<SkyPulseFlightEnvironment>();owned.Build(12);
         var ownedMeshes=((Mesh[])Get(owned,"silhouettes")).Concat((Mesh[])Get(owned,"residential")).ToArray();var ownedMaterials=(Material[])Get(owned,"surfaces");
         UnityEngine.Object.Destroy(cleanup);yield return null;yield return null;

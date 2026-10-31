@@ -6,15 +6,33 @@ Open **`mobile/` in Unity Hub** and the repository folder in VS Code. The shippi
 scene is `mobile/Assets/Scenes/SkyPulse.unity`. Start with the
 [editing map](EDITING_GUIDE.md) before changing code.
 
-## Local visual repairs after Build 19 — 30–31 October 2026
+## Current local design candidate — 31 October 2026
 
-The source includes the [world/Home/Hangar/Tech Tree and bird-shape pass](Development/VisualPolish20261030/README.md), followed by visual regression repairs. **These changes are newer than the installed iPhone Build 19**; a new signed device candidate and owner acceptance are still required. Do not describe Editor previews as installed-phone footage. Refer to the dated QA record for the exact source that each capture and check covers.
+The [DesignUpgrade20261031 package](Development/DesignUpgrade20261031/README.md)
+records the current local previews, source manifests and QA scope. This source is
+newer than installed iPhone build 19 and has not been installed or uploaded.
+World/district and Relay presentation, Home labels, Hangar/Tech Tree finishes and
+native tactile feedback work need acceptance on a newly signed device candidate.
+Editor captures are not installed-phone footage; use each dated record for the
+exact source and checks it covers.
 
-The original articulated bird artwork is restored; the rejected sculpted replacement has been removed. Pipe collars use a real hollow mouth and separately editable structural parts; see [the Unity pipe editing steps](EDITING_GUIDE.md#edit-the-actual-3d-pipes-in-unity). The game starts in the Editor only from `Assets/Scenes/SkyPulse.unity`. Workshop Play remains an inspection session, preventing its static pipe and camera from appearing in actual gameplay.
+Gameplay retains the original articulated bird artwork. The separate editable
+Neon Finch workshop is an isolated art-review prototype. **Review its revised head
+and inset mechanical optics before any further bird or roster work.** The current
+revision is limited to the existing head mesh assets; preserve the body, wings,
+tail, joints, materials, prefab, scene, animation and GUIDs. It has no gameplay
+integration.
 
-The Editor safely stops Play before C# recompilation. Wait for compilation, then start a fresh Play session. No owner save reset or App Store action is part of this pass.
+Pipe collars use a real hollow mouth and separately editable structural parts;
+see [the Unity pipe editing steps](EDITING_GUIDE.md#edit-the-actual-3d-pipes-in-unity).
+Use [the guide's opening scene map](EDITING_GUIDE.md#open-the-right-scene) for the
+worlds, distant atmosphere, Relay, pipes and Finch. Gameplay starts in the Editor
+from `Assets/Scenes/SkyPulse.unity`; workshop Play remains model inspection.
 
-## Current state — local Build 19
+The Editor stops Play before C# recompilation. Wait for compilation, then start
+a fresh Play session. No owner save reset or App Store action is part of this work.
+
+## Installed iPhone build 19
 
 - Runtime source: `f6221f68314a864b898a7c7bbe9693bb528316e2`; Unity 6000.6.0f1.
 - **SkyPulse 1.0.0 (19) is installed and launched on the paired iPhone.** It replaced the phone's Build 17 directly; TestFlight was not uploaded.
@@ -42,8 +60,8 @@ capped at 20%. Breeding creates a permanent offspring with previewed inherited
 traits and retains its parents. Read the authoritative pricing and transaction
 functions in the editing guide before changing costs or rewards.
 
-The current prepared metadata lives at the path in `CURRENT_RELEASE.json`.
-Changing code makes its recorded export/QA hashes stale until renewed checks.
+The installed-build metadata lives at the path in `Release/CURRENT_RELEASE.json`.
+Its export/QA hashes describe build 19; newer source needs its own renewed checks.
 Local metadata checks cannot certify global uniqueness or settle Apple's
 unidentified similarity allegation. Keep original art/generation evidence;
 generated artwork is not evidence of exclusive rights by itself.
@@ -108,5 +126,6 @@ rights, global metadata uniqueness, a bug-free game or Apple acceptance.
    helpers belong in the disposable project, never in the real player save.
 6. Test the new candidate on physical devices before treating it as release-ready.
 
-Suggested next visual work: improve bird/background separation and give the exact
-collision location a restrained impact cue. These remain proposals.
+Next visual acceptance: review the Finch head in the isolated workshop and the
+new local preview package. Keep further bird/roster work on hold until that review;
+physical-device checks for the wider design candidate remain pending.

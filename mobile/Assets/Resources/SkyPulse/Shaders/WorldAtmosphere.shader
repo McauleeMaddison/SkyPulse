@@ -23,35 +23,45 @@ Shader "SkyPulse/Constructed World Atmosphere"
                 return lerp(lerp(lerp(hash(a),hash(a+float3(1,0,0)),f.x),lerp(hash(a+float3(0,1,0)),hash(a+float3(1,1,0)),f.x),f.y),lerp(lerp(hash(a+float3(0,0,1)),hash(a+float3(1,0,1)),f.x),lerp(hash(a+float3(0,1,1)),hash(a+1),f.x),f.y),f.z);
             }
             void palette(float world,out float3 zenith,out float3 middle,out float3 shadow,out float3 light,out float3 glow);
+            float cloudDensity(float3 at,float3 wind)
+            {
+                // The lobe width is measured in world units. White voxels at
+                // the former scale read as marbled ground instead of clouds.
+                float3 uv=at*.00225+float3(.17,.43,.29)+wind;
+                float billow=tex3Dlod(_CloudNoise,float4(uv,0)).r;
+                float crown=-5.2+(billow-.5)*13;
+                float top=1-smoothstep(crown-2.7,crown+.9,at.y);
+                float bottom=smoothstep(-23,-15,at.y);
+                return top*bottom*smoothstep(.30,.66,billow);
+            }
             float3 cloudVolume(float3 ray,float3 behind)
             {
-                // Three sparse samples through a real distant volume, below
-                // the city. Air remains transparent: no neutral cloud floor.
-                // Upper cosmos rays do no density sampling at all.
+                // Four shaped billow samples, each with one upper-light probe.
+                // Cloud crowns have a lit top and a shadowed body instead of an
+                // opaque noise carpet. The upper sky does no volume sampling.
                 if(ray.y>=-.12)return behind;
-                const float top=-3,bottom=-18,originHeight=6.4,maxDistance=96;
+                const float top=1,bottom=-23,originHeight=6.4,maxDistance=110;
                 float start=max(0,(top-originHeight)/ray.y);
                 float finish=min(maxDistance,(bottom-originHeight)/ray.y);
                 if(finish<=start)return behind;
                 float3 za,ma,sa,la,ga,zb,mb,sb,lb,gb;
                 palette(_WorldA,za,ma,sa,la,ga);palette(_WorldB,zb,mb,sb,lb,gb);
                 float blend=saturate(_Blend);
-                float3 shadow=lerp(sa,sb,blend)*.75+behind*.35;
-                float3 lit=lerp(la,lb,blend)*.72+lerp(ga,gb,blend)*.14+behind*.28;
-                float stepLength=(finish-start)/3;
-                float3 origin=float3(0,originHeight,0),wind=float3(_Clock*.00032,0,_Clock*.00011);
+                float3 shadow=lerp(sa,sb,blend)*.53+behind*.22;
+                float3 lit=lerp(la,lb,blend)*.56+float3(.12,.15,.21)+lerp(ga,gb,blend)*.035;
+                float stepLength=(finish-start)*.25;
+                float3 origin=float3(0,originHeight,0),wind=float3(_Clock*.00010,0,_Clock*.000035);
                 float transmittance=1;float3 scattering=0;
-                [unroll] for(int stepIndex=0;stepIndex<3;stepIndex++)
+                [unroll] for(int stepIndex=0;stepIndex<4;stepIndex++)
                 {
-                    float3 sampleAt=origin+ray*(start+(stepIndex+.5)*stepLength);
-                    float3 uv=sampleAt*.009+float3(.17,.43,.29)+wind;
-                    float coarse=tex3Dlod(_CloudNoise,float4(uv,0)).r;
-                    float fine=tex3Dlod(_CloudNoise,float4(uv*3.17+float3(.37,.11,.61),0)).r;
-                    float height=saturate((sampleAt.y-bottom)/(top-bottom));
-                    float envelope=smoothstep(0,.28,height)*(1-smoothstep(.60,1,height));
-                    float density=smoothstep(.43,.68,coarse*.76+fine*.24)*envelope;
-                    float3 colour=lerp(shadow,lit,saturate(height*.75+.18+coarse*.14));
-                    float opacity=1-exp2(-density*min(stepLength,8)*.10);
+                    float3 at=origin+ray*(start+(stepIndex+.42)*stepLength);
+                    float density=cloudDensity(at,wind);
+                    float upper=cloudDensity(at+float3(-2.8,4.6,-1.4),wind);
+                    float silver=saturate((density-upper)*2.7);
+                    float height=saturate((at.y+20)*.075);
+                    float illumination=saturate(.21+height*.31+silver*.62);
+                    float3 colour=lerp(shadow,lit,illumination);
+                    float opacity=1-exp2(-density*min(stepLength,8)*.125);
                     scattering+=colour*(transmittance*opacity);
                     transmittance*=1-opacity;
                 }

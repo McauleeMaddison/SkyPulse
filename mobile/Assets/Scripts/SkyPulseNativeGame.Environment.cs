@@ -7,13 +7,19 @@ namespace SkyPulse.Mobile
         SkyPulseFlightEnvironment flightEnvironment;
         SkyPulseRelayEnvironment relayHomeEnvironment;
         float sceneryTravel,sceneryAnchorX,sceneryEntry,sceneryHomeTravel;
+        float sceneryViewOrigin,sceneryLastDistance;
+        int sceneryLastWorld=-1;
+        bool sceneryHasView,sceneryWasHome;
         int scenerySequence=int.MinValue;
         void ResetFlightEnvironment()
         {
             // Home already shows this city. Keep it solid when entering or
             // retrying flight instead of flashing a dithered construction reveal.
+            // A new run resets simulation travel, while the already visible
+            // Neon district continues from its current position behind the HUD.
+            sceneryViewOrigin=sceneryHasView&&sceneryLastWorld==0?sceneryLastDistance:0;
             sceneryTravel=0;sceneryEntry=1;scenerySequence=int.MinValue;
-            if(flightEnvironment!=null)flightEnvironment.ResetView();
+            if(flightEnvironment!=null)flightEnvironment.ResetView(sceneryViewOrigin,flightEnvironment.PresentationClock);
         }
         void UpdateFlightEnvironment(float dt)
         {
@@ -42,7 +48,9 @@ namespace SkyPulse.Mobile
                 flightEnvironment=root.AddComponent<SkyPulseFlightEnvironment>();flightEnvironment.Build(GetViewportWidth());
             }
             if(flightEnvironment.gameObject.activeSelf!=show)flightEnvironment.gameObject.SetActive(show);
-            if(!show||state==FlightState.Paused)return;
+            if(!show){sceneryWasHome=false;return;}
+            if(state==FlightState.Paused)return;
+            if(home&&!sceneryWasHome&&sceneryHasView&&sceneryLastWorld==routeWorldIndex)sceneryHomeTravel=flightEnvironment.InputDistanceForView(sceneryLastDistance);
             if(home&&!reduceMotionEnabled)sceneryHomeTravel+=Mathf.Max(0,dt)*.45f;
             if(state==FlightState.Playing)
             {
@@ -59,7 +67,8 @@ namespace SkyPulse.Mobile
             float blend=worldTransitionTimer>0?Mathf.SmoothStep(0,1,1-worldTransitionTimer/WorldTransitionSeconds):1;
             var world=routeWorld??equippedWorld;
             if(flightEnvironment.ReflectionWorld!=routeWorldIndex)flightEnvironment.SetReflection(routeWorldIndex,LoadSprite(world.BackgroundPath).texture);
-            flightEnvironment.Present(routeWorldIndex,home?sceneryHomeTravel:sceneryTravel,cinematicClock,blend,world.Accent,world.Floor,reduceMotionEnabled,home||reduceMotionEnabled?1:Mathf.SmoothStep(0,1,sceneryEntry));
+            flightEnvironment.Present(routeWorldIndex,home?sceneryHomeTravel:sceneryViewOrigin+sceneryTravel,cinematicClock,blend,world.Accent,world.Floor,reduceMotionEnabled,home||reduceMotionEnabled?1:Mathf.SmoothStep(0,1,sceneryEntry));
+            sceneryLastDistance=flightEnvironment.Travel;sceneryLastWorld=routeWorldIndex;sceneryHasView=true;sceneryWasHome=home;
             flightEnvironment.SetViewport(GetViewportWidth());flightEnvironment.Render();
         }
     }
