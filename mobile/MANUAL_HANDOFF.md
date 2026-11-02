@@ -17,14 +17,12 @@ Editor captures are not installed-phone footage; use each dated record for the
 exact source and checks it covers.
 
 Gameplay retains the original articulated bird artwork. The separate editable
-Neon Finch workshop is an isolated art-review prototype. **Review the rebuilt
-contoured body/head, compact rounded face and material finish before any further bird or roster work.**
-The 2 November sculpture changes existing mesh buffers 001–042 and eight review
-materials. Wing/tail buffers 043 onward, joints, prefab, clips, bindings and existing
-GUIDs remain intact. The studio scene now includes separately checked neutral
-lighting/reflections. The latest user-directed metal finish/detail pass changes only
-the existing shader and eight material profiles; the accepted compact face and all
-geometry remain intact. Gameplay still uses the original bird art.
+Neon Finch workshop is an isolated art-review prototype. **Review the roster-style
+blade feathers, cobalt/cyan coverage and compact mechanical face before further
+bird or roster work.** The 2 November revision refreshes existing sculpture mesh
+buffers 001–125 and eight material profiles. Bones, joints, prefab, scene, clips,
+bindings, lighting and every GUID are preserved. Feather face colour is editable
+in the existing material Inspector. New art remains unapproved and uninstalled.
 
 Pipe collars use a real hollow mouth and separately editable structural parts;
 see [the Unity pipe editing steps](EDITING_GUIDE.md#edit-the-actual-3d-pipes-in-unity).

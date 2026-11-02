@@ -26,17 +26,20 @@ Workshop Play is model inspection. Return to `Assets/Scenes/SkyPulse.unity` to
 test gameplay. Preserve the existing scenes, prefabs, materials, animation and
 `.meta` identities. Numbered mesh copies are local studies, not cleanup targets.
 
-The Finch remains an isolated prototype. Review its contoured body/head sculpture,
-embedded optics, compact rounded face and PBR finish before converting any other birds. The wing/tail
-geometry and existing animation are preserved; gameplay retains the original art.
+The Finch remains an isolated prototype. Review its roster-directed cobalt/cyan
+blade feathers, stepped armour and embedded compact optics before converting any
+other birds. Existing wing/tail animation, bones, scene and prefab remain intact;
+gameplay retains the original roster artwork.
 Its surface is `SkyPulseBirdWorkshop/Shaders/FinchArmourFinish.shader`. The material
-Inspector exposes **Directional machining** and **Satin microfacet finish**; these
-control grain/highlight detail without changing the geometry. Studio
-settings live in the review scene and its `Lighting` folder. **Refine Finch
-sculpture and metal finish** explicitly replaces workshop buffers 001–042 and the
+Inspector exposes **Feather face colour**, **Fine directional microfinish** and
+**Restrained plate satin**. Base feather vertex alpha separates broad cobalt faces
+(alpha 0) from dark bevels/sidewalls (alpha 1); other parts keep alpha 1. Materials
+and all sculpted mesh parts remain editable in the existing workshop.
+Studio settings live in the review scene and its `Lighting` folder. **Refine Finch
+sculpture and metal finish** explicitly replaces workshop buffers 001–125 and the
 eight review-material profiles; **Create Neon Finch 3D art review** preserves an
-existing rig. Edit the saved meshes/materials directly in Unity when making manual
-art changes; do not run the explicit refinement command over those edits.
+existing rig. Edit saved meshes/materials directly in Unity for manual art changes;
+do not run the explicit refinement command over those edits.
 
 ## Where to make a code change
 

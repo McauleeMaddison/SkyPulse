@@ -89,7 +89,7 @@ public static class SkyPulseBirdPrototypeChecks
     {
         if(!path.StartsWith(Folder+"/Meshes/",StringComparison.Ordinal)||!path.EndsWith(".asset",StringComparison.Ordinal))return false;
         string file=Path.GetFileName(path);int number;
-        return file.Length>4&&file[3]==' '&&int.TryParse(file.Substring(0,3),out number)&&number>=1&&number<=42;
+        return file.Length>4&&file[3]==' '&&int.TryParse(file.Substring(0,3),out number)&&number>=1&&number<=125;
     }
     static Mesh OpticalLens(int number)
     {
@@ -112,7 +112,7 @@ public static class SkyPulseBirdPrototypeChecks
     const string FinishShader="SkyPulse/Workshop/Finch Armour Finish";
     const string FinishShaderPath=Folder+"/Shaders/FinchArmourFinish.shader";
     static readonly HashSet<string> ReviewFloats=new HashSet<string>(new[]{"_Metallic","_Glossiness","_FinishKind","_DetailScale","_SeamStrength","_EmissionStrength","_BrushStrength","_SatinStrength"},StringComparer.Ordinal);
-    static readonly HashSet<string> ReviewColors=new HashSet<string>(new[]{"_Color","_EmissionColor"},StringComparer.Ordinal);
+    static readonly HashSet<string> ReviewColors=new HashSet<string>(new[]{"_Color","_EmissionColor","_BladeColor"},StringComparer.Ordinal);
     sealed class MaterialExpectation { public string preservedJson; }
     static Material CopyMaterial(Material original)
     {
@@ -241,7 +241,7 @@ public static class SkyPulseBirdPrototypeChecks
             return;
         }
         if(!faceOnly)return;
-        Check(changed.All(path=>IsReviewMesh(path)&&int.Parse(Path.GetFileName(path).Substring(0,3))>=21),"Face-only revision preserves every body/wing/tail mesh, material, rig, clip and metadata file");
+        Check(changed.All(path=>IsReviewMesh(path)&&int.Parse(Path.GetFileName(path).Substring(0,3))>=21&&int.Parse(Path.GetFileName(path).Substring(0,3))<=42),"Face-only revision preserves every body/wing/tail mesh, material, rig, clip and metadata file");
         var beak=OpticalLens(40);var vertices=beak.vertices;
         float tip=vertices.Max(v=>v.x),projection=tip+.66f-.69f;
         float tipRadius=vertices.Where(v=>Mathf.Abs(v.x-tip)<.0001f).Max(v=>Mathf.Abs(v.z));
@@ -262,20 +262,20 @@ public static class SkyPulseBirdPrototypeChecks
             AssetDatabase.SaveAssets();
             var before=Snapshot();
             var reviewPaths=before.Keys.Where(IsReviewMesh).OrderBy(p=>p,StringComparer.Ordinal).ToArray();
-            Check(reviewPaths.Length==42,"Existing body and head have exactly the expected 42 mesh assets numbered 001–042");
+            Check(reviewPaths.Length==125,"Existing Finch has exactly the expected 125 mesh assets numbered 001–125");
             var guids=before.Keys.Where(p=>!p.EndsWith(".meta",StringComparison.Ordinal)).ToDictionary(p=>p,AssetDatabase.AssetPathToGUID);
             bool wasCompact=CompactLens(OpticalLens(29))&&CompactLens(OpticalLens(36));
             var finishPaths=before.Keys.Where(IsFinishMaterial).OrderBy(p=>p,StringComparer.Ordinal).ToArray();
             Check(finishPaths.Length==8&&finishPaths.Select(FinishNumber).Distinct().Count()==8,"Exactly the eight existing review-finish materials 01–08 are authorized for property updates");
             var expectedMaterials=ExpectedMaterials(finishPaths);
-            Check(SkyPulseBirdPrototypeWorkshop.OpticsRevision=="Detailed metallic finch finish v6","The requested contoured mechanical finch revision is active");
+            Check(SkyPulseBirdPrototypeWorkshop.OpticsRevision=="Roster-aligned mechanical finch v7","The requested contoured mechanical finch revision is active");
             SkyPulseBirdPrototypeWorkshop.ReviseOpticsInQa();AssetDatabase.SaveAssets();
             var revised=Snapshot();
             Check(before.Count==revised.Count&&before.Keys.All(revised.ContainsKey),"Sculpture revision creates or removes no workshop asset or metadata file");
             var changed=before.Where(pair=>revised[pair.Key]!=pair.Value).Select(pair=>pair.Key).OrderBy(p=>p,StringComparer.Ordinal).ToArray();
-            Check(changed.All(path=>IsReviewMesh(path)||IsFinishMaterial(path)),"Only existing sculpture meshes 001–042 and review-finish material assets 01–08 may change");
+            Check(changed.All(path=>IsReviewMesh(path)||IsFinishMaterial(path)),"Only existing sculpture meshes 001–125 and review-finish material assets 01–08 may change");
             CheckFaceScope(changed);
-            Check(before.Where(pair=>!IsReviewMesh(pair.Key)&&!IsFinishMaterial(pair.Key)).All(pair=>revised[pair.Key]==pair.Value),"Prefab, scene, animations, wing and tail meshes 043 onward, all other materials and every meta file remain byte-for-byte unchanged");
+            Check(before.Where(pair=>!IsReviewMesh(pair.Key)&&!IsFinishMaterial(pair.Key)).All(pair=>revised[pair.Key]==pair.Value),"Prefab, scene, animation clips, reference-card geometry, all other materials and every meta file remain byte-for-byte unchanged");
             foreach(var item in expectedMaterials)
             {
                 var material=AssetDatabase.LoadAssetAtPath<Material>(item.Key);ValidateReviewFinish(material);
@@ -288,7 +288,7 @@ public static class SkyPulseBirdPrototypeChecks
                 Check(actual==item.Value.preservedJson,"Saved material preserves every field outside the exact declared shader and property scope: "+Path.GetFileName(item.Key));
             }
             Check(guids.All(pair=>AssetDatabase.AssetPathToGUID(pair.Key)==pair.Value),"Every workshop asset GUID remains stable through the head revision");
-            Check(reviewPaths.All(path=>guids[path]==AssetDatabase.AssetPathToGUID(path)),"All 42 existing body and head mesh identities are preserved");
+            Check(reviewPaths.All(path=>guids[path]==AssetDatabase.AssetPathToGUID(path)),"All 125 existing Finch mesh identities are preserved");
             int changedSculpture=changed.Count(IsReviewMesh),changedFinishes=changed.Count(IsFinishMaterial);
             Check(changedSculpture>0||wasCompact,"Sculpture geometry changes, or the existing optics already meet narrow-sensor bounds");
             var left=OpticalLens(29);var right=OpticalLens(36);
@@ -298,7 +298,7 @@ public static class SkyPulseBirdPrototypeChecks
             var repeated=Snapshot();
             Check(revised.Count==repeated.Count&&revised.All(pair=>repeated.TryGetValue(pair.Key,out var hash)&&hash==pair.Value),"Repeating the head revision is byte-identical and preserves owner edits elsewhere");
             Check(guids.All(pair=>AssetDatabase.AssetPathToGUID(pair.Key)==pair.Value),"Head revision repeat preserves every asset GUID");
-            var report=new RevisionReport{result="PASS",scope="Only existing sculpture mesh geometry 001–042 and the declared armour shader reference plus _Color, _Metallic, _Glossiness, _EmissionColor, _FinishKind, _DetailScale, _SeamStrength, _EmissionStrength, _BrushStrength and _SatinStrength in materials 01–08 may change; prefab, scene, transforms, bones, wing and tail geometry 043 onward, clips, every other material field and metadata are preserved",revision=SkyPulseBirdPrototypeWorkshop.OpticsRevision,workshopFiles=before.Count,reviewedMeshes=reviewPaths.Length,changedReviewedMeshes=changedSculpture,finishMaterials=finishPaths.Length,changedFinishMaterials=changedFinishes,priorOpticsAlreadyCompact=wasCompact,leftLensDimensions=left.bounds.size,rightLensDimensions=right.bounds.size,changedAssets=changed,checks=assertions.ToArray()};
+            var report=new RevisionReport{result="PASS",scope="Only existing sculpture mesh geometry 001–125 and the declared armour shader reference plus _Color, _Metallic, _Glossiness, _EmissionColor, _FinishKind, _DetailScale, _SeamStrength, _EmissionStrength, _BrushStrength, _SatinStrength and _BladeColor in materials 01–08 may change; prefab, scene, transforms, bones, reference-card geometry, clips, every other material field and metadata are preserved",revision=SkyPulseBirdPrototypeWorkshop.OpticsRevision,workshopFiles=before.Count,reviewedMeshes=reviewPaths.Length,changedReviewedMeshes=changedSculpture,finishMaterials=finishPaths.Length,changedFinishMaterials=changedFinishes,priorOpticsAlreadyCompact=wasCompact,leftLensDimensions=left.bounds.size,rightLensDimensions=right.bounds.size,changedAssets=changed,checks=assertions.ToArray()};
             File.WriteAllText(Path.Combine(output,"REVISION-PRESERVATION.json"),JsonUtility.ToJson(report,true));
             PrepareStudioLighting(output);
             Debug.Log("SKYPULSE_NEON_FINCH_HEAD_REVISION_PASS: "+changedSculpture+" body and head meshes and "+changedFinishes+" authorized finishes changed; all other files and every GUID preserved");
@@ -342,6 +342,10 @@ public static class SkyPulseBirdPrototypeChecks
             Check(meshes.All(m=>m.vertexCount>0&&m.normals.Length==m.vertexCount&&m.triangles.Length>0),"All mesh parts have usable geometry and normals");
             Check(meshes.All(m=>m.vertices.All(Finite)),"All authored mesh coordinates are finite");
             Check(meshes.Where(m=>IsReviewMesh(AssetDatabase.GetAssetPath(m))).All(m=>m.normals.All(n=>Finite(n)&&n.sqrMagnitude>.5f)),"Every revised armour vertex has a finite nonzero surface normal; thin crown plates retain physical thickness");
+            Check(meshes.All(m=>m.colors.Length==m.vertexCount&&m.colors.All(c=>Finite(c.r)&&Finite(c.g)&&Finite(c.b)&&Finite(c.a)&&c.a>=0&&c.a<=1)),"Every sculpture vertex has a finite material-coverage channel");
+            var bladeMeshes=meshes.Where(m=>m.name.Contains("curved primary chassis")||m.name.Contains("secondary metal feather")||m.name.Contains("articulated tail blade")).ToArray();
+            Check(bladeMeshes.Length==33&&bladeMeshes.All(m=>m.colors.Any(c=>c.a==0)&&m.colors.Any(c=>c.a==1)),"All 33 wing/tail blades separate cobalt faces from narrow dark sidewalls");
+            Check(meshes.Except(bladeMeshes).All(m=>m.colors.All(c=>c.a==1)),"Blade masks cannot recolour the optics, body, gold or enamel parts");
             var renderers=rig.GetComponentsInChildren<MeshRenderer>(true);Check(renderers.Length>25,"Rigid mesh parts are attached to the editable bone hierarchy");
             Bounds bounds=renderers[0].bounds;foreach(var renderer in renderers)bounds.Encapsulate(renderer.bounds);
             Check(bounds.size.z>.7f,"Model has genuine front-to-back volume ("+bounds.size.z.ToString("F3")+" world units)");

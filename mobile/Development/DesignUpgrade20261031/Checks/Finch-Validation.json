@@ -5,14 +5,14 @@
     "geometry": "Authored curved rigid mesh parts parented to editable articulated bones",
     "scope": "Art-review candidate only; no gameplay replacement or roster conversion",
     "meshParts": 125,
-    "vertices": 36487,
-    "triangles": 68020,
+    "vertices": 39151,
+    "triangles": 55672,
     "bones": 8,
     "warmPoseAllocatedBytes": 0,
     "dimensions": {
-        "x": 3.343395233154297,
-        "y": 1.4203190803527832,
-        "z": 2.603590488433838
+        "x": 3.363459348678589,
+        "y": 1.4203479290008545,
+        "z": 2.6617116928100586
     },
     "checks": [
         "Prototype QA starts in Edit mode",
@@ -27,12 +27,15 @@
         "All preview bones remain under the isolated bird root",
         "Wing and tail tips form articulated parent-child chains",
         "Mechanical shell and layered feathers use distinct authored mesh parts",
-        "Authored geometry stays within the 15–40k prototype verification budget (36487 vertices)",
+        "Authored geometry stays within the 15–40k prototype verification budget (39151 vertices)",
         "All mesh parts have usable geometry and normals",
         "All authored mesh coordinates are finite",
         "Every revised armour vertex has a finite nonzero surface normal; thin crown plates retain physical thickness",
+        "Every sculpture vertex has a finite material-coverage channel",
+        "All 33 wing/tail blades separate cobalt faces from narrow dark sidewalls",
+        "Blade masks cannot recolour the optics, body, gold or enamel parts",
         "Rigid mesh parts are attached to the editable bone hierarchy",
-        "Model has genuine front-to-back volume (2.604 world units)",
+        "Model has genuine front-to-back volume (2.662 world units)",
         "Distinct editable metal, shell, ivory, optical and emissive finishes are assigned",
         "Material shader compiles: SkyPulse/Workshop/Finch Armour Finish",
         "Pose sampling is deterministic and independent of prior sampled time",
@@ -45,13 +48,13 @@
         "Side, front, rear, three-quarter, flight-phase and material-detail review captures were written"
     ],
     "captures": [
-        "/private/tmp/skypulse-finch-metal-20261102/captures/skypulse-neon-finch-review/01-side.png",
-        "/private/tmp/skypulse-finch-metal-20261102/captures/skypulse-neon-finch-review/02-front.png",
-        "/private/tmp/skypulse-finch-metal-20261102/captures/skypulse-neon-finch-review/03-rear.png",
-        "/private/tmp/skypulse-finch-metal-20261102/captures/skypulse-neon-finch-review/04-three-quarter.png",
-        "/private/tmp/skypulse-finch-metal-20261102/captures/skypulse-neon-finch-review/05-flight-a.png",
-        "/private/tmp/skypulse-finch-metal-20261102/captures/skypulse-neon-finch-review/06-flight-b.png",
-        "/private/tmp/skypulse-finch-metal-20261102/captures/skypulse-neon-finch-review/07-flight-c.png",
-        "/private/tmp/skypulse-finch-metal-20261102/captures/skypulse-neon-finch-review/08-metal-detail.png"
+        "/private/tmp/skypulse-finch-roster-20261102/captures/skypulse-neon-finch-review/01-side.png",
+        "/private/tmp/skypulse-finch-roster-20261102/captures/skypulse-neon-finch-review/02-front.png",
+        "/private/tmp/skypulse-finch-roster-20261102/captures/skypulse-neon-finch-review/03-rear.png",
+        "/private/tmp/skypulse-finch-roster-20261102/captures/skypulse-neon-finch-review/04-three-quarter.png",
+        "/private/tmp/skypulse-finch-roster-20261102/captures/skypulse-neon-finch-review/05-flight-a.png",
+        "/private/tmp/skypulse-finch-roster-20261102/captures/skypulse-neon-finch-review/06-flight-b.png",
+        "/private/tmp/skypulse-finch-roster-20261102/captures/skypulse-neon-finch-review/07-flight-c.png",
+        "/private/tmp/skypulse-finch-roster-20261102/captures/skypulse-neon-finch-review/08-metal-detail.png"
     ]
 }

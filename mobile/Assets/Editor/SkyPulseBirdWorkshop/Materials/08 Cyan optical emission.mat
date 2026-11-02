@@ -65,14 +65,14 @@ Material:
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
-    - _DetailScale: 160
+    - _DetailScale: 240
     - _DstBlend: 0
-    - _EmissionStrength: 0.65
+    - _EmissionStrength: 0.8
     - _FinishKind: 4
     - _GlossMapScale: 1
-    - _Glossiness: 0.76
+    - _Glossiness: 0.75
     - _GlossyReflections: 1
-    - _Metallic: 0.18
+    - _Metallic: 0.1
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
@@ -84,7 +84,8 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.01, g: 0.5, b: 0.58, a: 1}
-    - _EmissionColor: {r: 0, g: 0.85, b: 1.15, a: 1}
+    - _BladeColor: {r: 0.035, g: 0.22, b: 0.72, a: 1}
+    - _Color: {r: 0.01, g: 0.75, b: 0.95, a: 1}
+    - _EmissionColor: {r: 0, g: 1.1, b: 1.6, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

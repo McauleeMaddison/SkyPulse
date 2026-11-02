@@ -48,7 +48,7 @@
   "csharpCompilerWarnings": [],
   "runtimeSourceStillMatchesFullSuite": true,
   "originalLogsLocal": "/private/tmp/skypulse-design-20261031",
-  "finchScope": "User-selected metal finish/detail pass only. Accepted compact V5 face and all geometry, rig, animation and lighting preserved. Existing shader and eight material profiles refined; no gameplay integration.",
+  "finchScope": "Roster-directed isolated Finch art revision: broader plated feathers with cobalt face masks/cyan insets, smaller shoulder joint, overlapping body armour and cleaner optical/plate clearances. Compact face and all rig motion retained. No gameplay replacement.",
   "deviceTested": false,
   "remainingChecks": [
     "Physical iPhone/iPad visual acceptance",
@@ -60,25 +60,35 @@
   ],
   "latestFinchReview": {
     "date": "2026-11-02",
-    "revision": "Detailed metallic finch finish v6",
-    "focus": "Metal finish and detail",
+    "revision": "Roster-aligned mechanical finch v7",
+    "focus": "Match original mechanical bird roster",
     "focusedQa": "PASS",
-    "geometryBuffersChanged": 0,
+    "geometryBuffersChanged": 125,
     "existingFinishMaterialsChanged": 8,
-    "acceptedFacePreserved": true,
-    "bodyWingTailGeometryAndAnimationPreserved": true,
-    "lightingPreserved": true,
-    "shader": "Existing Finch Armour Finish shader refined in place; same GUID",
-    "finish": "Satin anodized cobalt/cyan, brushed titanium/champagne alloy, fine filtered machining and controlled highlights",
+    "acceptedCompactFaceRetained": true,
+    "rigAndAnimationBytePreserved": true,
+    "lightingBytePreserved": true,
+    "shader": "Existing Finch Armour Finish shader; same GUID, one Standard surface program",
+    "finish": "Cobalt blade faces, cyan insets, narrow dark sidewalls, silver/gold mechanical fittings; reduced shell gloss",
     "surfaceControls": [
+      "_BladeColor",
       "_BrushStrength",
       "_SatinStrength"
     ],
     "warmPoseAllocatedBytes": 0,
-    "vertexCount": 36487,
-    "triangles": 68020,
+    "vertexCount": 39151,
+    "triangles": 55672,
     "ownerAcceptance": "pending",
-    "deviceTested": false
+    "deviceTested": false,
+    "csharpCompilerErrors": [],
+    "csharpCompilerWarnings": [],
+    "motionPreview": {
+      "sourceFrames": 90,
+      "durationSeconds": 3,
+      "encodedFps": 30,
+      "decodedSamplesDistinct": 3,
+      "measuresDeviceFps": false
+    }
   },
   "runtimeComparisonExclusions": [
     "Assets/.DS_Store: Finder folder metadata removed during the recorded cleanup; not a game asset"

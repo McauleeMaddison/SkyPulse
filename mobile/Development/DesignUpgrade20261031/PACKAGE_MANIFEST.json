@@ -3,12 +3,12 @@
   "mediaOrigin": "Actual Unity Editor captures; sheet layouts contain source images without repainting",
   "files": {
     "README.md": {
-      "sha256": "3c57b01cf1afc4be357840065447737f671726d921b526c9bcd86dc50198480c",
-      "bytes": 5248
+      "sha256": "2ad662ce66f380f0eda9fcc74f611396f935cc38f0cba530d4fd2580721ffbab",
+      "bytes": 5235
     },
     "Checks/Finch-Preservation.json": {
-      "sha256": "49459cdf297a657c3826d9efeb0e664ca0260e98424504d15dfdc39fc6a544fc",
-      "bytes": 26554
+      "sha256": "383085b19ced6575076c9950b4352e140dd2026a18732f31bca287d898355f93",
+      "bytes": 38818
     },
     "Checks/District-Migration.json": {
       "sha256": "346b9d5f561808bb6eebb1e7237468699e9e37cf7889db633f470d292a11d3b1",
@@ -31,8 +31,8 @@
       "bytes": 297
     },
     "Checks/Finch-Validation.json": {
-      "sha256": "0f96d948cd66d893e8b4ce052ad57e13621876fd312043d1b6121e35e58a1653",
-      "bytes": 3525
+      "sha256": "92b074e7cc7e76fd7b95b94bba2c8eae9c3f69b90a70bb710693d7716e26ce70",
+      "bytes": 3769
     },
     "Checks/Home-Responsive.json": {
       "sha256": "b71695f4efd13040b66ecad6633ed6e05afbc5a1bbb0bb5fc8238808724dc921",
@@ -43,8 +43,8 @@
       "bytes": 89944
     },
     "Checks/Finch-Copy.json": {
-      "sha256": "6a93f0106bac081b32a4ef804000a289bc870cf051c15453bda746f7f402d8c5",
-      "bytes": 88685
+      "sha256": "9d094164a9e338a980b1681aa4f0fe5f50e20374dc24e7680572325d7beecbab",
+      "bytes": 100220
     },
     "Checks/Tactile-Native.json": {
       "sha256": "334ff82c318d644664a52f138c4ad0aff215eb8d950e0517a6d8859ca8cb9aae",
@@ -59,20 +59,24 @@
       "bytes": 419
     },
     "Checks/QA-Summary.json": {
-      "sha256": "ceb7a4e1295501c9bd5e59adc05892ee87f039a62f032fa2831bbcdd78f70368",
-      "bytes": 3444
+      "sha256": "93c8102de74993198fcd2e12c05211c843f046537eff7ab9ca1a0ea2d295d5e0",
+      "bytes": 3784
     },
     "Previews/Tech-Tree.mp4": {
       "sha256": "ad3b901a1774e9cc5e011327e9857f87e4601437d228a35726d6499414790821",
       "bytes": 1801177
     },
+    "Previews/Finch-Roster-Comparison.png": {
+      "sha256": "fe4be4627415bcef3ba806ba3b6e8924cb8abd443a9431b5cc15d7b7487d2582",
+      "bytes": 517332
+    },
     "Previews/Finch-02-front.png": {
-      "sha256": "6424d99432b47448781c9c44d5679d982c61e5468fe13b9c6294bfc9bad78206",
-      "bytes": 202327
+      "sha256": "767b257606c5704bebbdab573032f021702b078e21329161ce437cec2fa98833",
+      "bytes": 203875
     },
     "Previews/Finch-01-side.png": {
-      "sha256": "97d44808dfd3a90ae2fa5ba78efecbed8a626cdc7dbf960a497e243d0ab50509",
-      "bytes": 225488
+      "sha256": "8373ddf62010d0a9dd9e6e80c0145adaa5a659aa41bb7876e1db30bab75747a1",
+      "bytes": 215636
     },
     "Previews/Relay-Flight.mp4": {
       "sha256": "79da16733901288c0a5a54a97f2a807545492b373d85d131a37d5bba9678b907",
@@ -83,16 +87,20 @@
       "bytes": 4928803
     },
     "Previews/Finch-05-flight-a.png": {
-      "sha256": "a3a5d53d3208b0bdee8fbfc39ec50a01e95e1a9c5e7e5dc11512dac09ef11a88",
-      "bytes": 238497
+      "sha256": "5b703df17b18296d355c233eb0f3118914fdb16e2f2d28e546ac5c9a09e51ea1",
+      "bytes": 223720
     },
     "Previews/Blackout-Home.mp4": {
       "sha256": "226fcb93c100ccb637a0d34f386e27a58d37fb63e6276c916754d68e2b5c4bda",
       "bytes": 1347086
     },
+    "Previews/Finch-Roster-Motion.mp4": {
+      "sha256": "f6e6f36ea3b23ae2e769aeca40afa4ea743df0b1aada1c73962706eae0f0a4de",
+      "bytes": 2255576
+    },
     "Previews/Finch-03-rear.png": {
-      "sha256": "0f670d0539f9bb16effb9cc160efa410285e6c626e12d4c3294194d4477477a8",
-      "bytes": 170606
+      "sha256": "2d1c9be6c81b8b959b312ed348e5353d6a322d6fb867c1f9ac15b609ed8f16d8",
+      "bytes": 203196
     },
     "Previews/Relay-Planets.png": {
       "sha256": "a1be173f2d1d31b8dc9e83e277ffbcffff600157abad8f8eb02eba821d342204",
@@ -106,6 +114,10 @@
       "sha256": "feaf1eef58f3b45dbec3f2e04865fd849226771e399883b345caa69047dcc060",
       "bytes": 3091831
     },
+    "Previews/Finch-Roster-Review.png": {
+      "sha256": "5bc4048e2d887efcb517e4248d7599656e21715f94db115dfe7608bdba738f17",
+      "bytes": 226927
+    },
     "Previews/Three-Modes.png": {
       "sha256": "36cbe3fd6ba605141c45e8525fc1e5ff69029fa6a997670c01429f0bb945de57",
       "bytes": 1405102
@@ -113,10 +125,6 @@
     "Previews/Visual-Preview.png": {
       "sha256": "9e52da4c24506218b41559f7acf6854749e58c76dce61f50ea4b787242724787",
       "bytes": 1008491
-    },
-    "Previews/Finch-Metal-Detail.png": {
-      "sha256": "79647cd14eac5e4fdcd84a058d11c33296036f57849b7200a3b1806ee7b390a3",
-      "bytes": 558281
     },
     "Previews/Home-Endless-640x1136.png": {
       "sha256": "0eef8ca2e89f918506f12845e163f38cd862d282bcb16159a7f90161886c5a81",
@@ -127,12 +135,8 @@
       "bytes": 2593950
     },
     "Previews/Finch-07-flight-c.png": {
-      "sha256": "df7de3841d6e2de314d91fb21829676659ef7e93d084e8303612243c31b8b104",
-      "bytes": 233537
-    },
-    "Previews/Finch-Metal-Finish.png": {
-      "sha256": "4b2641b45b814e4f335854e335a1883df82c5a192e2983fb326c6e3888af9a83",
-      "bytes": 241212
+      "sha256": "85e4d9e494afbbc5608bfa7a8ee00174eba7c6ce1ea0f24a8064048c8ef677f7",
+      "bytes": 217351
     },
     "Previews/Twelve-Worlds.png": {
       "sha256": "71e8ea9887ee36a8e9fce88e4a7539b441542db8591c461c7f46f2f869477b02",
@@ -143,8 +147,8 @@
       "bytes": 1526409
     },
     "Previews/Finch-06-flight-b.png": {
-      "sha256": "1ef7b1fc5a232f6c9a85d9b3fac5dd90078c1d2f21abb26919eaa080506c1684",
-      "bytes": 238776
+      "sha256": "d992a85993ff0d8624bdaca3794750cb17f68ebe58dcb84e431170c01260b4aa",
+      "bytes": 219677
     },
     "Previews/Bird-Hangar.mp4": {
       "sha256": "5fc16b9c274e2aabc4d6a6b48d1f22cf1d9db32da4a192b6b1088174d72f20a2",
@@ -154,11 +158,11 @@
       "sha256": "baa15bb33755e96ca3df1332dcaa8e23dc6efe8447aa0e9a1dfd033d71200be1",
       "bytes": 3752913
     },
-    "Previews/Finch-Metal-Finish-Motion.mp4": {
-      "sha256": "ead7bd46cd279515b55d331414e16be14c7b411871020244102134b332b7870e",
-      "bytes": 1823551
+    "Previews/Finch-Roster-Detail.png": {
+      "sha256": "0e827524bf21ac96830b7b4699d6abf0d599991172d8bc774693dab9375382b0",
+      "bytes": 545268
     }
   },
   "lastUpdated": "2026-11-02",
-  "finchRevision": "Detailed metallic finch finish v6"
+  "finchRevision": "Roster-aligned mechanical finch v7"
 }
