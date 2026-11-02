@@ -3,12 +3,12 @@
   "mediaOrigin": "Actual Unity Editor captures; sheet layouts contain source images without repainting",
   "files": {
     "README.md": {
-      "sha256": "918b309420bd858dd92dc12a410e94bc6a251f8a340b6fc18608c2f80b3c265c",
-      "bytes": 5023
+      "sha256": "3c57b01cf1afc4be357840065447737f671726d921b526c9bcd86dc50198480c",
+      "bytes": 5248
     },
     "Checks/Finch-Preservation.json": {
-      "sha256": "9ec8a2a91b46e0578ed31b3a33abeabdaba3acef98252f90548039181753705e",
-      "bytes": 23942
+      "sha256": "49459cdf297a657c3826d9efeb0e664ca0260e98424504d15dfdc39fc6a544fc",
+      "bytes": 26554
     },
     "Checks/District-Migration.json": {
       "sha256": "346b9d5f561808bb6eebb1e7237468699e9e37cf7889db633f470d292a11d3b1",
@@ -31,8 +31,8 @@
       "bytes": 297
     },
     "Checks/Finch-Validation.json": {
-      "sha256": "e60463f1f9a831e967d6a0e86e1733117097b55ac2f285f72d864e3c183779bb",
-      "bytes": 3397
+      "sha256": "0f96d948cd66d893e8b4ce052ad57e13621876fd312043d1b6121e35e58a1653",
+      "bytes": 3525
     },
     "Checks/Home-Responsive.json": {
       "sha256": "b71695f4efd13040b66ecad6633ed6e05afbc5a1bbb0bb5fc8238808724dc921",
@@ -43,8 +43,8 @@
       "bytes": 89944
     },
     "Checks/Finch-Copy.json": {
-      "sha256": "58e78f96639f51a57e9ef7196712e3126cfdd294be0c238a6fb57e1969c807fe",
-      "bytes": 88567
+      "sha256": "6a93f0106bac081b32a4ef804000a289bc870cf051c15453bda746f7f402d8c5",
+      "bytes": 88685
     },
     "Checks/Tactile-Native.json": {
       "sha256": "334ff82c318d644664a52f138c4ad0aff215eb8d950e0517a6d8859ca8cb9aae",
@@ -59,20 +59,20 @@
       "bytes": 419
     },
     "Checks/QA-Summary.json": {
-      "sha256": "04100d69a6d5416b1a33a333df62cbd6f7e3101f982f7834c6812c25d9f3df31",
-      "bytes": 3788
+      "sha256": "ceb7a4e1295501c9bd5e59adc05892ee87f039a62f032fa2831bbcdd78f70368",
+      "bytes": 3444
     },
     "Previews/Tech-Tree.mp4": {
       "sha256": "ad3b901a1774e9cc5e011327e9857f87e4601437d228a35726d6499414790821",
       "bytes": 1801177
     },
     "Previews/Finch-02-front.png": {
-      "sha256": "ef3e085d31837261163bc1b10063d97d6175c9503e84b1ed9f7f35ff554c5257",
-      "bytes": 202523
+      "sha256": "6424d99432b47448781c9c44d5679d982c61e5468fe13b9c6294bfc9bad78206",
+      "bytes": 202327
     },
     "Previews/Finch-01-side.png": {
-      "sha256": "c41533b942885704ca1db98b587b814b5a353dca62383a2e53ab4da89662e8b4",
-      "bytes": 223997
+      "sha256": "97d44808dfd3a90ae2fa5ba78efecbed8a626cdc7dbf960a497e243d0ab50509",
+      "bytes": 225488
     },
     "Previews/Relay-Flight.mp4": {
       "sha256": "79da16733901288c0a5a54a97f2a807545492b373d85d131a37d5bba9678b907",
@@ -83,20 +83,16 @@
       "bytes": 4928803
     },
     "Previews/Finch-05-flight-a.png": {
-      "sha256": "f52551e7a99bf688dd1756ad35e57bdd88e8c4d347c07146e4103d64457d2bfd",
-      "bytes": 235686
-    },
-    "Previews/Finch-Rounded-Face-Motion.mp4": {
-      "sha256": "664a8a73a9efc7208fd549dcf664b9d1ea159d1c7d366e6904ac2207d4284cd1",
-      "bytes": 1688144
+      "sha256": "a3a5d53d3208b0bdee8fbfc39ec50a01e95e1a9c5e7e5dc11512dac09ef11a88",
+      "bytes": 238497
     },
     "Previews/Blackout-Home.mp4": {
       "sha256": "226fcb93c100ccb637a0d34f386e27a58d37fb63e6276c916754d68e2b5c4bda",
       "bytes": 1347086
     },
     "Previews/Finch-03-rear.png": {
-      "sha256": "71273584123a2cf3ff6d768a2231ea87f2ae3d5c6cc077c4e064ea42c7ddf644",
-      "bytes": 174760
+      "sha256": "0f670d0539f9bb16effb9cc160efa410285e6c626e12d4c3294194d4477477a8",
+      "bytes": 170606
     },
     "Previews/Relay-Planets.png": {
       "sha256": "a1be173f2d1d31b8dc9e83e277ffbcffff600157abad8f8eb02eba821d342204",
@@ -110,10 +106,6 @@
       "sha256": "feaf1eef58f3b45dbec3f2e04865fd849226771e399883b345caa69047dcc060",
       "bytes": 3091831
     },
-    "Previews/Finch-Rounded-Face.png": {
-      "sha256": "8093b2c4da3f0aed03e342a6f89eefcfa2a132b13bdea985d5f8c5b8cbe064b5",
-      "bytes": 242612
-    },
     "Previews/Three-Modes.png": {
       "sha256": "36cbe3fd6ba605141c45e8525fc1e5ff69029fa6a997670c01429f0bb945de57",
       "bytes": 1405102
@@ -121,6 +113,10 @@
     "Previews/Visual-Preview.png": {
       "sha256": "9e52da4c24506218b41559f7acf6854749e58c76dce61f50ea4b787242724787",
       "bytes": 1008491
+    },
+    "Previews/Finch-Metal-Detail.png": {
+      "sha256": "79647cd14eac5e4fdcd84a058d11c33296036f57849b7200a3b1806ee7b390a3",
+      "bytes": 558281
     },
     "Previews/Home-Endless-640x1136.png": {
       "sha256": "0eef8ca2e89f918506f12845e163f38cd862d282bcb16159a7f90161886c5a81",
@@ -131,8 +127,12 @@
       "bytes": 2593950
     },
     "Previews/Finch-07-flight-c.png": {
-      "sha256": "2af8d25a76a1adb6b21cca4ba57ba169d164aeb3278edf2aa0a75d1c7b1463a8",
-      "bytes": 230075
+      "sha256": "df7de3841d6e2de314d91fb21829676659ef7e93d084e8303612243c31b8b104",
+      "bytes": 233537
+    },
+    "Previews/Finch-Metal-Finish.png": {
+      "sha256": "4b2641b45b814e4f335854e335a1883df82c5a192e2983fb326c6e3888af9a83",
+      "bytes": 241212
     },
     "Previews/Twelve-Worlds.png": {
       "sha256": "71e8ea9887ee36a8e9fce88e4a7539b441542db8591c461c7f46f2f869477b02",
@@ -143,8 +143,8 @@
       "bytes": 1526409
     },
     "Previews/Finch-06-flight-b.png": {
-      "sha256": "7ebb63790794ee61561bab52af5420c832c849442d1c34f78f3b0f7494091d26",
-      "bytes": 232159
+      "sha256": "1ef7b1fc5a232f6c9a85d9b3fac5dd90078c1d2f21abb26919eaa080506c1684",
+      "bytes": 238776
     },
     "Previews/Bird-Hangar.mp4": {
       "sha256": "5fc16b9c274e2aabc4d6a6b48d1f22cf1d9db32da4a192b6b1088174d72f20a2",
@@ -153,8 +153,12 @@
     "Previews/Endless-Home.mp4": {
       "sha256": "baa15bb33755e96ca3df1332dcaa8e23dc6efe8447aa0e9a1dfd033d71200be1",
       "bytes": 3752913
+    },
+    "Previews/Finch-Metal-Finish-Motion.mp4": {
+      "sha256": "ead7bd46cd279515b55d331414e16be14c7b411871020244102134b332b7870e",
+      "bytes": 1823551
     }
   },
   "lastUpdated": "2026-11-02",
-  "finchRevision": "Softened mechanical finch face v5"
+  "finchRevision": "Detailed metallic finch finish v6"
 }

@@ -17,7 +17,7 @@ public static class SkyPulseBirdPrototypeWorkshop
     static int meshNumber;
     static bool revisionBuild, refreshHead;
     static int revisedMeshCount;
-    public const string OpticsRevision = "Softened mechanical finch face v5";
+    public const string OpticsRevision = "Detailed metallic finch finish v6";
     static Transform model;
     struct Section
     {
@@ -111,13 +111,13 @@ public static class SkyPulseBirdPrototypeWorkshop
         Color colour;float metal,smooth,kind,seam;
         switch(finish)
         {
-            case 1:colour=new Color(.055f,.19f,.40f);metal=.42f;smooth=.59f;kind=0;seam=.15f;break;
-            case 2:colour=new Color(.035f,.50f,.65f);metal=.38f;smooth=.62f;kind=0;seam=.10f;break;
-            case 3:colour=new Color(.018f,.03f,.055f);metal=.35f;smooth=.40f;kind=2;seam=0;break;
-            case 4:colour=new Color(.62f,.70f,.78f);metal=.30f;smooth=.60f;kind=0;seam=.08f;break;
-            case 5:colour=new Color(.65f,.45f,.16f);metal=.85f;smooth=.68f;kind=1;seam=.04f;break;
+            case 1:colour=new Color(.075f,.22f,.43f);metal=.68f;smooth=.55f;kind=0;seam=.15f;break;
+            case 2:colour=new Color(.04f,.48f,.60f);metal=.70f;smooth=.56f;kind=0;seam=.10f;break;
+            case 3:colour=new Color(.018f,.03f,.05f);metal=.40f;smooth=.35f;kind=2;seam=0;break;
+            case 4:colour=new Color(.43f,.51f,.60f);metal=.88f;smooth=.60f;kind=1;seam=.08f;break;
+            case 5:colour=new Color(.58f,.42f,.22f);metal=.90f;smooth=.56f;kind=1;seam=.04f;break;
             case 6:colour=new Color(.005f,.014f,.025f);metal=.18f;smooth=.91f;kind=3;seam=0;break;
-            case 7:colour=new Color(.48f,.57f,.65f);metal=.92f;smooth=.76f;kind=1;seam=.08f;break;
+            case 7:colour=new Color(.48f,.56f,.65f);metal=.92f;smooth=.62f;kind=1;seam=.08f;break;
             case 8:colour=new Color(.01f,.50f,.58f);metal=.18f;smooth=.76f;kind=4;seam=0;break;
             default:throw new ArgumentOutOfRangeException(nameof(finish));
         }
@@ -128,6 +128,8 @@ public static class SkyPulseBirdPrototypeWorkshop
         Colour("_Color",colour);Colour("_EmissionColor",finish==8?new Color(0,.85f,1.15f):Color.black);
         Float("_Metallic",metal);Float("_Glossiness",smooth);Float("_FinishKind",kind);
         Float("_DetailScale",160);Float("_SeamStrength",seam);Float("_EmissionStrength",finish==8?.65f:0);
+        Float("_BrushStrength",kind==0?.17f:kind==1?.3f:kind==2?.2f:0);
+        Float("_SatinStrength",kind==0?1.1f:kind==1?1:kind==2?1.15f:0);
         if(changed)EditorUtility.SetDirty(material);
     }
     static void ApplyCurrentFinishes()

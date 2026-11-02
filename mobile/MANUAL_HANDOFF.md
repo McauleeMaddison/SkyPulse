@@ -22,7 +22,9 @@ contoured body/head, compact rounded face and material finish before any further
 The 2 November sculpture changes existing mesh buffers 001–042 and eight review
 materials. Wing/tail buffers 043 onward, joints, prefab, clips, bindings and existing
 GUIDs remain intact. The studio scene now includes separately checked neutral
-lighting/reflections. Gameplay still uses the original bird art.
+lighting/reflections. The latest user-directed metal finish/detail pass changes only
+the existing shader and eight material profiles; the accepted compact face and all
+geometry remain intact. Gameplay still uses the original bird art.
 
 Pipe collars use a real hollow mouth and separately editable structural parts;
 see [the Unity pipe editing steps](EDITING_GUIDE.md#edit-the-actual-3d-pipes-in-unity).

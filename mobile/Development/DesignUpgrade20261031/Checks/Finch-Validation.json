@@ -42,15 +42,16 @@
         "Flight cycle articulates both wings and the two-joint tail",
         "Reduced motion keeps preview movement substantially below the full flight cycle",
         "Warm pose sampling allocates zero managed bytes over 1,200 frames",
-        "Side, front, rear, three-quarter and three flight-phase review captures were written"
+        "Side, front, rear, three-quarter, flight-phase and material-detail review captures were written"
     ],
     "captures": [
-        "/private/tmp/skypulse-finch-face-20261102/captures/skypulse-neon-finch-review/01-side.png",
-        "/private/tmp/skypulse-finch-face-20261102/captures/skypulse-neon-finch-review/02-front.png",
-        "/private/tmp/skypulse-finch-face-20261102/captures/skypulse-neon-finch-review/03-rear.png",
-        "/private/tmp/skypulse-finch-face-20261102/captures/skypulse-neon-finch-review/04-three-quarter.png",
-        "/private/tmp/skypulse-finch-face-20261102/captures/skypulse-neon-finch-review/05-flight-a.png",
-        "/private/tmp/skypulse-finch-face-20261102/captures/skypulse-neon-finch-review/06-flight-b.png",
-        "/private/tmp/skypulse-finch-face-20261102/captures/skypulse-neon-finch-review/07-flight-c.png"
+        "/private/tmp/skypulse-finch-metal-20261102/captures/skypulse-neon-finch-review/01-side.png",
+        "/private/tmp/skypulse-finch-metal-20261102/captures/skypulse-neon-finch-review/02-front.png",
+        "/private/tmp/skypulse-finch-metal-20261102/captures/skypulse-neon-finch-review/03-rear.png",
+        "/private/tmp/skypulse-finch-metal-20261102/captures/skypulse-neon-finch-review/04-three-quarter.png",
+        "/private/tmp/skypulse-finch-metal-20261102/captures/skypulse-neon-finch-review/05-flight-a.png",
+        "/private/tmp/skypulse-finch-metal-20261102/captures/skypulse-neon-finch-review/06-flight-b.png",
+        "/private/tmp/skypulse-finch-metal-20261102/captures/skypulse-neon-finch-review/07-flight-c.png",
+        "/private/tmp/skypulse-finch-metal-20261102/captures/skypulse-neon-finch-review/08-metal-detail.png"
     ]
 }

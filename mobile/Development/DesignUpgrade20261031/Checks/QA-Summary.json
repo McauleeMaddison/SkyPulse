@@ -48,7 +48,7 @@
   "csharpCompilerWarnings": [],
   "runtimeSourceStillMatchesFullSuite": true,
   "originalLogsLocal": "/private/tmp/skypulse-design-20261031",
-  "finchScope": "2 November contoured sculpture review: body/head mesh001\u2013042 refined in place, eight constrained PBR material profiles and separately verified studio lighting; wing/tail buffers043+ and rig/animation preserved. Not integrated into gameplay.",
+  "finchScope": "User-selected metal finish/detail pass only. Accepted compact V5 face and all geometry, rig, animation and lighting preserved. Existing shader and eight material profiles refined; no gameplay integration.",
   "deviceTested": false,
   "remainingChecks": [
     "Physical iPhone/iPad visual acceptance",
@@ -60,25 +60,25 @@
   ],
   "latestFinchReview": {
     "date": "2026-11-02",
-    "revision": "Softened mechanical finch face v5",
+    "revision": "Detailed metallic finch finish v6",
+    "focus": "Metal finish and detail",
     "focusedQa": "PASS",
-    "bodyAndHeadMeshesChanged": 16,
-    "existingFinishMaterialsChanged": 0,
-    "studioLighting": "neutral HDR reflection asset; existing lights only; exact hierarchy/camera/rig preservation",
-    "normalRegressionCheck": "All revised vertices have finite nonzero surface normals; thin plate normals no longer collapse",
-    "shader": "SkyPulse/Workshop/Finch Armour Finish, actual Metal Editor render verified",
+    "geometryBuffersChanged": 0,
+    "existingFinishMaterialsChanged": 8,
+    "acceptedFacePreserved": true,
+    "bodyWingTailGeometryAndAnimationPreserved": true,
+    "lightingPreserved": true,
+    "shader": "Existing Finch Armour Finish shader refined in place; same GUID",
+    "finish": "Satin anodized cobalt/cyan, brushed titanium/champagne alloy, fine filtered machining and controlled highlights",
+    "surfaceControls": [
+      "_BrushStrength",
+      "_SatinStrength"
+    ],
     "warmPoseAllocatedBytes": 0,
     "vertexCount": 36487,
     "triangles": 68020,
-    "wingTailGeometryAndAnimationPreserved": true,
     "ownerAcceptance": "pending",
-    "deviceTested": false,
-    "cleanup": "Removed unused private Tube, BeveledPolygon and Beak mesh builders; retained one current preview set",
-    "scope": "Face-only correction after the sculpture pass",
-    "faceMeshesChanged": 16,
-    "beakProjectionReductionPercent": 37.827,
-    "tip": "Rounded finite-width tip and fuller front cheek",
-    "allOtherWorkshopFilesPreserved": true
+    "deviceTested": false
   },
   "runtimeComparisonExclusions": [
     "Assets/.DS_Store: Finder folder metadata removed during the recorded cleanup; not a game asset"

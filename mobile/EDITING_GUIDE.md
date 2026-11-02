@@ -29,7 +29,9 @@ test gameplay. Preserve the existing scenes, prefabs, materials, animation and
 The Finch remains an isolated prototype. Review its contoured body/head sculpture,
 embedded optics, compact rounded face and PBR finish before converting any other birds. The wing/tail
 geometry and existing animation are preserved; gameplay retains the original art.
-Its new surface is `SkyPulseBirdWorkshop/Shaders/FinchArmourFinish.shader`; studio
+Its surface is `SkyPulseBirdWorkshop/Shaders/FinchArmourFinish.shader`. The material
+Inspector exposes **Directional machining** and **Satin microfacet finish**; these
+control grain/highlight detail without changing the geometry. Studio
 settings live in the review scene and its `Lighting` folder. **Refine Finch
 sculpture and metal finish** explicitly replaces workshop buffers 001–042 and the
 eight review-material profiles; **Create Neon Finch 3D art review** preserves an
