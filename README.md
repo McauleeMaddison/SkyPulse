@@ -15,7 +15,7 @@ This includes world and Relay presentation, Home labels, Hangar and Tech Tree
 finishes, and native tactile feedback work. It has not been installed or uploaded.
 Its source manifests and dated checks apply to that local candidate, not the
 installed build. The separate Neon Finch 3D workshop is an art-review prototype;
-review the current head revision before any further bird or roster work. Gameplay
+review the current sculpture and finish before any further bird or roster work. Gameplay
 continues to use the original articulated bird artwork.
 
 **Public App Review remains on hold** pending Apple's clarification, current

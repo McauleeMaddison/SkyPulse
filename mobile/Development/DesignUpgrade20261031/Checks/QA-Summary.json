@@ -48,7 +48,7 @@
   "csharpCompilerWarnings": [],
   "runtimeSourceStillMatchesFullSuite": true,
   "originalLogsLocal": "/private/tmp/skypulse-design-20261031",
-  "finchScope": "2 November: separate angular helmet/sensor revision and eight property-limited metal finishes; accepted body, wings, tail geometry and rig/animation preserved. Not integrated into gameplay.",
+  "finchScope": "2 November contoured sculpture review: body/head mesh001\u2013042 refined in place, eight constrained PBR material profiles and separately verified studio lighting; wing/tail buffers043+ and rig/animation preserved. Not integrated into gameplay.",
   "deviceTested": false,
   "remainingChecks": [
     "Physical iPhone/iPad visual acceptance",
@@ -60,18 +60,20 @@
   ],
   "latestFinchReview": {
     "date": "2026-11-02",
-    "revision": "Angular sensor helmet v3",
+    "revision": "Contoured mechanical finch v4",
     "focusedQa": "PASS",
-    "headMeshesChanged": 22,
+    "bodyAndHeadMeshesChanged": 42,
     "existingFinishMaterialsChanged": 8,
-    "newAssetsCreated": 0,
+    "studioLighting": "neutral HDR reflection asset; existing lights only; exact hierarchy/camera/rig preservation",
+    "normalRegressionCheck": "All revised vertices have finite nonzero surface normals; thin plate normals no longer collapse",
+    "shader": "SkyPulse/Workshop/Finch Armour Finish, actual Metal Editor render verified",
     "warmPoseAllocatedBytes": 0,
-    "vertexCount": 21333,
-    "triangles": 36844,
-    "bodyGeometryAndAnimationPreserved": true,
+    "vertexCount": 36487,
+    "triangles": 68016,
+    "wingTailGeometryAndAnimationPreserved": true,
     "ownerAcceptance": "pending",
     "deviceTested": false,
-    "unitySaveNormalization": "Mat08 alone drops its lone _EMISSION valid-keyword entry; all other fields compared exactly."
+    "cleanup": "Removed unused private Tube, BeveledPolygon and Beak mesh builders; retained one current preview set"
   },
   "runtimeComparisonExclusions": [
     "Assets/.DS_Store: Finder folder metadata removed during the recorded cleanup; not a game asset"

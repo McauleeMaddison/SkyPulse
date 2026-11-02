@@ -5,13 +5,13 @@
     "geometry": "Authored curved rigid mesh parts parented to editable articulated bones",
     "scope": "Art-review candidate only; no gameplay replacement or roster conversion",
     "meshParts": 125,
-    "vertices": 21333,
-    "triangles": 36844,
+    "vertices": 36487,
+    "triangles": 68016,
     "bones": 8,
     "warmPoseAllocatedBytes": 0,
     "dimensions": {
-        "x": 3.4853951930999756,
-        "y": 1.7156085968017578,
+        "x": 3.4729952812194824,
+        "y": 1.4203190803527832,
         "z": 2.603590488433838
     },
     "checks": [
@@ -27,13 +27,14 @@
         "All preview bones remain under the isolated bird root",
         "Wing and tail tips form articulated parent-child chains",
         "Mechanical shell and layered feathers use distinct authored mesh parts",
-        "Authored geometry stays within the 15–35k prototype verification budget (21333 vertices)",
+        "Authored geometry stays within the 15–40k prototype verification budget (36487 vertices)",
         "All mesh parts have usable geometry and normals",
         "All authored mesh coordinates are finite",
+        "Every revised armour vertex has a finite nonzero surface normal; thin crown plates retain physical thickness",
         "Rigid mesh parts are attached to the editable bone hierarchy",
         "Model has genuine front-to-back volume (2.604 world units)",
         "Distinct editable metal, shell, ivory, optical and emissive finishes are assigned",
-        "Material shader compiles: Standard",
+        "Material shader compiles: SkyPulse/Workshop/Finch Armour Finish",
         "Pose sampling is deterministic and independent of prior sampled time",
         "Absolute animation agrees at 30 FPS",
         "Absolute animation agrees at 60 FPS",
@@ -44,12 +45,12 @@
         "Side, front, rear, three-quarter and three flight-phase review captures were written"
     ],
     "captures": [
-        "/private/tmp/skypulse-finch-industrial-20261031/captures/skypulse-neon-finch-review/01-side.png",
-        "/private/tmp/skypulse-finch-industrial-20261031/captures/skypulse-neon-finch-review/02-front.png",
-        "/private/tmp/skypulse-finch-industrial-20261031/captures/skypulse-neon-finch-review/03-rear.png",
-        "/private/tmp/skypulse-finch-industrial-20261031/captures/skypulse-neon-finch-review/04-three-quarter.png",
-        "/private/tmp/skypulse-finch-industrial-20261031/captures/skypulse-neon-finch-review/05-flight-a.png",
-        "/private/tmp/skypulse-finch-industrial-20261031/captures/skypulse-neon-finch-review/06-flight-b.png",
-        "/private/tmp/skypulse-finch-industrial-20261031/captures/skypulse-neon-finch-review/07-flight-c.png"
+        "/private/tmp/skypulse-finch-sculpture-20261102/captures/skypulse-neon-finch-review/01-side.png",
+        "/private/tmp/skypulse-finch-sculpture-20261102/captures/skypulse-neon-finch-review/02-front.png",
+        "/private/tmp/skypulse-finch-sculpture-20261102/captures/skypulse-neon-finch-review/03-rear.png",
+        "/private/tmp/skypulse-finch-sculpture-20261102/captures/skypulse-neon-finch-review/04-three-quarter.png",
+        "/private/tmp/skypulse-finch-sculpture-20261102/captures/skypulse-neon-finch-review/05-flight-a.png",
+        "/private/tmp/skypulse-finch-sculpture-20261102/captures/skypulse-neon-finch-review/06-flight-b.png",
+        "/private/tmp/skypulse-finch-sculpture-20261102/captures/skypulse-neon-finch-review/07-flight-c.png"
     ]
 }

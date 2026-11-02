@@ -3,16 +3,16 @@
   "mediaOrigin": "Actual Unity Editor captures; sheet layouts contain source images without repainting",
   "files": {
     "README.md": {
-      "sha256": "3cfa311f5352e3a594addafff0f87435135257886ed83f5bd0c06d33bc4f7000",
-      "bytes": 4401
+      "sha256": "bc877484158313a0e2bf7c6bc1fd657082c05f672697b4e81b0922b34b8548cb",
+      "bytes": 4720
+    },
+    "Checks/Finch-Preservation.json": {
+      "sha256": "233f876de01d71d94ba5e2e170c824f11c4abf9745a7b290c2d81c09f8c81311",
+      "bytes": 26489
     },
     "Checks/District-Migration.json": {
       "sha256": "346b9d5f561808bb6eebb1e7237468699e9e37cf7889db633f470d292a11d3b1",
       "bytes": 679
-    },
-    "Checks/Finch-Head-Preservation.json": {
-      "sha256": "8d7f672e90f556aded8167df3496eda3f92ac08f7609af7b36b87a00399f345f",
-      "bytes": 8099
     },
     "Checks/District-Copy.json": {
       "sha256": "4d8fce11862465bc82a32a66ccae15b54f936046b842361061af0c511f755caa",
@@ -23,7 +23,7 @@
       "bytes": 10452
     },
     "Checks/Preservation.json": {
-      "sha256": "20059291cbb9b0b79bb0dd8978ee0aa2ed3f14ef515374b2d3b93555c2de8a40",
+      "sha256": "5f92181af45a67e88bdd1aa9e2a045269f0a47cd9f5863ea3eb8317fc2cd2ace",
       "bytes": 6214
     },
     "Checks/Player-Copy.json": {
@@ -31,8 +31,8 @@
       "bytes": 297
     },
     "Checks/Finch-Validation.json": {
-      "sha256": "975d9d8b7ebea975983a6483b901762f341e47b6739d4632dec8e1680523f62f",
-      "bytes": 3291
+      "sha256": "b7b2b18dd055bec170134c54354c4707605f10b95b14514c341d466a922dbb0f",
+      "bytes": 3433
     },
     "Checks/Home-Responsive.json": {
       "sha256": "b71695f4efd13040b66ecad6633ed6e05afbc5a1bbb0bb5fc8238808724dc921",
@@ -43,32 +43,36 @@
       "bytes": 89944
     },
     "Checks/Finch-Copy.json": {
-      "sha256": "c54eef574668148fbe98bf2cf5a4a3e2c04769722b32913f6895e6415c98c7c0",
-      "bytes": 89111
+      "sha256": "9dd01207058d12dc1bc7ed183a1a0e7daf933eef1d309b6264616d75f5566e02",
+      "bytes": 92426
     },
     "Checks/Tactile-Native.json": {
       "sha256": "334ff82c318d644664a52f138c4ad0aff215eb8d950e0517a6d8859ca8cb9aae",
       "bytes": 351
+    },
+    "Checks/Finch-Lighting.json": {
+      "sha256": "4d494eb8a550229326f4cf6db902efc9a8560f0f88e652496030aba4ed3a601d",
+      "bytes": 1783
     },
     "Checks/Artwork-Evidence.json": {
       "sha256": "ff6c6a212395240b20aee995cf612bb77d87284281f71ce5cf2421159598a8b3",
       "bytes": 419
     },
     "Checks/QA-Summary.json": {
-      "sha256": "04b7fa3db2768f83ec9036c510e4596c77dfd2b32f14367d0289494f28f668e2",
-      "bytes": 3166
+      "sha256": "a3f6b8279630fee38ab91f7a64a58204a73946a82058914fdc6fd637ccbc6144",
+      "bytes": 3541
     },
     "Previews/Tech-Tree.mp4": {
       "sha256": "ad3b901a1774e9cc5e011327e9857f87e4601437d228a35726d6499414790821",
       "bytes": 1801177
     },
     "Previews/Finch-02-front.png": {
-      "sha256": "95f7fcedc9b4f4af1d10a11dac812d401ea60beee346e75f1993a51306f95ae6",
-      "bytes": 208887
+      "sha256": "e9be5b2dcf1c93e5f2d3fe4a1d414d8d017b9879ba2c1e615c536ed45c7a8eae",
+      "bytes": 202351
     },
     "Previews/Finch-01-side.png": {
-      "sha256": "d461297779569b4a7e4060429b115e692b80d70170947fc2c0a6991764d43cfd",
-      "bytes": 236178
+      "sha256": "2127e0b230034a6e81dfe1603332279cea5fb67601f9478e6a65ba2fc28fc5d5",
+      "bytes": 224589
     },
     "Previews/Relay-Flight.mp4": {
       "sha256": "79da16733901288c0a5a54a97f2a807545492b373d85d131a37d5bba9678b907",
@@ -79,20 +83,28 @@
       "bytes": 4928803
     },
     "Previews/Finch-05-flight-a.png": {
-      "sha256": "973f66511d030cf6a74ad579d4bb037ccd7cdf52a3b3a0040f963a69acdea8d3",
-      "bytes": 245786
+      "sha256": "f4840312ddc88ee8270e52daad314a8fb87e051343f362764f882791c4a0d13f",
+      "bytes": 236159
     },
     "Previews/Blackout-Home.mp4": {
       "sha256": "226fcb93c100ccb637a0d34f386e27a58d37fb63e6276c916754d68e2b5c4bda",
       "bytes": 1347086
     },
     "Previews/Finch-03-rear.png": {
-      "sha256": "38a899ca206a25f0ea4c49ee7906a3e9a7310765d9b014fc6ae2aae1531f345d",
-      "bytes": 186699
+      "sha256": "c2dae0695b2350ba860182c94b8fdc565e0faba1c2f786d5f61b4a761fd8cdc3",
+      "bytes": 174921
+    },
+    "Previews/Finch-Sculpted-Motion.mp4": {
+      "sha256": "f28987e232e8d109e3a5936a15a4820e3addc2f1b7dbcd2511672a3d8b095895",
+      "bytes": 1692645
     },
     "Previews/Relay-Planets.png": {
       "sha256": "a1be173f2d1d31b8dc9e83e277ffbcffff600157abad8f8eb02eba821d342204",
       "bytes": 475973
+    },
+    "Previews/Finch-Sculpted-Review.png": {
+      "sha256": "b676668565516564146c3ce253cdc22fd073e634937a127be128aa31d72ead60",
+      "bytes": 244266
     },
     "Previews/Relay-Home.mp4": {
       "sha256": "988c245e5c302812af5835a05f1751f74b13f8bf605b0d6c05ed4ade6b1ab30b",
@@ -102,10 +114,6 @@
       "sha256": "feaf1eef58f3b45dbec3f2e04865fd849226771e399883b345caa69047dcc060",
       "bytes": 3091831
     },
-    "Previews/Finch-04-three-quarter.png": {
-      "sha256": "945646a652d3055248d3df77136dcc73e067c5b28864ace7fd12058183dedfe9",
-      "bytes": 244171
-    },
     "Previews/Three-Modes.png": {
       "sha256": "36cbe3fd6ba605141c45e8525fc1e5ff69029fa6a997670c01429f0bb945de57",
       "bytes": 1405102
@@ -113,10 +121,6 @@
     "Previews/Visual-Preview.png": {
       "sha256": "9e52da4c24506218b41559f7acf6854749e58c76dce61f50ea4b787242724787",
       "bytes": 1008491
-    },
-    "Previews/Neon-Finch-Mechanical-Preview.mp4": {
-      "sha256": "4037a57e68d245b6d23d3ad691460040c729c0f825aff91098e3013c7725179c",
-      "bytes": 1651899
     },
     "Previews/Home-Endless-640x1136.png": {
       "sha256": "0eef8ca2e89f918506f12845e163f38cd862d282bcb16159a7f90161886c5a81",
@@ -127,8 +131,8 @@
       "bytes": 2593950
     },
     "Previews/Finch-07-flight-c.png": {
-      "sha256": "f4489dc30de97c18aa7d8ca0d2d86a4fd386c7d45300c2d8894b7494c2d11a70",
-      "bytes": 243697
+      "sha256": "92ac1f4f85395bb95e9b73e55c95bd09b117eefe63547340c4131d61b5838553",
+      "bytes": 231564
     },
     "Previews/Twelve-Worlds.png": {
       "sha256": "71e8ea9887ee36a8e9fce88e4a7539b441542db8591c461c7f46f2f869477b02",
@@ -139,8 +143,8 @@
       "bytes": 1526409
     },
     "Previews/Finch-06-flight-b.png": {
-      "sha256": "92e815bc4b738f5aa0d484de72ad88f4e3e03d9c477fa65f8470ad356ebaf4b4",
-      "bytes": 246008
+      "sha256": "8d55511279b10686b6ebef2f7e4639f75fef267c03d4f4ab881235f8007b6060",
+      "bytes": 233037
     },
     "Previews/Bird-Hangar.mp4": {
       "sha256": "5fc16b9c274e2aabc4d6a6b48d1f22cf1d9db32da4a192b6b1088174d72f20a2",
@@ -152,5 +156,5 @@
     }
   },
   "lastUpdated": "2026-11-02",
-  "finchRevision": "Angular sensor helmet v3"
+  "finchRevision": "Contoured mechanical finch v4"
 }

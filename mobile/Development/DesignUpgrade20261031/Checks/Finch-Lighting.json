@@ -1,0 +1,28 @@
+{
+    "result": "PASS",
+    "scope": "Separate scene-lighting stage; existing objects, hierarchy, transforms, cameras, rig settings, prefab and all prior assets preserved; only review scene lighting and a new reflection asset may change",
+    "reflectionAsset": "Assets/Editor/SkyPulseBirdWorkshop/Lighting/Finch Studio Reflection.asset",
+    "reflectionGuid": "540dd5e31d544424792b5cfb8a1d25bf",
+    "sceneHash": "6A-1A-F9-78-4F-54-FD-A5-52-EF-1F-4B-F2-20-9F-7D-A7-6D-8E-49-4E-84-E7-35-AA-52-76-21-A7-4A-83-37",
+    "roots": 7,
+    "objects": 142,
+    "transforms": 142,
+    "cameras": 1,
+    "repeatedSceneByteStable": true,
+    "checks": [
+        "Lighting preparation uses the existing dedicated review rig",
+        "Lighting retains every existing root and component",
+        "Lighting preserves all transforms, cameras, renderer bindings and frozen rig configuration exactly",
+        "Lighting preserves every scene object and hierarchy setting",
+        "Existing review scene saves with its original rig flags and bind pose",
+        "Studio lighting uses an editable reflection cubemap asset",
+        "Lighting preserves every existing workshop file except the review scene",
+        "Lighting creates assets only inside the separate studio lighting folder",
+        "Lighting retains every existing root and component",
+        "Lighting preserves all transforms, cameras, renderer bindings and frozen rig configuration exactly",
+        "Lighting preserves every scene object and hierarchy setting",
+        "Existing review scene saves with its original rig flags and bind pose",
+        "Repeated lighting preserves the reflection cubemap GUID, bytes and metadata",
+        "Repeated lighting is byte-identical for the review scene and every workshop asset"
+    ]
+}

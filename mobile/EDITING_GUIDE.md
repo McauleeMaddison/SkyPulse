@@ -26,11 +26,15 @@ Workshop Play is model inspection. Return to `Assets/Scenes/SkyPulse.unity` to
 test gameplay. Preserve the existing scenes, prefabs, materials, animation and
 `.meta` identities. Numbered mesh copies are local studies, not cleanup targets.
 
-The Finch remains an isolated prototype. Current acceptance is **the head revision
-only**, now using the 2 November angular helmet, narrow sensor optics and
-restrained metal finishes; keep its body geometry, wings, tail, joints and
-animation intact. Stop further Finch or roster work until that head is reviewed.
-The prototype is not integrated into gameplay, which retains the original bird art.
+The Finch remains an isolated prototype. Review its contoured body/head sculpture,
+embedded optics and PBR finish before converting any other birds. The wing/tail
+geometry and existing animation are preserved; gameplay retains the original art.
+Its new surface is `SkyPulseBirdWorkshop/Shaders/FinchArmourFinish.shader`; studio
+settings live in the review scene and its `Lighting` folder. **Refine Finch
+sculpture and metal finish** explicitly replaces workshop buffers 001–042 and the
+eight review-material profiles; **Create Neon Finch 3D art review** preserves an
+existing rig. Edit the saved meshes/materials directly in Unity when making manual
+art changes; do not run the explicit refinement command over those edits.
 
 ## Where to make a code change
 
@@ -205,7 +209,7 @@ Resources/SkyPulse/characters/bird-silhouette-coverage.json and is reproducible
 with Tools/bake_bird_shapes.swift. Original art, registration and gameplay
 collision dimensions stay intact. Simple bird UI images use the same mesh.
 The original articulated bird artwork is the gameplay appearance. The separate
-Neon Finch workshop is for art review only; its current head-only acceptance
+Neon Finch workshop is for art review only; its current sculpture/finish acceptance
 hold is described in the opening scene map.
 
 Assets/Editor/SkyPulsePlaySessionGuard.cs ends Editor Play before compilation.
