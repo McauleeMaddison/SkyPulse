@@ -26,15 +26,21 @@ Workshop Play is model inspection. Return to `Assets/Scenes/SkyPulse.unity` to
 test gameplay. Preserve the existing scenes, prefabs, materials, animation and
 `.meta` identities. Numbered mesh copies are local studies, not cleanup targets.
 
-The Finch remains an isolated prototype. Review its roster-directed cobalt/cyan
-blade feathers, stepped armour and embedded compact optics before converting any
-other birds. Existing wing/tail animation, bones, scene and prefab remain intact;
-gameplay retains the original roster artwork.
-Its surface is `SkyPulseBirdWorkshop/Shaders/FinchArmourFinish.shader`. The material
-Inspector exposes **Feather face colour**, **Fine directional microfinish** and
-**Restrained plate satin**. Base feather vertex alpha separates broad cobalt faces
-(alpha 0) from dark bevels/sidewalls (alpha 1); other parts keep alpha 1. Materials
-and all sculpted mesh parts remain editable in the existing workshop.
+The Finch remains an isolated prototype. The original
+`Resources/SkyPulse/characters/roster/volt-frame-04-v1.png` is its design blueprint.
+Review the reconstructed round optic, helmet, gold crescent, swept feathers and
+silver shield before converting any other birds. Existing wing/tail animation,
+bones, scene and prefab remain intact; gameplay retains the original artwork.
+The generator registers source pixels at 100px per Unity unit, with source
+(285,255) at model (0,0). `HeadPixel2` includes the preserved head bind offset.
+`ReferenceWingContour` holds the traced cubic outlines and cyan regions of the
+first seven main feathers. `ReferenceBodyPixel` authors body, wing and tail landmarks inside the existing
+mesh buffers; hidden mounts and continuous keel provide real depth.
+The existing `FinchArmourFinish.shader` exposes **Feather face colour**, metallic,
+smoothness and emission. Vertex alpha separates cobalt blade faces (0) from dark
+bevels (1); vertex RGB tints cyan feather panels and emissive exhaust cores.
+The previous procedural grain/scribe controls are removed; legacy serialized
+material entries are retained to preserve asset compatibility.
 Studio settings live in the review scene and its `Lighting` folder. **Refine Finch
 sculpture and metal finish** explicitly replaces workshop buffers 001–125 and the
 eight review-material profiles; **Create Neon Finch 3D art review** preserves an

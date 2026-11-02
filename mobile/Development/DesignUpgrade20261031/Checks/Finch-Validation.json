@@ -4,15 +4,16 @@
     "prefab": "Assets/Editor/SkyPulseBirdWorkshop/Prefabs/Neon Finch Rig.prefab",
     "geometry": "Authored curved rigid mesh parts parented to editable articulated bones",
     "scope": "Art-review candidate only; no gameplay replacement or roster conversion",
+    "referenceArtworkSha256": "7E-C3-4F-0B-42-75-54-F6-28-25-0A-54-EA-53-DE-7C-72-A1-58-3D-BF-F2-9E-2C-A5-46-EA-B2-84-0C-9D-AF",
     "meshParts": 125,
-    "vertices": 39151,
-    "triangles": 55672,
+    "vertices": 37024,
+    "triangles": 54626,
     "bones": 8,
     "warmPoseAllocatedBytes": 0,
     "dimensions": {
-        "x": 3.363459348678589,
-        "y": 1.4203479290008545,
-        "z": 2.6617116928100586
+        "x": 4.500412940979004,
+        "y": 2.3611955642700195,
+        "z": 1.8280000686645508
     },
     "checks": [
         "Prototype QA starts in Edit mode",
@@ -27,7 +28,7 @@
         "All preview bones remain under the isolated bird root",
         "Wing and tail tips form articulated parent-child chains",
         "Mechanical shell and layered feathers use distinct authored mesh parts",
-        "Authored geometry stays within the 15–40k prototype verification budget (39151 vertices)",
+        "Authored geometry stays within the 15–40k prototype verification budget (37024 vertices)",
         "All mesh parts have usable geometry and normals",
         "All authored mesh coordinates are finite",
         "Every revised armour vertex has a finite nonzero surface normal; thin crown plates retain physical thickness",
@@ -35,9 +36,13 @@
         "All 33 wing/tail blades separate cobalt faces from narrow dark sidewalls",
         "Blade masks cannot recolour the optics, body, gold or enamel parts",
         "Rigid mesh parts are attached to the editable bone hierarchy",
-        "Model has genuine front-to-back volume (2.662 world units)",
+        "Model has genuine front-to-back volume (1.828 world units)",
         "Distinct editable metal, shell, ivory, optical and emissive finishes are assigned",
         "Material shader compiles: SkyPulse/Workshop/Finch Armour Finish",
+        "Measured source silhouette bounds: Sculpted cobalt helmet (319.0, 132.0) to (445.0, 228.0) within 3 source pixels",
+        "Measured source silhouette bounds: Dark curved optical glass -1 (375.8, 150.8) to (444.2, 215.2) within 2 source pixels",
+        "Measured source silhouette bounds: Gold upper beak (434.0, 180.3) to (486.0, 210.5) within 2 source pixels",
+        "Measured source silhouette bounds: Gold swept shoulder hub (231.0, 188.0) to (305.0, 222.0) within 2 source pixels",
         "Pose sampling is deterministic and independent of prior sampled time",
         "Absolute animation agrees at 30 FPS",
         "Absolute animation agrees at 60 FPS",
@@ -45,16 +50,17 @@
         "Flight cycle articulates both wings and the two-joint tail",
         "Reduced motion keeps preview movement substantially below the full flight cycle",
         "Warm pose sampling allocates zero managed bytes over 1,200 frames",
-        "Side, front, rear, three-quarter, flight-phase and material-detail review captures were written"
+        "Side, front, rear, three-quarter, flight-phase, material-detail and fixed-scale source-reference captures were written"
     ],
     "captures": [
-        "/private/tmp/skypulse-finch-roster-20261102/captures/skypulse-neon-finch-review/01-side.png",
-        "/private/tmp/skypulse-finch-roster-20261102/captures/skypulse-neon-finch-review/02-front.png",
-        "/private/tmp/skypulse-finch-roster-20261102/captures/skypulse-neon-finch-review/03-rear.png",
-        "/private/tmp/skypulse-finch-roster-20261102/captures/skypulse-neon-finch-review/04-three-quarter.png",
-        "/private/tmp/skypulse-finch-roster-20261102/captures/skypulse-neon-finch-review/05-flight-a.png",
-        "/private/tmp/skypulse-finch-roster-20261102/captures/skypulse-neon-finch-review/06-flight-b.png",
-        "/private/tmp/skypulse-finch-roster-20261102/captures/skypulse-neon-finch-review/07-flight-c.png",
-        "/private/tmp/skypulse-finch-roster-20261102/captures/skypulse-neon-finch-review/08-metal-detail.png"
+        "/private/tmp/skypulse-finch-reference-wing-20261102/captures/skypulse-neon-finch-review/01-side.png",
+        "/private/tmp/skypulse-finch-reference-wing-20261102/captures/skypulse-neon-finch-review/02-front.png",
+        "/private/tmp/skypulse-finch-reference-wing-20261102/captures/skypulse-neon-finch-review/03-rear.png",
+        "/private/tmp/skypulse-finch-reference-wing-20261102/captures/skypulse-neon-finch-review/04-three-quarter.png",
+        "/private/tmp/skypulse-finch-reference-wing-20261102/captures/skypulse-neon-finch-review/05-flight-a.png",
+        "/private/tmp/skypulse-finch-reference-wing-20261102/captures/skypulse-neon-finch-review/06-flight-b.png",
+        "/private/tmp/skypulse-finch-reference-wing-20261102/captures/skypulse-neon-finch-review/07-flight-c.png",
+        "/private/tmp/skypulse-finch-reference-wing-20261102/captures/skypulse-neon-finch-review/08-metal-detail.png",
+        "/private/tmp/skypulse-finch-reference-wing-20261102/captures/skypulse-neon-finch-review/09-reference-pose.png"
     ]
 }

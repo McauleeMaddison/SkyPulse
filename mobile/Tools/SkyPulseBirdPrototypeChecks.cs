@@ -18,7 +18,7 @@ public static class SkyPulseBirdPrototypeChecks
     static readonly List<string> assertions=new List<string>();
     [Serializable] sealed class Report
     {
-        public string result,scene,prefab,geometry,scope;
+        public string result,scene,prefab,geometry,scope,referenceArtworkSha256;
         public int meshParts,vertices,triangles,bones;
         public long warmPoseAllocatedBytes;
         public Vector3 dimensions;
@@ -28,7 +28,7 @@ public static class SkyPulseBirdPrototypeChecks
     {
         public string result,scope,revision;
         public int workshopFiles,reviewedMeshes,changedReviewedMeshes,finishMaterials,changedFinishMaterials;
-        public bool priorOpticsAlreadyCompact;
+        public bool priorOpticsMatchedReference;
         public Vector3 leftLensDimensions,rightLensDimensions;
         public string[] changedAssets,checks;
     }
@@ -97,10 +97,10 @@ public static class SkyPulseBirdPrototypeChecks
         string path=Directory.GetFiles(Folder+"/Meshes",prefix+"*.asset").SingleOrDefault();
         return path==null?null:AssetDatabase.LoadAssetAtPath<Mesh>(path);
     }
-    static bool CompactLens(Mesh lens)
+    static bool ReferenceLens(Mesh lens)
     {
         if(lens==null)return false;var size=lens.bounds.size;
-        return size.x>=.19999f&&size.x<=.55001f&&size.y>=.05999f&&size.y<=.20001f&&size.x/size.y>=2.0999f&&size.z<=.12001f;
+        return size.x>=.60f&&size.x<=.76f&&size.y>=.60f&&size.y<=.78f&&size.x/size.y>=.88f&&size.x/size.y<=1.10f&&size.z<=.20f;
     }
     static int FinishNumber(string path)
     {
@@ -111,7 +111,7 @@ public static class SkyPulseBirdPrototypeChecks
     static bool IsFinishMaterial(string path)=>FinishNumber(path)>0;
     const string FinishShader="SkyPulse/Workshop/Finch Armour Finish";
     const string FinishShaderPath=Folder+"/Shaders/FinchArmourFinish.shader";
-    static readonly HashSet<string> ReviewFloats=new HashSet<string>(new[]{"_Metallic","_Glossiness","_FinishKind","_DetailScale","_SeamStrength","_EmissionStrength","_BrushStrength","_SatinStrength"},StringComparer.Ordinal);
+    static readonly HashSet<string> ReviewFloats=new HashSet<string>(new[]{"_Metallic","_Glossiness","_FinishKind","_EmissionStrength","_BrushStrength","_SatinStrength"},StringComparer.Ordinal);
     static readonly HashSet<string> ReviewColors=new HashSet<string>(new[]{"_Color","_EmissionColor","_BladeColor"},StringComparer.Ordinal);
     sealed class MaterialExpectation { public string preservedJson; }
     static Material CopyMaterial(Material original)
@@ -149,8 +149,8 @@ public static class SkyPulseBirdPrototypeChecks
         var expectedShader=AssetDatabase.LoadAssetAtPath<Shader>(FinishShaderPath);
         Check(expectedShader!=null&&expectedShader.name==FinishShader&&material.shader==expectedShader,"Exact declared workshop armour shader asset is assigned: "+material.name);
         CheckRange(material,"_Metallic",0,1);CheckRange(material,"_Glossiness",0,1);
-        CheckRange(material,"_FinishKind",0,4);CheckRange(material,"_DetailScale",40,400);
-        CheckRange(material,"_SeamStrength",0,1);CheckRange(material,"_EmissionStrength",0,4);
+        CheckRange(material,"_FinishKind",0,4);
+        CheckRange(material,"_EmissionStrength",0,4);
         CheckRange(material,"_BrushStrength",0,2);CheckRange(material,"_SatinStrength",0,2);
         Check(Mathf.Abs(material.GetFloat("_FinishKind")-Mathf.Round(material.GetFloat("_FinishKind")))<.00001f,"Finish kind selects a discrete supported surface: "+material.name);
         foreach(string property in ReviewColors)
@@ -230,24 +230,6 @@ public static class SkyPulseBirdPrototypeChecks
         var report=new LightingReport{result="PASS",scope="Separate scene-lighting stage; existing objects, hierarchy, transforms, cameras, rig settings, prefab and all prior assets preserved; only review scene lighting and a new reflection asset may change",reflectionAsset=reflection,reflectionGuid=cubeGuid,sceneHash=sceneHash,roots=roots.Length,objects=components.OfType<Transform>().Count(),transforms=components.OfType<Transform>().Count(),cameras=components.OfType<Camera>().Count(),repeatedSceneByteStable=true,checks=assertions.Skip(firstCheck).ToArray()};
         File.WriteAllText(Path.Combine(output,"LIGHTING-VALIDATION.json"),JsonUtility.ToJson(report,true));
     }
-    static bool faceOnly,finishOnly;
-    public static void RunFaceRevision(){faceOnly=true;RunRevision();}
-    public static void RunFinishRevision(){finishOnly=true;RunRevision();}
-    static void CheckFaceScope(string[] changed)
-    {
-        if(finishOnly)
-        {
-            Check(changed.All(IsFinishMaterial),"Finish-only revision preserves every geometry buffer, face proportion, rig, animation, scene, lighting and metadata file");
-            return;
-        }
-        if(!faceOnly)return;
-        Check(changed.All(path=>IsReviewMesh(path)&&int.Parse(Path.GetFileName(path).Substring(0,3))>=21&&int.Parse(Path.GetFileName(path).Substring(0,3))<=42),"Face-only revision preserves every body/wing/tail mesh, material, rig, clip and metadata file");
-        var beak=OpticalLens(40);var vertices=beak.vertices;
-        float tip=vertices.Max(v=>v.x),projection=tip+.66f-.69f;
-        float tipRadius=vertices.Where(v=>Mathf.Abs(v.x-tip)<.0001f).Max(v=>Mathf.Abs(v.z));
-        Check(projection>0&&projection<=.23f,"Exposed beak projection is compact rather than the previous long wedge");
-        Check(tipRadius>=.012f,"Beak terminates in a rounded finite-width tip rather than a needle point");
-    }
     public static void RunRevision()
     {
         if(!Application.isBatchMode||Application.companyName!="SkyPulseQA20261006")throw new InvalidOperationException("Disposable batch QA product required before revising or capturing the prototype");
@@ -264,17 +246,16 @@ public static class SkyPulseBirdPrototypeChecks
             var reviewPaths=before.Keys.Where(IsReviewMesh).OrderBy(p=>p,StringComparer.Ordinal).ToArray();
             Check(reviewPaths.Length==125,"Existing Finch has exactly the expected 125 mesh assets numbered 001–125");
             var guids=before.Keys.Where(p=>!p.EndsWith(".meta",StringComparison.Ordinal)).ToDictionary(p=>p,AssetDatabase.AssetPathToGUID);
-            bool wasCompact=CompactLens(OpticalLens(29))&&CompactLens(OpticalLens(36));
+            bool wasReference=ReferenceLens(OpticalLens(29))&&ReferenceLens(OpticalLens(36));
             var finishPaths=before.Keys.Where(IsFinishMaterial).OrderBy(p=>p,StringComparer.Ordinal).ToArray();
             Check(finishPaths.Length==8&&finishPaths.Select(FinishNumber).Distinct().Count()==8,"Exactly the eight existing review-finish materials 01–08 are authorized for property updates");
             var expectedMaterials=ExpectedMaterials(finishPaths);
-            Check(SkyPulseBirdPrototypeWorkshop.OpticsRevision=="Roster-aligned mechanical finch v7","The requested contoured mechanical finch revision is active");
+            Check(SkyPulseBirdPrototypeWorkshop.OpticsRevision=="Reference-shaped mechanical finch v8","The source-reference Finch reconstruction is active");
             SkyPulseBirdPrototypeWorkshop.ReviseOpticsInQa();AssetDatabase.SaveAssets();
             var revised=Snapshot();
             Check(before.Count==revised.Count&&before.Keys.All(revised.ContainsKey),"Sculpture revision creates or removes no workshop asset or metadata file");
             var changed=before.Where(pair=>revised[pair.Key]!=pair.Value).Select(pair=>pair.Key).OrderBy(p=>p,StringComparer.Ordinal).ToArray();
             Check(changed.All(path=>IsReviewMesh(path)||IsFinishMaterial(path)),"Only existing sculpture meshes 001–125 and review-finish material assets 01–08 may change");
-            CheckFaceScope(changed);
             Check(before.Where(pair=>!IsReviewMesh(pair.Key)&&!IsFinishMaterial(pair.Key)).All(pair=>revised[pair.Key]==pair.Value),"Prefab, scene, animation clips, reference-card geometry, all other materials and every meta file remain byte-for-byte unchanged");
             foreach(var item in expectedMaterials)
             {
@@ -290,15 +271,15 @@ public static class SkyPulseBirdPrototypeChecks
             Check(guids.All(pair=>AssetDatabase.AssetPathToGUID(pair.Key)==pair.Value),"Every workshop asset GUID remains stable through the head revision");
             Check(reviewPaths.All(path=>guids[path]==AssetDatabase.AssetPathToGUID(path)),"All 125 existing Finch mesh identities are preserved");
             int changedSculpture=changed.Count(IsReviewMesh),changedFinishes=changed.Count(IsFinishMaterial);
-            Check(changedSculpture>0||wasCompact,"Sculpture geometry changes, or the existing optics already meet narrow-sensor bounds");
+            Check(changedSculpture>0||wasReference,"Sculpture geometry changes, or the existing optics already meet reference lens bounds");
             var left=OpticalLens(29);var right=OpticalLens(36);
-            Check(CompactLens(left)&&CompactLens(right),"Both optical sensors are narrow: width 0.20–0.55, height 0.06–0.20, aspect ratio at least 2.1 and conformal depth at most 0.12 units");
+            Check(ReferenceLens(left)&&ReferenceLens(right),"Both optical sensors match the measured reference proportions: near-round 0.60–0.76 width, 0.60–0.78 height, aspect ratio 0.88–1.10");
             Check(left.vertices.All(Finite)&&right.vertices.All(Finite),"Revised optical lens geometry remains finite");
             SkyPulseBirdPrototypeWorkshop.ReviseOpticsInQa();AssetDatabase.SaveAssets();
             var repeated=Snapshot();
             Check(revised.Count==repeated.Count&&revised.All(pair=>repeated.TryGetValue(pair.Key,out var hash)&&hash==pair.Value),"Repeating the head revision is byte-identical and preserves owner edits elsewhere");
             Check(guids.All(pair=>AssetDatabase.AssetPathToGUID(pair.Key)==pair.Value),"Head revision repeat preserves every asset GUID");
-            var report=new RevisionReport{result="PASS",scope="Only existing sculpture mesh geometry 001–125 and the declared armour shader reference plus _Color, _Metallic, _Glossiness, _EmissionColor, _FinishKind, _DetailScale, _SeamStrength, _EmissionStrength, _BrushStrength, _SatinStrength and _BladeColor in materials 01–08 may change; prefab, scene, transforms, bones, reference-card geometry, clips, every other material field and metadata are preserved",revision=SkyPulseBirdPrototypeWorkshop.OpticsRevision,workshopFiles=before.Count,reviewedMeshes=reviewPaths.Length,changedReviewedMeshes=changedSculpture,finishMaterials=finishPaths.Length,changedFinishMaterials=changedFinishes,priorOpticsAlreadyCompact=wasCompact,leftLensDimensions=left.bounds.size,rightLensDimensions=right.bounds.size,changedAssets=changed,checks=assertions.ToArray()};
+            var report=new RevisionReport{result="PASS",scope="Only existing sculpture mesh geometry 001–125 and the declared armour shader reference plus _Color, _Metallic, _Glossiness, _EmissionColor, _FinishKind, _EmissionStrength, _BrushStrength, _SatinStrength and _BladeColor in materials 01–08 may change; prefab, scene, transforms, bones, reference-card geometry, clips, every other material field and metadata are preserved",revision=SkyPulseBirdPrototypeWorkshop.OpticsRevision,workshopFiles=before.Count,reviewedMeshes=reviewPaths.Length,changedReviewedMeshes=changedSculpture,finishMaterials=finishPaths.Length,changedFinishMaterials=changedFinishes,priorOpticsMatchedReference=wasReference,leftLensDimensions=left.bounds.size,rightLensDimensions=right.bounds.size,changedAssets=changed,checks=assertions.ToArray()};
             File.WriteAllText(Path.Combine(output,"REVISION-PRESERVATION.json"),JsonUtility.ToJson(report,true));
             PrepareStudioLighting(output);
             Debug.Log("SKYPULSE_NEON_FINCH_HEAD_REVISION_PASS: "+changedSculpture+" body and head meshes and "+changedFinishes+" authorized finishes changed; all other files and every GUID preserved");
@@ -310,6 +291,18 @@ public static class SkyPulseBirdPrototypeChecks
         // Reuse the complete geometry, frame-rate, reduced-motion, allocation and
         // capture suite. Its existing output names and process exit are retained.
         Run();
+    }
+    static void CheckReferenceBounds(SkyPulseNeonFinchPrototype rig,string part,Vector2 expectedMin,Vector2 expectedMax,float tolerance)
+    {
+        var filter=rig.GetComponentsInChildren<MeshFilter>(true).Where(f=>f.name==part).OrderBy(f=>f.transform.position.z).First();
+        Vector2 min=new Vector2(float.PositiveInfinity,float.PositiveInfinity),max=new Vector2(float.NegativeInfinity,float.NegativeInfinity);
+        foreach(var vertex in filter.sharedMesh.vertices)
+        {
+            var local=rig.transform.InverseTransformPoint(filter.transform.TransformPoint(vertex));
+            var pixel=new Vector2(285+100*local.x,255-100*local.y);min=Vector2.Min(min,pixel);max=Vector2.Max(max,pixel);
+        }
+        Check(Mathf.Abs(min.x-expectedMin.x)<=tolerance&&Mathf.Abs(min.y-expectedMin.y)<=tolerance&&Mathf.Abs(max.x-expectedMax.x)<=tolerance&&Mathf.Abs(max.y-expectedMax.y)<=tolerance,
+            "Measured source silhouette bounds: "+part+" "+min.ToString("F1")+" to "+max.ToString("F1")+" within "+tolerance+" source pixels");
     }
     public static void Run()
     {
@@ -354,6 +347,10 @@ public static class SkyPulseBirdPrototypeChecks
             foreach(var shader in materials.Select(m=>m.shader).Distinct())Check(ShaderUtil.GetShaderMessages(shader).All(m=>m.severity.ToString()!="Error"),"Material shader compiles: "+shader.name);
             bool wasTurntable=rig.turntable,wasAnimate=rig.animate,wasReduced=rig.reducedMotion;
             rig.turntable=false;rig.animate=true;rig.reducedMotion=false;rig.ResetPose();
+            CheckReferenceBounds(rig,"Sculpted cobalt helmet",new Vector2(319,132),new Vector2(445,228),3);
+            CheckReferenceBounds(rig,"Dark curved optical glass -1",new Vector2(375.8f,150.8f),new Vector2(444.2f,215.2f),2);
+            CheckReferenceBounds(rig,"Gold upper beak",new Vector2(434,180),new Vector2(486,210.5f),2);
+            CheckReferenceBounds(rig,"Gold swept shoulder hub",new Vector2(231,188),new Vector2(305,222),2);
             rig.SamplePose(1.231f);var deterministic=Poses(bones);rig.SamplePose(.079f);rig.SamplePose(1.231f);
             Check(Same(deterministic,Poses(bones)),"Pose sampling is deterministic and independent of prior sampled time");
             rig.SamplePose(2f);var endpoint=Poses(bones);
@@ -384,7 +381,7 @@ public static class SkyPulseBirdPrototypeChecks
             Check(allocated==0,"Warm pose sampling allocates zero managed bytes over 1,200 frames");
             string[] captures=Capture(rig,bounds,output);
             rig.ResetPose();rig.turntable=wasTurntable;rig.animate=wasAnimate;rig.reducedMotion=wasReduced;
-            var report=new Report{result="PASS",scene=ScenePath,prefab=PrefabPath,geometry="Authored curved rigid mesh parts parented to editable articulated bones",scope="Art-review candidate only; no gameplay replacement or roster conversion",meshParts=meshFilters.Length,vertices=vertices,triangles=triangles,bones=bones.Length,dimensions=bounds.size,warmPoseAllocatedBytes=allocated,checks=assertions.ToArray(),captures=captures};
+            var report=new Report{result="PASS",scene=ScenePath,prefab=PrefabPath,geometry="Authored curved rigid mesh parts parented to editable articulated bones",scope="Art-review candidate only; no gameplay replacement or roster conversion",referenceArtworkSha256=FileHash("Assets/Resources/SkyPulse/characters/roster/volt-frame-04-v1.png"),meshParts=meshFilters.Length,vertices=vertices,triangles=triangles,bones=bones.Length,dimensions=bounds.size,warmPoseAllocatedBytes=allocated,checks=assertions.ToArray(),captures=captures};
             File.WriteAllText(Path.Combine(output,"VALIDATION.json"),JsonUtility.ToJson(report,true));
             Debug.Log("SKYPULSE_NEON_FINCH_PROTOTYPE_PASS: "+vertices+" vertices, "+triangles+" triangles, "+meshFilters.Length+" mesh parts; captures in "+output);EditorApplication.Exit(0);
         }
@@ -411,29 +408,43 @@ public static class SkyPulseBirdPrototypeChecks
         try
         {
             rig.turntable=false;rig.animate=true;rig.reducedMotion=false;
-            var views=new[]{new{file="01-side.png",direction=new Vector3(.03f,.08f,-1),time=0f},new{file="02-front.png",direction=new Vector3(1,.12f,-.03f),time=0f},new{file="03-rear.png",direction=new Vector3(-1,.12f,.05f),time=0f},new{file="04-three-quarter.png",direction=new Vector3(.6f,.24f,-1),time=0f},new{file="05-flight-a.png",direction=new Vector3(.27f,.16f,-1),time=.11f},new{file="06-flight-b.png",direction=new Vector3(.27f,.16f,-1),time=.25f},new{file="07-flight-c.png",direction=new Vector3(.27f,.16f,-1),time=.41f}};
+            var views=new[]{new{file="01-side.png",direction=new Vector3(0,0,-1),time=0f},new{file="02-front.png",direction=new Vector3(1,.12f,-.03f),time=0f},new{file="03-rear.png",direction=new Vector3(-1,.12f,.05f),time=0f},new{file="04-three-quarter.png",direction=new Vector3(.08f,.03f,-1),time=0f},new{file="05-flight-a.png",direction=new Vector3(.27f,.16f,-1),time=.11f},new{file="06-flight-b.png",direction=new Vector3(.27f,.16f,-1),time=.25f},new{file="07-flight-c.png",direction=new Vector3(.27f,.16f,-1),time=.41f}};
             foreach(var view in views)
             {
-                rig.SamplePose(view.time);camera.transform.position=center+view.direction.normalized*12;camera.transform.LookAt(center,Vector3.up);
+                if(view.time==0)rig.ResetPose();else rig.SamplePose(view.time);camera.transform.position=center+view.direction.normalized*12;camera.transform.LookAt(center,Vector3.up);
                 camera.orthographicSize=Mathf.Max(bounds.size.y*.72f,bounds.size.x*.47f,bounds.size.z*.72f);
                 camera.Render();RenderTexture.active=texture;pixels.ReadPixels(new Rect(0,0,width,height),0,0);pixels.Apply();
                 var path=Path.Combine(output,view.file);File.WriteAllBytes(path,pixels.EncodeToPNG());paths.Add(path);
             }
             float fullViewSize=camera.orthographicSize;
             Vector3 detailCenter=rig.head.position+new Vector3(-.22f,0,0);
-            rig.SamplePose(0);camera.orthographicSize=.80f;
-            camera.transform.position=detailCenter+new Vector3(.6f,.24f,-1).normalized*12;camera.transform.LookAt(detailCenter,Vector3.up);
+            rig.ResetPose();camera.orthographicSize=1.25f;
+            camera.transform.position=detailCenter+new Vector3(.08f,.03f,-1).normalized*12;camera.transform.LookAt(detailCenter,Vector3.up);
             camera.Render();RenderTexture.active=texture;pixels.ReadPixels(new Rect(0,0,width,height),0,0);pixels.Apply();
             string detailPath=Path.Combine(output,"08-metal-detail.png");File.WriteAllBytes(detailPath,pixels.EncodeToPNG());paths.Add(detailPath);
+            // Fixed source-image frame: 100 source pixels per world unit,
+            // source (285,255) maps to world (0,0). Both images can therefore
+            // be compared at the same scale, rather than fitted independently.
+            var referenceTarget=new RenderTexture(1024,768,24,RenderTextureFormat.ARGB32){antiAliasing=4};
+            var referencePixels=new Texture2D(1024,768,TextureFormat.RGB24,false);
+            try
+            {
+                rig.ResetPose();camera.targetTexture=referenceTarget;camera.orthographicSize=1.92f;
+                var referenceCenter=new Vector3(-.29f,.63f,0);
+                camera.transform.position=referenceCenter+Vector3.back*12;camera.transform.LookAt(referenceCenter,Vector3.up);
+                camera.Render();RenderTexture.active=referenceTarget;referencePixels.ReadPixels(new Rect(0,0,1024,768),0,0);referencePixels.Apply();
+                string referencePath=Path.Combine(output,"09-reference-pose.png");File.WriteAllBytes(referencePath,referencePixels.EncodeToPNG());paths.Add(referencePath);
+            }
+            finally{camera.targetTexture=texture;RenderTexture.active=texture;referenceTarget.Release();UnityEngine.Object.DestroyImmediate(referenceTarget);UnityEngine.Object.DestroyImmediate(referencePixels);}
             camera.orthographicSize=fullViewSize;
             var motion=Path.Combine(output,"motion");Directory.CreateDirectory(motion);
-            camera.transform.position=center+new Vector3(.6f,.24f,-1).normalized*12;camera.transform.LookAt(center,Vector3.up);
+            camera.transform.position=center+new Vector3(.08f,.03f,-1).normalized*12;camera.transform.LookAt(center,Vector3.up);
             for(int frame=0;frame<90;frame++)
             {
                 rig.SamplePose(frame/30f);camera.Render();RenderTexture.active=texture;pixels.ReadPixels(new Rect(0,0,width,height),0,0);pixels.Apply();
                 File.WriteAllBytes(Path.Combine(motion,frame.ToString("000")+".png"),pixels.EncodeToPNG());
             }
-            Check(paths.All(File.Exists),"Side, front, rear, three-quarter, flight-phase and material-detail review captures were written");
+            Check(paths.All(File.Exists),"Side, front, rear, three-quarter, flight-phase, material-detail and fixed-scale source-reference captures were written");
             return paths.ToArray();
         }
         finally

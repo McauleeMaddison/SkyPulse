@@ -48,7 +48,7 @@
   "csharpCompilerWarnings": [],
   "runtimeSourceStillMatchesFullSuite": true,
   "originalLogsLocal": "/private/tmp/skypulse-design-20261031",
-  "finchScope": "Roster-directed isolated Finch art revision: broader plated feathers with cobalt face masks/cyan insets, smaller shoulder joint, overlapping body armour and cleaner optical/plate clearances. Compact face and all rig motion retained. No gameplay replacement.",
+  "finchScope": "Original Volt reference reconstruction: round optics/gold crescent, reference helmet/beak, swept curved feathers, ivory shield, gold shoulder, source tail cuffs/fins and closed emissive exhaust. Existing rig and animation retained. No gameplay replacement.",
   "deviceTested": false,
   "remainingChecks": [
     "Physical iPhone/iPad visual acceptance",
@@ -60,24 +60,29 @@
   ],
   "latestFinchReview": {
     "date": "2026-11-02",
-    "revision": "Roster-aligned mechanical finch v7",
-    "focus": "Match original mechanical bird roster",
+    "revision": "Reference-shaped mechanical finch v8",
+    "focus": "Reconstruct the original reference design",
     "focusedQa": "PASS",
     "geometryBuffersChanged": 125,
     "existingFinishMaterialsChanged": 8,
-    "acceptedCompactFaceRetained": true,
     "rigAndAnimationBytePreserved": true,
     "lightingBytePreserved": true,
-    "shader": "Existing Finch Armour Finish shader; same GUID, one Standard surface program",
-    "finish": "Cobalt blade faces, cyan insets, narrow dark sidewalls, silver/gold mechanical fittings; reduced shell gloss",
-    "surfaceControls": [
-      "_BladeColor",
-      "_BrushStrength",
-      "_SatinStrength"
+    "originalArtworkBytePreserved": true,
+    "sourceLandmarkBoundsChecked": [
+      "helmet:3px tolerance",
+      "round black optic:2px tolerance",
+      "upper beak:2px tolerance",
+      "gold shoulder:2px tolerance"
     ],
+    "notProven": [
+      "pixel-identical appearance",
+      "hidden surfaces specified by source",
+      "device performance or visual acceptance"
+    ],
+    "shader": "One Standard surface program with authored normals and vertex masks/tint; no UV scribes, procedural grain or outline pass",
     "warmPoseAllocatedBytes": 0,
-    "vertexCount": 39151,
-    "triangles": 55672,
+    "vertexCount": 37024,
+    "triangles": 54626,
     "ownerAcceptance": "pending",
     "deviceTested": false,
     "csharpCompilerErrors": [],
@@ -88,7 +93,9 @@
       "encodedFps": 30,
       "decodedSamplesDistinct": 3,
       "measuresDeviceFps": false
-    }
+    },
+    "wingGeometry": "First seven primary blades and their cyan regions use closed, bowed/bevelled source contours, with clear enamel surface separation",
+    "cleanup": "Superseded optics/plate/width-profile helpers removed; no unreferenced private generator helpers"
   },
   "runtimeComparisonExclusions": [
     "Assets/.DS_Store: Finder folder metadata removed during the recorded cleanup; not a game asset"
