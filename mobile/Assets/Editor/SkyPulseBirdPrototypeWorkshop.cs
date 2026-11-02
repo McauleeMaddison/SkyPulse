@@ -17,7 +17,7 @@ public static class SkyPulseBirdPrototypeWorkshop
     static int meshNumber;
     static bool revisionBuild, refreshHead;
     static int revisedMeshCount;
-    public const string OpticsRevision = "Reference-shaped mechanical finch v8";
+    public const string OpticsRevision = "Volumetric reference finch v9";
     static Transform model;
     struct Section
     {
@@ -321,7 +321,7 @@ public static class SkyPulseBirdPrototypeWorkshop
             Part(head,"Dark curved optical glass "+side,SensorPanel("curved black optical lens",side,optic+new Vector3(0,0,side*.049f)),dark,optic+new Vector3(0,0,side*.049f));
             Part(head,"Forward cyan optical chevron "+side,SensorPanel("inset optical direction mark",side,optic+new Vector3(.025f,.015f,side*.113f)),glow,optic+new Vector3(.025f,.015f,side*.113f));
             Part(head,"Ivory jaw rim "+side,CheekPlates("jaw machined trim",side),ivory);
-            Part(head,"Brow fastener "+side,Shift(OpticalDisc("brow screw",HeadPixel2(418,182),new Vector2(.072f,.112f),side,Vector3.zero,.502f,.012f,.006f,28,4),-new Vector3(.11f,.67f,side*.35f)),silver,new Vector3(.11f,.67f,side*.35f));
+            Part(head,"Brow fastener "+side,Shift(OpticalDisc("brow screw",HeadPixel2(418,182),new Vector2(.072f,.112f),side,Vector3.zero,.502f,.012f,.035f,28,4),-new Vector3(.11f,.67f,side*.35f)),silver,new Vector3(.11f,.67f,side*.35f));
         }
         Part(head,"Gold upper beak",ChiselBeak("gold beveled finch beak",0),gold,new Vector3(.66f,.22f,0));
         Part(head,"Dark lower beak seam",ChiselBeak("beak split gasket",1),navy,new Vector3(.66f,.20f,0));
@@ -469,7 +469,16 @@ public static class SkyPulseBirdPrototypeWorkshop
         {Vector2 p=Cubic2(a[panel],b[panel],c[panel],d[panel],u),q=Cubic2(a[panel],b[panel],c[panel],d[panel],Mathf.Clamp01(u+.002f));Vector2 delta=q-p;float len=Mathf.Sqrt(delta.x*delta.x+delta.y*delta.y);float w=(v-.5f)*.9f;if(len>.0001f)p+=new Vector2(-delta.y/len,delta.x/len)*w;return ReferenceBodySkin(p.x,p.y,side,.012f);},20,2,.005f,.001f,.004f,.02f));
     }
     static Mesh TalonSocket(int side)
-    {return ReferenceBodyOval("gold talon hinge",ReferenceBodyPixel(268,300,side*.435f)-new Vector3(-.49f,-.29f,side*.32f),.18f,.15f,.055f,side,.018f);}
+    {
+        var g=new Geometry();Vector3 legOrigin=new Vector3(-.49f,-.29f,side*.32f);
+        Append(g,ReferenceBodyOval("gold talon hinge",ReferenceBodyPixel(268,300,side*.435f)-legOrigin,.18f,.15f,.055f,side,.018f));
+        // A buried Z axle joins the body interior to the existing gold actuator.
+        // Its .06 radius stays wholly inside the approved oval X/Y silhouette.
+        var axle=Loft("concealed gold talon axle",new[]{new Section(0,0,.06f,.06f),new Section(.305f,0,.06f,.06f)},20);
+        var vertices=axle.vertices;Vector3 center=ReferenceBodyPixel(268,300);
+        for(int i=0;i<vertices.Length;i++){var v=vertices[i];vertices[i]=center+new Vector3(v.y,v.z,side*(.13f+v.x))-legOrigin;}
+        axle.vertices=vertices;if(side<0)ReverseWinding(axle);axle.RecalculateBounds();FiniteNormals(axle);Append(g,axle);return g.Build("gold talon hinge");
+    }
     static Mesh CollarShell(string name,float from,float to,float lift)
     {return ReferenceBodyCollar(name,name.Contains("blue")?3:0,lift);}
     static Vector2 Cubic2(Vector2 a,Vector2 b,Vector2 c,Vector2 d,float t)
@@ -490,54 +499,8 @@ public static class SkyPulseBirdPrototypeWorkshop
             int row=end==0?0:along*stride;var section=HelmetSection(end==0?-.01f:1.25f);int center=g.Add(new Vector3(section.x,(section.y+section.h)*.5f,0),Vector2.zero);
             for(int j=0;j<around;j++)if(end==0)g.Tri(center,row+j+1,row+j);else g.Tri(center,row+j,row+j+1);
         }
-        var mesh=ClipSensorAperture(g.Build("helmet compound sections"),SensorOutline(.955f));RemoveUnusedVertices(mesh);WeldSmoothNormals(mesh);return mesh;
+        var mesh=g.Build("helmet compound sections");RemoveUnusedVertices(mesh);WeldSmoothNormals(mesh);return mesh;
     }
-    // All head layers share an exact aperture tucked beneath the optical gasket.
-    static Mesh ClipSensorAperture(Mesh source,Vector2[] outline)
-    {
-        outline=CounterClockwise(outline);var g=new Geometry();var v=source.vertices;var uv=source.uv;var colours=source.colors;var triangles=source.triangles;
-        for(int i=0;i<v.Length;i++)g.Add(v[i],uv[i],colours.Length==v.Length?colours[i]:Color.white);
-        Vector2 apertureMin=outline[0],apertureMax=outline[0];foreach(var p in outline){apertureMin=Vector2.Min(apertureMin,p);apertureMax=Vector2.Max(apertureMax,p);}
-        var cuts=new Dictionary<long,int>[outline.Length];for(int i=0;i<cuts.Length;i++)cuts[i]=new Dictionary<long,int>();
-        for(int tri=0;tri<triangles.Length;tri+=3)
-        {
-            int ia=triangles[tri],ib=triangles[tri+1],ic=triangles[tri+2];
-            // Do not subdivide remote armour against infinite clipping planes.
-            // Only triangles whose projected bounds touch the optic can need a cut.
-            var triangleMin=Vector3.Min(v[ia],Vector3.Min(v[ib],v[ic]));var triangleMax=Vector3.Max(v[ia],Vector3.Max(v[ib],v[ic]));
-            if(Mathf.Max(Mathf.Abs(v[ia].z),Mathf.Abs(v[ib].z),Mathf.Abs(v[ic].z))<.12f){g.Tri(ia,ib,ic);continue;}
-            if(triangleMax.x<apertureMin.x||triangleMin.x>apertureMax.x||triangleMax.y<apertureMin.y||triangleMin.y>apertureMax.y)
-            {g.Tri(ia,ib,ic);continue;}
-            var remaining=new List<int>{ia,ib,ic};
-            for(int edge=0;edge<outline.Length&&remaining.Count>=3;edge++)
-            {
-                var a=outline[edge];var b=outline[(edge+1)%outline.Length];var inside=new List<int>();var outside=new List<int>();
-                float Distance(int index){var p=g.v[index];return (b.x-a.x)*(p.y-a.y)-(b.y-a.y)*(p.x-a.x);}
-                int previous=remaining[remaining.Count-1];float previousDistance=Distance(previous);
-                foreach(int current in remaining)
-                {
-                    float distance=Distance(current);bool wasInside=previousDistance>=0,isInside=distance>=0;
-                    if(wasInside!=isInside)
-                    {
-                        int lo=Mathf.Min(previous,current),hi=Mathf.Max(previous,current);long key=((long)lo<<32)|(uint)hi;
-                        if(!cuts[edge].TryGetValue(key,out int intersection))
-                        {
-                            float t=previousDistance/(previousDistance-distance);
-                            intersection=g.Add(Vector3.LerpUnclamped(g.v[previous],g.v[current],t),Vector2.LerpUnclamped(g.uv[previous],g.uv[current],t),Color.LerpUnclamped(g.colours[previous],g.colours[current],t));
-                            cuts[edge].Add(key,intersection);
-                        }
-                        inside.Add(intersection);outside.Add(intersection);
-                    }
-                    if(isInside)inside.Add(current);else outside.Add(current);
-                    previous=current;previousDistance=distance;
-                }
-                for(int i=1;i+1<outside.Count;i++)g.Tri(outside[0],outside[i],outside[i+1]);
-                remaining=inside;
-            }
-        }
-        string name=source.name;UnityEngine.Object.DestroyImmediate(source);return g.Build(name);
-    }
-
     static Mesh SensorHousing(string name,int side,Vector3 origin)
     {
         var g=new Geometry();float[] scales={1.045f,1.015f,.97f,.92f},depths={.275f,.335f,.365f,.36f};const int n=40;
@@ -567,7 +530,7 @@ public static class SkyPulseBirdPrototypeWorkshop
         return Shift(CurvedPlate(name,Rim,24,3,.015f,.003f,.005f,.025f),-origin);
     }
 
-    static Mesh SensorPanel(string name,int side,Vector3 origin)=>name=="curved black optical lens"?OpticalDisc(name,HeadPixel2(410,183),new Vector2(.342f,.322f),side,origin,.375f,.066f,.018f,40,6):OpticalDisc(name,HeadPixel2(417,182),new Vector2(.145f,.19f),side,origin,.447f,.052f,.009f,32,5);
+    static Mesh SensorPanel(string name,int side,Vector3 origin)=>name=="curved black optical lens"?OpticalDisc(name,HeadPixel2(410,183),new Vector2(.342f,.322f),side,origin,.375f,.066f,.11f,40,6):OpticalDisc(name,HeadPixel2(417,182),new Vector2(.145f,.19f),side,origin,.447f,.052f,.07f,32,5);
     static void ReverseWinding(Mesh mesh)
     {var t=mesh.triangles;for(int i=0;i<t.Length;i+=3){int a=t[i];t[i]=t[i+2];t[i+2]=a;}mesh.triangles=t;}
     static Vector2[] CounterClockwise(Vector2[] p)
@@ -801,6 +764,34 @@ public static class SkyPulseBirdPrototypeWorkshop
         Vector3 n=Vector3.Cross(g.v[b]-g.v[a],g.v[c]-g.v[a]);
         if(n.x*outward.x+n.y*outward.y+n.z*outward.z>=0)g.Quad(a,b,c,d);else g.Quad(a,d,c,b);
     }
+    // Z-only span: both sides of each closed blade and all inset panels share
+    // the same native-X warp. Existing X/Y buffers and every rig origin survive.
+    static Mesh ReferenceWingTipRib(float rootZ,int side)
+    {
+        // A rib between adjacent primary blades shares their existing tip bone.
+        // It is buried behind the approved feathers/coverts in source projection.
+        Vector3 start=ReferenceBodyPixel(264,177)-new Vector3(-.97f,.38f,0),end=ReferenceBodyPixel(264,193)-new Vector3(-.97f,.38f,0);
+        start.z=rootZ+side*(.71f*(28f/188));end.z=rootZ+side*(.013f+.635f*(34f/229));
+        Vector3 axis=Unit(end-start,Vector3.up),radial=Vector3.Cross(axis,Vector3.right);float length=Mathf.Sqrt((end-start).sqrMagnitude);
+        var rib=Loft("buried primary root rib",new[]{new Section(0,0,.018f,.018f),new Section(length,0,.018f,.018f)},20);
+        var vertices=rib.vertices;for(int i=0;i<vertices.Length;i++){var v=vertices[i];vertices[i]=start+axis*v.x+Vector3.right*v.y+radial*v.z;}
+        rib.vertices=vertices;rib.RecalculateBounds();FiniteNormals(rib);return rib;
+    }
+    static float ReferenceWingSpanZ(int index,int side,float u,float amount,float divisor)
+    {u=Mathf.Clamp01(u);return side*amount*(1-index/divisor)*u;}
+    static void ReferenceWingSpanMesh(Mesh mesh,string name)
+    {
+        bool primary=name.StartsWith("curved primary chassis ")||name.StartsWith("curved primary enamel ");
+        bool secondary=name.StartsWith("secondary metal feather ")||name.StartsWith("secondary cobalt panel ");
+        if(!primary&&!secondary)return;var fields=name.Split(' ');
+        if(fields.Length!=5||!int.TryParse(fields[3],out int side)||!int.TryParse(fields[4],out int index))return;
+        float rootX,tipX,parentX,amount,divisor;
+        if(primary){if(index<7)return;rootX=index==7?301:303;tipX=index==7?246:257;parentX=-.97f;amount=.60f;divisor=8;}
+        else{float[] tips={176,141,173,215,250};rootX=293+index*2;tipX=tips[index];parentX=-.33f;amount=.40f;divisor=6;}
+        var vertices=mesh.vertices;for(int i=0;i<vertices.Length;i++)
+        {float px=(vertices[i].x+parentX)*100+285,u=(rootX-px)/(rootX-tipX);vertices[i].z+=ReferenceWingSpanZ(index,side,u,amount,divisor);}
+        mesh.vertices=vertices;mesh.RecalculateBounds();
+    }
     static Mesh ReferenceWingSolid(string name,Vector2[] boundary,int index,int skeletonSide,int faceSide,float rootZ,float halfDepth,float lift,float bow,bool chassis,Color tint)
     {
         if(ReferenceWingArea(boundary)<0)Array.Reverse(boundary);
@@ -811,8 +802,8 @@ public static class SkyPulseBirdPrototypeWorkshop
         float rootX=index==0?292:index==1?298:index<5?300:index==5?301:303,tipX=index==0?104:index==1?69:index==2?111:index==3?160:index==4?203:index==5?236:265;
         Vector3 Point(Vector2 p,float depth,bool rounded)
         {
-            float u=Mathf.Clamp01((rootX-p.x)/(rootX-tipX));float nx=(p.x-cx)/rx,ny=(p.y-cy)/ry,q=Mathf.Clamp01(1-nx*nx-ny*ny);
-            float z=rootZ+skeletonSide*.11f*u+faceSide*(lift+depth+(rounded?bow*q*Mathf.Sign(depth):0));
+            if(!chassis&&depth<0)depth-=.015f;float u=Mathf.Clamp01((rootX-p.x)/(rootX-tipX));float nx=(p.x-cx)/rx,ny=(p.y-cy)/ry,q=Mathf.Clamp01(1-nx*nx-ny*ny);
+            float z=rootZ+skeletonSide*.11f*u+ReferenceWingSpanZ(index,skeletonSide,u,.60f,8)+faceSide*(lift+depth+(rounded?bow*q*Mathf.Sign(depth):0));
             return new Vector3((p.x-285)/100f+.97f,(255-p.y)/100f-.38f,z);
         }
         Vector2 UV(Vector2 p)=>new Vector2((p.x-minX)/Mathf.Max(1,maxX-minX),(p.y-minY)/Mathf.Max(1,maxY-minY));
@@ -847,7 +838,7 @@ public static class SkyPulseBirdPrototypeWorkshop
         // Enamel's original authoring point is Bezier(.38)+normal*.012;
         // remove that offset to recover the shared load-bearing blade centre.
         float rootZ=chassis?a.z:a.z-side*.0477922f;Vector2[] boundary=ReferenceWingContour(index,enamel);
-        if(chassis)return ReferenceWingSolid(name,boundary,index,side,side,rootZ,thickness,0,.004f,true,Color.white);
+        if(chassis){var blade=ReferenceWingSolid(name,boundary,index,side,side,rootZ,thickness,0,.004f,true,Color.white);if(index!=0)return blade;var assembly=new Geometry();Append(assembly,blade);Append(assembly,ReferenceWingTipRib(rootZ,side));return assembly.Build(name);}
         Color tint=index%3==1?new Color(1,6,1,1):Color.white;var g=new Geometry();
         Append(g,ReferenceWingSolid(name+" outer",boundary,index,side,side,rootZ,.008f,.045f,0,false,tint));
         Append(g,ReferenceWingSolid(name+" inner",boundary,index,side,-side,rootZ,.008f,.045f,0,false,tint));return g.Build(name);
@@ -886,7 +877,7 @@ public static class SkyPulseBirdPrototypeWorkshop
             else if(name.StartsWith("tail enamel"))offset=new Vector3(0,0,-.012f);
             if(offset.sqrMagnitude>0)Append(g,Feather(name+" inner",a-offset*2,b-offset*2,c-offset*2,d-offset*2,width,thickness,length,around));
         }
-        var mesh=g.Build(name);FiniteNormals(mesh);return mesh;
+        var mesh=g.Build(name);if(!name.EndsWith(" inner"))ReferenceWingSpanMesh(mesh,name);FiniteNormals(mesh);return mesh;
     }
     static void FiniteNormals(Mesh mesh)
     {

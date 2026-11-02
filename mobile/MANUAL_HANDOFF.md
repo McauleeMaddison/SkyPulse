@@ -133,3 +133,11 @@ rights, global metadata uniqueness, a bug-free game or Apple acceptance.
 Next visual acceptance: review the Finch head in the isolated workshop and the
 new local preview package. Keep further bird/roster work on hold until that review;
 physical-device checks for the wider design candidate remain pending.
+
+The subsequent local Finch 3D pass is documented in
+[3D structure checks](Development/DesignUpgrade20261031/Checks/Finch-Structure.json)
+and the [360° turntable](Development/DesignUpgrade20261031/Previews/Finch-3D/Turntable.mp4).
+It retains the reference-facing geometry while closing the case and supporting
+the optical, wing and foot assemblies. Acceptance remains pending. Prior reference
+preview files are preserved; the structural proofs are in their own Finch-3D folder.
+The installed app remains Build 19; no device install, upload or submission occurred.

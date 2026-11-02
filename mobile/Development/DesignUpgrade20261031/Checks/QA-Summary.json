@@ -99,5 +99,34 @@
   },
   "runtimeComparisonExclusions": [
     "Assets/.DS_Store: Finder folder metadata removed during the recorded cleanup; not a game asset"
-  ]
+  ],
+  "latestFinchStructure": {
+    "revision": "Volumetric reference finch v9",
+    "ownerAcceptance": "pending",
+    "result": "PASS",
+    "sourceGeometryBefore": "Reference-shaped mechanical finch v8",
+    "closedPartsChecked": 72,
+    "openEdgesOnTestedSolids": 0,
+    "nonManifoldEdgesOnTestedSolids": 0,
+    "helmetOpenEdgesBefore": 548,
+    "helmetOpenEdgesAfter": 0,
+    "supportOverlapChecks": 9,
+    "wingPriorXYUnchanged": true,
+    "opticalFrontsUnchanged": true,
+    "vertices": 36596,
+    "triangles": 54152,
+    "depth": 2.670816659927368,
+    "warmPoseAllocatedBytes": 0,
+    "csharpCompilerErrors": [],
+    "csharpCompilerWarnings": [],
+    "deviceTested": false,
+    "turntable": {
+      "frames": 120,
+      "seconds": 4,
+      "encodedFps": 30,
+      "decodedSamplesDistinct": 3,
+      "measuresDeviceFps": false
+    },
+    "priorPreviewFiles": "unchanged"
+  }
 }

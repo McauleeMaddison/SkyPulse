@@ -3,8 +3,8 @@
   "mediaOrigin": "Actual Unity Editor captures; sheet layouts contain source images without repainting",
   "files": {
     "README.md": {
-      "sha256": "e09cdf534da273691d367080740f88ec0d3767e5150ee9109d30d62914b24eeb",
-      "bytes": 5557
+      "sha256": "96fa9488fbb160c23ad9cbca0e4404019a306e1037b78edae4a83703ad9f98b7",
+      "bytes": 6335
     },
     "Checks/Finch-Preservation.json": {
       "sha256": "4afebea9ca2a644d802d49c324149730da5419d887e5a091422ed135470199ba",
@@ -17,6 +17,10 @@
     "Checks/District-Copy.json": {
       "sha256": "4d8fce11862465bc82a32a66ccae15b54f936046b842361061af0c511f755caa",
       "bytes": 35955
+    },
+    "Checks/Finch-3D-Copy.json": {
+      "sha256": "5d9307b37fa22b30e6a60f4512b175df3934ac6b91d0f32a18f696a2914da597",
+      "bytes": 89133
     },
     "Checks/Cleanup-Record.json": {
       "sha256": "ad21edfc493b1970ef8c0084b0d519754e9f1af0db761b26ee264360f980630b",
@@ -42,6 +46,14 @@
       "sha256": "6d4ef42957d63bc787c4a09a28e0dd15aea4a2957f8da671a7a1dc48837ea84b",
       "bytes": 89944
     },
+    "Checks/Finch-3D-Preservation.json": {
+      "sha256": "42b52799c55d1d12c5972bdc76707f49799c2d0c027b65304608a549a1604af7",
+      "bytes": 35789
+    },
+    "Checks/Finch-3D-Validation.json": {
+      "sha256": "9617a9d385968545351d5e98c2255cf9c403dc9654e327eb5253fe327699b3f6",
+      "bytes": 12789
+    },
     "Checks/Finch-Copy.json": {
       "sha256": "a980e25148bec564b5c76fd923ae1d4185a1dddd29a2183527f58dd30717feb3",
       "bytes": 101185
@@ -49,6 +61,10 @@
     "Checks/Tactile-Native.json": {
       "sha256": "334ff82c318d644664a52f138c4ad0aff215eb8d950e0517a6d8859ca8cb9aae",
       "bytes": 351
+    },
+    "Checks/Finch-Structure.json": {
+      "sha256": "fd9ac437ea271e78fdcb04e8f16567fbdd55abc964519e0bef18e56d4635a315",
+      "bytes": 21997
     },
     "Checks/Finch-Lighting.json": {
       "sha256": "4d494eb8a550229326f4cf6db902efc9a8560f0f88e652496030aba4ed3a601d",
@@ -59,8 +75,8 @@
       "bytes": 419
     },
     "Checks/QA-Summary.json": {
-      "sha256": "fb5da1f3f79f81e39c5d7a5193763adbf302afcdfc38e9ccd86470be14511b92",
-      "bytes": 4218
+      "sha256": "8c097bd14ff0f47600c2a72d88e442060d81e0858362284438f417e149a2b86c",
+      "bytes": 5096
     },
     "Previews/Tech-Tree.mp4": {
       "sha256": "ad3b901a1774e9cc5e011327e9857f87e4601437d228a35726d6499414790821",
@@ -165,8 +181,29 @@
     "Previews/Finch-Reference-Model.png": {
       "sha256": "ebffdaed68f5b03b7bf649372c309376b72975c0fabfc4e629449952ad4a4c2e",
       "bytes": 233641
+    },
+    "Previews/Finch-3D/Wireframe.png": {
+      "sha256": "bc075f8fa47a063ef57da60484a49e583873c4288409936a5f301b1a8e218eae",
+      "bytes": 435072
+    },
+    "Previews/Finch-3D/Reference.png": {
+      "sha256": "85552d754226b51fcdf14da5e523c8ff44b34d52149a0e735354bbe916de6352",
+      "bytes": 582965
+    },
+    "Previews/Finch-3D/Turntable.mp4": {
+      "sha256": "f1cc6416e83344798ff40ad252f04b5718bf7dc21085cd92c35b37d07e87b246",
+      "bytes": 3478663
+    },
+    "Previews/Finch-3D/Structure.png": {
+      "sha256": "43295c3349f0c33aebb69b76312cae5ba30f3a2a5ad4fb4fbb7a694ea2d96746",
+      "bytes": 541685
+    },
+    "Previews/Finch-3D/Flight.mp4": {
+      "sha256": "164048594c22d09c1cbe3251c751211c1cb5f0a02acc83c6d9f43444d19b16aa",
+      "bytes": 2549016
     }
   },
   "lastUpdated": "2026-11-02",
-  "finchRevision": "Reference-shaped mechanical finch v8"
+  "finchRevision": "Reference-shaped mechanical finch v8",
+  "latestFinchStructuralRevision": "Volumetric reference finch v9"
 }

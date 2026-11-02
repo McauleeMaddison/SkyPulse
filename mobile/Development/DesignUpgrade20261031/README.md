@@ -4,6 +4,16 @@ Current source review; **not a new installed build**. The iPhone release record 
 
 ## Start here
 
+Latest structural pass (2 November): [3D views](Previews/Finch-3D/Structure.png),
+[360° turntable](Previews/Finch-3D/Turntable.mp4), [flight](Previews/Finch-3D/Flight.mp4),
+[reference view](Previews/Finch-3D/Reference.png) and [wireframe](Previews/Finch-3D/Wireframe.png).
+The closed helmet, supported optical caps, connected foot mounts and deeper wing fan
+use real geometry. [Unity structural checks](Checks/Finch-Structure.json) cover 72 closed
+solid parts and 9 support overlaps; existing wing X/Y and optical fronts are retained.
+**Visual acceptance remains pending.** This is art revision v9, not an App Store
+build. The older reference previews and records below are preserved as the preceding
+v8 appearance review; they do not describe the latest structural geometry.
+
 - [Finch reference reconstruction](Previews/Finch-Source-Match.png), [fixed-scale source pose](Previews/Finch-Reference-Model.png), [3D view](Previews/Finch-Reference-ThreeQuarter.png), [close-up](Previews/Finch-Reference-Detail.png) and [animated review](Previews/Finch-Source-Motion.mp4). The original Volt artwork now drives the helmet, round optic/gold crescent, swept wings, ivory belly, shoulder and tail/exhaust. **Owner visual acceptance remains pending. Do not convert other birds or integrate this model into gameplay until accepted.**
 - [Current Home layouts](Previews/Three-Homes.png), [all three modes](Previews/Three-Modes.png), [twelve worlds](Previews/Twelve-Worlds.png).
 - [Hangar and Tech Tree](Previews/Visual-Preview.png), [Relay celestial materials](Previews/Relay-Planets.png).
