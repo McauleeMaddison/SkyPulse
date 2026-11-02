@@ -60,20 +60,25 @@
   ],
   "latestFinchReview": {
     "date": "2026-11-02",
-    "revision": "Contoured mechanical finch v4",
+    "revision": "Softened mechanical finch face v5",
     "focusedQa": "PASS",
-    "bodyAndHeadMeshesChanged": 42,
-    "existingFinishMaterialsChanged": 8,
+    "bodyAndHeadMeshesChanged": 16,
+    "existingFinishMaterialsChanged": 0,
     "studioLighting": "neutral HDR reflection asset; existing lights only; exact hierarchy/camera/rig preservation",
     "normalRegressionCheck": "All revised vertices have finite nonzero surface normals; thin plate normals no longer collapse",
     "shader": "SkyPulse/Workshop/Finch Armour Finish, actual Metal Editor render verified",
     "warmPoseAllocatedBytes": 0,
     "vertexCount": 36487,
-    "triangles": 68016,
+    "triangles": 68020,
     "wingTailGeometryAndAnimationPreserved": true,
     "ownerAcceptance": "pending",
     "deviceTested": false,
-    "cleanup": "Removed unused private Tube, BeveledPolygon and Beak mesh builders; retained one current preview set"
+    "cleanup": "Removed unused private Tube, BeveledPolygon and Beak mesh builders; retained one current preview set",
+    "scope": "Face-only correction after the sculpture pass",
+    "faceMeshesChanged": 16,
+    "beakProjectionReductionPercent": 37.827,
+    "tip": "Rounded finite-width tip and fuller front cheek",
+    "allOtherWorkshopFilesPreserved": true
   },
   "runtimeComparisonExclusions": [
     "Assets/.DS_Store: Finder folder metadata removed during the recorded cleanup; not a game asset"

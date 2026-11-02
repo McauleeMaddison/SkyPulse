@@ -17,7 +17,7 @@ public static class SkyPulseBirdPrototypeWorkshop
     static int meshNumber;
     static bool revisionBuild, refreshHead;
     static int revisedMeshCount;
-    public const string OpticsRevision = "Contoured mechanical finch v4";
+    public const string OpticsRevision = "Softened mechanical finch face v5";
     static Transform model;
     struct Section
     {
@@ -242,7 +242,7 @@ public static class SkyPulseBirdPrototypeWorkshop
     }
     // Shape-preserving cubic interpolation gives a continuous silhouette with
     // no roof corners, while the independently curated sections avoid a sphere.
-    static Section[] HelmetProfile()=>new[]{new Section(-.31f,.18f,.31f,.025f),new Section(-.25f,.085f,.39f,.14f),new Section(-.15f,.025f,.46f,.225f),new Section(-.02f,.015f,.50f,.267f),new Section(.12f,.028f,.515f,.283f),new Section(.27f,.05f,.495f,.274f),new Section(.42f,.09f,.455f,.246f),new Section(.55f,.14f,.385f,.194f),new Section(.66f,.205f,.315f,.06f),new Section(.69f,.235f,.29f,.009f)};
+    static Section[] HelmetProfile()=>new[]{new Section(-.31f,.18f,.31f,.025f),new Section(-.25f,.085f,.39f,.14f),new Section(-.15f,.025f,.46f,.225f),new Section(-.02f,.015f,.50f,.267f),new Section(.12f,.028f,.515f,.283f),new Section(.27f,.05f,.495f,.274f),new Section(.42f,.09f,.455f,.246f),new Section(.55f,.13f,.395f,.205f),new Section(.66f,.18f,.335f,.105f),new Section(.69f,.205f,.31f,.05f)};
     static float SectionValue(Section s,int field)=>field==0?s.y:field==1?s.h:s.w;
     static float SectionSlope(Section[] p,int index,int field)
     {
@@ -481,10 +481,10 @@ public static class SkyPulseBirdPrototypeWorkshop
     static Mesh ChiselBeak(string name,int kind)
     {
         Section[] p;
-        if(kind==0)p=new[]{new Section(.615f,.272f,.047f,.068f),new Section(.70f,.275f,.044f,.081f),new Section(.80f,.261f,.030f,.061f),new Section(.90f,.245f,.012f,.031f),new Section(.975f,.234f,.0008f,.001f)};
-        else if(kind==1)p=new[]{new Section(.635f,.230f,.0022f,.064f),new Section(.72f,.231f,.0023f,.076f),new Section(.83f,.232f,.0018f,.052f),new Section(.963f,.233f,.0005f,.001f)};
-        else p=new[]{new Section(.632f,.215f,.015f,.058f),new Section(.72f,.215f,.014f,.068f),new Section(.82f,.222f,.009f,.045f),new Section(.945f,.230f,.0006f,.001f)};
-        for(int i=0;i<p.Length;i++){var section=p[i];section.x=.615f+(section.x-.615f)*1.16f;p[i]=section;}
+        if(kind==0)p=new[]{new Section(.615f,.272f,.047f,.068f),new Section(.70f,.275f,.044f,.081f),new Section(.80f,.261f,.030f,.061f),new Section(.90f,.248f,.014f,.034f),new Section(.975f,.241f,.006f,.014f)};
+        else if(kind==1)p=new[]{new Section(.635f,.230f,.0022f,.064f),new Section(.72f,.231f,.0023f,.076f),new Section(.83f,.232f,.0018f,.052f),new Section(.963f,.233f,.0005f,.010f)};
+        else p=new[]{new Section(.632f,.215f,.015f,.058f),new Section(.72f,.215f,.014f,.068f),new Section(.82f,.222f,.009f,.045f),new Section(.945f,.230f,.004f,.009f)};
+        for(int i=0;i<p.Length;i++){var section=p[i];section.x=.615f+(section.x-.615f)*.80f;p[i]=section;}
         const int along=22,around=16;var g=new Geometry();int stride=around+1;
         Vector3 origin=kind==0?new Vector3(.66f,.22f,0):kind==1?new Vector3(.66f,.20f,0):new Vector3(.66f,.185f,0);
         for(int i=0;i<=along;i++)for(int j=0;j<=around;j++)

@@ -27,7 +27,7 @@ test gameplay. Preserve the existing scenes, prefabs, materials, animation and
 `.meta` identities. Numbered mesh copies are local studies, not cleanup targets.
 
 The Finch remains an isolated prototype. Review its contoured body/head sculpture,
-embedded optics and PBR finish before converting any other birds. The wing/tail
+embedded optics, compact rounded face and PBR finish before converting any other birds. The wing/tail
 geometry and existing animation are preserved; gameplay retains the original art.
 Its new surface is `SkyPulseBirdWorkshop/Shaders/FinchArmourFinish.shader`; studio
 settings live in the review scene and its `Lighting` folder. **Refine Finch

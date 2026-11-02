@@ -6,11 +6,11 @@
     "scope": "Art-review candidate only; no gameplay replacement or roster conversion",
     "meshParts": 125,
     "vertices": 36487,
-    "triangles": 68016,
+    "triangles": 68020,
     "bones": 8,
     "warmPoseAllocatedBytes": 0,
     "dimensions": {
-        "x": 3.4729952812194824,
+        "x": 3.343395233154297,
         "y": 1.4203190803527832,
         "z": 2.603590488433838
     },
@@ -45,12 +45,12 @@
         "Side, front, rear, three-quarter and three flight-phase review captures were written"
     ],
     "captures": [
-        "/private/tmp/skypulse-finch-sculpture-20261102/captures/skypulse-neon-finch-review/01-side.png",
-        "/private/tmp/skypulse-finch-sculpture-20261102/captures/skypulse-neon-finch-review/02-front.png",
-        "/private/tmp/skypulse-finch-sculpture-20261102/captures/skypulse-neon-finch-review/03-rear.png",
-        "/private/tmp/skypulse-finch-sculpture-20261102/captures/skypulse-neon-finch-review/04-three-quarter.png",
-        "/private/tmp/skypulse-finch-sculpture-20261102/captures/skypulse-neon-finch-review/05-flight-a.png",
-        "/private/tmp/skypulse-finch-sculpture-20261102/captures/skypulse-neon-finch-review/06-flight-b.png",
-        "/private/tmp/skypulse-finch-sculpture-20261102/captures/skypulse-neon-finch-review/07-flight-c.png"
+        "/private/tmp/skypulse-finch-face-20261102/captures/skypulse-neon-finch-review/01-side.png",
+        "/private/tmp/skypulse-finch-face-20261102/captures/skypulse-neon-finch-review/02-front.png",
+        "/private/tmp/skypulse-finch-face-20261102/captures/skypulse-neon-finch-review/03-rear.png",
+        "/private/tmp/skypulse-finch-face-20261102/captures/skypulse-neon-finch-review/04-three-quarter.png",
+        "/private/tmp/skypulse-finch-face-20261102/captures/skypulse-neon-finch-review/05-flight-a.png",
+        "/private/tmp/skypulse-finch-face-20261102/captures/skypulse-neon-finch-review/06-flight-b.png",
+        "/private/tmp/skypulse-finch-face-20261102/captures/skypulse-neon-finch-review/07-flight-c.png"
     ]
 }

@@ -4,7 +4,7 @@ Current source review; **not a new installed build**. The iPhone release record 
 
 ## Start here
 
-- [Rebuilt Finch](Previews/Finch-Sculpted-Review.png) and [moving Unity review](Previews/Finch-Sculpted-Motion.mp4). **Updated 2 November:** slimmer overlapping body armour, a low compound-curved head, longer tapered beak, integrated almond optics and neutral-lit satin/metal surfaces. Wing/tail geometry, rig and animation preserved. This isolated art candidate is not the gameplay bird. **Wait for owner acceptance before converting the roster.**
+- [Rebuilt Finch](Previews/Finch-Rounded-Face.png) and [moving Unity review](Previews/Finch-Rounded-Face-Motion.mp4). **Updated 2 November:** slimmer overlapping body armour, a low compound-curved head, compact rounded beak, fuller front cheeks, integrated almond optics and neutral-lit satin/metal surfaces. Wing/tail geometry, rig and animation preserved. This isolated art candidate is not the gameplay bird. **Wait for owner acceptance before converting the roster.**
 - [Current Home layouts](Previews/Three-Homes.png), [all three modes](Previews/Three-Modes.png), [twelve worlds](Previews/Twelve-Worlds.png).
 - [Hangar and Tech Tree](Previews/Visual-Preview.png), [Relay celestial materials](Previews/Relay-Planets.png).
 - [Where to edit](../../EDITING_GUIDE.md). Open the Finch review scene listed in the guide; play the game in `Assets/Scenes/SkyPulse.unity`.
@@ -20,6 +20,8 @@ Current source review; **not a new installed build**. The iPhone release record 
 - Only the first Neon Finch has a new 3D art-review rig. This revision reshapes the existing body/head mesh buffers 001–042 and applies a constrained PBR finish to eight existing materials. The wing/tail buffers 043 onward, rig, prefab, animation and all original asset GUIDs remain unchanged. A separate lighting check proves the review camera, hierarchy, rig and renderer bindings are preserved while lighting and a new studio reflection asset are applied. See [sculpture preservation](Checks/Finch-Preservation.json) and [lighting preservation](Checks/Finch-Lighting.json).
 
 The established gameplay handling, pipe spacing/gaps/collision, gate charge rules, puzzle logic, saves, economy and original roster artwork remain protected by automated comparisons.
+
+Latest face correction: exposed beak projection shortened by about 38%, with a rounded finite-width tip and broader front cheek. Only 16 existing face meshes changed; all body/wing/tail geometry, materials, lighting, scene, rig, animation and metadata files were byte-preserved.
 
 ## Validation and limits
 

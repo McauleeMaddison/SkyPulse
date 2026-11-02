@@ -3,12 +3,12 @@
   "mediaOrigin": "Actual Unity Editor captures; sheet layouts contain source images without repainting",
   "files": {
     "README.md": {
-      "sha256": "bc877484158313a0e2bf7c6bc1fd657082c05f672697b4e81b0922b34b8548cb",
-      "bytes": 4720
+      "sha256": "918b309420bd858dd92dc12a410e94bc6a251f8a340b6fc18608c2f80b3c265c",
+      "bytes": 5023
     },
     "Checks/Finch-Preservation.json": {
-      "sha256": "233f876de01d71d94ba5e2e170c824f11c4abf9745a7b290c2d81c09f8c81311",
-      "bytes": 26489
+      "sha256": "9ec8a2a91b46e0578ed31b3a33abeabdaba3acef98252f90548039181753705e",
+      "bytes": 23942
     },
     "Checks/District-Migration.json": {
       "sha256": "346b9d5f561808bb6eebb1e7237468699e9e37cf7889db633f470d292a11d3b1",
@@ -31,8 +31,8 @@
       "bytes": 297
     },
     "Checks/Finch-Validation.json": {
-      "sha256": "b7b2b18dd055bec170134c54354c4707605f10b95b14514c341d466a922dbb0f",
-      "bytes": 3433
+      "sha256": "e60463f1f9a831e967d6a0e86e1733117097b55ac2f285f72d864e3c183779bb",
+      "bytes": 3397
     },
     "Checks/Home-Responsive.json": {
       "sha256": "b71695f4efd13040b66ecad6633ed6e05afbc5a1bbb0bb5fc8238808724dc921",
@@ -43,8 +43,8 @@
       "bytes": 89944
     },
     "Checks/Finch-Copy.json": {
-      "sha256": "9dd01207058d12dc1bc7ed183a1a0e7daf933eef1d309b6264616d75f5566e02",
-      "bytes": 92426
+      "sha256": "58e78f96639f51a57e9ef7196712e3126cfdd294be0c238a6fb57e1969c807fe",
+      "bytes": 88567
     },
     "Checks/Tactile-Native.json": {
       "sha256": "334ff82c318d644664a52f138c4ad0aff215eb8d950e0517a6d8859ca8cb9aae",
@@ -59,20 +59,20 @@
       "bytes": 419
     },
     "Checks/QA-Summary.json": {
-      "sha256": "a3f6b8279630fee38ab91f7a64a58204a73946a82058914fdc6fd637ccbc6144",
-      "bytes": 3541
+      "sha256": "04100d69a6d5416b1a33a333df62cbd6f7e3101f982f7834c6812c25d9f3df31",
+      "bytes": 3788
     },
     "Previews/Tech-Tree.mp4": {
       "sha256": "ad3b901a1774e9cc5e011327e9857f87e4601437d228a35726d6499414790821",
       "bytes": 1801177
     },
     "Previews/Finch-02-front.png": {
-      "sha256": "e9be5b2dcf1c93e5f2d3fe4a1d414d8d017b9879ba2c1e615c536ed45c7a8eae",
-      "bytes": 202351
+      "sha256": "ef3e085d31837261163bc1b10063d97d6175c9503e84b1ed9f7f35ff554c5257",
+      "bytes": 202523
     },
     "Previews/Finch-01-side.png": {
-      "sha256": "2127e0b230034a6e81dfe1603332279cea5fb67601f9478e6a65ba2fc28fc5d5",
-      "bytes": 224589
+      "sha256": "c41533b942885704ca1db98b587b814b5a353dca62383a2e53ab4da89662e8b4",
+      "bytes": 223997
     },
     "Previews/Relay-Flight.mp4": {
       "sha256": "79da16733901288c0a5a54a97f2a807545492b373d85d131a37d5bba9678b907",
@@ -83,28 +83,24 @@
       "bytes": 4928803
     },
     "Previews/Finch-05-flight-a.png": {
-      "sha256": "f4840312ddc88ee8270e52daad314a8fb87e051343f362764f882791c4a0d13f",
-      "bytes": 236159
+      "sha256": "f52551e7a99bf688dd1756ad35e57bdd88e8c4d347c07146e4103d64457d2bfd",
+      "bytes": 235686
+    },
+    "Previews/Finch-Rounded-Face-Motion.mp4": {
+      "sha256": "664a8a73a9efc7208fd549dcf664b9d1ea159d1c7d366e6904ac2207d4284cd1",
+      "bytes": 1688144
     },
     "Previews/Blackout-Home.mp4": {
       "sha256": "226fcb93c100ccb637a0d34f386e27a58d37fb63e6276c916754d68e2b5c4bda",
       "bytes": 1347086
     },
     "Previews/Finch-03-rear.png": {
-      "sha256": "c2dae0695b2350ba860182c94b8fdc565e0faba1c2f786d5f61b4a761fd8cdc3",
-      "bytes": 174921
-    },
-    "Previews/Finch-Sculpted-Motion.mp4": {
-      "sha256": "f28987e232e8d109e3a5936a15a4820e3addc2f1b7dbcd2511672a3d8b095895",
-      "bytes": 1692645
+      "sha256": "71273584123a2cf3ff6d768a2231ea87f2ae3d5c6cc077c4e064ea42c7ddf644",
+      "bytes": 174760
     },
     "Previews/Relay-Planets.png": {
       "sha256": "a1be173f2d1d31b8dc9e83e277ffbcffff600157abad8f8eb02eba821d342204",
       "bytes": 475973
-    },
-    "Previews/Finch-Sculpted-Review.png": {
-      "sha256": "b676668565516564146c3ce253cdc22fd073e634937a127be128aa31d72ead60",
-      "bytes": 244266
     },
     "Previews/Relay-Home.mp4": {
       "sha256": "988c245e5c302812af5835a05f1751f74b13f8bf605b0d6c05ed4ade6b1ab30b",
@@ -113,6 +109,10 @@
     "Previews/Home-Endless-1640x2360.png": {
       "sha256": "feaf1eef58f3b45dbec3f2e04865fd849226771e399883b345caa69047dcc060",
       "bytes": 3091831
+    },
+    "Previews/Finch-Rounded-Face.png": {
+      "sha256": "8093b2c4da3f0aed03e342a6f89eefcfa2a132b13bdea985d5f8c5b8cbe064b5",
+      "bytes": 242612
     },
     "Previews/Three-Modes.png": {
       "sha256": "36cbe3fd6ba605141c45e8525fc1e5ff69029fa6a997670c01429f0bb945de57",
@@ -131,8 +131,8 @@
       "bytes": 2593950
     },
     "Previews/Finch-07-flight-c.png": {
-      "sha256": "92ac1f4f85395bb95e9b73e55c95bd09b117eefe63547340c4131d61b5838553",
-      "bytes": 231564
+      "sha256": "2af8d25a76a1adb6b21cca4ba57ba169d164aeb3278edf2aa0a75d1c7b1463a8",
+      "bytes": 230075
     },
     "Previews/Twelve-Worlds.png": {
       "sha256": "71e8ea9887ee36a8e9fce88e4a7539b441542db8591c461c7f46f2f869477b02",
@@ -143,8 +143,8 @@
       "bytes": 1526409
     },
     "Previews/Finch-06-flight-b.png": {
-      "sha256": "8d55511279b10686b6ebef2f7e4639f75fef267c03d4f4ab881235f8007b6060",
-      "bytes": 233037
+      "sha256": "7ebb63790794ee61561bab52af5420c832c849442d1c34f78f3b0f7494091d26",
+      "bytes": 232159
     },
     "Previews/Bird-Hangar.mp4": {
       "sha256": "5fc16b9c274e2aabc4d6a6b48d1f22cf1d9db32da4a192b6b1088174d72f20a2",
@@ -156,5 +156,5 @@
     }
   },
   "lastUpdated": "2026-11-02",
-  "finchRevision": "Contoured mechanical finch v4"
+  "finchRevision": "Softened mechanical finch face v5"
 }

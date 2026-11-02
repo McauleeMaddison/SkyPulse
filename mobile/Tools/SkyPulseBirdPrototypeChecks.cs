@@ -229,6 +229,18 @@ public static class SkyPulseBirdPrototypeChecks
         var report=new LightingReport{result="PASS",scope="Separate scene-lighting stage; existing objects, hierarchy, transforms, cameras, rig settings, prefab and all prior assets preserved; only review scene lighting and a new reflection asset may change",reflectionAsset=reflection,reflectionGuid=cubeGuid,sceneHash=sceneHash,roots=roots.Length,objects=components.OfType<Transform>().Count(),transforms=components.OfType<Transform>().Count(),cameras=components.OfType<Camera>().Count(),repeatedSceneByteStable=true,checks=assertions.Skip(firstCheck).ToArray()};
         File.WriteAllText(Path.Combine(output,"LIGHTING-VALIDATION.json"),JsonUtility.ToJson(report,true));
     }
+    static bool faceOnly;
+    public static void RunFaceRevision(){faceOnly=true;RunRevision();}
+    static void CheckFaceScope(string[] changed)
+    {
+        if(!faceOnly)return;
+        Check(changed.All(path=>IsReviewMesh(path)&&int.Parse(Path.GetFileName(path).Substring(0,3))>=21),"Face-only revision preserves every body/wing/tail mesh, material, rig, clip and metadata file");
+        var beak=OpticalLens(40);var vertices=beak.vertices;
+        float tip=vertices.Max(v=>v.x),projection=tip+.66f-.69f;
+        float tipRadius=vertices.Where(v=>Mathf.Abs(v.x-tip)<.0001f).Max(v=>Mathf.Abs(v.z));
+        Check(projection>0&&projection<=.23f,"Exposed beak projection is compact rather than the previous long wedge");
+        Check(tipRadius>=.012f,"Beak terminates in a rounded finite-width tip rather than a needle point");
+    }
     public static void RunRevision()
     {
         if(!Application.isBatchMode||Application.companyName!="SkyPulseQA20261006")throw new InvalidOperationException("Disposable batch QA product required before revising or capturing the prototype");
@@ -249,12 +261,13 @@ public static class SkyPulseBirdPrototypeChecks
             var finishPaths=before.Keys.Where(IsFinishMaterial).OrderBy(p=>p,StringComparer.Ordinal).ToArray();
             Check(finishPaths.Length==8&&finishPaths.Select(FinishNumber).Distinct().Count()==8,"Exactly the eight existing review-finish materials 01–08 are authorized for property updates");
             var expectedMaterials=ExpectedMaterials(finishPaths);
-            Check(SkyPulseBirdPrototypeWorkshop.OpticsRevision=="Contoured mechanical finch v4","The requested contoured mechanical finch revision is active");
+            Check(SkyPulseBirdPrototypeWorkshop.OpticsRevision=="Softened mechanical finch face v5","The requested contoured mechanical finch revision is active");
             SkyPulseBirdPrototypeWorkshop.ReviseOpticsInQa();AssetDatabase.SaveAssets();
             var revised=Snapshot();
             Check(before.Count==revised.Count&&before.Keys.All(revised.ContainsKey),"Sculpture revision creates or removes no workshop asset or metadata file");
             var changed=before.Where(pair=>revised[pair.Key]!=pair.Value).Select(pair=>pair.Key).OrderBy(p=>p,StringComparer.Ordinal).ToArray();
             Check(changed.All(path=>IsReviewMesh(path)||IsFinishMaterial(path)),"Only existing sculpture meshes 001–042 and review-finish material assets 01–08 may change");
+            CheckFaceScope(changed);
             Check(before.Where(pair=>!IsReviewMesh(pair.Key)&&!IsFinishMaterial(pair.Key)).All(pair=>revised[pair.Key]==pair.Value),"Prefab, scene, animations, wing and tail meshes 043 onward, all other materials and every meta file remain byte-for-byte unchanged");
             foreach(var item in expectedMaterials)
             {

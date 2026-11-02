@@ -18,7 +18,7 @@ exact source and checks it covers.
 
 Gameplay retains the original articulated bird artwork. The separate editable
 Neon Finch workshop is an isolated art-review prototype. **Review the rebuilt
-contoured body/head and material finish before any further bird or roster work.**
+contoured body/head, compact rounded face and material finish before any further bird or roster work.**
 The 2 November sculpture changes existing mesh buffers 001–042 and eight review
 materials. Wing/tail buffers 043 onward, joints, prefab, clips, bindings and existing
 GUIDs remain intact. The studio scene now includes separately checked neutral
