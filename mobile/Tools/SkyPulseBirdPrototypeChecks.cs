@@ -26,11 +26,11 @@ public static class SkyPulseBirdPrototypeChecks
     }
     [Serializable] sealed class RevisionReport
     {
-        public string result,scope;
-        public int workshopFiles,headMeshes,changedHeadMeshes;
+        public string result,scope,revision;
+        public int workshopFiles,headMeshes,changedHeadMeshes,finishMaterials,changedFinishMaterials;
         public bool priorOpticsAlreadyCompact;
         public Vector3 leftLensDimensions,rightLensDimensions;
-        public string[] changedAssets,checks;
+        public string[] changedAssets,engineNormalizedMaterials,checks;
     }
     struct Pose
     {
@@ -97,7 +97,77 @@ public static class SkyPulseBirdPrototypeChecks
         string path=Directory.GetFiles(Folder+"/Meshes",prefix+"*.asset").SingleOrDefault();
         return path==null?null:AssetDatabase.LoadAssetAtPath<Mesh>(path);
     }
-    static bool CompactLens(Mesh lens)=>lens!=null&&lens.bounds.size.x>.05f&&lens.bounds.size.y>.05f&&lens.bounds.size.x<=.46001f&&lens.bounds.size.y<=.42001f;
+    static bool CompactLens(Mesh lens)
+    {
+        if(lens==null)return false;var size=lens.bounds.size;
+        return size.x>=.19999f&&size.x<=.55001f&&size.y>=.05999f&&size.y<=.20001f&&size.x/size.y>=2.0999f&&size.z<=.03001f;
+    }
+    static int FinishNumber(string path)
+    {
+        if(!path.StartsWith(Folder+"/Materials/",StringComparison.Ordinal)||!path.EndsWith(".mat",StringComparison.Ordinal))return -1;
+        string file=Path.GetFileName(path);int number;
+        return file.Length>3&&file[2]==' '&&int.TryParse(file.Substring(0,2),out number)&&number>=1&&number<=8?number:-1;
+    }
+    static bool IsFinishMaterial(string path)=>FinishNumber(path)>0;
+    sealed class MaterialExpectation
+    {
+        public string fullJson, normalizedJson;
+    }
+    static Material CopyMaterial(Material original)
+    {
+        var clone=new Material(original);EditorUtility.CopySerialized(original,clone);return clone;
+    }
+    static void ExpectedFinish(Material material,int finish)
+    {
+        // Independent QA copy of the explicitly authorized review-finish table.
+        Color colour;float metallic,smoothness;
+        switch(finish)
+        {
+            case 1:colour=new Color(.045f,.115f,.26f);metallic=.78f;smoothness=.42f;break;
+            case 2:colour=new Color(.025f,.39f,.52f);metallic=.62f;smoothness=.40f;break;
+            case 3:colour=new Color(.018f,.029f,.045f);metallic=.72f;smoothness=.34f;break;
+            case 4:colour=new Color(.58f,.66f,.70f);metallic=.64f;smoothness=.40f;break;
+            case 5:colour=new Color(.58f,.43f,.22f);metallic=.82f;smoothness=.40f;break;
+            case 6:colour=new Color(.008f,.018f,.026f);metallic=.35f;smoothness=.55f;break;
+            case 7:colour=new Color(.43f,.50f,.57f);metallic=.85f;smoothness=.44f;break;
+            case 8:colour=new Color(.01f,.64f,.74f);metallic=.28f;smoothness=.52f;break;
+            default:throw new ArgumentOutOfRangeException(nameof(finish));
+        }
+        material.SetColor("_Color",colour);material.SetFloat("_Metallic",metallic);material.SetFloat("_Glossiness",smoothness);
+        if(finish==8)material.SetColor("_EmissionColor",new Color(0,.75f,.95f));
+    }
+    static Dictionary<string,MaterialExpectation> ExpectedMaterials(string[] paths)
+    {
+        var expectations=new Dictionary<string,MaterialExpectation>(StringComparer.Ordinal);
+        foreach(string path in paths)
+        {
+            var original=AssetDatabase.LoadAssetAtPath<Material>(path);Check(original!=null,"Existing review-finish material loads: "+Path.GetFileName(path));
+            var predicted=CopyMaterial(original);var applied=CopyMaterial(original);
+            try
+            {
+                Check(EditorJsonUtility.ToJson(predicted)==EditorJsonUtility.ToJson(original),"QA material clone preserves every serialized field: "+Path.GetFileName(path));
+                ExpectedFinish(predicted,FinishNumber(path));SkyPulseBirdPrototypeWorkshop.ApplyReviewFinish(applied,FinishNumber(path));
+                string full=EditorJsonUtility.ToJson(predicted),normalized=null;
+                Check(EditorJsonUtility.ToJson(applied)==full,"Finish API changes only the authorized shader properties to the exact review table: "+Path.GetFileName(path));
+                // In this Unity version saving mat08 removes its lone _EMISSION
+                // valid-keyword entry. Permit exactly that observed change, not
+                // arbitrary keyword loss, while comparing every other field.
+                if(FinishNumber(path)==8)
+                {
+                    var serialized=new SerializedObject(predicted);
+                    var keywords=serialized.FindProperty("m_ValidKeywords");
+                    if(keywords!=null&&keywords.isArray&&keywords.arraySize==1&&keywords.GetArrayElementAtIndex(0).stringValue=="_EMISSION")
+                    {
+                        keywords.DeleteArrayElementAtIndex(0);serialized.ApplyModifiedPropertiesWithoutUndo();
+                        normalized=EditorJsonUtility.ToJson(predicted);
+                    }
+                }
+                expectations.Add(path,new MaterialExpectation{fullJson=full,normalizedJson=normalized});
+            }
+            finally{UnityEngine.Object.DestroyImmediate(predicted);UnityEngine.Object.DestroyImmediate(applied);}
+        }
+        return expectations;
+    }
     public static void RunRevision()
     {
         if(!Application.isBatchMode||Application.companyName!="SkyPulseQA20261006")throw new InvalidOperationException("Disposable batch QA product required before revising or capturing the prototype");
@@ -115,25 +185,44 @@ public static class SkyPulseBirdPrototypeChecks
             Check(headPaths.Length==22,"Existing head has exactly the expected 22 mesh assets numbered 021–042");
             var guids=before.Keys.Where(p=>!p.EndsWith(".meta",StringComparison.Ordinal)).ToDictionary(p=>p,AssetDatabase.AssetPathToGUID);
             bool wasCompact=CompactLens(OpticalLens(29))&&CompactLens(OpticalLens(36));
+            var finishPaths=before.Keys.Where(IsFinishMaterial).OrderBy(p=>p,StringComparer.Ordinal).ToArray();
+            Check(finishPaths.Length==8&&finishPaths.Select(FinishNumber).Distinct().Count()==8,"Exactly the eight existing review-finish materials 01–08 are authorized for property updates");
+            var expectedMaterials=ExpectedMaterials(finishPaths);
+            Check(SkyPulseBirdPrototypeWorkshop.OpticsRevision=="Angular sensor helmet v3","The requested angular sensor helmet revision is active");
             SkyPulseBirdPrototypeWorkshop.ReviseOpticsInQa();AssetDatabase.SaveAssets();
             var revised=Snapshot();
             Check(before.Count==revised.Count&&before.Keys.All(revised.ContainsKey),"Head revision creates or removes no workshop asset or metadata file");
             var changed=before.Where(pair=>revised[pair.Key]!=pair.Value).Select(pair=>pair.Key).OrderBy(p=>p,StringComparer.Ordinal).ToArray();
-            Check(changed.All(IsHeadMesh),"Only the existing 021–042 head mesh asset bytes may change");
-            Check(before.Where(pair=>!IsHeadMesh(pair.Key)).All(pair=>revised[pair.Key]==pair.Value),"Prefab, scene, materials, animations, all non-head meshes and every meta file remain byte-for-byte unchanged");
+            Check(changed.All(path=>IsHeadMesh(path)||IsFinishMaterial(path)),"Only existing head meshes 021–042 and review-finish material assets 01–08 may change");
+            Check(before.Where(pair=>!IsHeadMesh(pair.Key)&&!IsFinishMaterial(pair.Key)).All(pair=>revised[pair.Key]==pair.Value),"Prefab, scene, animations, all non-head meshes, all other materials and every meta file remain byte-for-byte unchanged");
+            var normalizedMaterials=new List<string>();
+            foreach(var item in expectedMaterials)
+            {
+                var material=AssetDatabase.LoadAssetAtPath<Material>(item.Key);
+                string actual=EditorJsonUtility.ToJson(material);
+                bool strict=actual==item.Value.fullJson,normalized=item.Value.normalizedJson!=null&&actual==item.Value.normalizedJson;
+                if(!strict&&normalized)normalizedMaterials.Add(item.Key);
+                if(!strict&&!normalized)
+                {
+                    File.WriteAllText(Path.Combine(output,"MATERIAL-EXPECTED.json"),item.Value.fullJson);
+                    File.WriteAllText(Path.Combine(output,"MATERIAL-ACTUAL.json"),actual);
+                }
+                Check(strict||normalized,"Material matches every expected field; only mat08 may normalize its lone _EMISSION keyword: "+Path.GetFileName(item.Key));
+            }
             Check(guids.All(pair=>AssetDatabase.AssetPathToGUID(pair.Key)==pair.Value),"Every workshop asset GUID remains stable through the head revision");
             Check(headPaths.All(path=>guids[path]==AssetDatabase.AssetPathToGUID(path)),"All 22 existing head mesh identities are preserved");
-            Check(changed.Length>0||wasCompact,"Head mesh geometry changed, or the existing optics were already the compact revision");
+            int changedHead=changed.Count(IsHeadMesh),changedFinishes=changed.Count(IsFinishMaterial);
+            Check(changedHead>0||wasCompact,"Head mesh geometry changed, or the existing optics were already narrow angular sensors");
             var left=OpticalLens(29);var right=OpticalLens(36);
-            Check(CompactLens(left)&&CompactLens(right),"Both optical lenses fit within 0.46 by 0.42 units; oversized lens geometry is removed");
+            Check(CompactLens(left)&&CompactLens(right),"Both optical sensors are narrow: width 0.20–0.55, height 0.06–0.20, aspect ratio at least 2.1 and depth at most 0.03 units");
             Check(left.vertices.All(Finite)&&right.vertices.All(Finite),"Revised optical lens geometry remains finite");
             SkyPulseBirdPrototypeWorkshop.ReviseOpticsInQa();AssetDatabase.SaveAssets();
             var repeated=Snapshot();
             Check(revised.Count==repeated.Count&&revised.All(pair=>repeated.TryGetValue(pair.Key,out var hash)&&hash==pair.Value),"Repeating the head revision is byte-identical and preserves owner edits elsewhere");
             Check(guids.All(pair=>AssetDatabase.AssetPathToGUID(pair.Key)==pair.Value),"Head revision repeat preserves every asset GUID");
-            var report=new RevisionReport{result="PASS",scope="Only existing head mesh assets 021–042 may change; body, wings, tail, transforms, bones and animation assets are preserved",workshopFiles=before.Count,headMeshes=headPaths.Length,changedHeadMeshes=changed.Length,priorOpticsAlreadyCompact=wasCompact,leftLensDimensions=left.bounds.size,rightLensDimensions=right.bounds.size,changedAssets=changed,checks=assertions.ToArray()};
+            var report=new RevisionReport{result="PASS",scope="Only existing head mesh geometry 021–042 and the exact authorized shader property values in existing materials 01–08 may change; all object transforms, bones, non-head geometry, clips, other material fields and metadata are preserved; mat08 alone may normalize its lone _EMISSION keyword on save",revision=SkyPulseBirdPrototypeWorkshop.OpticsRevision,workshopFiles=before.Count,headMeshes=headPaths.Length,changedHeadMeshes=changedHead,finishMaterials=finishPaths.Length,changedFinishMaterials=changedFinishes,priorOpticsAlreadyCompact=wasCompact,leftLensDimensions=left.bounds.size,rightLensDimensions=right.bounds.size,changedAssets=changed,engineNormalizedMaterials=normalizedMaterials.ToArray(),checks=assertions.ToArray()};
             File.WriteAllText(Path.Combine(output,"REVISION-PRESERVATION.json"),JsonUtility.ToJson(report,true));
-            Debug.Log("SKYPULSE_NEON_FINCH_HEAD_REVISION_PASS: "+changed.Length+" head meshes changed; all non-head files and GUIDs preserved");
+            Debug.Log("SKYPULSE_NEON_FINCH_HEAD_REVISION_PASS: "+changedHead+" head meshes and "+changedFinishes+" authorized finishes changed; all other files and every GUID preserved");
         }
         catch(Exception error)
         {

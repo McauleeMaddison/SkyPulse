@@ -48,7 +48,7 @@
   "csharpCompilerWarnings": [],
   "runtimeSourceStillMatchesFullSuite": true,
   "originalLogsLocal": "/private/tmp/skypulse-design-20261031",
-  "finchScope": "Separate head-only mesh revision + prototype QA; not installed or linked into gameplay",
+  "finchScope": "2 November: separate angular helmet/sensor revision and eight property-limited metal finishes; accepted body, wings, tail geometry and rig/animation preserved. Not integrated into gameplay.",
   "deviceTested": false,
   "remainingChecks": [
     "Physical iPhone/iPad visual acceptance",
@@ -57,5 +57,23 @@
     "Full Unity/Xcode export and native tactile-plugin link",
     "Physical haptic feel",
     "Owner acceptance of revised Finch before any other roster conversion"
+  ],
+  "latestFinchReview": {
+    "date": "2026-11-02",
+    "revision": "Angular sensor helmet v3",
+    "focusedQa": "PASS",
+    "headMeshesChanged": 22,
+    "existingFinishMaterialsChanged": 8,
+    "newAssetsCreated": 0,
+    "warmPoseAllocatedBytes": 0,
+    "vertexCount": 21333,
+    "triangles": 36844,
+    "bodyGeometryAndAnimationPreserved": true,
+    "ownerAcceptance": "pending",
+    "deviceTested": false,
+    "unitySaveNormalization": "Mat08 alone drops its lone _EMISSION valid-keyword entry; all other fields compared exactly."
+  },
+  "runtimeComparisonExclusions": [
+    "Assets/.DS_Store: Finder folder metadata removed during the recorded cleanup; not a game asset"
   ]
 }

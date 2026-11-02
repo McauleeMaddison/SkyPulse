@@ -27,7 +27,8 @@ test gameplay. Preserve the existing scenes, prefabs, materials, animation and
 `.meta` identities. Numbered mesh copies are local studies, not cleanup targets.
 
 The Finch remains an isolated prototype. Current acceptance is **the head revision
-only**, with inset mechanical optics; keep its body, wings, tail, joints and
+only**, now using the 2 November angular helmet, narrow sensor optics and
+restrained metal finishes; keep its body geometry, wings, tail, joints and
 animation intact. Stop further Finch or roster work until that head is reviewed.
 The prototype is not integrated into gameplay, which retains the original bird art.
 

@@ -17,7 +17,7 @@ public static class SkyPulseBirdPrototypeWorkshop
     static int meshNumber;
     static bool revisionBuild, refreshHead;
     static int revisedMeshCount;
-    public const string OpticsRevision = "Inset mechanical optics v2";
+    public const string OpticsRevision = "Angular sensor helmet v3";
     static Transform model;
     struct Section
     {
@@ -47,14 +47,15 @@ public static class SkyPulseBirdPrototypeWorkshop
         if(!Application.isBatchMode&&!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())return;
         foreach(string part in new[]{"Scenes","Prefabs","Meshes","Materials","Animations"})Directory.CreateDirectory(Folder+"/"+part);
         AssetDatabase.Refresh();meshNumber=0;
-        blue=Material("01 Cobalt ceramic metal",new Color(.018f,.12f,.67f),.68f,.31f);
-        cyan=Material("02 Cyan feather enamel",new Color(.015f,.67f,.91f),.58f,.35f);
-        navy=Material("03 Cobalt shadow edges",new Color(.008f,.027f,.095f),.66f,.4f);
-        ivory=Material("04 Warm ivory belly",new Color(.70f,.78f,.82f),.48f,.34f);
-        gold=Material("05 Brushed champagne gold",new Color(.94f,.57f,.08f),.72f,.52f);
-        dark=Material("06 Recessed optical black",new Color(.004f,.012f,.018f),.3f,.79f);
-        silver=Material("07 Machined titanium",new Color(.39f,.53f,.63f),.75f,.52f);
-        glow=Material("08 Cyan optical emission",new Color(.015f,.9f,1),.2f,.7f,new Color(.0f,1.5f,1.8f));
+        blue=Material("01 Cobalt ceramic metal",new Color(.045f,.115f,.26f),.78f,.42f);
+        cyan=Material("02 Cyan feather enamel",new Color(.025f,.39f,.52f),.62f,.40f);
+        navy=Material("03 Cobalt shadow edges",new Color(.018f,.029f,.045f),.72f,.34f);
+        ivory=Material("04 Warm ivory belly",new Color(.58f,.66f,.70f),.64f,.40f);
+        gold=Material("05 Brushed champagne gold",new Color(.58f,.43f,.22f),.82f,.40f);
+        dark=Material("06 Recessed optical black",new Color(.008f,.018f,.026f),.35f,.55f);
+        silver=Material("07 Machined titanium",new Color(.43f,.50f,.57f),.85f,.44f);
+        glow=Material("08 Cyan optical emission",new Color(.01f,.64f,.74f),.28f,.52f,new Color(0,.75f,.95f));
+        ApplyCurrentFinishes();
         var root=new GameObject("Neon Finch · 3D first art-review candidate");model=root.transform;
         var rig=root.AddComponent<SkyPulseNeonFinchPrototype>();
         var body=Bone(model,"01 Body and flight bank",Vector3.zero);rig.body=body;
@@ -69,13 +70,13 @@ public static class SkyPulseBirdPrototypeWorkshop
         CreateClips();CreateStudio();AssetDatabase.SaveAssets();AssetDatabase.Refresh();
         Debug.Log("SKYPULSE_NEON_FINCH_CREATED: editable mechanical finch art-review candidate only; no gameplay references or source art changed. "+ScenePath);
     }
-    [MenuItem("Tools/SkyPulse/Bird Workshop/Revise Finch head to inset mechanical optics")]
+    [MenuItem("Tools/SkyPulse/Bird Workshop/Revise Finch head to angular sensor armour")]
     public static void ReviseOptics()
     {
         if(EditorApplication.isPlaying)throw new InvalidOperationException("Stop Play mode before revising the Finch head.");
         if(AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath)==null)throw new InvalidOperationException("Create the Finch art-review rig first.");
-        // This explicit revision changes only existing head mesh buffers. It never
-        // rebuilds the owner's prefab, scene, materials, joints or animation clips.
+        // This explicit revision changes existing head buffers and the declared
+        // eight finish properties. It never rebuilds prefab, scene or animation.
         blue=ExistingMaterial("01 Cobalt ceramic metal");cyan=ExistingMaterial("02 Cyan feather enamel");
         navy=ExistingMaterial("03 Cobalt shadow edges");ivory=ExistingMaterial("04 Warm ivory belly");
         gold=ExistingMaterial("05 Brushed champagne gold");dark=ExistingMaterial("06 Recessed optical black");
@@ -90,13 +91,43 @@ public static class SkyPulseBirdPrototypeWorkshop
             refreshHead=true;BuildHead(Bone(temporary.transform,"Temporary head",Vector3.zero));
         }
         finally{refreshHead=false;revisionBuild=false;UnityEngine.Object.DestroyImmediate(temporary);}
+        ApplyCurrentFinishes();
         SceneView.RepaintAll();EditorApplication.QueuePlayerLoopUpdate();
-        Debug.Log("SKYPULSE_FINCH_HEAD_REVISED: "+revisedMeshCount+" existing head meshes updated in place; all asset GUIDs, non-head geometry, scene, prefab, materials and animation retained.");
+        Debug.Log("SKYPULSE_FINCH_HEAD_REVISED: "+revisedMeshCount+" existing head meshes updated in place; all asset GUIDs, non-head geometry, scene, prefab and animation retained; only the declared eight finish properties refreshed.");
     }
     public static void ReviseOpticsInQa()
     {
         if(!Application.isBatchMode||Application.companyName!="SkyPulseQA20261006")throw new InvalidOperationException("Disposable batch QA product required for this entrypoint.");
         ReviseOptics();
+    }
+    // The single current finish path is shared by fresh authoring and revision.
+    // Only these shader values are authorized; names, shader, keywords and all
+    // other serialized owner properties remain intact.
+    public static void ApplyReviewFinish(Material material,int finish)
+    {
+        Color colour;float metal,smooth;
+        switch(finish)
+        {
+            case 1:colour=new Color(.045f,.115f,.26f);metal=.78f;smooth=.42f;break;
+            case 2:colour=new Color(.025f,.39f,.52f);metal=.62f;smooth=.40f;break;
+            case 3:colour=new Color(.018f,.029f,.045f);metal=.72f;smooth=.34f;break;
+            case 4:colour=new Color(.58f,.66f,.70f);metal=.64f;smooth=.40f;break;
+            case 5:colour=new Color(.58f,.43f,.22f);metal=.82f;smooth=.40f;break;
+            case 6:colour=new Color(.008f,.018f,.026f);metal=.35f;smooth=.55f;break;
+            case 7:colour=new Color(.43f,.50f,.57f);metal=.85f;smooth=.44f;break;
+            case 8:colour=new Color(.01f,.64f,.74f);metal=.28f;smooth=.52f;break;
+            default:throw new ArgumentOutOfRangeException(nameof(finish));
+        }
+        bool changed=!material.GetColor("_Color").Equals(colour)||material.GetFloat("_Metallic")!=metal||material.GetFloat("_Glossiness")!=smooth;
+        if(changed){material.SetColor("_Color",colour);material.SetFloat("_Metallic",metal);material.SetFloat("_Glossiness",smooth);}
+        if(finish==8&&!material.GetColor("_EmissionColor").Equals(new Color(0,.75f,.95f)))
+        {material.SetColor("_EmissionColor",new Color(0,.75f,.95f));changed=true;}
+        if(changed)EditorUtility.SetDirty(material);
+    }
+    static void ApplyCurrentFinishes()
+    {
+        var materials=new[]{blue,cyan,navy,ivory,gold,dark,silver,glow};
+        for(int i=0;i<materials.Length;i++){ApplyReviewFinish(materials[i],i+1);AssetDatabase.SaveAssetIfDirty(materials[i]);}
     }
     static Material ExistingMaterial(string name)
     {
@@ -185,151 +216,168 @@ public static class SkyPulseBirdPrototypeWorkshop
     }
     static void BuildHead(Transform head)
     {
-        // In head-local coordinates, a compact aerodynamic helmet around the optics.
+        // Single current design: a low, plated aerodynamic hood, never a sphere.
         Part(head,"Sculpted cobalt helmet",MechanicalHelmet(),blue);
-        // Layered crest echoes the two swept blades in the source silhouette.
-        Part(head,"Long swept crown blade",Feather("rear crown blade",new Vector3(.15f,.75f,0),new Vector3(-.09f,.86f,0),new Vector3(-.31f,.98f,0),new Vector3(-.47f,1.06f,0),.095f,.055f,18,10),navy);
-        Part(head,"Cobalt crown inlay",Feather("crown enamel",new Vector3(.14f,.78f,-.012f),new Vector3(-.08f,.9f,-.012f),new Vector3(-.29f,1.0f,-.012f),new Vector3(-.44f,1.055f,-.012f),.071f,.043f,16,10),blue);
-        Part(head,"Forward swept crown blade",Feather("short crown blade",new Vector3(.3f,.76f,.02f),new Vector3(.03f,.94f,.02f),new Vector3(-.16f,1.1f,.02f),new Vector3(-.34f,1.16f,.02f),.074f,.046f,16,10),gold);
-        Part(head,"Crown cyan vent",Feather("crest cyan center",new Vector3(.26f,.78f,-.027f),new Vector3(.03f,.94f,-.027f),new Vector3(-.13f,1.06f,-.027f),new Vector3(-.27f,1.12f,-.027f),.046f,.027f,14,8),blue);
+        Part(head,"Long swept crown blade",Feather("rear crown blade",new Vector3(.12f,.61f,0),new Vector3(-.02f,.71f,0),new Vector3(-.22f,.78f,0),new Vector3(-.37f,.82f,0),.059f,.035f,18,10),navy);
+        Part(head,"Cobalt crown inlay",Feather("crown enamel",new Vector3(.10f,.63f,-.008f),new Vector3(-.02f,.72f,-.008f),new Vector3(-.22f,.78f,-.008f),new Vector3(-.34f,.805f,-.008f),.044f,.027f,16,10),blue);
+        Part(head,"Forward swept crown blade",Feather("short crown blade",new Vector3(.28f,.62f,.015f),new Vector3(.10f,.70f,.015f),new Vector3(-.03f,.76f,.015f),new Vector3(-.17f,.80f,.015f),.041f,.030f,16,10),gold);
+        Part(head,"Crown cyan vent",Feather("crest cyan center",new Vector3(.22f,.635f,-.020f),new Vector3(.08f,.707f,-.020f),new Vector3(-.03f,.752f,-.020f),new Vector3(-.13f,.78f,-.020f),.024f,.020f,14,8),blue);
         foreach(int side in new[]{-1,1})
         {
-            // Keep every existing part transform, name and material binding. The
-            // revised shape is baked into that part's existing local mesh buffer.
+            // Origins and part names deliberately retain their original prefab
+            // values. All new placement is authored into those same mesh buffers.
             Vector3 optic=new Vector3(.40f,.35f,side*.414f);
-            Part(head,"Optic recessed gasket "+side,OpticSaddle("optical black recessed surround",side,optic),navy,optic);
-            Part(head,"Optic titanium bezel "+side,ConformalOpticRim("optic outer beveled lip",side,.224f,.207f,.213f,.196f,.454f,0,360,optic+new Vector3(0,0,side*.026f)),silver,optic+new Vector3(0,0,side*.026f));
-            Part(head,"Champagne gold brow arc "+side,ConformalOpticRim("gold optical crescent",side,.260f,.239f,.239f,.218f,.441f,102,254,optic+new Vector3(0,0,side*.042f)),gold,optic+new Vector3(0,0,side*.042f));
-            var lens=Shift(Dome("curved black optical lens",.212f,.195f,side*.008f,64,10),new Vector3(.015f,.035f,side*(.449f-.463f)));
-            Part(head,"Dark curved optical glass "+side,lens,dark,optic+new Vector3(0,0,side*.049f));
-            // Two independently convex bars produce an open, precise chevron.
-            Part(head,"Forward cyan optical chevron "+side,ChevronMark("inset optical direction mark",side,optic+new Vector3(.025f,.015f,side*.113f)),glow,optic+new Vector3(.025f,.015f,side*.113f));
-            var rim=new[]{new Vector3(-.04f,.12f,side*.35f),new Vector3(.03f,-.02f,side*.34f),new Vector3(.22f,-.13f,side*.30f),new Vector3(.42f,-.12f,side*.30f),new Vector3(.60f,-.02f,side*.28f)};
-            Part(head,"Ivory jaw rim "+side,Tube("jaw machined trim",rim,.031f,10),ivory);
-            // Two subtle brow fasteners, modeled with beveled ring sections.
-            Part(head,"Brow fastener "+side,Ring("brow screw",.021f,.009f,.015f,16,4),silver,new Vector3(.11f,.67f,side*.35f));
+            Part(head,"Optic recessed gasket "+side,SensorHousing("optical black recessed surround",side,optic),navy,optic);
+            Part(head,"Optic titanium bezel "+side,SensorFrame("optic outer beveled lip",side,optic+new Vector3(0,0,side*.026f),1.025f,.99f,.009f,0,5),silver,optic+new Vector3(0,0,side*.026f));
+            Part(head,"Champagne gold brow arc "+side,SensorFrame("gold optical crescent",side,optic+new Vector3(0,0,side*.042f),1.17f,1.09f,.013f,3,2),gold,optic+new Vector3(0,0,side*.042f));
+            Part(head,"Dark curved optical glass "+side,SensorPanel("curved black optical lens",SensorOutline(1),side,optic+new Vector3(0,0,side*.049f),.002f,.006f),dark,optic+new Vector3(0,0,side*.049f));
+            Part(head,"Forward cyan optical chevron "+side,SensorPanel("inset optical direction mark",new[]{new Vector2(.275f,.407f),new Vector2(.304f,.364f),new Vector2(.520f,.357f),new Vector2(.445f,.394f)},side,optic+new Vector3(.025f,.015f,side*.113f),.0015f,.011f),glow,optic+new Vector3(.025f,.015f,side*.113f));
+            Part(head,"Ivory jaw rim "+side,CheekPlates("jaw machined trim",side),ivory);
+            Part(head,"Brow fastener "+side,Shift(ArmourPanel("brow screw",new[]{new Vector2(.007f,.307f),new Vector2(.031f,.332f),new Vector2(.092f,.307f),new Vector2(.073f,.282f)},side,.009f,.005f),-new Vector3(.11f,.67f,side*.35f)),silver,new Vector3(.11f,.67f,side*.35f));
         }
-        // Closed six-faced, beveled wedge; genuinely spans the face's depth.
-        Part(head,"Gold upper beak",Beak("gold beveled finch beak",false),gold,new Vector3(.66f,.22f,0));
-        Part(head,"Dark lower beak seam",Beak("beak split gasket",true),navy,new Vector3(.66f,.20f,0));
-        Part(head,"Beak lower gold plate",Beak("lower beak",false),gold,new Vector3(.66f,.185f,0)).transform.localScale=new Vector3(.89f,.28f,.84f);
+        Part(head,"Gold upper beak",ChiselBeak("gold beveled finch beak",0),gold,new Vector3(.66f,.22f,0));
+        Part(head,"Dark lower beak seam",ChiselBeak("beak split gasket",1),navy,new Vector3(.66f,.20f,0));
+        Part(head,"Beak lower gold plate",ChiselBeak("lower beak",2),gold,new Vector3(.66f,.185f,0)).transform.localScale=new Vector3(.89f,.28f,.84f);
     }
-    static readonly Vector2 OpticCenter=new Vector2(.415f,.385f);
-    static Section[] HelmetProfile()=>new[]{new Section(-.22f,.28f,.05f,.06f),new Section(-.15f,.29f,.27f,.25f),new Section(-.02f,.32f,.40f,.37f),new Section(.14f,.35f,.46f,.43f),new Section(.32f,.35f,.455f,.455f),new Section(.47f,.35f,.415f,.44f),new Section(.61f,.33f,.325f,.37f),new Section(.71f,.30f,.20f,.26f),new Section(.75f,.27f,.04f,.055f)};
+    // Section fields: x, lower edge, upper edge, half-width. Flat sidewalls and
+    // narrow chamfer planes produce a faceted shell with a visibly swept brow.
+    static Section[] HelmetProfile()=>new[]{new Section(-.26f,.08f,.38f,.08f),new Section(-.12f,.02f,.53f,.22f),new Section(.02f,-.02f,.64f,.31f),new Section(.14f,-.005f,.66f,.33f),new Section(.20f,.005f,.66f,.34f),new Section(.45f,.055f,.62f,.34f),new Section(.65f,.14f,.49f,.32f),new Section(.78f,.235f,.37f,.075f)};
     static Section HelmetSection(float x)
     {
-        var profile=HelmetProfile();
-        for(int i=1;i<profile.Length;i++)if(x<=profile[i].x)
+        var p=HelmetProfile();
+        for(int i=1;i<p.Length;i++)if(x<=p[i].x)
         {
-            var a=profile[i-1];var b=profile[i];float t=Mathf.InverseLerp(a.x,b.x,x);
+            var a=p[i-1];var b=p[i];float t=Mathf.InverseLerp(a.x,b.x,x);
             return new Section(x,Mathf.Lerp(a.y,b.y,t),Mathf.Lerp(a.h,b.h,t),Mathf.Lerp(a.w,b.w,t));
         }
-        return profile[profile.Length-1];
+        return p[p.Length-1];
     }
-    static float HelmetDepth(float x,float y)
+    static Vector3 HoodPoint(Section s,int point)
     {
-        var s=HelmetSection(x);float c=Mathf.Clamp((y-s.y)/s.h,-.999f,.999f);
-        c=Mathf.Sign(c)*Mathf.Pow(Mathf.Abs(c),1f/.87f);
-        return s.w*Mathf.Pow(Mathf.Sqrt(Mathf.Max(.0001f,1-c*c)),.91f);
+        float height=s.h-s.y,upperBevel=Mathf.Min(.12f,height*.4f),lowerBevel=Mathf.Min(.10f,height*.4f);
+        switch(point&7)
+        {
+            case 0:return new Vector3(s.x,s.h,0);
+            case 1:return new Vector3(s.x,s.h-.035f,s.w*.65f);
+            case 2:return new Vector3(s.x,s.h-upperBevel,s.w);
+            case 3:return new Vector3(s.x,s.y+lowerBevel,s.w);
+            case 4:return new Vector3(s.x,s.y,0);
+            case 5:return new Vector3(s.x,s.y+lowerBevel,-s.w);
+            case 6:return new Vector3(s.x,s.h-upperBevel,-s.w);
+            default:return new Vector3(s.x,s.h-.035f,-s.w*.65f);
+        }
+    }
+    static Vector2[] SensorOutline(float scale)
+    {
+        var p=new[]{new Vector2(.15f,.452f),new Vector2(.20f,.342f),new Vector2(.47f,.312f),new Vector2(.61f,.357f),new Vector2(.49f,.429f)};
+        var center=new Vector2(.375f,.387f);for(int i=0;i<p.Length;i++)p[i]=center+(p[i]-center)*scale;return p;
+    }
+    static bool Inside(Vector2 p,Vector2[] polygon)
+    {
+        bool inside=false;for(int i=0,j=polygon.Length-1;i<polygon.Length;j=i++)
+            if((polygon[i].y>p.y)!=(polygon[j].y>p.y)&&p.x<(polygon[j].x-polygon[i].x)*(p.y-polygon[i].y)/(polygon[j].y-polygon[i].y)+polygon[i].x)inside=!inside;
+        return inside;
     }
     static Mesh MechanicalHelmet()
     {
-        const int along=32,around=64;var g=new Geometry();int stride=around+1;
-        for(int j=0;j<=along;j++)
+        const int along=48;var g=new Geometry();var aperture=SensorOutline(1.14f);
+        // Each armour plane owns its vertices, preserving deliberate hard
+        // chamfers. Only the two sidewalls need fine topology around openings.
+        for(int face=0;face<8;face++)
         {
-            float x=Mathf.Lerp(-.22f,.75f,j/(float)along);var s=HelmetSection(x);
-            for(int i=0;i<=around;i++)
+            int rows=face==2||face==5?18:1,first=g.v.Count;
+            for(int x=0;x<=along;x++)
             {
-                float a=i*Mathf.PI*2/around,c=Mathf.Cos(a),z=Mathf.Sin(a);
-                g.Add(new Vector3(x,s.y+s.h*Mathf.Sign(c)*Mathf.Pow(Mathf.Abs(c),.87f),s.w*Mathf.Sign(z)*Mathf.Pow(Mathf.Abs(z),.91f)),new Vector2(j/(float)along,i/(float)around));
+                var s=HelmetSection(Mathf.Lerp(-.26f,.78f,x/(float)along));
+                for(int row=0;row<=rows;row++)g.Add(Vector3.Lerp(HoodPoint(s,face),HoodPoint(s,face+1),row/(float)rows),new Vector2(x/(float)along,row/(float)rows));
+            }
+            for(int x=0;x<along;x++)for(int row=0;row<rows;row++)
+            {
+                int a=first+x*(rows+1)+row,b=a+rows+1;var center=(g.v[a]+g.v[a+1]+g.v[b]+g.v[b+1])*.25f;
+                if((face==2||face==5)&&Inside(new Vector2(center.x,center.y),aperture))continue;
+                g.Quad(a,a+1,b+1,b);
             }
         }
-        for(int j=0;j<along;j++)for(int i=0;i<around;i++)
+        foreach(int end in new[]{0,1})
         {
-            int k=j*stride+i;var p=(g.v[k]+g.v[k+1]+g.v[k+stride]+g.v[k+stride+1])*.25f;
-            float dx=(p.x-OpticCenter.x)/.241f,dy=(p.y-OpticCenter.y)/.223f;
-            if(dx*dx+dy*dy<1)continue; // Actual bilateral aperture behind the lens.
-            g.Quad(k,k+1,k+stride+1,k+stride);
-        }
-        int aCap=g.Add(new Vector3(-.22f,.28f,0),Vector2.zero),bCap=g.Add(new Vector3(.75f,.27f,0),Vector2.one);
-        for(int i=0;i<around;i++){g.Tri(aCap,i+1,i);int k=along*stride+i;g.Tri(bCap,k,k+1);}
-        // Angular brow panels are integrated into this same cobalt helmet mesh.
-        foreach(int side in new[]{-1,1})
-        {
-            float[] xs={.10f,.20f,.36f,.50f,.61f},upper={.56f,.665f,.66f,.57f,.46f},lower={.49f,.565f,.57f,.50f,.405f};
-            int first=g.v.Count;
-            for(int layer=0;layer<2;layer++)for(int i=0;i<xs.Length;i++)for(int row=0;row<2;row++)
-            {
-                float y=row==0?lower[i]:upper[i],z=HelmetDepth(xs[i],y)+(layer==0?.004f:.017f);
-                g.Add(new Vector3(xs[i],y,side*z),new Vector2(i/4f,row));
-            }
-            for(int i=0;i<4;i++)
-            {
-                int k=first+10+i*2;
-                if(side<0)g.Quad(k,k+1,k+3,k+2);else g.Quad(k,k+2,k+3,k+1);
-                g.Quad(first+i*2,first+(i+1)*2,k+2,k);
-                g.Quad(first+i*2+1,k+1,k+3,first+(i+1)*2+1);
-            }
-            g.Quad(first,first+10,first+11,first+1);g.Quad(first+8,first+9,first+19,first+18);
+            var s=HelmetSection(end==0?-.26f:.78f);int first=g.v.Count;for(int i=0;i<8;i++)g.Add(HoodPoint(s,i),Vector2.zero);
+            for(int i=1;i<7;i++)if(end==0)g.Tri(first,first+i+1,first+i);else g.Tri(first,first+i,first+i+1);
         }
         return g.Build("helmet compound sections");
     }
-    static Mesh OpticSaddle(string name,int side,Vector3 origin)
+    static float SensorDepth(float x)=>.346f-.035f*(x-.14f);
+    static Mesh SensorHousing(string name,int side,Vector3 origin)
     {
-        const int slices=64;var g=new Geometry();
-        // A broad conformal rear flange meets the helmet; an angled shoulder
-        // carries the small lens recess. No separate floating circular housing.
-        for(int ring=0;ring<5;ring++)for(int i=0;i<=slices;i++)
+        var outer=SensorOutline(1.26f);var inner=SensorOutline(1.01f);var g=new Geometry();
+        for(int ring=0;ring<4;ring++)for(int i=0;i<5;i++)
         {
-            float a=i*Mathf.PI*2/slices;
-            float rx=ring==0?.294f:ring==1?.278f:ring==2?.246f:ring==3?.219f:.213f;
-            float ry=ring==0?.265f:ring==1?.250f:ring==2?.226f:ring==3?.204f:.196f;
-            float x=OpticCenter.x+rx*Mathf.Cos(a),y=OpticCenter.y+ry*Mathf.Sin(a);
-            float z=ring==0?HelmetDepth(x,y)+.003f:ring==1?HelmetDepth(x,y)+.009f:ring==2?Mathf.Lerp(HelmetDepth(x,y),.448f,.70f)+.006f:ring==3?.450f:.441f;
-            g.Add(new Vector3(x,y,side*z)-origin,new Vector2(i/(float)slices,ring/4f));
+            var p=ring<2?outer[i]:inner[i];
+            float z=ring==0?HelmetSection(p.x).w+.001f:ring==1?SensorDepth(p.x)+.008f:ring==2?SensorDepth(p.x)+.009f:SensorDepth(p.x)-.005f;
+            g.Add(new Vector3(p.x,p.y,side*z)-origin,new Vector2(i/5f,ring/3f));
         }
-        for(int ring=0;ring<4;ring++)for(int i=0;i<slices;i++)
+        for(int ring=0;ring<3;ring++)for(int i=0;i<5;i++)
+        {int a=ring*5+i,b=ring*5+(i+1)%5;if(side>0)g.Quad(a,b,b+5,a+5);else g.Quad(a,a+5,b+5,b);}
+        return g.Build(name);
+    }
+    static Mesh SensorFrame(string name,int side,Vector3 origin,float outside,float inside,float lift,int firstEdge,int edges)
+    {
+        var outer=SensorOutline(outside);var inner=SensorOutline(inside);var g=new Geometry();
+        for(int edge=firstEdge;edge<firstEdge+edges;edge++)
         {
-            int k=ring*(slices+1)+i;
-            if(side<0)g.Quad(k,k+slices+1,k+slices+2,k+1);else g.Quad(k,k+1,k+slices+2,k+slices+1);
+            int a=edge%5,b=(edge+1)%5;
+            var part=SensorPanel(name,new[]{inner[a],inner[b],outer[b],outer[a]},side,origin,.003f,lift);
+            Append(g,part);
         }
         return g.Build(name);
     }
-    static Mesh ConformalOpticRim(string name,int side,float rx,float ry,float innerX,float innerY,float front,float start,float end,Vector3 origin)
+    static Mesh SensorPanel(string name,Vector2[] outline,int side,Vector3 origin,float thickness,float lift)
     {
-        int slices=Mathf.CeilToInt((end-start)/5);const int around=6;var g=new Geometry();
-        bool goldArc=end-start<359;
-        for(int i=0;i<=slices;i++)for(int j=0;j<=around;j++)
+        var mesh=BeveledPolygon(name,CounterClockwise(outline),thickness);var v=mesh.vertices;
+        for(int i=0;i<v.Length;i++)v[i]=new Vector3(v[i].x,v[i].y,side*(SensorDepth(v[i].x)+lift+v[i].z))-origin;
+        mesh.vertices=v;if(side<0)ReverseWinding(mesh);mesh.RecalculateNormals();mesh.RecalculateBounds();return mesh;
+    }
+    static void ReverseWinding(Mesh mesh)
+    {var t=mesh.triangles;for(int i=0;i<t.Length;i+=3){int a=t[i];t[i]=t[i+2];t[i+2]=a;}mesh.triangles=t;}
+    static Vector2[] CounterClockwise(Vector2[] p)
+    {
+        float area=0;for(int i=0;i<p.Length;i++){var b=p[(i+1)%p.Length];area+=p[i].x*b.y-b.x*p[i].y;}
+        if(area<0)Array.Reverse(p);return p;
+    }
+    static Mesh ArmourPanel(string name,Vector2[] outline,int side,float lift,float thickness)
+    {
+        var m=BeveledPolygon(name,CounterClockwise(outline),thickness);var v=m.vertices;
+        for(int i=0;i<v.Length;i++)v[i]=new Vector3(v[i].x,v[i].y,side*(HelmetSection(v[i].x).w+lift+v[i].z));
+        m.vertices=v;if(side<0)ReverseWinding(m);m.RecalculateNormals();m.RecalculateBounds();return m;
+    }
+    static Mesh CheekPlates(string name,int side)
+    {
+        var g=new Geometry();
+        Append(g,ArmourPanel(name,new[]{new Vector2(-.10f,.14f),new Vector2(.02f,.27f),new Vector2(.24f,.20f),new Vector2(.22f,.09f),new Vector2(.02f,.045f)},side,.007f,.011f));
+        Append(g,ArmourPanel(name,new[]{new Vector2(.26f,.19f),new Vector2(.59f,.23f),new Vector2(.65f,.18f),new Vector2(.49f,.105f),new Vector2(.27f,.055f)},side,.007f,.011f));
+        return g.Build(name);
+    }
+    static Mesh ChiselBeak(string name,int kind)
+    {
+        Vector3 origin=kind==0?new Vector3(.66f,.22f,0):kind==1?new Vector3(.66f,.20f,0):new Vector3(.66f,.185f,0);
+        Vector3[] p;
+        if(kind==0)p=new[]{new Vector3(.67f,.315f,-.11f),new Vector3(.67f,.315f,.11f),new Vector3(.70f,.225f,-.09f),new Vector3(.70f,.225f,.09f),new Vector3(1.045f,.235f,0),new Vector3(.81f,.305f,0)};
+        else p=new[]{new Vector3(.70f,.223f,-.088f),new Vector3(.70f,.223f,.088f),new Vector3(.72f,.197f,-.075f),new Vector3(.72f,.197f,.075f),new Vector3(1.02f,.220f,0),new Vector3(.83f,.223f,0)};
+        if(kind==1)for(int i=0;i<p.Length;i++)p[i].y=.226f+(p[i].y-.223f)*.15f;
+        int[] indices={0,5,4,5,1,4,0,4,2,1,3,4,2,4,3,0,2,3,0,3,1,0,1,5};var g=new Geometry();
+        for(int i=0;i<indices.Length;i+=3)
         {
-            float a=Mathf.Lerp(start,end,i/(float)slices)*Mathf.Deg2Rad,b=j*Mathf.PI*2/around;
-            float radialX=Mathf.Lerp(innerX,rx,(Mathf.Cos(b)+1)*.5f);
-            float x=OpticCenter.x+radialX*Mathf.Cos(a);
-            float y=OpticCenter.y+(Mathf.Lerp(innerY,ry,(Mathf.Cos(b)+1)*.5f))*Mathf.Sin(a);
-            float z=(goldArc?Mathf.Lerp(HelmetDepth(x,y)+.009f,.451f,Mathf.InverseLerp(.278f,.246f,radialX))+.004f:front)+Mathf.Sin(b)*.004f;
-            g.Add(new Vector3(x,y,side*z)-origin,new Vector2(i/(float)slices,j/(float)around));
+            int first=g.v.Count;
+            for(int j=0;j<3;j++){var v=p[indices[i+j]]-origin;if(kind==2)v=new Vector3(v.x/.89f,v.y/.28f,v.z/.84f);g.Add(v,Vector2.zero);}
+            g.Tri(first,first+1,first+2);
         }
-        for(int i=0;i<slices;i++)for(int j=0;j<around;j++)
-        {int k=i*(around+1)+j;if(side<0)g.Quad(k,k+1,k+around+2,k+around+1);else g.Quad(k,k+around+1,k+around+2,k+1);}
         return g.Build(name);
     }
     static Mesh Shift(Mesh mesh,Vector3 offset)
+    {var v=mesh.vertices;for(int i=0;i<v.Length;i++)v[i]+=offset;mesh.vertices=v;mesh.RecalculateBounds();return mesh;}
+    static void Append(Geometry g,Mesh mesh)
     {
-        var v=mesh.vertices;for(int i=0;i<v.Length;i++)v[i]+=offset;mesh.vertices=v;mesh.RecalculateBounds();return mesh;
-    }
-    static Mesh ChevronMark(string name,int side,Vector3 origin)
-    {
-        var top=BeveledPolygon(name,new[]{new Vector2(.042f,-.009f),new Vector2(.063f,.008f),new Vector2(-.034f,.074f),new Vector2(-.054f,.066f)},.006f);
-        var bottom=BeveledPolygon(name,new[]{new Vector2(-.054f,-.066f),new Vector2(-.034f,-.074f),new Vector2(.063f,-.008f),new Vector2(.042f,.009f)},.006f);
-        var offset=new Vector3(OpticCenter.x,OpticCenter.y,side*.457f)-origin;
-        var g=new Geometry();
-        foreach(var mesh in new[]{top,bottom})
-        {
-            int first=g.v.Count;var uv=mesh.uv;var v=mesh.vertices;var tris=mesh.triangles;
-            for(int i=0;i<v.Length;i++)g.Add(v[i]+offset,uv[i]);
-            for(int i=0;i<tris.Length;i+=3)g.Tri(first+tris[i],first+tris[i+1],first+tris[i+2]);
-            UnityEngine.Object.DestroyImmediate(mesh);
-        }
-        return g.Build(name);
+        int first=g.v.Count;var v=mesh.vertices;var uv=mesh.uv;var t=mesh.triangles;
+        for(int i=0;i<v.Length;i++)g.Add(v[i],uv[i]);for(int i=0;i<t.Length;i+=3)g.Tri(first+t[i],first+t[i+1],first+t[i+2]);UnityEngine.Object.DestroyImmediate(mesh);
     }
     static void BuildWing(Transform body,int side,out Transform root,out Transform tip)
     {

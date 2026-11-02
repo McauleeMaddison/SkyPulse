@@ -18,9 +18,9 @@ exact source and checks it covers.
 
 Gameplay retains the original articulated bird artwork. The separate editable
 Neon Finch workshop is an isolated art-review prototype. **Review its revised head
-and inset mechanical optics before any further bird or roster work.** The current
-revision is limited to the existing head mesh assets; preserve the body, wings,
-tail, joints, materials, prefab, scene, animation and GUIDs. It has no gameplay
+and narrow inset sensor optics before any further bird or roster work.** The 2 November
+revision changes existing head mesh assets and eight declared material finishes; preserve the body geometry, wings,
+tail, joints, other material settings, prefab, scene, animation and GUIDs. It has no gameplay
 integration.
 
 Pipe collars use a real hollow mouth and separately editable structural parts;
