@@ -1,0 +1,117 @@
+// Closed 3D flame volumes, authored by SkyPulseBirdJetWorkshop.
+// No cards, textures, opaque shards or dependency on the global Unity clock.
+Shader "SkyPulse/Workshop/Neon Finch Blue Jet"
+{
+    Properties
+    {
+        [HDR] _FlameColor ("Electric blue flame", Color) = (0.015, 0.38, 1.7, 1)
+        [HDR] _CoreColor ("White hot core", Color) = (3.2, 3.6, 4, 1)
+        _Opacity ("Soft volume density", Range(0, 1)) = 0.68
+        _JetTime ("Absolute jet time", Float) = 0
+        _JetStrength ("Thrust", Range(0, 1.4)) = 0.92
+        _JetMotion ("Flow and turbulence", Range(0, 1)) = 1
+    }
+    SubShader
+    {
+        Tags { "Queue" = "Transparent+20" "RenderType" = "Transparent" "IgnoreProjector" = "True" }
+        LOD 100
+        Pass
+        {
+            Cull Back
+            ZWrite Off
+            ZTest LEqual
+            Blend One One
+            CGPROGRAM
+            #pragma target 3.0
+            #pragma vertex vert
+            #pragma fragment frag
+            #include "UnityCG.cginc"
+
+            half4 _FlameColor, _CoreColor;
+            half _Opacity, _JetStrength, _JetMotion;
+            float _JetTime;
+
+            struct Attributes
+            {
+                float4 vertex : POSITION;
+                float3 normal : NORMAL;
+                float2 uv : TEXCOORD0;
+                // R: heat, G: per-tongue phase, B: density, A: turbulence.
+                half4 color : COLOR;
+            };
+            struct Varyings
+            {
+                float4 position : SV_POSITION;
+                float3 worldPosition : TEXCOORD0;
+                half3 worldNormal : TEXCOORD1;
+                float2 uv : TEXCOORD2;
+                float2 angular : TEXCOORD3;
+                half4 color : COLOR;
+            };
+
+            Varyings vert(Attributes v)
+            {
+                Varyings o;
+                float axial = v.uv.x;
+                float seed = v.color.g * 6.2831853;
+                float clock = _JetTime * _JetMotion;
+                float tipWeight = axial * axial;
+                float3 p = v.vertex.xyz;
+                // Every root vertex is fixed. Moving waves deform individual
+                // cross sections and tips, rather than scaling the whole plume.
+                float radialRipple = 1.0 + _JetMotion * axial * 0.17
+                    * sin(axial * 27.0 - clock * 78.0 + seed);
+                p.yz *= radialRipple;
+                p.y += tipWeight * v.color.a * _JetMotion
+                    * (sin(axial * 15.0 - clock * 39.0 + seed) * 0.044
+                    + sin(axial * 26.0 - clock * 67.0 + seed * 1.7) * 0.018);
+                p.z += tipWeight * v.color.a * _JetMotion
+                    * sin(axial * 19.0 - clock * 47.0 + seed * 1.3) * 0.048;
+                p.x *= 1.0 + tipWeight * ((_JetStrength - 0.92) * 0.40
+                    + _JetMotion * sin(clock * 11.0 + seed) * 0.065);
+                o.worldPosition = mul(unity_ObjectToWorld, float4(p, 1)).xyz;
+                o.position = UnityWorldToClipPos(o.worldPosition);
+                o.worldNormal = UnityObjectToWorldNormal(v.normal);
+                o.uv = v.uv;
+                // Interpolate a circular direction, not wrapped UV angles.
+                // The final wedge then has the same flow as every other wedge.
+                o.angular = float2(cos(v.uv.y * 6.2831853), sin(v.uv.y * 6.2831853));
+                o.color = v.color;
+                return o;
+            }
+
+            half4 frag(Varyings i) : SV_Target
+            {
+                float axial = i.uv.x;
+                float seed = i.color.g * 6.2831853;
+                float clock = _JetTime * _JetMotion;
+                // Increasing axial coordinates run away from the nozzle.
+                // Both wave trains travel downstream at three lengths/second.
+                float2 circle = normalize(i.angular + float2(0.000001, 0.0));
+                float phaseA = axial * 24.0 - clock * 72.0 + seed;
+                float phaseB = axial * 43.0 - clock * 129.0 + seed * 1.8;
+                half flowA = sin(phaseA) * (circle.x * circle.x - circle.y * circle.y)
+                    + cos(phaseA) * (2.0 * circle.x * circle.y);
+                half flowB = sin(phaseB) * circle.x - cos(phaseB) * circle.y;
+                half flow = lerp(0.83h, 0.77h + flowA * 0.16h + flowB * 0.07h, _JetMotion);
+                half shock = pow(saturate(0.5h + 0.5h * cos(axial * 31.41593)), 9.0h)
+                    * (1.0h - i.color.r) * 0.30h;
+                half facing = saturate(abs(dot(normalize(i.worldNormal),
+                    normalize(_WorldSpaceCameraPos.xyz - i.worldPosition))));
+                // Soft silhouette and dissipating tips remain smooth at every
+                // angle; additive blending needs no internal layer sorting.
+                half softRim = pow(facing, 0.65h);
+                half tipFade = 1.0h - smoothstep(0.68h, 1.0h, axial);
+                half rootFade = 0.35h + 0.65h * smoothstep(0.0h, 0.065h, axial);
+                half flicker = 1.0h + _JetMotion * sin(clock * 29.0 + seed) * 0.025h;
+                half density = _Opacity * i.color.b * softRim * tipFade * rootFade
+                    * (flow + shock) * flicker * _JetStrength;
+                half3 colour = lerp(_FlameColor.rgb, _CoreColor.rgb, i.color.r);
+                colour += half3(0.0h, 0.35h, 0.65h) * shock;
+                return half4(colour * density, density);
+            }
+            ENDCG
+        }
+    }
+    Fallback Off
+}

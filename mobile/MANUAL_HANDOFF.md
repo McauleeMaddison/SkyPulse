@@ -141,3 +141,13 @@ It retains the reference-facing geometry while closing the case and supporting
 the optical, wing and foot assemblies. Acceptance remains pending. Prior reference
 preview files are preserved; the structural proofs are in their own Finch-3D folder.
 The installed app remains Build 19; no device install, upload or submission occurred.
+
+The latest Finch optics/exhaust pass is in
+[Finch-Eyes-Jet](Development/DesignUpgrade20261031/Previews/Finch-Eyes-Jet/Overview.png).
+Eyes are smaller and supported by closed helmet pockets; a dedicated 1,102-vertex
+jet replaces the static plume. [Actual GPU checks](Development/DesignUpgrade20261031/Checks/Finch-Eyes-Jet-GPU.json)
+verify fixed-camera flow, deterministic repeat-time rendering and static Reduced
+Motion. The existing eight-joint flight formulas, gameplay and other roster birds
+are preserved. The art rig is the only changed runtime-source file relative to the
+prior 40-group suite; its new motion passed focused tests. Visual review, device
+profiling and gameplay integration remain pending. No new installed build.

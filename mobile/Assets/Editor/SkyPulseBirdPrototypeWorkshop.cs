@@ -17,7 +17,7 @@ public static class SkyPulseBirdPrototypeWorkshop
     static int meshNumber;
     static bool revisionBuild, refreshHead;
     static int revisedMeshCount;
-    public const string OpticsRevision = "Volumetric reference finch v9";
+    public const string OpticsRevision = "Integrated optics and blue jet v10";
     static Transform model;
     struct Section
     {
@@ -123,7 +123,7 @@ public static class SkyPulseBirdPrototypeWorkshop
             case 3:colour=new Color(.004f,.009f,.022f);metal=.12f;smooth=.30f;kind=2;break;
             case 4:colour=new Color(.91f,.94f,1);metal=.18f;smooth=.48f;kind=1;break;
             case 5:colour=new Color(1,.65f,.065f);metal=.55f;smooth=.52f;kind=1;break;
-            case 6:colour=new Color(.002f,.006f,.013f);metal=0;smooth=.40f;kind=3;break;
+            case 6:colour=new Color(.002f,.006f,.013f);metal=.06f;smooth=.62f;kind=3;break;
             case 7:colour=new Color(.90f,.96f,1);metal=.20f;smooth=.48f;kind=1;break;
             case 8:colour=new Color(.015f,.85f,1);metal=0;smooth=.40f;kind=4;break;
             default:throw new ArgumentOutOfRangeException(nameof(finish));
@@ -321,7 +321,7 @@ public static class SkyPulseBirdPrototypeWorkshop
             Part(head,"Dark curved optical glass "+side,SensorPanel("curved black optical lens",side,optic+new Vector3(0,0,side*.049f)),dark,optic+new Vector3(0,0,side*.049f));
             Part(head,"Forward cyan optical chevron "+side,SensorPanel("inset optical direction mark",side,optic+new Vector3(.025f,.015f,side*.113f)),glow,optic+new Vector3(.025f,.015f,side*.113f));
             Part(head,"Ivory jaw rim "+side,CheekPlates("jaw machined trim",side),ivory);
-            Part(head,"Brow fastener "+side,Shift(OpticalDisc("brow screw",HeadPixel2(418,182),new Vector2(.072f,.112f),side,Vector3.zero,.502f,.012f,.035f,28,4),-new Vector3(.11f,.67f,side*.35f)),silver,new Vector3(.11f,.67f,side*.35f));
+            Part(head,"Brow fastener "+side,Shift(OpticalDisc("brow screw",HeadPixel2(418,182),new Vector2(.05f,.08f),side,Vector3.zero,.006f,.008f,.022f,28,4),-new Vector3(.11f,.67f,side*.35f)),silver,new Vector3(.11f,.67f,side*.35f));
         }
         Part(head,"Gold upper beak",ChiselBeak("gold beveled finch beak",0),gold,new Vector3(.66f,.22f,0));
         Part(head,"Dark lower beak seam",ChiselBeak("beak split gasket",1),navy,new Vector3(.66f,.20f,0));
@@ -348,13 +348,25 @@ public static class SkyPulseBirdPrototypeWorkshop
     static Mesh OpticalDisc(string name,Vector2 center,Vector2 radius,int side,Vector3 origin,float depth,float bulge,float thickness,int slices,int rings)
     {
         var g=new Geometry();int[] centers=new int[2],starts=new int[2];
+        float Front(Vector2 p,float r)
+        {
+            float support=name=="curved black optical lens"?.78f*UndentedHeadDepth(p):name=="inset optical direction mark"?EyeLensFront(p):name=="brow screw"?EyeIrisFront(p):0;
+            return support+depth+bulge*(1-r*r);
+        }
+        float Depth(Vector2 p,float r,int face)
+        {
+            float front=Front(p,r);if(face==0)return front;
+            // The lens base is embedded in the closed pocket. Iris/core backs
+            // overlap the preceding optical layer instead of hovering above it.
+            return name=="curved black optical lens"?Mathf.Min(front-thickness,HeadSkinDepth(p)-.008f):front-thickness;
+        }
         for(int face=0;face<2;face++)
         {
-            float offset=face==0?0:-thickness;centers[face]=g.Add(new Vector3(center.x,center.y,side*(depth+bulge+offset))-origin,new Vector2(.5f,.5f));starts[face]=g.v.Count;
+            centers[face]=g.Add(new Vector3(center.x,center.y,side*Depth(center,0,face))-origin,new Vector2(.5f,.5f));starts[face]=g.v.Count;
             for(int ring=1;ring<=rings;ring++)for(int i=0;i<slices;i++)
             {
                 float r=ring/(float)rings,a=i*Mathf.PI*2/slices;var p=center+new Vector2(Mathf.Cos(a)*radius.x*r,Mathf.Sin(a)*radius.y*r);
-                g.Add(new Vector3(p.x,p.y,side*(depth+bulge*(1-r*r)+offset))-origin,new Vector2(.5f+Mathf.Cos(a)*r*.5f,.5f+Mathf.Sin(a)*r*.5f));
+                g.Add(new Vector3(p.x,p.y,side*Depth(p,r,face))-origin,new Vector2(.5f+Mathf.Cos(a)*r*.5f,.5f+Mathf.Sin(a)*r*.5f));
             }
             bool outward=face==0?side>0:side<0;
             for(int i=0;i<slices;i++){int a=starts[face]+i,b=starts[face]+(i+1)%slices;if(outward)g.Tri(centers[face],a,b);else g.Tri(centers[face],b,a);}
@@ -395,10 +407,30 @@ public static class SkyPulseBirdPrototypeWorkshop
     static float SignedPower(float value,float power)=>Mathf.Sign(value)*Mathf.Pow(Mathf.Abs(value),power);
     static Vector3 HeadPoint(float x,float angle,float lift=0)
     {
-        var s=HelmetSection(x);float a=angle*Mathf.Deg2Rad,c=Mathf.Cos(a),sn=Mathf.Sin(a),center=Mathf.Lerp(s.y,s.h,.47f);
-        float height=c>=0?s.h-center:center-s.y;
-        return new Vector3(x,center+SignedPower(c,.86f)*(height+lift),SignedPower(sn,.91f)*(s.w+lift));
+        var section=HelmetSection(x);float a=angle*Mathf.Deg2Rad,c=Mathf.Cos(a),sn=Mathf.Sin(a),center=Mathf.Lerp(section.y,section.h,.47f);
+        float height=c>=0?section.h-center:center-section.y;
+        var p=new Vector3(x,center+SignedPower(c,.86f)*(height+lift),SignedPower(sn,.91f)*(section.w+lift));
+        // A smooth closed recess changes depth alone; the approved outer XY profile stays fixed.
+        p.z-=Mathf.Sign(p.z)*HeadPocketDepth(new Vector2(p.x,p.y),Mathf.Abs(p.z));return p;
     }
+    static float UndentedHeadDepth(Vector2 p)
+    {
+        var section=HelmetSection(p.x);float center=Mathf.Lerp(section.y,section.h,.47f),height=p.y>=center?section.h-center:center-section.y;
+        float q=Mathf.Clamp01(Mathf.Abs(p.y-center)/Mathf.Max(.001f,height));return section.w*Mathf.Pow(Mathf.Sqrt(Mathf.Max(0,1-Mathf.Pow(q,2/.86f))),.91f);
+    }
+    static float OpticRadiusSquared(Vector2 p,Vector2 center,Vector2 radius)
+    {var q=p-center;return q.x*q.x/(radius.x*radius.x)+q.y*q.y/(radius.y*radius.y);}
+    static float HeadPocketDepth(Vector2 p,float skin)
+    {
+        float r=Mathf.Sqrt(OpticRadiusSquared(p,HeadPixel2(410,183),new Vector2(.31f,.29f)));
+        float fade=1-Mathf.SmoothStep(0,1,Mathf.Clamp01((r-1)/.28f));return Mathf.Min(.055f*fade,skin*.65f);
+    }
+    static float HeadSkinDepth(Vector2 p)
+    {float skin=UndentedHeadDepth(p);return skin-HeadPocketDepth(p,skin);}
+    static float EyeLensFront(Vector2 p)
+    {float q=Mathf.Clamp01(OpticRadiusSquared(p,HeadPixel2(410,183),new Vector2(.31f,.29f)));return .78f*UndentedHeadDepth(p)+.0594f+.025f*(1-q);}
+    static float EyeIrisFront(Vector2 p)
+    {float q=Mathf.Clamp01(OpticRadiusSquared(p,HeadPixel2(417,182),new Vector2(.115f,.155f)));return EyeLensFront(p)+.008f+.018f*(1-q);}
 
     static Vector3 SurfaceNormal(Func<float,float,Vector3> surface,float u,float v)
     {
@@ -486,7 +518,7 @@ public static class SkyPulseBirdPrototypeWorkshop
     static Vector2[] SensorOutline(float scale)
     {
         var p=new Vector2[40];var center=HeadPixel2(410,183);
-        for(int i=0;i<p.Length;i++){float a=i*Mathf.PI*2/p.Length;p[i]=center+new Vector2(Mathf.Cos(a)*.35f*scale,Mathf.Sin(a)*.33f*scale);}return p;
+        for(int i=0;i<p.Length;i++){float a=i*Mathf.PI*2/p.Length;p[i]=center+new Vector2(Mathf.Cos(a)*.31f*scale,Mathf.Sin(a)*.29f*scale);}return p;
     }
     static Mesh MechanicalHelmet()
     {
@@ -503,9 +535,14 @@ public static class SkyPulseBirdPrototypeWorkshop
     }
     static Mesh SensorHousing(string name,int side,Vector3 origin)
     {
-        var g=new Geometry();float[] scales={1.045f,1.015f,.97f,.92f},depths={.275f,.335f,.365f,.36f};const int n=40;
-        for(int ring=0;ring<4;ring++)foreach(var p in SensorOutline(scales[ring]))g.Add(new Vector3(p.x,p.y,side*depths[ring])-origin,p);
-        for(int ring=0;ring<3;ring++)for(int i=0;i<n;i++){int a=ring*n+i,b=ring*n+(i+1)%n;if(side>0)g.Quad(a,b,b+n,a+n);else g.Quad(a,a+n,b+n,b);}
+        var g=new Geometry();float[] scales={1.045f,1.045f,.985f,.985f};const int n=40;
+        for(int ring=0;ring<4;ring++)foreach(var p in SensorOutline(scales[ring]))
+        {
+            float depth=ring==0||ring==3?HeadSkinDepth(p)-.008f:EyeLensFront(p)+(ring==1?.004f:.006f);
+            g.Add(new Vector3(p.x,p.y,side*depth)-origin,p);
+        }
+        for(int ring=0;ring<4;ring++)for(int i=0;i<n;i++)
+        {int a=ring*n+i,b=ring*n+(i+1)%n,c=((ring+1)%4)*n+(i+1)%n,d=((ring+1)%4)*n+i;if(side>0)g.Quad(a,b,c,d);else g.Quad(a,d,c,b);}
         var mesh=g.Build(name);WeldSmoothNormals(mesh);return mesh;
     }
     static Mesh SensorFrame(string name,int side,Vector3 origin)
@@ -517,20 +554,20 @@ public static class SkyPulseBirdPrototypeWorkshop
                 if(side>0)v=1-v;
                 var outer=Cubic2(HeadPixel2(376,149),HeadPixel2(348,160),HeadPixel2(347,202),HeadPixel2(376,212),t);
                 var inner=Cubic2(HeadPixel2(385,156),HeadPixel2(373,169),HeadPixel2(373,190),HeadPixel2(383,202),t);
-                var p=Vector2.Lerp(outer,inner,v);return new Vector3(p.x,p.y,side*(.355f+.026f*Mathf.Sin(t*Mathf.PI)+.015f*Mathf.Sin(v*Mathf.PI)));
+                var p=Vector2.Lerp(outer,inner,v);return new Vector3(p.x,p.y,side*(HeadSkinDepth(p)+.018f+.008f*Mathf.Sin(t*Mathf.PI)*Mathf.Sin(v*Mathf.PI)));
             }
-            return Shift(CurvedPlate(name,Surface,24,4,.045f,.009f,.006f,.025f),-origin);
+            return Shift(CurvedPlate(name,Surface,24,4,.030f,.006f,.006f,.025f),-origin);
         }
         // The reference has a pale lower rim rather than a full silver eyeglass ring.
         Vector3 Rim(float t,float v)
         {
-            if(side>0)v=1-v;float a=Mathf.Lerp(198,326,t)*Mathf.Deg2Rad,r=Mathf.Lerp(1.012f,1.052f,v);var p=HeadPixel2(410,183)+new Vector2(Mathf.Cos(a)*.35f*r,Mathf.Sin(a)*.33f*r);
-            return new Vector3(p.x,p.y,side*(.354f+.006f*Mathf.Sin(v*Mathf.PI)));
+            if(side>0)v=1-v;float a=Mathf.Lerp(198,326,t)*Mathf.Deg2Rad,r=Mathf.Lerp(1.012f,1.033f,v);var p=HeadPixel2(410,183)+new Vector2(Mathf.Cos(a)*.31f*r,Mathf.Sin(a)*.29f*r);
+            return new Vector3(p.x,p.y,side*(EyeLensFront(p)+.011f+.002f*Mathf.Sin(v*Mathf.PI)));
         }
-        return Shift(CurvedPlate(name,Rim,24,3,.015f,.003f,.005f,.025f),-origin);
+        return Shift(CurvedPlate(name,Rim,24,3,.014f,.003f,.005f,.025f),-origin);
     }
 
-    static Mesh SensorPanel(string name,int side,Vector3 origin)=>name=="curved black optical lens"?OpticalDisc(name,HeadPixel2(410,183),new Vector2(.342f,.322f),side,origin,.375f,.066f,.11f,40,6):OpticalDisc(name,HeadPixel2(417,182),new Vector2(.145f,.19f),side,origin,.447f,.052f,.07f,32,5);
+    static Mesh SensorPanel(string name,int side,Vector3 origin)=>name=="curved black optical lens"?OpticalDisc(name,HeadPixel2(410,183),new Vector2(.31f,.29f),side,origin,.0594f,.025f,.045f,40,6):OpticalDisc(name,HeadPixel2(417,182),new Vector2(.115f,.155f),side,origin,.008f,.018f,.035f,32,5);
     static void ReverseWinding(Mesh mesh)
     {var t=mesh.triangles;for(int i=0;i<t.Length;i+=3){int a=t[i];t[i]=t[i+2];t[i+2]=a;}mesh.triangles=t;}
     static Vector2[] CounterClockwise(Vector2[] p)
@@ -656,13 +693,6 @@ public static class SkyPulseBirdPrototypeWorkshop
         }
         Part(root,"Gold tail power collar",ReferenceBodyLoft("gold tail power sleeve",new[]{S(210,282,.10f,.15f),S(203,284,.12f,.16f),S(173,289,.115f,.135f),S(168,289,.086f,.11f)},36),gold);
         var power=new Geometry();Append(power,ReferenceBodyLoft("tail power inset",new[]{S(170,289,.083f,.105f),S(166,290,.079f,.10f)},32));
-        Vector2[] exhaustEnds={new Vector2(36,311),new Vector2(85,281),new Vector2(91,326),new Vector2(61,307),new Vector2(88,298)};
-        for(int i=0;i<5;i++)
-        {
-            Vector3 a=ReferenceBodyPixel(169,286+i*2,0)-origin,d=ReferenceBodyPixel(exhaustEnds[i].x,exhaustEnds[i].y,0)-origin,b=Vector3.Lerp(a,d,.28f)+new Vector3(0,i==1?.05f:-.015f,0),c=Vector3.Lerp(a,d,.72f)+new Vector3(0,i==2?-.035f:.012f,0);float w=i==4?.105f:i==0?.16f:.105f;
-            var plume=Feather("reference closed cyan exhaust "+i,a,b,c,d,w,i==4?.13f:.095f,12,8);
-            var colours=plume.colors;for(int k=0;k<colours.Length;k++)colours[k]=i==4?new Color(4,4,4,1):new Color(1,1,1,1);plume.colors=colours;Append(power,plume);
-        }
         Part(root,"Cyan tail power inset",power.Build("tail power inset"),glow);
     }
     static Mesh Loft(string name,Section[] s,int sides,float from=0,float to=360)

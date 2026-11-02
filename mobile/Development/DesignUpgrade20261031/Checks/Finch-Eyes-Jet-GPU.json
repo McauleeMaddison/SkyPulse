@@ -1,0 +1,93 @@
+{
+    "result": "PASS",
+    "proof": "Actual fixed-camera isolated-jet Camera.Render readbacks. No CPU shader/deformation replica is used as GPU evidence. Hashes use raw RGB ROI bytes.",
+    "shader": "SkyPulse/Workshop/Neon Finch Blue Jet",
+    "vertices": 1102,
+    "triangles": 2176,
+    "width": 128,
+    "height": 256,
+    "roi": {
+        "x": 36,
+        "y": 32,
+        "width": 51,
+        "height": 178
+    },
+    "topology": {
+        "mesh": "Blue jet volume",
+        "weldedVertices": 1096,
+        "triangles": 2176,
+        "boundaryEdges": 0,
+        "nonManifoldEdges": 0,
+        "degenerateTriangles": 0,
+        "signedVolume": 0.06104200653576208
+    },
+    "frames": [
+        {
+            "file": "JET-0.png",
+            "roiSha256": "e0666b4429b6bfb81ef579ad1819cb39364b4b8fa24ff4c3f5de4bedf6ff58b7",
+            "time": 0.0,
+            "appliedState": {
+                "x": 0.0,
+                "y": 0.9194261431694031,
+                "z": 1.0
+            },
+            "foregroundPixels": 3999
+        },
+        {
+            "file": "JET-1.png",
+            "roiSha256": "7484e0aa48286cf28132d17e2ba30dea40b322e09fe0e120acd22ea50c868eb3",
+            "time": 0.125,
+            "appliedState": {
+                "x": 0.125,
+                "y": 0.9475399255752563,
+                "z": 1.0
+            },
+            "foregroundPixels": 4109
+        },
+        {
+            "file": "JET-2.png",
+            "roiSha256": "f23883c87f164eeb6dd9962ac666948b13a82562b6eb8f3aae6701c5f316c0e1",
+            "time": 0.25,
+            "appliedState": {
+                "x": 0.25,
+                "y": 0.9739773869514465,
+                "z": 1.0
+            },
+            "foregroundPixels": 4103
+        },
+        {
+            "file": "JET-3.png",
+            "roiSha256": "9f256e488a4ca4b7c00f06fd203337bd7f504b230dc86d9044d48dee64cb7a30",
+            "time": 0.375,
+            "appliedState": {
+                "x": 0.375,
+                "y": 0.992860734462738,
+                "z": 1.0
+            },
+            "foregroundPixels": 4094
+        }
+    ],
+    "differences": [
+        {
+            "first": 0,
+            "second": 1,
+            "changedPixels": 3747,
+            "meanAbsoluteRgbDifference": 0.03602374345064163
+        },
+        {
+            "first": 1,
+            "second": 2,
+            "changedPixels": 3832,
+            "meanAbsoluteRgbDifference": 0.0378454253077507
+        },
+        {
+            "first": 2,
+            "second": 3,
+            "changedPixels": 3745,
+            "meanAbsoluteRgbDifference": 0.03363053873181343
+        }
+    ],
+    "repeatedTimeHash": "7484e0aa48286cf28132d17e2ba30dea40b322e09fe0e120acd22ea50c868eb3",
+    "reducedFirstHash": "bcc5bea3ef6b6a04080bfb6ae3231e671783a228ad1685118e5ccf38c0e6b5cc",
+    "reducedSecondHash": "bcc5bea3ef6b6a04080bfb6ae3231e671783a228ad1685118e5ccf38c0e6b5cc"
+}

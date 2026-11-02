@@ -47,6 +47,18 @@ eight review-material profiles; **Create Neon Finch 3D art review** preserves an
 existing rig. Edit saved meshes/materials directly in Unity for manual art changes;
 do not run the explicit refinement command over those edits.
 
+The latest Finch has smaller curved lenses seated into closed helmet pockets.
+The named **09 Volumetric blue jet fire** child under the tail is real mesh geometry.
+Its editable mesh, material and shader are in the workshop's **Effects** folder.
+Use **Blue jet fire.mat** for electric-blue colour, white-hot core and opacity;
+`SkyPulseNeonFinchPrototype.SampleJet` supplies absolute time and flap-linked
+thrust through a cached property block. **Reduced Motion** holds the flow steady.
+The jet tool preserves an existing attachment and rejects unexpected owner edits;
+it does not overwrite custom mesh/material edits or save unrelated dirty assets.
+Use the saved prefab directly rather than rerunning generation over manual edits.
+[Current eye/exhaust previews](Development/DesignUpgrade20261031/Previews/Finch-Eyes-Jet/Overview.png)
+remain an art-review candidate, separate from the installed game.
+
 ## Where to make a code change
 
 Start with `mobile/Assets/Scripts/SkyPulseNativeGame.cs`. All

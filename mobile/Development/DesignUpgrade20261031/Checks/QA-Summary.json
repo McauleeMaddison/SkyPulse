@@ -46,9 +46,9 @@
   ],
   "csharpCompilerErrors": [],
   "csharpCompilerWarnings": [],
-  "runtimeSourceStillMatchesFullSuite": true,
+  "runtimeSourceStillMatchesFullSuite": false,
   "originalLogsLocal": "/private/tmp/skypulse-design-20261031",
-  "finchScope": "Original Volt reference reconstruction: round optics/gold crescent, reference helmet/beak, swept curved feathers, ivory shield, gold shoulder, source tail cuffs/fins and closed emissive exhaust. Existing rig and animation retained. No gameplay replacement.",
+  "finchScope": "Isolated editable reference Finch with smaller integrated optics and animated volumetric blue exhaust. Original gameplay sprites retained. Visual acceptance pending.",
   "deviceTested": false,
   "remainingChecks": [
     "Physical iPhone/iPad visual acceptance",
@@ -98,7 +98,8 @@
     "cleanup": "Superseded optics/plate/width-profile helpers removed; no unreferenced private generator helpers"
   },
   "runtimeComparisonExclusions": [
-    "Assets/.DS_Store: Finder folder metadata removed during the recorded cleanup; not a game asset"
+    "Assets/.DS_Store: Finder metadata removed during recorded cleanup; not a game asset",
+    "Assets/Scripts/SkyPulseNeonFinchPrototype.cs: isolated art-review rig now drives the dedicated jet; focused Unity tests cover the change"
   ],
   "latestFinchStructure": {
     "revision": "Volumetric reference finch v9",
@@ -128,5 +129,74 @@
       "measuresDeviceFps": false
     },
     "priorPreviewFiles": "unchanged"
+  },
+  "gameRuntimeSourceStillMatchesFullSuite": true,
+  "latestFinchOpticsJet": {
+    "date": "2026-11-02",
+    "revision": "Integrated optics and blue jet v10",
+    "result": "PASS",
+    "ownerAcceptance": "pending",
+    "deviceTested": false,
+    "vertices": 36888,
+    "triangles": 55768,
+    "meshParts": 126,
+    "eyeProfile": {
+      "samplesPerLayer": 10980,
+      "blackLensXY": [
+        0.62,
+        0.58
+      ],
+      "cyanIrisXY": [
+        0.23,
+        0.31
+      ],
+      "whiteCoreXY": [
+        0.1,
+        0.16
+      ],
+      "blackFrontFloorClearanceMin": 0.032686608177273535,
+      "blackProtrusionBeyondOriginalSkinMax": 0.03185812782804762,
+      "blackBackCaseOverlapMin": 0.008,
+      "cyanBackBlackOverlapMin": 0.009000000000000008,
+      "whiteBackCyanOverlapMin": 0.008000000000000007,
+      "cyanProtrusionAboveGlassMax": 0.026000000000000023,
+      "whiteProtrusionAboveIrisMax": 0.014000000000000012,
+      "blackFrontDepthRange": [
+        0.15704845588237662,
+        0.3748671207570476
+      ],
+      "blackBackDepthRange": [
+        0.06219032805432901,
+        0.3169990261754653
+      ],
+      "blackTotalBoundsZ": 0.3126767927027186,
+      "maxPocketDepth": 0.055,
+      "expectedVertexCountChange": 0,
+      "evidence": "Numerical authoring-profile audit; actual closed meshes and support overlaps are separately tested by Unity."
+    },
+    "jetVertices": 1102,
+    "jetTriangles": 2176,
+    "actualGpuFlowSamples": 4,
+    "gpuRepeatedTimeDeterministic": true,
+    "gpuReducedMotionPixelIdentical": true,
+    "poseRatesChecked": [
+      30,
+      60,
+      120
+    ],
+    "warmPoseAllocatedBytes": 0,
+    "warmJetAllocatedBytes": 0,
+    "ownerEditedJetRejectedWithoutMutation": true,
+    "repeatRevisionChangedAssets": [],
+    "otherExistingMeshMaterialSceneAnimationAndMetaBytesProtected": true,
+    "priorPreviewFiles": "unchanged",
+    "csharpCompilerErrors": [],
+    "csharpCompilerWarnings": [],
+    "visualMedia": "Previews/Finch-Eyes-Jet",
+    "limits": [
+      "Editor Metal rendering does not establish physical device FPS or appearance",
+      "Original eight-joint motion retained; one additional jet renderer is parented to tail",
+      "Workshop prototype only; no gameplay replacement, device install, upload or App Review submission"
+    ]
   }
 }

@@ -70,9 +70,9 @@ Material:
     - _EmissionStrength: 0
     - _FinishKind: 3
     - _GlossMapScale: 1
-    - _Glossiness: 0.4
+    - _Glossiness: 0.62
     - _GlossyReflections: 1
-    - _Metallic: 0
+    - _Metallic: 0.06
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02

@@ -4,7 +4,17 @@ Current source review; **not a new installed build**. The iPhone release record 
 
 ## Start here
 
-Latest structural pass (2 November): [3D views](Previews/Finch-3D/Structure.png),
+Latest optics/exhaust pass (2 November): [overview](Previews/Finch-Eyes-Jet/Overview.png),
+[eye close-up](Previews/Finch-Eyes-Jet/Eyes.png), [flight](Previews/Finch-Eyes-Jet/Flight.mp4),
+[blue jet close-up](Previews/Finch-Eyes-Jet/Jet.mp4) and [turntable](Previews/Finch-Eyes-Jet/Turntable.mp4).
+Smaller curved optical lenses sit inside continuous helmet pockets with fitted slim
+bezels. One seven-volume blue jet replaces the static exhaust lances; downstream
+flow, a bright core and moving tips use absolute time and respect Reduced Motion.
+[Focused checks](Checks/Finch-Eyes-Jet-Validation.json), [actual GPU proof](Checks/Finch-Eyes-Jet-GPU.json)
+and [change preservation](Checks/Finch-Eyes-Jet-Preservation.json) pass. This is art
+revision v10, with visual acceptance pending. Other birds remain on hold.
+
+Preceding structural pass (2 November): [3D views](Previews/Finch-3D/Structure.png),
 [360° turntable](Previews/Finch-3D/Turntable.mp4), [flight](Previews/Finch-3D/Flight.mp4),
 [reference view](Previews/Finch-3D/Reference.png) and [wireframe](Previews/Finch-3D/Wireframe.png).
 The closed helmet, supported optical caps, connected foot mounts and deeper wing fan
@@ -35,9 +45,9 @@ The source image is the design blueprint. Seven main feather bodies and their cy
 
 ## Validation and limits
 
-[QA summary](Checks/QA-Summary.json): full isolated Unity suite passed **40 groups**, with no C# compiler errors/warnings. Runtime source hashes still match that suite. The latest focused sculpture/material/lighting checks passed byte/GUID preservation, nonzero-normal regression checks, a material-scope mutation negative control, repeat idempotency, all 33 wing/tail blade coverage masks, 30/60/120 Hz deterministic pose sampling and zero warm pose allocations. Responsive Home captures cover four phone/tablet sizes. Native bridge compiled for arm64 iOS15 with warnings treated as errors; [copy checks](Checks/Player-Copy.json), [art evidence coverage](Checks/Artwork-Evidence.json) and [protected rules](Checks/Preservation.json) pass.
+[QA summary](Checks/QA-Summary.json): full isolated Unity suite passed **40 groups**, with no C# compiler errors/warnings. Gameplay runtime source hashes still match that suite; the isolated art-review rig changed for the jet and passed the new focused Unity checks. The latest focused sculpture/material/lighting checks passed byte/GUID preservation, nonzero-normal regression checks, a material-scope mutation negative control, repeat idempotency, all 33 wing/tail blade coverage masks, 30/60/120 Hz deterministic pose sampling and zero warm pose allocations. Responsive Home captures cover four phone/tablet sizes. Native bridge compiled for arm64 iOS15 with warnings treated as errors; [copy checks](Checks/Player-Copy.json), [art evidence coverage](Checks/Artwork-Evidence.json) and [protected rules](Checks/Preservation.json) pass.
 
-These are Editor/automated checks. Physical GPU/thermal/startup-memory measurements, iPhone/iPad visual acceptance, native plugin linking in a full export and haptic feel remain open. The 125-part Finch rig is an art-review prototype; merge/optimise draw calls before any gameplay integration. No device install, TestFlight upload, App Store metadata save or public review submission was performed in this pass. Preview video frame rates verify captured motion, not phone performance. Raw earlier failed-run files were excluded from this package.
+These are Editor/automated checks. Physical GPU/thermal/startup-memory measurements, iPhone/iPad visual acceptance, native plugin linking in a full export and haptic feel remain open. The Finch rig now has 125 sculpted renderers plus one jet renderer and is an art-review prototype; merge/optimise draw calls before any gameplay integration. No device install, TestFlight upload, App Store metadata save or public review submission was performed in this pass. Preview video frame rates verify captured motion, not phone performance. Raw earlier failed-run files were excluded from this package.
 
 ## Project cleanup
 

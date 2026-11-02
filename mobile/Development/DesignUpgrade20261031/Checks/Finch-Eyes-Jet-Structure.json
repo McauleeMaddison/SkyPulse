@@ -1,0 +1,668 @@
+{
+    "result": "PASS",
+    "scope": "Separate articulated solids, position-welded at 1e-5 units for topology analysis; ring interfaces are intentionally excluded. No image-plane bird.",
+    "width": 4.926811218261719,
+    "height": 2.5673632621765137,
+    "depth": 2.670816659927368,
+    "closedParts": [
+        {
+            "mesh": "021 helmet compound sections",
+            "weldedVertices": 1334,
+            "triangles": 2664,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.4361212117433317
+        },
+        {
+            "mesh": "029 curved black optical lens",
+            "weldedVertices": 482,
+            "triangles": 960,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.01817615309562371
+        },
+        {
+            "mesh": "030 inset optical direction mark",
+            "weldedVertices": 322,
+            "triangles": 640,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.0019473915128725634
+        },
+        {
+            "mesh": "032 brow screw",
+            "weldedVertices": 226,
+            "triangles": 448,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.0002741458833289312
+        },
+        {
+            "mesh": "036 curved black optical lens",
+            "weldedVertices": 482,
+            "triangles": 960,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.01817615309562371
+        },
+        {
+            "mesh": "037 inset optical direction mark",
+            "weldedVertices": 322,
+            "triangles": 640,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.0019473915128725631
+        },
+        {
+            "mesh": "039 brow screw",
+            "weldedVertices": 226,
+            "triangles": 448,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.000274145883328931
+        },
+        {
+            "mesh": "046 articulated tail blade 0",
+            "weldedVertices": 74,
+            "triangles": 144,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.0046266853599945595
+        },
+        {
+            "mesh": "048 articulated tail blade 1",
+            "weldedVertices": 74,
+            "triangles": 144,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.003991333827684684
+        },
+        {
+            "mesh": "050 articulated tail blade 2",
+            "weldedVertices": 74,
+            "triangles": 144,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.0011369152976546577
+        },
+        {
+            "mesh": "052 articulated tail blade 3",
+            "weldedVertices": 74,
+            "triangles": 144,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.0016188445792143153
+        },
+        {
+            "mesh": "054 articulated tail blade 4",
+            "weldedVertices": 74,
+            "triangles": 144,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.0014220562799446659
+        },
+        {
+            "mesh": "001 sculpted fuselage",
+            "weldedVertices": 1642,
+            "triangles": 3280,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.594146182066349
+        },
+        {
+            "mesh": "002 curved ivory chest plating",
+            "weldedVertices": 1518,
+            "triangles": 3024,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.014056143223806909
+        },
+        {
+            "mesh": "007 gold talon hinge",
+            "weldedVertices": 236,
+            "triangles": 464,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.008750616252655165
+        },
+        {
+            "mesh": "015 gold talon hinge",
+            "weldedVertices": 236,
+            "triangles": 464,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.008750615660877282
+        },
+        {
+            "mesh": "058 curved primary chassis -1 0",
+            "weldedVertices": 278,
+            "triangles": 548,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.018245374605157842
+        },
+        {
+            "mesh": "059 curved primary enamel -1 0",
+            "weldedVertices": 376,
+            "triangles": 744,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.007390022769418662
+        },
+        {
+            "mesh": "060 curved primary chassis -1 1",
+            "weldedVertices": 236,
+            "triangles": 468,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.022254289138942344
+        },
+        {
+            "mesh": "061 curved primary enamel -1 1",
+            "weldedVertices": 376,
+            "triangles": 744,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.008461861703835904
+        },
+        {
+            "mesh": "062 curved primary chassis -1 2",
+            "weldedVertices": 188,
+            "triangles": 372,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.014751288416315827
+        },
+        {
+            "mesh": "063 curved primary enamel -1 2",
+            "weldedVertices": 280,
+            "triangles": 552,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.005358935640868389
+        },
+        {
+            "mesh": "064 curved primary chassis -1 3",
+            "weldedVertices": 140,
+            "triangles": 276,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.009939208843510043
+        },
+        {
+            "mesh": "065 curved primary enamel -1 3",
+            "weldedVertices": 208,
+            "triangles": 408,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.004239060976890605
+        },
+        {
+            "mesh": "066 curved primary chassis -1 4",
+            "weldedVertices": 140,
+            "triangles": 276,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.0050956720893301066
+        },
+        {
+            "mesh": "067 curved primary enamel -1 4",
+            "weldedVertices": 208,
+            "triangles": 408,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.0025320608181284366
+        },
+        {
+            "mesh": "068 curved primary chassis -1 5",
+            "weldedVertices": 140,
+            "triangles": 276,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.0027866816937489663
+        },
+        {
+            "mesh": "069 curved primary enamel -1 5",
+            "weldedVertices": 208,
+            "triangles": 408,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.001515090401388381
+        },
+        {
+            "mesh": "070 curved primary chassis -1 6",
+            "weldedVertices": 140,
+            "triangles": 276,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.0012864901479095608
+        },
+        {
+            "mesh": "071 curved primary enamel -1 6",
+            "weldedVertices": 208,
+            "triangles": 408,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.0008427368463041292
+        },
+        {
+            "mesh": "072 curved primary chassis -1 7",
+            "weldedVertices": 74,
+            "triangles": 144,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.0013404759676921207
+        },
+        {
+            "mesh": "073 curved primary enamel -1 7",
+            "weldedVertices": 148,
+            "triangles": 288,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.0014367897143235575
+        },
+        {
+            "mesh": "074 curved primary chassis -1 8",
+            "weldedVertices": 74,
+            "triangles": 144,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.0010088781252903798
+        },
+        {
+            "mesh": "075 curved primary enamel -1 8",
+            "weldedVertices": 148,
+            "triangles": 288,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.0010794528769366716
+        },
+        {
+            "mesh": "076 secondary metal feather -1 0",
+            "weldedVertices": 74,
+            "triangles": 144,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.004370495774428679
+        },
+        {
+            "mesh": "077 secondary cobalt panel -1 0",
+            "weldedVertices": 148,
+            "triangles": 288,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.006792461468596875
+        },
+        {
+            "mesh": "078 secondary metal feather -1 1",
+            "weldedVertices": 74,
+            "triangles": 144,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.005152969432202778
+        },
+        {
+            "mesh": "079 secondary cobalt panel -1 1",
+            "weldedVertices": 148,
+            "triangles": 288,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.008004664228006188
+        },
+        {
+            "mesh": "080 secondary metal feather -1 2",
+            "weldedVertices": 74,
+            "triangles": 144,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.0038098018877548104
+        },
+        {
+            "mesh": "081 secondary cobalt panel -1 2",
+            "weldedVertices": 148,
+            "triangles": 288,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.005917921807001875
+        },
+        {
+            "mesh": "082 secondary metal feather -1 3",
+            "weldedVertices": 74,
+            "triangles": 144,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.0023802301882511817
+        },
+        {
+            "mesh": "083 secondary cobalt panel -1 3",
+            "weldedVertices": 148,
+            "triangles": 288,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.003697614995004983
+        },
+        {
+            "mesh": "084 secondary metal feather -1 4",
+            "weldedVertices": 74,
+            "triangles": 144,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.0013355362361592632
+        },
+        {
+            "mesh": "085 secondary cobalt panel -1 4",
+            "weldedVertices": 148,
+            "triangles": 288,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.002075489113050411
+        },
+        {
+            "mesh": "092 curved primary chassis 1 0",
+            "weldedVertices": 278,
+            "triangles": 548,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.018245374700048448
+        },
+        {
+            "mesh": "093 curved primary enamel 1 0",
+            "weldedVertices": 376,
+            "triangles": 744,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.007390022769418661
+        },
+        {
+            "mesh": "094 curved primary chassis 1 1",
+            "weldedVertices": 236,
+            "triangles": 468,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.022254289138942344
+        },
+        {
+            "mesh": "095 curved primary enamel 1 1",
+            "weldedVertices": 376,
+            "triangles": 744,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.008461861703835902
+        },
+        {
+            "mesh": "096 curved primary chassis 1 2",
+            "weldedVertices": 188,
+            "triangles": 372,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.014751288416315827
+        },
+        {
+            "mesh": "097 curved primary enamel 1 2",
+            "weldedVertices": 280,
+            "triangles": 552,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.005358935640868388
+        },
+        {
+            "mesh": "098 curved primary chassis 1 3",
+            "weldedVertices": 140,
+            "triangles": 276,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.009939208843510043
+        },
+        {
+            "mesh": "099 curved primary enamel 1 3",
+            "weldedVertices": 208,
+            "triangles": 408,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.004239060976890605
+        },
+        {
+            "mesh": "100 curved primary chassis 1 4",
+            "weldedVertices": 140,
+            "triangles": 276,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.0050956720893301066
+        },
+        {
+            "mesh": "101 curved primary enamel 1 4",
+            "weldedVertices": 208,
+            "triangles": 408,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.0025320608181284366
+        },
+        {
+            "mesh": "102 curved primary chassis 1 5",
+            "weldedVertices": 140,
+            "triangles": 276,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.002786681693748966
+        },
+        {
+            "mesh": "103 curved primary enamel 1 5",
+            "weldedVertices": 208,
+            "triangles": 408,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.001515090401388381
+        },
+        {
+            "mesh": "104 curved primary chassis 1 6",
+            "weldedVertices": 140,
+            "triangles": 276,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.00128649014790956
+        },
+        {
+            "mesh": "105 curved primary enamel 1 6",
+            "weldedVertices": 208,
+            "triangles": 408,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.0008427368463041292
+        },
+        {
+            "mesh": "106 curved primary chassis 1 7",
+            "weldedVertices": 74,
+            "triangles": 144,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.001350732970382273
+        },
+        {
+            "mesh": "107 curved primary enamel 1 7",
+            "weldedVertices": 148,
+            "triangles": 288,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.0014396159254962046
+        },
+        {
+            "mesh": "108 curved primary chassis 1 8",
+            "weldedVertices": 74,
+            "triangles": 144,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.0010215355596419806
+        },
+        {
+            "mesh": "109 curved primary enamel 1 8",
+            "weldedVertices": 148,
+            "triangles": 288,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.0010830467836318767
+        },
+        {
+            "mesh": "110 secondary metal feather 1 0",
+            "weldedVertices": 74,
+            "triangles": 144,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.0043848720634069175
+        },
+        {
+            "mesh": "111 secondary cobalt panel 1 0",
+            "weldedVertices": 148,
+            "triangles": 288,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.006807442889377558
+        },
+        {
+            "mesh": "112 secondary metal feather 1 1",
+            "weldedVertices": 74,
+            "triangles": 144,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.005159958538844965
+        },
+        {
+            "mesh": "113 secondary cobalt panel 1 1",
+            "weldedVertices": 148,
+            "triangles": 288,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.008012010376707688
+        },
+        {
+            "mesh": "114 secondary metal feather 1 2",
+            "weldedVertices": 74,
+            "triangles": 144,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.003815421291003911
+        },
+        {
+            "mesh": "115 secondary cobalt panel 1 2",
+            "weldedVertices": 148,
+            "triangles": 288,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.005923877351904135
+        },
+        {
+            "mesh": "116 secondary metal feather 1 3",
+            "weldedVertices": 74,
+            "triangles": 144,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.002386349680269485
+        },
+        {
+            "mesh": "117 secondary cobalt panel 1 3",
+            "weldedVertices": 148,
+            "triangles": 288,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.003704192941005617
+        },
+        {
+            "mesh": "118 secondary metal feather 1 4",
+            "weldedVertices": 74,
+            "triangles": 144,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.0013435620966006949
+        },
+        {
+            "mesh": "119 secondary cobalt panel 1 4",
+            "weldedVertices": 148,
+            "triangles": 288,
+            "boundaryEdges": 0,
+            "nonManifoldEdges": 0,
+            "degenerateTriangles": 0,
+            "signedVolume": 0.0020842587627839097
+        }
+    ],
+    "supportChecks": [
+        "Head and torso overlap as real volumes",
+        "Black optic mounted into helmet: -1",
+        "Cyan iris supported: -1",
+        "White optical core supported: -1",
+        "Foot actuator has a solid concealed body mount: -1",
+        "Black optic mounted into helmet: 1",
+        "Cyan iris supported: 1",
+        "White optical core supported: 1",
+        "Foot actuator has a solid concealed body mount: 1"
+    ]
+}

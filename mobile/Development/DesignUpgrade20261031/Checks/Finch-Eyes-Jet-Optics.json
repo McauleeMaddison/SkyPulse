@@ -1,0 +1,34 @@
+{
+  "samplesPerLayer": 10980,
+  "blackLensXY": [
+    0.62,
+    0.58
+  ],
+  "cyanIrisXY": [
+    0.23,
+    0.31
+  ],
+  "whiteCoreXY": [
+    0.1,
+    0.16
+  ],
+  "blackFrontFloorClearanceMin": 0.032686608177273535,
+  "blackProtrusionBeyondOriginalSkinMax": 0.03185812782804762,
+  "blackBackCaseOverlapMin": 0.008,
+  "cyanBackBlackOverlapMin": 0.009000000000000008,
+  "whiteBackCyanOverlapMin": 0.008000000000000007,
+  "cyanProtrusionAboveGlassMax": 0.026000000000000023,
+  "whiteProtrusionAboveIrisMax": 0.014000000000000012,
+  "blackFrontDepthRange": [
+    0.15704845588237662,
+    0.3748671207570476
+  ],
+  "blackBackDepthRange": [
+    0.06219032805432901,
+    0.3169990261754653
+  ],
+  "blackTotalBoundsZ": 0.3126767927027186,
+  "maxPocketDepth": 0.055,
+  "expectedVertexCountChange": 0,
+  "evidence": "Numerical authoring-profile audit; actual closed meshes and support overlaps are separately tested by Unity."
+}

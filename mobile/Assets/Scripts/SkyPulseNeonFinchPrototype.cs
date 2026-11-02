@@ -14,12 +14,18 @@ namespace SkyPulse.Mobile
         [Range(0, 48)] public float flapDegrees = 28f;
         [Range(0, 12)] public float bankDegrees = 5f;
         [Range(0, 30)] public float turntableDegreesPerSecond = 12f;
+        [Header("Volumetric blue exhaust")]
+        public Renderer jetRenderer;
         [SerializeField, HideInInspector] Transform[] joints;
         [SerializeField, HideInInspector] Quaternion[] bindRotations;
         [SerializeField, HideInInspector] Vector3[] bindPositions;
         [SerializeField, HideInInspector] Quaternion bindRootRotation = Quaternion.identity;
         [SerializeField, HideInInspector] Vector3 bindRootPosition;
         bool ready;
+        MaterialPropertyBlock jetProperties;
+        static readonly int JetTimeId = Shader.PropertyToID("_JetTime");
+        static readonly int JetStrengthId = Shader.PropertyToID("_JetStrength");
+        static readonly int JetMotionId = Shader.PropertyToID("_JetMotion");
 
         public void CaptureBindPose()
         {
@@ -29,7 +35,11 @@ namespace SkyPulse.Mobile
             { bindRotations[i] = joints[i].localRotation; bindPositions[i] = joints[i].localPosition; }
             bindRootRotation = transform.localRotation; bindRootPosition = transform.localPosition; ready = true;
         }
-        void OnEnable() { ready = joints != null && joints.Length == 8 && bindRotations != null && bindRotations.Length == 8; }
+        void OnEnable()
+        {
+            ready = joints != null && joints.Length == 8 && bindRotations != null && bindRotations.Length == 8;
+            SampleJet(0);
+        }
         void Update() { if (animate) SamplePose(Application.isPlaying ? Time.time : (float)Time.realtimeSinceStartupAsDouble); }
         public void ResetPose()
         {
@@ -37,6 +47,7 @@ namespace SkyPulse.Mobile
             transform.localRotation = bindRootRotation; transform.localPosition = bindRootPosition;
             for (int i = 0; i < joints.Length; i++) if (joints[i] != null)
             { joints[i].localRotation = bindRotations[i]; joints[i].localPosition = bindPositions[i]; }
+            SampleJet(0);
         }
         public void SamplePose(float time)
         {
@@ -55,7 +66,32 @@ namespace SkyPulse.Mobile
             Set(5, -follow * 13f * amount, 0, follow * 4f * amount);
             Set(6, Mathf.Sin(phase * .5f) * 3f * amount, Mathf.Sin(phase * .41f) * 4f * amount, Mathf.Sin(phase - .6f) * 4f * amount);
             Set(7, 0, Mathf.Sin(phase * .41f - .4f) * 5f * amount, Mathf.Sin(phase - .9f) * 5f * amount);
+            SampleJet(time);
         }
+
+        /// <summary>Absolute shader time, smooth flap-linked thrust, and motion amount.</summary>
+        public static Vector3 JetSample(float time, float period, bool reduced)
+        {
+            if (float.IsNaN(time) || float.IsInfinity(time)) time = 0;
+            if (float.IsNaN(period) || float.IsInfinity(period)) period = 1.65f;
+            float phase = time * (Mathf.PI * 2f / Mathf.Max(.1f, period));
+            return reduced ? new Vector3(0, .92f, 0)
+                : new Vector3(time, .94f + .06f * Mathf.Sin(phase - .35f), 1);
+        }
+
+        /// <summary>Updates only the jet; one cached block and no per-frame allocation.</summary>
+        public void SampleJet(float time)
+        {
+            if (jetRenderer == null) return;
+            if (jetProperties == null) jetProperties = new MaterialPropertyBlock();
+            var sample = JetSample(time, flapPeriod, reducedMotion);
+            jetProperties.Clear();
+            jetProperties.SetFloat(JetTimeId, sample.x);
+            jetProperties.SetFloat(JetStrengthId, sample.y);
+            jetProperties.SetFloat(JetMotionId, sample.z);
+            jetRenderer.SetPropertyBlock(jetProperties);
+        }
+
         void Set(int i, float x, float y, float z)
         { if (joints[i] != null) { joints[i].localRotation = bindRotations[i] * Quaternion.Euler(x, y, z); joints[i].localPosition = bindPositions[i]; } }
     }
