@@ -1,0 +1,332 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &-8254670001958706036
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: "Solara \xB7 Machined trim"
+  m_Shader: {fileID: 4800000, guid: 8c9f13b543b544a49e746b86102bf89a, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Ints: []
+    m_Floats:
+    - _BrushStrength: 0
+    - _EmissionStrength: 0
+    - _FinishKind: 1
+    - _Glossiness: 0.52
+    - _Metallic: 0.55
+    - _SatinStrength: 0.5
+    m_Colors:
+    - _BladeColor: {r: 0.85882354, g: 0.627451, b: 0.23137255, a: 1}
+    - _Color: {r: 0.85882354, g: 0.627451, b: 0.23137255, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
+--- !u!21 &-6514653779598492316
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: "Solara \xB7 Optical iris"
+  m_Shader: {fileID: 4800000, guid: 8c9f13b543b544a49e746b86102bf89a, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Ints: []
+    m_Floats:
+    - _BrushStrength: 0
+    - _EmissionStrength: 0.45
+    - _FinishKind: 0
+    - _Glossiness: 0.48
+    - _Metallic: 0.22
+    - _SatinStrength: 0.5
+    m_Colors:
+    - _BladeColor: {r: 1, g: 0.53333336, b: 0.12156863, a: 1}
+    - _Color: {r: 1, g: 0.53333336, b: 0.12156863, a: 1}
+    - _EmissionColor: {r: 1, g: 0.53333336, b: 0.12156863, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
+--- !u!21 &-5742847224384425759
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: "Solara \xB7 Recessed chassis"
+  m_Shader: {fileID: 4800000, guid: 8c9f13b543b544a49e746b86102bf89a, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Ints: []
+    m_Floats:
+    - _BrushStrength: 0
+    - _EmissionStrength: 0
+    - _FinishKind: 2
+    - _Glossiness: 0.48
+    - _Metallic: 0.12
+    - _SatinStrength: 0.25
+    m_Colors:
+    - _BladeColor: {r: 0.039215688, g: 0.050980393, b: 0.07450981, a: 1}
+    - _Color: {r: 0.039215688, g: 0.050980393, b: 0.07450981, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
+--- !u!21 &-1887257604554467646
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: "Solara \xB7 Feather enamel"
+  m_Shader: {fileID: 4800000, guid: 8c9f13b543b544a49e746b86102bf89a, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Ints: []
+    m_Floats:
+    - _BrushStrength: 0
+    - _EmissionStrength: 0
+    - _FinishKind: 0
+    - _Glossiness: 0.48
+    - _Metallic: 0.22
+    - _SatinStrength: 0.5
+    m_Colors:
+    - _BladeColor: {r: 0.78039217, g: 0.1764706, b: 0.16078432, a: 1}
+    - _Color: {r: 0.78039217, g: 0.1764706, b: 0.16078432, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Finishes
+  m_Shader: {fileID: 4800000, guid: 8c9f13b543b544a49e746b86102bf89a, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Ints: []
+    m_Floats:
+    - _BrushStrength: 0
+    - _EmissionStrength: 0
+    - _FinishKind: 0
+    - _Glossiness: 0.48
+    - _Metallic: 0.22
+    - _SatinStrength: 0.5
+    m_Colors:
+    - _BladeColor: {r: 0.1254902, g: 0.13725491, b: 0.16862746, a: 1}
+    - _Color: {r: 0.1254902, g: 0.13725491, b: 0.16862746, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
+--- !u!21 &3033503559502181021
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: "Solara \xB7 Luminous inlay"
+  m_Shader: {fileID: 4800000, guid: 8c9f13b543b544a49e746b86102bf89a, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Ints: []
+    m_Floats:
+    - _BrushStrength: 0
+    - _EmissionStrength: 0.65
+    - _FinishKind: 4
+    - _Glossiness: 0.48
+    - _Metallic: 0.22
+    - _SatinStrength: 0.5
+    m_Colors:
+    - _BladeColor: {r: 1, g: 0.76862746, b: 0.2901961, a: 1}
+    - _Color: {r: 1, g: 0.76862746, b: 0.2901961, a: 1}
+    - _EmissionColor: {r: 1, g: 0.76862746, b: 0.2901961, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
+--- !u!21 &5013042063396529646
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: "Solara \xB7 Fitted optical glass"
+  m_Shader: {fileID: 4800000, guid: 8c9f13b543b544a49e746b86102bf89a, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Ints: []
+    m_Floats:
+    - _BrushStrength: 0
+    - _EmissionStrength: 0
+    - _FinishKind: 3
+    - _Glossiness: 0.62
+    - _Metallic: 0.06
+    - _SatinStrength: 0.5
+    m_Colors:
+    - _BladeColor: {r: 0.019607844, g: 0.043137256, b: 0.08627451, a: 1}
+    - _Color: {r: 0.019607844, g: 0.043137256, b: 0.08627451, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
+--- !u!21 &5559536881041211499
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: "Solara \xB7 Ivory alloy"
+  m_Shader: {fileID: 4800000, guid: 8c9f13b543b544a49e746b86102bf89a, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Ints: []
+    m_Floats:
+    - _BrushStrength: 0
+    - _EmissionStrength: 0
+    - _FinishKind: 1
+    - _Glossiness: 0.48
+    - _Metallic: 0.22
+    - _SatinStrength: 0.5
+    m_Colors:
+    - _BladeColor: {r: 1, g: 0.89411765, b: 0.627451, a: 1}
+    - _Color: {r: 1, g: 0.89411765, b: 0.627451, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
+--- !u!21 &8466675001785857741
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: "Solara \xB7 live engine fire"
+  m_Shader: {fileID: 4800000, guid: 27417879ad825936b17f6e7306b69989, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Ints: []
+    m_Floats:
+    - _JetMotion: 1
+    - _JetStrength: 0.92
+    - _JetTime: 0
+    - _Opacity: 0.68
+    m_Colors:
+    - _CoreColor: {r: 3.2, g: 3.6, b: 4, a: 1}
+    - _FlameColor: {r: 1.4, g: 1.0760784, b: 0.40627453, a: 1.4}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

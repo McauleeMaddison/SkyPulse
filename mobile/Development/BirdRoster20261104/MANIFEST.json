@@ -1,0 +1,606 @@
+{
+  "date": "2026-11-04",
+  "origin": "Actual Unity Editor captures; current approval status in Checks/Acceptance-Scope.json",
+  "installedBuild": "19 unchanged",
+  "appearanceApproved": [
+    "Neon Finch only"
+  ],
+  "files": {
+    "Checks/Acceptance-Scope.json": {
+      "sha256": "bb1854dfac19ac6bcb76ae1ab5587714247566fe7997480fa5f88ab539f8e59a",
+      "bytes": 1215
+    },
+    "Checks/Atmosphere.json": {
+      "sha256": "a81d96fd61593f11ce2ea60e7d3d10a84a85cbdee70355debd5d05a14185531e",
+      "bytes": 26582
+    },
+    "Checks/Current-Gameplay-Preservation.json": {
+      "sha256": "27131b0c8bee0f2d7113edbb874d7b3ac03f8e720cfb8ad5daccf759b1cae96d",
+      "bytes": 6214
+    },
+    "Checks/Current-Media.json": {
+      "sha256": "90fd225e9c53636596365bf090361a2441c88bdbf05f98640318dcf3b2bd1811",
+      "bytes": 896
+    },
+    "Checks/Current-Player-Copy.json": {
+      "sha256": "f503b33a117c814807c53a6e1408e5ecc01a752d1c3ee9fafc5a1e81d725481a",
+      "bytes": 297
+    },
+    "Checks/Deferred-Hangar-Prototype.json": {
+      "sha256": "4b8af3b2acfab91c22aebf0de8632e46f254308743a8080cb502ced1f807aee4",
+      "bytes": 82746
+    },
+    "Checks/Districts.json": {
+      "sha256": "c49017ed9be42d5a32f40487999b82d8ef7fe9ec3a0f028985526e232d353105",
+      "bytes": 679
+    },
+    "Checks/Final-Candidate-Promotion.json": {
+      "sha256": "f9e425fae92569b3f36e5088fa9b2fea23e8b0d5ea9525b531085d6e48d94a08",
+      "bytes": 5410
+    },
+    "Checks/Final-Source-Manifest.json": {
+      "sha256": "d92bda5fe2c864a190ca19173c1dfea0ca337ba6ac987a53cd6da7adb276e5dc",
+      "bytes": 12915
+    },
+    "Checks/Gameplay.json": {
+      "sha256": "69aacd2d5c77c9983b172d1d021be7237510e74a7fcb6794a4de34b525c38238",
+      "bytes": 4638
+    },
+    "Checks/Media.json": {
+      "sha256": "30102b215de8a49d384a1511dca1170966feee38bbe48b928e3eb66dd0bcddf6",
+      "bytes": 7367
+    },
+    "Checks/Neon-City-Geometry.json": {
+      "sha256": "31038a3eee44d94f99f651afdbf1be2b65f73a8f605f4ae59d471c709647ba17",
+      "bytes": 237
+    },
+    "Checks/Neon-City-Render.json": {
+      "sha256": "9e98cbfa850b8b3417379d05753d257793ba79b97172389b4907f88f13a44b73",
+      "bytes": 61188
+    },
+    "Checks/Preservation.json": {
+      "sha256": "a4bb5b3fca9978b3a328f6177566e33dc4d7de1628af20921cb6ea32ae3d2931",
+      "bytes": 20709
+    },
+    "Checks/Raven-Revision.json": {
+      "sha256": "a3053422046221b2a08d5c68529402ac0e421572557bc58a678a00df09c53007",
+      "bytes": 51764
+    },
+    "Checks/Runtime-Hangar-Hold.json": {
+      "sha256": "5596e3ebc162bae827f33ff09f23b676d2c70bbaf3cca3b3668f13e363233943",
+      "bytes": 4508
+    },
+    "Checks/Studio.json": {
+      "sha256": "f027127a0b92a4c76f08543b6566847110862a8b20b711a36b4999e6f5309a07",
+      "bytes": 460187
+    },
+    "Checks/Window.json": {
+      "sha256": "dfa8f98b0cd7fbff706667fa7813d45c152d55254d4408b7cd3e55fcea8ae393",
+      "bytes": 142
+    },
+    "Checks/WorldPromotion.json": {
+      "sha256": "bae68514ebfda26d245e90d8abdd5e6386aa1c6b90ab97c16430caed92dec235",
+      "bytes": 61132
+    },
+    "Pending-Hangar-Integration.patch": {
+      "sha256": "6ceb01438f02ebd400dc5e3752ff4bf2e0ece3c52b72471d0fe7bd70c3af3532",
+      "bytes": 30979
+    },
+    "Previews/Birds/Astra/Flight.mp4": {
+      "sha256": "aea2a5ff13589bbc87ee71b4022b5e7871dc060c19a2e9482e92ebaa217cca6b",
+      "bytes": 1285955
+    },
+    "Previews/Birds/Astra/Reverse.png": {
+      "sha256": "a9873045266113d2578f2162615d2331c148fb1f82f48d63757e283ac7f07248",
+      "bytes": 270941
+    },
+    "Previews/Birds/Astra/Side.png": {
+      "sha256": "0f1ac54beeb72f41223157f7fd81658c325ec6c7fdfab3292cf52e78c969952f",
+      "bytes": 259395
+    },
+    "Previews/Birds/Astra/ThreeQuarter.png": {
+      "sha256": "4e26b14daf17cfd4dd6160763e01d8b7726ae0060f41e88b13873c5d9505b106",
+      "bytes": 223499
+    },
+    "Previews/Birds/Borealis/Flight.mp4": {
+      "sha256": "38ac0c55f41829966406b9d9d0fd35f4324b4195700d1e62d1229c73b997a50e",
+      "bytes": 1208933
+    },
+    "Previews/Birds/Borealis/Reverse.png": {
+      "sha256": "85644f271a0b0602fdc7aa2723b6b69f3d6477c96aec6874d14769a067178ac8",
+      "bytes": 231703
+    },
+    "Previews/Birds/Borealis/Side.png": {
+      "sha256": "a94e9dcc6015ff31e21a6c4b25286c02f98b11e291d7da9298362ffc26dc19bb",
+      "bytes": 228043
+    },
+    "Previews/Birds/Borealis/ThreeQuarter.png": {
+      "sha256": "36c4f4d796ac27cfa40886381917c0b26c93b2803d9d83b852a03b0cf1212b50",
+      "bytes": 201096
+    },
+    "Previews/Birds/Chromaflux/Flight.mp4": {
+      "sha256": "2395a60d6672ef9f780646f784f3c149f294f68436bae40a2d234d6942e76278",
+      "bytes": 1254663
+    },
+    "Previews/Birds/Chromaflux/Reverse.png": {
+      "sha256": "9b2b894cab7d81bf526ba55b5aa1cbeabbf6089844a72eb83bfd1b6423db2d1e",
+      "bytes": 248486
+    },
+    "Previews/Birds/Chromaflux/Side.png": {
+      "sha256": "675f980beafbdea86bc1b9834a6c5c88101a048798a8060ee621e62a6b5fd0dd",
+      "bytes": 241222
+    },
+    "Previews/Birds/Chromaflux/ThreeQuarter.png": {
+      "sha256": "f6d2e3d5fc9d53d0c63c59f7286ac970a596112a378476101a22644eb194ced0",
+      "bytes": 207585
+    },
+    "Previews/Birds/Chrome Raven/Flight.mp4": {
+      "sha256": "dbb4e121982f04ccb0c1597cb04e104d9b38a98f0aa3a4c35c3ea4ca988347e0",
+      "bytes": 1118793
+    },
+    "Previews/Birds/Chrome Raven/Reverse.png": {
+      "sha256": "f62133f0b7199c2e1d0a2473783aa446f6f3c69f0ac0db5c0b87f354264e8ac9",
+      "bytes": 179097
+    },
+    "Previews/Birds/Chrome Raven/Side.png": {
+      "sha256": "878112eda638e530e363aa8b6ee0d371a916ebabc32b1258de6be12a75a1446c",
+      "bytes": 173046
+    },
+    "Previews/Birds/Chrome Raven/ThreeQuarter.png": {
+      "sha256": "fb0e2f1edf8977eec082a0bba6388eec1ee20d1a1f41ff616b6ab12837605a2f",
+      "bytes": 164016
+    },
+    "Previews/Birds/Ionwing/Flight.mp4": {
+      "sha256": "6b51bcd16eb5ee6caa5ca737f866e48e2932e554074906d32f9411710b20d2b3",
+      "bytes": 1283014
+    },
+    "Previews/Birds/Ionwing/Reverse.png": {
+      "sha256": "ba717796da1418fe9b048da3b3da9f1ecf15445c82cb195070059c7752fa5ca6",
+      "bytes": 258081
+    },
+    "Previews/Birds/Ionwing/Side.png": {
+      "sha256": "23e3ada7bc62c2e6851bdfb5f1c2c829e94c12c5eb9100b1f07a2742d8124a00",
+      "bytes": 248703
+    },
+    "Previews/Birds/Ionwing/ThreeQuarter.png": {
+      "sha256": "6d5226a11f0cc047e0a5e111f95f939ad5caae8771209569ac4ad6480edba9ba",
+      "bytes": 212905
+    },
+    "Previews/Birds/Koiwing Glider/Flight.mp4": {
+      "sha256": "b80536d12965f5ab007a3cab76aed226a64ce170673ba016dc9d91035c4155b2",
+      "bytes": 1275074
+    },
+    "Previews/Birds/Koiwing Glider/Reverse.png": {
+      "sha256": "29934b376991667192b7457b053863f45aa8eb67536ce2d7d68ed34e6f9d6a2e",
+      "bytes": 254895
+    },
+    "Previews/Birds/Koiwing Glider/Side.png": {
+      "sha256": "410659c1d92b080cce4695e10e8a9c540aed97939b533dfecc30b1b02c082f28",
+      "bytes": 247788
+    },
+    "Previews/Birds/Koiwing Glider/ThreeQuarter.png": {
+      "sha256": "ce9223b3a8b4f98aec6aec62ca33adb045a9bdbdce92d7422a0d153629a099c2",
+      "bytes": 257362
+    },
+    "Previews/Birds/Nightveil/Flight.mp4": {
+      "sha256": "d680b8b66c83980fca87eb3ecff193210abcf46e1d9ebbfd00d9700fa6404966",
+      "bytes": 1213154
+    },
+    "Previews/Birds/Nightveil/Reverse.png": {
+      "sha256": "bb9f126b998443bb57726dcb94853395c75dc5582186b195ee0948ad398e43b3",
+      "bytes": 251699
+    },
+    "Previews/Birds/Nightveil/Side.png": {
+      "sha256": "c42d928ffafdecc66f1aa645877b0d317d61f1976a4725593d1487e4a54c9e07",
+      "bytes": 243958
+    },
+    "Previews/Birds/Nightveil/ThreeQuarter.png": {
+      "sha256": "f7d3ff42b71f5c411a2fe5d63aebba58d3559ac9ed46464dd727703e5a3cb1dd",
+      "bytes": 207360
+    },
+    "Previews/Birds/Prism Hummingbird/Flight.mp4": {
+      "sha256": "8f910df2c4326d13e4a29c80c91fcdd9a097d4840be9671e14fc7bbebb0a22c2",
+      "bytes": 1259248
+    },
+    "Previews/Birds/Prism Hummingbird/Reverse.png": {
+      "sha256": "ce4274e5f9ac075fb78bb856bd72669840518496067ad1b9c8d5624ba0fff2ae",
+      "bytes": 227579
+    },
+    "Previews/Birds/Prism Hummingbird/Side.png": {
+      "sha256": "15fb30e8bd2db4f123b49b6dea788540a8a90c09c1c2e763ba82a4840ffbcf02",
+      "bytes": 221412
+    },
+    "Previews/Birds/Prism Hummingbird/ThreeQuarter.png": {
+      "sha256": "4ebacc869380f5a050a4751e61edaa503d1e2be1ca831d4b155fb8c453aff21c",
+      "bytes": 231946
+    },
+    "Previews/Birds/Pyrestorm/Flight.mp4": {
+      "sha256": "4f303eb22311a424be11e106124bab146e827fcf4c0f6f6234b7b83333c3c049",
+      "bytes": 1253720
+    },
+    "Previews/Birds/Pyrestorm/Reverse.png": {
+      "sha256": "b82ef25d22850b678cf6bc40a13e95820e17634191326778cb411a841cf1c896",
+      "bytes": 227318
+    },
+    "Previews/Birds/Pyrestorm/Side.png": {
+      "sha256": "692f0b12849213cd30f06690a84b8225b2cf63050e1d85a263c1de5590f11f6e",
+      "bytes": 223043
+    },
+    "Previews/Birds/Pyrestorm/ThreeQuarter.png": {
+      "sha256": "24f2c75380da65a1d89b49b4282a145635afdaee10ce6286aba8ba6d0b46474b",
+      "bytes": 191174
+    },
+    "Previews/Birds/Roselight/Flight.mp4": {
+      "sha256": "598a5d4150169e881566831546dd7bb2713ffb0e19a80eccfeea9e2f23f0fa8f",
+      "bytes": 1226153
+    },
+    "Previews/Birds/Roselight/Reverse.png": {
+      "sha256": "bf767fa307dad9ef4be50a89dac9accbd0c9356e5b77d0a9ea0165c1202b4488",
+      "bytes": 247500
+    },
+    "Previews/Birds/Roselight/Side.png": {
+      "sha256": "b68dcb5a10075991b678a7c63a986dc114b24bb5212a7d4fdfb02d9b3076895a",
+      "bytes": 238921
+    },
+    "Previews/Birds/Roselight/ThreeQuarter.png": {
+      "sha256": "7ca0b1f7439431f7155428c2f84bfbcb6ab0d5b498d115f3db203824d315a226",
+      "bytes": 205771
+    },
+    "Previews/Birds/Solara/Flight.mp4": {
+      "sha256": "957c8be3aee185b353e15c919ccdbe34307661997ec2a963b102ee4300128ef4",
+      "bytes": 1260974
+    },
+    "Previews/Birds/Solara/Reverse.png": {
+      "sha256": "2ad79ab0a823069624a4b56d5015a46ab16155c9863f0b1b22d4a1a4c59af93b",
+      "bytes": 249244
+    },
+    "Previews/Birds/Solara/Side.png": {
+      "sha256": "4adf36fff3f907f27e4a13c5b891950f72fc21a96f67f99da4205c1f0b7df780",
+      "bytes": 238809
+    },
+    "Previews/Birds/Solara/ThreeQuarter.png": {
+      "sha256": "73c3a7f28c1de33e40defc1896d40da6a7e3f0112a42a92b1134718c2e0e942f",
+      "bytes": 204985
+    },
+    "Previews/Birds/Verdant Kite/Flight.mp4": {
+      "sha256": "9ee9fa81b3ddef0f37595121fc06ae7384a740ab5135999ae025d6404d2cbc19",
+      "bytes": 1265153
+    },
+    "Previews/Birds/Verdant Kite/Reverse.png": {
+      "sha256": "3eb6e9b7366522196247687cedcdee8ab51205677fd3fd9f25a6515cefa81a88",
+      "bytes": 294331
+    },
+    "Previews/Birds/Verdant Kite/Side.png": {
+      "sha256": "801e2d1b6f8f933116bd83134b1763850ec0b603324b988312acc5913a26d954",
+      "bytes": 286482
+    },
+    "Previews/Birds/Verdant Kite/ThreeQuarter.png": {
+      "sha256": "ac8a4e5803038aa67a186b7f0282645c09e4d84d69ff3b5ae6055543a189f96e",
+      "bytes": 294168
+    },
+    "Previews/Birds/Virex/Flight.mp4": {
+      "sha256": "4f9b85c12a741066637cb55b2b9841288f7121a90888b08008b593643658e38c",
+      "bytes": 1281704
+    },
+    "Previews/Birds/Virex/Reverse.png": {
+      "sha256": "a91a88afda49633f83bee6b78c39c4d05b3985d1810e17d5e963a2b5ee7609dc",
+      "bytes": 270152
+    },
+    "Previews/Birds/Virex/Side.png": {
+      "sha256": "d212c4cb37f55be80e6af8b6c65329cef4119ae901064d04f4ec203e6c497c40",
+      "bytes": 260874
+    },
+    "Previews/Birds/Virex/ThreeQuarter.png": {
+      "sha256": "e7dd245ea80a65d429a18146e6a122e1946666836c9d385cd4e45f7861ee5f8c",
+      "bytes": 226460
+    },
+    "Previews/Birds/Voltcrest/Flight.mp4": {
+      "sha256": "1a65200c561bd89e747e8c4131428303c518fbcc20e43a5f063bd0334eb5f76a",
+      "bytes": 1283912
+    },
+    "Previews/Birds/Voltcrest/Reverse.png": {
+      "sha256": "b678532ab7fb8367fe3926787f91f1d683642957732a5e3313c7eb4089e3be78",
+      "bytes": 268902
+    },
+    "Previews/Birds/Voltcrest/Side.png": {
+      "sha256": "e9d93ac0600bb120eaed5beea2c6d5575dd01c1869b807a842faadd0bde75903",
+      "bytes": 255515
+    },
+    "Previews/Birds/Voltcrest/ThreeQuarter.png": {
+      "sha256": "94527fd044ee7bb9deb91948d3ce42023bda90bb5e31610ba6a671c9fa03d501",
+      "bytes": 225287
+    },
+    "Previews/Endless-Gameplay.png": {
+      "sha256": "fb813e8dbfa7313720875b2b67501c7af749632b8fce08c0443ff6683efa4608",
+      "bytes": 11389423
+    },
+    "Previews/Gameplay/Astra-EndlessRoute.png": {
+      "sha256": "078b201998e713f15bf59e664a1dab03600ff24cf9057cf44d9ddedf15794d29",
+      "bytes": 1096300
+    },
+    "Previews/Gameplay/Astra-PulseRelay.png": {
+      "sha256": "8e6b20d79454a93c63693810d5c3777d23097b94f418fdbc7c07af3ef108a16f",
+      "bytes": 1027050
+    },
+    "Previews/Gameplay/Borealis-EndlessRoute.png": {
+      "sha256": "4d5de6d2bff2bc0577e991f1208e9920aee3ebc48aa8509903c1a8a3f99a8298",
+      "bytes": 1095294
+    },
+    "Previews/Gameplay/Borealis-PulseRelay.png": {
+      "sha256": "f2d7efcf657f6c1540161fbd54d43e7474f56c385aebd5b41319094a4c81a529",
+      "bytes": 1026410
+    },
+    "Previews/Gameplay/Chromaflux-EndlessRoute.png": {
+      "sha256": "419307ef545aff834a3e7ea65939cf46c2ae0057036ea87bbb134b9134dc4aa3",
+      "bytes": 1094414
+    },
+    "Previews/Gameplay/Chromaflux-PulseRelay.png": {
+      "sha256": "eee940ca86bb2fec764b16df88e5d08f44d9e2195b8aaf56f06c5864b3191f6a",
+      "bytes": 1026025
+    },
+    "Previews/Gameplay/Chrome Raven-EndlessRoute.png": {
+      "sha256": "48da27dadde4b9e4eae98df6d7a36ff19ea2f158386db497c9701dbee73190a6",
+      "bytes": 1093389
+    },
+    "Previews/Gameplay/Chrome Raven-PulseRelay.png": {
+      "sha256": "83cda867dd0ed2db0dc8644168ca5ab8c61c4733eaebe2dbb11322ba8872e15e",
+      "bytes": 1023764
+    },
+    "Previews/Gameplay/Ionwing-EndlessRoute.png": {
+      "sha256": "25b2bb94d8662ae315c4c237555e901c092ea49e11458dcfc98eeb82879bbc17",
+      "bytes": 1099267
+    },
+    "Previews/Gameplay/Ionwing-PulseRelay.png": {
+      "sha256": "82a3fbd9558fe6ebec1bb9dcae9b25378e877694687b172f2bdca05e025a4e43",
+      "bytes": 1030941
+    },
+    "Previews/Gameplay/Koiwing Glider-EndlessRoute.png": {
+      "sha256": "c694887cd58fd05319904a7af75e26d12ecd5c703aeb1d8f4b62c09aadd884c0",
+      "bytes": 1098333
+    },
+    "Previews/Gameplay/Koiwing Glider-PulseRelay.png": {
+      "sha256": "f9fc8714e800febf79f00e17466384f72a285341f3382710ba0a5a1b2280225d",
+      "bytes": 1027958
+    },
+    "Previews/Gameplay/Nightveil-EndlessRoute.png": {
+      "sha256": "ccbf9e0093c7877840fb09f3c192ca833870c91e9fc9ba3d911909aa1044be00",
+      "bytes": 1095811
+    },
+    "Previews/Gameplay/Nightveil-PulseRelay.png": {
+      "sha256": "de0c67956e3783f41e2d0fbd0a0acf6b65a0f725eef1516def7cd190850349bb",
+      "bytes": 1027026
+    },
+    "Previews/Gameplay/Prism Hummingbird-EndlessRoute.png": {
+      "sha256": "d7a3ef3b36c185002f1b4c9093d2b0242028c07ec0b5b24ee0d6b6d5d077c039",
+      "bytes": 1097378
+    },
+    "Previews/Gameplay/Prism Hummingbird-PulseRelay.png": {
+      "sha256": "b24f582b42641a253954a0ac6dfe1254bd815780cfde91cc920f9d30507659cd",
+      "bytes": 1026135
+    },
+    "Previews/Gameplay/Pyrestorm-EndlessRoute.png": {
+      "sha256": "048e93c31cd44b5119d2edab324b72856c902c6d973e01c148729fe89191a37b",
+      "bytes": 1094749
+    },
+    "Previews/Gameplay/Pyrestorm-PulseRelay.png": {
+      "sha256": "e710f3ec1cf730900c312ce148013b7b7e5d4a3e1fe54dc494c4b656dd803cf2",
+      "bytes": 1026513
+    },
+    "Previews/Gameplay/Roselight-EndlessRoute.png": {
+      "sha256": "33798e936b94b9027a87c7c3717eda4224841956a54ebe5668568606a246f9c0",
+      "bytes": 1095464
+    },
+    "Previews/Gameplay/Roselight-PulseRelay.png": {
+      "sha256": "c15d77a77f763c748d447a910f43434a49097bfa9b81fc30b55a597ca82362ad",
+      "bytes": 1027014
+    },
+    "Previews/Gameplay/Solara-EndlessRoute.png": {
+      "sha256": "b6c6f17736c881da00ef7a104e456fe864392ba33754fa03fce4950d29bac72f",
+      "bytes": 1094974
+    },
+    "Previews/Gameplay/Solara-PulseRelay.png": {
+      "sha256": "b71216fce08d1da6acd5ac4c0b31cde4644ee050f07ad78171fdab3e18f0e4ed",
+      "bytes": 1026057
+    },
+    "Previews/Gameplay/Verdant Kite-EndlessRoute.png": {
+      "sha256": "cdacdbf021ab4e7c78d3a044827300f8ceef33ee7e053bd0589ced21498e6f26",
+      "bytes": 1099330
+    },
+    "Previews/Gameplay/Verdant Kite-PulseRelay.png": {
+      "sha256": "420aadf9bbbdd0d0d54bd575f01d8e11a53fdba4715c6e8f3b852011603e6b83",
+      "bytes": 1029436
+    },
+    "Previews/Gameplay/Virex-EndlessRoute.png": {
+      "sha256": "9eae0dbb608e099ddb023ad29bfd1bbcae5748374d20bf26c4c68c2148121fa6",
+      "bytes": 1097355
+    },
+    "Previews/Gameplay/Virex-PulseRelay.png": {
+      "sha256": "eaf54161572bbef5a2a34d3a3c1e1e9bb8671e0fd0981c0e9f73f36a07dff11e",
+      "bytes": 1028467
+    },
+    "Previews/Gameplay/Voltcrest-EndlessRoute.png": {
+      "sha256": "04214d45faad2f88fb73833e1f955abdc24ccbd2c7f78853b21b389bb1acce58",
+      "bytes": 1096091
+    },
+    "Previews/Gameplay/Voltcrest-PulseRelay.png": {
+      "sha256": "0d5876da347576e448644d92ea8547578aa296d57ad9a19edc86125e5f687e88",
+      "bytes": 1026689
+    },
+    "Previews/Gameplay-Preview.mp4": {
+      "sha256": "b82f69b56465cd78321a2704b94c7150e09d66b85629ca2407eb443938618b2b",
+      "bytes": 5716494
+    },
+    "Previews/Neon-City-Revision/Architecture-Inspection.png": {
+      "sha256": "7e84b64c28eae91e1818de40f8daf3b7bc13b38033414a5e00fa51f402952166",
+      "bytes": 567906
+    },
+    "Previews/Neon-City-Revision/Gameplay.mp4": {
+      "sha256": "de3d9212d6193abe14900f0cc20c09019b86678a223289a1b2049d2dee3ad37a",
+      "bytes": 1962180
+    },
+    "Previews/Neon-City-Revision/Gameplay.png": {
+      "sha256": "065382a3bcbc800fc5722a73e6bc791f6bd4968f57dfc3eea69829c6ce293d45",
+      "bytes": 986572
+    },
+    "Previews/Neon-City-Revision/Home.png": {
+      "sha256": "f2ba12bc6d96184b42c4118bd783b83aa42c2eee23b203f995185754f1082083",
+      "bytes": 932736
+    },
+    "Previews/Neon-City-Revision/World-Only.png": {
+      "sha256": "0f1c7d1044e1697d18ac699d7cb85f79bcb4da296d4cc693f64ae065b7c3628e",
+      "bytes": 871487
+    },
+    "Previews/Raven-Revision/Flight.mp4": {
+      "sha256": "66d6f950249d092c464fba93f993f086092406d007a4a1d94923bfc6536a8565",
+      "bytes": 1218004
+    },
+    "Previews/Raven-Revision/Reference-Comparison.png": {
+      "sha256": "80dd323a04bf20cf83febfbe27059e9b80700fc5e8f1e2b07f3e8bff1f6fd2b4",
+      "bytes": 4461169
+    },
+    "Previews/Raven-Revision/Reverse.png": {
+      "sha256": "41ee17d48d4ec55fba05bb2ce158216e224bf843b6baab6b9307a30e84496c05",
+      "bytes": 196847
+    },
+    "Previews/Raven-Revision/Side.png": {
+      "sha256": "04e3a36b0771cdeb5a3ef116d0f4e7b1dd0161eea8f7786e52d9c93afa95b369",
+      "bytes": 194794
+    },
+    "Previews/Raven-Revision/ThreeQuarter.png": {
+      "sha256": "9ccf6ee11c59b1c4369f0f78b62e79875d4f3efd2bed4c39e43d7521153e4d8b",
+      "bytes": 167959
+    },
+    "Previews/Relay-Gameplay.png": {
+      "sha256": "81f4a1351c29229079a263dd9c800b0518a6adf7b01b9c1b8a9bdcfde0dc31ec",
+      "bytes": 11208386
+    },
+    "Previews/Roster-3D.png": {
+      "sha256": "e00bdccd2db44b775e90888d74887f9a0969d5c5ebf7eb56c52d0d69c5d5f6fe",
+      "bytes": 8610160
+    },
+    "Previews/Roster-Flight.mp4": {
+      "sha256": "70e043e413f4c208bc553012278e422db5560e4b21f2cb818ff9b694b52375b8",
+      "bytes": 1433193
+    },
+    "Previews/Worlds/Pulse-Relay-Home-Gameplay.png": {
+      "sha256": "aa67b11a39972e68463d3adebbebe2c2eccbaba1d6bfc68e8ab332dceff04887",
+      "bytes": 2255027
+    },
+    "Previews/Worlds/Twelve-Worlds-Gameplay.png": {
+      "sha256": "caf3896ada7137e8b122b6e966c2940d81b06811db77ceed1746b41c23042dca",
+      "bytes": 3292549
+    },
+    "Previews/Worlds/Twelve-Worlds-Homes.png": {
+      "sha256": "b54e52e0e21ad61ebf76c74df881c8a7e5841e9d93fa9574d702a682eff6da77",
+      "bytes": 3174543
+    },
+    "Previews/Worlds/relay-flight.png": {
+      "sha256": "1603f8cf5bbc68a20cdcf409e983797a65b720b0d4024052756638aaa608ace0",
+      "bytes": 1011451
+    },
+    "Previews/Worlds/relay-home.png": {
+      "sha256": "7fa001cc6d3d04f1d11c6dcb37a52514a55e205a8911f4b1002548b547c47602",
+      "bytes": 1079275
+    },
+    "Previews/Worlds/world-00-flight.png": {
+      "sha256": "7406dac15702cc235dc1a7bc42f431abdc281180549f5e023cc7cb78668ac058",
+      "bytes": 1105485
+    },
+    "Previews/Worlds/world-00-home.png": {
+      "sha256": "6d3d10e73c752079b8254493114dbf75796b23c91ce36480bac400ead60a42dd",
+      "bytes": 1043907
+    },
+    "Previews/Worlds/world-01-flight.png": {
+      "sha256": "b1193d51b6e65b121d188519a4b13ead954727d648f544772787b998972e7e10",
+      "bytes": 926819
+    },
+    "Previews/Worlds/world-01-home.png": {
+      "sha256": "53232841d80dc90d10137323d66819169fd6be20c6860d1b83d865c9494da476",
+      "bytes": 884847
+    },
+    "Previews/Worlds/world-02-flight.png": {
+      "sha256": "201c2f2ceebac50b334441f490d55651381c49f07e41b112271d8ed75f01c59f",
+      "bytes": 845760
+    },
+    "Previews/Worlds/world-02-home.png": {
+      "sha256": "c6aca1ee43e7232922d28164f0cb0f81003362e787a031270fbf1dd1ab402843",
+      "bytes": 823135
+    },
+    "Previews/Worlds/world-03-flight.png": {
+      "sha256": "b3c041ec530dd329d679819751a23fbecfb99ae0d1c2616b3842e17fcbd63fc9",
+      "bytes": 664861
+    },
+    "Previews/Worlds/world-03-home.png": {
+      "sha256": "a9c5c6f42e02d9bc155a219f98ceefdcbab00754945358ba4246e1ed25efc34e",
+      "bytes": 641556
+    },
+    "Previews/Worlds/world-04-flight.png": {
+      "sha256": "ca4454e1c8d7f72560d9b731ecef25e725646b4c06e7efb3472dc83e085b3b8a",
+      "bytes": 743640
+    },
+    "Previews/Worlds/world-04-home.png": {
+      "sha256": "289555941039b11933649ade97ad0dfc7a6a7bb9efde35da497fef7fffbfc119",
+      "bytes": 715321
+    },
+    "Previews/Worlds/world-05-flight.png": {
+      "sha256": "689cc6f20051b9410576617eb47789dac3843d22ef6f057f0a2786de2667cc2f",
+      "bytes": 767756
+    },
+    "Previews/Worlds/world-05-home.png": {
+      "sha256": "3f3c71c27cc19964dc8fcaf1bbf4007ad0371dbde2cdaa5d97291c5cfbca589a",
+      "bytes": 748704
+    },
+    "Previews/Worlds/world-06-flight.png": {
+      "sha256": "fed4c7620a47963f09121f690b865b784eb6d249bc4244ddb1c1bdc45760f2fd",
+      "bytes": 684156
+    },
+    "Previews/Worlds/world-06-home.png": {
+      "sha256": "8867f057c62e25e42bf8be87dd567c4e0e138552ef1f3a68fb23d85e3ef08b07",
+      "bytes": 668485
+    },
+    "Previews/Worlds/world-07-flight.png": {
+      "sha256": "ccede23513f67d12e0ed02204e03705b0970b5014a15d89a2bd90ed5cb963710",
+      "bytes": 746670
+    },
+    "Previews/Worlds/world-07-home.png": {
+      "sha256": "921fdd5a59270f33d60dc6dbb7c573687b91dfbb0e94cdf7b339a430c4f0b65f",
+      "bytes": 747226
+    },
+    "Previews/Worlds/world-08-flight.png": {
+      "sha256": "3acf1a6e6cdd5616147944ba9244ab6596ba34acc39a7fc2ed378a3bc971c14c",
+      "bytes": 648153
+    },
+    "Previews/Worlds/world-08-home.png": {
+      "sha256": "f1b3c1728081e0430e05d6a8378987bc53bbcaf8de570785ad1daa06bfd5ea60",
+      "bytes": 658158
+    },
+    "Previews/Worlds/world-09-flight.png": {
+      "sha256": "715393ef3c7d8101d765cdb29db2f1c6581003e7cb691d0aa658cb1fdfb82c0b",
+      "bytes": 702801
+    },
+    "Previews/Worlds/world-09-home.png": {
+      "sha256": "5cc3157ebbe8f5e41e9f50ec68a5f47e5887f8729f0e8836e462ad5a82266b2f",
+      "bytes": 686325
+    },
+    "Previews/Worlds/world-10-flight.png": {
+      "sha256": "2e1b31f55b8bddf8d2852f50ae876ff0906a7dcc93a1711c206b5ac498c7c9f5",
+      "bytes": 730200
+    },
+    "Previews/Worlds/world-10-home.png": {
+      "sha256": "11f3caf1fcfea1b47f0516dc8796e6e2c7ee2a22c2d9db4e98643519c9c8df9a",
+      "bytes": 721404
+    },
+    "Previews/Worlds/world-11-flight.png": {
+      "sha256": "4e47576e2aef8733415c332b0cc177194497ca28e289c84a1b2762e333846798",
+      "bytes": 803455
+    },
+    "Previews/Worlds/world-11-home.png": {
+      "sha256": "a9fa9a151e85ce3e07bcabf0590ddb2deb1abc6b66444c583ff243fae64f6e62",
+      "bytes": 775272
+    },
+    "README.md": {
+      "sha256": "2e59870f5947eca88b78455a0899222f6a0d725083d67ecb7726d9b301577550",
+      "bytes": 12474
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "result": "PASS",
+  "records": [
+    {
+      "decodedDistinctSamples": 3,
+      "decodedHashes": [
+        "9cce8170a8cc55be",
+        "dd85f017fa5ab848",
+        "67d0d1a8f4f5fe29"
+      ],
+      "file": "Raven-Flight-v2.mp4",
+      "fps": 30,
+      "frames": 60,
+      "height": 768,
+      "scope": "Actual Unity frames; encoding rate does not measure device FPS.",
+      "seconds": 2,
+      "width": 1024
+    },
+    {
+      "decodedDistinctSamples": 3,
+      "decodedHashes": [
+        "e14d42b1af3fda12",
+        "c1a13d615a9e67ac",
+        "fad687d3aa01d7eb"
+      ],
+      "file": "Neon-City-Gameplay.mp4",
+      "fps": 30,
+      "frames": 90,
+      "height": 1334,
+      "scope": "Actual Unity frames; encoding rate does not measure device FPS.",
+      "seconds": 3,
+      "width": 750
+    }
+  ],
+  "limitation": "Actual Editor render samples, not device FPS or appearance approval"
+}

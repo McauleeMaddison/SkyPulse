@@ -1,5 +1,12 @@
 # SkyPulse Arcade
 
+The [reference-based 3D roster](mobile/Development/BirdRoster20261104/README.md)
+now includes fourteen additional editable models, actual-gameplay captures and an
+Editor visual selector. The approved Finch is preserved. The other fourteen colours are approved,
+but the owner rejected their first sculpture pass; Raven has a new review candidate
+against its artwork before further rollout. The package also contains the
+[current Neon City gameplay preview](mobile/Development/BirdRoster20261104/Previews/Neon-City-Revision/Gameplay.mp4). The previous twelve-world set was rejected; the remaining eleven redesigns are not finished.
+
 Open `mobile/` in Unity Hub and the **SkyPulse** repository in VS Code. Start with
 [the editing guide](mobile/EDITING_GUIDE.md) for the actual game and model scenes,
 code map and preservation rules. [The handoff](mobile/MANUAL_HANDOFF.md) records
@@ -15,8 +22,9 @@ This includes world and Relay presentation, Home labels, Hangar and Tech Tree
 finishes, and native tactile feedback work. It has not been installed or uploaded.
 Its source manifests and dated checks apply to that local candidate, not the
 installed build. The separate Neon Finch 3D workshop is an art-review prototype;
-review the current sculpture and finish before any further bird or roster work. Gameplay
-continues to use the original articulated bird artwork.
+the Finch appearance has since been approved, while the remaining roster
+sculptures need review. Gameplay continues to use the original articulated
+bird artwork by default; the solid-model selector is Editor-only.
 
 **Public App Review remains on hold** pending Apple's clarification, current
 device/media validation and renewed owner authorization. Local compilation and

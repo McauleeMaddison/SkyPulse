@@ -67,7 +67,10 @@ Shader "SkyPulse/Flight Architecture"
                 float3 colour=surfaceColour*lighting*lerp(float3(.96,.99,1.02),max(_Tint.rgb,.28),.08);
                 // Near facades retain solid readable values. Reflections belong
                 // mainly to inset glazing; broad grey gloss flattened the masonry.
-                colour+=ambient*(.15+glass*.52+fresnel*.25)+float3(.90,.94,1)*(spec*.34+softbox*(.065+glass*.28))*lerp(1,.12,stone);
+                // A restrained solid-wall reflection leaves the actual
+                // ceramic/stone colour visible. Clear inset glass retains the
+                // stronger sky reflection, without silver-washing the city.
+                colour+=ambient*(.075+glass*.38+fresnel*.14)+float3(.90,.94,1)*(spec*(.18+glass*.15)+softbox*(.030+glass*.24))*lerp(1,.12,stone);
                 if(_SurfaceAmount>.001)
                 {
                     float3 axis=pow(abs(mul((float3x3)unity_WorldToObject,n)),4);axis/=max(dot(axis,1),.001);float3 p=i.local*_SurfaceScale;
@@ -91,7 +94,17 @@ Shader "SkyPulse/Flight Architecture"
                 // colour is baked from the same palette as the pipe LEDs.
                 // Slow, restrained drift keeps interiors alive without flashes.
                 float windowPulse=.66+.025*sin(_Clock*.24+floor(i.local.y*2.6)*.73+_Design);
-                colour+=neon*_WindowGlow*i.color.rgb*(windowPulse+.10*pow(facing,3));
+                float paneFalloff=.77+.23*interior;
+                float windowExposure=1;
+                if(_Design<.5)
+                {
+                    // Recessed glazing contains individual occupied rooms, not
+                    // one luminous rectangle filling an entire facade bay.
+                    float rooms=lerp(.24,1,step(.24,hash21(floor(grid)+17.3)));
+                    paneFalloff=.055+.945*interior*rooms;
+                    windowExposure=1.85;
+                }
+                colour+=neon*_WindowGlow*i.color.rgb*(windowPulse*.78+.06*pow(facing,3))*paneFalloff*windowExposure;
                 float surface=.94+.06*hash21(floor(i.local.xz*28));
                 colour*=lerp(1,surface,stone);
                 colour+=stone*i.color.rgb*(.17+.14*saturate(n.y))+.035*stone*_Tint.rgb;
@@ -119,6 +132,17 @@ Shader "SkyPulse/Flight Architecture"
                         spill+=_BeaconColours[beacon].rgb*exp2(-distanceToLed*distanceToLed*1.35)*ledPulse*step(.01,radius);
                     }
                     colour+=spill*_BeaconGlow*.58;
+                }
+                if(_Design<.5)
+                {
+                    // Opposed city light catches real facade/reveal normals.
+                    // Recesses remain dark while exposed roof and wall edges
+                    // pick up the cyan network and magenta district lighting.
+                    float cyanSide=pow(saturate(dot(n,normalize(float3(-.78,.28,-.56)))),3);
+                    float pinkSide=pow(saturate(dot(n,normalize(float3(.80,.42,.26)))),3);
+                    float edgeReflect=.30+.70*pow(1-facing,3);
+                    colour+=(float3(.025,.16,.22)*cyanSide+float3(.13,.025,.115)*pinkSide)
+                        *edgeReflect*(1-light)*(1-neon)*lerp(1,.35,stone);
                 }
                 float distanceToCamera=length(_WorldSpaceCameraPos.xyz-i.world);
                 float mist=saturate((distanceToCamera-30)/48)*.34;

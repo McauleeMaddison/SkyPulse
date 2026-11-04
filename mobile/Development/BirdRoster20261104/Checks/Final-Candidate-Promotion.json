@@ -1,0 +1,105 @@
+{
+  "result": "PASS",
+  "date": "2026-11-04",
+  "scope": "Local review candidates: corrected Chrome Raven and connected Neon City. Owner appearance approval remains pending. No installed or uploaded build changed.",
+  "mapping": [
+    {
+      "path": "Assets/Editor/SkyPulseBirdWorkshop/Roster/Chrome Raven/Geometry.asset",
+      "before": "f9f431c58e157189992853a5cbb653e53618d8211e2781e2bd722f892bb1398b",
+      "after": "f4f7d5fcc4cd8b7b6d987a73b5bcea3276c9d66d853852db03c62d66f9852e92"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBirdWorkshop/Roster/Chrome Raven/Finishes.asset",
+      "before": "3ca2a012b5faa4be51f7158402684646a60a16ac185ccdfcff7b824c6d551cd4",
+      "after": "6c0248b35bb2bb12963bcda849ea99f87137e8f4f3eb8c68e6efb47519b81de0"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBirdWorkshop/Roster/Chrome Raven/Chrome Raven Rig.prefab",
+      "before": "1b8617a7696dbe1b8b2b547fd91dff4203815dad61f50457ce434e58c0cac5e4",
+      "after": "8bd2abe4d951bfeab37ab356e96ee9d44ce4bc182063e39d8edf9ce9f3a59e6d"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-civic-03.asset",
+      "before": "8ec29890265f783966936333577cb64f75d89977ff12244f4a47416750d48d8f",
+      "after": "1bafd5bd55a4651122238f16f9d7a34a9e72cc020513f260333ac92dccc41baa"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-civic-04.asset",
+      "before": "135e362076bda7d62df85fa9d19c1984987415a2eff8ad8c3d19294b35d5ea13",
+      "after": "8a36d7a1ee070fd284f63d0738e11f43fcac09d7db61c9f6bedf370df4583241"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-civic-05.asset",
+      "before": "2185beab0b21c627852259409eadd78f10e0fa7703a2cf662a8b585db885d4c3",
+      "after": "cf0961c4cd98b846fd0c5a733c4b81dfd329b3ffa87b834f35295208621d5c0e"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-civic-06.asset",
+      "before": "2e653d3bfb2ddd795b03ca9bc7b2a2b498546093744fdc95d6408e5b0f139efd",
+      "after": "58b0cc702df960b00d6ef8949ac226dc40ac5e4f3b20c8f9251831cb92e60a5a"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-civic-07.asset",
+      "before": "f655587a38ecd893d6f1d203c0042bcb23430fc03ade88e731c049ad94253892",
+      "after": "567cef8190cb4400b46c5eeaef60c252d86064a280a9d65c044f3074578cac2d"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-civic-08.asset",
+      "before": "575c1570fd2cfd6ff26b55f73b73b84e21bc4dd138376bcf7d7ae9e693a7b4c6",
+      "after": "32291396904e7a3dda15bed16fcc6c9ce95146ad04ded02b4ffaa82e4ebaac33"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-residential-03.asset",
+      "before": "1ea8a6f6a2349a2465a03302ed6c7c89f935e1e2e0b7b4bc53bf7286a143b83a",
+      "after": "9e6832abc19c618025892296aa305d0f9f08a9c934da874b5df9fc6af3a5307c"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-residential-04.asset",
+      "before": "99f13ec48ab88285d878d82f7f53e74825c29f309ed35aaf86e17e5399784a0b",
+      "after": "41790244c4514765959e79e7b85418edc27b06ba4ba3dfcd80755788d0fc67d6"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-residential-05.asset",
+      "before": "8c54503bc062cdca05b19d1e32f82483d9ea915992f53116cdb1873e1bc45886",
+      "after": "ba08325bc8064439eeb32366c489339fd715c5660ab131d2c4929334005e6dc4"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-residential-06.asset",
+      "before": "b4325c1b447875bc1be62edf3257d2d6b38df7e9cbe5dcabba18613b18926dc2",
+      "after": "4dcae804f659a20e383e2ebbe8459fa860fc15b0ac4a27fde108d267ca17ab61"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-residential-07.asset",
+      "before": "5fe2014f2af15738f6735f3f5a698fbbada70dd2f1e15591da98f8ebb30f641b",
+      "after": "bf6dd919b5a3a0c76a03cd2e3d1d2e4a42c5b856eb030dc8647b2c573f647943"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-residential-08.asset",
+      "before": "305ca6b983a05345fa8c0917deb08e55bc6bb9d53e85826ea242acca72f6c7b4",
+      "after": "ac53b213017510aff4c3d6739d1751471c99e739d3d8b9ae174982723fc11514"
+    },
+    {
+      "path": "Assets/Resources/SkyPulse/BackgroundEdits/world-00-civic.asset",
+      "before": "82f28db37ecab54d94550cc45fc323e76331611c11c7fa63b9a3895827cbb69d",
+      "after": "d64213c7f165e3cee3370fa160c893016c73b6e19dd6a92f6ec36bae6cff64fa"
+    },
+    {
+      "path": "Assets/Resources/SkyPulse/BackgroundEdits/world-00-residential.asset",
+      "before": "9227ee049231dcf1c87e11e5eac1b964f6595da494095c2f83365b0b499c9c71",
+      "after": "c623d115c1ff29c97d62c2104541d612dd51a18996cdb2e6782c943edc430729"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/district-design-baseline-v1.json",
+      "before": "eeb5a5231f2f21ff10f3f28c6353e61d78deb3d4eb85ba8e0a5abcaedbbe7f5b",
+      "after": "d85746df520b084aa2186e06641bda1a2c6b5451ad006b2ac3a432031b30d593"
+    }
+  ],
+  "approvedFinchArtworkAndSceneFilesPreserved": 545,
+  "allExistingMetasAndSceneBindingsPreserved": true,
+  "existingRuntimeHangarRestored": true,
+  "newBirdRuntimeResourcesPromoted": false,
+  "deviceTested": false,
+  "ownerAppearanceApproved": false,
+  "installedBuild": "19; unchanged",
+  "publicAppReview": "on hold"
+}

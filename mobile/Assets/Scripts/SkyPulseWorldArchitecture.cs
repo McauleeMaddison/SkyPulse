@@ -132,14 +132,8 @@ namespace SkyPulse.Mobile
             world=Mathf.Clamp(world,0,11)+Mathf.Clamp(variant,0,1)*12;var b=new SkyPulseMeshBuilder();var shell=Shell(world);var light=Light(world);
             switch(world%12)
             {
-                case 0: // Rock is terrain; the occupied city has its own engineered promenade.
-                    Landform(b,2.30f,1.35f,2.35f,0);Promenade(b,2.15f,1.20f,world);
-                    Tower(b,new Vector3(-.20f,.29f,.25f),1.08f,.88f,5.45f,.36f,0,world);
-                    Tower(b,new Vector3(-1.20f,.29f,.10f),.78f,.77f,3.15f,-.12f,1,world);
-                    Tower(b,new Vector3(1.10f,.29f,.30f),.82f,.78f,3.90f,-.21f,0,world);
-                    Tower(b,new Vector3(.60f,.29f,-.66f),.88f,.60f,1.50f,0,2,world);
-                    Skyway(b,new Vector3(-1.15f,1.91f,.02f),new Vector3(.96f,1.91f,.02f),.22f,world);
-                    Garden(b,new Vector3(-.95f,.31f,-.72f),.65f,world);break;
+                case 0:
+                    NeonConnectedCity(b,world);break;
                 case 1:
                     Landform(b,2.25f,1.30f,2.10f,1);Promenade(b,2.13f,1.18f,world);
                     Tower(b,new Vector3(-1.06f,.29f,.20f),.95f,.88f,5.65f,.58f,1,world);
@@ -226,6 +220,167 @@ namespace SkyPulse.Mobile
                     Skyway(b,new Vector3(-1.14f,1.82f,.05f),new Vector3(1.15f,1.82f,.05f),.26f,world);break;
             }
             return b.Finish(Styles[world%12]+(variant==0?" / civic district":" / residential district"));
+        }
+        // Neon City is one connected piece of inhabited architecture. This
+        // candidate keeps the eight original editable-part identities while
+        // replacing the repeated leaning spires with a civic podium and three
+        // solid, chamfered setback towers. Other worlds keep their own plans.
+        static void NeonConnectedCity(SkyPulseMeshBuilder b,int world)
+        {
+            Landform(b,2.30f,1.35f,2.35f,0);
+            Promenade(b,2.15f,1.20f,world);
+            bool residential=world>=12;
+            NeonTower(b,new Vector3(-.20f,.29f,.25f),1.19f,1.02f,residential?4.15f:4.95f,0,world);
+            NeonTower(b,new Vector3(-1.20f,.29f,.10f),.94f,.91f,residential?3.67f:3.12f,1,world);
+            NeonTower(b,new Vector3(1.10f,.29f,.30f),1.02f,.94f,residential?3.18f:3.89f,2,world);
+            NeonCivicPodium(b,world);
+            CapturePart("Sky bridge",b,true);
+            foreach(float x in new[]{-1.20f,-.20f,1.10f})
+            {
+                RoundedSlab(b,new Vector3(x,2.165f,-.22f),.40f,.43f,.065f,Color.Lerp(Frame,Shadow,.55f));
+                for(int side=-1;side<=1;side+=2)Beam(b,new Vector3(x+side*.17f,2.13f,-.17f),new Vector3(x+side*.17f,2.06f,.02f),.025f,.035f,Frame);
+            }
+            Skyway(b,new Vector3(-1.20f,2.22f,-.22f),new Vector3(-.20f,2.22f,-.22f),.27f,world);
+            Skyway(b,new Vector3(-.20f,2.22f,-.22f),new Vector3(1.10f,2.22f,-.22f),.27f,world);
+            CapturePart("Sky bridge",b,false);
+            NeonRoofGarden(b,world);
+        }
+        static Vector2[] NeonFootprint(float width,float depth,float inset)
+        {
+            float x=width*.5f,z=depth*.5f,c=Mathf.Min(width,depth)*inset;
+            return new[]{new Vector2(-x+c,-z),new Vector2(x-c,-z),new Vector2(x,-z+c),new Vector2(x,z-c),new Vector2(x-c,z),new Vector2(-x+c,z),new Vector2(-x,z-c),new Vector2(-x,-z+c)};
+        }
+        static float NeonSetback(float t,int identity)
+        {
+            float shoulder=identity==0?.69f:identity==1?.77f:.62f;
+            if(t<.065f)return Mathf.Lerp(1.10f,1,t/.065f);
+            if(t<shoulder)return 1;
+            if(t<shoulder+.045f)return Mathf.Lerp(1,.81f,(t-shoulder)/.045f);
+            if(t<.925f)return .81f;
+            return Mathf.Lerp(.81f,.73f,(t-.925f)/.075f);
+        }
+        static Color NeonWindow(int world,int tower,int floor,int bay)
+        {
+            int seed=world*613+tower*157+(floor/2)*71+bay*29;
+            if(Hash(seed)<.74f)return Glass(world);
+            var colour=(bay+floor+tower)%5==0?SkyPulseRouteArchitecture.Secondary(world%12):Light(world);
+            colour=Color.Lerp(colour,new Color(.78f,.90f,1),.16f);colour.a=.48f;return colour;
+        }
+        static void NeonTower(SkyPulseMeshBuilder b,Vector3 at,float width,float depth,float height,int identity,int world)
+        {
+            CapturePart("Building",b,true);
+            int floors=Mathf.Max(8,Mathf.CeilToInt(height/.31f));var shell=Shell(world);
+            // Broad flat walls and true chamfered corners are deliberately
+            // different from a stack of rounded tapering floor plates.
+            for(int floor=0;floor<floors;floor++)
+            {
+                float t=floor/(float)floors,u=(floor+1f)/floors;
+                var low=NeonFootprint(width*NeonSetback(t,identity),depth*NeonSetback(t,identity),.095f);
+                var high=NeonFootprint(width*NeonSetback(u,identity),depth*NeonSetback(u,identity),.095f);
+                for(int side=0;side<8;side++)
+                {
+                    int next=(side+1)%8;var p=at+new Vector3(low[side].x,t*height,low[side].y);var q=at+new Vector3(low[next].x,t*height,low[next].y);
+                    var rr=at+new Vector3(high[next].x,u*height,high[next].y);var ss=at+new Vector3(high[side].x,u*height,high[side].y);
+                    var normal=Vector3.Cross((ss-p).normalized,(q-p).normalized).normalized;
+                    if((side==0||side==2||side==6)&&floor>0&&floor<floors-1)
+                    {
+                        int bays=side==0?3:2;
+                        for(int bay=0;bay<bays;bay++)
+                        {
+                            float a=bay/(float)bays,c=(bay+1f)/bays;
+                            WindowBay(b,Vector3.zero,Vector3.Lerp(p,q,a),Vector3.Lerp(p,q,c),Vector3.Lerp(ss,rr,c),Vector3.Lerp(ss,rr,a),normal,normal,shell,NeonWindow(world,identity,floor,bay+side*3));
+                        }
+                    }
+                    else b.SmoothQuad(p,q,rr,ss,normal,normal,side%2==1?Color.Lerp(shell,Edge,.23f):shell);
+                }
+            }
+            // Construction reveals at each setback, not ornamental discs.
+            float shoulder=identity==0?.69f:identity==1?.77f:.62f;
+            foreach(float tier in new[]{.065f,shoulder+.023f,.94f})
+            {
+                float scale=NeonSetback(tier,identity);
+                RoundedSlab(b,at+Vector3.up*(tier*height),width*scale*1.035f,depth*scale*1.035f,.042f,Frame);
+            }
+            // Two projecting facade fins and a narrow recessed service light
+            // establish large readable lines between the actual window bays.
+            for(int side=-1;side<=1;side+=2)
+            {
+                float x=side*width*.42f,z=-depth*.505f;
+                Beam(b,at+new Vector3(x,.16f,z),at+new Vector3(x,height*shoulder,z),.030f,.045f,Color.Lerp(shell,Edge,.42f));
+                var colour=side<0?Light(world):SkyPulseRouteArchitecture.Secondary(world%12);colour.a=1;
+                Beam(b,at+new Vector3(x+side*.018f,.65f,z-.020f),at+new Vector3(x+side*.018f,height*shoulder-.055f,z-.020f),.009f,.010f,colour);
+            }
+            float roofWidth=width*.73f,roofDepth=depth*.73f;var roof=at+Vector3.up*height;
+            RoundedSlab(b,roof,roofWidth*1.025f,roofDepth*1.025f,.055f,shell);
+            // Solid penthouse, service louvres and a supported cantilever roof
+            // replace the repeated triangular wire-frame crown.
+            RoundedSlab(b,roof+new Vector3(-roofWidth*.10f,.13f,roofDepth*.08f),roofWidth*.55f,roofDepth*.52f,.23f,Frame);
+            RoundedSlab(b,roof+new Vector3(0,.26f,-roofDepth*.04f),roofWidth*.97f,roofDepth*.85f,.040f,Color.Lerp(shell,Edge,.22f));
+            for(int slat=0;slat<3;slat++)Beam(b,roof+new Vector3(-roofWidth*.28f,.13f+(slat-1)*.040f,-roofDepth*.19f),roof+new Vector3(roofWidth*.10f,.13f+(slat-1)*.040f,-roofDepth*.19f),.018f,.012f,Shadow);
+            Beam(b,roof+new Vector3(-roofWidth*.45f,.253f,-roofDepth*.44f),roof+new Vector3(roofWidth*.45f,.253f,-roofDepth*.44f),.010f,.010f,Light(world));
+            if(identity==0)
+            {
+                var mast=roof+new Vector3(roofWidth*.25f,.13f,roofDepth*.20f);
+                Beam(b,mast,mast+Vector3.up*.42f,.025f,.025f,Edge);
+                Beam(b,mast+Vector3.up*.39f,mast+Vector3.up*.44f,.033f,.033f,Light(world));
+            }
+            RoundedSlab(b,at+Vector3.up*.05f,width*1.09f,depth*1.09f,.10f,Shadow);
+            CapturePart("Building",b,false);
+        }
+        static void NeonCivicPodium(SkyPulseMeshBuilder b,int world)
+        {
+            CapturePart("Building",b,true);
+            var at=new Vector3(-.02f,.29f,-.60f);float width=3.53f,depth=.88f,height=1.06f;
+            var wall=Color.Lerp(Shell(world),Edge,.18f);
+            // A single inhabited podium physically joins all three tower feet.
+            // The podium envelope has a real open-front window wall. Dark
+            // interior beams and deep sill seats sit behind its separate piers;
+            // no black floating plane is used to pretend there is a shadow.
+            Beam(b,at+new Vector3(-width*.50f,height*.49f,depth*.45f),at+new Vector3(width*.50f,height*.49f,depth*.45f),.13f,height*.96f,wall);
+            for(int side=-1;side<=1;side+=2)Beam(b,at+new Vector3(side*width*.485f,height*.49f,-depth*.43f),at+new Vector3(side*width*.485f,height*.49f,depth*.45f),.12f,height*.96f,wall);
+            RoundedSlab(b,at+Vector3.up*.07f,width*1.025f,depth*1.04f,.14f,Frame);
+            RoundedSlab(b,at+Vector3.up*(height-.058f),width*1.015f,depth*.99f,.065f,Color.Lerp(Frame,Shadow,.60f));
+            RoundedSlab(b,at+Vector3.up*(height+.015f),width*1.045f,depth*1.10f,.10f,wall);
+            for(int bay=0;bay<7;bay++)
+            {
+                float left=(bay-3.5f)*width/7,right=(bay-2.5f)*width/7;
+                var lowL=at+new Vector3(left,.10f,-depth*.50f);var lowR=at+new Vector3(right,.10f,-depth*.50f);
+                var highL=at+new Vector3(left,height-.095f,-depth*.50f);var highR=at+new Vector3(right,height-.095f,-depth*.50f);
+                WindowBay(b,Vector3.zero,lowL,lowR,highR,highL,Vector3.back,Vector3.back,wall,NeonWindow(world,3,bay,0));
+                Beam(b,lowL+new Vector3(.022f,.05f,.15f),highL+new Vector3(.022f,-.04f,.15f),.045f,.065f,Color.Lerp(Frame,Shadow,.55f));
+            }
+            // The central arcade has a recessed portal, canopy and steps aligned
+            // to the civic walking surface; every detail has a structural seat.
+            var entry=at+new Vector3(.03f,0,-depth*.50f);
+            RoundedSlab(b,entry+new Vector3(0,.70f,-.17f),.74f,.40f,.065f,wall);
+            for(int side=-1;side<=1;side+=2)Beam(b,entry+new Vector3(side*.29f,.04f,-.24f),entry+new Vector3(side*.29f,.68f,-.24f),.045f,.045f,Edge);
+            for(int step=0;step<3;step++)RoundedSlab(b,entry+new Vector3(0,-.018f-step*.026f,-.14f-step*.10f),.80f+step*.10f,.30f,.044f,Frame);
+            Beam(b,entry+new Vector3(-.33f,.675f,-.36f),entry+new Vector3(.33f,.675f,-.36f),.010f,.012f,Light(world));
+            // Low parapet frames the occupied roof garden without hiding it.
+            Beam(b,at+new Vector3(-width*.48f,height+.18f,-depth*.48f),at+new Vector3(width*.48f,height+.18f,-depth*.48f),.018f,.050f,Glass(world));
+            for(int post=-3;post<=3;post++)Beam(b,at+new Vector3(post*.52f,height+.055f,-depth*.48f),at+new Vector3(post*.52f,height+.23f,-depth*.48f),.016f,.016f,Edge);
+            CapturePart("Building",b,false);
+        }
+        static void NeonRoofGarden(SkyPulseMeshBuilder b,int world)
+        {
+            CapturePart("Garden terrace",b,true);
+            for(int bed=0;bed<3;bed++)
+            {
+                var at=new Vector3(-1.18f+bed*.70f,1.44f,-.66f);
+                RoundedSlab(b,at,.58f,.27f,.11f,Frame);
+                RoundedSlab(b,at+Vector3.up*.055f,.52f,.21f,.015f,new Color(.13f,.24f,.18f,0));
+                for(int leaf=0;leaf<4;leaf++)
+                {
+                    var root=at+new Vector3((leaf-1.5f)*.115f,.065f,0);
+                    Beam(b,root,root+Vector3.up*.15f,.012f,.012f,new Color(.18f,.29f,.20f,0));
+                    for(int side=-1;side<=1;side+=2)
+                    {
+                        var tip=root+new Vector3(side*.070f,.19f,.018f);
+                        b.Face(root+new Vector3(0,.09f,-.028f),tip,root+new Vector3(side*.030f,.10f,.044f),new Color(.19f,.35f,.25f,.20f));
+                    }
+                }
+            }
+            CapturePart("Garden terrace",b,false);
         }
         // Separate low-detail skyline behind the inhabited islands. Reuses the
         // same tower profiles and normals, without drawing full window meshes
@@ -580,6 +735,25 @@ namespace SkyPulse.Mobile
                 Beam(b,p,p+Vector3.up*.18f,.012f,.012f,Edge);Beam(b,p+Vector3.up*.17f,q+Vector3.up*.17f,.012f,.015f,Edge);
                 if(i%4==0)Beam(b,p+Vector3.up*.025f,q+Vector3.up*.025f,.010f,.012f,Light(world));
             }
+            // A second inset surface, perimeter supports and expansion joints
+            // make the district ground read as an occupied civic terrace.
+            RoundedSlab(b,new Vector3(0,.219f,0),rx*1.64f,rz*1.58f,.024f,Color.Lerp(Shell(world),Edge,.24f));
+            for(int bay=0;bay<12;bay++)
+            {
+                float a=-Mathf.PI+.14f+bay*(Mathf.PI-.28f)/12f;
+                var p=Plan(a,rx*1.88f,rz*1.85f);
+                Beam(b,p+Vector3.down*.025f,p+Vector3.up*.19f,.045f,.055f,Shell(world));
+                if(bay%3==1)
+                {
+                    var q=Plan(a+.13f,rx*1.88f,rz*1.85f);
+                    Beam(b,p+Vector3.up*.035f,q+Vector3.up*.035f,.016f,.012f,Light(world));
+                }
+            }
+            for(int joint=-2;joint<=2;joint++)
+            {
+                float x=joint*rx*.29f;
+                Beam(b,new Vector3(x,.234f,-rz*.71f),new Vector3(x,.234f,-rz*.18f),.010f,.003f,Frame);
+            }
             CapturePart("Promenade",b,false);
         }
         static void Dock(SkyPulseMeshBuilder b,int world)
@@ -640,8 +814,41 @@ namespace SkyPulse.Mobile
                 b.SmoothQuad(p,q,v,u,Vector3.up,Vector3.up,stone);
                 b.SmoothQuad(u,v,v-Vector3.up*.035f,u-Vector3.up*.035f,na,nb,stone);
             }
+            FoundationSeats(b,rx,rz,depth,world);
             BeaconStars(b,world);
             CapturePart("Cliff island",b,false);
+        }
+        static void FoundationSeats(SkyPulseMeshBuilder b,float rx,float rz,float depth,int world)
+        {
+            // Retaining piers connect the civic deck to the rock shoulder.
+            // They occupy the gaps between the existing star mountings, with
+            // a restrained material appropriate to stone/ceramic civic plans.
+            Color stone=Shell(world);stone=Color.Lerp(stone,Edge,.20f);stone.a=world==4||world==6||world==8||world==10?.12f:0;
+            for(int pier=0;pier<6;pier++)
+            {
+                float a=-Mathf.PI*.5f-.95f+pier*.38f;
+                var upper=Rock(a,.025f,rx,rz,depth,world);
+                var lower=Rock(a,.23f,rx,rz,depth,world);
+                var normal=RockNormal(a,.13f,rx,rz,depth,world);
+                var cap=upper+normal*.035f;
+                Beam(b,cap,lower+normal*.045f,.095f,.065f,stone);
+                Beam(b,cap+normal*.037f,Vector3.Lerp(upper,lower,.72f)+normal*.082f,.018f,.012f,Frame);
+                var edge=Vector3.Cross(Vector3.up,normal).normalized*.11f;
+                Beam(b,cap-edge,cap+edge,.060f,.045f,Edge);
+            }
+            // Broken rock facets carry visible depth under the promenade.
+            // Existing beacon receivers and their five-source light layout
+            // remain exactly on the original middle band above these shelves.
+            for(int shelf=0;shelf<4;shelf++)
+            {
+                float a=-2.67f+shelf*.60f,c=a+.37f,t=.65f+(shelf%2)*.10f;
+                var p=Rock(a,t,rx,rz,depth,world);var q=Rock(c,t,rx,rz,depth,world);
+                var n=RockNormal(a,t,rx,rz,depth,world);var m=RockNormal(c,t,rx,rz,depth,world);
+                var outerP=p+n*.075f;var outerQ=q+m*.075f;
+                Color mineral=world==10?new Color(.40f,.29f,.20f,.18f):world==6?new Color(.25f,.34f,.28f,.18f):world==1||world==5||world==11?new Color(.35f,.46f,.53f,.18f):new Color(.31f,.28f,.35f,.18f);
+                b.SmoothQuad(p,q,outerQ,outerP,Vector3.up,Vector3.up,mineral);
+                b.SmoothQuad(outerP,outerQ,outerQ-Vector3.up*.07f,outerP-Vector3.up*.07f,n,m,mineral);
+            }
         }
         static void NeonStar(SkyPulseMeshBuilder b,Vector3 at,Vector3 normal,float radius,int world,bool secondary)
         {
@@ -681,7 +888,14 @@ namespace SkyPulse.Mobile
             float shoulder=(1-Mathf.SmoothStep(0,1,(t-.12f)/.12f))*.075f*Mathf.Clamp01(t/.10f);
             float buttress=Mathf.SmoothStep(0,1,(t-.56f)/.32f)*(.14f+.045f*Mathf.Sin(a*3+world*.7f));
             float radius=(1-.58f*Mathf.Pow(t,1.18f)+shoulder+buttress)*(1+.10f*Mathf.Sin(a*5+world)+.055f*Mathf.Sin(a*11+t*4));
-            return new Vector3(Mathf.Cos(a)*rx*radius+.22f*t, -.04f-depth*t+.14f*Mathf.Sin(a*7+world)*t,Mathf.Sin(a)*rz*radius);
+            // Preserve the upper shoulder and every registered LED mounting
+            // point. Below that band, three buttressed rock lobes replace the
+            // broad flat underside: a carved landmass rather than a metal bowl.
+            float lower=Mathf.SmoothStep(0,1,(t-.55f)/.45f);
+            float lobe=.5f+.5f*Mathf.Cos(a*3+world*.39f);
+            radius*=1-lower*(.50f-.18f*lobe*lobe);
+            float bedrock=lower*.18f*(.35f+.65f*lobe*lobe);
+            return new Vector3(Mathf.Cos(a)*rx*radius+.22f*t, -.04f-depth*t+.14f*Mathf.Sin(a*7+world)*t-bedrock,Mathf.Sin(a)*rz*radius);
         }
         static Vector3 RockNormal(float a,float t,float rx,float rz,float depth,int world)
         {
@@ -705,18 +919,33 @@ namespace SkyPulse.Mobile
         static void Skyway(SkyPulseMeshBuilder b,Vector3 from,Vector3 to,float width,int world)
         {
             CapturePart("Sky bridge",b,true);
-            Beam(b,from,to,width,.12f,Frame);Beam(b,from+Vector3.up*.13f,to+Vector3.up*.13f,width*.89f,.16f,Glass(world));
-            var side=Vector3.Cross((to-from).normalized,Vector3.up).normalized*width*.5f;
-            Beam(b,from+side+Vector3.up*.10f,to+side+Vector3.up*.10f,.018f,.018f,Light(world));
-            Beam(b,from-side+Vector3.up*.10f,to-side+Vector3.up*.10f,.025f,.025f,Edge);
-            // Real portal frames divide the bridge glazing into structural bays.
-            for(int i=1;i<4;i++)
+            var axis=(to-from).normalized;var side=Vector3.Cross(axis,Vector3.up).normalized*width*.5f;
+            Beam(b,from,to,width,.12f,Frame);
+            Beam(b,from+Vector3.up*.265f,to+Vector3.up*.265f,width*1.03f,.035f,Shell(world));
+            // A thin roof and individual recessed glazing bays retain an open
+            // interior. Solid portals sit inside the existing end structures;
+            // a continuous opaque glass beam no longer fills the passage.
+            for(int bay=0;bay<4;bay++)
             {
-                var p=Vector3.Lerp(from,to,i*.25f);
-                Beam(b,p-side+Vector3.up*.04f,p-side+Vector3.up*.25f,.016f,.016f,Frame);
-                Beam(b,p+side+Vector3.up*.04f,p+side+Vector3.up*.25f,.016f,.016f,Frame);
-                Beam(b,p-side+Vector3.up*.25f,p+side+Vector3.up*.25f,.018f,.018f,Edge);
+                var a=Vector3.Lerp(from,to,bay*.25f);var c=Vector3.Lerp(from,to,(bay+1f)*.25f);
+                var p=Vector3.Lerp(a,c,.07f);var q=Vector3.Lerp(a,c,.93f);
+                foreach(int face in new[]{-1,1})
+                {
+                    var edge=side*face*.88f;
+                    b.Quad(p+edge+Vector3.up*.055f,q+edge+Vector3.up*.055f,q+edge+Vector3.up*.232f,p+edge+Vector3.up*.232f,Glass(world));
+                }
+                Beam(b,a+side-Vector3.up*.115f,c+side-Vector3.up*.115f,.022f,.025f,Edge);
+                Beam(b,a+side-Vector3.up*.105f,c+side-Vector3.up*.020f,.014f,.014f,Frame);
             }
+            for(int portal=0;portal<=4;portal++)
+            {
+                var p=Vector3.Lerp(from,to,portal*.25f);
+                Beam(b,p-side+Vector3.up*.025f,p-side+Vector3.up*.255f,.020f,.022f,Frame);
+                Beam(b,p+side+Vector3.up*.025f,p+side+Vector3.up*.255f,.020f,.022f,Frame);
+                Beam(b,p-side+Vector3.up*.255f,p+side+Vector3.up*.255f,.022f,.022f,Edge);
+            }
+            Beam(b,from+side+Vector3.up*.04f,to+side+Vector3.up*.04f,.012f,.014f,Light(world));
+            Beam(b,from-side+Vector3.up*.04f,to-side+Vector3.up*.04f,.020f,.020f,Edge);
             CapturePart("Sky bridge",b,false);
         }
         static void SolarWing(SkyPulseMeshBuilder b,Vector3 at,int world,bool distant=false)

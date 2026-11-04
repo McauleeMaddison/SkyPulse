@@ -23,10 +23,12 @@ Shader "SkyPulse/Atmospheric Depth Veil"
                 clip(feather-.001);
                 float2 p=(i.world.xy-_Origin.xy)*float2(.13,.32)+float2(_Clock*.004,0);
                 float billow=noise(p),detail=noise(p*2.03+billow*.5);
-                float body=smoothstep(.24,.80,billow*.70+detail*.30);
-                float3 shadow=max(_Haze.rgb*.9,float3(.045,.065,.11));
-                float3 light=lerp(float3(.28,.38,.49),_Tint.rgb,.33);
-                return float4(lerp(shadow,light,body),feather*(.035+body*.14)*_Visibility);
+                // Sparse lit wisps carry depth without a permanent grey sheet
+                // over the sky and islands. Their gaps stay fully transparent.
+                float body=smoothstep(.43,.83,billow*.70+detail*.30);
+                float3 shadow=max(_Haze.rgb*.32+_Tint.rgb*.012,float3(.014,.025,.055));
+                float3 light=lerp(float3(.14,.22,.34),_Tint.rgb*.38+float3(.055,.075,.11),.36);
+                return float4(lerp(shadow,light,body),feather*body*.085*_Visibility);
             }
             ENDCG
         }

@@ -1,0 +1,291 @@
+{
+  "result": "PASS",
+  "records": [
+    {
+      "decodedDistinctSamples": 3,
+      "decodedHashes": [
+        "ee06354347c35944",
+        "24a15a9482e98706",
+        "4c5ff70793fbdfc6"
+      ],
+      "file": "chrome_raven-gameplay.mp4",
+      "fps": 30,
+      "frames": 90,
+      "height": 1334,
+      "scope": "Actual Unity frames; encoding rate does not measure device FPS.",
+      "seconds": 3,
+      "width": 750
+    },
+    {
+      "decodedDistinctSamples": 3,
+      "decodedHashes": [
+        "61473acb2b172582",
+        "f9cb1b4734fad838",
+        "ada5017738e57cc2"
+      ],
+      "file": "chrome_raven.mp4",
+      "fps": 30,
+      "frames": 60,
+      "height": 768,
+      "scope": "Actual Unity frames; encoding rate does not measure device FPS.",
+      "seconds": 2,
+      "width": 1024
+    },
+    {
+      "decodedDistinctSamples": 3,
+      "decodedHashes": [
+        "543d71106c5a6295",
+        "ba100eb9b3d7cd77",
+        "ec7e7bd8b7da533a"
+      ],
+      "file": "koiwing_glider.mp4",
+      "fps": 30,
+      "frames": 60,
+      "height": 768,
+      "scope": "Actual Unity frames; encoding rate does not measure device FPS.",
+      "seconds": 2,
+      "width": 1024
+    },
+    {
+      "decodedDistinctSamples": 3,
+      "decodedHashes": [
+        "1e27ac3a595304c2",
+        "faf29cf4171d0077",
+        "695942567c1c2e8"
+      ],
+      "file": "newbird01.mp4",
+      "fps": 30,
+      "frames": 60,
+      "height": 768,
+      "scope": "Actual Unity frames; encoding rate does not measure device FPS.",
+      "seconds": 2,
+      "width": 1024
+    },
+    {
+      "decodedDistinctSamples": 3,
+      "decodedHashes": [
+        "5269e55b3c3a310e",
+        "d40f7b1ba9c303de",
+        "47359786bfa50929"
+      ],
+      "file": "newbird02.mp4",
+      "fps": 30,
+      "frames": 60,
+      "height": 768,
+      "scope": "Actual Unity frames; encoding rate does not measure device FPS.",
+      "seconds": 2,
+      "width": 1024
+    },
+    {
+      "decodedDistinctSamples": 3,
+      "decodedHashes": [
+        "3b4131f91bc35260",
+        "12ad88ba4e1da51",
+        "fe87c788f7dfcea4"
+      ],
+      "file": "newbird03.mp4",
+      "fps": 30,
+      "frames": 60,
+      "height": 768,
+      "scope": "Actual Unity frames; encoding rate does not measure device FPS.",
+      "seconds": 2,
+      "width": 1024
+    },
+    {
+      "decodedDistinctSamples": 3,
+      "decodedHashes": [
+        "71f711c62a4fec94",
+        "638560794fa65cc4",
+        "eec3ff251344ffda"
+      ],
+      "file": "newbird04.mp4",
+      "fps": 30,
+      "frames": 60,
+      "height": 768,
+      "scope": "Actual Unity frames; encoding rate does not measure device FPS.",
+      "seconds": 2,
+      "width": 1024
+    },
+    {
+      "decodedDistinctSamples": 3,
+      "decodedHashes": [
+        "7d425fd7f3952cb3",
+        "3caec82acee3a7ad",
+        "20a9a61a6c05fd67"
+      ],
+      "file": "newbird05.mp4",
+      "fps": 30,
+      "frames": 60,
+      "height": 768,
+      "scope": "Actual Unity frames; encoding rate does not measure device FPS.",
+      "seconds": 2,
+      "width": 1024
+    },
+    {
+      "decodedDistinctSamples": 3,
+      "decodedHashes": [
+        "9bf47df47e7b7572",
+        "a85bfbe792423fba",
+        "2c97737ea1e4b0f2"
+      ],
+      "file": "newbird06.mp4",
+      "fps": 30,
+      "frames": 60,
+      "height": 768,
+      "scope": "Actual Unity frames; encoding rate does not measure device FPS.",
+      "seconds": 2,
+      "width": 1024
+    },
+    {
+      "decodedDistinctSamples": 3,
+      "decodedHashes": [
+        "6f8a1fb38e5582be",
+        "f8920cf1a21e6c2a",
+        "8f3cdb50e4a3c6e3"
+      ],
+      "file": "newbird07.mp4",
+      "fps": 30,
+      "frames": 60,
+      "height": 768,
+      "scope": "Actual Unity frames; encoding rate does not measure device FPS.",
+      "seconds": 2,
+      "width": 1024
+    },
+    {
+      "decodedDistinctSamples": 3,
+      "decodedHashes": [
+        "2980bd90d20eece5",
+        "30fe1dd23f9b4d27",
+        "41db3fadf9390ac2"
+      ],
+      "file": "newbird08.mp4",
+      "fps": 30,
+      "frames": 60,
+      "height": 768,
+      "scope": "Actual Unity frames; encoding rate does not measure device FPS.",
+      "seconds": 2,
+      "width": 1024
+    },
+    {
+      "decodedDistinctSamples": 3,
+      "decodedHashes": [
+        "69f1860512b5c7fe",
+        "4d8f24f1fe7c0554",
+        "c4f432b42603d06b"
+      ],
+      "file": "newbird09.mp4",
+      "fps": 30,
+      "frames": 60,
+      "height": 768,
+      "scope": "Actual Unity frames; encoding rate does not measure device FPS.",
+      "seconds": 2,
+      "width": 1024
+    },
+    {
+      "decodedDistinctSamples": 3,
+      "decodedHashes": [
+        "4175a28abc64092",
+        "c998fb785c73b8aa",
+        "b8c8431c6d044c4b"
+      ],
+      "file": "newbird10-gameplay.mp4",
+      "fps": 30,
+      "frames": 90,
+      "height": 1334,
+      "scope": "Actual Unity frames; encoding rate does not measure device FPS.",
+      "seconds": 3,
+      "width": 750
+    },
+    {
+      "decodedDistinctSamples": 3,
+      "decodedHashes": [
+        "eafe7546bfe8293f",
+        "f34ddd604d2f2283",
+        "6f03c70d09d7063b"
+      ],
+      "file": "newbird10.mp4",
+      "fps": 30,
+      "frames": 60,
+      "height": 768,
+      "scope": "Actual Unity frames; encoding rate does not measure device FPS.",
+      "seconds": 2,
+      "width": 1024
+    },
+    {
+      "decodedDistinctSamples": 3,
+      "decodedHashes": [
+        "e229c88bc723cdc6",
+        "4b796e30fea83d69",
+        "3fecb7b01ca3aa5e"
+      ],
+      "file": "prism_hummingbird-gameplay.mp4",
+      "fps": 30,
+      "frames": 90,
+      "height": 1334,
+      "scope": "Actual Unity frames; encoding rate does not measure device FPS.",
+      "seconds": 3,
+      "width": 750
+    },
+    {
+      "decodedDistinctSamples": 3,
+      "decodedHashes": [
+        "2550d50fec503ad2",
+        "2a3ee3ac6517433a",
+        "72a98668f4f6547a"
+      ],
+      "file": "prism_hummingbird.mp4",
+      "fps": 30,
+      "frames": 60,
+      "height": 768,
+      "scope": "Actual Unity frames; encoding rate does not measure device FPS.",
+      "seconds": 2,
+      "width": 1024
+    },
+    {
+      "decodedDistinctSamples": 3,
+      "decodedHashes": [
+        "3cb8771782783aa6",
+        "845a9879c870f1e",
+        "78ad0243d9c1a085"
+      ],
+      "file": "verdant_kite.mp4",
+      "fps": 30,
+      "frames": 60,
+      "height": 768,
+      "scope": "Actual Unity frames; encoding rate does not measure device FPS.",
+      "seconds": 2,
+      "width": 1024
+    },
+    {
+      "decodedDistinctSamples": 3,
+      "decodedHashes": [
+        "a538e69a4c66225",
+        "710f13d9a8f156f9",
+        "76ba851ce900e9e1"
+      ],
+      "file": "Roster-Flight.mp4",
+      "fps": 30,
+      "frames": 60,
+      "height": 2680,
+      "scope": "Actual Unity frames; encoding rate does not measure device FPS.",
+      "seconds": 2,
+      "width": 3200
+    },
+    {
+      "decodedDistinctSamples": 3,
+      "decodedHashes": [
+        "ee06354347c35944",
+        "d9af041a5bcb3bb3",
+        "73d3af4d68dd09cf"
+      ],
+      "file": "Gameplay-Preview.mp4",
+      "fps": 30,
+      "frames": 270,
+      "height": 1334,
+      "scope": "Actual Unity frames; encoding rate does not measure device FPS.",
+      "seconds": 9,
+      "width": 750
+    }
+  ],
+  "scope": "Decoded sample diversity proves recorded motion exists; encoding rate is not a phone FPS measurement."
+}

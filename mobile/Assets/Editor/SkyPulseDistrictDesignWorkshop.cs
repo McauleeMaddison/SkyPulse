@@ -15,11 +15,12 @@ public static class SkyPulseDistrictDesignWorkshop
 {
     public const string BaselinePath=SkyPulseBackgroundWorkshop.Folder+"/district-design-baseline-v1.json";
     const string MeshFolder=SkyPulseBackgroundWorkshop.Folder+"/Meshes/";
+    const int CurrentDesignVersion=3;
     static readonly Type Factory=typeof(SkyPulseNativeGame).Assembly.GetType("SkyPulse.Mobile.SkyPulseWorldArchitecture");
     const BindingFlags Static=BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Static;
     static readonly FieldInfo CaptureField=Factory.GetField("EditorPartCapture",Static);
     [Serializable] public sealed class PartRecord { public string path,name,sha256,installedSha256;public bool generated;public Vector3 pivot; }
-    [Serializable] public sealed class Baseline { public int version=1,designVersion=1;public string sourceCommit="17a8f6de216413ee9af6f2d99a9cbd612ec067a8";public PartRecord[] parts; }
+    [Serializable] public sealed class Baseline { public int version=1,designVersion=1,neonCityRevision;public string sourceCommit="17a8f6de216413ee9af6f2d99a9cbd612ec067a8";public PartRecord[] parts; }
     sealed class Part { public string name;public Mesh mesh;public Vector3 pivot; }
     static int captureDepth,start,piece;static object builder;
     static readonly List<Vector2Int> ranges=new List<Vector2Int>();static readonly List<Part> captured=new List<Part>();
@@ -91,6 +92,47 @@ public static class SkyPulseDistrictDesignWorkshop
     public static void UpgradeInQa(){Guard();Upgrade();}
     public static string ScenePath(int world,int variant)=>SkyPulseBackgroundWorkshop.Folder+"/Scenes/"+(world+1).ToString("00")+" "+Worlds[world]+(variant==0?" Civic":" Residential")+".unity";
     static readonly string[] Worlds={"Neon City","Aurora Rise","Solar Drift","Midnight Tide","Velvet Dawn","Crystal Night","Jade Horizon","Violet Rain","Eclipse","Cobalt Storm","Amber Skies","Polar Glow"};
+    public static void UpgradeNeonCityInQa()
+    {
+        Guard();
+        var baseline=JsonUtility.FromJson<Baseline>(File.ReadAllText(BaselinePath));
+        if(baseline.version!=1)throw new InvalidOperationException("Unsupported source district baseline.");
+        var records=baseline.parts.ToDictionary(p=>p.path);int changed=0,custom=0;
+        for(int variant=0;variant<2;variant++)
+        {
+            var parts=Generate(0,variant);
+            try
+            {
+                if(parts.Length!=8)throw new InvalidOperationException("Neon City must keep all eight original editable part identities.");
+                for(int i=0;i<parts.Length;i++)
+                {
+                    string path=Prefix(0,variant)+"-"+(i+1).ToString("00")+".asset";
+                    if(!records.TryGetValue(path,out var record)||record.name!=parts[i].name||!File.Exists(path)||!MayRefresh(record,Hash(path))){custom++;continue;}
+                    var target=AssetDatabase.LoadAssetAtPath<Mesh>(path);
+                    if(target==null||EditorUtility.IsDirty(target)){custom++;continue;}
+                    var candidate=parts[i].mesh;candidate.name=Path.GetFileNameWithoutExtension(path);
+                    var vertices=candidate.vertices;for(int n=0;n<vertices.Length;n++)vertices[n]-=record.pivot;
+                    candidate.vertices=vertices;candidate.RecalculateBounds();
+                    bool same=target.vertices.SequenceEqual(candidate.vertices)&&target.normals.SequenceEqual(candidate.normals)&&target.colors.SequenceEqual(candidate.colors)&&target.triangles.SequenceEqual(candidate.triangles);
+                    if(same)continue;
+                    EditorUtility.CopySerialized(candidate,target);EditorUtility.SetDirty(target);
+                    target.vertices=target.vertices;target.normals=target.normals;target.colors=target.colors;
+                    for(int sub=0;sub<target.subMeshCount;sub++)target.SetIndices(target.GetIndices(sub),target.GetTopology(sub),sub,false);
+                    target.UploadMeshData(false);AssetDatabase.SaveAssetIfDirty(target);record.installedSha256=Hash(path);changed++;
+                }
+            }
+            finally{foreach(var part in parts)UnityEngine.Object.DestroyImmediate(part.mesh);}
+        }
+        if(changed>0){baseline.neonCityRevision++;File.WriteAllText(BaselinePath,JsonUtility.ToJson(baseline,true));AssetDatabase.ImportAsset(BaselinePath,ImportAssetOptions.ForceUpdate);}
+        for(int variant=0;variant<2;variant++)
+        {
+            string path=ScenePath(0,variant);var scene=UnityEngine.SceneManagement.SceneManager.GetSceneByPath(path);bool opened=!scene.IsValid()||!scene.isLoaded;
+            if(opened)scene=EditorSceneManager.OpenScene(path,OpenSceneMode.Additive);
+            try{var root=scene.GetRootGameObjects().Select(g=>g.GetComponent<SkyPulseBackgroundAuthoring>()).Single(a=>a!=null);SkyPulseBackgroundWorkshop.Bake(root);}
+            finally{if(opened)EditorSceneManager.CloseScene(scene,true);}
+        }
+        Debug.Log("SKYPULSE_NEON_CONNECTED_CITY_CANDIDATE: "+changed+" known-owned parts revised; "+custom+" custom parts preserved. Only Neon City civic/residential bakes touched; scene objects, original pivots and asset GUIDs retained.");
+    }
     static void Upgrade()
     {
         if(!File.Exists(BaselinePath))throw new InvalidOperationException("The guarded original-mesh baseline is required. No district has been changed.");
@@ -107,8 +149,8 @@ public static class SkyPulseDistrictDesignWorkshop
                     if(!index.TryGetValue(path,out var record)||record.name!=parts[i].name||!File.Exists(path)){custom++;continue;}
                     string current=Hash(path);
                     if(!MayRefresh(record,current)){custom++;continue;}
-                    if(baseline.designVersion==2&&record.installedSha256==current){unchanged++;continue;}
-                    var existing=AssetDatabase.LoadAssetAtPath<Mesh>(path);if(existing==null){custom++;continue;}
+                    if(baseline.designVersion>=CurrentDesignVersion&&record.installedSha256==current){unchanged++;continue;}
+                    var existing=AssetDatabase.LoadAssetAtPath<Mesh>(path);if(existing==null||EditorUtility.IsDirty(existing)){custom++;continue;}
                     var replacement=parts[i].mesh;replacement.name=Path.GetFileNameWithoutExtension(path);
                     var vertices=replacement.vertices;for(int v=0;v<vertices.Length;v++)vertices[v]-=record.pivot;
                     replacement.vertices=vertices;replacement.RecalculateBounds();
@@ -118,14 +160,13 @@ public static class SkyPulseDistrictDesignWorkshop
                     // vertex buffer until fresh upload; keep same-process previews honest.
                     existing.vertices=existing.vertices;existing.normals=existing.normals;existing.colors=existing.colors;
                     for(int sub=0;sub<existing.subMeshCount;sub++)existing.SetIndices(existing.GetIndices(sub),existing.GetTopology(sub),sub,false);
-                    existing.UploadMeshData(false);replaced.Add(path);changed++;
+                    existing.UploadMeshData(false);AssetDatabase.SaveAssetIfDirty(existing);replaced.Add(path);changed++;
                 }
             }
             finally{foreach(var part in parts)UnityEngine.Object.DestroyImmediate(part.mesh);}
         }
-        AssetDatabase.SaveAssets();
         foreach(var part in baseline.parts)if(replaced.Contains(part.path))part.installedSha256=Hash(part.path);
-        baseline.designVersion=2;
+        baseline.designVersion=CurrentDesignVersion;
         File.WriteAllText(BaselinePath,JsonUtility.ToJson(baseline,true));AssetDatabase.Refresh();
         for(int world=0;world<12;world++)for(int variant=0;variant<2;variant++)
         {

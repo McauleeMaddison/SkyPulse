@@ -65,6 +65,7 @@ public static class SkyPulseDistrictDesignChecks
         if(!Application.isBatchMode||Application.companyName!="SkyPulseQA20261006")throw new InvalidOperationException("Disposable batch QA project required.");
         try
         {
+            EditorSceneManager.OpenScene("Assets/Scenes/SkyPulse.unity",OpenSceneMode.Single);
             assertions=0;var layouts=Layouts();var guids=Guids();
             var baseline=JsonUtility.FromJson<SkyPulseDistrictDesignWorkshop.Baseline>(File.ReadAllText(SkyPulseDistrictDesignWorkshop.BaselinePath));
             Check(baseline.sourceCommit=="17a8f6de216413ee9af6f2d99a9cbd612ec067a8"&&baseline.parts.Length==216,"Original committed design baseline identifies all 216 authored parts");

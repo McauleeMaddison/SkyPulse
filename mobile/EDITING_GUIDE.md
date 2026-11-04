@@ -28,8 +28,10 @@ test gameplay. Preserve the existing scenes, prefabs, materials, animation and
 
 The Finch remains an isolated prototype. The original
 `Resources/SkyPulse/characters/roster/volt-frame-04-v1.png` is its design blueprint.
-Review the reconstructed round optic, helmet, gold crescent, swept feathers and
-silver shield before converting any other birds. Existing wing/tail animation,
+The owner approved the reconstructed Finch appearance before the remaining
+fourteen roster models were authored. Their colours are approved, but the owner
+rejected the first sculpture pass; Raven has a revised candidate awaiting review before the others.
+Their device integration remains on hold; see the [roster package](Development/BirdRoster20261104/README.md). Existing wing/tail animation,
 bones, scene and prefab remain intact; gameplay retains the original artwork.
 The generator registers source pixels at 100px per Unity unit, with source
 (285,255) at model (0,0). `HeadPixel2` includes the preserved head bind offset.
@@ -58,6 +60,23 @@ it does not overwrite custom mesh/material edits or save unrelated dirty assets.
 Use the saved prefab directly rather than rerunning generation over manual edits.
 [Current eye/exhaust previews](Development/DesignUpgrade20261031/Previews/Finch-Eyes-Jet/Overview.png)
 remain an art-review candidate, separate from the installed game.
+
+## The full 3D bird roster
+
+The [4 November roster package](Development/BirdRoster20261104/README.md) contains
+all individual previews and actual-gameplay captures. The approved Finch is intact.
+The new editable prefabs/scenes are under `Assets/Editor/SkyPulseBirdWorkshop/Roster`.
+Each named folder groups its meshes and finishes into two asset containers.
+
+Use **Tools → SkyPulse → Bird Workshop → 3D roster in actual gameplay** for the
+Editor visual selector in the normal game scene. It changes model appearance only;
+normal flight rules, equipped stats and saves remain in use. This is an Editor
+review feature; it has not changed the installed iPhone build. The source data,
+authoring, Raven-specific revision, preview controller and preview window are
+the named `SkyPulseBirdRoster*` files under `Assets/Editor`. The runtime baker
+is an Editor tool; do not generate or promote unapproved release models.
+`Revise Chrome Raven reference sculpture` only accepts its known first-pass
+asset hashes and preserves saved revised models and all other birds.
 
 ## Where to make a code change
 
@@ -232,8 +251,8 @@ Resources/SkyPulse/characters/bird-silhouette-coverage.json and is reproducible
 with Tools/bake_bird_shapes.swift. Original art, registration and gameplay
 collision dimensions stay intact. Simple bird UI images use the same mesh.
 The original articulated bird artwork is the gameplay appearance. The separate
-Neon Finch workshop is for art review only; its current sculpture/finish acceptance
-hold is described in the opening scene map.
+Neon Finch workshop is separate from gameplay; its appearance is approved.
+The additional fourteen bird sculptures remain under review as described above.
 
 Assets/Editor/SkyPulsePlaySessionGuard.cs ends Editor Play before compilation.
 Wait and press Play again; existing progress loads through ordinary startup.

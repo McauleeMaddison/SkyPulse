@@ -1,13 +1,14 @@
 {
     "version": 1,
-    "designVersion": 2,
+    "designVersion": 3,
+    "neonCityRevision": 1,
     "sourceCommit": "17a8f6de216413ee9af6f2d99a9cbd612ec067a8",
     "parts": [
         {
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-civic-01.asset",
             "name": "Cliff island",
             "sha256": "fef4aa27ae9441910fb87b327aca314b5af73ca3469a2a9519d3e96f7476bd89",
-            "installedSha256": "695091e1089dda64f2cd680a7b418095c1c12a4a5f10d1c3c4436772818ab3af",
+            "installedSha256": "85a8df373a0349e6f399a134a4a2e373260b9969aff9025caa9dbc0ef6dca671",
             "generated": true,
             "pivot": {
                 "x": 0.0,
@@ -19,7 +20,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-civic-02.asset",
             "name": "Promenade",
             "sha256": "080eb083fbcd53a74a9f6c98f9bdb5fa6557bb7c45a857c13b17c5d59ccdc56b",
-            "installedSha256": "93fe2031295cc16d49e4b0dabe5661d268213f45d2538f6a575e6d06e9cb8dae",
+            "installedSha256": "1662ef13f76fde78b4670f5dfef13fa23b0c435d2d682107dea6c96f01b0e53f",
             "generated": true,
             "pivot": {
                 "x": 0.0,
@@ -31,7 +32,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-civic-03.asset",
             "name": "Building",
             "sha256": "9720fec4f6c9e95342c2c02e53d4fa5445cbd94ed06ecab32a1b49e6cbf2faec",
-            "installedSha256": "8ec29890265f783966936333577cb64f75d89977ff12244f4a47416750d48d8f",
+            "installedSha256": "1bafd5bd55a4651122238f16f9d7a34a9e72cc020513f260333ac92dccc41baa",
             "generated": true,
             "pivot": {
                 "x": -0.17069214582443237,
@@ -43,7 +44,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-civic-04.asset",
             "name": "Building",
             "sha256": "a9a28eee352f59121b9a2094a313090d65fc64babc1c042ff1cb66428c7aef41",
-            "installedSha256": "135e362076bda7d62df85fa9d19c1984987415a2eff8ad8c3d19294b35d5ea13",
+            "installedSha256": "8a36d7a1ee070fd284f63d0738e11f43fcac09d7db61c9f6bedf370df4583241",
             "generated": true,
             "pivot": {
                 "x": -1.2000000476837158,
@@ -55,7 +56,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-civic-05.asset",
             "name": "Building",
             "sha256": "038b29ea69f6d1fe9199991b891ac23d11377233130f09a479c7eb70f873e240",
-            "installedSha256": "2185beab0b21c627852259409eadd78f10e0fa7703a2cf662a8b585db885d4c3",
+            "installedSha256": "cf0961c4cd98b846fd0c5a733c4b81dfd329b3ffa87b834f35295208621d5c0e",
             "generated": true,
             "pivot": {
                 "x": 1.1000001430511475,
@@ -67,7 +68,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-civic-06.asset",
             "name": "Building",
             "sha256": "8bc7291982b2aa40d8a8919d99a1873fea65fbfb09b4fb50592ab00510d76dcb",
-            "installedSha256": "2e653d3bfb2ddd795b03ca9bc7b2a2b498546093744fdc95d6408e5b0f139efd",
+            "installedSha256": "58b0cc702df960b00d6ef8949ac226dc40ac5e4f3b20c8f9251831cb92e60a5a",
             "generated": true,
             "pivot": {
                 "x": 0.5999999642372131,
@@ -79,7 +80,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-civic-07.asset",
             "name": "Sky bridge",
             "sha256": "ef5940fb97e8a74e061c064720870f5da3288c834fd5a4bd93efe6f5df92f31e",
-            "installedSha256": "ef5940fb97e8a74e061c064720870f5da3288c834fd5a4bd93efe6f5df92f31e",
+            "installedSha256": "567cef8190cb4400b46c5eeaef60c252d86064a280a9d65c044f3074578cac2d",
             "generated": true,
             "pivot": {
                 "x": -0.09500002861022949,
@@ -91,7 +92,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-civic-08.asset",
             "name": "Garden terrace",
             "sha256": "575c1570fd2cfd6ff26b55f73b73b84e21bc4dd138376bcf7d7ae9e693a7b4c6",
-            "installedSha256": "575c1570fd2cfd6ff26b55f73b73b84e21bc4dd138376bcf7d7ae9e693a7b4c6",
+            "installedSha256": "32291396904e7a3dda15bed16fcc6c9ce95146ad04ded02b4ffaa82e4ebaac33",
             "generated": true,
             "pivot": {
                 "x": -0.949999988079071,
@@ -103,7 +104,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-residential-01.asset",
             "name": "Cliff island",
             "sha256": "3a8fdfd66d412b70f67fdeed4d3d7b7b029064688d76b8dc7251f587fecb89da",
-            "installedSha256": "478732aa23bc9ae61d3df50c549fbdda61385165e103ee34a8a8146d4d933fe7",
+            "installedSha256": "3c9cdb33bdace6ee0b2eff4cf96fa0176209750b8c3f781c6a1b70d77ff1b547",
             "generated": true,
             "pivot": {
                 "x": 0.0,
@@ -115,7 +116,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-residential-02.asset",
             "name": "Promenade",
             "sha256": "58be23f0a9fa43ee6a504d2f487b25d0c054d4c09ae3255d11a9d688293fb360",
-            "installedSha256": "1bf6c221a185af14370b3785c2918f532a36dbd7bf067faae3d1a351d4f1fe85",
+            "installedSha256": "a762652254f1172d6428c158281a9ba45452c98f342d98067f62a70fa551cd37",
             "generated": true,
             "pivot": {
                 "x": 0.0,
@@ -127,7 +128,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-residential-03.asset",
             "name": "Building",
             "sha256": "55416bef597114c9a2f9475a8c136300dac7462d9ad9fbebaacd8fc37fff258b",
-            "installedSha256": "1ea8a6f6a2349a2465a03302ed6c7c89f935e1e2e0b7b4bc53bf7286a143b83a",
+            "installedSha256": "9e6832abc19c618025892296aa305d0f9f08a9c934da874b5df9fc6af3a5307c",
             "generated": true,
             "pivot": {
                 "x": -0.2561640739440918,
@@ -139,7 +140,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-residential-04.asset",
             "name": "Building",
             "sha256": "297ff3182b4b6e4dca6de50eeb1cedb549f3b3a3ceed86e7b689e0521175b8ce",
-            "installedSha256": "99f13ec48ab88285d878d82f7f53e74825c29f309ed35aaf86e17e5399784a0b",
+            "installedSha256": "41790244c4514765959e79e7b85418edc27b06ba4ba3dfcd80755788d0fc67d6",
             "generated": true,
             "pivot": {
                 "x": -1.278592586517334,
@@ -151,7 +152,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-residential-05.asset",
             "name": "Building",
             "sha256": "7c082f5bc22dabe8206a82dbbe745287124966c92837c83d26c7beb5deb98d89",
-            "installedSha256": "8c54503bc062cdca05b19d1e32f82483d9ea915992f53116cdb1873e1bc45886",
+            "installedSha256": "ba08325bc8064439eeb32366c489339fd715c5660ab131d2c4929334005e6dc4",
             "generated": true,
             "pivot": {
                 "x": 1.1063945293426514,
@@ -163,7 +164,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-residential-06.asset",
             "name": "Building",
             "sha256": "42f1412c7aac77db6cfeb23db102977d90f32ae5e080aad5adec6919a280e770",
-            "installedSha256": "b4325c1b447875bc1be62edf3257d2d6b38df7e9cbe5dcabba18613b18926dc2",
+            "installedSha256": "4dcae804f659a20e383e2ebbe8459fa860fc15b0ac4a27fde108d267ca17ab61",
             "generated": true,
             "pivot": {
                 "x": 0.650181233882904,
@@ -175,7 +176,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-residential-07.asset",
             "name": "Sky bridge",
             "sha256": "3683c6c522de62c52067f24766754b383883fe87142ddda469be8919f4bc34c6",
-            "installedSha256": "3683c6c522de62c52067f24766754b383883fe87142ddda469be8919f4bc34c6",
+            "installedSha256": "bf6dd919b5a3a0c76a03cd2e3d1d2e4a42c5b856eb030dc8647b2c573f647943",
             "generated": true,
             "pivot": {
                 "x": -0.09500002861022949,
@@ -187,7 +188,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-residential-08.asset",
             "name": "Garden terrace",
             "sha256": "305ca6b983a05345fa8c0917deb08e55bc6bb9d53e85826ea242acca72f6c7b4",
-            "installedSha256": "305ca6b983a05345fa8c0917deb08e55bc6bb9d53e85826ea242acca72f6c7b4",
+            "installedSha256": "ac53b213017510aff4c3d6739d1751471c99e739d3d8b9ae174982723fc11514",
             "generated": true,
             "pivot": {
                 "x": -0.949999988079071,
@@ -199,7 +200,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-01-civic-01.asset",
             "name": "Cliff island",
             "sha256": "ebf5250cf8700a17d257bc5cf983d8c625d3ce4726e56fe00dc6e12f5a852c48",
-            "installedSha256": "2383b922f9ae1188a7307fb2c7e1f38cb06d50d5fc4b2083cd1a77cc0be2ae77",
+            "installedSha256": "b0b3b2b1508233a1c8cda9ae0db0704fd3d7ac639bfc5f97063d719e98f6d4bc",
             "generated": true,
             "pivot": {
                 "x": 0.11985087394714355,
@@ -211,7 +212,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-01-civic-02.asset",
             "name": "Promenade",
             "sha256": "0e60058e847de0bcb85a04bb5246175ce26574d53cce7b893b090d68129f9f2d",
-            "installedSha256": "f067c4e937cc70ce31ae71c6394afb53a595098f02f6125177e5353b6ebe5b31",
+            "installedSha256": "49475c25bfd2f6df1914eea08c4cc6ff1fa4e2434aec5dd2fc0830860c8b3428",
             "generated": true,
             "pivot": {
                 "x": 0.0,
@@ -247,7 +248,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-01-civic-05.asset",
             "name": "Sky bridge",
             "sha256": "db866f9143e812efaa253f8e54dd3d21a08470abd8106dd442ad44309a3b9f9d",
-            "installedSha256": "db866f9143e812efaa253f8e54dd3d21a08470abd8106dd442ad44309a3b9f9d",
+            "installedSha256": "63d23acff95ef7a581d0739e43bda303f2736c9bf9f2fc6e3712c4e13ba89b8c",
             "generated": true,
             "pivot": {
                 "x": -0.06000000238418579,
@@ -283,7 +284,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-01-residential-01.asset",
             "name": "Cliff island",
             "sha256": "107a38eb95119c53c86897c2108778731987f43cfbd34eb96baca6dd28638c75",
-            "installedSha256": "f388b9ab0511463d021e2ee7bc33eef8edfff4b52cd791aee0276d6f962bd263",
+            "installedSha256": "9603166763a739f362c055aa01be557feaf8c81544d3183b11325f91590d1811",
             "generated": true,
             "pivot": {
                 "x": 0.11985087394714355,
@@ -295,7 +296,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-01-residential-02.asset",
             "name": "Promenade",
             "sha256": "0058044548dfa842280cef8aee51ff61bec5026a0ecf781b7a8fdcdd343e3b3d",
-            "installedSha256": "2d8c8373997078636689780f14b7609dfdf8f0dd7e4f83d5536e468e8e16a22f",
+            "installedSha256": "da5adf8ae628709110b88374d5f58106ac2dc90839c120ab3619de5cd36a0f4e",
             "generated": true,
             "pivot": {
                 "x": 0.0,
@@ -331,7 +332,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-01-residential-05.asset",
             "name": "Sky bridge",
             "sha256": "27a8a985143f498abc40e4adb8c52adb606522ba874a436826cc144ace989a78",
-            "installedSha256": "27a8a985143f498abc40e4adb8c52adb606522ba874a436826cc144ace989a78",
+            "installedSha256": "b54845cd64cd5a658c30737510b95cb60067b992669c47324f06d8c165d8f15a",
             "generated": true,
             "pivot": {
                 "x": -0.06000000238418579,
@@ -367,7 +368,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-02-civic-01.asset",
             "name": "Station foundation",
             "sha256": "8b3fdc097a1617f594a7b517b44c1f74cde71746ebc02ab2b55d417b7f6ea3fb",
-            "installedSha256": "abc95831b6dc39f146c498210817d54b74e3a0ecfeb3a4caacda264cc4b2aeaa",
+            "installedSha256": "ab4309c9bc42b24b2e8ca685dab2ece22e917a5534301fe5f5b06ae3cb65c863",
             "generated": true,
             "pivot": {
                 "x": 0.0,
@@ -415,7 +416,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-02-civic-05.asset",
             "name": "Sky bridge",
             "sha256": "ba046efbe58715d3b96e0d211e3d6111218d394055d282f57b2923a1ea87513d",
-            "installedSha256": "ba046efbe58715d3b96e0d211e3d6111218d394055d282f57b2923a1ea87513d",
+            "installedSha256": "69ad51f4eb38e9c532ff3425f8b642e8b00118396fea6561568a5399023015e7",
             "generated": true,
             "pivot": {
                 "x": -1.1800000667572021,
@@ -439,7 +440,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-02-civic-07.asset",
             "name": "Sky bridge",
             "sha256": "3cb00147c91b055ff06d113787aa7cd4a21ee091486f04398d40989373a59d8f",
-            "installedSha256": "3cb00147c91b055ff06d113787aa7cd4a21ee091486f04398d40989373a59d8f",
+            "installedSha256": "90cc9cd5fd8e5b0caff2d3f35e597c042c7c13c8de91d17306bf050188a40299",
             "generated": true,
             "pivot": {
                 "x": 1.1800000667572021,
@@ -463,7 +464,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-02-residential-01.asset",
             "name": "Station foundation",
             "sha256": "b8bb1a04206b51767bf4d9fbded5c3b6c7c7a935ca8b6206869263e9626b5022",
-            "installedSha256": "464c6e52eb7cb89cc5d84b1c95d585df5dd56fb36ba75ee5eeb8dce3f8589b0a",
+            "installedSha256": "2cb071083edb9cefa11ad3285e13b705f11508dbe1804ac355c586868806335c",
             "generated": true,
             "pivot": {
                 "x": 0.0,
@@ -511,7 +512,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-02-residential-05.asset",
             "name": "Sky bridge",
             "sha256": "50ea4f16b8c5af04401260c908c317ca770f59b1e30c1b3bba1242cbffd63097",
-            "installedSha256": "50ea4f16b8c5af04401260c908c317ca770f59b1e30c1b3bba1242cbffd63097",
+            "installedSha256": "2cf7b8ebe11bdaa70603ff0125ad64ffc563ea68402348ce91998dfe53ea94d9",
             "generated": true,
             "pivot": {
                 "x": -1.1800000667572021,
@@ -535,7 +536,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-02-residential-07.asset",
             "name": "Sky bridge",
             "sha256": "e2e4173a05a738fbf3c94ae34a8e81d6f90edddde2122a9fadd76100f89613df",
-            "installedSha256": "e2e4173a05a738fbf3c94ae34a8e81d6f90edddde2122a9fadd76100f89613df",
+            "installedSha256": "b2c1b08b2d844ab0f0fe9198979075ae1242b976086be74d894c2a2245e92e00",
             "generated": true,
             "pivot": {
                 "x": 1.1800000667572021,
@@ -571,7 +572,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-03-civic-02.asset",
             "name": "Promenade",
             "sha256": "7074872f881c4a6978efef1922650c0a0b39b9f033782c3089c73bc75bdf4c1f",
-            "installedSha256": "6cfa93828ed21046ceba316eb752264cba1b220a31b235c228a6b3994a30e5c7",
+            "installedSha256": "39c3ba92a8a7bf4a9739da417f66cec63d6cfd07d7fe0da2afdc7787563d253f",
             "generated": true,
             "pivot": {
                 "x": 0.0,
@@ -655,7 +656,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-03-residential-02.asset",
             "name": "Promenade",
             "sha256": "24f0759bfa11e35a835441bdd9699ce860cd81fe879d6f58e8e99d5d8940ae18",
-            "installedSha256": "50ce8c46efa8c9045b8c9f68aae115521fd7c5b51d566d9bedb148ae012e94dd",
+            "installedSha256": "1a341e564f01a2a0ac2706d9c193363c59730d592536cb21178d1fedb6c1ec29",
             "generated": true,
             "pivot": {
                 "x": 0.0,
@@ -727,7 +728,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-04-civic-01.asset",
             "name": "Cliff island",
             "sha256": "67702bb2236c579ef8b4240ea0d8d752ae37f859c9de14274d0fe5ef3b008e9e",
-            "installedSha256": "b4631eaef6a51ce647e10c01b41b6a4f9355425a432700a8a29d958803ae3280",
+            "installedSha256": "9d7443c42c953909854c5fb899fb86e4908bb7f7129589702404b9e325900a56",
             "generated": true,
             "pivot": {
                 "x": -0.03516507148742676,
@@ -739,7 +740,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-04-civic-02.asset",
             "name": "Promenade",
             "sha256": "5c9cef7fd67f9bead3084a59b7a02f9ceb8d4d2a024470408dd4c1409d42bcc6",
-            "installedSha256": "5e1e9f509fff25fb1d4a7296cddc86ab44d5cc96b6c416537ae3a4b9bede66ba",
+            "installedSha256": "e1ba753511fb676b33c61778c342bb1192c5f6368adf3e3e2227b048260f1a4f",
             "generated": true,
             "pivot": {
                 "x": 0.0,
@@ -811,7 +812,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-04-civic-08.asset",
             "name": "Sky bridge",
             "sha256": "e31c3e756aacc7ff0ef7d17f4cecd316acc4c3abee3fad29b8574c50c5390ece",
-            "installedSha256": "e31c3e756aacc7ff0ef7d17f4cecd316acc4c3abee3fad29b8574c50c5390ece",
+            "installedSha256": "8434ec8c02ef14d6a624480e6ad374f83dabb01201b22b1dfefc868951d69cf6",
             "generated": true,
             "pivot": {
                 "x": -0.009999990463256836,
@@ -847,7 +848,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-04-residential-01.asset",
             "name": "Cliff island",
             "sha256": "1647db7896f546175789bcbbf2896e53e661243c400758937fd576703ea0d58d",
-            "installedSha256": "0ef425f828896afbb7623281b13602050fed83d7757c3772784d52e998196255",
+            "installedSha256": "11e5472edc3d8161eb4613f74b42c0ea8ce9723a04c6eaef08f0a4ca52caf345",
             "generated": true,
             "pivot": {
                 "x": -0.03516507148742676,
@@ -859,7 +860,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-04-residential-02.asset",
             "name": "Promenade",
             "sha256": "a6dcb67a1e382d7f1436d2acec3a1f1c991555382998ab687e804edc9d4dadc6",
-            "installedSha256": "c4cdd35343730661bf99141ba014b8b659c7e17370b2826d4fcaf21bfc944a10",
+            "installedSha256": "d19ee1c4f5aca58ce57ebc21e534bf5ff6de01045dd792581fc2a8bcab0202ab",
             "generated": true,
             "pivot": {
                 "x": 0.0,
@@ -931,7 +932,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-04-residential-08.asset",
             "name": "Sky bridge",
             "sha256": "e885ebae4866c0af46cf6bd91a1476f9ff3c0b97cdc3e75e17506fc1eaf25f9c",
-            "installedSha256": "e885ebae4866c0af46cf6bd91a1476f9ff3c0b97cdc3e75e17506fc1eaf25f9c",
+            "installedSha256": "1c6f0b5aaf7febb45d1a5d08cc9c6b8f5b88f030d5246bfb6d6e4c28215f77f9",
             "generated": true,
             "pivot": {
                 "x": -0.009999990463256836,
@@ -967,7 +968,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-05-civic-01.asset",
             "name": "Cliff island",
             "sha256": "2dd3fd66623dc757d7685b5de4f10ddc8d651967b710c29023a3c7e76c6ce40f",
-            "installedSha256": "6224b3b5c28857ce0b18426e084ab8dfcf775f767ada4883d3aac1a1b21441df",
+            "installedSha256": "500c1ed3dc150a91b398e211a4e384b4f92c3ee00ce62a1df69a97a4686f53ce",
             "generated": true,
             "pivot": {
                 "x": -0.1444706916809082,
@@ -979,7 +980,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-05-civic-02.asset",
             "name": "Promenade",
             "sha256": "49ce5ca6a1faf743da011388028e3fbf7f185666ad8d669d65404148cac89127",
-            "installedSha256": "cd0773cf59b5f1deab636b15f64d823805f025d50ecb23347f98fa7ca4403161",
+            "installedSha256": "d5d7ec5769ebb8ad264b5ad23e95dbb2726802a40ea57bd2978a70bba8bf1c4e",
             "generated": true,
             "pivot": {
                 "x": 0.0,
@@ -1039,7 +1040,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-05-residential-01.asset",
             "name": "Cliff island",
             "sha256": "8d2949a09cd5c10a4927da90342a2684d4208f4298875f19e88e7ef12f69634d",
-            "installedSha256": "c855f2a976571999c88f10435e80b069d61ad07c2eac0ce0ee3048f7014e2853",
+            "installedSha256": "7dd2934c34b321513b200a0ba3114c0dd3ac21b82648b8966281c648b2c7395b",
             "generated": true,
             "pivot": {
                 "x": -0.1444706916809082,
@@ -1051,7 +1052,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-05-residential-02.asset",
             "name": "Promenade",
             "sha256": "cd2350669fd7bacba2066c48bb6a003b01cc34a896afdd0d4c8558bcdf4287c3",
-            "installedSha256": "e098ef9d171679614904ff88967c4306e4843d6b9f68152c3bcea3ddc00f3999",
+            "installedSha256": "6bab750493585e4169168203930409b93bf836f026736b7a366c85f8881ffcb4",
             "generated": true,
             "pivot": {
                 "x": 0.0,
@@ -1111,7 +1112,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-06-civic-01.asset",
             "name": "Cliff island",
             "sha256": "b50b65e7932b9a7de6705de65082d2d540c62026d8f494fc653230c1cb1d5d65",
-            "installedSha256": "23f22276599063a72817dee56e276df988ec8d5921b1b5922485d4d7243edf3d",
+            "installedSha256": "3803ffa059c6b6828e77a87e21f358f06c35d10fa918ce17406795a2a3e96d64",
             "generated": true,
             "pivot": {
                 "x": -0.042450666427612305,
@@ -1123,7 +1124,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-06-civic-02.asset",
             "name": "Promenade",
             "sha256": "b2ad4ce5197368380374ab2405c4aa9df33365a39fe73af0c14d208ed2d4898c",
-            "installedSha256": "1472aba85ab9a1f151b8e84f5d9247ebe1704f8884be5b7480c577ff5e19ac1d",
+            "installedSha256": "fd57de920ad8646b163bc56dadb6a3806d5aa5e8c88d12f2a568c6e1052a4104",
             "generated": true,
             "pivot": {
                 "x": 0.0,
@@ -1291,7 +1292,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-06-residential-01.asset",
             "name": "Cliff island",
             "sha256": "3811f6e19326b57f3d439785332f14060df20c9f6b7218a1fc81c23ad12d88a6",
-            "installedSha256": "a86c2246d1626fb392cd36015af2fcf8cdc248ba6d2a4e8e2df6abc64fcdd8fa",
+            "installedSha256": "4677a926d29f1d9132c6c9a571231e50cf55b7e23cc0d2bfdbb236b00ed0a985",
             "generated": true,
             "pivot": {
                 "x": -0.042450666427612305,
@@ -1303,7 +1304,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-06-residential-02.asset",
             "name": "Promenade",
             "sha256": "f2be60be2c3bb3d768d6b55c628d6bc6ef529cb7dd2c36aaf23214b938adcbf9",
-            "installedSha256": "9bf1dd4981c0fa3c289984bad7d287fca5dfc5f7b4322fbefd466619891ee12c",
+            "installedSha256": "722b04762f3292107aaabfecac296dd6d2392691933ffbc7ab2d198133466278",
             "generated": true,
             "pivot": {
                 "x": 0.0,
@@ -1471,7 +1472,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-07-civic-01.asset",
             "name": "Station foundation",
             "sha256": "5a1fd981f1ece8f84f7018acae4e3e13751d8e6c7c81eddf709c9eb18af8abfc",
-            "installedSha256": "97c0baa51ecf2d2fe4496d0205fb5613ef2b845277a99588ac9b97bb425574d0",
+            "installedSha256": "07e9fe47e861d034771d5470185cc16bdbd931966b7866f4d08155e7897df44c",
             "generated": true,
             "pivot": {
                 "x": 0.0,
@@ -1519,7 +1520,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-07-civic-05.asset",
             "name": "Sky bridge",
             "sha256": "e116a9302013fe91da11dedfcbeaf5869931b16160de162e97493405dd3b27bc",
-            "installedSha256": "e116a9302013fe91da11dedfcbeaf5869931b16160de162e97493405dd3b27bc",
+            "installedSha256": "9830cf58be8deaae426711814f89e3add86450eab2ca982cf819bf452d44dabb",
             "generated": true,
             "pivot": {
                 "x": 0.22499990463256836,
@@ -1531,7 +1532,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-07-civic-06.asset",
             "name": "Sky bridge",
             "sha256": "cb854a98ff611d115c7e1ed07ab0325ac316b9bc380ac680d3c65702d6a8c29d",
-            "installedSha256": "cb854a98ff611d115c7e1ed07ab0325ac316b9bc380ac680d3c65702d6a8c29d",
+            "installedSha256": "4e6b7004a626a2d0042458f7a93abb1e2d5efe77ce0f1619f56e6d09e61f7694",
             "generated": true,
             "pivot": {
                 "x": -0.4100000262260437,
@@ -1555,7 +1556,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-07-residential-01.asset",
             "name": "Station foundation",
             "sha256": "f63414cb032782e235300788ed59e2c46d16f45e6a268f842179ac8e80b8a8f6",
-            "installedSha256": "299016f0da3154b7e841f0ecbbf4506d5ba5d29ba99c917e854bbe32f0e81830",
+            "installedSha256": "9baf9ca7bf1a702924b856a66095edd2028bae6d260d05eb07e2277413782894",
             "generated": true,
             "pivot": {
                 "x": 0.0,
@@ -1603,7 +1604,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-07-residential-05.asset",
             "name": "Sky bridge",
             "sha256": "548af4b3ea2d03e3af193d2422db8627279dbec83fd141371385ab2b654888da",
-            "installedSha256": "548af4b3ea2d03e3af193d2422db8627279dbec83fd141371385ab2b654888da",
+            "installedSha256": "25875b8e65dbc6b14fc1cfab130f3d07f31a55823aa70d73654c9648853ed319",
             "generated": true,
             "pivot": {
                 "x": 0.22499990463256836,
@@ -1615,7 +1616,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-07-residential-06.asset",
             "name": "Sky bridge",
             "sha256": "2ce77811a575374d00d053abc3f193042df9cece078b37afa9f46a52830e48b8",
-            "installedSha256": "2ce77811a575374d00d053abc3f193042df9cece078b37afa9f46a52830e48b8",
+            "installedSha256": "73e30c8cba93eccdb7bbf34f48a66e1d61021ecda2ee1a026a03e12d770dfa3a",
             "generated": true,
             "pivot": {
                 "x": -0.4100000262260437,
@@ -1639,7 +1640,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-08-civic-01.asset",
             "name": "Cliff island",
             "sha256": "27552887f936989eefbeba97d05bbf7666b35fcad45734b38537cd23eb35c855",
-            "installedSha256": "cfd99a62ca8ed6de93dbcfcef625afacd9c8a46e1832ba9eb111625ba60d4365",
+            "installedSha256": "a9b50bd6142d90ad447d4062e375fa145f28284602591d654e57626a9da39fbe",
             "generated": true,
             "pivot": {
                 "x": 0.11328577995300293,
@@ -1651,7 +1652,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-08-civic-02.asset",
             "name": "Promenade",
             "sha256": "4dcec872f138f83a5ef9669baf03b29a7bd52d75a310561f7955232b8e4dc420",
-            "installedSha256": "37d19428cd491e1faa009c88e423647e0aa5836c922e38c47efd06d24e0dc69d",
+            "installedSha256": "054564767419a567af473df81e73ef13e89905d78ad4b712c06fbc05466aca4a",
             "generated": true,
             "pivot": {
                 "x": 0.0,
@@ -1735,7 +1736,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-08-residential-01.asset",
             "name": "Cliff island",
             "sha256": "62b2bc7071be8f6167ee5c02ea3db07f5757cbe6f49694e0c373eb6822ae579d",
-            "installedSha256": "f62bfcc8bdd4cf11509b0f09233bafd55f3b5eb3baf2f2a4ac553820669029cf",
+            "installedSha256": "ea911e44d2d2f048711d6c7afc9f620992e7d2f7c5d0f7af1a99e3bc078af381",
             "generated": true,
             "pivot": {
                 "x": 0.11328577995300293,
@@ -1747,7 +1748,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-08-residential-02.asset",
             "name": "Promenade",
             "sha256": "2dea12f4d16e0e59825dd51229ffe502c5d6d47dcc299744a6ce49d6a774075a",
-            "installedSha256": "fbbff50f5a8d9ca4af3de3f5b5ff1409d3acc20ccf12c918d8ab0e25bf055461",
+            "installedSha256": "21d839b7bf40a015bf5b4c0bd0db809110ade9667e4f87c28c743127b5d32e24",
             "generated": true,
             "pivot": {
                 "x": 0.0,
@@ -1831,7 +1832,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-civic-01.asset",
             "name": "Station foundation",
             "sha256": "348e62da099716a377ca07027ef6814d4a3c13f9db62564251586095450daee6",
-            "installedSha256": "802bee796aed0523d1232e8d5923281401da3289fb5a1486aad4ed3114823f2c",
+            "installedSha256": "31faec2d87f01def0f1a6b37d6233efb04f0d2749be860b07490c7edcc54b7f2",
             "generated": true,
             "pivot": {
                 "x": 0.0,
@@ -1915,7 +1916,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-civic-08.asset",
             "name": "Sky bridge",
             "sha256": "d5e7484c75edf51325a68b926dfa01c52f4c580f72c24f0f9a4db24a3bb70290",
-            "installedSha256": "d5e7484c75edf51325a68b926dfa01c52f4c580f72c24f0f9a4db24a3bb70290",
+            "installedSha256": "7185fccb0fb82744bcfb3440e6ac1a50bbad23f14e8a0f888d3f04be67f1567a",
             "generated": true,
             "pivot": {
                 "x": -0.8849999904632568,
@@ -1927,7 +1928,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-civic-09.asset",
             "name": "Sky bridge",
             "sha256": "f50fe5aaeb32046f545d8d89c9a54e98f81b497dc0ee05f52e816aa4eb811f07",
-            "installedSha256": "f50fe5aaeb32046f545d8d89c9a54e98f81b497dc0ee05f52e816aa4eb811f07",
+            "installedSha256": "f9acfba06b8f532dd61dd6da47f0ee89925f7da30854961acdce613b7c427eab",
             "generated": true,
             "pivot": {
                 "x": -0.8849999904632568,
@@ -1939,7 +1940,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-civic-10.asset",
             "name": "Sky bridge",
             "sha256": "765de46f2b6327b8387baa142f98c31df89ebb55d215703541d45b9789964441",
-            "installedSha256": "765de46f2b6327b8387baa142f98c31df89ebb55d215703541d45b9789964441",
+            "installedSha256": "a86597b09865a92a7d5b5096860b3571b1e7572ecd72f5e27ed26f4115d8d8f4",
             "generated": true,
             "pivot": {
                 "x": -0.8849999904632568,
@@ -1951,7 +1952,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-civic-11.asset",
             "name": "Sky bridge",
             "sha256": "a938577b8be313a17918c31460d64cae336184686b162b8b4ac25a844eaac29c",
-            "installedSha256": "a938577b8be313a17918c31460d64cae336184686b162b8b4ac25a844eaac29c",
+            "installedSha256": "d8cd3c1f4d3fce897a6912696e4d69565f89f9d06d237d3550a19a90eaf7aedb",
             "generated": true,
             "pivot": {
                 "x": 0.8849999904632568,
@@ -1963,7 +1964,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-civic-12.asset",
             "name": "Sky bridge",
             "sha256": "975417f995ecd016e50d74971a2e93351c073bb04c62e4c87578ce9d5997a484",
-            "installedSha256": "975417f995ecd016e50d74971a2e93351c073bb04c62e4c87578ce9d5997a484",
+            "installedSha256": "fad78a9ee03e3ecb76f6966b66916c9c119df5dd1ab3db0314adb2d76d3a7fbb",
             "generated": true,
             "pivot": {
                 "x": 0.8849999904632568,
@@ -1975,7 +1976,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-civic-13.asset",
             "name": "Sky bridge",
             "sha256": "165e38d8fb165a4d75fb56d8fc5fadf7d0b979326aaf7da3dd411aabeda51a79",
-            "installedSha256": "165e38d8fb165a4d75fb56d8fc5fadf7d0b979326aaf7da3dd411aabeda51a79",
+            "installedSha256": "2cbdcdfb7c80007bb8173bf18adb3f85ab4f6a1215167fcb66c620660290bdad",
             "generated": true,
             "pivot": {
                 "x": 0.8849999904632568,
@@ -1987,7 +1988,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-residential-01.asset",
             "name": "Station foundation",
             "sha256": "cf3cf8af6847ebf66c77518adebc16e5b2c073fedf96de68592c457752d9ccb5",
-            "installedSha256": "09d54e096a16007bf03d05ec26f2d3a2e96951f190671ed7ef4a580bba2bdfb6",
+            "installedSha256": "49320231e35ed7d6bea79e7c04312d8488108005eb1fa32bad13484f37b90555",
             "generated": true,
             "pivot": {
                 "x": 0.0,
@@ -2071,7 +2072,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-residential-08.asset",
             "name": "Sky bridge",
             "sha256": "17258a506ab49078bc6c390b2ee09a771a44fd1029ee8f3e1c66a2204bf6cfec",
-            "installedSha256": "17258a506ab49078bc6c390b2ee09a771a44fd1029ee8f3e1c66a2204bf6cfec",
+            "installedSha256": "693eaf03e66e4a34324d5227a5adf6fb1e9dee9fabf967258aeb5fe167bff440",
             "generated": true,
             "pivot": {
                 "x": -0.8849999904632568,
@@ -2083,7 +2084,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-residential-09.asset",
             "name": "Sky bridge",
             "sha256": "050f933a5483cb1ce9a67407cfaee1e52e3b6aff8cb6d4fe547034b0087aaf44",
-            "installedSha256": "050f933a5483cb1ce9a67407cfaee1e52e3b6aff8cb6d4fe547034b0087aaf44",
+            "installedSha256": "7401f11ca79b802c0b4824bcebfb227fe78b98ce43579cbc860165a217106aba",
             "generated": true,
             "pivot": {
                 "x": -0.8849999904632568,
@@ -2095,7 +2096,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-residential-10.asset",
             "name": "Sky bridge",
             "sha256": "63e920e8fd95d0b5316c7aafcff51893351020445e9c37382079d3e8ac293118",
-            "installedSha256": "63e920e8fd95d0b5316c7aafcff51893351020445e9c37382079d3e8ac293118",
+            "installedSha256": "c32b8b5f22bd57cfc6a67c2021558dd7c708a5fa9cd93017368c082933f3581f",
             "generated": true,
             "pivot": {
                 "x": -0.8849999904632568,
@@ -2107,7 +2108,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-residential-11.asset",
             "name": "Sky bridge",
             "sha256": "948aefe1c86d1985706dec406abfb6ee1352fa8d52c67d1bc129142a23e08423",
-            "installedSha256": "948aefe1c86d1985706dec406abfb6ee1352fa8d52c67d1bc129142a23e08423",
+            "installedSha256": "eeea3a2d3442274ca248acd7c93e06bbc37bb42a93136a4a9f88f40ee0e2dd36",
             "generated": true,
             "pivot": {
                 "x": 0.8849999904632568,
@@ -2119,7 +2120,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-residential-12.asset",
             "name": "Sky bridge",
             "sha256": "89d2adf8de12b700d9e9efeb22cb4bba258126f98ef46c1abc6da465dd52633f",
-            "installedSha256": "89d2adf8de12b700d9e9efeb22cb4bba258126f98ef46c1abc6da465dd52633f",
+            "installedSha256": "c2ed7950307a0e457bd26adc6b4ff27dab602489df415a1e609a289cf1e4b5c4",
             "generated": true,
             "pivot": {
                 "x": 0.8849999904632568,
@@ -2131,7 +2132,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-residential-13.asset",
             "name": "Sky bridge",
             "sha256": "27de45a2014851681d64f3af1b227fd26d218ee595845ae70beebe2419fc04c7",
-            "installedSha256": "27de45a2014851681d64f3af1b227fd26d218ee595845ae70beebe2419fc04c7",
+            "installedSha256": "e67a205ea2785b56d8e906dd480fead8ace3570be7e4ce03293408fc0cd4c2a7",
             "generated": true,
             "pivot": {
                 "x": 0.8849999904632568,
@@ -2143,7 +2144,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-10-civic-01.asset",
             "name": "Cliff island",
             "sha256": "b3393d9f0a470a0d60371fa391db1ab35217fcc4613b590fd5b00638b9f269db",
-            "installedSha256": "298ef02e84fbe24e9e287f08028ae1db9ef39950827a045d427253b842ba239a",
+            "installedSha256": "64998b5a19947fd88843d7afcd023b22c0e5ed9cfbc2e9dbd7646b0ae6dfa41a",
             "generated": true,
             "pivot": {
                 "x": 0.006247282028198242,
@@ -2155,7 +2156,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-10-civic-02.asset",
             "name": "Promenade",
             "sha256": "52b24fdcec0eb9d655c381d057aac76fe277534d207854f3369dece6c4320cd6",
-            "installedSha256": "b47cb6f13e2b44be7f1bed3f0297d56b4df270cba50b35bfee9f5b372fa4fcd9",
+            "installedSha256": "4ea0960200dd820184de0accdb6bb794a63eb0a632aabbd4bcf189cadf011582",
             "generated": true,
             "pivot": {
                 "x": 0.0,
@@ -2239,7 +2240,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-10-residential-01.asset",
             "name": "Cliff island",
             "sha256": "fe8666e980583db340f9bf3db7a8f51373759867113f1a167d641a4b021e9ae8",
-            "installedSha256": "aebbfc755ee22823bd7d5351501ebd9a5086bb272cbc62fe899fe4fc29d870b1",
+            "installedSha256": "f15bdf88a87fdf4933f54d57750a6f1c4f64bb44910c262437edfb442ca027c7",
             "generated": true,
             "pivot": {
                 "x": 0.006247282028198242,
@@ -2251,7 +2252,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-10-residential-02.asset",
             "name": "Promenade",
             "sha256": "64cd02e1252bf5124ffc4b4fe88f718181a2c2bf58cc09c361eebd32958c2435",
-            "installedSha256": "79ad3999d85a2f76326e6f6debd0827424aa534e27d058e4c69e7f62c6c573f6",
+            "installedSha256": "a0f9dc0bddb780be9cb3fda8dc34d6e5e23b424cba2421109d37e4d2deb1566e",
             "generated": true,
             "pivot": {
                 "x": 0.0,
@@ -2335,7 +2336,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-11-civic-01.asset",
             "name": "Cliff island",
             "sha256": "d28933cb0b85ed7cac1160d2579c06120924819ed7a1a74204554443965baf90",
-            "installedSha256": "38f1c0e52d066c1c2c270f9cd96b7e9d961b6b3650c76f18825f22f6f62ec7f0",
+            "installedSha256": "c3dea962ac0f53081778abf4db1edd55864c460a69acf91f718582fd0b6de326",
             "generated": true,
             "pivot": {
                 "x": -0.13230061531066895,
@@ -2347,7 +2348,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-11-civic-02.asset",
             "name": "Promenade",
             "sha256": "67a86fe98652646e15626773e46ca609dd38679712214a04934aa8d9af7cbea3",
-            "installedSha256": "b2bd5a4ad88be7feacdbb8b3520c8e5aba00d50a34ba558f8c5433327ad849cc",
+            "installedSha256": "75cce1b69a99d1d637e8ffdcf74560648f8bffd043d637f7e85f2aced0f4a48e",
             "generated": true,
             "pivot": {
                 "x": 0.0,
@@ -2455,7 +2456,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-11-civic-11.asset",
             "name": "Sky bridge",
             "sha256": "ca490defa5e979671a7dda38ca8e8672a74c768ca48d04d044b1fa0e636f1a2e",
-            "installedSha256": "ca490defa5e979671a7dda38ca8e8672a74c768ca48d04d044b1fa0e636f1a2e",
+            "installedSha256": "3e1801cc74f2b5ae8b1cf126c1618ab7e3874fdc6877f11287fa71f773e1fddf",
             "generated": true,
             "pivot": {
                 "x": 0.004999995231628418,
@@ -2467,7 +2468,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-11-residential-01.asset",
             "name": "Cliff island",
             "sha256": "cb3cbce162cf98b47933b66e363caff6dbc419b2e5cbf985062ef1d0c0fe6723",
-            "installedSha256": "d3197358346662067c048cf3ff96aa85ec28f786c718dc2be83ce4efbd8b7da4",
+            "installedSha256": "47f7c1b7f59bdbb4e439d2fd885a1228e582245e7789e50e9169d8ff2136f6f1",
             "generated": true,
             "pivot": {
                 "x": -0.13230061531066895,
@@ -2479,7 +2480,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-11-residential-02.asset",
             "name": "Promenade",
             "sha256": "3001edfd841f2bf9ba4c88161ac8403de9995611e26bf1aaffaacc20aede72a5",
-            "installedSha256": "4286fe747f95e1035042f4b4e71c0c472605123e45bfee57c1ff6bbe421cd8de",
+            "installedSha256": "cbaada3218f7e38dd7a5aca4b5bf24cd8bb6a48325ab6205f1f3b4647a130891",
             "generated": true,
             "pivot": {
                 "x": 0.0,
@@ -2587,7 +2588,7 @@
             "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-11-residential-11.asset",
             "name": "Sky bridge",
             "sha256": "7bef06b5eb3bcc891f5795fe4adcbde9e03797d002fe75b8253ec788bda5b76e",
-            "installedSha256": "7bef06b5eb3bcc891f5795fe4adcbde9e03797d002fe75b8253ec788bda5b76e",
+            "installedSha256": "a32cfa92492cf0ab2ac7a6e5e73dff9f1594126de6bbb8f88195dd1ed743dc94",
             "generated": true,
             "pivot": {
                 "x": 0.004999995231628418,

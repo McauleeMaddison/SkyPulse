@@ -1,0 +1,298 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &-3805940693300015363
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: "Chromaflux \xB7 Optical iris"
+  m_Shader: {fileID: 4800000, guid: 8c9f13b543b544a49e746b86102bf89a, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Ints: []
+    m_Floats:
+    - _BrushStrength: 0
+    - _EmissionStrength: 0.45
+    - _FinishKind: 0
+    - _Glossiness: 0.48
+    - _Metallic: 0.22
+    - _SatinStrength: 0.5
+    m_Colors:
+    - _BladeColor: {r: 0.9254902, g: 0.34901962, b: 0.8, a: 1}
+    - _Color: {r: 0.9254902, g: 0.34901962, b: 0.8, a: 1}
+    - _EmissionColor: {r: 0.9254902, g: 0.34901962, b: 0.8, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
+--- !u!21 &-113826139223102022
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: "Chromaflux \xB7 Feather enamel"
+  m_Shader: {fileID: 4800000, guid: 8c9f13b543b544a49e746b86102bf89a, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Ints: []
+    m_Floats:
+    - _BrushStrength: 0
+    - _EmissionStrength: 0
+    - _FinishKind: 0
+    - _Glossiness: 0.48
+    - _Metallic: 0.22
+    - _SatinStrength: 0.5
+    m_Colors:
+    - _BladeColor: {r: 0.9019608, g: 0.32941177, b: 0.65882355, a: 1}
+    - _Color: {r: 0.9019608, g: 0.32941177, b: 0.65882355, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Finishes
+  m_Shader: {fileID: 4800000, guid: 8c9f13b543b544a49e746b86102bf89a, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Ints: []
+    m_Floats:
+    - _BrushStrength: 0
+    - _EmissionStrength: 0
+    - _FinishKind: 0
+    - _Glossiness: 0.48
+    - _Metallic: 0.22
+    - _SatinStrength: 0.5
+    m_Colors:
+    - _BladeColor: {r: 0.6392157, g: 0.16470589, b: 0.4627451, a: 1}
+    - _Color: {r: 0.6392157, g: 0.16470589, b: 0.4627451, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
+--- !u!21 &2673573946761488871
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: "Chromaflux \xB7 Recessed chassis"
+  m_Shader: {fileID: 4800000, guid: 8c9f13b543b544a49e746b86102bf89a, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Ints: []
+    m_Floats:
+    - _BrushStrength: 0
+    - _EmissionStrength: 0
+    - _FinishKind: 2
+    - _Glossiness: 0.48
+    - _Metallic: 0.12
+    - _SatinStrength: 0.25
+    m_Colors:
+    - _BladeColor: {r: 0.12941177, g: 0.09019608, b: 0.16470589, a: 1}
+    - _Color: {r: 0.12941177, g: 0.09019608, b: 0.16470589, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
+--- !u!21 &3820123041406528703
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: "Chromaflux \xB7 Machined trim"
+  m_Shader: {fileID: 4800000, guid: 8c9f13b543b544a49e746b86102bf89a, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Ints: []
+    m_Floats:
+    - _BrushStrength: 0
+    - _EmissionStrength: 0
+    - _FinishKind: 1
+    - _Glossiness: 0.52
+    - _Metallic: 0.55
+    - _SatinStrength: 0.5
+    m_Colors:
+    - _BladeColor: {r: 0.72156864, g: 0.5411765, b: 0.28627452, a: 1}
+    - _Color: {r: 0.72156864, g: 0.5411765, b: 0.28627452, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
+--- !u!21 &4684688885533402293
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: "Chromaflux \xB7 Fitted optical glass"
+  m_Shader: {fileID: 4800000, guid: 8c9f13b543b544a49e746b86102bf89a, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Ints: []
+    m_Floats:
+    - _BrushStrength: 0
+    - _EmissionStrength: 0
+    - _FinishKind: 3
+    - _Glossiness: 0.62
+    - _Metallic: 0.06
+    - _SatinStrength: 0.5
+    m_Colors:
+    - _BladeColor: {r: 0.019607844, g: 0.043137256, b: 0.08627451, a: 1}
+    - _Color: {r: 0.019607844, g: 0.043137256, b: 0.08627451, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
+--- !u!21 &8274556499411090856
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: "Chromaflux \xB7 Luminous inlay"
+  m_Shader: {fileID: 4800000, guid: 8c9f13b543b544a49e746b86102bf89a, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Ints: []
+    m_Floats:
+    - _BrushStrength: 0
+    - _EmissionStrength: 0.65
+    - _FinishKind: 4
+    - _Glossiness: 0.48
+    - _Metallic: 0.22
+    - _SatinStrength: 0.5
+    m_Colors:
+    - _BladeColor: {r: 1, g: 0.53333336, b: 0.89411765, a: 1}
+    - _Color: {r: 1, g: 0.53333336, b: 0.89411765, a: 1}
+    - _EmissionColor: {r: 1, g: 0.53333336, b: 0.89411765, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
+--- !u!21 &8345200929804510386
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: "Chromaflux \xB7 Ivory alloy"
+  m_Shader: {fileID: 4800000, guid: 8c9f13b543b544a49e746b86102bf89a, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Ints: []
+    m_Floats:
+    - _BrushStrength: 0
+    - _EmissionStrength: 0
+    - _FinishKind: 1
+    - _Glossiness: 0.48
+    - _Metallic: 0.22
+    - _SatinStrength: 0.5
+    m_Colors:
+    - _BladeColor: {r: 0.9490196, g: 0.9098039, b: 0.9372549, a: 1}
+    - _Color: {r: 0.9490196, g: 0.9098039, b: 0.9372549, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

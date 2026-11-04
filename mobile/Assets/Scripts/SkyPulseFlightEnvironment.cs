@@ -172,20 +172,21 @@ namespace SkyPulse.Mobile
                 // Seven composed districts use the existing twelve-item pool:
                 // three small skyline accents, two middle districts and two
                 // hero islands. Reserve instances stay cached, not duplicated.
-                int districtCount=layer==0?3:2;bool show=visible&&slot<districtCount;
+                int districtCount=theme==0?(layer==2?1:layer==0?3:2):(layer==0?3:2);bool show=visible&&slot<districtCount;
                 if(item.gameObject.activeSelf!=show)item.gameObject.SetActive(show);
                 if(changed)
                 {
                     // The civic landmark leads the middle district; lower
                     // residential silhouettes frame it, rather than every row
                     // presenting the same tall building at the same strength.
+                    // Skyline, civic landmark and near island keep separate visual weights.
                     int variant=layer==1?(slot==0?0:1):layer==2?(slot==0?1:0):slot%2;
                     item.GetComponent<MeshFilter>().sharedMesh=variant==0?silhouettes[theme]:residential[theme];
                     var renderer=districtRenderers[bank,i];var finish=districtFinish[bank,i];
                     renderer.SetPropertyBlock(authoredLighting[theme,variant]);renderer.GetPropertyBlock(finish);
-                    finish.SetFloat("_DistrictDepth",layer==0?.82f:layer==1?.34f:0);
-                    finish.SetFloat("_WindowGlow",layer==0?.28f:layer==1?.64f:1);
-                    finish.SetFloat("_BeaconGlow",layer==0?.24f:layer==1?.60f:1);
+                    finish.SetFloat("_DistrictDepth",theme==0?(layer==0?.56f:layer==1?.10f:0):(layer==0?.74f:layer==1?.30f:0));
+                    finish.SetFloat("_WindowGlow",theme==0?(layer==0?.32f:layer==1?.82f:1):(layer==0?.24f:layer==1?.56f:1));
+                    finish.SetFloat("_BeaconGlow",layer==0?.20f:layer==1?.52f:1);
                     finish.SetFloat("_Backdrop",layer==0?.16f:layer==1?.03f:0);
                     renderer.SetPropertyBlock(finish);
                 }
@@ -193,16 +194,33 @@ namespace SkyPulse.Mobile
                 // One asymmetric landmark composition repeats only beyond the
                 // camera edges. Slots share a coherent city plane, exact uniform
                 // proportions and calm orientations; travel is still absolute.
-                float scale=layer==0?(slot==1?.36f:.30f):layer==1?(slot==0?.72f:.53f):(slot==0?.76f:.98f);
-                float spacing=span*(layer==0?1.80f:layer==1?1.18f:.98f);
-                float phase=layer==0?-.09f:layer==1?.095f:-.28f;
+                float scale=layer==0?(slot==1?.33f:.28f):layer==1?(slot==0?.62f:.49f):(slot==0?.68f:.86f);
+                float spacing=span*(layer==0?1.85f:layer==1?1.24f:1.02f);
+                float phase=layer==0?-.15f:layer==1?-.025f:-.33f;
                 float speed=layer==0?.055f:layer==1?.145f:.285f;
+                // Neon City is reviewed as a composed city scene first. A larger
+                // connected civic district leads on the right, an offset lower
+                // quarter sits behind it and a cropped near quarter supplies
+                // parallax. The distant banks frame the clear flight corridor.
+                if(theme==0)
+                {
+                    scale=layer==0?(slot==1?.80f:.68f):layer==1?(slot==0?1.45f:.96f):1.30f;
+                    spacing=span*(layer==0?3.2f:layer==1?1.35f:2.65f);
+                    phase=layer==0?-.14f:layer==1?.100f:-.100f;
+                }
                 float x=Mathf.Repeat(slot*spacing/districtCount+phase*spacing-distance*speed+spacing*.5f,spacing)-spacing*.5f;
-                float y=layer==0?-1.10f+(slot==1?.35f:0):layer==1?(slot==0?-2.80f:-4.35f):(slot==0?-6.15f:-5.85f);
+                if(theme==0&&layer==1&&slot==1)x=Mathf.Repeat(x+spacing*.16f+spacing*.5f,spacing)-spacing*.5f;
+                float y=layer==0?-.20f+(slot==1?.50f:0):layer==1?(slot==0?-1.85f:-3.65f):(slot==0?-5.15f:-5.05f);
                 float z=(layer==0?48f:layer==1?26f:12.5f)+(slot%2==0?0:2.4f);
+                if(theme==0)
+                {
+                    y=layer==0?-.30f+(slot==1?.65f:0):layer==1?(slot==0?-3.30f:-2.90f):-11.9f;
+                    z=layer==0?(slot==1?47:55):layer==1?(slot==0?18:30):7;
+                }
                 item.localPosition=new Vector3(x,y,z);
                 item.localScale=Vector3.one*scale;
-                float orientation=layer==0?(slot==1?-6:8):layer==1?(slot==0?-18:12):(slot==0?15:-16);
+                float orientation=layer==0?(slot==1?-6:8):layer==1?(slot==0?-14:10):(slot==0?11:-12);
+                if(theme==0)orientation=layer==0?(slot==1?8:-10):layer==1?(slot==0?-22:15):23;
                 item.localRotation=Quaternion.Euler(0,orientation,0);
             }
         }

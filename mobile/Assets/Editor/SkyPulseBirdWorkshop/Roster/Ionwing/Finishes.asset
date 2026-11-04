@@ -1,0 +1,298 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &-3247134630753911577
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: "Ionwing \xB7 Fitted optical glass"
+  m_Shader: {fileID: 4800000, guid: 8c9f13b543b544a49e746b86102bf89a, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Ints: []
+    m_Floats:
+    - _BrushStrength: 0
+    - _EmissionStrength: 0
+    - _FinishKind: 3
+    - _Glossiness: 0.62
+    - _Metallic: 0.06
+    - _SatinStrength: 0.5
+    m_Colors:
+    - _BladeColor: {r: 0.019607844, g: 0.043137256, b: 0.08627451, a: 1}
+    - _Color: {r: 0.019607844, g: 0.043137256, b: 0.08627451, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
+--- !u!21 &-2887226641348684825
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: "Ionwing \xB7 Ivory alloy"
+  m_Shader: {fileID: 4800000, guid: 8c9f13b543b544a49e746b86102bf89a, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Ints: []
+    m_Floats:
+    - _BrushStrength: 0
+    - _EmissionStrength: 0
+    - _FinishKind: 1
+    - _Glossiness: 0.48
+    - _Metallic: 0.22
+    - _SatinStrength: 0.5
+    m_Colors:
+    - _BladeColor: {r: 0.9137255, g: 0.9529412, b: 0.96862745, a: 1}
+    - _Color: {r: 0.9137255, g: 0.9529412, b: 0.96862745, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Finishes
+  m_Shader: {fileID: 4800000, guid: 8c9f13b543b544a49e746b86102bf89a, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Ints: []
+    m_Floats:
+    - _BrushStrength: 0
+    - _EmissionStrength: 0
+    - _FinishKind: 0
+    - _Glossiness: 0.48
+    - _Metallic: 0.22
+    - _SatinStrength: 0.5
+    m_Colors:
+    - _BladeColor: {r: 0.15686275, g: 0.28235295, b: 0.6666667, a: 1}
+    - _Color: {r: 0.15686275, g: 0.28235295, b: 0.6666667, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
+--- !u!21 &941034208590164525
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: "Ionwing \xB7 Machined trim"
+  m_Shader: {fileID: 4800000, guid: 8c9f13b543b544a49e746b86102bf89a, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Ints: []
+    m_Floats:
+    - _BrushStrength: 0
+    - _EmissionStrength: 0
+    - _FinishKind: 1
+    - _Glossiness: 0.52
+    - _Metallic: 0.55
+    - _SatinStrength: 0.5
+    m_Colors:
+    - _BladeColor: {r: 0.67058825, g: 0.7921569, b: 0.8392157, a: 1}
+    - _Color: {r: 0.67058825, g: 0.7921569, b: 0.8392157, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
+--- !u!21 &1715273549063532085
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: "Ionwing \xB7 Luminous inlay"
+  m_Shader: {fileID: 4800000, guid: 8c9f13b543b544a49e746b86102bf89a, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Ints: []
+    m_Floats:
+    - _BrushStrength: 0
+    - _EmissionStrength: 0.65
+    - _FinishKind: 4
+    - _Glossiness: 0.48
+    - _Metallic: 0.22
+    - _SatinStrength: 0.5
+    m_Colors:
+    - _BladeColor: {r: 0.92156863, g: 0.54901963, b: 1, a: 1}
+    - _Color: {r: 0.92156863, g: 0.54901963, b: 1, a: 1}
+    - _EmissionColor: {r: 0.92156863, g: 0.54901963, b: 1, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
+--- !u!21 &3149296690844399489
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: "Ionwing \xB7 Optical iris"
+  m_Shader: {fileID: 4800000, guid: 8c9f13b543b544a49e746b86102bf89a, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Ints: []
+    m_Floats:
+    - _BrushStrength: 0
+    - _EmissionStrength: 0.45
+    - _FinishKind: 0
+    - _Glossiness: 0.48
+    - _Metallic: 0.22
+    - _SatinStrength: 0.5
+    m_Colors:
+    - _BladeColor: {r: 0.5411765, g: 0.2627451, b: 0.8352941, a: 1}
+    - _Color: {r: 0.5411765, g: 0.2627451, b: 0.8352941, a: 1}
+    - _EmissionColor: {r: 0.5411765, g: 0.2627451, b: 0.8352941, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
+--- !u!21 &4391920859224793310
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: "Ionwing \xB7 Recessed chassis"
+  m_Shader: {fileID: 4800000, guid: 8c9f13b543b544a49e746b86102bf89a, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Ints: []
+    m_Floats:
+    - _BrushStrength: 0
+    - _EmissionStrength: 0
+    - _FinishKind: 2
+    - _Glossiness: 0.48
+    - _Metallic: 0.12
+    - _SatinStrength: 0.25
+    m_Colors:
+    - _BladeColor: {r: 0.078431375, g: 0.1254902, b: 0.23137255, a: 1}
+    - _Color: {r: 0.078431375, g: 0.1254902, b: 0.23137255, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
+--- !u!21 &5013352659361746946
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: "Ionwing \xB7 Feather enamel"
+  m_Shader: {fileID: 4800000, guid: 8c9f13b543b544a49e746b86102bf89a, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Ints: []
+    m_Floats:
+    - _BrushStrength: 0
+    - _EmissionStrength: 0
+    - _FinishKind: 0
+    - _Glossiness: 0.48
+    - _Metallic: 0.22
+    - _SatinStrength: 0.5
+    m_Colors:
+    - _BladeColor: {r: 0.2627451, g: 0.8666667, b: 0.8352941, a: 1}
+    - _Color: {r: 0.2627451, g: 0.8666667, b: 0.8352941, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

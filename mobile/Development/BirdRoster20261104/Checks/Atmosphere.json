@@ -1,0 +1,639 @@
+{
+    "result": "PASS",
+    "date": "2026-11-04",
+    "scope": "Two shared atmosphere shader changes; actual main SkyPulse scene and UI at 750x1334. Approved Neon Finch 3D workshop model displayed through the Editor-only in-game visual preview at t=.25 during flight; Home uses the actual current Home renderer. Existing route worlds selected in disposable QA for inspection; no new world props or backgrounds.",
+    "graphicsDevice": "Apple M5 / Metal",
+    "proof": "Camera.Render GPU readbacks; normal collision-checked flight simulation; actual palette/world bindings and reduced-motion pixel identity.",
+    "limits": "Editor rendering is not physical-device visual acceptance, thermal profiling or device FPS. Fixtures select worlds directly; these are not a single uninterrupted scored run. Earlier comparison used the Chrome Raven sprite and a different pose, so this is not a controlled shader-only A/B comparison. The preview does not establish physical-device behavior or approval of the other fourteen roster studies.",
+    "comparisonReference": "/private/tmp/skypulse-roster-20261104/captures/roster/gameplay/EndlessRoute-chrome_raven.png",
+    "failure": "",
+    "assertions": [
+        "Actual graphics device supports WorldAtmosphere",
+        "Actual graphics device supports AtmosphereVeil",
+        "Actual graphics device supports WorldComposite",
+        "Actual graphics device supports FlightArchitecture",
+        "Review uses all twelve existing route definitions",
+        "Actual Home screen remains active for NEON CITY",
+        "Home perspective world matches actual route definition: NEON CITY",
+        "Flight-only Finch preview stays hidden on actual Home: world-00-home.png",
+        "Actual main camera renders visible colour: world-00-home.png",
+        "Flight inspection follows collision-checked simulation: NEON CITY",
+        "Approved Finch 3D visual is active in actual flight capture: world-00-flight.png",
+        "Actual main camera renders visible colour: world-00-flight.png",
+        "Actual Home screen remains active for AURORA RISE",
+        "Home perspective world matches actual route definition: AURORA RISE",
+        "Flight-only Finch preview stays hidden on actual Home: world-01-home.png",
+        "Actual main camera renders visible colour: world-01-home.png",
+        "Flight inspection follows collision-checked simulation: AURORA RISE",
+        "Approved Finch 3D visual is active in actual flight capture: world-01-flight.png",
+        "Actual main camera renders visible colour: world-01-flight.png",
+        "Actual Home screen remains active for SOLAR DRIFT",
+        "Home perspective world matches actual route definition: SOLAR DRIFT",
+        "Flight-only Finch preview stays hidden on actual Home: world-02-home.png",
+        "Actual main camera renders visible colour: world-02-home.png",
+        "Flight inspection follows collision-checked simulation: SOLAR DRIFT",
+        "Approved Finch 3D visual is active in actual flight capture: world-02-flight.png",
+        "Actual main camera renders visible colour: world-02-flight.png",
+        "Actual Home screen remains active for MIDNIGHT TIDE",
+        "Home perspective world matches actual route definition: MIDNIGHT TIDE",
+        "Flight-only Finch preview stays hidden on actual Home: world-03-home.png",
+        "Actual main camera renders visible colour: world-03-home.png",
+        "Flight inspection follows collision-checked simulation: MIDNIGHT TIDE",
+        "Approved Finch 3D visual is active in actual flight capture: world-03-flight.png",
+        "Actual main camera renders visible colour: world-03-flight.png",
+        "Actual Home screen remains active for VELVET DAWN",
+        "Home perspective world matches actual route definition: VELVET DAWN",
+        "Flight-only Finch preview stays hidden on actual Home: world-04-home.png",
+        "Actual main camera renders visible colour: world-04-home.png",
+        "Flight inspection follows collision-checked simulation: VELVET DAWN",
+        "Approved Finch 3D visual is active in actual flight capture: world-04-flight.png",
+        "Actual main camera renders visible colour: world-04-flight.png",
+        "Actual Home screen remains active for CRYSTAL NIGHT",
+        "Home perspective world matches actual route definition: CRYSTAL NIGHT",
+        "Flight-only Finch preview stays hidden on actual Home: world-05-home.png",
+        "Actual main camera renders visible colour: world-05-home.png",
+        "Flight inspection follows collision-checked simulation: CRYSTAL NIGHT",
+        "Approved Finch 3D visual is active in actual flight capture: world-05-flight.png",
+        "Actual main camera renders visible colour: world-05-flight.png",
+        "Actual Home screen remains active for JADE HORIZON",
+        "Home perspective world matches actual route definition: JADE HORIZON",
+        "Flight-only Finch preview stays hidden on actual Home: world-06-home.png",
+        "Actual main camera renders visible colour: world-06-home.png",
+        "Flight inspection follows collision-checked simulation: JADE HORIZON",
+        "Approved Finch 3D visual is active in actual flight capture: world-06-flight.png",
+        "Actual main camera renders visible colour: world-06-flight.png",
+        "Actual Home screen remains active for VIOLET RAIN",
+        "Home perspective world matches actual route definition: VIOLET RAIN",
+        "Flight-only Finch preview stays hidden on actual Home: world-07-home.png",
+        "Actual main camera renders visible colour: world-07-home.png",
+        "Flight inspection follows collision-checked simulation: VIOLET RAIN",
+        "Approved Finch 3D visual is active in actual flight capture: world-07-flight.png",
+        "Actual main camera renders visible colour: world-07-flight.png",
+        "Actual Home screen remains active for ECLIPSE",
+        "Home perspective world matches actual route definition: ECLIPSE",
+        "Flight-only Finch preview stays hidden on actual Home: world-08-home.png",
+        "Actual main camera renders visible colour: world-08-home.png",
+        "Flight inspection follows collision-checked simulation: ECLIPSE",
+        "Approved Finch 3D visual is active in actual flight capture: world-08-flight.png",
+        "Actual main camera renders visible colour: world-08-flight.png",
+        "Actual Home screen remains active for COBALT STORM",
+        "Home perspective world matches actual route definition: COBALT STORM",
+        "Flight-only Finch preview stays hidden on actual Home: world-09-home.png",
+        "Actual main camera renders visible colour: world-09-home.png",
+        "Flight inspection follows collision-checked simulation: COBALT STORM",
+        "Approved Finch 3D visual is active in actual flight capture: world-09-flight.png",
+        "Actual main camera renders visible colour: world-09-flight.png",
+        "Actual Home screen remains active for AMBER SKIES",
+        "Home perspective world matches actual route definition: AMBER SKIES",
+        "Flight-only Finch preview stays hidden on actual Home: world-10-home.png",
+        "Actual main camera renders visible colour: world-10-home.png",
+        "Flight inspection follows collision-checked simulation: AMBER SKIES",
+        "Approved Finch 3D visual is active in actual flight capture: world-10-flight.png",
+        "Actual main camera renders visible colour: world-10-flight.png",
+        "Actual Home screen remains active for POLAR GLOW",
+        "Home perspective world matches actual route definition: POLAR GLOW",
+        "Flight-only Finch preview stays hidden on actual Home: world-11-home.png",
+        "Actual main camera renders visible colour: world-11-home.png",
+        "Flight inspection follows collision-checked simulation: POLAR GLOW",
+        "Approved Finch 3D visual is active in actual flight capture: world-11-flight.png",
+        "Actual main camera renders visible colour: world-11-flight.png",
+        "Reduced Motion holds actual sky/light clock and scenery travel",
+        "Actual rendered perspective-world pixels stay identical while Reduced Motion is held",
+        "Relay Home uses the live orbital environment",
+        "Flight-only Finch preview stays hidden on actual Home: relay-home.png",
+        "Actual main camera renders visible colour: relay-home.png",
+        "Relay flight uses its actual live station and active mission",
+        "Approved Finch 3D visual is active in actual flight capture: relay-flight.png",
+        "Actual main camera renders visible colour: relay-flight.png",
+        "Actual graphics device supports WorldAtmosphere",
+        "Actual graphics device supports AtmosphereVeil",
+        "Actual graphics device supports WorldComposite",
+        "Actual graphics device supports FlightArchitecture",
+        "Twenty-six distinct main-camera Home/flight frames captured"
+    ],
+    "captures": [
+        {
+            "file": "world-00-home.png",
+            "mode": "EndlessRoute",
+            "state": "Home",
+            "world": "NEON CITY",
+            "sha256": "6d3d10e73c752079b8254493114dbf75796b23c91ce36480bac400ead60a42dd",
+            "worldIndex": 0,
+            "width": 750,
+            "height": 1334,
+            "lowerSkyMean": {
+                "x": 0.09174133092164993,
+                "y": 0.11597661674022675,
+                "z": 0.18774206936359406
+            },
+            "lowerSkyRange": {
+                "x": 0.8588235378265381,
+                "y": 0.8509804010391235,
+                "z": 0.8901960849761963
+            }
+        },
+        {
+            "file": "world-00-flight.png",
+            "mode": "EndlessRoute",
+            "state": "Playing",
+            "world": "NEON CITY",
+            "sha256": "7406dac15702cc235dc1a7bc42f431abdc281180549f5e023cc7cb78668ac058",
+            "worldIndex": 0,
+            "width": 750,
+            "height": 1334,
+            "lowerSkyMean": {
+                "x": 0.07609652727842331,
+                "y": 0.08617948740720749,
+                "z": 0.1955195963382721
+            },
+            "lowerSkyRange": {
+                "x": 0.1568627506494522,
+                "y": 0.21176470816135406,
+                "z": 0.250980406999588
+            }
+        },
+        {
+            "file": "world-01-home.png",
+            "mode": "EndlessRoute",
+            "state": "Home",
+            "world": "AURORA RISE",
+            "sha256": "53232841d80dc90d10137323d66819169fd6be20c6860d1b83d865c9494da476",
+            "worldIndex": 1,
+            "width": 750,
+            "height": 1334,
+            "lowerSkyMean": {
+                "x": 0.08711538463830948,
+                "y": 0.14341779053211212,
+                "z": 0.1918039172887802
+            },
+            "lowerSkyRange": {
+                "x": 0.8666666746139526,
+                "y": 0.8235294222831726,
+                "z": 0.8823529481887817
+            }
+        },
+        {
+            "file": "world-01-flight.png",
+            "mode": "EndlessRoute",
+            "state": "Playing",
+            "world": "AURORA RISE",
+            "sha256": "b1193d51b6e65b121d188519a4b13ead954727d648f544772787b998972e7e10",
+            "worldIndex": 1,
+            "width": 750,
+            "height": 1334,
+            "lowerSkyMean": {
+                "x": 0.06499245762825012,
+                "y": 0.1416357457637787,
+                "z": 0.20131900906562805
+            },
+            "lowerSkyRange": {
+                "x": 0.5372549295425415,
+                "y": 0.5568627715110779,
+                "z": 0.4941176474094391
+            }
+        },
+        {
+            "file": "world-02-home.png",
+            "mode": "EndlessRoute",
+            "state": "Home",
+            "world": "SOLAR DRIFT",
+            "sha256": "c6aca1ee43e7232922d28164f0cb0f81003362e787a031270fbf1dd1ab402843",
+            "worldIndex": 2,
+            "width": 750,
+            "height": 1334,
+            "lowerSkyMean": {
+                "x": 0.1274811327457428,
+                "y": 0.12715308368206024,
+                "z": 0.1674426794052124
+            },
+            "lowerSkyRange": {
+                "x": 0.8313725590705872,
+                "y": 0.8392156958580017,
+                "z": 0.8980392217636108
+            }
+        },
+        {
+            "file": "world-02-flight.png",
+            "mode": "EndlessRoute",
+            "state": "Playing",
+            "world": "SOLAR DRIFT",
+            "sha256": "201c2f2ceebac50b334441f490d55651381c49f07e41b112271d8ed75f01c59f",
+            "worldIndex": 2,
+            "width": 750,
+            "height": 1334,
+            "lowerSkyMean": {
+                "x": 0.14753243327140808,
+                "y": 0.10644344240427017,
+                "z": 0.14781975746154785
+            },
+            "lowerSkyRange": {
+                "x": 0.25882354378700256,
+                "y": 0.21568627655506134,
+                "z": 0.2823529541492462
+            }
+        },
+        {
+            "file": "world-03-home.png",
+            "mode": "EndlessRoute",
+            "state": "Home",
+            "world": "MIDNIGHT TIDE",
+            "sha256": "a9c5c6f42e02d9bc155a219f98ceefdcbab00754945358ba4246e1ed25efc34e",
+            "worldIndex": 3,
+            "width": 750,
+            "height": 1334,
+            "lowerSkyMean": {
+                "x": 0.08056184649467468,
+                "y": 0.13015535473823547,
+                "z": 0.1873868703842163
+            },
+            "lowerSkyRange": {
+                "x": 0.8941176533699036,
+                "y": 0.8745098114013672,
+                "z": 0.886274516582489
+            }
+        },
+        {
+            "file": "world-03-flight.png",
+            "mode": "EndlessRoute",
+            "state": "Playing",
+            "world": "MIDNIGHT TIDE",
+            "sha256": "b3c041ec530dd329d679819751a23fbecfb99ae0d1c2616b3842e17fcbd63fc9",
+            "worldIndex": 3,
+            "width": 750,
+            "height": 1334,
+            "lowerSkyMean": {
+                "x": 0.05212141573429108,
+                "y": 0.11481071263551712,
+                "z": 0.19150075316429138
+            },
+            "lowerSkyRange": {
+                "x": 0.16862745583057404,
+                "y": 0.2862745225429535,
+                "z": 0.3764705955982208
+            }
+        },
+        {
+            "file": "world-04-home.png",
+            "mode": "EndlessRoute",
+            "state": "Home",
+            "world": "VELVET DAWN",
+            "sha256": "289555941039b11933649ade97ad0dfc7a6a7bb9efde35da497fef7fffbfc119",
+            "worldIndex": 4,
+            "width": 750,
+            "height": 1334,
+            "lowerSkyMean": {
+                "x": 0.12347964197397232,
+                "y": 0.12058446556329727,
+                "z": 0.1833220273256302
+            },
+            "lowerSkyRange": {
+                "x": 0.8313725590705872,
+                "y": 0.8470588326454163,
+                "z": 0.8901960849761963
+            }
+        },
+        {
+            "file": "world-04-flight.png",
+            "mode": "EndlessRoute",
+            "state": "Playing",
+            "world": "VELVET DAWN",
+            "sha256": "ca4454e1c8d7f72560d9b731ecef25e725646b4c06e7efb3472dc83e085b3b8a",
+            "worldIndex": 4,
+            "width": 750,
+            "height": 1334,
+            "lowerSkyMean": {
+                "x": 0.14973756670951843,
+                "y": 0.10222548991441727,
+                "z": 0.18581749498844147
+            },
+            "lowerSkyRange": {
+                "x": 0.43529412150382996,
+                "y": 0.3803921639919281,
+                "z": 0.4156862795352936
+            }
+        },
+        {
+            "file": "world-05-home.png",
+            "mode": "EndlessRoute",
+            "state": "Home",
+            "world": "CRYSTAL NIGHT",
+            "sha256": "3f3c71c27cc19964dc8fcaf1bbf4007ad0371dbde2cdaa5d97291c5cfbca589a",
+            "worldIndex": 5,
+            "width": 750,
+            "height": 1334,
+            "lowerSkyMean": {
+                "x": 0.09274208545684814,
+                "y": 0.1315000057220459,
+                "z": 0.1994449496269226
+            },
+            "lowerSkyRange": {
+                "x": 0.8588235378265381,
+                "y": 0.8352941274642944,
+                "z": 0.8784313797950745
+            }
+        },
+        {
+            "file": "world-05-flight.png",
+            "mode": "EndlessRoute",
+            "state": "Playing",
+            "world": "CRYSTAL NIGHT",
+            "sha256": "689cc6f20051b9410576617eb47789dac3843d22ef6f057f0a2786de2667cc2f",
+            "worldIndex": 5,
+            "width": 750,
+            "height": 1334,
+            "lowerSkyMean": {
+                "x": 0.09214629977941513,
+                "y": 0.13257691264152527,
+                "z": 0.230672687292099
+            },
+            "lowerSkyRange": {
+                "x": 0.6274510025978088,
+                "y": 0.8156862854957581,
+                "z": 0.8745098114013672
+            }
+        },
+        {
+            "file": "world-06-home.png",
+            "mode": "EndlessRoute",
+            "state": "Home",
+            "world": "JADE HORIZON",
+            "sha256": "8867f057c62e25e42bf8be87dd567c4e0e138552ef1f3a68fb23d85e3ef08b07",
+            "worldIndex": 6,
+            "width": 750,
+            "height": 1334,
+            "lowerSkyMean": {
+                "x": 0.08514479547739029,
+                "y": 0.1382262408733368,
+                "z": 0.17415988445281982
+            },
+            "lowerSkyRange": {
+                "x": 0.8666666746139526,
+                "y": 0.8274509906768799,
+                "z": 0.8980392217636108
+            }
+        },
+        {
+            "file": "world-06-flight.png",
+            "mode": "EndlessRoute",
+            "state": "Playing",
+            "world": "JADE HORIZON",
+            "sha256": "fed4c7620a47963f09121f690b865b784eb6d249bc4244ddb1c1bdc45760f2fd",
+            "worldIndex": 6,
+            "width": 750,
+            "height": 1334,
+            "lowerSkyMean": {
+                "x": 0.06379562616348267,
+                "y": 0.13454826176166534,
+                "z": 0.1629125326871872
+            },
+            "lowerSkyRange": {
+                "x": 0.22745098173618317,
+                "y": 0.3176470696926117,
+                "z": 0.32549020648002625
+            }
+        },
+        {
+            "file": "world-07-home.png",
+            "mode": "EndlessRoute",
+            "state": "Home",
+            "world": "VIOLET RAIN",
+            "sha256": "921fdd5a59270f33d60dc6dbb7c573687b91dfbb0e94cdf7b339a430c4f0b65f",
+            "worldIndex": 7,
+            "width": 750,
+            "height": 1334,
+            "lowerSkyMean": {
+                "x": 0.10354223102331161,
+                "y": 0.11373529583215714,
+                "z": 0.19164027273654938
+            },
+            "lowerSkyRange": {
+                "x": 0.8588235378265381,
+                "y": 0.8784313797950745,
+                "z": 0.886274516582489
+            }
+        },
+        {
+            "file": "world-07-flight.png",
+            "mode": "EndlessRoute",
+            "state": "Playing",
+            "world": "VIOLET RAIN",
+            "sha256": "ccede23513f67d12e0ed02204e03705b0970b5014a15d89a2bd90ed5cb963710",
+            "worldIndex": 7,
+            "width": 750,
+            "height": 1334,
+            "lowerSkyMean": {
+                "x": 0.1023687794804573,
+                "y": 0.0826040729880333,
+                "z": 0.20356787741184235
+            },
+            "lowerSkyRange": {
+                "x": 0.6784313917160034,
+                "y": 0.3764705955982208,
+                "z": 0.9254902005195618
+            }
+        },
+        {
+            "file": "world-08-home.png",
+            "mode": "EndlessRoute",
+            "state": "Home",
+            "world": "ECLIPSE",
+            "sha256": "f1b3c1728081e0430e05d6a8378987bc53bbcaf8de570785ad1daa06bfd5ea60",
+            "worldIndex": 8,
+            "width": 750,
+            "height": 1334,
+            "lowerSkyMean": {
+                "x": 0.09362519532442093,
+                "y": 0.11536425352096558,
+                "z": 0.1654796302318573
+            },
+            "lowerSkyRange": {
+                "x": 0.8588235378265381,
+                "y": 0.8588235378265381,
+                "z": 0.9019607901573181
+            }
+        },
+        {
+            "file": "world-08-flight.png",
+            "mode": "EndlessRoute",
+            "state": "Playing",
+            "world": "ECLIPSE",
+            "sha256": "3acf1a6e6cdd5616147944ba9244ab6596ba34acc39a7fc2ed378a3bc971c14c",
+            "worldIndex": 8,
+            "width": 750,
+            "height": 1334,
+            "lowerSkyMean": {
+                "x": 0.07826847583055496,
+                "y": 0.08241251856088638,
+                "z": 0.1461312174797058
+            },
+            "lowerSkyRange": {
+                "x": 0.1568627506494522,
+                "y": 0.2235294133424759,
+                "z": 0.3137255012989044
+            }
+        },
+        {
+            "file": "world-09-home.png",
+            "mode": "EndlessRoute",
+            "state": "Home",
+            "world": "COBALT STORM",
+            "sha256": "5cc3157ebbe8f5e41e9f50ec68a5f47e5887f8729f0e8836e462ad5a82266b2f",
+            "worldIndex": 9,
+            "width": 750,
+            "height": 1334,
+            "lowerSkyMean": {
+                "x": 0.08666063100099564,
+                "y": 0.12945173680782318,
+                "z": 0.1954268515110016
+            },
+            "lowerSkyRange": {
+                "x": 0.8627451062202454,
+                "y": 0.8392156958580017,
+                "z": 0.8823529481887817
+            }
+        },
+        {
+            "file": "world-09-flight.png",
+            "mode": "EndlessRoute",
+            "state": "Playing",
+            "world": "COBALT STORM",
+            "sha256": "715393ef3c7d8101d765cdb29db2f1c6581003e7cb691d0aa658cb1fdfb82c0b",
+            "worldIndex": 9,
+            "width": 750,
+            "height": 1334,
+            "lowerSkyMean": {
+                "x": 0.06685370206832886,
+                "y": 0.11757918447256088,
+                "z": 0.21669231355190277
+            },
+            "lowerSkyRange": {
+                "x": 0.2235294133424759,
+                "y": 0.4431372582912445,
+                "z": 0.8705882430076599
+            }
+        },
+        {
+            "file": "world-10-home.png",
+            "mode": "EndlessRoute",
+            "state": "Home",
+            "world": "AMBER SKIES",
+            "sha256": "11f3caf1fcfea1b47f0516dc8796e6e2c7ee2a22c2d9db4e98643519c9c8df9a",
+            "worldIndex": 10,
+            "width": 750,
+            "height": 1334,
+            "lowerSkyMean": {
+                "x": 0.12309350818395615,
+                "y": 0.12691402435302734,
+                "z": 0.16459955275058746
+            },
+            "lowerSkyRange": {
+                "x": 0.8313725590705872,
+                "y": 0.8392156958580017,
+                "z": 0.9019607901573181
+            }
+        },
+        {
+            "file": "world-10-flight.png",
+            "mode": "EndlessRoute",
+            "state": "Playing",
+            "world": "AMBER SKIES",
+            "sha256": "2e1b31f55b8bddf8d2852f50ae876ff0906a7dcc93a1711c206b5ac498c7c9f5",
+            "worldIndex": 10,
+            "width": 750,
+            "height": 1334,
+            "lowerSkyMean": {
+                "x": 0.14994418621063232,
+                "y": 0.11255279183387756,
+                "z": 0.14061689376831055
+            },
+            "lowerSkyRange": {
+                "x": 0.5411764979362488,
+                "y": 0.3490196168422699,
+                "z": 0.27843138575553894
+            }
+        },
+        {
+            "file": "world-11-home.png",
+            "mode": "EndlessRoute",
+            "state": "Home",
+            "world": "POLAR GLOW",
+            "sha256": "a9fa9a151e85ce3e07bcabf0590ddb2deb1abc6b66444c583ff243fae64f6e62",
+            "worldIndex": 11,
+            "width": 750,
+            "height": 1334,
+            "lowerSkyMean": {
+                "x": 0.09007390588521957,
+                "y": 0.1409577578306198,
+                "z": 0.19381296634674072
+            },
+            "lowerSkyRange": {
+                "x": 0.8627451062202454,
+                "y": 0.8235294222831726,
+                "z": 0.8823529481887817
+            }
+        },
+        {
+            "file": "world-11-flight.png",
+            "mode": "EndlessRoute",
+            "state": "Playing",
+            "world": "POLAR GLOW",
+            "sha256": "4e47576e2aef8733415c332b0cc177194497ca28e289c84a1b2762e333846798",
+            "worldIndex": 11,
+            "width": 750,
+            "height": 1334,
+            "lowerSkyMean": {
+                "x": 0.08595474809408188,
+                "y": 0.15153543651103973,
+                "z": 0.21892006695270538
+            },
+            "lowerSkyRange": {
+                "x": 0.6000000238418579,
+                "y": 0.6627451181411743,
+                "z": 0.658823549747467
+            }
+        },
+        {
+            "file": "relay-home.png",
+            "mode": "PulseRelay",
+            "state": "Home",
+            "world": "Orbital station",
+            "sha256": "7fa001cc6d3d04f1d11c6dcb37a52514a55e205a8911f4b1002548b547c47602",
+            "worldIndex": -1,
+            "width": 750,
+            "height": 1334,
+            "lowerSkyMean": {
+                "x": 0.12729336321353912,
+                "y": 0.20092609524726868,
+                "z": 0.277981162071228
+            },
+            "lowerSkyRange": {
+                "x": 0.9372549057006836,
+                "y": 0.95686274766922,
+                "z": 0.9686274528503418
+            }
+        },
+        {
+            "file": "relay-flight.png",
+            "mode": "PulseRelay",
+            "state": "Playing",
+            "world": "Orbital station",
+            "sha256": "1603f8cf5bbc68a20cdcf409e983797a65b720b0d4024052756638aaa608ace0",
+            "worldIndex": -1,
+            "width": 750,
+            "height": 1334,
+            "lowerSkyMean": {
+                "x": 0.0912390649318695,
+                "y": 0.1990015059709549,
+                "z": 0.2934954762458801
+            },
+            "lowerSkyRange": {
+                "x": 0.32156863808631897,
+                "y": 0.32549020648002625,
+                "z": 0.3960784375667572
+            }
+        }
+    ],
+    "deviceTested": false,
+    "shippingProgressChanged": false,
+    "routeWorldSelectedForInspection": true
+}

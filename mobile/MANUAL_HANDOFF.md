@@ -6,6 +6,23 @@ Open **`mobile/` in Unity Hub** and the repository folder in VS Code. The shippi
 scene is `mobile/Assets/Scenes/SkyPulse.unity`. Start with the
 [editing map](EDITING_GUIDE.md) before changing code.
 
+## Current roster work — 4 November 2026
+
+The owner approved the Finch's revised eyes and animated blue jet. Fourteen
+additional reference-based solid 3D bird studies are saved in the
+[roster package](Development/BirdRoster20261104/README.md), with individual editable
+prefabs, scenes, material/mesh containers, animation previews and real-gameplay
+captures. The owner approved only their colours and rejected the first sculpture pass.
+Chrome Raven has a corrected, technically checked review candidate; the remaining thirteen need the same
+reference-faithful treatment after that review. Device integration stays on hold. Use the
+Editor-only 3D roster gameplay selector to compare models without changing
+progression, equipment or flight rules. Original artwork and the approved Finch
+were preserved. Prepared runtime Hangar changes are held outside the project;
+the live runtime presentation is restored. The previous twelve-world set was rejected. A connected Neon City prototype
+and actual gameplay video are in the same package; other worlds await redesign. Build 19 and the public-review hold remain unchanged.
+
+The older design package below remains historical evidence for its own source.
+
 ## Current local design candidate — 31 October 2026
 
 The [DesignUpgrade20261031 package](Development/DesignUpgrade20261031/README.md)
@@ -17,14 +34,14 @@ Editor captures are not installed-phone footage; use each dated record for the
 exact source and checks it covers.
 
 Gameplay retains the original articulated bird artwork. The separate editable
-Neon Finch workshop is an isolated art-review prototype. **Review the reconstruction
-against the original Volt image before further bird or roster work.** The latest
+Neon Finch workshop is an isolated art-review prototype. **The Finch appearance was subsequently approved in chat; the new 4 November
+roster package records the additional fourteen models.** The latest
 2 November revision refreshes existing sculpture buffers 001–125 and eight material
 profiles: source-shaped round optics, helmet, swept wings, ivory shield and tail
 exhaust. Bones, joints, prefab, scene, clips, bindings, lighting and all GUIDs stay
 intact. The fixed source-pose comparison uses equal framing and scale; head/optic/
 beak/shoulder bounds pass measured source tolerances. Pixel-identical appearance
-and physical-device acceptance remain unproven. New art remains unapproved and
+and physical-device acceptance remain unproven. The additional roster art remains under review and
 uninstalled. See the opening scene map in the editing guide.
 
 Pipe collars use a real hollow mouth and separately editable structural parts;
@@ -130,8 +147,8 @@ rights, global metadata uniqueness, a bug-free game or Apple acceptance.
    helpers belong in the disposable project, never in the real player save.
 6. Test the new candidate on physical devices before treating it as release-ready.
 
-Next visual acceptance: review the Finch head in the isolated workshop and the
-new local preview package. Keep further bird/roster work on hold until that review;
+Next visual acceptance: Finch is approved. Review the corrected Chrome Raven
+against its original artwork before applying that approach to the other thirteen;
 physical-device checks for the wider design candidate remain pending.
 
 The subsequent local Finch 3D pass is documented in

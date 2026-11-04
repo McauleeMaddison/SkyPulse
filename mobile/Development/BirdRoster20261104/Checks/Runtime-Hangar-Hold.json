@@ -1,0 +1,77 @@
+{
+  "result": "PASS",
+  "date": "2026-11-04",
+  "reason": "Hold prepared runtime Hangar rollout after owner rejected the14 new bird shapes/materials. Existing approved presentation restored until review.",
+  "auditBaselineCommit": "572625e666ca07c9ab65a04663008310c9246ac8",
+  "existingFilesRestored": 4,
+  "newPartialAndMetaHeldOutsideProject": 2,
+  "sourceBackupRoot": "/private/tmp/skypulse-roster-20261104/pending-runtime-hangar",
+  "mapping": [
+    {
+      "path": "Assets/Scripts/SkyPulseNativeGame.cs",
+      "backup": "/private/tmp/skypulse-roster-20261104/pending-runtime-hangar/Assets/Scripts/SkyPulseNativeGame.cs",
+      "preparedSha256": "308b1e4de445be404d8759614c79cd1c4d920f51597f0914685a65b422c940c1",
+      "headAndLiveBeforeSha256": "31500aa693838547001e5232e6b3fbdc8919e9cbb7a1a7e28f8d5472424acbcb",
+      "liveAfterSha256": "31500aa693838547001e5232e6b3fbdc8919e9cbb7a1a7e28f8d5472424acbcb",
+      "action": "Restore exact committed session baseline"
+    },
+    {
+      "path": "Assets/Scripts/SkyPulseNativeGame.Hangar.cs",
+      "backup": "/private/tmp/skypulse-roster-20261104/pending-runtime-hangar/Assets/Scripts/SkyPulseNativeGame.Hangar.cs",
+      "preparedSha256": "e74e2b50228def17e92eb6155e9b8d4b39ee2ad1fc081f4becc29f13837aa9c4",
+      "headAndLiveBeforeSha256": "5858e69992f8a4c5cfccb1460dac7f8477fe92a258ca66d830d6c995c7127464",
+      "liveAfterSha256": "5858e69992f8a4c5cfccb1460dac7f8477fe92a258ca66d830d6c995c7127464",
+      "action": "Restore exact committed session baseline"
+    },
+    {
+      "path": "Assets/Scripts/SkyPulseNativeGame.BirdProgression.cs",
+      "backup": "/private/tmp/skypulse-roster-20261104/pending-runtime-hangar/Assets/Scripts/SkyPulseNativeGame.BirdProgression.cs",
+      "preparedSha256": "20dc3ef13b0bc973067a9be0987f7d1b0bdf9f1bf575d8b1cbe5f30391ab3d9e",
+      "headAndLiveBeforeSha256": "1f69852413054c30072410832ca9f688f4095fd3c37a5cff288d330e3337b871",
+      "liveAfterSha256": "1f69852413054c30072410832ca9f688f4095fd3c37a5cff288d330e3337b871",
+      "action": "Restore exact committed session baseline"
+    },
+    {
+      "path": "Assets/Scripts/SkyPulseProgressionStage.cs",
+      "backup": "/private/tmp/skypulse-roster-20261104/pending-runtime-hangar/Assets/Scripts/SkyPulseProgressionStage.cs",
+      "preparedSha256": "ebc6154bac39dbe6369ca491cd00c5bc5e080a8e73a145a9201caf053cad7d8d",
+      "headAndLiveBeforeSha256": "b0c8993c5bedf2c18885dfae24c5e318fb3a6fee3add7fe4756e03d8178d1fff",
+      "liveAfterSha256": "b0c8993c5bedf2c18885dfae24c5e318fb3a6fee3add7fe4756e03d8178d1fff",
+      "action": "Restore exact committed session baseline"
+    },
+    {
+      "path": "Assets/Scripts/SkyPulseNativeGame.Roster3D.cs",
+      "backup": "/private/tmp/skypulse-roster-20261104/pending-runtime-hangar/Assets/Scripts/SkyPulseNativeGame.Roster3D.cs",
+      "preparedSha256": "72d8bc0ce05a1a8b85538dc03663eef4fdc7787d13e64803d51c60fad0bb35d9",
+      "headAndLiveBeforeSha256": null,
+      "liveAfterSha256": null,
+      "action": "Remove task-created partial/meta after verified backup"
+    },
+    {
+      "path": "Assets/Scripts/SkyPulseNativeGame.Roster3D.cs.meta",
+      "backup": "/private/tmp/skypulse-roster-20261104/pending-runtime-hangar/Assets/Scripts/SkyPulseNativeGame.Roster3D.cs.meta",
+      "preparedSha256": "4788f021a7e086013e176a0b45e06e719d5b6c6353f256d28832463f77ce6b8e",
+      "headAndLiveBeforeSha256": null,
+      "liveAfterSha256": null,
+      "action": "Remove task-created partial/meta after verified backup"
+    }
+  ],
+  "guards": {
+    "allHEADVersionsMatchedLIVE_BEFORE": true,
+    "allPendingVersionsMatchedAuditedQA": true,
+    "allBackupsByteVerified": true,
+    "noPriorUserChangesErased": true,
+    "approvedFinchAndSourceArtFilesBytePreserved": 539,
+    "runtimeResourcesBirds3DAbsent": true,
+    "worldRosterAndToolsFilesNotModifiedByThisHold": true
+  },
+  "editorBaker": {
+    "path": "Assets/Editor/SkyPulseBirdRosterRuntimeBaker.cs",
+    "action": "Retained unchanged",
+    "sha256": "ff2bc15f9201487d270bca6b5b6e03e78eb932577180903efe8cc0e9c50c0d9c",
+    "reason": "No reference to SkyPulseProgressionStage or the prepared Stage APIs; it uses the unchanged Finch rig and editor authoring types. It remains an explicitly invoked editor exporter, with no live runtime assets installed."
+  },
+  "qaProject": "The validated pending integration remains in /private/tmp/skypulse-roster-20261104/project for future approved review; this hold did not change it.",
+  "deviceInstall": false,
+  "upload": false
+}

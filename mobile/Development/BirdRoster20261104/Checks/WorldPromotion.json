@@ -1,0 +1,806 @@
+{
+  "result": "PASS",
+  "date": "2026-11-04",
+  "scope": "Guarded local world geometry polish only; rejected bird rollout is unaffected. No device install or upload.",
+  "auditBaselineCommit": "572625e666ca07c9ab65a04663008310c9246ac8",
+  "promotedAssets": 93,
+  "sourceMeshes": 68,
+  "runtimeMeshes": 24,
+  "baseline": "Assets/Editor/SkyPulseBackgroundWorkshop/district-design-baseline-v1.json",
+  "designVersionBefore": 2,
+  "designVersionAfter": 3,
+  "sourcePathWhitelist": [
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-civic-01.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-civic-02.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-civic-07.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-residential-01.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-residential-02.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-residential-07.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-01-civic-01.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-01-civic-02.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-01-civic-05.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-01-residential-01.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-01-residential-02.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-01-residential-05.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-02-civic-01.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-02-civic-05.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-02-civic-07.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-02-residential-01.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-02-residential-05.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-02-residential-07.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-03-civic-02.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-03-residential-02.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-04-civic-01.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-04-civic-02.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-04-civic-08.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-04-residential-01.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-04-residential-02.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-04-residential-08.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-05-civic-01.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-05-civic-02.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-05-residential-01.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-05-residential-02.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-06-civic-01.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-06-civic-02.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-06-residential-01.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-06-residential-02.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-07-civic-01.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-07-civic-05.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-07-civic-06.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-07-residential-01.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-07-residential-05.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-07-residential-06.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-08-civic-01.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-08-civic-02.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-08-residential-01.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-08-residential-02.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-civic-01.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-civic-08.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-civic-09.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-civic-10.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-civic-11.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-civic-12.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-civic-13.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-residential-01.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-residential-08.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-residential-09.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-residential-10.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-residential-11.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-residential-12.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-residential-13.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-10-civic-01.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-10-civic-02.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-10-residential-01.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-10-residential-02.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-11-civic-01.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-11-civic-02.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-11-civic-11.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-11-residential-01.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-11-residential-02.asset",
+    "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-11-residential-11.asset"
+  ],
+  "runtimePathWhitelist": [
+    "Assets/Resources/SkyPulse/BackgroundEdits/world-00-civic.asset",
+    "Assets/Resources/SkyPulse/BackgroundEdits/world-00-residential.asset",
+    "Assets/Resources/SkyPulse/BackgroundEdits/world-01-civic.asset",
+    "Assets/Resources/SkyPulse/BackgroundEdits/world-01-residential.asset",
+    "Assets/Resources/SkyPulse/BackgroundEdits/world-02-civic.asset",
+    "Assets/Resources/SkyPulse/BackgroundEdits/world-02-residential.asset",
+    "Assets/Resources/SkyPulse/BackgroundEdits/world-03-civic.asset",
+    "Assets/Resources/SkyPulse/BackgroundEdits/world-03-residential.asset",
+    "Assets/Resources/SkyPulse/BackgroundEdits/world-04-civic.asset",
+    "Assets/Resources/SkyPulse/BackgroundEdits/world-04-residential.asset",
+    "Assets/Resources/SkyPulse/BackgroundEdits/world-05-civic.asset",
+    "Assets/Resources/SkyPulse/BackgroundEdits/world-05-residential.asset",
+    "Assets/Resources/SkyPulse/BackgroundEdits/world-06-civic.asset",
+    "Assets/Resources/SkyPulse/BackgroundEdits/world-06-residential.asset",
+    "Assets/Resources/SkyPulse/BackgroundEdits/world-07-civic.asset",
+    "Assets/Resources/SkyPulse/BackgroundEdits/world-07-residential.asset",
+    "Assets/Resources/SkyPulse/BackgroundEdits/world-08-civic.asset",
+    "Assets/Resources/SkyPulse/BackgroundEdits/world-08-residential.asset",
+    "Assets/Resources/SkyPulse/BackgroundEdits/world-09-civic.asset",
+    "Assets/Resources/SkyPulse/BackgroundEdits/world-09-residential.asset",
+    "Assets/Resources/SkyPulse/BackgroundEdits/world-10-civic.asset",
+    "Assets/Resources/SkyPulse/BackgroundEdits/world-10-residential.asset",
+    "Assets/Resources/SkyPulse/BackgroundEdits/world-11-civic.asset",
+    "Assets/Resources/SkyPulse/BackgroundEdits/world-11-residential.asset"
+  ],
+  "mapping": [
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-civic-01.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-civic-01.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-civic-01.asset",
+      "beforeSha256": "695091e1089dda64f2cd680a7b418095c1c12a4a5f10d1c3c4436772818ab3af",
+      "afterSha256": "85a8df373a0349e6f399a134a4a2e373260b9969aff9025caa9dbc0ef6dca671"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-civic-02.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-civic-02.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-civic-02.asset",
+      "beforeSha256": "93fe2031295cc16d49e4b0dabe5661d268213f45d2538f6a575e6d06e9cb8dae",
+      "afterSha256": "1662ef13f76fde78b4670f5dfef13fa23b0c435d2d682107dea6c96f01b0e53f"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-civic-07.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-civic-07.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-civic-07.asset",
+      "beforeSha256": "ef5940fb97e8a74e061c064720870f5da3288c834fd5a4bd93efe6f5df92f31e",
+      "afterSha256": "f655587a38ecd893d6f1d203c0042bcb23430fc03ade88e731c049ad94253892"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-residential-01.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-residential-01.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-residential-01.asset",
+      "beforeSha256": "478732aa23bc9ae61d3df50c549fbdda61385165e103ee34a8a8146d4d933fe7",
+      "afterSha256": "3c9cdb33bdace6ee0b2eff4cf96fa0176209750b8c3f781c6a1b70d77ff1b547"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-residential-02.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-residential-02.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-residential-02.asset",
+      "beforeSha256": "1bf6c221a185af14370b3785c2918f532a36dbd7bf067faae3d1a351d4f1fe85",
+      "afterSha256": "a762652254f1172d6428c158281a9ba45452c98f342d98067f62a70fa551cd37"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-residential-07.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-residential-07.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-00-residential-07.asset",
+      "beforeSha256": "3683c6c522de62c52067f24766754b383883fe87142ddda469be8919f4bc34c6",
+      "afterSha256": "5fe2014f2af15738f6735f3f5a698fbbada70dd2f1e15591da98f8ebb30f641b"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-01-civic-01.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-01-civic-01.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-01-civic-01.asset",
+      "beforeSha256": "2383b922f9ae1188a7307fb2c7e1f38cb06d50d5fc4b2083cd1a77cc0be2ae77",
+      "afterSha256": "b0b3b2b1508233a1c8cda9ae0db0704fd3d7ac639bfc5f97063d719e98f6d4bc"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-01-civic-02.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-01-civic-02.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-01-civic-02.asset",
+      "beforeSha256": "f067c4e937cc70ce31ae71c6394afb53a595098f02f6125177e5353b6ebe5b31",
+      "afterSha256": "49475c25bfd2f6df1914eea08c4cc6ff1fa4e2434aec5dd2fc0830860c8b3428"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-01-civic-05.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-01-civic-05.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-01-civic-05.asset",
+      "beforeSha256": "db866f9143e812efaa253f8e54dd3d21a08470abd8106dd442ad44309a3b9f9d",
+      "afterSha256": "63d23acff95ef7a581d0739e43bda303f2736c9bf9f2fc6e3712c4e13ba89b8c"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-01-residential-01.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-01-residential-01.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-01-residential-01.asset",
+      "beforeSha256": "f388b9ab0511463d021e2ee7bc33eef8edfff4b52cd791aee0276d6f962bd263",
+      "afterSha256": "9603166763a739f362c055aa01be557feaf8c81544d3183b11325f91590d1811"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-01-residential-02.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-01-residential-02.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-01-residential-02.asset",
+      "beforeSha256": "2d8c8373997078636689780f14b7609dfdf8f0dd7e4f83d5536e468e8e16a22f",
+      "afterSha256": "da5adf8ae628709110b88374d5f58106ac2dc90839c120ab3619de5cd36a0f4e"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-01-residential-05.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-01-residential-05.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-01-residential-05.asset",
+      "beforeSha256": "27a8a985143f498abc40e4adb8c52adb606522ba874a436826cc144ace989a78",
+      "afterSha256": "b54845cd64cd5a658c30737510b95cb60067b992669c47324f06d8c165d8f15a"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-02-civic-01.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-02-civic-01.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-02-civic-01.asset",
+      "beforeSha256": "abc95831b6dc39f146c498210817d54b74e3a0ecfeb3a4caacda264cc4b2aeaa",
+      "afterSha256": "ab4309c9bc42b24b2e8ca685dab2ece22e917a5534301fe5f5b06ae3cb65c863"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-02-civic-05.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-02-civic-05.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-02-civic-05.asset",
+      "beforeSha256": "ba046efbe58715d3b96e0d211e3d6111218d394055d282f57b2923a1ea87513d",
+      "afterSha256": "69ad51f4eb38e9c532ff3425f8b642e8b00118396fea6561568a5399023015e7"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-02-civic-07.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-02-civic-07.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-02-civic-07.asset",
+      "beforeSha256": "3cb00147c91b055ff06d113787aa7cd4a21ee091486f04398d40989373a59d8f",
+      "afterSha256": "90cc9cd5fd8e5b0caff2d3f35e597c042c7c13c8de91d17306bf050188a40299"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-02-residential-01.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-02-residential-01.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-02-residential-01.asset",
+      "beforeSha256": "464c6e52eb7cb89cc5d84b1c95d585df5dd56fb36ba75ee5eeb8dce3f8589b0a",
+      "afterSha256": "2cb071083edb9cefa11ad3285e13b705f11508dbe1804ac355c586868806335c"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-02-residential-05.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-02-residential-05.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-02-residential-05.asset",
+      "beforeSha256": "50ea4f16b8c5af04401260c908c317ca770f59b1e30c1b3bba1242cbffd63097",
+      "afterSha256": "2cf7b8ebe11bdaa70603ff0125ad64ffc563ea68402348ce91998dfe53ea94d9"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-02-residential-07.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-02-residential-07.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-02-residential-07.asset",
+      "beforeSha256": "e2e4173a05a738fbf3c94ae34a8e81d6f90edddde2122a9fadd76100f89613df",
+      "afterSha256": "b2c1b08b2d844ab0f0fe9198979075ae1242b976086be74d894c2a2245e92e00"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-03-civic-02.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-03-civic-02.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-03-civic-02.asset",
+      "beforeSha256": "6cfa93828ed21046ceba316eb752264cba1b220a31b235c228a6b3994a30e5c7",
+      "afterSha256": "39c3ba92a8a7bf4a9739da417f66cec63d6cfd07d7fe0da2afdc7787563d253f"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-03-residential-02.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-03-residential-02.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-03-residential-02.asset",
+      "beforeSha256": "50ce8c46efa8c9045b8c9f68aae115521fd7c5b51d566d9bedb148ae012e94dd",
+      "afterSha256": "1a341e564f01a2a0ac2706d9c193363c59730d592536cb21178d1fedb6c1ec29"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-04-civic-01.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-04-civic-01.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-04-civic-01.asset",
+      "beforeSha256": "b4631eaef6a51ce647e10c01b41b6a4f9355425a432700a8a29d958803ae3280",
+      "afterSha256": "9d7443c42c953909854c5fb899fb86e4908bb7f7129589702404b9e325900a56"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-04-civic-02.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-04-civic-02.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-04-civic-02.asset",
+      "beforeSha256": "5e1e9f509fff25fb1d4a7296cddc86ab44d5cc96b6c416537ae3a4b9bede66ba",
+      "afterSha256": "e1ba753511fb676b33c61778c342bb1192c5f6368adf3e3e2227b048260f1a4f"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-04-civic-08.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-04-civic-08.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-04-civic-08.asset",
+      "beforeSha256": "e31c3e756aacc7ff0ef7d17f4cecd316acc4c3abee3fad29b8574c50c5390ece",
+      "afterSha256": "8434ec8c02ef14d6a624480e6ad374f83dabb01201b22b1dfefc868951d69cf6"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-04-residential-01.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-04-residential-01.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-04-residential-01.asset",
+      "beforeSha256": "0ef425f828896afbb7623281b13602050fed83d7757c3772784d52e998196255",
+      "afterSha256": "11e5472edc3d8161eb4613f74b42c0ea8ce9723a04c6eaef08f0a4ca52caf345"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-04-residential-02.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-04-residential-02.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-04-residential-02.asset",
+      "beforeSha256": "c4cdd35343730661bf99141ba014b8b659c7e17370b2826d4fcaf21bfc944a10",
+      "afterSha256": "d19ee1c4f5aca58ce57ebc21e534bf5ff6de01045dd792581fc2a8bcab0202ab"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-04-residential-08.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-04-residential-08.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-04-residential-08.asset",
+      "beforeSha256": "e885ebae4866c0af46cf6bd91a1476f9ff3c0b97cdc3e75e17506fc1eaf25f9c",
+      "afterSha256": "1c6f0b5aaf7febb45d1a5d08cc9c6b8f5b88f030d5246bfb6d6e4c28215f77f9"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-05-civic-01.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-05-civic-01.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-05-civic-01.asset",
+      "beforeSha256": "6224b3b5c28857ce0b18426e084ab8dfcf775f767ada4883d3aac1a1b21441df",
+      "afterSha256": "500c1ed3dc150a91b398e211a4e384b4f92c3ee00ce62a1df69a97a4686f53ce"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-05-civic-02.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-05-civic-02.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-05-civic-02.asset",
+      "beforeSha256": "cd0773cf59b5f1deab636b15f64d823805f025d50ecb23347f98fa7ca4403161",
+      "afterSha256": "d5d7ec5769ebb8ad264b5ad23e95dbb2726802a40ea57bd2978a70bba8bf1c4e"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-05-residential-01.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-05-residential-01.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-05-residential-01.asset",
+      "beforeSha256": "c855f2a976571999c88f10435e80b069d61ad07c2eac0ce0ee3048f7014e2853",
+      "afterSha256": "7dd2934c34b321513b200a0ba3114c0dd3ac21b82648b8966281c648b2c7395b"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-05-residential-02.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-05-residential-02.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-05-residential-02.asset",
+      "beforeSha256": "e098ef9d171679614904ff88967c4306e4843d6b9f68152c3bcea3ddc00f3999",
+      "afterSha256": "6bab750493585e4169168203930409b93bf836f026736b7a366c85f8881ffcb4"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-06-civic-01.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-06-civic-01.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-06-civic-01.asset",
+      "beforeSha256": "23f22276599063a72817dee56e276df988ec8d5921b1b5922485d4d7243edf3d",
+      "afterSha256": "3803ffa059c6b6828e77a87e21f358f06c35d10fa918ce17406795a2a3e96d64"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-06-civic-02.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-06-civic-02.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-06-civic-02.asset",
+      "beforeSha256": "1472aba85ab9a1f151b8e84f5d9247ebe1704f8884be5b7480c577ff5e19ac1d",
+      "afterSha256": "fd57de920ad8646b163bc56dadb6a3806d5aa5e8c88d12f2a568c6e1052a4104"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-06-residential-01.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-06-residential-01.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-06-residential-01.asset",
+      "beforeSha256": "a86c2246d1626fb392cd36015af2fcf8cdc248ba6d2a4e8e2df6abc64fcdd8fa",
+      "afterSha256": "4677a926d29f1d9132c6c9a571231e50cf55b7e23cc0d2bfdbb236b00ed0a985"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-06-residential-02.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-06-residential-02.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-06-residential-02.asset",
+      "beforeSha256": "9bf1dd4981c0fa3c289984bad7d287fca5dfc5f7b4322fbefd466619891ee12c",
+      "afterSha256": "722b04762f3292107aaabfecac296dd6d2392691933ffbc7ab2d198133466278"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-07-civic-01.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-07-civic-01.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-07-civic-01.asset",
+      "beforeSha256": "97c0baa51ecf2d2fe4496d0205fb5613ef2b845277a99588ac9b97bb425574d0",
+      "afterSha256": "07e9fe47e861d034771d5470185cc16bdbd931966b7866f4d08155e7897df44c"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-07-civic-05.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-07-civic-05.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-07-civic-05.asset",
+      "beforeSha256": "e116a9302013fe91da11dedfcbeaf5869931b16160de162e97493405dd3b27bc",
+      "afterSha256": "9830cf58be8deaae426711814f89e3add86450eab2ca982cf819bf452d44dabb"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-07-civic-06.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-07-civic-06.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-07-civic-06.asset",
+      "beforeSha256": "cb854a98ff611d115c7e1ed07ab0325ac316b9bc380ac680d3c65702d6a8c29d",
+      "afterSha256": "4e6b7004a626a2d0042458f7a93abb1e2d5efe77ce0f1619f56e6d09e61f7694"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-07-residential-01.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-07-residential-01.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-07-residential-01.asset",
+      "beforeSha256": "299016f0da3154b7e841f0ecbbf4506d5ba5d29ba99c917e854bbe32f0e81830",
+      "afterSha256": "9baf9ca7bf1a702924b856a66095edd2028bae6d260d05eb07e2277413782894"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-07-residential-05.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-07-residential-05.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-07-residential-05.asset",
+      "beforeSha256": "548af4b3ea2d03e3af193d2422db8627279dbec83fd141371385ab2b654888da",
+      "afterSha256": "25875b8e65dbc6b14fc1cfab130f3d07f31a55823aa70d73654c9648853ed319"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-07-residential-06.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-07-residential-06.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-07-residential-06.asset",
+      "beforeSha256": "2ce77811a575374d00d053abc3f193042df9cece078b37afa9f46a52830e48b8",
+      "afterSha256": "73e30c8cba93eccdb7bbf34f48a66e1d61021ecda2ee1a026a03e12d770dfa3a"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-08-civic-01.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-08-civic-01.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-08-civic-01.asset",
+      "beforeSha256": "cfd99a62ca8ed6de93dbcfcef625afacd9c8a46e1832ba9eb111625ba60d4365",
+      "afterSha256": "a9b50bd6142d90ad447d4062e375fa145f28284602591d654e57626a9da39fbe"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-08-civic-02.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-08-civic-02.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-08-civic-02.asset",
+      "beforeSha256": "37d19428cd491e1faa009c88e423647e0aa5836c922e38c47efd06d24e0dc69d",
+      "afterSha256": "054564767419a567af473df81e73ef13e89905d78ad4b712c06fbc05466aca4a"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-08-residential-01.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-08-residential-01.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-08-residential-01.asset",
+      "beforeSha256": "f62bfcc8bdd4cf11509b0f09233bafd55f3b5eb3baf2f2a4ac553820669029cf",
+      "afterSha256": "ea911e44d2d2f048711d6c7afc9f620992e7d2f7c5d0f7af1a99e3bc078af381"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-08-residential-02.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-08-residential-02.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-08-residential-02.asset",
+      "beforeSha256": "fbbff50f5a8d9ca4af3de3f5b5ff1409d3acc20ccf12c918d8ab0e25bf055461",
+      "afterSha256": "21d839b7bf40a015bf5b4c0bd0db809110ade9667e4f87c28c743127b5d32e24"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-civic-01.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-civic-01.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-civic-01.asset",
+      "beforeSha256": "802bee796aed0523d1232e8d5923281401da3289fb5a1486aad4ed3114823f2c",
+      "afterSha256": "31faec2d87f01def0f1a6b37d6233efb04f0d2749be860b07490c7edcc54b7f2"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-civic-08.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-civic-08.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-civic-08.asset",
+      "beforeSha256": "d5e7484c75edf51325a68b926dfa01c52f4c580f72c24f0f9a4db24a3bb70290",
+      "afterSha256": "7185fccb0fb82744bcfb3440e6ac1a50bbad23f14e8a0f888d3f04be67f1567a"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-civic-09.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-civic-09.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-civic-09.asset",
+      "beforeSha256": "f50fe5aaeb32046f545d8d89c9a54e98f81b497dc0ee05f52e816aa4eb811f07",
+      "afterSha256": "f9acfba06b8f532dd61dd6da47f0ee89925f7da30854961acdce613b7c427eab"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-civic-10.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-civic-10.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-civic-10.asset",
+      "beforeSha256": "765de46f2b6327b8387baa142f98c31df89ebb55d215703541d45b9789964441",
+      "afterSha256": "a86597b09865a92a7d5b5096860b3571b1e7572ecd72f5e27ed26f4115d8d8f4"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-civic-11.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-civic-11.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-civic-11.asset",
+      "beforeSha256": "a938577b8be313a17918c31460d64cae336184686b162b8b4ac25a844eaac29c",
+      "afterSha256": "d8cd3c1f4d3fce897a6912696e4d69565f89f9d06d237d3550a19a90eaf7aedb"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-civic-12.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-civic-12.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-civic-12.asset",
+      "beforeSha256": "975417f995ecd016e50d74971a2e93351c073bb04c62e4c87578ce9d5997a484",
+      "afterSha256": "fad78a9ee03e3ecb76f6966b66916c9c119df5dd1ab3db0314adb2d76d3a7fbb"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-civic-13.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-civic-13.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-civic-13.asset",
+      "beforeSha256": "165e38d8fb165a4d75fb56d8fc5fadf7d0b979326aaf7da3dd411aabeda51a79",
+      "afterSha256": "2cbdcdfb7c80007bb8173bf18adb3f85ab4f6a1215167fcb66c620660290bdad"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-residential-01.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-residential-01.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-residential-01.asset",
+      "beforeSha256": "09d54e096a16007bf03d05ec26f2d3a2e96951f190671ed7ef4a580bba2bdfb6",
+      "afterSha256": "49320231e35ed7d6bea79e7c04312d8488108005eb1fa32bad13484f37b90555"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-residential-08.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-residential-08.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-residential-08.asset",
+      "beforeSha256": "17258a506ab49078bc6c390b2ee09a771a44fd1029ee8f3e1c66a2204bf6cfec",
+      "afterSha256": "693eaf03e66e4a34324d5227a5adf6fb1e9dee9fabf967258aeb5fe167bff440"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-residential-09.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-residential-09.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-residential-09.asset",
+      "beforeSha256": "050f933a5483cb1ce9a67407cfaee1e52e3b6aff8cb6d4fe547034b0087aaf44",
+      "afterSha256": "7401f11ca79b802c0b4824bcebfb227fe78b98ce43579cbc860165a217106aba"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-residential-10.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-residential-10.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-residential-10.asset",
+      "beforeSha256": "63e920e8fd95d0b5316c7aafcff51893351020445e9c37382079d3e8ac293118",
+      "afterSha256": "c32b8b5f22bd57cfc6a67c2021558dd7c708a5fa9cd93017368c082933f3581f"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-residential-11.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-residential-11.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-residential-11.asset",
+      "beforeSha256": "948aefe1c86d1985706dec406abfb6ee1352fa8d52c67d1bc129142a23e08423",
+      "afterSha256": "eeea3a2d3442274ca248acd7c93e06bbc37bb42a93136a4a9f88f40ee0e2dd36"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-residential-12.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-residential-12.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-residential-12.asset",
+      "beforeSha256": "89d2adf8de12b700d9e9efeb22cb4bba258126f98ef46c1abc6da465dd52633f",
+      "afterSha256": "c2ed7950307a0e457bd26adc6b4ff27dab602489df415a1e609a289cf1e4b5c4"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-residential-13.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-residential-13.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-09-residential-13.asset",
+      "beforeSha256": "27de45a2014851681d64f3af1b227fd26d218ee595845ae70beebe2419fc04c7",
+      "afterSha256": "e67a205ea2785b56d8e906dd480fead8ace3570be7e4ce03293408fc0cd4c2a7"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-10-civic-01.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-10-civic-01.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-10-civic-01.asset",
+      "beforeSha256": "298ef02e84fbe24e9e287f08028ae1db9ef39950827a045d427253b842ba239a",
+      "afterSha256": "64998b5a19947fd88843d7afcd023b22c0e5ed9cfbc2e9dbd7646b0ae6dfa41a"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-10-civic-02.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-10-civic-02.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-10-civic-02.asset",
+      "beforeSha256": "b47cb6f13e2b44be7f1bed3f0297d56b4df270cba50b35bfee9f5b372fa4fcd9",
+      "afterSha256": "4ea0960200dd820184de0accdb6bb794a63eb0a632aabbd4bcf189cadf011582"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-10-residential-01.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-10-residential-01.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-10-residential-01.asset",
+      "beforeSha256": "aebbfc755ee22823bd7d5351501ebd9a5086bb272cbc62fe899fe4fc29d870b1",
+      "afterSha256": "f15bdf88a87fdf4933f54d57750a6f1c4f64bb44910c262437edfb442ca027c7"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-10-residential-02.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-10-residential-02.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-10-residential-02.asset",
+      "beforeSha256": "79ad3999d85a2f76326e6f6debd0827424aa534e27d058e4c69e7f62c6c573f6",
+      "afterSha256": "a0f9dc0bddb780be9cb3fda8dc34d6e5e23b424cba2421109d37e4d2deb1566e"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-11-civic-01.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-11-civic-01.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-11-civic-01.asset",
+      "beforeSha256": "38f1c0e52d066c1c2c270f9cd96b7e9d961b6b3650c76f18825f22f6f62ec7f0",
+      "afterSha256": "c3dea962ac0f53081778abf4db1edd55864c460a69acf91f718582fd0b6de326"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-11-civic-02.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-11-civic-02.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-11-civic-02.asset",
+      "beforeSha256": "b2bd5a4ad88be7feacdbb8b3520c8e5aba00d50a34ba558f8c5433327ad849cc",
+      "afterSha256": "75cce1b69a99d1d637e8ffdcf74560648f8bffd043d637f7e85f2aced0f4a48e"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-11-civic-11.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-11-civic-11.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-11-civic-11.asset",
+      "beforeSha256": "ca490defa5e979671a7dda38ca8e8672a74c768ca48d04d044b1fa0e636f1a2e",
+      "afterSha256": "3e1801cc74f2b5ae8b1cf126c1618ab7e3874fdc6877f11287fa71f773e1fddf"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-11-residential-01.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-11-residential-01.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-11-residential-01.asset",
+      "beforeSha256": "d3197358346662067c048cf3ff96aa85ec28f786c718dc2be83ce4efbd8b7da4",
+      "afterSha256": "47f7c1b7f59bdbb4e439d2fd885a1228e582245e7789e50e9169d8ff2136f6f1"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-11-residential-02.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-11-residential-02.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-11-residential-02.asset",
+      "beforeSha256": "4286fe747f95e1035042f4b4e71c0c472605123e45bfee57c1ff6bbe421cd8de",
+      "afterSha256": "cbaada3218f7e38dd7a5aca4b5bf24cd8bb6a48325ab6205f1f3b4647a130891"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-11-residential-11.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-11-residential-11.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/Meshes/world-11-residential-11.asset",
+      "beforeSha256": "7bef06b5eb3bcc891f5795fe4adcbde9e03797d002fe75b8253ec788bda5b76e",
+      "afterSha256": "a32cfa92492cf0ab2ac7a6e5e73dff9f1594126de6bbb8f88195dd1ed743dc94"
+    },
+    {
+      "path": "Assets/Editor/SkyPulseBackgroundWorkshop/district-design-baseline-v1.json",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Editor/SkyPulseBackgroundWorkshop/district-design-baseline-v1.json",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Editor/SkyPulseBackgroundWorkshop/district-design-baseline-v1.json",
+      "beforeSha256": "aee51b6cc1159ff4c97245aed1fc847d8a2a7cc94dc74c3680a8cf0d41413537",
+      "afterSha256": "eeb5a5231f2f21ff10f3f28c6353e61d78deb3d4eb85ba8e0a5abcaedbbe7f5b"
+    },
+    {
+      "path": "Assets/Resources/SkyPulse/BackgroundEdits/world-00-civic.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Resources/SkyPulse/BackgroundEdits/world-00-civic.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Resources/SkyPulse/BackgroundEdits/world-00-civic.asset",
+      "beforeSha256": "828f4070e2d8bde8e49f71fbf9e44833d09054d549a71c9bd3a34693c41c853e",
+      "afterSha256": "82f28db37ecab54d94550cc45fc323e76331611c11c7fa63b9a3895827cbb69d"
+    },
+    {
+      "path": "Assets/Resources/SkyPulse/BackgroundEdits/world-00-residential.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Resources/SkyPulse/BackgroundEdits/world-00-residential.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Resources/SkyPulse/BackgroundEdits/world-00-residential.asset",
+      "beforeSha256": "d6cf5e8564d49ea97930c247a6591ee094b9d69b261b3005781090b848933cf9",
+      "afterSha256": "9227ee049231dcf1c87e11e5eac1b964f6595da494095c2f83365b0b499c9c71"
+    },
+    {
+      "path": "Assets/Resources/SkyPulse/BackgroundEdits/world-01-civic.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Resources/SkyPulse/BackgroundEdits/world-01-civic.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Resources/SkyPulse/BackgroundEdits/world-01-civic.asset",
+      "beforeSha256": "8269576183a13b0ba023375b508165c57ac25923d688c0a829b182f0a5d1a823",
+      "afterSha256": "cb89fd8f7b60e3607d410601c49303e187c6d0cf7dc38fa55e80fe4a20f67cc8"
+    },
+    {
+      "path": "Assets/Resources/SkyPulse/BackgroundEdits/world-01-residential.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Resources/SkyPulse/BackgroundEdits/world-01-residential.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Resources/SkyPulse/BackgroundEdits/world-01-residential.asset",
+      "beforeSha256": "7a2e8bbd9d91f4cf3807874e72bfad37f745070fbb6ae74b722df903e409d69c",
+      "afterSha256": "826341e5f89abe749d25e5c372a54d659f28711e425732a13064e794afa107c2"
+    },
+    {
+      "path": "Assets/Resources/SkyPulse/BackgroundEdits/world-02-civic.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Resources/SkyPulse/BackgroundEdits/world-02-civic.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Resources/SkyPulse/BackgroundEdits/world-02-civic.asset",
+      "beforeSha256": "27856a5ae2ee702a404ef03a51b9162f230957d9fdb013deb6da2cfefa9549b8",
+      "afterSha256": "70159ebe7dfae49089c9155f40e0432e5e266945c30fe6ac5aa14d61ba65acf4"
+    },
+    {
+      "path": "Assets/Resources/SkyPulse/BackgroundEdits/world-02-residential.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Resources/SkyPulse/BackgroundEdits/world-02-residential.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Resources/SkyPulse/BackgroundEdits/world-02-residential.asset",
+      "beforeSha256": "6ac1e4db3ba9daa24eece149c54010cbb46f2da6335d7c345f5545b2d7db38e9",
+      "afterSha256": "392dc8537c5a276ba730b8dd4b93e38c09dca49c2dacb63f19223bb2f5ba2f75"
+    },
+    {
+      "path": "Assets/Resources/SkyPulse/BackgroundEdits/world-03-civic.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Resources/SkyPulse/BackgroundEdits/world-03-civic.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Resources/SkyPulse/BackgroundEdits/world-03-civic.asset",
+      "beforeSha256": "00a28a55caafd45d57ed8e59004794ac8434707c1a65890b54a78e4b4e32f503",
+      "afterSha256": "681950a0e1c76d1d5690ef20ae8efe6687f24dba4f81755f017ccde24d90e865"
+    },
+    {
+      "path": "Assets/Resources/SkyPulse/BackgroundEdits/world-03-residential.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Resources/SkyPulse/BackgroundEdits/world-03-residential.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Resources/SkyPulse/BackgroundEdits/world-03-residential.asset",
+      "beforeSha256": "f6aafe4c370ddec651b4d0565a12b7d65125593e8701f690d2e23089e5bd5e4f",
+      "afterSha256": "cb69a1f0d65be5338f92071cb58cdce8517b296662b72899380afa17c1da48b9"
+    },
+    {
+      "path": "Assets/Resources/SkyPulse/BackgroundEdits/world-04-civic.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Resources/SkyPulse/BackgroundEdits/world-04-civic.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Resources/SkyPulse/BackgroundEdits/world-04-civic.asset",
+      "beforeSha256": "2d64b7b07e62d2dba160c78f2bc9803306fdb377602248f9dd6553aa08864b72",
+      "afterSha256": "f36f100a5870aaf85dcd390661156d8dc23fa017db1baa453c57e69696fd3405"
+    },
+    {
+      "path": "Assets/Resources/SkyPulse/BackgroundEdits/world-04-residential.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Resources/SkyPulse/BackgroundEdits/world-04-residential.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Resources/SkyPulse/BackgroundEdits/world-04-residential.asset",
+      "beforeSha256": "209fc2082a5d18025d1008cb1a624c5fb04c11f88dd8a9cc4d2228364581009e",
+      "afterSha256": "890fe9cdfc4b8720b4a1b4e4284bf517d29aa3a8119a0a82c043ff752b26f941"
+    },
+    {
+      "path": "Assets/Resources/SkyPulse/BackgroundEdits/world-05-civic.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Resources/SkyPulse/BackgroundEdits/world-05-civic.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Resources/SkyPulse/BackgroundEdits/world-05-civic.asset",
+      "beforeSha256": "e1de410a9dcbe2e69246b6a1de24e49e319fa1e0943e954d30417c3f1c0ac6d9",
+      "afterSha256": "e9b68b6820ccf55ec7ed3a473bbb95899dcfb27467eeede07a8ae12b1612a072"
+    },
+    {
+      "path": "Assets/Resources/SkyPulse/BackgroundEdits/world-05-residential.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Resources/SkyPulse/BackgroundEdits/world-05-residential.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Resources/SkyPulse/BackgroundEdits/world-05-residential.asset",
+      "beforeSha256": "f2183338dff72bfd6dc3cc9a26cc7c3dda3aff7e5f31c9d64d3662f997c99c98",
+      "afterSha256": "cf5e0a1316a20c031f715e3e8400fdf934320a04d6d46f593c602ecef5b98d74"
+    },
+    {
+      "path": "Assets/Resources/SkyPulse/BackgroundEdits/world-06-civic.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Resources/SkyPulse/BackgroundEdits/world-06-civic.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Resources/SkyPulse/BackgroundEdits/world-06-civic.asset",
+      "beforeSha256": "f7a9cb11f2c19db87dbb3a29d12337d30edd73339726224dbe769ba5c403ae0c",
+      "afterSha256": "c801643630ea2b5ad4ddc8b564a46cd920e0082304ec09e157876e4bde81e325"
+    },
+    {
+      "path": "Assets/Resources/SkyPulse/BackgroundEdits/world-06-residential.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Resources/SkyPulse/BackgroundEdits/world-06-residential.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Resources/SkyPulse/BackgroundEdits/world-06-residential.asset",
+      "beforeSha256": "f39ddda971e129d1189d7df4ed299bba8470b36ec5f746754bdeecd4136ac925",
+      "afterSha256": "47a516d6f01551a6fdc3a0923214a131696f00e965cf417464a289939b5184d4"
+    },
+    {
+      "path": "Assets/Resources/SkyPulse/BackgroundEdits/world-07-civic.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Resources/SkyPulse/BackgroundEdits/world-07-civic.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Resources/SkyPulse/BackgroundEdits/world-07-civic.asset",
+      "beforeSha256": "bb95dc92e11ff828cba455cea2c4d0744758ba261bf0033e0d87f14e56330b63",
+      "afterSha256": "4523f701396a4d1a6f3eda559b75b2e5089782d82afe133721cd0780e6538df3"
+    },
+    {
+      "path": "Assets/Resources/SkyPulse/BackgroundEdits/world-07-residential.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Resources/SkyPulse/BackgroundEdits/world-07-residential.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Resources/SkyPulse/BackgroundEdits/world-07-residential.asset",
+      "beforeSha256": "eb23d7300a26a09ef5267dc5fd3cd16cccb7c804981578e17403d7a49bdc44ca",
+      "afterSha256": "22307119e579c6ebff7b43e218aad2b893c4438d89d1807c3454ba14d17a43ff"
+    },
+    {
+      "path": "Assets/Resources/SkyPulse/BackgroundEdits/world-08-civic.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Resources/SkyPulse/BackgroundEdits/world-08-civic.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Resources/SkyPulse/BackgroundEdits/world-08-civic.asset",
+      "beforeSha256": "0f9393d31f759df243346a609a2e5c976e43adda6263946fceee0a305c530872",
+      "afterSha256": "c8bc31fc461b6c01ed8fb88b009bef5bd0324c0632838b6940d830479a3c1d7a"
+    },
+    {
+      "path": "Assets/Resources/SkyPulse/BackgroundEdits/world-08-residential.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Resources/SkyPulse/BackgroundEdits/world-08-residential.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Resources/SkyPulse/BackgroundEdits/world-08-residential.asset",
+      "beforeSha256": "3b34d0eb273029f46823ed723e6474757cd2e3e2acb8881afb76919b30b45eda",
+      "afterSha256": "5b2c783864c96c57dec48f466a4b7c24937d11cb8b4e7505404ab2fb65be8837"
+    },
+    {
+      "path": "Assets/Resources/SkyPulse/BackgroundEdits/world-09-civic.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Resources/SkyPulse/BackgroundEdits/world-09-civic.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Resources/SkyPulse/BackgroundEdits/world-09-civic.asset",
+      "beforeSha256": "5d878aaf6679fe93043baa5df2355a94840cb66ab1ad3b2a9aa357cd98ab8ff5",
+      "afterSha256": "5eb906a81e4637d7d3a406d282f8703aabcc3638adf4ec59f8c13525a43bf0d8"
+    },
+    {
+      "path": "Assets/Resources/SkyPulse/BackgroundEdits/world-09-residential.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Resources/SkyPulse/BackgroundEdits/world-09-residential.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Resources/SkyPulse/BackgroundEdits/world-09-residential.asset",
+      "beforeSha256": "c07d68e2d713516a1a96533ffc263b48c946c5479de6de0ac525112fdf13ae28",
+      "afterSha256": "c0e20b4ecbb1918490cb00c5f817b2a916d901324e0d076e0a4cfe251bf69839"
+    },
+    {
+      "path": "Assets/Resources/SkyPulse/BackgroundEdits/world-10-civic.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Resources/SkyPulse/BackgroundEdits/world-10-civic.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Resources/SkyPulse/BackgroundEdits/world-10-civic.asset",
+      "beforeSha256": "0f2bf86a9881979426b42694ab99c82ae61e74e582fbdc3b8cb1b999c59ec460",
+      "afterSha256": "d7d4dd897f9975e22261d7bdcb6113caa092595771faa74e25bc4820bd5a3388"
+    },
+    {
+      "path": "Assets/Resources/SkyPulse/BackgroundEdits/world-10-residential.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Resources/SkyPulse/BackgroundEdits/world-10-residential.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Resources/SkyPulse/BackgroundEdits/world-10-residential.asset",
+      "beforeSha256": "2dedf74098f1f9baec231f8985eb055a2c05e47bdfd21543a6c36c3a992a47a2",
+      "afterSha256": "24571917c0d033138432965ac13e3341d49f1c37e1836edbc7f10d5680899d2a"
+    },
+    {
+      "path": "Assets/Resources/SkyPulse/BackgroundEdits/world-11-civic.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Resources/SkyPulse/BackgroundEdits/world-11-civic.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Resources/SkyPulse/BackgroundEdits/world-11-civic.asset",
+      "beforeSha256": "16bc5caba5b5687119cddae266e25528189ea988b95657548045d86616687918",
+      "afterSha256": "e5bbbba8dc512149e1f23bd53d1302dd039b4b0766e13829fd9f64db976838cc"
+    },
+    {
+      "path": "Assets/Resources/SkyPulse/BackgroundEdits/world-11-residential.asset",
+      "from": "/private/tmp/skypulse-roster-20261104/project/Assets/Resources/SkyPulse/BackgroundEdits/world-11-residential.asset",
+      "to": "/Users/mcauleemaddison/Desktop/SkyPulse/mobile/Assets/Resources/SkyPulse/BackgroundEdits/world-11-residential.asset",
+      "beforeSha256": "0c12870cbe4f00f2309aa9cdd5b5760772e535ddf3405a1b57f397d190a54e0d",
+      "afterSha256": "d4c7ba1eb67ce9d73f0e882ea2b949b080ef57849ce3a6c72ba1ec11a87e97ca"
+    }
+  ],
+  "preserved": {
+    "metadata": 591,
+    "scenes": 38,
+    "prefabs": 38,
+    "lightingAssets": 24,
+    "otherExistingFiles": 1077,
+    "allBytesUnchanged": true,
+    "baselineOriginalHashesPivotsNamesFlagsPreserved": true,
+    "ownerEligibilityRevalidated": true
+  },
+  "districtQa": {
+    "passed": true,
+    "assertions": 1666,
+    "worlds": 12,
+    "districts": 24,
+    "maximumVertices": 53620,
+    "customMeshFixtures": 1,
+    "scope": [
+      "216 original source geometry comparisons; only known generated buffers eligible",
+      "original scene/prefab bytes, owner layouts and all existing GUIDs preserved",
+      "real saved custom mesh edit retained by refresh",
+      "same original part pivots keep moved structures registered",
+      "repeated refresh and bake byte-stable",
+      "24 mobile-budget district meshes and 12 real workshop camera renders",
+      "no player saves, controls, economy, colliders or App Store changes"
+    ]
+  },
+  "atmosphereQa": {
+    "result": "PASS",
+    "captureFilesVerified": 26,
+    "deviceTested": false,
+    "shippingProgressChanged": false,
+    "shaderMessages": [
+      "Shader import/render message: WorldAtmosphere / use of potentially uninitialized variable (themedSky)",
+      "Shader import/render message: WorldAtmosphere / use of potentially uninitialized variable (themedSky)"
+    ]
+  },
+  "testSourceFix": {
+    "path": "Tools/SkyPulseDistrictDesignChecks.cs",
+    "beforeSha256": "481c9beaee21e73493873e652ef9df5ba29a69b9e15fa111a06c7d100a2abd0f",
+    "afterSha256": "ef460bb8d9be197238d916583cb3ad563bb96af412f5e973223fc45257f9ffff",
+    "exactHunk": "Add EditorSceneManager.OpenScene(\"Assets/Scenes/SkyPulse.unity\", OpenSceneMode.Single) at Run try-block start, before taking layout/GUID snapshots. This prevents the incoming active scene being an authoring scene that cannot be reopened additively. No check logic changed.",
+    "matchesSourceThatPassedDisposableUnity": true
+  },
+  "backup": "/private/tmp/skypulse-roster-20261104/world-promotion-before"
+}

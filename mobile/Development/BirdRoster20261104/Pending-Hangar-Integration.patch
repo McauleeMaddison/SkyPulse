@@ -1,0 +1,521 @@
+diff --git a/mobile/Assets/Scripts/SkyPulseNativeGame.BirdProgression.cs b/mobile/Assets/Scripts/SkyPulseNativeGame.BirdProgression.cs
+--- a/mobile/Assets/Scripts/SkyPulseNativeGame.BirdProgression.cs
++++ b/mobile/Assets/Scripts/SkyPulseNativeGame.BirdProgression.cs
+@@ -153,0 +154,5 @@
++            if(birdProgressionStage!=null)
++            {
++                birdProgressionStage.ReleaseResources();
++                Destroy(birdProgressionStage.gameObject);birdProgressionStage=null;
++            }
+@@ -214,0 +220,6 @@
++            var genome=birdProgression!=null?birdProgression.Genome(skin.Id):null;
++            string modelId=genome!=null&&!string.IsNullOrEmpty(genome.appearance)?genome.appearance:skin.Id;
++            var model=Resources.Load<GameObject>("SkyPulse/Birds3D/"+modelId);
++            if(model!=null&&model.GetComponentInChildren<SkyPulseNeonFinchPrototype>(true)!=null)
++                return new SkyPulseProgressionStage.Portrait{At=at,Size=size,Accent=skin.Accent,ModelId=modelId};
++            // Registered pose textures are only loaded for an actual fallback.
+@@ -221 +232 @@
+-            return new SkyPulseProgressionStage.Portrait{At=at,Size=size,Accent=skin.Accent,Frames=frames,Still=frames!=null?frames[0]:LoadPresentationPose(skin.UnlockPath)??LoadSprite(skin.ArtPath)};
++            return new SkyPulseProgressionStage.Portrait{At=at,Size=size,Accent=skin.Accent,ModelId=modelId,Frames=frames,Still=frames!=null?frames[0]:LoadPresentationPose(skin.UnlockPath)??LoadSprite(skin.ArtPath)};
+diff --git a/mobile/Assets/Scripts/SkyPulseNativeGame.Hangar.cs b/mobile/Assets/Scripts/SkyPulseNativeGame.Hangar.cs
+--- a/mobile/Assets/Scripts/SkyPulseNativeGame.Hangar.cs
++++ b/mobile/Assets/Scripts/SkyPulseNativeGame.Hangar.cs
+@@ -1,0 +2 @@
++using System.Collections.Generic;
+@@ -13,2 +14,2 @@
+-        // The featured bird shares the existing 3D portrait studio used by training
+-        // and breeding. Its cradle/rig are meshes, with one transparent render target.
++        // All three carousel bays share the training/lineage studio. The center
++        // alias stays stable for callers; the collection owns every live target.
+@@ -15,0 +17,9 @@
++        private readonly List<SkyPulseProgressionStage> hangarPreviewStages = new List<SkyPulseProgressionStage>(3);
++
++        private void ClearHangarPreviewStages()
++        {
++            foreach (var preview in hangarPreviewStages)
++                if (preview != null) { preview.ReleaseResources(); preview.enabled = false; }
++            hangarPreviewStages.Clear();
++            hangarPreviewStage = null;
++        }
+@@ -18,0 +29 @@
++            ClearHangarPreviewStages();
+@@ -19,0 +31 @@
++            hangarHeroAnimationTime = 0f;
+@@ -246,4 +258,8 @@
+-            if (hangarPreviewStage != null)
+-            {
+-                hangarPreviewStage.ReducedMotion = reduceMotionEnabled;
+-                hangarPreviewStage.MotionPaused = birdProgressionScreen != null && birdProgressionScreen.activeInHierarchy;
++            bool portraitPaused = (birdProgressionScreen != null && birdProgressionScreen.activeInHierarchy)
++                || (purchaseModal != null && purchaseModal.activeInHierarchy)
++                || (unlockRevealModal != null && unlockRevealModal.activeInHierarchy);
++            foreach (var preview in hangarPreviewStages)
++            {
++                if (preview == null) continue;
++                preview.ReducedMotion = reduceMotionEnabled;
++                preview.MotionPaused = portraitPaused;
+@@ -736,5 +751,0 @@
+-            preview.sprite =
+-                LoadPresentationPose(skin.UnlockPath)
+-                ??
+-                LoadSprite(skin.ArtPath);
+-
+@@ -747,8 +758,2 @@
+-
+-                hangarHeroBirdBasePosition =
+-                    hangarHeroBirdArt.anchoredPosition;
+-
+-                hangarHeroAnimationTime = 0f;
+-
+-                if (skin.FlapFramePaths != null &&
+-                    skin.FlapFramePaths.Length > 0)
++                hangarHeroBirdBasePosition = hangarHeroBirdArt.anchoredPosition;
++                foreach (string decoration in new[] { "Hero scanner", "Hero docking platform", "Hero horizon" })
+@@ -756,11 +761,2 @@
+-                    hangarHeroWingFrames =
+-                        new Sprite[skin.FlapFramePaths.Length];
+-
+-                    for (var frameIndex = 0;
+-                         frameIndex < skin.FlapFramePaths.Length;
+-                         frameIndex++)
+-                    {
+-                        hangarHeroWingFrames[frameIndex] =
+-                            LoadSprite(
+-                                skin.FlapFramePaths[frameIndex]);
+-                    }
++                    var old = root.Find(decoration);
++                    if (old != null) old.gameObject.SetActive(false);
+@@ -768,24 +764,16 @@
+-                else
+-                {
+-                    hangarHeroWingFrames = null;
+-                }
+-            }
+-
+-            if (selected)
+-            {
+-                // The original pose remains the layout/registration reference;
+-                // the visible hero is rendered with physical cradle and rig meshes.
+-                preview.enabled = false;
+-                root.Find("Hero scanner").gameObject.SetActive(false);
+-                root.Find("Hero docking platform").gameObject.SetActive(false);
+-                root.Find("Hero horizon").gameObject.SetActive(false);
+-                var studioObject = new GameObject("Hangar three-dimensional studio", typeof(RectTransform), typeof(RawImage));
+-                studioObject.transform.SetParent(root, false);
+-                var view = studioObject.GetComponent<RawImage>();
+-                view.rectTransform.sizeDelta = new Vector2(530, 420);
+-                hangarPreviewStage = studioObject.AddComponent<SkyPulseProgressionStage>();
+-                hangarPreviewStage.ReducedMotion = reduceMotionEnabled;
+-                hangarPreviewStage.Build(view, new[] {
+-                    ProgressionPortrait(skin, new Vector2(0, 28), new Vector2(440, 265))
+-                }, false);
+-            }
++            }
++            // A real rotating model is displayed in every carousel bay. The
++            // original Image remains only as the existing layout reference.
++            preview.enabled = false;
++            var studioObject = new GameObject("Hangar three-dimensional studio", typeof(RectTransform), typeof(RawImage));
++            studioObject.transform.SetParent(root, false);
++            var view = studioObject.GetComponent<RawImage>();
++            view.rectTransform.sizeDelta = selected ? new Vector2(530, 420) : new Vector2(286, 260);
++            view.rectTransform.anchoredPosition = selected ? Vector2.zero : new Vector2(0, 10);
++            var studio = studioObject.AddComponent<SkyPulseProgressionStage>();
++            studio.ReducedMotion = reduceMotionEnabled;
++            studio.Build(view, new[] {
++                ProgressionPortrait(skin, new Vector2(0, selected ? 28 : 18), selected ? new Vector2(440, 265) : new Vector2(238, 165))
++            }, false, selected ? 768 : 384);
++            hangarPreviewStages.Add(studio);
++            if (selected) hangarPreviewStage = studio;
+diff --git a/mobile/Assets/Scripts/SkyPulseNativeGame.Roster3D.cs b/mobile/Assets/Scripts/SkyPulseNativeGame.Roster3D.cs
+new file mode 100644
+--- /dev/null
++++ b/mobile/Assets/Scripts/SkyPulseNativeGame.Roster3D.cs
+@@ -0,0 +1,49 @@
++using UnityEngine;
++using UnityEngine.UI;
++
++namespace SkyPulse.Mobile
++{
++    public sealed partial class SkyPulseNativeGame
++    {
++        SkyPulseProgressionStage unlockModelStage;
++        RawImage unlockModelView;
++
++        // Reuse the Hangar/training studio so reveals keep the same model,
++        // materials and wing cadence as the collection display.
++        void BindUnlockModel(Skin skin)
++        {
++            ReleaseUnlockModel();
++            string id=birdProgression?.Genome(skin.Id)?.appearance;
++            if(string.IsNullOrEmpty(id))id=skin.Id;
++            if(Resources.Load<GameObject>("SkyPulse/Birds3D/"+id)==null)return;
++            unlockRevealBirdTransform.sizeDelta=new Vector2(660,420);
++            var go=new GameObject("Unlocked 3D flight form",typeof(RectTransform),typeof(CanvasRenderer),typeof(RawImage),typeof(SkyPulseProgressionStage));
++            go.transform.SetParent(unlockRevealBirdTransform,false);
++            unlockModelView=go.GetComponent<RawImage>();var rect=unlockModelView.rectTransform;
++            rect.anchorMin=Vector2.zero;rect.anchorMax=Vector2.one;rect.offsetMin=rect.offsetMax=Vector2.zero;rect.sizeDelta=Vector2.zero;
++            // Stretch dimensions are resolved before constructing the camera.
++            Canvas.ForceUpdateCanvases();
++            unlockModelStage=go.GetComponent<SkyPulseProgressionStage>();
++            unlockModelStage.ReducedMotion=reduceMotionEnabled;
++            var portrait=new SkyPulseProgressionStage.Portrait{ModelId=id,At=Vector2.zero,Size=new Vector2(590,340),Accent=skin.Accent,Still=LoadPresentationPose(skin.UnlockPath)??LoadSprite(skin.ArtPath)};
++            unlockModelStage.Build(unlockModelView,new[]{portrait},false,768);
++            if(unlockModelStage.ModelPilotCount==0){ReleaseUnlockModel();return;}
++            unlockModelStage.SetFacing(reduceMotionEnabled?-12:32,false);
++            unlockRevealBirdImage.enabled=false;
++        }
++        void PresentUnlockModel(float progress)
++        {
++            if(unlockModelStage==null)return;
++            unlockModelStage.ReducedMotion=reduceMotionEnabled;
++            // The launch turns from a forward three-quarter presentation into
++            // its reference-facing flight pose while the wings remain alive.
++            if(!reduceMotionEnabled)unlockModelStage.SetFacing(Mathf.Lerp(32,-12,Mathf.SmoothStep(0,1,progress)),false);
++        }
++        void ReleaseUnlockModel()
++        {
++            if(unlockModelView!=null)Destroy(unlockModelView.gameObject);
++            unlockModelView=null;unlockModelStage=null;
++            if(unlockRevealBirdImage!=null)unlockRevealBirdImage.enabled=true;
++        }
++    }
++}
+diff --git a/mobile/Assets/Scripts/SkyPulseNativeGame.Roster3D.cs.meta b/mobile/Assets/Scripts/SkyPulseNativeGame.Roster3D.cs.meta
+new file mode 100644
+--- /dev/null
++++ b/mobile/Assets/Scripts/SkyPulseNativeGame.Roster3D.cs.meta
+@@ -0,0 +1,2 @@
++fileFormatVersion: 2
++guid: 555aae0c7ec751e484a401da7184f0b6
+diff --git a/mobile/Assets/Scripts/SkyPulseNativeGame.cs b/mobile/Assets/Scripts/SkyPulseNativeGame.cs
+--- a/mobile/Assets/Scripts/SkyPulseNativeGame.cs
++++ b/mobile/Assets/Scripts/SkyPulseNativeGame.cs
+@@ -1000 +999,0 @@
+-        private Sprite[] hangarHeroWingFrames;
+@@ -1003,2 +1001,0 @@
+-        private RectTransform hangarGlassShimmer;
+-        private Image hangarGlassShimmerImage;
+@@ -2345,0 +2343 @@
++            BindUnlockModel(skin);
+@@ -2350,0 +2349 @@
++            ReleaseUnlockModel();
+@@ -2363,0 +2363 @@
++            PresentUnlockModel(progress);
+diff --git a/mobile/Assets/Scripts/SkyPulseProgressionStage.cs b/mobile/Assets/Scripts/SkyPulseProgressionStage.cs
+--- a/mobile/Assets/Scripts/SkyPulseProgressionStage.cs
++++ b/mobile/Assets/Scripts/SkyPulseProgressionStage.cs
+@@ -2,0 +3 @@
++using UnityEngine.Rendering;
+@@ -7,2 +8,3 @@
+-    // One isolated render target for a training dock or the whole lineage display.
+-    // Reuses registered artwork and the flight rig over open machined 3D cradles.
++    // A self-contained portrait studio shared by Hangar, training and lineage.
++    // A missing model falls back to the original registered artwork. Model assets,
++    // materials and bind poses are never modified by the presentation stage.
+@@ -10,0 +13,4 @@
++        public const float DisplayFlapPeriod=1.65f;
++        public const float DisplayFlapDegrees=28f;
++        public const float DisplayTurnDegreesPerSecond=12f;
++        const int StudioLayer=31;
+@@ -14,0 +21 @@
++            public string ModelId;
+@@ -20,2 +27,9 @@
+-            public Portrait Data;public SpriteRenderer Bird;public SkyPulseBirdRig Rig;
+-            public Transform Dock,Guide;public Vector3 Home;public float Phase;
++            public Portrait Data;
++            public SpriteRenderer Bird;
++            public SkyPulseBirdRig Rig;
++            public SkyPulseNeonFinchPrototype ModelRig;
++            public Renderer[] ModelRenderers;
++            public MeshFilter[] ModelFilters;
++            public Transform Anchor,ModelFit,Dock,Guide;
++            public Vector3 Home;
++            public float Phase;
+@@ -27,2 +41,8 @@
+-        Transform stage;Camera camera3D;RenderTexture texture;Material metal,light;
+-        float clock;int slot;bool lineage;
++        Transform stage;
++        Camera camera3D;
++        RenderTexture texture;
++        RawImage output;
++        Material metal,light;
++        float clock,modelYaw;
++        int slot=-1;
++        bool lineage,rotateModels=true;
+@@ -32,0 +53 @@
++        public int ModelPilotCount {get{int count=0;foreach(var p in pilots)if(p.ModelRig!=null)count++;return count;}}
+@@ -34,4 +55,8 @@
+-        public void Build(RawImage view,Portrait[] birds,bool connect)
+-        {
+-            lineage=connect;while(!slots.Add(slot))slot++;
+-            stage=new GameObject("Progression optical studio").transform;stage.position=new Vector3(12000+slot*64,12000,0);
++        public void Build(RawImage view,Portrait[] birds,bool connect,int targetWidth=1024)
++        {
++            Release();
++            if(view==null||birds==null)return;
++            output=view;lineage=connect;
++            slot=0;while(!slots.Add(slot))slot++;
++            stage=new GameObject("Progression optical studio").transform;
++            stage.position=new Vector3(12000+slot*64,12000,0);
+@@ -40,3 +65,5 @@
+-            // Match the registered portrait plane, while the physical cradle
+-            // recedes behind it through a long-lens perspective camera.
+-            camera3D.orthographic=false;camera3D.orthographicSize=view.rectTransform.rect.height*.005f;
++            // A long lens keeps the portrait's authored UI dimensions while
++            // allowing real perspective through the bird and machined cradle.
++            var rect=view.rectTransform.rect;
++            float viewHeight=Mathf.Max(1,rect.height),viewWidth=Mathf.Max(1,rect.width);
++            camera3D.orthographic=false;camera3D.orthographicSize=viewHeight*.005f;
+@@ -44,6 +71,9 @@
+-            camera3D.aspect=view.rectTransform.rect.width/view.rectTransform.rect.height;
+-            camera3D.nearClipPlane=.1f;camera3D.farClipPlane=40;camera3D.cullingMask=1<<31;
+-            camera3D.clearFlags=CameraClearFlags.SolidColor;camera3D.backgroundColor=Color.clear;camera3D.allowHDR=false;camera3D.allowMSAA=true;
+-            int height=Mathf.RoundToInt(1024/camera3D.aspect);
+-            texture=new RenderTexture(1024,height,24,RenderTextureFormat.ARGB32){name="Bird progression studio",antiAliasing=4};texture.Create();camera3D.targetTexture=texture;view.texture=texture;view.raycastTarget=false;
+-            metal=new Material(Resources.Load<Shader>("SkyPulse/Shaders/HeistOptics")){name="Progression satin titanium"};
++            camera3D.aspect=viewWidth/viewHeight;camera3D.nearClipPlane=.1f;camera3D.farClipPlane=40;
++            camera3D.cullingMask=1<<StudioLayer;camera3D.clearFlags=CameraClearFlags.SolidColor;
++            camera3D.backgroundColor=Color.clear;camera3D.allowHDR=false;camera3D.allowMSAA=true;
++            int width=Mathf.Clamp(targetWidth,128,1024),height=Mathf.Clamp(Mathf.RoundToInt(width/camera3D.aspect),64,2048);
++            texture=new RenderTexture(width,height,24,RenderTextureFormat.ARGB32){name="Bird progression studio",antiAliasing=4};
++            texture.Create();camera3D.targetTexture=texture;view.texture=texture;view.raycastTarget=false;
++            BuildStudioLighting();
++            var shader=Resources.Load<Shader>("SkyPulse/Shaders/HeistOptics");
++            metal=new Material(shader){name="Progression satin titanium"};
+@@ -51,4 +81,6 @@
+-            light=new Material(metal){name="Progression inset optical conductors"};light.SetColor("_BaseColor",new Color(.10f,.22f,.27f));light.SetFloat("_Energy",.42f);
+-            // An open annulus has a real inner wall and a small machined bevel.
+-            // No opaque top disk can read as a flat plastic display stand.
+-            var b=new SkyPulseMeshBuilder();b.Profile(new[]{new Vector2(.78f,-.035f),new Vector2(.80f,-.065f),new Vector2(.95f,-.065f),new Vector2(1,-.025f),new Vector2(1,.045f),new Vector2(.97f,.075f),new Vector2(.81f,.075f),new Vector2(.78f,.04f),new Vector2(.78f,-.035f)});
++            light=new Material(metal){name="Progression inset optical conductors"};
++            light.SetColor("_BaseColor",new Color(.10f,.22f,.27f));light.SetFloat("_Energy",.42f);
++            // The open annulus has an inner wall and machined bevel, with no
++            // opaque top disk behind the independently rotating model.
++            var b=new SkyPulseMeshBuilder();
++            b.Profile(new[]{new Vector2(.78f,-.035f),new Vector2(.80f,-.065f),new Vector2(.95f,-.065f),new Vector2(1,-.025f),new Vector2(1,.045f),new Vector2(.97f,.075f),new Vector2(.81f,.075f),new Vector2(.78f,.04f),new Vector2(.78f,-.035f)});
+@@ -67 +98,0 @@
+-                if(descriptor.Still==null)continue;
+@@ -69,5 +100,3 @@
+-                var go=new GameObject("Registered animated bird",typeof(SpriteRenderer));go.transform.SetParent(root,false);
+-                var bird=go.GetComponent<SpriteRenderer>();bird.sprite=descriptor.Still;bird.sortingOrder=10;
+-                var reference=descriptor.Frames!=null&&descriptor.Frames.Length>0?descriptor.Frames[0]:descriptor.Still;
+-                bird.transform.localScale=Vector3.one*(Mathf.Min(descriptor.Size.x/reference.bounds.size.x,descriptor.Size.y/reference.bounds.size.y)*.01f);
+-                var rig=go.AddComponent<SkyPulseBirdRig>();rig.Bind(bird);rig.PrepareFrames(descriptor.Frames);
++                var p=new Pilot{Data=descriptor,Anchor=root,Home=(Vector3)descriptor.At*.01f,Phase=pilots.Count*.53f};
++                root.localPosition=p.Home;
++                if(!BuildModel(p)&&!BuildOriginalPortrait(p)) {Discard(root.gameObject);continue;}
+@@ -75,5 +104,5 @@
+-                dock.localPosition=new Vector3(descriptor.At.x*.01f,(descriptor.At.y-descriptor.Size.y*.48f)*.01f,.75f);
+-                // The long-lens camera needs headroom for the tilted housing's
+-                // nearest AABB corners as well as the visible rim. Keep the
+-                // original bird plane/scale intact; size only its support.
+-                dock.localRotation=Quaternion.Euler(65,-8,0);dock.localScale=Vector3.one*descriptor.Size.x*.0032f;
++                // Fit the cradle to both dimensions: the wide unlock portrait must
++                // keep its lower rim inside its transparent render target.
++                dock.localPosition=new Vector3(descriptor.At.x*.01f,(descriptor.At.y-descriptor.Size.y*.30f)*.01f,.75f);
++                dock.localRotation=Quaternion.Euler(65,-8,0);
++                dock.localScale=Vector3.one*Mathf.Min(descriptor.Size.x*.0032f,descriptor.Size.y*.0026f);
+@@ -84,6 +113,115 @@
+-                var pilot=new Pilot{Data=descriptor,Bird=bird,Rig=rig,Dock=dock,Guide=guide.transform,Home=(Vector3)descriptor.At*.01f,Phase=pilots.Count*.53f};pilots.Add(pilot);
+-            }
+-            if(connect&&birds.Length==3)BuildInheritance(birds);
+-            foreach(var t in stage.GetComponentsInChildren<Transform>())t.gameObject.layer=31;
+-            Tick(0);
+-        }
++                p.Dock=dock;p.Guide=guide.transform;pilots.Add(p);
++            }
++            if(connect&&pilots.Count==3)BuildInheritance(birds);
++            foreach(var t in stage.GetComponentsInChildren<Transform>())t.gameObject.layer=StudioLayer;
++            ApplyPose(clock);
++        }
++
++        bool BuildModel(Pilot p)
++        {
++            if(string.IsNullOrEmpty(p.Data.ModelId))return false;
++            var asset=Resources.Load<GameObject>("SkyPulse/Birds3D/"+p.Data.ModelId);
++            if(asset==null)return false;
++            var fit=new GameObject("Fitted rotating 3D bird").transform;fit.SetParent(p.Anchor,false);
++            var model=Instantiate(asset,fit,false);var rig=model.GetComponentInChildren<SkyPulseNeonFinchPrototype>(true);
++            var renderers=model.GetComponentsInChildren<Renderer>(true);
++            var filters=model.GetComponentsInChildren<MeshFilter>(true);
++            if(rig==null||renderers.Length==0||filters.Length==0){Discard(fit.gameObject);return false;}
++            p.ModelFit=fit;p.ModelRig=rig;p.ModelRenderers=renderers;p.ModelFilters=filters;
++            rig.animate=false;rig.turntable=true;rig.reducedMotion=false;
++            rig.flapPeriod=DisplayFlapPeriod;rig.flapDegrees=DisplayFlapDegrees;
++            rig.turntableDegreesPerSecond=DisplayTurnDegreesPerSecond;
++            foreach(var renderer in renderers)
++            {
++                renderer.shadowCastingMode=ShadowCastingMode.Off;renderer.receiveShadows=false;
++                renderer.lightProbeUsage=LightProbeUsage.Off;renderer.reflectionProbeUsage=ReflectionProbeUsage.Simple;
++            }
++            // Sample a complete revolution and all phases during construction.
++            // Runtime centering then uses cached renderers without allocations.
++            float halfWidth=0,halfHeight=0;
++            for(int i=0;i<96;i++)
++            {
++                rig.SamplePose(i*(360f/DisplayTurnDegreesPerSecond)/95f);
++                var bounds=ModelBounds(p);halfWidth=Mathf.Max(halfWidth,bounds.extents.x);halfHeight=Mathf.Max(halfHeight,bounds.extents.y);
++            }
++            float scale=Mathf.Min(p.Data.Size.x*.005f/Mathf.Max(.01f,halfWidth),p.Data.Size.y*.005f/Mathf.Max(.01f,halfHeight))*.86f;
++            fit.localScale=Vector3.one*scale;fit.localRotation=Quaternion.Euler(0,modelYaw,0);
++            rig.turntable=rotateModels;rig.SamplePose(clock);CenterModel(p);
++            return true;
++        }
++        bool BuildOriginalPortrait(Pilot p)
++        {
++            if(p.Data.Still==null)return false;
++            var go=new GameObject("Registered animated bird",typeof(SpriteRenderer));go.transform.SetParent(p.Anchor,false);
++            var bird=go.GetComponent<SpriteRenderer>();bird.sprite=p.Data.Still;bird.sortingOrder=10;
++            var reference=p.Data.Frames!=null&&p.Data.Frames.Length>0?p.Data.Frames[0]:p.Data.Still;
++            bird.transform.localScale=Vector3.one*Mathf.Min(p.Data.Size.x/reference.bounds.size.x,p.Data.Size.y/reference.bounds.size.y)*.01f;
++            var rig=go.AddComponent<SkyPulseBirdRig>();rig.Bind(bird);rig.PrepareFrames(p.Data.Frames);
++            p.Bird=bird;p.Rig=rig;return true;
++        }
++        static Bounds ModelBounds(Pilot p)
++        {
++            // Evaluate entirely in anchor-local coordinates. Reading world-space
++            // bounds at a distant studio origin would quantize tiny recentering
++            // offsets and make a frozen pose depend on its previous translation.
++            var fit=Matrix4x4.TRS(Vector3.zero,p.ModelFit.localRotation,p.ModelFit.localScale);
++            var bounds=new Bounds();bool first=true;
++            foreach(var filter in p.ModelFilters)
++            {
++                if(filter.sharedMesh==null)continue;
++                var matrix=Matrix4x4.identity;var current=filter.transform;
++                while(current!=null&&current!=p.ModelFit)
++                {
++                    matrix=Matrix4x4.TRS(current.localPosition,current.localRotation,current.localScale)*matrix;
++                    current=current.parent;
++                }
++                matrix=fit*matrix;var local=filter.sharedMesh.bounds;
++                for(int corner=0;corner<8;corner++)
++                {
++                    var sign=new Vector3((corner&1)==0?-1:1,(corner&2)==0?-1:1,(corner&4)==0?-1:1);
++                    var point=matrix.MultiplyPoint3x4(local.center+Vector3.Scale(local.extents,sign));
++                    if(first){bounds=new Bounds(point,Vector3.zero);first=false;}else bounds.Encapsulate(point);
++                }
++            }
++            return bounds;
++        }
++        static void CenterModel(Pilot p)=>p.ModelFit.localPosition=-ModelBounds(p).center;
++        void BuildStudioLighting()
++        {
++            AddStudioLight("Bird studio soft key",new Vector3(-3,4,-5),new Color(.78f,.87f,1),2.8f);
++            AddStudioLight("Bird studio cyan fill",new Vector3(4,1,-3),new Color(.52f,.78f,1),1.7f);
++            AddStudioLight("Bird studio warm rim",new Vector3(-2,3,4),new Color(1,.80f,.52f),3.2f);
++            var cube=Resources.Load<Cubemap>("SkyPulse/Birds3D/StudioReflection");
++            if(cube!=null)
++            {
++                var go=new GameObject("Bird studio local reflection",typeof(ReflectionProbe));go.transform.SetParent(stage,false);
++                var probe=go.GetComponent<ReflectionProbe>();probe.mode=ReflectionProbeMode.Custom;
++                probe.customBakedTexture=cube;probe.size=Vector3.one*24;probe.center=Vector3.zero;
++                probe.boxProjection=false;probe.blendDistance=0;probe.importance=10;probe.intensity=1;probe.cullingMask=1<<StudioLayer;
++            }
++        }
++        void AddStudioLight(string name,Vector3 at,Color colour,float intensity)
++        {
++            var go=new GameObject(name,typeof(Light));go.transform.SetParent(stage,false);go.transform.localPosition=at;
++            go.transform.LookAt(stage.position);var source=go.GetComponent<Light>();source.type=LightType.Spot;
++            source.color=colour;source.intensity=intensity;source.range=28;source.spotAngle=100;
++            source.cullingMask=1<<StudioLayer;source.shadows=LightShadows.None;
++        }
++
++        // Head-on yaw is 90 degrees for the source-facing mechanical birds.
++        // The same flap clock is retained when an unlock/portrait changes facing.
++        public void SetFacing(float yaw,bool rotate)
++        {
++            modelYaw=Finite(yaw)?yaw:0;rotateModels=rotate;
++            foreach(var p in pilots)if(p.ModelRig!=null)
++            {
++                p.ModelFit.localRotation=Quaternion.Euler(0,modelYaw,0);p.ModelRig.turntable=rotateModels;
++            }
++            ApplyPose(clock);
++        }
++        public void SampleAt(float seconds)
++        {
++            if(!Finite(seconds))return;
++            clock=Mathf.Max(0,seconds);ApplyPose(clock);
++        }
++        static bool Finite(float value)=>!float.IsNaN(value)&&!float.IsInfinity(value);
+@@ -100,2 +237,0 @@
+-                // Signals emerge below the parent identity strip, keeping the
+-                // names unobscured while visually joining the two parent cards.
+@@ -117,17 +253,26 @@
+-            if(stage==null||MotionPaused)return;if(!ReducedMotion)clock+=Mathf.Max(0,dt);
+-            // Holding the current clock freezes the existing pose. Toggling a
+-            // comfort preference must not snap wings or the cradle to time zero.
+-            float t=clock;
+-            for(int i=0;i<pilots.Count;i++)
+-            {
+-                var p=pilots[i];float phase=t+p.Phase;var frames=p.Data.Frames;
+-                if(frames!=null&&frames.Length>1)
+-                {
+-                    int count=(frames.Length*2)-2,step=Mathf.FloorToInt(Mathf.Repeat(phase*.55f,1)*count);
+-                    p.Bird.sprite=frames[step<frames.Length?step:count-step];
+-                }
+-                p.Bird.transform.localPosition=p.Home+Vector3.up*(Mathf.Sin(phase*1.3f)*.038f);
+-                p.Bird.transform.localRotation=Quaternion.Euler(0,0,Mathf.Sin(phase*.7f)*1.1f);
+-                // The rig reads this frozen clock too, retaining its current
+-                // feather relief instead of toggling its deformation off.
+-                p.Rig.Present(t,.15f,0,false,Color.Lerp(Color.white,p.Data.Accent,.28f));
++            if(stage==null||MotionPaused)return;
++            if(!ReducedMotion&&Finite(dt))clock+=Mathf.Max(0,dt);
++            ApplyPose(clock);
++        }
++        void ApplyPose(float time)
++        {
++            if(stage==null)return;
++            foreach(var p in pilots)
++            {
++                float phase=time+p.Phase;
++                p.Anchor.localPosition=p.Home+Vector3.up*(Mathf.Sin(phase*1.3f)*.038f);
++                if(p.ModelRig!=null)
++                {
++                    p.ModelRig.SamplePose(time);CenterModel(p);
++                }
++                else
++                {
++                    var frames=p.Data.Frames;
++                    if(frames!=null&&frames.Length>1)
++                    {
++                        int count=(frames.Length*2)-2,step=Mathf.FloorToInt(Mathf.Repeat(phase*.55f,1)*count);
++                        p.Bird.sprite=frames[step<frames.Length?step:count-step];
++                    }
++                    p.Bird.transform.localRotation=Quaternion.Euler(0,0,Mathf.Sin(phase*.7f)*1.1f);
++                    p.Rig.Present(time,.15f,0,false,Color.Lerp(Color.white,p.Data.Accent,.28f));
++                }
+@@ -135 +280 @@
+-                p.Guide.localRotation=Quaternion.Euler(0,0,t*8+p.Phase*35);
++                p.Guide.localRotation=Quaternion.Euler(0,0,time*8+p.Phase*35);
+@@ -140 +285 @@
+-                packets[i].localPosition=Route(a,d,Mathf.Repeat(t*.32f+i*.25f,1));
++                packets[i].localPosition=Route(a,d,Mathf.Repeat(time*.32f+i*.25f,1));
+@@ -144 +289 @@
+-        void OnEnable(){if(stage!=null)stage.gameObject.SetActive(true);}
++        void OnEnable(){if(stage!=null){stage.gameObject.SetActive(true);ApplyPose(clock);}}
+@@ -146,6 +291,19 @@
+-        void OnDestroy()
+-        {
+-            if(stage!=null)Destroy(stage.gameObject);slots.Remove(slot);
+-            if(texture!=null){texture.Release();Destroy(texture);}foreach(var m in meshes)Destroy(m);
+-            if(metal!=null)Destroy(metal);if(light!=null)Destroy(light);
+-        }
++        static void Discard(Object value)
++        {
++            if(value==null)return;
++            if(Application.isPlaying)Destroy(value);else DestroyImmediate(value);
++        }
++        void Release()
++        {
++            if(camera3D!=null)camera3D.targetTexture=null;
++            if(output!=null&&output.texture==texture)output.texture=null;
++            if(stage!=null){stage.gameObject.SetActive(false);Discard(stage.gameObject);}
++            if(slot>=0)slots.Remove(slot);slot=-1;
++            if(texture!=null){texture.Release();Discard(texture);}
++            foreach(var mesh in meshes)Discard(mesh);
++            Discard(metal);Discard(light);
++            meshes.Clear();pilots.Clear();packets.Clear();
++            camera3D=null;stage=null;texture=null;output=null;metal=light=null;
++        }
++        public void ReleaseResources()=>Release();
++        void OnDestroy()=>Release();

@@ -1,0 +1,16 @@
+{
+  "date": "2026-11-04",
+  "approvedAppearance": [
+    "Neon Finch"
+  ],
+  "approvedForOther14": "Colours only",
+  "rejectedForOther14": "First-pass sculpture and surface detail: not faithful enough to reference artwork; described by owner as plastic toy figures",
+  "nextReview": "Review the actual Neon City gameplay/architecture and corrected Raven model against source artwork",
+  "runtimeHangar": "Prepared integration tested in isolated QA only; original live runtime source restored while bird artwork is unapproved",
+  "installedBuild": "19; unchanged",
+  "nextDeviceInstall": "After owner approves remaining bird designs and a newly signed candidate passes build checks",
+  "publicAppReview": "On hold; no submission authorized",
+  "currentRaven": "Reference-plated structural revision; technical checks passed, owner appearance approval pending",
+  "worlds": "Owner rejected first twelve-world preview set; connected Neon City revision is the current focused prototype. Remaining eleven redesigns await direction review.",
+  "deferredHangarPatch": "Pending-Hangar-Integration.patch; preserves prepared code only, not applied or shipping. Recheck and rebuild optimized models after final art approval."
+}
