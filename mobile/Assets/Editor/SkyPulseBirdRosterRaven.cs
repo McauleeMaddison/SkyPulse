@@ -32,6 +32,43 @@ public static partial class SkyPulseBirdRosterWorkshop
         {"newbird09",new[]{"a5fe0451b051a7357ca658c5655984b4f801af9ce69aa40f4872e6c0004efe62","36bfd322f1062dd751610ddbe87c72dadcef6a8c6d21db194e6bd16e9d6a52f4","d35e10644646bcb7c56ff4873f46d71c8711aa7162684f4e2f13d2521322afbc","4ef2c6db9189a730f4f7fe5a90bd85a3cba66e47cea883779961329696ce57c4","bc88faf2e586f37ebcfea36589bed232e9f6752a2ae5447568353fad46775919","948ba5eea8d8c91bf31ae0100b0a685b74b5aa3681fa5db45a461cbec2f5a70c","b735426e1937a346b7c78dcf1b58372a496f647b1a51675d9844fa086684f41f","9a5ca6197f69f1f6021b5b2a3376a48dfc59f2659ba735a26f06c7cf19447bf8"}},
         {"newbird10",new[]{"c7e67095e6bb6d8a65e106366f5b1dfb21e96c1c14013d17b252e71a996a1f73","6aa360c0940272f2fbb14345adbd256e63ddba5a511b39351cbcfca7359fc703","e73936cdf7ca37938b9b46823ff22123d232e2e13717d7f4e3799aa4c19ee73b","03c3721de241cf4e5cc89d57947da7451ad2df1f026b12e45a6f4225e7b1951c","51af2ed6fa73a2e2eb1fa4ef01082e6fe68bcd030675c171d37d60975a6c588c","7b871d134c90147018e0b63d916a4910581d16a8fc4e13d4eecb2705b05d648d","a11760ee4da399ba74a57bcc3b54ef75d1380e3ee9965a254479a395e3fc6404","797cbcf19bd1d6a0a8adbb7df887c6b21e16c1d7108dd48e111fc2338074a130"}},
     };
+    // This narrow correction is deliberately separate from the v5 roster
+    // migration. It may only replace the two known generated magenta studies;
+    // artist edits, palettes, scene bindings and all other birds are preserved.
+    static readonly Dictionary<string,string[]> MagentaIdentityBefore = new Dictionary<string,string[]>
+    {
+        {"newbird04",new[]{"8de3c7ca116be13febac1c7fcd909875b1efa3f0becc07ca60cbb6d52b433e22","b178a2c9c51f5983537cb0e031e2e318a51340475462e0e41a44a9903010c4a8","4356a0ef6f104ef487782894732ed5cfe4352abfb1f46309fff8db85b5d90c5a","43643678d8a079d9b8aecb49246814212bd1794080d5609af409efa468d7255d","d04a2c55f4a92239ad5b83afe082279e9384d0ad0e78a3c94417a6b178a486de","144cbf645997842e04da3e5d82d40daebe38f25bab73fa0cccdeccf7eae69ab8","c95abbb7ecd6bbc6a872be155816f11d16acf5c0f4004d36fc5d8fb2e225470a","5ea1c57f67b739c54a6a64865a5f7943bcbbbf3baac50ab57411dd5611532dac"}},
+        {"newbird05",new[]{"ba70520a2a734ba6f9f1d23cfe2211fd76e9d8887b21a79682d19db5f00fa914","1e25481c64c02c599856a9414c3ae562b7366263e6c9ffced8155ce30c520c0a","6c514f731b40a833a070341655297fd4afbb4d42d5e9eae4d770573be804641e","e52935efec79c78335fb7e73328b912a93580f2c2acc46fc12199ee9040e6180","aa5cac6b1cadc138d3a0951822806b609c2059d4670cef5c6f21f04a11db7780","5a143b6e0187e033db3a2bfce214d58d7578450a21fd81183a9d587e7f01469a","64ed3702b7019dc015edd9f8dfd2c748e151266ac4f305e0db2d0f6e01ed823c","25b13f360b35720dcf55e19a54714d4f1663a3a387719430b8974074840f4ee1"}}
+    };
+    static string MagentaIdentityPart(Design d)=>d.name+" source-specific fitted facial mask v6";
+    static bool MagentaIdentityAlreadySaved(Design d)
+    {
+        var prefab=AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath(d));
+        return prefab!=null&&prefab.GetComponentsInChildren<MeshFilter>(true).Any(part=>part.name==MagentaIdentityPart(d)+" -1");
+    }
+    static void MagentaIdentityGuard(Design d)
+    {
+        ValidateDesign(d);
+        if(!MagentaIdentityBefore.TryGetValue(d.id,out var hashes))throw new InvalidOperationException("Only the two source-measured magenta birds may use this correction.");
+        var files=SculptFiles(d);string folder=BirdFolder(d);
+        for(int i=0;i<files.Length;i++)
+        {
+            string path=folder+"/"+files[i];
+            if(!File.Exists(path)||SculptHash(path)!=hashes[i]||!File.Exists(path+".meta")||SculptHash(path+".meta")!=hashes[i+files.Length])
+                throw new InvalidOperationException("Source identity correction preserved an unknown or artist-edited asset: "+path);
+            foreach(var asset in AssetDatabase.LoadAllAssetsAtPath(path))if(asset!=null&&EditorUtility.IsDirty(asset))throw new InvalidOperationException("Save or discard unsaved magenta study edits before revising: "+path);
+        }
+    }
+    [MenuItem("Tools/SkyPulse/Bird Workshop/Refine Chromaflux and Virex source identities")]
+    public static void RefineMagentaSourceIdentities()
+    {
+        if(EditorApplication.isPlayingOrWillChangePlaymode)throw new InvalidOperationException("Stop Play before revising saved bird structures.");
+        var targets=LoadDesigns().Where(d=>d.id=="newbird04"||d.id=="newbird05").ToArray();
+        if(targets.Length!=2)throw new InvalidOperationException("Both unique original magenta references are required.");
+        foreach(var d in targets)if(!MagentaIdentityAlreadySaved(d))MagentaIdentityGuard(d);
+        foreach(var d in targets)if(!MagentaIdentityAlreadySaved(d))ReviseSavedSculpture(d,true);
+        Debug.Log("SKYPULSE_MAGENTA_SOURCE_IDENTITIES_SAVED: Chromaflux broad fan and swept paired crown; Virex fine pointed fan and compact triple crest. Source artwork, palettes, Finch and twelve other sculptures preserved.");
+    }
     static string SculptHash(string path)
     {using(var sha=SHA256.Create())return BitConverter.ToString(sha.ComputeHash(File.ReadAllBytes(path))).Replace("-","").ToLowerInvariant();}
     static string[] SculptFiles(Design d)=>new[]{"Geometry.asset","Finishes.asset",d.name+" Rig.prefab",d.name+" Review.unity"};
@@ -81,7 +118,7 @@ public static partial class SkyPulseBirdRosterWorkshop
         var result=new Material[d.jet?9:8];result[0]=AssetDatabase.LoadAssetAtPath<Material>(path);
         for(int i=1;i<result.Length;i++)result[i]=all.Single(m=>m.name==d.name+" · "+names[i]);return result;
     }
-    static void ReviseSavedSculpture(Design d)
+    static void ReviseSavedSculpture(Design d,bool sourceIdentityCorrection=false)
     {
         string folder=BirdFolder(d),geometryPath=folder+"/Geometry.asset",prefabPath=PrefabPath(d);
         var existing=AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);var files=SculptFiles(d);
@@ -106,7 +143,7 @@ public static partial class SkyPulseBirdRosterWorkshop
             string prefab=SculptPreserveBindings(existing,AssetDatabase.LoadAssetAtPath<GameObject>(tempPrefab),File.ReadAllText(tempPrefab));
             prefab=prefab.Replace("guid: "+from,"guid: "+to);
             if(prefab.Contains("guid: "+from)||!prefab.Contains("guid: "+to))throw new InvalidOperationException("Sculpture mesh reference remapping failed: "+d.name);
-            SculptGuard(d);promoted=true;File.Copy(tempGeometry,geometryPath,true);File.WriteAllText(prefabPath,prefab);
+            if(sourceIdentityCorrection)MagentaIdentityGuard(d);else SculptGuard(d);promoted=true;File.Copy(tempGeometry,geometryPath,true);File.WriteAllText(prefabPath,prefab);
             AssetDatabase.ImportAsset(geometryPath,ImportAssetOptions.ForceUpdate);AssetDatabase.ImportAsset(prefabPath,ImportAssetOptions.ForceUpdate);
             foreach(string f in files)if(!File.ReadAllBytes(folder+"/"+f+".meta").SequenceEqual(metas[f]))throw new InvalidOperationException("Sculpture changed an existing asset GUID: "+d.name);
             foreach(string f in new[]{files[1],files[3]})if(!File.ReadAllBytes(folder+"/"+f).SequenceEqual(backups[f]))throw new InvalidOperationException("Sculpture changed the approved finishes or saved review scene: "+d.name);
@@ -499,8 +536,8 @@ public static partial class SkyPulseBirdRosterWorkshop
             case "newbird01":return new SculptIdentity(.72f,.67f,false,.43f,.74f);
             case "newbird02":return new SculptIdentity(.68f,.66f,false,.39f,.78f);
             case "newbird03":return new SculptIdentity(.72f,.68f,false,.42f,.74f);
-            case "newbird04":return new SculptIdentity(.74f,.68f,false,.45f,.70f);
-            case "newbird05":return new SculptIdentity(.70f,.67f,false,.46f,.72f);
+            case "newbird04":return new SculptIdentity(.70f,.70f,false,.47f,.77f);
+            case "newbird05":return new SculptIdentity(.57f,.58f,false,.39f,.82f);
             case "newbird06":return new SculptIdentity(.70f,.63f,false,.48f,.65f);
             case "newbird07":return new SculptIdentity(.72f,.68f,false,.45f,.72f);
             case "newbird08":return new SculptIdentity(.72f,.66f,false,.43f,.74f);
@@ -571,10 +608,16 @@ public static partial class SkyPulseBirdRosterWorkshop
         RavenSupports.Clear();var d=design;var identity=SculptIdentityFor(d.id);
         var bodyShape=new SculptProfile(d.body,d.bodyDepth*identity.bodyDepth);
         var headShape=new SculptProfile(d.head,d.headDepth*identity.headDepth,identity.headY,identity.headZ);
-        bodyShape.crownInset=bodyShape.maxHeight*.09f;bodyShape.chinInset=bodyShape.maxHeight*.04f;
+        bodyShape.crownInset=bodyShape.maxHeight*(d.id=="newbird05"?.15f:.09f);
+        bodyShape.chinInset=bodyShape.maxHeight*(d.id=="newbird05"?.09f:.04f);
         bool facialDisc=identity.headY>.9f;
         headShape.crownInset=headShape.maxHeight*(facialDisc?.035f:.14f);
         headShape.chinInset=headShape.maxHeight*(facialDisc?.02f:.03f);
+        if(d.id=="newbird04"||d.id=="newbird05")
+        {
+            headShape.crownInset=headShape.maxHeight*(d.id=="newbird04"?.20f:.25f);
+            headShape.chinInset=headShape.maxHeight*.09f;
+        }
         var bc=Mean(d.body);var hc=Mean(d.head);
         rig.body=Joint(rig.transform,SculptBodyJoint,Vector3.zero);
         rig.head=Joint(rig.body,"02 Seated helmet, swept cowl and inset optics",Point(hc));
@@ -591,9 +634,10 @@ public static partial class SkyPulseBirdRosterWorkshop
         Part(rig.head,"Seated forward helmet cowl",SculptWrapCourse(headShape,.447f,.965f,.90f),d.headMaterial);
         var neckA=Vector2.Lerp(bc,hc,.43f);var neckB=Vector2.Lerp(bc,hc,.85f);var neckMid=Vector2.Lerp(neckA,neckB,.5f);
         float neckRadius=Mathf.Min((bodyShape.maxX-bodyShape.minX)*.14f,(headShape.maxX-headShape.minX)*.24f);
+        if(d.id=="newbird04"||d.id=="newbird05")neckRadius=(headShape.maxX-headShape.minX)*(d.id=="newbird04"?.32f:.27f);
         float neckDepth=Mathf.Min(headShape.depth,bodyShape.depth)*.86f;
         var neckPath=new[]{new Vector3(neckA.x,neckA.y,0),new Vector3(neckMid.x,neckMid.y,0),new Vector3(neckB.x,neckB.y,0)};
-        Part(rig.body,"Continuous supported neck casting",SculptTube(neckPath,neckRadius,neckDepth,neckRadius*.82f,18,20),d.bodyMaterial);
+        Part(rig.body,"Continuous supported neck casting",SculptTube(neckPath,neckRadius,neckDepth,neckRadius*.82f,18,20),d.id=="newbird04"||d.id=="newbird05"?3:d.bodyMaterial);
         var neckAxis=(neckB-neckA).normalized;var collar=Vector2.Lerp(neckA,neckB,.76f);
         Part(rig.body,"Neck flexible seated coupling",SculptCuff(new Vector3(collar.x-neckAxis.x*2.7f,collar.y-neckAxis.y*2.7f,0),new Vector3(collar.x+neckAxis.x*2.7f,collar.y+neckAxis.y*2.7f,0),neckRadius*.96f,neckDepth+.45f,1.8f),2);
         var lip=collar+neckAxis*2.7f;
@@ -615,13 +659,30 @@ public static partial class SkyPulseBirdRosterWorkshop
                 else SculptProfilePart(parent,"Fitted source armour casting "+side+" "+panelIndex,profile,polygon,side,material,material==(onHead?d.headMaterial:d.bodyMaterial)?1.85f:1.42f,.60f,.45f);
                 panelIndex++;
             }
+            if(d.id=="newbird04"||d.id=="newbird05")BuildMagentaSourceArmour(rig,bodyShape,headShape,side);
             BuildSculptOptics(rig.head,headShape,side);
         }
         foreach(var crest in d.crest??Array.Empty<Panel>())
         {
-            var polygon=Points(crest.outline);float minX=polygon.Min(p=>p.x),maxX=polygon.Max(p=>p.x);
+            var polygon=Points(crest.outline);
+            if(d.id=="newbird04"||d.id=="newbird05")
+            {
+                // Both source crowns trail back from the helmet. Compress the
+                // upright envelope into that swept silhouette instead of tall
+                // generic antennae; Virex retains its compact triple crest.
+                float seatX=d.id=="newbird04"?421:374,seatY=d.id=="newbird04"?287:309;
+                float sweep=d.id=="newbird04"?1.14f:1.04f,rise=d.id=="newbird04"?.62f:.54f;
+                polygon=polygon.Select(p=>new Vector2(seatX+(p.x-seatX)*sweep,seatY+(p.y-seatY)*rise)).ToArray();
+            }
+            float minX=polygon.Min(p=>p.x),maxX=polygon.Max(p=>p.x);
             float center=Center(polygon).x;
-            var vane=RvSolid(polygon,p=>1.2f*Mathf.Sin(Mathf.InverseLerp(minX,maxX,p.x)*Mathf.PI),1,Mathf.Clamp(d.headDepth*.085f,1.8f,2.8f),.65f,7);
+            // The magenta references have separate crown blades, not a single
+            // paper-thin central comb. Spread their measured castings into real
+            // near/far seats while retaining each original outline and colour.
+            int crestIndex=Array.IndexOf(d.crest,crest);
+            float crownSeat=d.id=="newbird04"?(crestIndex==0?-5.8f:crestIndex==1?5.8f:crestIndex==2?-2.6f:2.6f)
+                :d.id=="newbird05"?(crestIndex==0?-6f:crestIndex==1?6f:crestIndex==2?0:crestIndex==3?-3f:3f):0;
+            var vane=RvSolid(polygon,p=>crownSeat+1.2f*Mathf.Sin(Mathf.InverseLerp(minX,maxX,p.x)*Mathf.PI),1,Mathf.Clamp(d.headDepth*.085f,1.8f,2.8f),.65f,7);
             Part(rig.head,"Swept bevelled crown vane "+meshes.Count,vane,crest.material);
         }
         if(d.id=="chrome_raven")BuildChromeDorsalMantle(rig,bodyShape);
@@ -629,6 +690,27 @@ public static partial class SkyPulseBirdRosterWorkshop
         BuildSculptWing(rig,-1,bodyMesh,out rig.leftWing,out rig.leftWingTip);
         BuildSculptWing(rig,1,bodyMesh,out rig.rightWing,out rig.rightWingTip);
         BuildSculptTail(rig,fan);BuildSculptTalons(rig,bodyShape);
+    }
+    static void BuildMagentaSourceArmour(SkyPulseNeonFinchPrototype rig,SculptProfile body,SculptProfile head,int side)
+    {
+        var d=design;bool broad=d.id=="newbird04";
+        // These are independently traced source surfaces. In particular the
+        // broad black mask and white neck shield distinguish Chromaflux from
+        // Virex's low forward visor and narrower white cheek. They sit below
+        // the existing connected optics and never float over the glass.
+        var mask=broad?RvPoints(394,278,407,273,424,276,441,285,451,296,443,307,427,311,410,303,398,291)
+            :RvPoints(349,298,361,294,377,298,395,307,403,317,392,325,376,325,360,315);
+        SculptProfilePart(rig.head,MagentaIdentityPart(d)+" "+side,head,mask,side,2,1.78f,.31f,.34f,5);
+        var cheek=broad?RvPoints(395,294,404,302,416,309,435,313,423,317,407,310,398,302)
+            :RvPoints(346,310,355,316,369,325,383,330,369,332,354,324,345,317);
+        SculptProfilePart(rig.head,d.name+" measured white cheek shield "+side,head,cheek,side,3,2.04f,.32f,.28f,5);
+        var back=broad?new[]{
+            RvPoints(235,304,254,290,277,281,299,279,316,285,300,291,278,292,256,302,241,314),
+            RvPoints(268,291,290,280,315,278,339,285,354,296,338,296,319,289,297,292,278,302)}
+            :new[]{
+            RvPoints(230,318,252,305,276,297,292,298,278,305,254,315,239,327),
+            RvPoints(266,296,284,288,305,291,326,301,338,315,324,315,309,303,290,300,276,306)};
+        for(int i=0;i<back.Length;i++)SculptProfilePart(rig.body,d.name+" measured overlapping dorsal vane "+side+" "+i,body,back[i],side,i==0?3:broad?0:4,2.40f+i*.40f,.51f,.40f,6);
     }
     static void BuildChromeDorsalMantle(SkyPulseNeonFinchPrototype rig,SculptProfile profile)
     {
@@ -732,7 +814,11 @@ public static partial class SkyPulseBirdRosterWorkshop
         Part(tip,"Distal fan machined retaining nut "+side,SculptSpindle(fan,fanZ+side*3,6.6f,1.2f,3.6f),4);
         for(int i=0;i<d.primaries.Length;i++)
         {
-            var b=d.primaries[i];float z=fanZ+side*(1.7f+i*1.35f);float span=10+Mathf.Min(11,Vector2.Distance(b.root.V,b.tip.V)*.044f);
+            var b=d.primaries[i];
+            if(d.id=="newbird04")b=SculptShortBlade(b,1,i<4?1.08f:1);
+            else if(d.id=="newbird05")b=SculptShortBlade(b,1,i<4?.84f:.91f);
+            float z=fanZ+side*(1.7f+i*(d.id=="newbird04"?1.65f:d.id=="newbird05"?1.12f:1.35f));
+            float span=10+Mathf.Min(11,Vector2.Distance(b.root.V,b.tip.V)*.044f);
             if(Vector2.Distance(fan,b.root.V)>2)
                 Part(tip,"Connected feather socket spar "+side+" "+i,SculptTube(new[]{new Vector3(fan.x,fan.y,fanZ),new Vector3(b.root.x,b.root.y,z)},2.6f,2,2,6,8),2);
             Part(tip,"Primary "+side+" "+i+" solid cambered flight blade",SculptBlade(b,z,side,span,.82f),b.material);
@@ -742,7 +828,9 @@ public static partial class SkyPulseBirdRosterWorkshop
             if(i<d.primaries.Length-1)
             {
                 var covert=SculptShortBlade(b,identity.covert,.68f);float covertZ=z+side*3.4f;
-                Part(tip,"Layered sculpted root covert "+side+" "+i,SculptBlade(covert,covertZ,side,span*.31f,.72f),i%3==0?4:d.bodyMaterial);
+                int covertMaterial=d.id=="newbird04"?(i<4?3:i%3==0?4:d.bodyMaterial)
+                    :d.id=="newbird05"?(i<3?3:i%3==0?4:d.bodyMaterial):i%3==0?4:d.bodyMaterial;
+                Part(tip,"Layered sculpted root covert "+side+" "+i,SculptBlade(covert,covertZ,side,span*.31f,.72f),covertMaterial);
                 if(i%2==0)Part(tip,"Covert enamel detail "+side+" "+i,SculptBladeInlay(covert,covertZ,side,span*.31f,.72f,.27f,.95f,.61f),b.material);
             }
         }

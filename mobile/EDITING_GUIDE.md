@@ -220,6 +220,18 @@ separate 3D meshes. Collision shapes still overlap for reliable gameplay; do not
 trim those colliders when adjusting the visible join. The original cyan/pink
 artwork and animated LED material remain in use.
 
+## Endless pickup effects
+
+`SkyPulseNativeGame.PickupBoosts.cs` owns Crystal Echo (6 seconds, +1 per
+collected crystal, at most 6 extra) and Route Lens (8 seconds, two upcoming
+openings). They use the existing pool and activate automatically. Edit the
+constants at its top; do not create another game component or save system.
+Echo rewards are excluded from percentage/daily reward bases and recorded
+separately in results. Lens brackets are pooled presentation only; never alter
+pipe colliders to fit them. Runtime emblems are cached once and disposed with
+the game. The Survival/Discovery groups in `CreateFlightGuideScreen` explain all
+five pickups. Keep the guide and public player page aligned after rule changes.
+
 ## How to Play and world crossfades
 
 `SkyPulseNativeGame.Guide.cs` owns the mode-specific guide and Endless topics for

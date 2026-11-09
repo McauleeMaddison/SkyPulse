@@ -111,6 +111,7 @@ namespace SkyPulse.Mobile
         }
         void OnDestroy()
         {
+            DisposeEndlessPickupSprites();
             if(scoreGlassMaterial!=null)Destroy(scoreGlassMaterial);
             if(homeGlassMaterial!=null)Destroy(homeGlassMaterial);
             if(scoreTypographyMaterial!=null)Destroy(scoreTypographyMaterial);

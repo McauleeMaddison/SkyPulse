@@ -6,22 +6,24 @@ Open **`mobile/` in Unity Hub** and the repository folder in VS Code. The shippi
 scene is `mobile/Assets/Scenes/SkyPulse.unity`. Start with the
 [editing map](EDITING_GUIDE.md) before changing code.
 
-## Current roster work — 4 November 2026
+## Latest local work — 9 November 2026
 
-The owner approved the Finch's revised eyes and animated blue jet. Fourteen
-additional reference-based solid 3D bird studies are saved in the
-[roster package](Development/BirdRoster20261104/README.md), with individual editable
-prefabs, scenes, material/mesh containers, animation previews and real-gameplay
-captures. The owner approved only their colours and rejected the first sculpture pass.
-Chrome Raven has a corrected, technically checked review candidate; the remaining thirteen need the same
-reference-faithful treatment after that review. Device integration stays on hold. Use the
-Editor-only 3D roster gameplay selector to compare models without changing
-progression, equipment or flight rules. Original artwork and the approved Finch
-were preserved. Prepared runtime Hangar changes are held outside the project;
-the live runtime presentation is restored. The previous twelve-world set was rejected. A connected Neon City prototype
-and actual gameplay video are in the same package; other worlds await redesign. Build 19 and the public-review hold remain unchanged.
+Start with the [current polish record](Development/GameplayPolish20261109/README.md)
+for new Endless pickups, exact rewards, changed files and source-specific checks.
+The [bird editing map](Development/BirdRoster20261104/README.md) points to the
+fifteen saved rigs and the twelve-world candidate. Finch is approved; other
+roster/world appearance still needs owner review. Chromaflux and Virex received a
+pair-only identity refinement after their shapes looked too similar. No runtime
+3D roster rollout, iPhone build, installation or TestFlight upload occurred.
 
-The older design package below remains historical evidence for its own source.
+MacWebStudio attribution and current product information were saved in App Store
+Connect; the branded privacy/support/player pages are published. See the
+[public information record](Release/StoreListing20261109/README.md). The saved
+version still selects historical build 15, while the last recorded installed
+phone build is 19. Media and the matching final build require renewal before any
+separately authorized submission. Public review remains on hold.
+
+The older packages below are historical evidence for their own sources.
 
 ## Current local design candidate — 31 October 2026
 
@@ -60,7 +62,7 @@ a fresh Play session. No owner save reset or App Store action is part of this wo
 - The twelve-world/Relay model-detail pass and raised Blackout board are included.
 - Full automated gameplay/world validation and signed native compilation passed. Physical visual/gameplay acceptance, sustained FPS, memory, thermals and retained-progress confirmation remain pending with the owner.
 - [Current device checklist](Release/DeviceBuild19/DEVICE_CHECKLIST.md), [build/installation record](Release/DeviceBuild19/RELEASE_RECORD.json), [QA](Release/DeviceBuild19/QA_RECORD.json) and [release contract](Release/CURRENT_RELEASE.json) identify the actual candidate. Older release folders are historical.
-- **Public App Review stays on hold.** No App Store Connect copy/media/build selection or submission was changed in this session.
+- **Public App Review stays on hold.** The 9 November listing update saved copy only; no public submission or build replacement was made.
 
 ## Preserve while editing
 

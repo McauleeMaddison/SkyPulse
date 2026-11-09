@@ -78,7 +78,7 @@ namespace SkyPulse.Mobile
             birdCollectionCarry+=SkyPulseBirdProgression.Points(flightBirdGenome,BirdTrait.Collector)*.02f;
             int earned=Mathf.FloorToInt(birdCollectionCarry+.0001f);birdCollectionCarry-=earned;return earned;
         }
-        int BirdRunBonus()=>SkyPulseBirdProgression.ResultBonus(flightBirdGenome??birdProgression.Genome(equippedSkin.Id),runCrystalsCollected,score,perfectPasses);
+        int BirdRunBonus()=>SkyPulseBirdProgression.ResultBonus(flightBirdGenome??birdProgression.Genome(equippedSkin.Id),Mathf.Max(0,runCrystalsCollected-runEchoPickupBonus),score,perfectPasses);
         Text ProgressionText(Transform parent,string text,float y,int size=30,float height=80,Color? colour=null)
         {
             var label=CreateText(parent,text,new Vector2(0,y),new Vector2(790,height),size,colour??Hex("#dceef5"),TextAnchor.MiddleCenter,FontStyle.Normal);

@@ -1,11 +1,13 @@
 # SkyPulse Arcade
 
-The [reference-based 3D roster](mobile/Development/BirdRoster20261104/README.md)
-now includes fourteen additional editable models, actual-gameplay captures and an
-Editor visual selector. The approved Finch is preserved. The other fourteen colours are approved,
-but the owner rejected their first sculpture pass; Raven has a new review candidate
-against its artwork before further rollout. The package also contains the
-[current Neon City gameplay preview](mobile/Development/BirdRoster20261104/Previews/Neon-City-Revision/Gameplay.mp4). The previous twelve-world set was rejected; the remaining eleven redesigns are not finished.
+The [9 November local polish](mobile/Development/GameplayPolish20261109/README.md)
+adds Crystal Echo and Route Lens to Endless Route, with updated help and bounded
+once-only rewards. It also gives Chromaflux and Virex clearer source-specific
+shapes and checks that all fifteen Studio selections load one correct model.
+The approved Finch is preserved; the other fourteen sculptures remain under
+visual review. All twelve worlds have a newer local composition candidate in
+[the world review guide](mobile/Development/BirdRoster20261104/Previews/World-Revision-2/README.md).
+Owner appearance approval and a matching device candidate remain pending.
 
 Open `mobile/` in Unity Hub and the **SkyPulse** repository in VS Code. Start with
 [the editing guide](mobile/EDITING_GUIDE.md) for the actual game and model scenes,
@@ -47,7 +49,7 @@ one point. Its twelve worlds change every 15 gates: Neon City, Aurora Rise,
 Solar Drift, Midnight Tide, Velvet Dawn, Crystal Night, Jade Horizon, Violet Rain,
 Eclipse, Cobalt Storm, Amber Skies and Polar Glow; Neon City returns at score 180.
 Crystals bank during the run. Nine upgrade families have three connected level
-branches; temporary pickups provide Aegis, Time Pulse and Crystal Magnet.
+branches; temporary pickups provide Aegis, Time Pulse, Crystal Magnet, Crystal Echo and Route Lens.
 
 Pulse Relay has four finite circuits refreshed each UTC day; crystals open the
 matching gates automatically. Blackout has eight authored Signal Heist vaults,

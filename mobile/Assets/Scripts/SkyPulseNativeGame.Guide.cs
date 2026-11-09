@@ -140,7 +140,7 @@ namespace SkyPulse.Mobile
                 default:
                     GuideStep(0, "TAP TO TAKE FLIGHT", "Tap PLAY, then tap the flight area to flap through each pipe opening. Avoid the pipes and ground. Use the pause button to stop, resume or return to Home.");
                     GuideStep(1, "DISCOVER TWELVE WORLDS", "The flight HUD shows your next world and gates remaining. Every run begins in Neon City; a new world arrives every 15 gates. After Polar Glow, Neon City returns at score 180. Your best is saved.");
-                    GuideStep(2, "TURN FLIGHTS INTO PROGRESS", "Collect crystals and power-ups in flight. Spend earned crystals on birds, training, breeding, Core evolution and Tech. Open the topics above for their exact benefits.");
+                    GuideStep(2, "TURN FLIGHTS INTO PROGRESS", "Collect crystals and automatic power-ups in flight. Crystal Echo adds limited bonus crystals; Route Lens marks upcoming openings. Open Worlds & Power-ups for durations, then spend crystals on birds and Tech.");
                     break;
             }
         }

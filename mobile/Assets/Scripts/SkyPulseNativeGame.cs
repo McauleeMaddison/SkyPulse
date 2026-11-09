@@ -21,6 +21,7 @@ namespace SkyPulse.Mobile
         // .Depth.cs + Shaders/EndlessRouteMetal.shader: 3D pipe metal and LED motion.
         // .PipeVisuals.cs: original artwork layout and collider-aligned fallback.
         // .Controls/.Missions/.Blackout: mode input, Relay and Signal Heist rules.
+        // .PickupBoosts.cs: Endless-only Echo rewards and Route Lens aperture guides.
         // Keep catalogue IDs, PlayerPrefs keys and this script's .meta GUID stable:
         // existing installations use them to restore ownership, progress and scenes.
 
@@ -33,7 +34,7 @@ namespace SkyPulse.Mobile
         // These are tactical pickup effects only.  The permanent economy is kept
         // deliberately separate so no purchase can change score potential or
         // flight handling.
-        private enum PowerUpKind { Aegis, TimePulse, CrystalMagnet }
+        private enum PowerUpKind { Aegis, TimePulse, CrystalMagnet, CrystalEcho, RouteLens }
         private enum PendingPurchase { None, Skin, Upgrade }
 
         /// <summary>
@@ -309,6 +310,8 @@ namespace SkyPulse.Mobile
             public int Sequence;
             public bool IsStatic;
             public bool Passed;
+            public Transform LensGuide;
+            public SpriteRenderer[] LensEdges;
 #if UNITY_EDITOR || UNITY_ENABLE_CHECKS
             public SpriteRenderer DebugTopBody;
             public SpriteRenderer DebugTopCap;
@@ -1309,6 +1312,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             ringSprite = CreateRadialSprite("Neon ring", 96, .31f, .5f);
             roundedPanelSprite = CreateRoundedRectSprite("Premium rounded panel", 128, 28);
             interfacePanelSprite = CreateFlightPanelSprite();
+            CreateEndlessPickupSprites();
             // Supplied pipe PNGs use a white presentation canvas. Turn their
             // connected white background into alpha once at load time so the actual
             // mechanical art can be used without white slabs or invisible geometry.
@@ -1634,6 +1638,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             pair.DebugBottomBody.enabled = false;
             pair.DebugBottomCap.enabled = false;
 #endif
+            CreateRouteLensGuide(pair);
             return pair;
         }
 
@@ -1976,6 +1981,10 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             var pageLabel = CreateText(card, "", new Vector2(0f, 79f), new Vector2(420f, 40f), 24, Hex("#adc6dd"), TextAnchor.MiddleCenter, FontStyle.Bold);
             var previous = CreateNeonButton(card, "PREVIOUS", new Vector2(-327f, 79f), new Vector2(180f, 66f), Hex("#45eaff"));
             var next = CreateNeonButton(card, "NEXT", new Vector2(327f, 79f), new Vector2(180f, 66f), Hex("#45eaff"));
+            // 176-unit hit targets retain at least 44 pt on the supported small
+            // portrait layout. Navigation and pickup tabs have separate hit bands.
+            SetComfortHitTarget(previous);
+            SetComfortHitTarget(next);
             previous.GetComponentInChildren<Text>().fontSize = 23;
             next.GetComponentInChildren<Text>().fontSize = 23;
             Action refreshPage = () =>
@@ -2001,23 +2010,51 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             refreshPage();
             CreateText(card, "Next world every 15 gates · full route repeats", new Vector2(0f, 22f), new Vector2(850f, 36f), 23, Hex("#adc6dd"), TextAnchor.MiddleCenter, FontStyle.Normal);
             CreateText(card, "COLLECT POWER-UPS IN FLIGHT", new Vector2(0f, -30f), new Vector2(850f, 48f), 30, Hex("#ffc34d"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            var kinds = new[] { PowerUpKind.Aegis, PowerUpKind.TimePulse, PowerUpKind.CrystalMagnet };
-            var names = new[] { "AEGIS", "TIME PULSE", "CRYSTAL MAGNET" };
-            var details = new[] { "Absorbs one collision", "Slows flight for 4 seconds", "Draws in crystals for 6 seconds" };
-            for (var index = 0; index < kinds.Length; index++)
+            var kinds = new[] { PowerUpKind.Aegis, PowerUpKind.TimePulse, PowerUpKind.CrystalMagnet, PowerUpKind.CrystalEcho, PowerUpKind.RouteLens };
+            var names = new[] { "AEGIS", "TIME PULSE", "CRYSTAL MAGNET", "CRYSTAL ECHO", "ROUTE LENS" };
+            var details = new[] { "Absorbs one collision", "Slows flight for 4 seconds", "Draws in crystals for 6 seconds", "+1 per crystal for 6s · up to 6 extra", "Highlights the next openings for 8s" };
+            var pickupRows = new RectTransform[3];
+            var pickupIcons = new Image[3];
+            var pickupTitles = new Text[3];
+            var pickupDetails = new Text[3];
+            for (var index = 0; index < pickupRows.Length; index++)
             {
-                var y = -124f - index * 128f;
-                var icon = CreateImage(card, names[index] + " pickup", new Vector2(-335f, y), new Vector2(92f, 92f), Color.white);
-                icon.sprite = LoadSprite(PowerUpArtworkPath(kinds[index]));
-                icon.preserveAspect = true;
-                icon.raycastTarget = false;
-                CreateText(card, names[index], new Vector2(68f, y + 24f), new Vector2(650f, 42f), 28, Hex("#8eeeff"), TextAnchor.MiddleLeft, FontStyle.Bold);
-                CreateText(card, details[index], new Vector2(68f, y - 23f), new Vector2(650f, 42f), 27, Hex("#d2def0"), TextAnchor.MiddleLeft, FontStyle.Normal);
+                var row = CreatePanel(card, "Power-up guide row " + index, new Vector2(0f, -268f - index * 104f), new Vector2(836f, 88f), Color.clear);
+                row.GetComponent<Image>().raycastTarget = false;
+                pickupRows[index] = row;
+                pickupIcons[index] = CreateImage(row, "Power-up emblem", new Vector2(-335f, 0f), new Vector2(82f, 82f), Color.white);
+                pickupIcons[index].preserveAspect = true;
+                pickupIcons[index].raycastTarget = false;
+                pickupTitles[index] = CreateText(row, "", new Vector2(68f, 23f), new Vector2(650f, 38f), 27, Hex("#8eeeff"), TextAnchor.MiddleLeft, FontStyle.Bold);
+                pickupDetails[index] = CreateText(row, "", new Vector2(68f, -22f), new Vector2(650f, 38f), 25, Hex("#d2def0"), TextAnchor.MiddleLeft, FontStyle.Normal);
             }
-            CreateText(card, "EVERY RUN BUILDS YOUR COLLECTION", new Vector2(0f, -479f), new Vector2(850f, 46f), 28, Hex("#ffc34d"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            var progression = CreateText(card, "Train 15 founder birds and breed inherited reward traits. Evolve the SkyPulse Core to raise training limits. Bird traits reward Endless play; every bird retains the same flight handling.", new Vector2(0f, -573f), new Vector2(822f, 116f), 27, Hex("#d2def0"), TextAnchor.MiddleCenter, FontStyle.Normal);
+            var survival = CreateNeonButton(card, "SURVIVAL", new Vector2(-215f, -125f), new Vector2(390f, 112f), Hex("#45eaff"));
+            var discovery = CreateNeonButton(card, "DISCOVERY", new Vector2(215f, -125f), new Vector2(390f, 112f), Hex("#ba9bff"));
+            SetComfortHitTarget(survival);
+            SetComfortHitTarget(discovery);
+            Action<int> showPickupGroup = group =>
+            {
+                int start = group == 0 ? 0 : 3;
+                for (var slot = 0; slot < pickupRows.Length; slot++)
+                {
+                    int index = start + slot;
+                    pickupRows[slot].gameObject.SetActive(index < kinds.Length);
+                    if (index >= kinds.Length) continue;
+                    pickupIcons[slot].sprite = PowerUpArtwork(kinds[index]);
+                    pickupTitles[slot].text = names[index];
+                    pickupDetails[slot].text = details[index];
+                }
+                survival.interactable = group != 0;
+                discovery.interactable = group != 1;
+            };
+            survival.onClick.AddListener(() => showPickupGroup(0));
+            discovery.onClick.AddListener(() => showPickupGroup(1));
+            showPickupGroup(0);
+            CreateText(card, "EVERY RUN BUILDS YOUR COLLECTION", new Vector2(0f, -558f), new Vector2(850f, 40f), 27, Hex("#ffc34d"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            var progression = CreateText(card, "Train and breed birds in the Hangar. Evolve the Core for lower costs and higher training limits.", new Vector2(0f, -630f), new Vector2(822f, 86f), 25, Hex("#d2def0"), TextAnchor.MiddleCenter, FontStyle.Normal);
             progression.horizontalOverflow = HorizontalWrapMode.Wrap;
             var close = CreateNeonButton(card, "BACK TO HOME", new Vector2(0f, -750f), new Vector2(600f, 110f), Hex("#45eaff"));
+            SetComfortHitTarget(close);
             close.onClick.AddListener(() => root.SetActive(false));
             return root;
         }
@@ -3082,11 +3119,13 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
 
         private bool AllowsPowerUps()
         {
-            return true;
+            return activeMode == SkyPulseMode.EndlessRoute;
         }
 
         private void UpdatePowerUps(float deltaTime)
         {
+            if (activeMode != SkyPulseMode.EndlessRoute || state != FlightState.Playing) return;
+            var motion = reduceMotionEnabled ? 0f : 1f;
             foreach (var pickup in powerUpPool)
             {
                 if (!pickup.Active) continue;
@@ -3103,21 +3142,21 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
                 var targetY = pickup.Gate.GapCenter + pickup.GapOffset;
                 pickup.X = targetX;
                 pickup.Y = targetY;
-                var bob = Mathf.Sin(ambientTime * 3.2f + pickup.Phase) * .12f;
+                var bob = Mathf.Sin(ambientTime * 3.2f + pickup.Phase) * .12f * motion;
                 pickup.Transform.localPosition = new Vector3(pickup.X, pickup.Y + bob, 0f);
-                var pulse = 1f + Mathf.Sin(ambientTime * 4.2f + pickup.Phase) * .10f;
+                var pulse = 1f + Mathf.Sin(ambientTime * 4.2f + pickup.Phase) * .10f * motion;
                 pickup.Glow.transform.localScale = Vector3.one * (1.14f * pulse);
-                var spin = ambientTime * 2.1f + pickup.Phase;
-                var depthShift = new Vector3(Mathf.Cos(spin) * .035f, Mathf.Sin(spin * 1.3f) * .028f, 0f);
+                var spin = ambientTime * 2.1f * motion + pickup.Phase;
+                var depthShift = new Vector3(Mathf.Cos(spin) * .035f, Mathf.Sin(spin * 1.3f) * .028f, 0f) * motion;
                 pickup.Artwork.transform.localPosition = depthShift;
-                pickup.Artwork.transform.localScale = pickup.ArtworkBaseScale * (1f + Mathf.Sin(ambientTime * 3.5f + pickup.Phase) * .025f);
-                pickup.Artwork.transform.localRotation = Quaternion.Euler(0f, 0f, Mathf.Sin(spin) * 3.8f);
+                pickup.Artwork.transform.localScale = pickup.ArtworkBaseScale * (1f + Mathf.Sin(ambientTime * 3.5f + pickup.Phase) * .025f * motion);
+                pickup.Artwork.transform.localRotation = Quaternion.Euler(0f, 0f, Mathf.Sin(spin) * 3.8f * motion);
                 pickup.Depth.transform.localPosition = -depthShift * 1.35f;
-                pickup.Depth.transform.localScale = pickup.ArtworkBaseScale * (1.10f + Mathf.Sin(spin) * .035f);
+                pickup.Depth.transform.localScale = pickup.ArtworkBaseScale * (1.10f + Mathf.Sin(spin) * .035f * motion);
                 var depthColour = pickup.Glow.color;
-                depthColour.a = .15f + Mathf.Sin(spin) * .025f;
+                depthColour.a = .15f + Mathf.Sin(spin) * .025f * motion;
                 pickup.Depth.color = depthColour;
-                pickup.Spark.transform.localPosition = new Vector3(Mathf.Cos(ambientTime * 4.3f + pickup.Phase) * .46f, Mathf.Sin(ambientTime * 4.3f + pickup.Phase) * .46f, 0f);
+                pickup.Spark.transform.localPosition = reduceMotionEnabled ? new Vector3(-.20f, .34f, 0f) : new Vector3(Mathf.Cos(ambientTime * 4.3f + pickup.Phase) * .46f, Mathf.Sin(ambientTime * 4.3f + pickup.Phase) * .46f, 0f);
 
                 if (Vector2.Distance(new Vector2(BirdX, birdY), new Vector2(pickup.X, pickup.Y + bob)) <= ActiveTuning().CollisionRadius + PickupRadius)
                 {
@@ -3396,18 +3435,24 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
 
         private void CollectCrystalPickup(PowerUpPickup pickup)
         {
+            // Retiring before rewards makes duplicate contact/callbacks harmless.
+            if (pickup == null || !pickup.Active || activeMode != SkyPulseMode.EndlessRoute || state != FlightState.Playing) return;
             ShowCrystalPickupBurst(pickup.Transform.localPosition);
             DeferCrystalPickup(pickup, 0f);
             // Currency is banked on contact—even a failed run keeps the find.
             // Prism Conduit adds value through a fractional carry so +5/+10/+15%
             // remains mathematically fair even though the wallet stores whole crystals.
             int techValue=CrystalPickupValue(1),birdValue=BirdPickupBonus();
-            var crystalValue = techValue + birdValue;
+            int echoValue = TakeCrystalEchoBonus();
+            var crystalValue = techValue + birdValue + echoValue;
+            runEchoPickupBonus += echoValue;
             BankCollectedCrystals(crystalValue);
             runTechPickupBonus+=techValue-1;runBirdPickupBonus+=birdValue;
-            RecordDailyEvent(DailyGameplayEvent.CrystalPickup, crystalValue);
+            // Echo is its own bounded pickup reward, never a multiplier for daily tasks.
+            RecordDailyEvent(DailyGameplayEvent.CrystalPickup, techValue + birdValue);
             ShowCrystalBurst(crystalValue);
-            if(birdValue>0&&scoreBurstText!=null){scoreBurstText.text="COLLECTOR +"+birdValue+" · CRYSTALS +"+crystalValue+" ✦";scoreBurstText.color=Hex("#8dedd6");}
+            if(echoValue>0&&scoreBurstText!=null){scoreBurstText.text="CRYSTAL ECHO · +"+crystalValue+" ✦";scoreBurstText.color=Hex("#bba1ff");}
+            else if(birdValue>0&&scoreBurstText!=null){scoreBurstText.text="COLLECTOR +"+birdValue+" · CRYSTALS +"+crystalValue+" ✦";scoreBurstText.color=Hex("#8dedd6");}
             TriggerFlightFeedback(Hex("#45eaff"), .26f);
             PulseHaptic(.08f);
             Play(crystalSound);
@@ -3438,7 +3483,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             pickup.GapOffset = RouteRange(-safeGapOffset, safeGapOffset);
             pickup.Y = gate.GapCenter + pickup.GapOffset;
             pickup.Phase = RouteRange(0f, Mathf.PI * 2f);
-            pickup.Kind = (PowerUpKind)RouteRange(0, 3);
+            pickup.Kind = (PowerUpKind)RouteRange(0, 5);
             var colour = Hex("#8f64ff");
             var secondary = Hex("#45eaff");
             switch (pickup.Kind)
@@ -3455,9 +3500,17 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
                     colour = Hex("#b17cff");
                     secondary = Hex("#45eaff");
                     break;
+                case PowerUpKind.CrystalEcho:
+                    colour = Hex("#ba9bff");
+                    secondary = Hex("#e2eeff");
+                    break;
+                case PowerUpKind.RouteLens:
+                    colour = Hex("#65e8ff");
+                    secondary = Hex("#fff0ba");
+                    break;
             }
 
-            var artwork = LoadSprite(PowerUpArtworkPath(pickup.Kind));
+            var artwork = PowerUpArtwork(pickup.Kind);
             pickup.Glow.color = new Color(colour.r, colour.g, colour.b, .20f);
             pickup.Artwork.sprite = artwork ?? softCircleSprite;
             pickup.Artwork.color = artwork == null ? colour : Color.white;
@@ -3485,6 +3538,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
 
         private void CollectPowerUp(PowerUpPickup pickup)
         {
+            if (pickup == null || !pickup.Active || activeMode != SkyPulseMode.EndlessRoute || state != FlightState.Playing) return;
             pickup.Active = false;
             pickup.Gate = null;
             pickup.Root.SetActive(false);
@@ -3502,7 +3556,19 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
                     magnetHaloTimer = 6f;
                     Play(unlockSound);
                     break;
-                default:
+                case PowerUpKind.CrystalEcho:
+                    crystalEchoTimer = CrystalEchoSeconds;
+                    crystalEchoBudget = CrystalEchoMaxBonus;
+                    ShowEndlessPickupBanner("CRYSTAL ECHO · +1 PER CRYSTAL", Hex("#ba9bff"));
+                    Play(unlockSound);
+                    break;
+                case PowerUpKind.RouteLens:
+                    routeLensTimer = RouteLensSeconds;
+                    UpdateRouteLensVisuals();
+                    ShowEndlessPickupBanner("ROUTE LENS · OPENINGS MARKED", Hex("#65e8ff"));
+                    Play(unlockSound);
+                    break;
+                case PowerUpKind.TimePulse:
                     slowFieldTimer = 4f;
                     Play(crystalSound);
                     break;
@@ -3512,6 +3578,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
 
         private void UpdatePowerUpEffects(float deltaTime)
         {
+            TickEndlessPickupBoosts(deltaTime);
             if (slowFieldTimer > 0f) slowFieldTimer = Mathf.Max(0f, slowFieldTimer - deltaTime);
             if (shieldFlashTimer > 0f) shieldFlashTimer = Mathf.Max(0f, shieldFlashTimer - deltaTime);
             if (magnetHaloTimer > 0f) magnetHaloTimer = Mathf.Max(0f, magnetHaloTimer - deltaTime);
@@ -3521,7 +3588,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
 
         private bool HasActivePowerEffect()
         {
-            return shieldCharges > 0 || shieldImmunityTimer > 0f || slowFieldTimer > 0f || magnetHaloTimer > 0f;
+            return shieldCharges > 0 || shieldImmunityTimer > 0f || slowFieldTimer > 0f || magnetHaloTimer > 0f || crystalEchoTimer > 0f || routeLensTimer > 0f;
         }
 
         private void UpdatePowerUpHud()
@@ -3531,7 +3598,9 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             var timer = 0f;
             var label = string.Empty;
             var colour = Hex("#f4fbff");
-            if (slowFieldTimer > 0f) { code = 0; timer = slowFieldTimer; label = "◌  TIME PULSE"; colour = Hex("#b17cff"); }
+            if (crystalEchoTimer > 0f) { code = 4; timer = crystalEchoTimer; label = "◈  CRYSTAL ECHO"; colour = Hex("#ba9bff"); }
+            else if (routeLensTimer > 0f) { code = 5; timer = routeLensTimer; label = "⌁  ROUTE LENS"; colour = Hex("#65e8ff"); }
+            else if (slowFieldTimer > 0f) { code = 0; timer = slowFieldTimer; label = "◌  TIME PULSE"; colour = Hex("#b17cff"); }
             else if (magnetHaloTimer > 0f) { code = 1; timer = magnetHaloTimer; label = "◌  CRYSTAL MAGNET"; colour = Hex("#45eaff"); }
             else if (shieldImmunityTimer > 0f) { code = 2; timer = shieldImmunityTimer; label = "◈  AEGIS RECOVERY"; colour = Hex("#61f5b3"); }
             else if (shieldCharges > 0) { code = 3; label = "◈  AEGIS READY"; colour = Hex("#61f5b3"); }
@@ -3727,6 +3796,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             perfectPasses = 0;
             newBest = false;
             BeginProgressionRun();
+            ResetEndlessPickupBoosts();
             routeWorldIndex = 0;
             routeWorld = Worlds[routeWorldIndex];
             nextGateRouteScore = 0;
@@ -3798,6 +3868,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             ResetWorldTransition();
             ClosePurchaseModal();
             state = FlightState.Menu;
+            ResetEndlessPickupBoosts();
             menuPresentationTime = 0f;
             menuWingTimer = 0f;
             simulationAccumulator = 0f;
@@ -4771,7 +4842,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
 
             // Percentage bonuses share the same pre-result reward base, so stacking
             // never compounds a bonus on top of another bonus by accident.
-            var rewardBase = runCrystalsCollected;
+            var rewardBase = Mathf.Max(0, runCrystalsCollected - runEchoPickupBonus);
             var salvageBonus = Mathf.FloorToInt(rewardBase * SalvageCodecBonusFraction() + .0001f);
             var apexBonus = score >= 10
                 ? Mathf.FloorToInt(rewardBase * ApexMatrixBonusFraction() + .0001f)
@@ -4806,7 +4877,11 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
         private void RefreshProgressionResultLabels()
         {
             ApplyResultTechBonuses();
-            if (resultCrystalsText != null) resultCrystalsText.text = $"PICKUPS  ·  {runCrystalsCollected-runTechPickupBonus-runBirdPickupBonus}";
+            if (resultCrystalsText != null)
+            {
+                int finds = Mathf.Max(0, runCrystalsCollected-runTechPickupBonus-runBirdPickupBonus-runEchoPickupBonus);
+                resultCrystalsText.text = runEchoPickupBonus > 0 ? $"PICKUPS · {finds}   ECHO +{runEchoPickupBonus}" : $"PICKUPS  ·  {finds}";
+            }
             if (resultBonusText != null) resultBonusText.text = $"TECH  ·  +{runTechPickupBonus+runTechResultBonus} ✦";
             if (resultBirdBonusText != null) resultBirdBonusText.text = $"BIRD TRAITS  ·  +{runBirdPickupBonus+runBirdResultBonus} ✦";
             if (resultBalanceText != null) resultBalanceText.text = $"TOTAL BALANCE  ·  {crystals}";

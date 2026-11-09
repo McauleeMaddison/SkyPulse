@@ -1,0 +1,10 @@
+{
+  "result": "PASS",
+  "scope": "Unity asset identity audit only, not global App Store metadata originality verification.",
+  "existingMetaGuidCount": 1262,
+  "duplicateGuidCount": 0,
+  "playerCopyScanPassed": true,
+  "shippingSourceFiles": 59,
+  "originalBirdFramesRegistered": 90,
+  "releaseMetadataUnitTestsPassed": 15
+}

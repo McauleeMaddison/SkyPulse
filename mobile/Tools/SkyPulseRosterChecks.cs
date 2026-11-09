@@ -71,14 +71,14 @@ public static class SkyPulseRosterChecks
         {
             EditorSceneManager.OpenScene("Assets/Scenes/SkyPulse.unity");
             var designs=SkyPulseBirdRosterWorkshop.LoadDesigns();
-            Check(designs.Length==14&&designs.Select(d=>d.id).Distinct().Count()==14&&designs.All(d=>d.id!="neon_finch"),"Revision 4 migration targets exactly fourteen distinct non-Finch birds");
+            Check(designs.Length==14&&designs.Select(d=>d.id).Distinct().Count()==14&&designs.All(d=>d.id!="neon_finch"),"Revision 5 migration targets exactly fourteen distinct non-Finch birds");
             var sources=new[]{"Assets/Editor/SkyPulseBirdRosterWorkshop.cs","Assets/Editor/SkyPulseBirdRosterRaven.cs"}.ToDictionary(path=>path,Hash);
             var protectedBefore=ProtectedSnapshot();var before=Snapshot();
             var changes=designs.Select(d=>new RevisionChange{id=d.id,alreadyRevision5=HasRevision5Marker(d),geometryBefore=Hash(SkyPulseBirdRosterWorkshop.BirdFolder(d)+"/Geometry.asset"),prefabBefore=Hash(SkyPulseBirdRosterWorkshop.PrefabPath(d))}).ToArray();
             SkyPulseBirdRosterWorkshop.ReviseRemainingRosterSculptures();
             var after=Snapshot();var allowed=new HashSet<string>(designs.SelectMany(d=>new[]{SkyPulseBirdRosterWorkshop.BirdFolder(d)+"/Geometry.asset",SkyPulseBirdRosterWorkshop.PrefabPath(d)}),StringComparer.Ordinal);
-            Check(before.Count==after.Count&&before.Where(p=>!allowed.Contains(p.Key)).All(p=>after.ContainsKey(p.Key)&&after[p.Key]==p.Value),"Revision 4 changes only fourteen saved geometry/prefab files; palettes, scene bindings and every existing meta remain byte-identical");
-            Check(SameSnapshot(protectedBefore,ProtectedSnapshot()),"Revision 4 preserves every approved Finch workshop file and original roster artwork byte-for-byte");
+            Check(before.Count==after.Count&&before.Where(p=>!allowed.Contains(p.Key)).All(p=>after.ContainsKey(p.Key)&&after[p.Key]==p.Value),"Revision 5 changes only fourteen saved geometry/prefab files; palettes, scene bindings and every existing meta remain byte-identical");
+            Check(SameSnapshot(protectedBefore,ProtectedSnapshot()),"Revision 5 preserves every approved Finch workshop file and original roster artwork byte-for-byte");
             // The generator has returned. Force a disk import before loading separate
             // prefab contents and saved review scenes for all subsequent checks.
             foreach(var d in designs)
@@ -87,15 +87,15 @@ public static class SkyPulseRosterChecks
                 AssetDatabase.ImportAsset(SkyPulseBirdRosterWorkshop.PrefabPath(d),ImportAssetOptions.ForceUpdate|ImportAssetOptions.ForceSynchronousImport);
                 ReadBackRevision5(d);
                 var change=changes.Single(c=>c.id==d.id);change.geometryAfter=Hash(SkyPulseBirdRosterWorkshop.BirdFolder(d)+"/Geometry.asset");change.prefabAfter=Hash(SkyPulseBirdRosterWorkshop.PrefabPath(d));
-                Check(change.alreadyRevision5?change.geometryBefore==change.geometryAfter&&change.prefabBefore==change.prefabAfter:change.geometryBefore!=change.geometryAfter&&change.prefabBefore!=change.prefabAfter,"Saved Revision 4 geometry and prefab are "+(change.alreadyRevision5?"preserved on repeat: ":"newly generated before readback: ")+d.id);
+                Check(change.alreadyRevision5?change.geometryBefore==change.geometryAfter&&change.prefabBefore==change.prefabAfter:change.geometryBefore!=change.geometryAfter&&change.prefabBefore!=change.prefabAfter,"Saved Revision 5 geometry and prefab are "+(change.alreadyRevision5?"preserved on repeat: ":"newly generated before readback: ")+d.id);
             }
             var first=Snapshot();SkyPulseBirdRosterWorkshop.ReviseRemainingRosterSculptures();var second=Snapshot();
-            Check(SameSnapshot(first,second),"Repeated Revision 4 migration preserves every revised roster asset byte-for-byte and creates no duplicate");
-            Check(SameSnapshot(protectedBefore,ProtectedSnapshot()),"Repeated Revision 4 migration preserves Finch and original artwork byte-for-byte");
+            Check(SameSnapshot(first,second),"Repeated Revision 5 migration preserves every revised roster asset byte-for-byte and creates no duplicate");
+            Check(SameSnapshot(protectedBefore,ProtectedSnapshot()),"Repeated Revision 5 migration preserves Finch and original artwork byte-for-byte");
             Check(sources.All(p=>Hash(p.Key)==p.Value),"Generator source bytes remain frozen through migration and saved-asset readback");
-            File.WriteAllText(Path.Combine(Output,"REVISION5-GENERATION.json"),JsonUtility.ToJson(new GenerationReport{result="PASS",revision="4",scope="Explicit guarded authoring migration and independent saved-prefab readback; source hashes identify the generator used. Appearance approval remains pending.",generatorSources=Stamps(sources),protectedInputs=Stamps(protectedBefore),birds=changes,checks=checks.ToArray(),deviceTested=false},true));
+            File.WriteAllText(Path.Combine(Output,"REVISION5-GENERATION.json"),JsonUtility.ToJson(new GenerationReport{result="PASS",revision="5",scope="Explicit guarded authoring migration and independent saved-prefab readback; source hashes identify the generator used. Appearance approval remains pending.",generatorSources=Stamps(sources),protectedInputs=Stamps(protectedBefore),birds=changes,checks=checks.ToArray(),deviceTested=false},true));
             foreach(var d in designs)Inspect(d,true);
-            File.WriteAllText(Path.Combine(Output,"STUDIO-VALIDATION.json"),JsonUtility.ToJson(new Report{result="PASS",scope="Fourteen saved Revision 4 articulated solid-mesh candidates reopened after explicit generation. Strict geometry/optics checks and actual phase/turntable renders; owner appearance approval pending. No Play mode, save reset, build or device install.",birds=birds.ToArray(),checks=checks.ToArray(),deviceTested=false},true));
+            File.WriteAllText(Path.Combine(Output,"STUDIO-VALIDATION.json"),JsonUtility.ToJson(new Report{result="PASS",scope="Fourteen saved Revision 5 articulated solid-mesh candidates reopened after explicit generation. Strict geometry/optics checks and actual phase/turntable renders; owner appearance approval pending. No Play mode, save reset, build or device install.",birds=birds.ToArray(),checks=checks.ToArray(),deviceTested=false},true));
             var motionBirds=InspectRosterMotion(designs);
             Check(SameSnapshot(second,Snapshot())&&SameSnapshot(protectedBefore,ProtectedSnapshot()),"Readback, structural inspection, rendering and all fifteen motion checks leave saved candidates, Finch and artwork byte-identical");
             File.WriteAllText(Path.Combine(Output,"MOTION-VALIDATION.json"),JsonUtility.ToJson(new MotionReport{result="PASS",scope="Actual saved Unity rigs sampled at shared absolute times with turntable enabled, including a full thirty-second revolution at 30/60/120 Hz. Sampling frequency is a correctness check, not measured device FPS. Appearance approval pending.",baselineId="neon_finch",birds=motionBirds,checks=checks.ToArray(),deviceTested=false},true));
@@ -121,10 +121,10 @@ public static class SkyPulseRosterChecks
         try
         {
             var rig=root.GetComponent<SkyPulseNeonFinchPrototype>();
-            Check(rig!=null&&rig.body!=null&&rig.body.name==Revision5Body,"Independently reopened saved prefab has the exact Revision 4 body marker: "+d.id);
+            Check(rig!=null&&rig.body!=null&&rig.body.name==Revision5Body,"Independently reopened saved prefab has the exact Revision 5 body marker: "+d.id);
             string geometry=SkyPulseBirdRosterWorkshop.BirdFolder(d)+"/Geometry.asset";
             var owned=root.GetComponentsInChildren<MeshFilter>(true).Select(f=>AssetDatabase.GetAssetPath(f.sharedMesh)).Where(path=>path!=SkyPulseBirdJetWorkshop.MeshPath).ToArray();
-            Check(owned.Length>0&&owned.All(path=>path==geometry),"Saved Revision 4 prefab resolves its own canonical geometry without staging references: "+d.id);
+            Check(owned.Length>0&&owned.All(path=>path==geometry),"Saved Revision 5 prefab resolves its own canonical geometry without staging references: "+d.id);
         }
         finally{PrefabUtility.UnloadPrefabContents(root);}
     }
@@ -217,7 +217,7 @@ public static class SkyPulseRosterChecks
         Check(Hash("Assets/Resources/SkyPulse/characters/roster/"+d.reference+".png")==d.sourceSha256,"Original source evidence unchanged: "+d.id);
         EditorSceneManager.OpenScene(SkyPulseBirdRosterWorkshop.ScenePath(d));var rig=UnityEngine.Object.FindAnyObjectByType<SkyPulseNeonFinchPrototype>();
         Check(rig!=null&&rig.GetComponentsInChildren<SpriteRenderer>().Length==0&&rig.GetComponentsInChildren<Collider2D>().Length==0,"Solid inspection rig without image-plane bird or gameplay collider: "+d.id);
-        if(requireRevision5)Check(rig.body!=null&&rig.body.name==Revision5Body,"Reopened saved review scene resolves the exact Revision 4 sculpture: "+d.id);
+        if(requireRevision5)Check(rig.body!=null&&rig.body.name==Revision5Body,"Reopened saved review scene resolves the exact Revision 5 sculpture: "+d.id);
         rig.animate=false;rig.turntable=false;rig.reducedMotion=false;rig.ResetPose();
         var filters=rig.GetComponentsInChildren<MeshFilter>();var renderers=rig.GetComponentsInChildren<MeshRenderer>();
         var own=filters.Where(f=>AssetDatabase.GetAssetPath(f.sharedMesh).StartsWith(SkyPulseBirdRosterWorkshop.BirdFolder(d)+"/",StringComparison.Ordinal)).Select(f=>f.sharedMesh).Distinct().ToArray();

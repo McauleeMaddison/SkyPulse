@@ -1,10 +1,10 @@
 {
   "date": "2026-11-09",
   "projectId": "appgprj_6a9eb032fc0c81918e77b1bc278ab197",
-  "sourceCommit": "0d00177ffac2605c906c86752c56ca0394efc56c",
-  "versionNumber": 6,
-  "savedVersionId": "appgprj_6a9eb032fc0c81918e77b1bc278ab197~appgver_f82a9a25bc008191b7e1233e7e2c54c7",
-  "deploymentId": "appgdep_6af1a5e0ec848191aae8cc6c5685d510",
+  "sourceCommit": "783e0cd6a91f75cea13974bc66480ac2821b3e6b",
+  "versionNumber": 7,
+  "savedVersionId": "appgprj_6a9eb032fc0c81918e77b1bc278ab197~appgver_f1eaf1339dc48191915e7878d5245d09",
+  "deploymentId": "appgdep_6af1e9601f9c81919662ce0aa0485569",
   "deploymentStatus": "succeeded",
   "publicUrl": "https://skypulse.macwebstudio.com/",
   "pages": [
@@ -17,13 +17,15 @@
     "MacWebStudio attribution, studio links and retained individual copyright",
     "Privacy effective date 9 November 2026; game-local data, voluntary support email, Apple services and hosting clearly separated",
     "Accurate Tech prerequisites and first-parent breeding appearance/trait explanation",
-    "No unavailable App Store download or unapproved 3D roster claims"
+    "No unavailable App Store download or unapproved 3D roster claims",
+    "Player guide explains Crystal Echo and Route Lens with exact caps/durations and identifies them as current development features, not older installed builds"
   ],
   "verification": [
     "Existing lockfile dependencies installed unchanged",
     "Vinext static build succeeded for all four routes",
     "Mobile browser layout and navigation inspected; no horizontal overflow on all four pages",
-    "Production branded privacy route shows matching updated date/brand/content"
+    "Production branded privacy route shows matching updated date/brand/content",
+    "Version 7 static build succeeded; branded production guide visibly contains the exact new pickup rules"
   ],
   "scope": "Website publication only; no Unity export, signing, iPhone install, TestFlight upload or public App Review submission."
 }

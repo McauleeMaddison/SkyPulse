@@ -1,0 +1,38 @@
+{
+  "result": "PASS",
+  "scope": "Promoted exactly two source-specific local 3D bird study corrections. Not an iPhone build, approved public release or roster-wide aesthetic approval.",
+  "baselineCommit": "274e773",
+  "targetChanges": [
+    {
+      "path": "mobile/Assets/Editor/SkyPulseBirdWorkshop/Roster/Chromaflux/Geometry.asset",
+      "beforeSha256": "8de3c7ca116be13febac1c7fcd909875b1efa3f0becc07ca60cbb6d52b433e22",
+      "afterSha256": "3aa23ee3a505e35347160bd246d05c27642a5c8ad35633fbece88fbdc823622a"
+    },
+    {
+      "path": "mobile/Assets/Editor/SkyPulseBirdWorkshop/Roster/Chromaflux/Chromaflux Rig.prefab",
+      "beforeSha256": "4356a0ef6f104ef487782894732ed5cfe4352abfb1f46309fff8db85b5d90c5a",
+      "afterSha256": "54184bf272c5a2c5e82ac8c8808513dd3e7d341fc6646e4bee9a52feabdfe877"
+    },
+    {
+      "path": "mobile/Assets/Editor/SkyPulseBirdWorkshop/Roster/Virex/Geometry.asset",
+      "beforeSha256": "ba70520a2a734ba6f9f1d23cfe2211fd76e9d8887b21a79682d19db5f00fa914",
+      "afterSha256": "66fa0f8888c8b1c5f777111e3fbbe974fec17917d681701fe41bb069b6b30d04"
+    },
+    {
+      "path": "mobile/Assets/Editor/SkyPulseBirdWorkshop/Roster/Virex/Virex Rig.prefab",
+      "beforeSha256": "6c514f731b40a833a070341655297fd4afbb4d42d5e9eae4d770573be804641e",
+      "afterSha256": "82d982b33accb6730b5cd1239bbe7d27667ed6faff78945de73d28ba29fd6583"
+    }
+  ],
+  "protectedFileCount": 661,
+  "preserved": [
+    "Approved Neon Finch",
+    "Twelve other roster studies",
+    "All original reference artwork",
+    "All finishes/palettes",
+    "Review scenes and existing metadata GUIDs"
+  ],
+  "checks": 1083,
+  "phoneBuild": false,
+  "submittedForReview": false
+}

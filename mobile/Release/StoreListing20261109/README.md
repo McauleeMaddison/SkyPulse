@@ -14,3 +14,7 @@ Build 19 is the last recorded directly installed candidate. New local bird/world
 art is under visual review; it is not claimed as uploaded artwork. Older store
 media must be replaced after visual approval and a matching build is prepared.
 No iPhone build/device testing or review submission occurred in this update.
+
+The later version 7 guide update explains the two new local Endless pickups. The
+saved App Store copy and historical build selection were not changed by that
+gameplay pass. Refresh matching final feature copy and media after visual approval.
