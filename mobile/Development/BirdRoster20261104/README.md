@@ -7,21 +7,22 @@ historical review records, not accepted release artwork.
 
 ## Current review candidates
 
-- **Neon City:** [actual gameplay video](Previews/Neon-City-Revision/Gameplay.mp4),
-  [gameplay frame](Previews/Neon-City-Revision/Gameplay.png),
-  [Home](Previews/Neon-City-Revision/Home.png),
-  [unobstructed world](Previews/Neon-City-Revision/World-Only.png),
-  [separate architecture inspection camera](Previews/Neon-City-Revision/Architecture-Inspection.png).
+- **All twelve worlds — current local candidate, approval pending:**
+  [preview guide and individual worlds](Previews/World-Revision-2/README.md),
+  [gameplay sheet](Previews/World-Revision-2/Twelve-Worlds-Gameplay.png),
+  [Home sheet](Previews/World-Revision-2/Twelve-Worlds-Homes.png),
+  [Neon motion](Previews/World-Revision-2/Neon-City-Motion.mp4),
+  [Aurora motion](Previews/World-Revision-2/Aurora-Rise-Motion.mp4).
 - **Chrome Raven:** [original/reference comparison](Previews/Raven-Revision/Reference-Comparison.png),
   [three-quarter model](Previews/Raven-Revision/ThreeQuarter.png),
   [reverse](Previews/Raven-Revision/Reverse.png), [flap video](Previews/Raven-Revision/Flight.mp4).
 
-Neon City has a connected inhabited podium, solid setback towers, recessed
-multi-bay glazing, supported skybridge landings, roof gardens and redesigned
-framing. Its sky uses bounded, sparse cloud pockets and a clean transition from
-retained nebula detail to constructed air. Old simplified skyline/cloud ribbons
-are disabled for this world. This is the first focused city prototype; **the other
-eleven world designs are not claimed finished or accepted**.
+The current twelve-world candidate uses three complete staggered districts,
+world-entry anchoring, curved facade windows and clear central air with sparse
+coloured edge clouds. Its [current evidence and device hold](Previews/World-Revision-2/README.md)
+apply to these previews. The lower Neon/Raven verification records describe the
+earlier focused package. **No world appearance is approved, and no iPhone/Xcode,
+signing, installation or device checks will run until the owner likes the previews.**
 
 Raven has a sectioned fuselage, individually traced closed bevelled plates,
 connected armour, fitted triangular optics, machined wing channels and seated

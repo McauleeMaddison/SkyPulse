@@ -1,6 +1,6 @@
 Shader "SkyPulse/Constructed World Atmosphere"
 {
-    Properties { _CloudNoise("Shared cloud density volume",3D)="white"{} _Tint("World light",Color)=(.2,.6,1,1) _Haze("Horizon",Color)=(.03,.08,.16,1) _Clock("Clock",Float)=0 _World("World",Float)=0 _SkyA("Outgoing sky art",2D)="gray"{} _SkyB("Incoming sky art",2D)="gray"{} _Blend("Sky transition",Float)=1 _Aspect("Sky camera aspect",Float)=.46 _WorldA("Outgoing world identity",Float)=0 _WorldB("Incoming world identity",Float)=0 }
+    Properties { _CloudNoise("Cached coherent RGBA cloud volume",3D)="white"{} _Tint("World light",Color)=(.2,.6,1,1) _Haze("Horizon",Color)=(.03,.08,.16,1) _Clock("Clock",Float)=0 _World("World",Float)=0 _SkyA("Outgoing sky art",2D)="gray"{} _SkyB("Incoming sky art",2D)="gray"{} _Blend("Sky transition",Float)=1 _Aspect("Sky camera aspect",Float)=.46 _WorldA("Outgoing world identity",Float)=0 _WorldB("Incoming world identity",Float)=0 }
     SubShader
     {
         Tags {"Queue"="Transparent" "RenderType"="Opaque"}
@@ -23,115 +23,112 @@ Shader "SkyPulse/Constructed World Atmosphere"
                 return lerp(lerp(lerp(hash(a),hash(a+float3(1,0,0)),f.x),lerp(hash(a+float3(0,1,0)),hash(a+float3(1,1,0)),f.x),f.y),lerp(lerp(hash(a+float3(0,0,1)),hash(a+float3(1,0,1)),f.x),lerp(hash(a+float3(0,1,1)),hash(a+1),f.x),f.y),f.z);
             }
             void palette(float world,out float3 zenith,out float3 middle,out float3 shadow,out float3 light,out float3 glow);
-            float cloudDensity(float3 at,float3 wind)
-            {
-                // Broken banks instead of one filled cloud floor. The density
-                // volume is sampled in physical world space, so every ray sees
-                // a different crown and a clear channel between the billows.
-                float3 uv=at*float3(.0036,.0026,.0036)+float3(.17,.43,.29)+wind;
-                float billow=tex3Dlod(_CloudNoise,float4(uv,0)).r;
-                float crown=-9.5+(billow-.5)*11;
-                float top=1-smoothstep(crown-1.2,crown+1.8,at.y);
-                float bottom=smoothstep(-25,-16,at.y);
-                float islands=smoothstep(.38,.73,billow);
-                return top*bottom*islands;
-            }
-            float3 cloudVolume(float3 ray,float3 behind)
-            {
-                // The four existing samples remain bounded. Low opacity and
-                // a soft horizon let clear air show through the cloud banks;
-                // they never replace the lower screen with an opaque lilac slab.
-                if(ray.y>=-.08)return behind;
-                const float top=-3.5,bottom=-25,originHeight=6.4,maxDistance=110;
-                float start=max(0,(top-originHeight)/ray.y);
-                float finish=min(maxDistance,(bottom-originHeight)/ray.y);
-                if(finish<=start)return behind;
-                float3 za,ma,sa,la,ga,zb,mb,sb,lb,gb;
-                palette(_WorldA,za,ma,sa,la,ga);palette(_WorldB,zb,mb,sb,lb,gb);
-                float blend=saturate(_Blend);
-                float3 shadow=lerp(sa,sb,blend)*.50+behind*.32;
-                float3 lit=lerp(la,lb,blend)*.40+float3(.08,.13,.21)+lerp(ga,gb,blend)*.020;
-                float stepLength=(finish-start)*.25;
-                float horizonFade=smoothstep(.08,.24,-ray.y);
-                float3 origin=float3(0,originHeight,0),wind=float3(_Clock*.00010,0,_Clock*.000035);
-                float transmittance=1;float3 scattering=0;
-                [unroll] for(int stepIndex=0;stepIndex<4;stepIndex++)
-                {
-                    float3 at=origin+ray*(start+(stepIndex+.42)*stepLength);
-                    float density=cloudDensity(at,wind);
-                    float upper=cloudDensity(at+float3(-2.8,4.6,-1.4),wind);
-                    float silver=saturate((density-upper)*3.2);
-                    float height=saturate((at.y+20)*.065);
-                    float illumination=saturate(.14+height*.30+silver*.68);
-                    float3 colour=lerp(shadow,lit,illumination);
-                    float opacity=(1-exp2(-density*min(stepLength,6)*.11))*horizonFade;
-                    scattering+=colour*(transmittance*opacity);
-                    transmittance*=1-opacity;
-                }
-                return behind*transmittance+scattering;
-            }
             float3 lowerAir(float3 d,float3 shadow,float3 glow)
             {
-                // Clean indigo depth below the inhabited skyline. A broad
-                // atmospheric falloff replaces the old constant purple fill.
-                float horizon=exp(-pow((d.y+.08)*4.6,2));
-                float altitude=smoothstep(-.65,-.035,d.y);
-                float3 deep=float3(.012,.022,.055)+shadow*.12;
-                float3 distant=float3(.026,.042,.095)+shadow*.24+glow*.014;
-                return lerp(deep,distant,altitude)+glow*horizon*.018;
+                float horizon=exp(-pow((d.y+.055)*5.8,2));
+                float altitude=smoothstep(-.72,.015,d.y);
+                float3 deep=float3(.008,.018,.042)+shadow*.085;
+                float3 distant=float3(.023,.049,.095)+shadow*.16+glow*.009;
+                return lerp(deep,distant,altitude)+glow*horizon*.014;
             }
-            float neonBankEnvelope(float3 at)
+            float3 cloudProfile(float world)
             {
-                // Three finite physical banks sit behind different city depths.
-                // Their ellipsoidal volumes leave open air between the crowns,
-                // rather than filling every point below a horizontal cloud floor.
-                float3 left=(at-float3(-24,-10,48))/float3(33,9,29);
-                float3 right=(at-float3(26,-9,76))/float3(31,8,27);
-                float3 lower=(at-float3(-4,-19,30))/float3(34,11,30);
-                return max(1-dot(left,left),max(1-dot(right,right),1-dot(lower,lower)));
+                // Height, crown spread and shearing are authored per place.
+                // The twelve profiles share one cached coherent density texture.
+                if(world<.5)return float3(0,1,0);
+                if(world<1.5)return float3(1.5,.78,.38);
+                if(world<2.5)return float3(-1.8,.66,-.32);
+                if(world<3.5)return float3(-.6,.60,.60);
+                if(world<4.5)return float3(.8,.84,-.22);
+                if(world<5.5)return float3(1.4,.76,.18);
+                if(world<6.5)return float3(-.4,.82,-.46);
+                if(world<7.5)return float3(.5,1.10,.44);
+                if(world<8.5)return float3(-2,1.05,-.20);
+                if(world<9.5)return float3(1.3,1.28,.66);
+                if(world<10.5)return float3(-1.5,.70,-.54);
+                return float3(.4,.62,.30);
             }
-            float neonCloudPocket(float envelope,float billow,float detail)
+            float bankEnvelope(float3 at,float3 profile)
             {
-                // The envelope only bounds the field. It never fills the bank:
-                // independently eroded pockets leave clear air through its body.
-                float boundary=smoothstep(0,.45,envelope);
-                float pocket=smoothstep(.40,.64,billow*.72+detail*.28);
-                float erosion=smoothstep(.22,.58,detail+billow*.20);
-                return boundary*pocket*erosion*.62;
+                // This is only a finite weather bound. Coherent, eroded density
+                // below is responsible for every visible billow and open channel.
+                float3 p=at;p.x+=p.y*profile.z;p.y-=profile.x;
+                // Weather belongs to small distant edge banks, not a blanket
+                // across the flight lane or underneath every island.
+                float3 left=(p-float3(-37,-17.5,66))/float3(18,6.0*profile.y,26);
+                float3 right=(p-float3(40,-21.0,89))/float3(20,6.8*profile.y,27);
+                return max(1-dot(left,left),1-dot(right,right));
             }
-            float neonDensity(float3 at,float3 wind,out float detail)
+            float coherentDensity(float4 field,float envelope)
             {
-                float3 uv=at*float3(.009,.012,.009)+float3(.13,.36,.51)+wind;
-                float billow=tex3Dlod(_CloudNoise,float4(uv,0)).r;
-                detail=tex3Dlod(_CloudNoise,float4(uv*3.01+float3(.31,.07,.19),0)).r;
-                return neonCloudPocket(neonBankEnvelope(at),billow,detail);
+                // Cached channel contract: R = coherent Perlin-Worley FBM;
+                // G/B = inverse Worley at six/twelve cells; A = low-frequency
+                // curl. Erosion removes the outside of a billow, not random
+                // white-noise holes through an otherwise filled cloud sheet.
+                float body=smoothstep(.51,.71,field.r);
+                float boundary=smoothstep(.015,.38,envelope+(field.r-.5)*.24);
+                float edge=1-body;
+                float erosion=((1-field.g)*.18+(1-field.b)*.075)*(.22+edge*.78);
+                float density=saturate(body-erosion);
+                return density*density*(3-2*density)*boundary*.72;
             }
-            float3 neonCloudVolume(float3 ray,float3 origin,float3 behind)
+            float3 cloudVolume(float3 ray,float3 origin,float3 behind)
             {
-                // Eight low-extinction samples resolve wispy billow pockets,
-                // not opaque ellipsoid walls or six broad integration bands.
-                // All samples remain bounded to the existing cached 3D volume.
-                if(ray.y>.08)return behind;
-                float start=12,finish=110,stepLength=(finish-start)/8;
-                float3 wind=float3(_Clock*.000065,0,_Clock*.000023);
+                if(ray.y>.035)return behind;
+                float blend=saturate(_Blend);
+                float3 profile=lerp(cloudProfile(_WorldA),cloudProfile(_WorldB),blend);
+                float3 za,ma,sa,la,ga,zb,mb,sb,lb,gb;
+                palette(_WorldA,za,ma,sa,la,ga);palette(_WorldB,zb,mb,sb,lb,gb);
+                float3 worldLight=lerp(la,lb,blend),worldGlow=lerp(ga,gb,blend);
+                // Deep coloured interiors and a lit edge retain the world's
+                // palette. Neutral grey scattering washed the whole scene out.
+                float3 ambient=float3(.015,.030,.065)+worldGlow*.025+behind*.09;
+                float3 sunlight=worldLight*.62+worldGlow*.15;
+                float3 wind=float3(_Clock*.00046,0,_Clock*.00015);
+                float3 densityScale=float3(.019,.025,.019);
+                float3 sunDirection=normalize(float3(-.48,.81,-.34));
+                // Twenty physically spaced primary samples resolve the volume
+                // instead of projecting eight disconnected slabs. Light is
+                // integrated from two further points inside each actual cloud.
+                const float start=11,finish=114;
+                const float stepLength=(finish-start)/20;
                 float transmittance=1;float3 scattering=0;
-                [unroll] for(int sampleIndex=0;sampleIndex<8;sampleIndex++)
+                [loop] for(int sampleIndex=0;sampleIndex<20;sampleIndex++)
                 {
-                    float3 at=origin+ray*(start+(sampleIndex+.46)*stepLength);
-                    float detail=0;float density=neonDensity(at,wind,detail);
-                    float3 upperAt=at+float3(-2.5,3.6,-1.5);
-                    float3 upperUv=upperAt*float3(.009,.012,.009)+float3(.13,.36,.51)+wind;
-                    float upperNoise=tex3Dlod(_CloudNoise,float4(upperUv,0)).r;
-                    float upper=neonCloudPocket(neonBankEnvelope(upperAt),upperNoise,detail);
-                    float crown=saturate((density-upper)*8.0);
-                    float height=saturate((at.y+23)*.055);
-                    float3 shade=float3(.012,.026,.061)+behind*.10;
-                    float3 light=float3(.22,.36,.53);
-                    float3 colour=lerp(shade,light,saturate(.05+height*.12+crown*.68));
-                    colour+=float3(.018,.060,.085)*crown;
-                    colour+=float3(.045,.006,.042)*crown*smoothstep(-8,28,at.x)*.35;
-                    float opacity=(1-exp2(-density*stepLength*.020))*smoothstep(-.08,.13,-ray.y);
-                    scattering+=colour*transmittance*opacity;transmittance*=1-opacity;
+                    float3 at=origin+ray*(start+(sampleIndex+.43)*stepLength);
+                    if(bankEnvelope(at,profile)>-.33)
+                    {
+                        float4 curl=tex3Dlod(_CloudNoise,float4(at*float3(.0055,.0068,.0055)+float3(.37,.11,.29)+wind*.41,0));
+                        float3 warp=(float3(curl.a,curl.r,curl.g)-.5)*float3(4.2,2.0,4.2);
+                        float3 shaped=at+warp;
+                        float3 uv=shaped*densityScale+float3(.13,.36,.51)+wind;
+                        float4 field=tex3Dlod(_CloudNoise,float4(uv,0));
+                        float density=coherentDensity(field,bankEnvelope(shaped,profile));
+                        if(density>.001)
+                        {
+                            float3 nearAt=shaped+sunDirection*3.2;
+                            float3 farAt=shaped+sunDirection*8.6;
+                            float4 nearField=tex3Dlod(_CloudNoise,float4(uv+sunDirection*3.2*densityScale,0));
+                            float4 farField=tex3Dlod(_CloudNoise,float4(uv+sunDirection*8.6*densityScale,0));
+                            float nearDensity=coherentDensity(nearField,bankEnvelope(nearAt,profile));
+                            float farDensity=coherentDensity(farField,bankEnvelope(farAt,profile));
+                            float opticalDepth=nearDensity*2.0+farDensity*3.6;
+                            float direct=exp2(-opticalDepth*.85);
+                            float crown=saturate((density-nearDensity)*3.8);
+                            float height=saturate((at.y+27-profile.x)*.052);
+                            // Minimum multiple-scattered sky light keeps deep
+                            // billows luminous; shadows cannot become ink holes.
+                            float3 colour=ambient*(.72+height*.28)+sunlight*(direct*.43+crown*.24);
+                            colour+=worldGlow*crown*.025;
+                            float airFade=smoothstep(-.025,.16,-ray.y);
+                            float opacity=(1-exp2(-density*stepLength*.105))*airFade;
+                            // A cloud never replaces more than 42% of the clear sky.
+                            // The space between separate islands stays open air.
+                            opacity=min(opacity,max(0,(transmittance-.58)/max(transmittance,.001)));
+                            scattering+=colour*transmittance*opacity;
+                            transmittance*=1-opacity;
+                        }
+                    }
                 }
                 return behind*transmittance+scattering;
             }
@@ -197,20 +194,20 @@ Shader "SkyPulse/Constructed World Atmosphere"
                 {
                 float3 zenith=0,middle=0,shadow=0,light=0,glow=0;palette(world,zenith,middle,shadow,light,glow);
                 float2 uv=float2(.5+d.x*(1.24/max(.3,_Aspect)),.44+d.y*1.24);
-                uv+=float2(sin(_Clock*.017)*.006,cos(_Clock*.013)*.004);uv=clamp(uv,float2(0,.30),float2(1,.985));
-                float3 art=tex2D(artwork,uv).rgb;float luma=dot(art,float3(.2126,.7152,.0722));
-                float structure=saturate(luma*.74+mist*.40);
-                float3 sky=lerp(zenith,middle,saturate(.52-d.y*1.6));
-                // Retain the authored cloud shapes; colour grade their light,
-                // rather than stretching one brown/grey cloud across every sky.
-                sky+=glow*smoothstep(.14,.78,structure)*.37;
-                sky+=art*lerp(glow,float3(.65,.76,1),.28)*.29;
-                float horizon=exp(-pow((d.y+.09)*6.8,2));sky+=glow*horizon*.14;
+                uv+=float2(sin(_Clock*.017)*.006,cos(_Clock*.013)*.004);
+                float artCoverage=smoothstep(.005,.075,uv.x)*(1-smoothstep(.925,.995,uv.x));
+                float3 art=tex2D(artwork,clamp(uv,float2(0,.30),float2(1,.985))).rgb;
+                float3 sky=lerp(zenith,middle,saturate(.50-d.y*1.5));
+                // Authored nebula, ice and storm structures retain their local
+                // colours and detail. Off-axis views fade before the crop edge.
+                float3 artSky=art*.74+middle*.07+glow*mist*.022;
+                sky=lerp(sky,artSky,artCoverage);
+                float horizon=exp(-pow((d.y+.09)*7.1,2));sky+=glow*horizon*.035;
                 float curtain=sin(d.x*8.5+d.y*2.3+sin(d.x*4-_Clock*.065)*.65);
                 float aurora=pow(saturate(1-abs(d.y-.13-curtain*.065)*13),3)*smoothstep(-.2,.18,d.y);
                 float polar=world<1.5||world>10.5?1:0;
                 sky+=lerp(glow,float3(.52,.27,.95),saturate(d.x+.45))*aurora*polar*.19;
-                float sea=1-smoothstep(-.18,.035,d.y);
+                float sea=1-smoothstep(-.105,.060,d.y);
                 float3 deepAir=lowerAir(d,shadow,glow);
                 sky=lerp(sky,deepAir,sea);
                 float3 cell=floor(d*720);float seed=hash(cell+world*3);
@@ -238,11 +235,7 @@ Shader "SkyPulse/Constructed World Atmosphere"
                     else sky=lerp(themedSky(d,_WorldA,_SkyA,mist),themedSky(d,_WorldB,_SkyB,mist),_Blend);
                 }
                 float3 ray=normalize(i.cloudRay);
-                float neonWeight=lerp(1-step(.5,_WorldA),1-step(.5,_WorldB),saturate(_Blend));
-                float3 atmosphere=sky;
-                if(neonWeight>.9999)atmosphere=neonCloudVolume(ray,i.cloudOrigin,sky);
-                else if(neonWeight<.0001)atmosphere=cloudVolume(ray,sky);
-                else atmosphere=lerp(cloudVolume(ray,sky),neonCloudVolume(ray,i.cloudOrigin,sky),neonWeight);
+                float3 atmosphere=cloudVolume(ray,i.cloudOrigin,sky);
                 return fixed4(atmosphere,1);
             }
             ENDCG

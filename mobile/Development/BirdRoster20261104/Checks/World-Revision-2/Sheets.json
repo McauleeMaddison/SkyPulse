@@ -1,0 +1,17 @@
+{
+  "appearanceAcceptance" : "pending",
+  "approvedBird" : "Neon Finch only",
+  "date" : "2026-11-04",
+  "deviceTested" : false,
+  "origin" : "Actual Unity Editor main-camera PNGs; layout only, full frames preserved without repainting\/cropping",
+  "other14Birds" : "not accepted; colour palette accepted, geometric redesign still required",
+  "outputs" : [
+    "\/private\/tmp\/skypulse-polish-20261104\/world-sheets\/Twelve-Worlds-Gameplay.png",
+    "\/private\/tmp\/skypulse-polish-20261104\/world-sheets\/Twelve-Worlds-Homes.png",
+    "\/private\/tmp\/skypulse-polish-20261104\/world-sheets\/Pulse-Relay-Home-Gameplay.png"
+  ],
+  "relayFrames" : 2,
+  "result" : "PASS",
+  "sourceValidation" : "\/private\/tmp\/skypulse-polish-20261104\/captures\/atmosphere-review\/VALIDATION.json",
+  "worldFrames" : 24
+}

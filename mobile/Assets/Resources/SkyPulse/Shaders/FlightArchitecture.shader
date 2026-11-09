@@ -23,18 +23,21 @@ Shader "SkyPulse/Flight Architecture"
         Tags {"Queue"="Transparent" "RenderType"="Opaque"}
         Pass
         {
+            Tags {"LightMode"="ForwardBase"}
             Cull Off ZWrite On ZTest LEqual
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
             #pragma target 3.0
+            #pragma multi_compile_fwdbase nolightmap nodirlightmap nodynlightmap novertexlight
             #include "UnityCG.cginc"
+            #include "AutoLight.cginc"
             struct app {float4 vertex:POSITION;float3 normal:NORMAL;float4 color:COLOR;};
-            struct vary {float4 pos:SV_POSITION;float3 world:TEXCOORD0;float3 normal:TEXCOORD1;float4 color:COLOR;float3 local:TEXCOORD2;};
+            struct vary {float4 pos:SV_POSITION;float3 world:TEXCOORD0;float3 normal:TEXCOORD1;float4 color:COLOR;float3 local:TEXCOORD2;SHADOW_COORDS(3)};
             float _Visibility,_Clock,_Architecture,_Geology,_Design,_WindowGlow,_BeaconGlow,_Backdrop,_DistrictDepth;float4 _Tint,_Haze;
             float4 _BeaconPoints[5],_BeaconColours[5];
             sampler2D _Environment,_SurfaceTex;float _SurfaceAmount,_SurfaceScale;
-            vary vert(app v){vary o;o.pos=UnityObjectToClipPos(v.vertex);o.world=mul(unity_ObjectToWorld,v.vertex).xyz;o.normal=UnityObjectToWorldNormal(v.normal);o.color=v.color;o.local=v.vertex.xyz;return o;}
+            vary vert(app v){vary o;o.pos=UnityObjectToClipPos(v.vertex);o.world=mul(unity_ObjectToWorld,v.vertex).xyz;o.normal=UnityObjectToWorldNormal(v.normal);o.color=v.color;o.local=v.vertex.xyz;TRANSFER_SHADOW(o);return o;}
             float hash21(float2 p){return frac(sin(dot(p,float2(127.1,311.7)))*43758.5453);}
             float facadeLine(float value,float width){float aa=max(fwidth(value),.001);return 1-smoothstep(width,width+aa,abs(frac(value)-.5));}
             float3 district(vary i)
@@ -44,7 +47,11 @@ Shader "SkyPulse/Flight Architecture"
                 float3 key=normalize(float3(-.64,.87,-.75)),halfway=normalize(key+view);
                 float fill=saturate(dot(n,normalize(float3(.72,.32,-.55))));
                 float skyFill=saturate(n.y*.5+.5);
-                float facing=saturate(dot(n,view)),ndl=saturate(dot(n,key));
+                float facing=saturate(dot(n,view));
+                // Real facade, balcony and cliff shadows modulate the direct key.
+                // Ambient sky and occupied rooms stay readable in the shade.
+                float contact=SHADOW_ATTENUATION(i);
+                float ndl=saturate(dot(n,key))*lerp(.18,1,contact);
                 float neon=smoothstep(.445,.465,i.color.a)*(1-smoothstep(.495,.515,i.color.a));
                 float glass=max(neon,smoothstep(.27,.32,i.color.a)*(1-smoothstep(.38,.43,i.color.a)));
                 float light=smoothstep(.76,.96,i.color.a),stone=step(.06,i.color.a)*(1-step(.23,i.color.a));
@@ -70,7 +77,7 @@ Shader "SkyPulse/Flight Architecture"
                 // A restrained solid-wall reflection leaves the actual
                 // ceramic/stone colour visible. Clear inset glass retains the
                 // stronger sky reflection, without silver-washing the city.
-                colour+=ambient*(.075+glass*.38+fresnel*.14)+float3(.90,.94,1)*(spec*(.18+glass*.15)+softbox*(.030+glass*.24))*lerp(1,.12,stone);
+                colour+=ambient*(.075+glass*.38+fresnel*.14)+float3(.90,.94,1)*(spec*contact*(.18+glass*.15)+softbox*(.030+glass*.24))*lerp(1,.12,stone);
                 if(_SurfaceAmount>.001)
                 {
                     float3 axis=pow(abs(mul((float3x3)unity_WorldToObject,n)),4);axis/=max(dot(axis,1),.001);float3 p=i.local*_SurfaceScale;
@@ -94,16 +101,11 @@ Shader "SkyPulse/Flight Architecture"
                 // colour is baked from the same palette as the pipe LEDs.
                 // Slow, restrained drift keeps interiors alive without flashes.
                 float windowPulse=.66+.025*sin(_Clock*.24+floor(i.local.y*2.6)*.73+_Design);
-                float paneFalloff=.77+.23*interior;
-                float windowExposure=1;
-                if(_Design<.5)
-                {
-                    // Recessed glazing contains individual occupied rooms, not
-                    // one luminous rectangle filling an entire facade bay.
-                    float rooms=lerp(.24,1,step(.24,hash21(floor(grid)+17.3)));
-                    paneFalloff=.055+.945*interior*rooms;
-                    windowExposure=1.85;
-                }
+                // Occupied rooms sit inside every world's recessed glazing.
+                // Fine dark mullions remain visible between individual lights.
+                float rooms=lerp(.24,1,step(.24,hash21(floor(grid)+17.3+_Design*2.1)));
+                float paneFalloff=.055+.945*interior*rooms;
+                float windowExposure=_Design<.5?1.85:1.5;
                 colour+=neon*_WindowGlow*i.color.rgb*(windowPulse*.78+.06*pow(facing,3))*paneFalloff*windowExposure;
                 float surface=.94+.06*hash21(floor(i.local.xz*28));
                 colour*=lerp(1,surface,stone);
@@ -159,7 +161,7 @@ Shader "SkyPulse/Flight Architecture"
             fixed4 frag(vary i):SV_Target
             {
                 // Stable coverage fade writes neither colour nor depth at zero.
-                float2 p=floor(i.pos.xy);float threshold=frac(dot(p,float2(.75487766,.56984029)));
+                float threshold=frac(dot(floor(i.world*37),float3(.75487766,.56984029,.438579)));
                 clip(_Visibility-threshold-.00001);
                 if(_Architecture>.5)return fixed4(district(i),1);
                 float3 n=normalize(i.normal),v=unity_OrthoParams.w>.5?float3(0,0,-1):normalize(_WorldSpaceCameraPos.xyz-i.world),key=normalize(float3(-.55,.8,-.9));
@@ -192,6 +194,34 @@ Shader "SkyPulse/Flight Architecture"
                 float mist=saturate((i.world.z-5)*.009);
                 float3 atmosphere=max(_Haze.rgb,lerp(float3(.04,.075,.14),_Tint.rgb,.06));
                 return fixed4(lerp(lit,atmosphere,mist),1);
+            }
+            ENDCG
+        }
+        // The same real district mesh casts its own balcony / crown shadows.
+        // A stable world-space coverage test respects crossfaded district banks.
+        Pass
+        {
+            Name "District shadows"
+            Tags {"LightMode"="ShadowCaster"}
+            Cull Off ZWrite On ZTest LEqual
+            CGPROGRAM
+            #pragma vertex shadowVert
+            #pragma fragment shadowFrag
+            #pragma multi_compile_shadowcaster
+            #pragma target 3.0
+            #include "UnityCG.cginc"
+            float _Visibility;
+            struct shadowVary {V2F_SHADOW_CASTER;float3 world:TEXCOORD1;};
+            shadowVary shadowVert(appdata_base v)
+            {
+                shadowVary o;o.world=mul(unity_ObjectToWorld,v.vertex).xyz;
+                TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)
+                return o;
+            }
+            float4 shadowFrag(shadowVary i):SV_Target
+            {
+                float threshold=frac(dot(floor(i.world*37),float3(.75487766,.56984029,.438579)));
+                clip(_Visibility-threshold-.00001);SHADOW_CASTER_FRAGMENT(i)
             }
             ENDCG
         }

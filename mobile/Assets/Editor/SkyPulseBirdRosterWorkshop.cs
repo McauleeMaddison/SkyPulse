@@ -61,44 +61,11 @@ public static partial class SkyPulseBirdRosterWorkshop
         try
         {
             rig.animate=false;rig.turntable=false;
-            if(d.id=="chrome_raven")BuildRavenSculpt(rig);
-            else
-            {
-            rig.body=Joint(root.transform,"01 Fuselage and bank",Vector3.zero);
-            rig.head=Joint(rig.body,"02 Fitted helmet and optics",Point(Mean(d.head)));
-            rig.tail=Joint(rig.body,"05 Tail actuator",Point(d.tailRoot));
-            rig.tailTip=Joint(rig.tail,"06 Tail feather follow",Point(d.tailRoot));
-            Part(rig.body,"Closed reference fuselage",Dome(Points(d.body),d.bodyDepth),d.bodyMaterial);
-            Part(rig.head,"Closed reference helmet",Dome(Points(d.head),d.headDepth),d.headMaterial);
-            Part(rig.head,"Sculpted reference beak",Dome(Points(d.beak),d.beakDepth,10),d.beakMaterial);
-            foreach(var panel in d.panels??Array.Empty<Panel>())
-                foreach(int side in new[]{-1,1})
-                {bool head=panel.surface=="head";Part(head?rig.head:rig.body,(head?"Helmet":"Fuselage")+" fitted panel "+meshes.Count+" "+side,SurfacePanel(Points(panel.outline),Points(head?d.head:d.body),head?d.headDepth:d.bodyDepth,side,3f,6.5f),panel.material);}
-            foreach(var crest in d.crest??Array.Empty<Panel>())
-                Part(rig.head,"Reference crown blade "+meshes.Count,Dome(Points(crest.outline),Mathf.Max(3,d.headDepth*.27f),10),crest.material);
-            BuildEyes(rig.head,d);
-            BuildWing(rig,-1,out rig.leftWing,out rig.leftWingTip);
-            BuildWing(rig,1,out rig.rightWing,out rig.rightWingTip);
-            Vector2 tailHub=Vector2.zero;foreach(var b in d.tail)tailHub+=b.root.V;tailHub/=d.tail.Length;
-            Part(rig.tail,"Connected tail driveshaft",Rod(d.tailRoot.V,tailHub,0,6),2);
-            Part(rig.tailTip,"Tail bearing collar",Ring(tailHub,0,10,2.5f,5),4);
-            if(d.jet)BuildJet(rig,tailHub);
-            int tailIndex=0;
-            foreach(var blade in d.tail)
-            {
-                float z=(tailIndex-(d.tail.Length-1)*.5f)*4;
-                Part(rig.tailTip,"Tail root spar "+tailIndex,Rod(tailHub,blade.root.V,z,2.5f),2);
-                Part(rig.tailTip,"Tail vane "+tailIndex,Feather(blade,z,3.1f,1),blade.material);
-                Part(rig.tailTip,"Tail luminous face "+tailIndex,FeatherInset(blade,z,-1),blade.inset);
-                Part(rig.tailTip,"Tail reverse face "+tailIndex,FeatherInset(blade,z,1),blade.inset);tailIndex++;
-            }
-            BuildFeet(rig);
-            }
+            BuildEngineeredSculpt(rig);
             // One asset contains named editable mesh sub-assets; no hundreds of loose numbered files.
             for(int i=0;i<meshes.Count;i++)
             {meshes[i].name=(i+1).ToString("000")+" "+meshes[i].name;if(i==0)AssetDatabase.CreateAsset(meshes[i],directory+"/Geometry.asset");else AssetDatabase.AddObjectToAsset(meshes[i],directory+"/Geometry.asset");}
             AssetDatabase.SaveAssetIfDirty(meshes[0]);
-            if(d.id=="chrome_raven")RavenApplyFinishes(finishes);
             rig.CaptureBindPose();rig.animate=true;rig.turntable=true;
             PrefabUtility.SaveAsPrefabAsset(root,PrefabPath(d));
         }

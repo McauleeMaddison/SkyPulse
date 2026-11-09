@@ -1,0 +1,283 @@
+{
+  "result": "PASS",
+  "date": "2026-11-04",
+  "scope": "Current three-district, world-entry-anchored visual candidate; previous generated preview evidence refreshed in place",
+  "ownerVisualAcceptance": "pending",
+  "mainCameraPngs": 26,
+  "inspectionPngs": 6,
+  "sheets": 3,
+  "videos": 2,
+  "renderAssertions": 805,
+  "districtAssertions": 1666,
+  "maximumDistrictVertices": 57412,
+  "promotedUniqueWorldAssetPaths": 221,
+  "promotionPhases": [
+    {
+      "initialAssets": 221
+    },
+    {
+      "curvedFacadeRefinement": 43
+    }
+  ],
+  "protectedExistingFiles": 1527,
+  "installedIphoneBuild": "19; unchanged",
+  "deviceWorkAllowedBeforeOwnerApproval": false,
+  "publicAppReview": "on hold",
+  "files": [
+    {
+      "file": "Previews/World-Revision-2/Aurora-Rise-Motion.mp4",
+      "sha256": "376f14f9a7020f20d35193a0db92c6167a273e8809ca7e27e277e727c32c7b33",
+      "bytes": 1924164
+    },
+    {
+      "file": "Previews/World-Revision-2/Neon-City-Motion.mp4",
+      "sha256": "c936004d5f0a245fe172719bfcc94fdcfa8f1e6f642189363a7c95fb1b287940",
+      "bytes": 1948546
+    },
+    {
+      "file": "Previews/World-Revision-2/Pulse-Relay-Home-Gameplay.png",
+      "sha256": "c0299a84f6586f819e696dad07269916e5aa0b18b404244c6b8b73874a55ecf6",
+      "bytes": 2272103
+    },
+    {
+      "file": "Previews/World-Revision-2/README.md",
+      "sha256": "3fe45deb03f3db433f0dfdd74bb87833d9b220413a92d65ba5483bbb98ac8b2f",
+      "bytes": 5063
+    },
+    {
+      "file": "Previews/World-Revision-2/Twelve-Worlds-Gameplay.png",
+      "sha256": "d6848e9587269bac1ea86e6ba47c30ca16a5b5eb1de89a79709421c45cbb6d39",
+      "bytes": 2669319
+    },
+    {
+      "file": "Previews/World-Revision-2/Twelve-Worlds-Homes.png",
+      "sha256": "b48fded9d45ec474d4e98a774909682c121595ba6dbf76ecc80e628fe68fd90d",
+      "bytes": 2714140
+    },
+    {
+      "file": "Previews/World-Revision-2/relay-flight.png",
+      "sha256": "a7bce0e7775b0f0719268bfd53963698582088d6d3e6870ccb2e83b9b0933d60",
+      "bytes": 1017585
+    },
+    {
+      "file": "Previews/World-Revision-2/relay-home.png",
+      "sha256": "2ca25107e4b1f30a4283bf1681744890fe44c04e661288775c98a75fa59c7923",
+      "bytes": 1086501
+    },
+    {
+      "file": "Previews/World-Revision-2/world-00-architecture-inspection.png",
+      "sha256": "8d286b85940b1e435dfe22f2c543adcf9f6b571146e5560b835ce189db2bb138",
+      "bytes": 517689
+    },
+    {
+      "file": "Previews/World-Revision-2/world-00-flight.png",
+      "sha256": "45a5f15f5f9edff6059cefc53b35e22c7ef5c4e2bfbd01a2716fae3a67429fd9",
+      "bytes": 870794
+    },
+    {
+      "file": "Previews/World-Revision-2/world-00-home.png",
+      "sha256": "61223a1f63682d1a0d44c4c090a0ff7f20421977a2adb6d83c14bcf75b0c6790",
+      "bytes": 837338
+    },
+    {
+      "file": "Previews/World-Revision-2/world-00-shadow-off.png",
+      "sha256": "dfa8a61f857529e9651e38daefe7b649657d498de0648b10995f1cabc6fd1b33",
+      "bytes": 754062
+    },
+    {
+      "file": "Previews/World-Revision-2/world-00-shadow-on.png",
+      "sha256": "f6f43f38441acd54115cf821624c2d7975fe8c1cd3ce8be2d0dddda89b647277",
+      "bytes": 766588
+    },
+    {
+      "file": "Previews/World-Revision-2/world-00-unobstructed.png",
+      "sha256": "bddeb666da23ac27eb98d551ed635108b1baa5024bf3baab19517a9d2340840b",
+      "bytes": 767089
+    },
+    {
+      "file": "Previews/World-Revision-2/world-01-flight.png",
+      "sha256": "06c8f96bb5a3c9812827aef374d7d1fc318c7aa7d58e84ae30365a4869bc66c5",
+      "bytes": 807054
+    },
+    {
+      "file": "Previews/World-Revision-2/world-01-home.png",
+      "sha256": "4990631207e509bcce0a95b70c105b306ddadc60e2b0d06cbbb06e684c29d168",
+      "bytes": 821194
+    },
+    {
+      "file": "Previews/World-Revision-2/world-02-flight.png",
+      "sha256": "8b0903c4b21e3931c8d01813418284ca0687ed0beec2d8bf3b79938b18e9706a",
+      "bytes": 768268
+    },
+    {
+      "file": "Previews/World-Revision-2/world-02-home.png",
+      "sha256": "9451f5cb126f846445e5e8d63f44af111969dc887920861d9aa41b32ee8784ca",
+      "bytes": 769467
+    },
+    {
+      "file": "Previews/World-Revision-2/world-03-flight.png",
+      "sha256": "1c82314a6837f04db56a07b666bc2bd320746f88bea5c88ac5dd412b9a4a6100",
+      "bytes": 539810
+    },
+    {
+      "file": "Previews/World-Revision-2/world-03-home.png",
+      "sha256": "58240f6e5b94dff6bca601ea899aa27f98222ddedb1241372f1e93450acf2e1c",
+      "bytes": 552028
+    },
+    {
+      "file": "Previews/World-Revision-2/world-04-flight.png",
+      "sha256": "9316cc31bbcb4e4f77388da6d8612b2eeed666ce537b413031fc1b58c22c21fd",
+      "bytes": 609038
+    },
+    {
+      "file": "Previews/World-Revision-2/world-04-home.png",
+      "sha256": "0e61705602f2ca54b117bf183a990232d58457c492b27cd570d5e592da0deade",
+      "bytes": 614413
+    },
+    {
+      "file": "Previews/World-Revision-2/world-05-flight.png",
+      "sha256": "927c493fdb56f6ebc53fe80e016e49a60d6b03a92af4e174f216bf8831e1021f",
+      "bytes": 615017
+    },
+    {
+      "file": "Previews/World-Revision-2/world-05-home.png",
+      "sha256": "5ccd8ba444e2ac318afad0bf47175666c6c7912a8aa8d2a682320a3f80740d44",
+      "bytes": 638212
+    },
+    {
+      "file": "Previews/World-Revision-2/world-06-flight.png",
+      "sha256": "854b5bf6ac8a3f64c81a9fb26c5e2d40641ea1d391505983731e610757dffc8d",
+      "bytes": 586331
+    },
+    {
+      "file": "Previews/World-Revision-2/world-06-home.png",
+      "sha256": "01c63a373649097e97a7305e3fe7b88efc1231bb597e072b3730ed23a9e56cc4",
+      "bytes": 610938
+    },
+    {
+      "file": "Previews/World-Revision-2/world-07-flight.png",
+      "sha256": "bd0cbc3a0d3cf10c19489b7260378d08218550d0d7b42c21683f1b7044645591",
+      "bytes": 596844
+    },
+    {
+      "file": "Previews/World-Revision-2/world-07-home.png",
+      "sha256": "ae7e6f367b9ec98d9ec1aea4604a251e59f45611cc9ba45c78017f16bbdeb63b",
+      "bytes": 655283
+    },
+    {
+      "file": "Previews/World-Revision-2/world-08-flight.png",
+      "sha256": "0aa37a9352e960ee4a83c3b9d6372b2f84d42ccf8e615be05c2027d41c907692",
+      "bytes": 531595
+    },
+    {
+      "file": "Previews/World-Revision-2/world-08-home.png",
+      "sha256": "e98b32d675fa96d57aa8d85b4405e83b924d23c44b492631a8d3980c26abcdb8",
+      "bytes": 593826
+    },
+    {
+      "file": "Previews/World-Revision-2/world-09-flight.png",
+      "sha256": "72678005a3385c9dd27f9433e6497be4582120bd34a465423f40f58f93e63e29",
+      "bytes": 597616
+    },
+    {
+      "file": "Previews/World-Revision-2/world-09-home.png",
+      "sha256": "8e514984f68df5c105cee2a729a8186922892a65c9134e98f7fc384c2089882d",
+      "bytes": 630039
+    },
+    {
+      "file": "Previews/World-Revision-2/world-10-flight.png",
+      "sha256": "7b6607f56da792e22bbfd7d1ebbd19da0f5904862fabc2d97e40ef9e562b2b3b",
+      "bytes": 578927
+    },
+    {
+      "file": "Previews/World-Revision-2/world-10-home.png",
+      "sha256": "67f7dabdbc5cdaf3f7ef6428fe75ac85d039f88cda61f5b221e262f73fba8d25",
+      "bytes": 616431
+    },
+    {
+      "file": "Previews/World-Revision-2/world-11-flight.png",
+      "sha256": "32016f53a1e6e12c48ccc3af55856e60df73b5be4bf330f84810badcfa733c78",
+      "bytes": 627027
+    },
+    {
+      "file": "Previews/World-Revision-2/world-11-home.png",
+      "sha256": "ebe1224d65067393ad98bd6dff377c5d957418f16550159d20745b0eaf695ce5",
+      "bytes": 663395
+    },
+    {
+      "file": "Previews/World-Revision-2/world-crossfade-35.png",
+      "sha256": "52f6222c2cf3d506d491b4976552b9c4f6a6629386ca98572c52ede2bd9d894e",
+      "bytes": 722713
+    },
+    {
+      "file": "Previews/World-Revision-2/world-crossfade-65.png",
+      "sha256": "bdb4baa8b020d45e6609e1556e976aa65dcb069938fda61d62a6145209b6cc60",
+      "bytes": 776967
+    },
+    {
+      "file": "Checks/World-Revision-2/Atmosphere-Editor.log",
+      "sha256": "e384cca1ddf733e15a46cd00e6f031d8cef46adc3c5903c523a967d47f6d2a18",
+      "bytes": 1085388
+    },
+    {
+      "file": "Checks/World-Revision-2/Atmosphere-Render.json",
+      "sha256": "029a08b199ad8145539ca3fe76020611d92d75f24b70bc3c7f10f778f427d9ea",
+      "bytes": 110592
+    },
+    {
+      "file": "Checks/World-Revision-2/Aurora-Media.json",
+      "sha256": "da2de1e78b5d7d3e48320b982368738566a74bf8a7c3fb0b3a270f7763423fd2",
+      "bytes": 331
+    },
+    {
+      "file": "Checks/World-Revision-2/Density-Bake-Editor.log",
+      "sha256": "c3f1555f04d1b326982479223832f8a252f5583f09362ff87e032a202da0fbe4",
+      "bytes": 24739
+    },
+    {
+      "file": "Checks/World-Revision-2/District-Editor.log",
+      "sha256": "cff15192728a52f0b3bb6f5730862c76797bfe4dea434d67ddacbb5ec60ca8c6",
+      "bytes": 433249
+    },
+    {
+      "file": "Checks/World-Revision-2/District-Geometry.json",
+      "sha256": "1102c5b8b68b06da82658ef45f1a38afc420229c7116d83bdc7911b62f3bb490",
+      "bytes": 679
+    },
+    {
+      "file": "Checks/World-Revision-2/Gameplay-Preservation.json",
+      "sha256": "efb17cda67ee59e27f72e447fa309abd3c7a519df5ef9f121a69cb96f47b93dd",
+      "bytes": 6214
+    },
+    {
+      "file": "Checks/World-Revision-2/Media.json",
+      "sha256": "52bcdd46c7cfec1fdfa7ddb3b99514e4e181218f8087a998bc82b765efd0fc0a",
+      "bytes": 330
+    },
+    {
+      "file": "Checks/World-Revision-2/Player-Copy.json",
+      "sha256": "1b59bc40b0fcb328657210a8b3411c3992784d6277b9fa44b5ba091a56840638",
+      "bytes": 297
+    },
+    {
+      "file": "Checks/World-Revision-2/Promotion-Audit.json",
+      "sha256": "b1f637c7811ea2efa6d3b3bf0063c1a3a2be2831ef35e9f928db555db41c3d17",
+      "bytes": 753
+    },
+    {
+      "file": "Checks/World-Revision-2/Sheets.json",
+      "sha256": "e7b8d137ff1180cbd6c74fa877e7cebcd3a0835a4155c8c94b314e6bdf37336d",
+      "bytes": 809
+    },
+    {
+      "file": "Checks/World-Revision-2/World-Art-Promotion.json",
+      "sha256": "cdd8ec4580b82d460e78326f1e1bd3356d28a9c518372f1e0da7abeffcab73eb",
+      "bytes": 60125
+    },
+    {
+      "file": "README.md",
+      "sha256": "7c1c1afbd01632e1c737672d24f8a7677a2f41bcd7b3c7f54ee5c32881d8c794",
+      "bytes": 12578
+    }
+  ]
+}

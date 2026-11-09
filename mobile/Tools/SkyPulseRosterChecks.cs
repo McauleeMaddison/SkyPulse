@@ -103,11 +103,12 @@ public static class SkyPulseRosterChecks
         Check(bones.All(t=>t!=null)&&bones.Distinct().Count()==8,"Eight editable articulated joints bound: "+d.id);
         Vector2 origin=Vector2.zero;foreach(var p in d.body)origin+=p.V;origin/=d.body.Length;
         var point=new Vector2((d.eye[0]-origin.x)*.01f,(origin.y-d.eye[1])*.01f);
-        var helmet=filters.Single(f=>f.name=="Closed reference helmet");
+        var helmet=filters.Single(f=>f.name=="Closed reference helmet"||f.name=="Continuous fitted helmet");
         foreach(int side in new[]{-1,1})
         {
-            var glass=filters.Single(f=>f.name=="Seated dark optical glass "+side);var iris=filters.Single(f=>f.name=="Reference luminous iris "+side);var core=filters.Single(f=>f.name=="Optical core "+side);
-            Check(filters.Where(f=>f==helmet||f.name.StartsWith("Helmet fitted panel ",StringComparison.Ordinal)).Any(f=>Overlap(f,glass,point)),"Glass is physically seated in helmet assembly: "+d.id+" "+side);
+            var glass=filters.Single(f=>f.name=="Seated dark optical glass "+side);var iris=filters.Single(f=>f.name=="Reference luminous iris "+side);var core=filters.Single(f=>f.name=="Optical core "+side||f.name=="Seated optical emitter "+side);
+            var probe=core.transform.TransformPoint(core.sharedMesh.bounds.center);point=new Vector2(probe.x,probe.y);
+            Check(filters.Where(f=>f==helmet||f.name.StartsWith("Helmet fitted panel ",StringComparison.Ordinal)||f.name=="Connected recessed optical housing "+side).Any(f=>Overlap(f,glass,point)),"Glass is physically seated in helmet assembly: "+d.id+" "+side);
             Check(Overlap(glass,iris,point)&&Overlap(iris,core,point),"Iris/core are physically connected: "+d.id+" "+side);
             var h=Interval(helmet,point);var b=Interval(glass,point);var i=Interval(iris,point);var c=Interval(core,point);
             bool outward=side<0?b.x<h.x&&i.x<b.x&&c.x<i.x:b.y>h.y&&i.y>b.y&&c.y>i.y;
@@ -142,15 +143,15 @@ public static class SkyPulseRosterChecks
     static bool Overlap(MeshFilter a,MeshFilter b,Vector2 at){var x=Interval(a,at);var y=Interval(b,at);return Mathf.Min(x.y,y.y)-Mathf.Max(x.x,y.x)>.0003f;}
     static string[] CaptureStudio(SkyPulseBirdRosterWorkshop.Design d,SkyPulseNeonFinchPrototype rig,Bounds bounds)
     {
-        var folder=Path.Combine(Output,d.id);Directory.CreateDirectory(folder);var camera=UnityEngine.Object.FindObjectsByType<Camera>().First();camera.enabled=false;camera.orthographic=true;camera.aspect=4f/3;camera.orthographicSize=Mathf.Max(bounds.size.y*.62f,bounds.size.x*.62f/camera.aspect);
+        var folder=Path.Combine(Output,d.id);Directory.CreateDirectory(folder);var camera=UnityEngine.Object.FindObjectsByType<Camera>().First();camera.enabled=false;camera.orthographic=false;camera.fieldOfView=31;camera.aspect=4f/3;float cameraDistance=Mathf.Max(bounds.size.y*.64f,bounds.size.x*.64f/camera.aspect)/Mathf.Tan(camera.fieldOfView*.5f*Mathf.Deg2Rad)+bounds.extents.z;
         var target=new RenderTexture(1024,768,24){antiAliasing=4};target.Create();camera.targetTexture=target;var pixels=new Texture2D(1024,768,TextureFormat.RGB24,false);var old=RenderTexture.active;var paths=new List<string>();
         try
         {
             void Frame(string file,Vector3 direction,float time)
-            {rig.SamplePose(time);camera.transform.position=bounds.center+direction.normalized*12;camera.transform.LookAt(bounds.center,Vector3.up);Save(camera,target,pixels,Path.Combine(folder,file));paths.Add(file);}
+            {rig.SamplePose(time);camera.transform.position=bounds.center+direction.normalized*cameraDistance;camera.transform.LookAt(bounds.center,Vector3.up);Save(camera,target,pixels,Path.Combine(folder,file));paths.Add(file);}
             Frame("Side.png",new Vector3(.06f,.03f,-1),0);Frame("ThreeQuarter.png",new Vector3(.8f,.35f,-1),0);Frame("Reverse.png",new Vector3(.2f,.1f,1),0);
             var motion=Path.Combine(folder,"motion");Directory.CreateDirectory(motion);
-            for(int i=0;i<60;i++){rig.SamplePose(i/30f);camera.transform.position=bounds.center+new Vector3(.15f,.08f,-1).normalized*12;camera.transform.LookAt(bounds.center,Vector3.up);Save(camera,target,pixels,Path.Combine(motion,i.ToString("000")+".png"));}
+            for(int i=0;i<60;i++){rig.SamplePose(i/30f);camera.transform.position=bounds.center+new Vector3(.15f,.08f,-1).normalized*cameraDistance;camera.transform.LookAt(bounds.center,Vector3.up);Save(camera,target,pixels,Path.Combine(motion,i.ToString("000")+".png"));}
         }
         finally{RenderTexture.active=old;camera.targetTexture=null;target.Release();UnityEngine.Object.DestroyImmediate(target);UnityEngine.Object.DestroyImmediate(pixels);rig.ResetPose();}
         return paths.ToArray();

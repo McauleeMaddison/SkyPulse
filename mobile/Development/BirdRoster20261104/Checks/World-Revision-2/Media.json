@@ -1,0 +1,15 @@
+{
+  "decodedDistinctSamples" : 3,
+  "decodedHashes" : [
+    "aeb55eb5242d16a4",
+    "704c83c82171c0b2",
+    "fd61f220f32dc7ed"
+  ],
+  "file" : "Neon-City-Motion.mp4",
+  "fps" : 30,
+  "frames" : 90,
+  "height" : 1334,
+  "scope" : "Actual Unity frames; encoding rate does not measure device FPS.",
+  "seconds" : 3,
+  "width" : 750
+}

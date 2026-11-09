@@ -1,0 +1,21 @@
+{
+  "result": "PASS",
+  "date": "2026-11-04",
+  "finalUniquePromotedPaths": 221,
+  "phases": [
+    {
+      "initialAssets": 221
+    },
+    {
+      "curvedFacadeRefinement": 43
+    }
+  ],
+  "phaseInterpretation": "43 paths refined after the initial 221-path promotion; 221 final unique paths, not 264",
+  "finalAssetHashesMatchOwnerProject": true,
+  "protectedExistingFiles": 1527,
+  "protectedHashesMatchBefore": true,
+  "maximumDistrictVertices": 57412,
+  "promotionReportSha256": "cdd8ec4580b82d460e78326f1e1bd3356d28a9c518372f1e0da7abeffcab73eb",
+  "beforeManifestSha256": "6a274c3ebc8cc601ce3bd8d96d22b91424045e2f10c17b9025ad0dd9f8fe20bf",
+  "scope": "Read-only final source asset hash audit; no Unity launch, code change, build or device action"
+}

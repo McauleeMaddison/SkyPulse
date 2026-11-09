@@ -1,0 +1,15 @@
+{
+  "decodedDistinctSamples" : 3,
+  "decodedHashes" : [
+    "9786866d0f8d3d0",
+    "45f587491dd83592",
+    "264f9a6ef80558a5"
+  ],
+  "file" : "Aurora-Rise-Motion.mp4",
+  "fps" : 30,
+  "frames" : 90,
+  "height" : 1334,
+  "scope" : "Actual Unity frames; encoding rate does not measure device FPS.",
+  "seconds" : 3,
+  "width" : 750
+}

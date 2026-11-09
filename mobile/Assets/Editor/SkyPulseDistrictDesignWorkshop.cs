@@ -15,7 +15,7 @@ public static class SkyPulseDistrictDesignWorkshop
 {
     public const string BaselinePath=SkyPulseBackgroundWorkshop.Folder+"/district-design-baseline-v1.json";
     const string MeshFolder=SkyPulseBackgroundWorkshop.Folder+"/Meshes/";
-    const int CurrentDesignVersion=3;
+    const int CurrentDesignVersion=5;
     static readonly Type Factory=typeof(SkyPulseNativeGame).Assembly.GetType("SkyPulse.Mobile.SkyPulseWorldArchitecture");
     const BindingFlags Static=BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Static;
     static readonly FieldInfo CaptureField=Factory.GetField("EditorPartCapture",Static);
@@ -79,6 +79,88 @@ public static class SkyPulseDistrictDesignWorkshop
         }
         File.WriteAllText(BaselinePath,JsonUtility.ToJson(new Baseline{parts=records.ToArray()},true));AssetDatabase.Refresh();
         Debug.Log("SKYPULSE_DISTRICT_BASELINE_PASS: "+records.Count+" exact original mesh hashes and source pivots recorded / "+records.Count(r=>r.generated)+" match the generator; no mesh or layout edited");EditorApplication.Exit(0);
+    }
+    public const string CloudDensityPath="Assets/Resources/SkyPulse/WorldCloudDensity.asset";
+    const string CloudDensityName="SkyPulse coherent Perlin-Worley density / v1";
+    // Editor construction only. The player loads one 1 MiB cached Texture3D;
+    // none of this Perlin/Worley work runs during launch or a world transition.
+    public static Color32[] GenerateCloudDensityPixels()
+    {
+        const int size=64;
+        var pixels=new Color32[size*size*size];
+        var coarse=CloudFeatures(6,0x8d29a4e3u);var fine=CloudFeatures(12,0x143d72abu);
+        for(int z=0;z<size;z++)for(int y=0;y<size;y++)for(int x=0;x<size;x++)
+        {
+            float u=(x+.5f)/size,v=(y+.5f)/size,w=(z+.5f)/size;
+            float perlin=CloudPerlin(u,v,w,3,0x385a91d7u)*.56f+CloudPerlin(u,v,w,6,0x9a7d35c1u)*.27f+CloudPerlin(u,v,w,12,0x517ea20bu)*.12f+CloudPerlin(u,v,w,24,0x6c79d8efu)*.05f;
+            perlin=Mathf.Clamp01((perlin-.5f)*1.55f+.5f);
+            float worley6=CloudWorley(u,v,w,6,coarse),worley12=CloudWorley(u,v,w,12,fine);
+            float density=perlin*.72f+(worley6*.72f+worley12*.28f)*.28f;
+            float curl=CloudPerlin(u,v,w,8,0x37b68d21u);
+            pixels[x+size*(y+size*z)]=new Color32(CloudByte(density),CloudByte(worley6),CloudByte(worley12),CloudByte(curl));
+        }
+        return pixels;
+    }
+    public static void BakeCloudDensityInQa()
+    {
+        Guard();var pixels=GenerateCloudDensityPixels();
+        var existing=AssetDatabase.LoadAssetAtPath<Texture3D>(CloudDensityPath);
+        if(existing!=null)
+        {
+            // A repeated bake is a no-op only for the exact known generation.
+            // Saved artist changes remain authoritative, including pixel edits.
+            if(EditorUtility.IsDirty(existing)||existing.name!=CloudDensityName||existing.width!=64||existing.height!=64||existing.depth!=64||existing.format!=TextureFormat.RGBA32||!existing.isReadable||!existing.GetPixels32().SequenceEqual(pixels))
+                throw new InvalidOperationException("The saved cloud density differs from this exact generator. It has been preserved: "+CloudDensityPath);
+            Debug.Log("SKYPULSE_COHERENT_CLOUD_DENSITY_PASS: exact existing 64 cubed RGBA density preserved / 1048576 bytes.");return;
+        }
+        if(File.Exists(CloudDensityPath))throw new InvalidOperationException("An existing non-texture cloud asset was preserved: "+CloudDensityPath);
+        var volume=new Texture3D(64,64,64,TextureFormat.RGBA32,false){name=CloudDensityName,wrapMode=TextureWrapMode.Repeat,filterMode=FilterMode.Trilinear,anisoLevel=0};
+        volume.SetPixels32(pixels);volume.Apply(false,false);AssetDatabase.CreateAsset(volume,CloudDensityPath);AssetDatabase.SaveAssets();
+        Debug.Log("SKYPULSE_COHERENT_CLOUD_DENSITY_PASS: deterministic periodic 64 cubed RGBA density / R Perlin-Worley FBM, G 6-cell erosion, B 12-cell erosion, A 8-cell curl / 1048576 bytes.");
+    }
+    static byte CloudByte(float value)=>(byte)Mathf.Clamp(Mathf.RoundToInt(value*255),0,255);
+    static int CloudWrap(int value,int size){int wrapped=value%size;return wrapped<0?wrapped+size:wrapped;}
+    static uint CloudHash(int x,int y,int z,uint seed)
+    {
+        uint h=(uint)x*0x8da6b343u^(uint)y*0xd8163841u^(uint)z*0xcb1ab31fu^seed;
+        h^=h>>16;h*=0x7feb352du;h^=h>>15;h*=0x846ca68bu;return h^(h>>16);
+    }
+    static float CloudUnit(uint value)=>(value&0x00ffffffu)/16777216f;
+    static Vector3[] CloudFeatures(int cells,uint seed)
+    {
+        var features=new Vector3[cells*cells*cells];
+        for(int z=0;z<cells;z++)for(int y=0;y<cells;y++)for(int x=0;x<cells;x++)
+        {
+            uint h=CloudHash(x,y,z,seed);
+            features[x+cells*(y+cells*z)]=new Vector3(.08f+.84f*CloudUnit(h),.08f+.84f*CloudUnit(CloudHash(x,y,z,h^0x6395a7d1u)),.08f+.84f*CloudUnit(CloudHash(x,y,z,h^0xb3d8c91fu)));
+        }
+        return features;
+    }
+    static float CloudWorley(float u,float v,float w,int cells,Vector3[] features)
+    {
+        float x=u*cells,y=v*cells,z=w*cells;int ix=Mathf.FloorToInt(x),iy=Mathf.FloorToInt(y),iz=Mathf.FloorToInt(z);float nearest=4;
+        for(int dz=-1;dz<=1;dz++)for(int dy=-1;dy<=1;dy++)for(int dx=-1;dx<=1;dx++)
+        {
+            int cx=ix+dx,cy=iy+dy,cz=iz+dz;
+            var feature=features[CloudWrap(cx,cells)+cells*(CloudWrap(cy,cells)+cells*CloudWrap(cz,cells))];
+            float a=cx+feature.x-x,b=cy+feature.y-y,c=cz+feature.z-z;nearest=Mathf.Min(nearest,a*a+b*b+c*c);
+        }
+        return Mathf.Clamp01(1-Mathf.Sqrt(nearest)*.95f);
+    }
+    static float CloudFade(float value)=>value*value*value*(value*(value*6-15)+10);
+    static float CloudGradient(int x,int y,int z,float dx,float dy,float dz,int cells,uint seed)
+    {
+        int h=(int)(CloudHash(CloudWrap(x,cells),CloudWrap(y,cells),CloudWrap(z,cells),seed)&15);
+        float u=h<8?dx:dy,v=h<4?dy:h==12||h==14?dx:dz;
+        return ((h&1)==0?u:-u)+((h&2)==0?v:-v);
+    }
+    static float CloudPerlin(float u,float v,float w,int cells,uint seed)
+    {
+        float x=u*cells,y=v*cells,z=w*cells;int ix=Mathf.FloorToInt(x),iy=Mathf.FloorToInt(y),iz=Mathf.FloorToInt(z);
+        x-=ix;y-=iy;z-=iz;float a=CloudFade(x),b=CloudFade(y),c=CloudFade(z);
+        float front=Mathf.LerpUnclamped(Mathf.LerpUnclamped(CloudGradient(ix,iy,iz,x,y,z,cells,seed),CloudGradient(ix+1,iy,iz,x-1,y,z,cells,seed),a),Mathf.LerpUnclamped(CloudGradient(ix,iy+1,iz,x,y-1,z,cells,seed),CloudGradient(ix+1,iy+1,iz,x-1,y-1,z,cells,seed),a),b);
+        float back=Mathf.LerpUnclamped(Mathf.LerpUnclamped(CloudGradient(ix,iy,iz+1,x,y,z-1,cells,seed),CloudGradient(ix+1,iy,iz+1,x-1,y,z-1,cells,seed),a),Mathf.LerpUnclamped(CloudGradient(ix,iy+1,iz+1,x,y-1,z-1,cells,seed),CloudGradient(ix+1,iy+1,iz+1,x-1,y-1,z-1,cells,seed),a),b);
+        return Mathf.Clamp01(.5f+.5f*Mathf.LerpUnclamped(front,back,c));
     }
     public static bool MayRefresh(PartRecord part,string currentHash)
         => part.generated&&(currentHash==part.sha256||(!string.IsNullOrEmpty(part.installedSha256)&&currentHash==part.installedSha256));

@@ -6,118 +6,136 @@ using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering;
 using SkyPulse.Mobile;
 
-// Chrome Raven's own plate layout, measured in the 512x384 reference frame.
-// This is deliberately separate from the generic roster studies: no Finch or
-// other bird is regenerated when the Raven is revised.
+// Reference coordinates determine each bird's silhouette; every visible part is
+// closed, sculpted geometry. The approved Finch and source artwork are never edited.
 public static partial class SkyPulseBirdRosterWorkshop
 {
-    const string RavenRevision="Chrome Raven · reference plated sculpture v2";
-    static readonly string[] RavenFiles={"Geometry.asset","Finishes.asset","Chrome Raven Rig.prefab","Chrome Raven Review.unity"};
-    static readonly string[] RavenOriginalHashes={
-        "f9f431c58e157189992853a5cbb653e53618d8211e2781e2bd722f892bb1398b",
-        "3ca2a012b5faa4be51f7158402684646a60a16ac185ccdfcff7b824c6d551cd4",
-        "1b8617a7696dbe1b8b2b547fd91dff4203815dad61f50457ce434e58c0cac5e4",
-        "e60f564ce9e950a2d706b8a3aad24aa46297b27fc4a19ff72ef9eb8a3e358dfd"};
-    static string RavenHash(string path){using(var sha=SHA256.Create())return BitConverter.ToString(sha.ComputeHash(File.ReadAllBytes(path))).Replace("-","").ToLowerInvariant();}
+    const string SculptRevision="SkyPulse engineered roster sculpture v3";
+    const string SculptBodyJoint="01 Sculpted continuous fuselage and flight bank v3";
+    static readonly Dictionary<string,string[]> SculptKnownGenerated = new Dictionary<string,string[]>
+    {
+        {"chrome_raven",new[]{"f4f7d5fcc4cd8b7b6d987a73b5bcea3276c9d66d853852db03c62d66f9852e92","6c0248b35bb2bb12963bcda849ea99f87137e8f4f3eb8c68e6efb47519b81de0","8bd2abe4d951bfeab37ab356e96ee9d44ce4bc182063e39d8edf9ce9f3a59e6d","e60f564ce9e950a2d706b8a3aad24aa46297b27fc4a19ff72ef9eb8a3e358dfd","2d2c7bcb9b4ce3343b3fbb89f13866a7c807eab85ac8e740018624a377eb0d54","afacabf612baf8c4d5f485149cd3b05968f00c7409ee7bd8ed61e439a595f61e","1181d9065bec6f1695bf1b9c55d1f603ada47333811af0de2c5300ecb3f9aef5","857b0b3f3f7fec17bb028df67a6039b73d18b7bcefb1f0952367dcbb588e9ba5"}},
+        {"prism_hummingbird",new[]{"d2fba009f8ea67f891128ac72c8e639ad4d55588ecebaafe0b5d8595a3767487","ad5537bf1129a671a9c835038b26b7cf98cbc408cefe1b2520d23104ff9bb36b","9888577e142c49741604b28921695b4e3f62de8016226c57e0be0b3732cda129","22931770bde28fd664bbcf60c8e90ee830810e465fb6a1f75f871613af47eeec","8dadf0d869124817529b3ab0405318d720592de4c9828de4bda2024dedacb222","9781b7bee2d1db89b416d1f9269a961d256c04d9bfdf042fa3f9c81e19f2009c","1657e6d0d360c345f291d903a200bc9571abfb52d55eca5bbff2ff6e8f40c524","356c0668caa439bf0975833ddcfc0ab9a8e8402521934c8dbc259c3e1cda632e"}},
+        {"koiwing_glider",new[]{"e6f4f60160d0e28e34c66d3d07ef2ee05138f72615386c9e888e9a129501a4c7","fa6c4627c8399cbdf3ac56ad3fb0d09a5802745d49826d1e57ffdb841b641134","7f747d8f46e6538fc89665cf5584c994bd8f87aeee118f8f31cc92135bea2799","76eec2a99bc7b3b57a804d38b7d13803375fdc3d5ce95121a3e28045adc97ba6","2025aa60e72b7d23b6b8399f1104fde58acd4c8ac8fe26264c6d7bacfad89597","c2f98a5503bbb09f59689f304da516cdd679a521c54d716c2c683594758d1e90","a76b0c57650ae98474e22873c44355c334135129dfaa74f8c09ad80ac4d322e0","ebde4f44a19d293b33cb105e0a338b29d4ec17f32ed562bdc5014b24a4ac5ad2"}},
+        {"verdant_kite",new[]{"fe8f5e78e22d7405e430746004fa09caaf16e533ec82552ebd5a9a3fba34177c","dac71bc5e180470bec334f58ac40e250429f10eed2dc8f3d85374a3d134e54e8","7c726226acc63d9cf1daeb3fd75d7cc17e5e9c18cd4c26d21db2d39fee7c0955","3c6e101697a2460757f979d4e8420643804bb16ca738532323b817c658ed1a10","5769688337d26da756ba91d9b07d17a97a6f045d0d08827d21c5ee1267ec1e80","0295dc5651f5089fa882e28907cdfd7fafc471783e4d8af67871a65603f434b6","ab63c2a20f71fb0d2da4e039ee7a205fdfb662068b710f5cc262e4718abda46f","c06a3ffa8744b47e3b3286915184ac4ff11812f64b611fdad700af4379b94df2"}},
+        {"newbird01",new[]{"f138480a879396f6a9608deb21081289c9aab9af1ab94ced656e37f62381a3eb","c7d0df3ca407599ddd3bba094d6240ae80df4ddad19edddfee413da7fa561d9a","ae69a8245a6d63d7f0341e0db1709037c4c7bacce104d9f9c1040eac12860f46","f6b683b0c0f2b6d249cee5f61228e42e2cbc63eb0546172a0bcbf3bb4ee44b1b","6f578843b236598c77f86131cbc887a57e749ceeb8bba926ecc70e636b6636a3","7cef671dc0a5ba4cf90eaeecf38a1f5bdb85a84c7314ec5440a8a0c1419e9978","46e4599f19270246203095f58c5a2f230db54a89b1507d77ea70373096e4f514","c0c49776169000d490fdeb747c5e924ae72046cedebe513f2684d06ccccee2bc"}},
+        {"newbird02",new[]{"b9f3084d9426d2c7d8f7f21ad7a28c665b53b1b3bc5d488d1789cda07e416bfa","1ccfcd1de1f9041644fb2e97b5d59cb7465db4d59fd83f7ac1dd6e4dbfd29742","81e0d4acf4ad598b9c665c4b175b251c79e3888f363411183424c165b1d6ae72","853b7e20d7f6cfc52d784b3941106ba90d4c5beb7441f5a4e2f210c47f182f79","44183705306930f1221583921caa9bfc9d31b48f8c28b9a7a52a3d6f3dd08818","36786b27a3b0834a290ae8ee5064281af78d187d4345b17429874a8accedafdc","4659a2c12ca55105f3268b0fefb15b2ce1c80c82ce64b2628847be2efb5320f6","03667bb9ced5a6a0b1871fd7f7c1f9470d6591c0160fd88a11e78f161a9fc8e2"}},
+        {"newbird03",new[]{"fa75dcee4f70528d46dd3b0bc5e6abfa675661aad3f409261dcfaf158784f8c0","f64ea7068d4c906a89a29d5c053ce22942f68f29041f7bf9dc30f66e3d3ebfa8","2d1c6bfc65f50c847c811532665222c2e8c6d81879608c0c23004036e714cc6b","5f3d506db87428562d18bccbf980d30671934b54abf910a261cec36f2ecc1bdc","5c6ea1db85482a3de1c3ae419c4e1051218caf49ece81282dfc2c4ee1bfef7bb","7f30676da1fb0dce628be8d92a8c43adbf75f2797fb95005a9d61fa427777a0f","14e01f8998741b73e182ffab9ea68b0e4df3649ecaea14255032bcd8407ff234","74798625c844398d5f13de242bb6c83215aefa8fd9d1089c3b40fc803616401e"}},
+        {"newbird04",new[]{"f5985ee639122ed169b0f27583c7f9e66781c4d10f593f4bb264b421811aa96f","b178a2c9c51f5983537cb0e031e2e318a51340475462e0e41a44a9903010c4a8","eed00d309a33a3691bc5b2f3999adae6d20f7499d226cec848ff7d2a5bb8dd13","43643678d8a079d9b8aecb49246814212bd1794080d5609af409efa468d7255d","d04a2c55f4a92239ad5b83afe082279e9384d0ad0e78a3c94417a6b178a486de","144cbf645997842e04da3e5d82d40daebe38f25bab73fa0cccdeccf7eae69ab8","c95abbb7ecd6bbc6a872be155816f11d16acf5c0f4004d36fc5d8fb2e225470a","5ea1c57f67b739c54a6a64865a5f7943bcbbbf3baac50ab57411dd5611532dac"}},
+        {"newbird05",new[]{"096a44506ad82e547d5cefd2ee8853ec33e5b5132087482f4d054195290ff179","1e25481c64c02c599856a9414c3ae562b7366263e6c9ffced8155ce30c520c0a","30adc84c1d562f28e2b6bd3575271d97a142ea0f5b961989fa51b7c0f231cca5","e52935efec79c78335fb7e73328b912a93580f2c2acc46fc12199ee9040e6180","aa5cac6b1cadc138d3a0951822806b609c2059d4670cef5c6f21f04a11db7780","5a143b6e0187e033db3a2bfce214d58d7578450a21fd81183a9d587e7f01469a","64ed3702b7019dc015edd9f8dfd2c748e151266ac4f305e0db2d0f6e01ed823c","25b13f360b35720dcf55e19a54714d4f1663a3a387719430b8974074840f4ee1"}},
+        {"newbird06",new[]{"a4e807c134f983082822516b3db301d910582d816e6f4c268c00ad2e38382b31","ccfac75077f76d326d32031a305a3848f80e686b591ec9dcc3d34bac04baa897","dcb2934574ed33305e1c3bb47ff776703bce3fb3bd440d095775ae22da497d8e","2c838bd9242bf0aa5ff56ffcdfcec973c3ad1053b3df73e62dd12c280da8b654","daefef0cfb8739e7b7c4a4da18b71db3033029a4a41bcc71a6f2ae39037e34e1","cc2e83ad32f2d8b3cc37fd40b352ba26db03fc1314d12331a52559afd5cc5b31","8349230cd507b66fc56d901554e008012c1ebf0032d4b93a5f82253978d0d87c","0f2191d3cf96be6a7d166d064a828cb01aa9e520b9efce8bc7faaf7e3b1f97df"}},
+        {"newbird07",new[]{"ad8b8e090cbe781b7e2bc1eb1f96523e5c074c116c78d8baa172374085515b11","a4f5f160a3ca95d32738102dec04e823dd33577ff63bfe54bab0ba1b2887e220","faa3469723fbc5edfee8ba973679e55f2a90665f2abd9fe7bb49f237590e8525","8645517337245da2da82ef1f6ded00edccbc1becbaadc2a511201f724e7a66b5","bec269b2099c27f50f9465263b0c46905dd3ff5f97eb37f7d2ff0aa8456d9cf8","5f3c067ea9e7ec72438ea0f0e99a78b8a768002f0bd5a061f35933c1ef446256","ae0bdab722deb667209a14e5a8e99ce98a7f1e606ae9fde27455c6e0decce8ea","f00a0094d9cbb962333a842b41ccd2e4f107c396689a046dcd7e270ee39941a7"}},
+        {"newbird08",new[]{"61e062dc856595b31c37013996c264d0a603944615f138caaa7d72614c095d68","deafb9a96ec00d6d6a297877e112d94b1169074bb44e0e6003fc99fec66a56b3","bba429da610f08085c9114335066b12d71fc8b60f12cf30d8cd022c94032c25e","dacf462761601c509f05e9cc9366a4316a0bd65e0379af0746afe45e7a790cdb","14cfe8ce91717f598c298538e7f6052916089138f900564a8bdcd0a59e6fb9b4","8ee85b36781b4c321d24b3ad85be4a8d1af746ac3b65bca6586f5654084e90da","d3eb8d016b7284ad997ac036c1920cc838be56f8943169d7b41a502fc36ce0a3","f53f7a1d030add1fbfcb6ecd2c04f5344995ec61f2c98efca496a3c349b92805"}},
+        {"newbird09",new[]{"a5fe0451b051a7357ca658c5655984b4f801af9ce69aa40f4872e6c0004efe62","36bfd322f1062dd751610ddbe87c72dadcef6a8c6d21db194e6bd16e9d6a52f4","d35e10644646bcb7c56ff4873f46d71c8711aa7162684f4e2f13d2521322afbc","4ef2c6db9189a730f4f7fe5a90bd85a3cba66e47cea883779961329696ce57c4","bc88faf2e586f37ebcfea36589bed232e9f6752a2ae5447568353fad46775919","948ba5eea8d8c91bf31ae0100b0a685b74b5aa3681fa5db45a461cbec2f5a70c","b735426e1937a346b7c78dcf1b58372a496f647b1a51675d9844fa086684f41f","9a5ca6197f69f1f6021b5b2a3376a48dfc59f2659ba735a26f06c7cf19447bf8"}},
+        {"newbird10",new[]{"c7e67095e6bb6d8a65e106366f5b1dfb21e96c1c14013d17b252e71a996a1f73","6aa360c0940272f2fbb14345adbd256e63ddba5a511b39351cbcfca7359fc703","e73936cdf7ca37938b9b46823ff22123d232e2e13717d7f4e3799aa4c19ee73b","03c3721de241cf4e5cc89d57947da7451ad2df1f026b12e45a6f4225e7b1951c","51af2ed6fa73a2e2eb1fa4ef01082e6fe68bcd030675c171d37d60975a6c588c","7b871d134c90147018e0b63d916a4910581d16a8fc4e13d4eecb2705b05d648d","a11760ee4da399ba74a57bcc3b54ef75d1380e3ee9965a254479a395e3fc6404","797cbcf19bd1d6a0a8adbb7df887c6b21e16c1d7108dd48e111fc2338074a130"}},
+    };
+    static string SculptHash(string path)
+    {using(var sha=SHA256.Create())return BitConverter.ToString(sha.ComputeHash(File.ReadAllBytes(path))).Replace("-","").ToLowerInvariant();}
+    static string[] SculptFiles(Design d)=>new[]{"Geometry.asset","Finishes.asset",d.name+" Rig.prefab",d.name+" Review.unity"};
+    static bool SculptAlreadySaved(Design d)
+    {
+        var prefab=AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath(d));
+        var rig=prefab!=null?prefab.GetComponent<SkyPulseNeonFinchPrototype>():null;
+        // A repeat is read-only, including any artist work made after this revision.
+        return rig!=null&&rig.body!=null&&rig.body.name==SculptBodyJoint;
+    }
+    static void SculptGuard(Design d)
+    {
+        ValidateDesign(d);
+        if(!SculptKnownGenerated.TryGetValue(d.id,out var hashes))throw new InvalidOperationException("No generated-asset provenance for "+d.id);
+        var files=SculptFiles(d);string folder=BirdFolder(d);
+        for(int i=0;i<files.Length;i++)
+        {
+            string path=folder+"/"+files[i];
+            if(!File.Exists(path)||SculptHash(path)!=hashes[i]||!File.Exists(path+".meta")||SculptHash(path+".meta")!=hashes[i+files.Length])
+                throw new InvalidOperationException("Sculpture revision preserved an owner-edited or unknown saved asset: "+path);
+            foreach(var asset in AssetDatabase.LoadAllAssetsAtPath(path))
+                if(asset!=null&&EditorUtility.IsDirty(asset))throw new InvalidOperationException("Save or discard unsaved roster edits before revising: "+path);
+        }
+    }
+    [MenuItem("Tools/SkyPulse/Bird Workshop/Revise remaining fourteen engineered sculptures")]
+    public static void ReviseRemainingRosterSculptures()
+    {
+        if(EditorApplication.isPlayingOrWillChangePlaymode)throw new InvalidOperationException("Stop Play before revising saved roster sculptures.");
+        var birds=LoadDesigns();
+        if(birds.Length!=14||birds.Any(d=>d.id=="neon_finch"))throw new InvalidOperationException("Only the fourteen remaining reference birds may be revised.");
+        // Check the entire roster before writing the first bird. Unknown edits
+        // are never legitimised by a structural marker on an older generator.
+        foreach(var d in birds)if(!SculptAlreadySaved(d))SculptGuard(d);
+        foreach(var d in birds)if(!SculptAlreadySaved(d))ReviseSavedSculpture(d);
+        Debug.Log("SKYPULSE_ROSTER_SCULPTURES_V3_SAVED: fourteen closed engineered sculptures; Finch, palettes, review scenes, prefab GUIDs and all eight rig identities retained.");
+    }
     [MenuItem("Tools/SkyPulse/Bird Workshop/Revise Chrome Raven reference sculpture")]
     public static void ReviseChromeRaven()
     {
-        if(EditorApplication.isPlayingOrWillChangePlaymode)throw new InvalidOperationException("Stop Play before revising the Raven study.");
-        var d=LoadDesigns().Single(b=>b.id=="chrome_raven");ValidateDesign(d);
-        string folder=BirdFolder(d),prefabPath=PrefabPath(d),geometryPath=folder+"/Geometry.asset";
-        var existing=AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
-        // A repeat never overwrites a saved revised sculpture or owner edits.
-        var savedRig=existing!=null?existing.GetComponent<SkyPulseNeonFinchPrototype>():null;
-        // Unity imports the main prefab object under its filename. Identify the
-        // revised structure by its authored joints, not that importer label.
-        if(savedRig!=null&&savedRig.body!=null&&savedRig.head!=null&&
-            savedRig.body.name=="01 Sectioned fuselage and flight bank"&&
-            savedRig.head.name=="02 Interlocking helmet and inset sensor"&&
-            savedRig.head.GetComponentsInChildren<MeshFilter>(true).Any(f=>f.name=="Closed reference helmet"))
-        {Debug.Log("SKYPULSE_RAVEN_REVISION_EXISTS: saved sculpture and owner edits preserved.");return;}
-        void Guard()
-        {
-            for(int i=0;i<RavenFiles.Length;i++)
-            {
-                string path=folder+"/"+RavenFiles[i];
-                if(!File.Exists(path)||RavenHash(path)!=RavenOriginalHashes[i])throw new InvalidOperationException("Raven revision preserved an owner-edited or unknown asset: "+path);
-                foreach(var asset in AssetDatabase.LoadAllAssetsAtPath(path))if(asset!=null&&EditorUtility.IsDirty(asset))throw new InvalidOperationException("Save or discard unsaved Raven edits before revising: "+path);
-            }
-        }
-        Guard();
-        var backups=RavenFiles.ToDictionary(f=>f,f=>File.ReadAllBytes(folder+"/"+f));
-        var meta=RavenFiles.ToDictionary(f=>f,f=>File.ReadAllBytes(folder+"/"+f+".meta"));
-        string staging="Assets/Editor/__SkyPulseRavenRevision";
-        if(Directory.Exists(staging))throw new InvalidOperationException("An unfinished Raven staging folder is preserved: "+staging);
-        Directory.CreateDirectory(staging);AssetDatabase.Refresh();
-        GameObject root=null;bool promoted=false;
+        if(EditorApplication.isPlayingOrWillChangePlaymode)throw new InvalidOperationException("Stop Play before revising the saved Raven sculpture.");
+        var d=LoadDesigns().Single(b=>b.id=="chrome_raven");if(!SculptAlreadySaved(d)){SculptGuard(d);ReviseSavedSculpture(d);}
+    }
+    static Material[] SculptExistingFinishes(Design d)
+    {
+        string path=BirdFolder(d)+"/Finishes.asset";var all=AssetDatabase.LoadAllAssetsAtPath(path).OfType<Material>().ToArray();
+        string[] names={"Armour","Feather enamel","Recessed chassis","Ivory alloy","Machined trim","Optical iris","Luminous inlay","Fitted optical glass","live engine fire"};
+        var result=new Material[d.jet?9:8];result[0]=AssetDatabase.LoadAssetAtPath<Material>(path);
+        for(int i=1;i<result.Length;i++)result[i]=all.Single(m=>m.name==d.name+" · "+names[i]);return result;
+    }
+    static void ReviseSavedSculpture(Design d)
+    {
+        string folder=BirdFolder(d),geometryPath=folder+"/Geometry.asset",prefabPath=PrefabPath(d);
+        var existing=AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);var files=SculptFiles(d);
+        var backups=files.ToDictionary(f=>f,f=>File.ReadAllBytes(folder+"/"+f));
+        var metas=files.ToDictionary(f=>f,f=>File.ReadAllBytes(folder+"/"+f+".meta"));
+        string staging="Assets/Editor/__SkyPulseSculptureV3_"+d.id;
+        if(Directory.Exists(staging))throw new InvalidOperationException("An unfinished sculpture staging folder is preserved: "+staging);
+        Directory.CreateDirectory(staging);AssetDatabase.Refresh();GameObject root=null;bool promoted=false;
         try
         {
-            design=d;origin=Mean(d.body);directory=folder;meshes.Clear();finishes=RavenExistingFinishes(d,folder);
-            root=new GameObject(RavenRevision);var rig=root.AddComponent<SkyPulseNeonFinchPrototype>();
-            rig.animate=false;rig.turntable=false;BuildRavenSculpt(rig);
-            string tempGeometry=staging+"/Geometry.asset",tempPrefab=staging+"/Chrome Raven Rig.prefab";
+            design=d;origin=Mean(d.body);directory=folder;meshes.Clear();finishes=SculptExistingFinishes(d);
+            root=new GameObject(d.name+" · "+SculptRevision);var rig=root.AddComponent<SkyPulseNeonFinchPrototype>();
+            rig.animate=false;rig.turntable=false;BuildEngineeredSculpt(rig);
+            int vertices=meshes.Sum(m=>m.vertexCount);
+            if(vertices>40000)throw new InvalidOperationException(d.name+" exceeded its 40,000 authored-vertex mobile budget: "+vertices);
+            string tempGeometry=staging+"/Geometry.asset",tempPrefab=staging+"/"+d.name+" Rig.prefab";
             for(int i=0;i<meshes.Count;i++)
-            {
-                meshes[i].name=(i+1).ToString("000")+" "+meshes[i].name;
-                if(i==0)AssetDatabase.CreateAsset(meshes[i],tempGeometry);else AssetDatabase.AddObjectToAsset(meshes[i],tempGeometry);
-            }
+            {meshes[i].name=(i+1).ToString("000")+" "+meshes[i].name;if(i==0)AssetDatabase.CreateAsset(meshes[i],tempGeometry);else AssetDatabase.AddObjectToAsset(meshes[i],tempGeometry);}
             AssetDatabase.SaveAssetIfDirty(meshes[0]);rig.CaptureBindPose();rig.animate=true;rig.turntable=true;
             PrefabUtility.SaveAsPrefabAsset(root,tempPrefab);
             string from=AssetDatabase.AssetPathToGUID(tempGeometry),to=AssetDatabase.AssetPathToGUID(geometryPath);
-            string prefab=RavenPreserveBindings(existing,AssetDatabase.LoadAssetAtPath<GameObject>(tempPrefab),File.ReadAllText(tempPrefab));
+            string prefab=SculptPreserveBindings(existing,AssetDatabase.LoadAssetAtPath<GameObject>(tempPrefab),File.ReadAllText(tempPrefab));
             prefab=prefab.Replace("guid: "+from,"guid: "+to);
-            if(prefab.Contains("guid: "+from)||!prefab.Contains("guid: "+to))throw new InvalidOperationException("Raven mesh reference remapping failed.");
-            Guard();
-            // Replace serialized buffers, retaining the four existing .meta
-            // files and prefab GUID used by the review scene and gallery.
-            promoted=true;File.Copy(tempGeometry,geometryPath,true);File.WriteAllText(prefabPath,prefab);
-            AssetDatabase.ImportAsset(geometryPath,ImportAssetOptions.ForceUpdate);
-            AssetDatabase.ImportAsset(prefabPath,ImportAssetOptions.ForceUpdate);
-            RavenApplyFinishes(finishes);
-            for(int i=0;i<RavenFiles.Length;i++)if(!File.ReadAllBytes(folder+"/"+RavenFiles[i]+".meta").SequenceEqual(meta[RavenFiles[i]]))throw new InvalidOperationException("Raven revision changed an asset identity.");
-            Debug.Log("SKYPULSE_RAVEN_SCULPT_REVISED: Raven only; native polygon blades, layered armour, supported optics, connected talons; original source and all asset identities retained.");
+            if(prefab.Contains("guid: "+from)||!prefab.Contains("guid: "+to))throw new InvalidOperationException("Sculpture mesh reference remapping failed: "+d.name);
+            SculptGuard(d);promoted=true;File.Copy(tempGeometry,geometryPath,true);File.WriteAllText(prefabPath,prefab);
+            AssetDatabase.ImportAsset(geometryPath,ImportAssetOptions.ForceUpdate);AssetDatabase.ImportAsset(prefabPath,ImportAssetOptions.ForceUpdate);
+            foreach(string f in files)if(!File.ReadAllBytes(folder+"/"+f+".meta").SequenceEqual(metas[f]))throw new InvalidOperationException("Sculpture changed an existing asset GUID: "+d.name);
+            foreach(string f in new[]{files[1],files[3]})if(!File.ReadAllBytes(folder+"/"+f).SequenceEqual(backups[f]))throw new InvalidOperationException("Sculpture changed the approved finishes or saved review scene: "+d.name);
+            Debug.Log("SKYPULSE_SCULPT_V3: "+d.id+"; vertices="+vertices+"; editable mesh parts="+meshes.Count+"; all eight joints preserved");
         }
         catch
         {
-            if(promoted){foreach(var pair in backups)File.WriteAllBytes(folder+"/"+pair.Key,pair.Value);AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);}
-            throw;
+            if(promoted){foreach(var pair in backups)File.WriteAllBytes(folder+"/"+pair.Key,pair.Value);AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);}throw;
         }
         finally
-        {
-            if(root!=null)UnityEngine.Object.DestroyImmediate(root);
-            AssetDatabase.DeleteAsset(staging);meshes.Clear();AssetDatabase.Refresh();
-        }
+        {if(root!=null)UnityEngine.Object.DestroyImmediate(root);AssetDatabase.DeleteAsset(staging);meshes.Clear();RavenSupports.Clear();AssetDatabase.Refresh();}
     }
-    static Material[] RavenExistingFinishes(Design d,string folder)
+    static string SculptPreserveBindings(GameObject original,GameObject staged,string yaml)
     {
-        var all=AssetDatabase.LoadAllAssetsAtPath(folder+"/Finishes.asset").OfType<Material>().ToArray();
-        string[] names={"Armour","Feather enamel","Recessed chassis","Ivory alloy","Machined trim","Optical iris","Luminous inlay","Fitted optical glass"};
-        var result=new Material[names.Length];
-        // Unity names a main sub-asset after its filename on import.
-        result[0]=AssetDatabase.LoadAssetAtPath<Material>(folder+"/Finishes.asset");
-        for(int i=1;i<result.Length;i++)result[i]=all.Single(m=>m.name==d.name+" · "+names[i]);
-        return result;
-    }
-    static string RavenPreserveBindings(GameObject original,GameObject staged,string yaml)
-    {
-        if(original==null||staged==null)throw new InvalidOperationException("Raven prefab identities are missing.");
+        if(original==null||staged==null)throw new InvalidOperationException("roster prefab identities are missing.");
         var from=staged.GetComponent<SkyPulseNeonFinchPrototype>();var to=original.GetComponent<SkyPulseNeonFinchPrototype>();
-        if(from==null||to==null)throw new InvalidOperationException("Raven rig identity is missing.");
+        if(from==null||to==null)throw new InvalidOperationException("roster rig identity is missing.");
         var map=new Dictionary<long,long>();
         long Id(UnityEngine.Object asset)
-        {if(asset==null||!AssetDatabase.TryGetGUIDAndLocalFileIdentifier(asset,out string guid,out long id))throw new InvalidOperationException("Cannot read a Raven local file identity.");return id;}
+        {if(asset==null||!AssetDatabase.TryGetGUIDAndLocalFileIdentifier(asset,out string guid,out long id))throw new InvalidOperationException("Cannot read a roster local file identity.");return id;}
         void Pair(UnityEngine.Object a,UnityEngine.Object b)
-        {long first=Id(a),last=Id(b);if(map.TryGetValue(first,out long found)&&found!=last)throw new InvalidOperationException("Conflicting Raven identity mapping.");map[first]=last;}
+        {long first=Id(a),last=Id(b);if(map.TryGetValue(first,out long found)&&found!=last)throw new InvalidOperationException("Conflicting roster identity mapping.");map[first]=last;}
         Pair(staged,original);Pair(staged.transform,original.transform);Pair(from,to);
         Transform[] first={from.body,from.head,from.leftWing,from.rightWing,from.leftWingTip,from.rightWingTip,from.tail,from.tailTip};
         Transform[] last={to.body,to.head,to.leftWing,to.rightWing,to.leftWingTip,to.rightWingTip,to.tail,to.tailTip};
         for(int i=0;i<first.Length;i++){Pair(first[i],last[i]);Pair(first[i].gameObject,last[i].gameObject);}
-        if(map.Count!=19||map.Values.Distinct().Count()!=19)throw new InvalidOperationException("Raven root, rig and eight joints must have distinct preserved identities.");
+        if(map.Count!=19||map.Values.Distinct().Count()!=19)throw new InvalidOperationException("roster root, rig and eight joints must have distinct preserved identities.");
         var declarations=Regex.Matches(yaml,@"(?m)^--- !u!\d+ &(-?\d+)$").Cast<Match>().Select(m=>long.Parse(m.Groups[1].Value)).ToArray();
-        if(map.Values.Any(id=>declarations.Contains(id)&&!map.ContainsKey(id)))throw new InvalidOperationException("A Raven preserved identity collides with a new part.");
+        if(map.Values.Any(id=>declarations.Contains(id)&&!map.ContainsKey(id)))throw new InvalidOperationException("A roster preserved identity collides with a new part.");
         string guidOriginal=AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(original));
         // Existing review/gallery placement and motion overrides must continue
         // targeting the same root, rig and joint local IDs. Unexpected child
@@ -127,72 +145,15 @@ public static partial class SkyPulseBirdRosterWorkshop
             if(!File.Exists(scene))continue;
             var references=Regex.Matches(File.ReadAllText(scene),@"fileID: (-?\d+), guid: "+guidOriginal+@"(?:,|})");
             foreach(Match match in references)
-            {long id=long.Parse(match.Groups[1].Value);if(id!=0&&id!=100100000&&!map.Values.Contains(id))throw new InvalidOperationException("Saved Raven scene contains an unsupported part override; preserved: "+scene);}
+            {long id=long.Parse(match.Groups[1].Value);if(id!=0&&id!=100100000&&!map.Values.Contains(id))throw new InvalidOperationException("Saved roster scene contains an unsupported part override; preserved: "+scene);}
         }
         yaml=Regex.Replace(yaml,@"(?m)^(--- !u!\d+ &)(-?\d+)$",m=>m.Groups[1].Value+(map.TryGetValue(long.Parse(m.Groups[2].Value),out long id)?id:long.Parse(m.Groups[2].Value)));
         // Only local references are remapped. Mesh/material external file IDs
         // retain their independently authored sub-asset identities.
         yaml=Regex.Replace(yaml,@"(\{fileID: )(-?\d+)(\})",m=>m.Groups[1].Value+(map.TryGetValue(long.Parse(m.Groups[2].Value),out long id)?id:long.Parse(m.Groups[2].Value))+m.Groups[3].Value);
         var remapped=Regex.Matches(yaml,@"(?m)^--- !u!\d+ &(-?\d+)$").Cast<Match>().Select(m=>long.Parse(m.Groups[1].Value)).ToArray();
-        if(remapped.Distinct().Count()!=declarations.Length||map.Values.Any(id=>!remapped.Contains(id)))throw new InvalidOperationException("Raven local identity remapping failed.");
+        if(remapped.Distinct().Count()!=declarations.Length||map.Values.Any(id=>!remapped.Contains(id)))throw new InvalidOperationException("roster local identity remapping failed.");
         return yaml;
-    }
-    static void RavenApplyFinishes(Material[] materials)
-    {
-        // Palette values remain unchanged. Different machined surfaces catch
-        // the studio light without using an all-over emissive silver coating.
-        for(int i=0;i<materials.Length;i++)
-        {
-            var m=materials[i];m.SetFloat("_Metallic",i==3||i==4?.66f:i==2?.24f:i==7?.08f:.38f);
-            m.SetFloat("_Glossiness",i==2?.30f:i==7?.59f:i==3||i==4?.48f:.42f);
-            m.SetFloat("_EmissionStrength",i==5?.65f:i==6?.70f:0);
-            EditorUtility.SetDirty(m);AssetDatabase.SaveAssetIfDirty(m);
-        }
-    }
-    struct RvSection
-    {
-        public float x,top,bottom,depth;
-        public RvSection(float x,float top,float bottom,float depth){this.x=x;this.top=top;this.bottom=bottom;this.depth=depth;}
-    }
-    static readonly RvSection[] RavenBody={
-        new RvSection(190,223,250,1),new RvSection(214,200,270,17),new RvSection(244,181,284,26),
-        new RvSection(275,172,293,32),new RvSection(305,175,293,35),new RvSection(329,185,288,32),
-        new RvSection(350,200,276,25),new RvSection(366,216,258,16),new RvSection(376,233,242,1)};
-    static readonly RvSection[] RavenHead={
-        new RvSection(329,142,182,1),new RvSection(341,144,204,15),new RvSection(358,149,219,23),
-        new RvSection(379,156,227,28),new RvSection(399,168,225,25),new RvSection(414,179,215,17),
-        new RvSection(423,190,207,1)};
-    static RvSection RvAt(RvSection[] list,float x)
-    {
-        int i=1;while(i<list.Length-1&&x>list[i].x)i++;
-        var a=list[i-1];var b=list[i];float t=Mathf.Clamp01((x-a.x)/(b.x-a.x));t=t*t*(3-2*t);
-        return new RvSection(x,Mathf.Lerp(a.top,b.top,t),Mathf.Lerp(a.bottom,b.bottom,t),Mathf.Lerp(a.depth,b.depth,t));
-    }
-    static float RvSkin(RvSection[] list,Vector2 p)
-    {
-        var q=RvAt(list,p.x);float center=Mathf.Lerp(q.top,q.bottom,.49f);
-        float height=p.y<center?center-q.top:q.bottom-center;
-        float r=Mathf.Clamp01(Mathf.Abs(p.y-center)/Mathf.Max(1,height));
-        return q.depth*Mathf.Pow(Mathf.Sqrt(Mathf.Max(0,1-Mathf.Pow(r,2f/.82f))),.94f);
-    }
-    static Mesh RvHull(RvSection[] list)
-    {
-        var g=new G();const int slices=40,around=24;
-        for(int row=0;row<=slices;row++)
-        {
-            float x=Mathf.Lerp(list[0].x,list[list.Length-1].x,row/(float)slices);var q=RvAt(list,x);float center=Mathf.Lerp(q.top,q.bottom,.49f);
-            for(int i=0;i<around;i++)
-            {
-                float a=i*Mathf.PI*2/around,c=Mathf.Cos(a),s=Mathf.Sin(a);float h=c<0?center-q.top:q.bottom-center;
-                float y=center+Mathf.Sign(c)*Mathf.Pow(Mathf.Abs(c),.82f)*h;
-                float z=Mathf.Sign(s)*Mathf.Pow(Mathf.Abs(s),.94f)*q.depth;
-                g.Add(Point(new Vector2(x,y),z),new Vector2(row/(float)slices,i/(float)around));
-            }
-        }
-        for(int row=0;row<slices;row++)for(int i=0;i<around;i++){int j=(i+1)%around;g.Quad(row*around+i,row*around+j,(row+1)*around+j,(row+1)*around+i);}
-        int start=g.Add(Point(new Vector2(list[0].x,(list[0].top+list[0].bottom)*.5f))),end=g.Add(Point(new Vector2(list[list.Length-1].x,(list[list.Length-1].top+list[list.Length-1].bottom)*.5f)));
-        for(int i=0;i<around;i++){int j=(i+1)%around;g.Tri(start,j,i);g.Tri(end,slices*around+i,slices*around+j);}
-        return g.Finish("Sectioned closed raven armour shell");
     }
     static Vector2[] RvPoints(params float[] xy){var p=new Vector2[xy.Length/2];for(int i=0;i<p.Length;i++)p[i]=new Vector2(xy[i*2],xy[i*2+1]);return p;}
     static Vector2[] RvInset(Vector2[] polygon,float inset)
@@ -325,195 +286,413 @@ public static partial class SkyPulseBirdRosterWorkshop
         }
         Func<Vector2,float> sample=Sample;RavenSupports.Add(cacheKey,sample);return sample;
     }
-    static void RvPlate(Transform parent,string name,Vector2[] p,RvSection[] surface,int side,int finish,float lift=1.3f,float halfThickness=1)
+    sealed class SculptProfile
     {
-        string shellName=surface==RavenBody?"Closed tapered load-bearing fuselage":"Closed reference helmet";
-        var shell=parent.GetComponentsInChildren<MeshFilter>(true).Single(f=>f.name==shellName);
-        var skin=RvSupport(shell.sharedMesh,parent.position,side);
-        if(name.StartsWith("Keel energy cell ",StringComparison.Ordinal))
+        public Vector2[] boundary;public float minX,maxX,maxHeight,depth;
+        public SculptProfile(P[] outline,float depth)
         {
-            // A light slot must follow the already-installed sternum face.
-            // Sampling only the base hull made the old LED coplanar with that
-            // shield and produced fragmented cyan triangles in the render.
-            var support=parent.GetComponentsInChildren<MeshFilter>(true)
-                .Where(f=>f.sharedMesh!=null&&(f.name==shellName||f.name.StartsWith("Lower sternum armoured segment "+side,StringComparison.Ordinal)||f.name.StartsWith("Silver chest shield "+side,StringComparison.Ordinal)))
-                .Select(f=>RvSupport(f.sharedMesh,parent.position,side)).ToArray();
-            float Assembly(Vector2 point){float z=0;foreach(var sample in support)z=Mathf.Max(z,sample(point));return z;}
-            var slot=RvSolid(p,q=>Assembly(q)-.3f,side,.75f,.6f,3);
-            Part(parent,name+" graphite gasket",slot,2);
-            var slotSkin=RvSupport(slot,parent.position,side);
-            Part(parent,name+" shaped metal face",RvSolid(RvInset(p,.85f),q=>slotSkin(q)+halfThickness*.45f,side,halfThickness,.35f,3),finish);
-            return;
+            boundary=Smooth(Points(outline),4);minX=boundary.Min(p=>p.x);maxX=boundary.Max(p=>p.x);this.depth=depth;
+            maxHeight=boundary.Max(p=>p.y)-boundary.Min(p=>p.y);
         }
-        Part(parent,name+" graphite gasket",RvSolid(p,q=>skin(q)+lift-.9f,side,.75f,.6f,6),2);
-        Part(parent,name+" shaped metal face",RvSolid(RvInset(p,.85f),q=>skin(q)+lift+.35f,side,halfThickness,.45f,6),finish);
-    }
-    static void BuildRavenSculpt(SkyPulseNeonFinchPrototype rig)
-    {
-        RavenSupports.Clear();
-        rig.body=Joint(rig.transform,"01 Sectioned fuselage and flight bank",Vector3.zero);
-        rig.head=Joint(rig.body,"02 Interlocking helmet and inset sensor",Point(new Vector2(376,192)));
-        rig.tail=Joint(rig.body,"05 Connected tail power spine",Point(new Vector2(216,250)));
-        rig.tailTip=Joint(rig.tail,"06 Four machined tail blades",Point(new Vector2(185,242)));
-        Part(rig.body,"Closed tapered load-bearing fuselage",RvHull(RavenBody),0);
-        Part(rig.head,"Closed reference helmet",RvHull(RavenHead),0);
-        foreach(int side in new[]{-1,1})
+        public void Section(float x,out float top,out float bottom,out float width)
         {
-            RvPlate(rig.body,"Forward neck shield "+side,RvPoints(328,184,342,193,354,209,367,226,374,237,369,253,361,262,355,245,347,228,335,212,320,203),RavenBody,side,0,1.2f,.8f);
-            RvPlate(rig.body,"Silver chest shield "+side,RvPoints(342,217,350,227,351,240,343,257,328,270,311,278,289,279,282,273,297,258,313,242,326,226),RavenBody,side,3,1.4f,1);
-            RvPlate(rig.body,"Lower sternum armoured segment "+side,RvPoints(304,281,324,279,340,270,350,258,353,268,342,279,326,286,306,289,289,286),RavenBody,side,0,1.8f,.8f);
-            // Separated light cells sit inside the lower keel, not a solid neon sticker.
-            RvPlate(rig.body,"Keel energy cell A "+side,RvPoints(310,282,325,279,328,285,316,290,308,290),RavenBody,side,6,2,.6f);
-            RvPlate(rig.body,"Keel energy cell B "+side,RvPoints(330,277,340,270,344,277,333,284,328,285),RavenBody,side,6,2,.6f);
-            RvPlate(rig.body,"Keel energy cell C "+side,RvPoints(344,266,350,257,353,267,348,274),RavenBody,side,6,2,.6f);
-            RvPlate(rig.body,"Upper back armour I "+side,RvPoints(211,201,237,185,260,177,280,175,296,178,278,184,254,185,230,194),RavenBody,side,0,1.1f,.75f);
-            RvPlate(rig.body,"Upper back armour II "+side,RvPoints(242,187,265,180,286,181,303,186,292,193,269,191,252,196,226,207),RavenBody,side,4,1.3f,.75f);
-            RvPlate(rig.head,"Swept helmet crown "+side,RvPoints(334,145,351,148,374,155,398,168,418,185,422,192,404,185,382,177,360,170,343,165,354,162,342,156),RavenHead,side,4,1.6f,.8f);
-            RvPlate(rig.head,"Forward brow ridge "+side,RvPoints(356,169,376,170,398,180,416,193,410,195,392,185,374,179,351,176),RavenHead,side,3,2.1f,.7f);
-            RvPlate(rig.head,"Lower articulated cheek "+side,RvPoints(345,190,357,198,367,212,382,220,396,217,405,210,399,224,383,230,366,223,352,210),RavenHead,side,0,1.2f,.8f);
-            BuildRavenEye(rig.head,side);
-        }
-        // A three-piece hooked beak keeps its hard lip and lower mandible split.
-        Part(rig.head,"Raven hooked upper beak",RvSolid(RvPoints(410,201,426,197,439,205,449,216,452,221,438,216,423,213,410,212),p=>0,1,7,.75f),2);
-        foreach(int side in new[]{-1,1})
-        {
-            Part(rig.head,"Beak machined upper cheek "+side,RvSolid(RvPoints(414,202,426,200,438,207,447,217,430,211,417,210),p=>4.4f,side,1.8f,.6f),0);
-            Part(rig.head,"Lower hooked mandible "+side,RvSolid(RvPoints(410,215,427,215,443,219,451,222,432,220,413,220,406,218),p=>2.5f,side,1.6f,.65f),2);
-        }
-        BuildRavenWing(rig,-1,out rig.leftWing,out rig.leftWingTip);
-        BuildRavenWing(rig,1,out rig.rightWing,out rig.rightWingTip);
-        BuildRavenTail(rig);BuildRavenTalons(rig);
-    }
-    static void BuildRavenEye(Transform head,int side)
-    {
-        var shell=RvPoints(373,175,387,178,408,190,419,199,409,209,396,216,384,212,376,201);
-        var helmet=head.GetComponentsInChildren<MeshFilter>().Single(f=>f.name=="Closed reference helmet");
-        var helmetSkin=RvSupport(helmet.sharedMesh,head.position,side);
-        var glass=RvSolid(shell,p=>helmetSkin(p)+1.2f,side,2.4f,.75f,2.5f);
-        Part(head,"Seated dark optical glass "+side,glass,7);
-        var glassSkin=RvSupport(glass,head.position,side);
-        var pane=RvPoints(381,182,391,185,406,194,408,198,400,204,394,206,388,201,384,193);
-        var iris=RvSolid(pane,p=>glassSkin(p)+.25f,side,.65f,.5f,2);
-        Part(head,"Reference luminous iris "+side,iris,5);
-        var irisSkin=RvSupport(iris,head.position,side);
-        // A tiny triangular emitter continues the pane geometry; no round pupil.
-        Part(head,"Optical core "+side,RvSolid(RvPoints(388,188,403,196,394,202,389,196),p=>irisSkin(p)+.15f,side,.35f,.25f,1.5f),6);
-        Part(head,"Brow recessed fastener "+side,RoundSolid(new Vector2(425,199),side*5.4f,1.3f,1.3f,.6f),2);
-    }
-    static readonly float[][] RavenPrimaryContours={
-        new float[]{306,191,285,188,260,193,235,201,214,210,189,220,214,215,243,208,273,202,296,199},
-        new float[]{307,199,284,199,260,207,237,219,214,232,190,246,164,259,193,251,225,236,253,223,282,211,303,207},
-        new float[]{307,207,283,209,257,223,230,241,204,259,177,277,146,289,175,284,205,271,234,253,264,234,292,220},
-        new float[]{306,214,286,217,262,233,234,254,207,274,177,288,123,299,153,283,178,265,203,246,233,227,263,215,290,208},
-        new float[]{290,218,280,219,263,227,244,240,220,255,199,273,174,291,204,281,236,270,260,256,281,240,291,227},
-        new float[]{299,217,285,231,271,245,252,257,229,266,209,274,231,275,250,269,271,259,288,243,301,226},
-        new float[]{305,211,289,221,278,232,262,244,245,252,260,253,281,244,297,231,311,217},
-        new float[]{305,204,291,208,279,216,263,225,250,231,265,231,282,224,297,216,312,208}
-    };
-    static void BuildRavenWing(SkyPulseNeonFinchPrototype rig,int side,out Transform wing,out Transform tip)
-    {
-        var hub=new Vector2(302,202);float hubDepth=RvSkin(RavenBody,hub)+2;
-        wing=Joint(rig.body,(side<0?"03 Near":"04 Far")+" connected wing saddle",Point(hub,side*hubDepth));
-        tip=Joint(wing,"Interlocking machined flight blades",Point(new Vector2(295,214),side*(hubDepth+2)));
-        Part(wing,"Supported shoulder axle",Rod(new Vector2(288,205),hub,side*(hubDepth-6),8),2);
-        var saddle=RvPoints(303,178,316,181,326,190,330,202,323,218,310,234,293,248,276,256,282,242,294,227,305,213,312,199,309,187);
-        Part(wing,"Dark shoulder saddle rim",RvSolid(saddle,p=>hubDepth+.8f,side,2,.7f),2);
-        Part(wing,"Swept shoulder titanium saddle",RvSolid(RvInset(saddle,1.8f),p=>hubDepth+2.5f,side,1.1f,.55f),4);
-        Part(wing,"Outer dark bearing housing",Ring(hub,side*(hubDepth+5.2f),11.5f,1.8f,1.8f),2);
-        Part(wing,"Machined bearing bevel",Ring(hub,side*(hubDepth+5.7f),9.3f,.9f,1.2f),4);
-        Part(wing,"Recessed cyan bearing ring",Ring(hub,side*(hubDepth+6),7.5f,.65f,.7f),5);
-        Part(wing,"Dark inner bearing seat",RoundSolid(hub,side*(hubDepth+5.9f),6.7f,6.7f,.6f),2);
-        Part(wing,"Cyan convex sensor bearing",RoundSolid(hub,side*(hubDepth+6.6f),5.2f,5.2f,1.1f),5);
-        for(int i=0;i<RavenPrimaryContours.Length;i++)
-        {
-            var poly=RvPoints(RavenPrimaryContours[i]);int index=i;
-            float Depth(Vector2 p)
+            top=float.PositiveInfinity;bottom=float.NegativeInfinity;
+            float sample=Mathf.Clamp(x,minX+.001f,maxX-.001f);
+            for(int i=0;i<boundary.Length;i++)
             {
-                float span=Mathf.Clamp01((302-p.x)/180);
-                // A small transverse crown shapes the metal reflection. It is
-                // below 1.4 native pixels, retaining a thin machined blade.
-                float edge=float.PositiveInfinity;
-                for(int e=0;e<poly.Length;e++)
+                var a=boundary[i];var b=boundary[(i+1)%boundary.Length];
+                if(sample<Mathf.Min(a.x,b.x)||sample>Mathf.Max(a.x,b.x)||Mathf.Abs(b.x-a.x)<.0001f)continue;
+                float y=Mathf.Lerp(a.y,b.y,(sample-a.x)/(b.x-a.x));top=Mathf.Min(top,y);bottom=Mathf.Max(bottom,y);
+            }
+            if(float.IsInfinity(top)){top=bottom=Center(boundary).y;}
+            float t=Mathf.InverseLerp(minX,maxX,x),h=Mathf.Max(0,bottom-top)/Mathf.Max(1,maxHeight);
+            width=depth*Mathf.Pow(h,.56f)*Mathf.Pow(Mathf.Max(0,Mathf.Sin(t*Mathf.PI)),.19f);
+        }
+        public Vector3 At(float t,float angle,float lift=0)
+        {
+            float x=Mathf.Lerp(minX,maxX,t);Section(x,out float top,out float bottom,out float width);
+            float c=Mathf.Cos(angle),s=Mathf.Sin(angle),mid=Mathf.Lerp(top,bottom,.49f),h=c>0?mid-top:bottom-mid;
+            float y=mid-Mathf.Sign(c)*Mathf.Pow(Mathf.Abs(c),.88f)*h;
+            float z=Mathf.Sign(s)*Mathf.Pow(Mathf.Abs(s),.91f)*width;
+            var outward=new Vector3(0,-c,s).normalized;return new Vector3(x,y,z)+outward*lift;
+        }
+    }
+    static Vector3 SculptNative(Vector3 p)=>Point(new Vector2(p.x,p.y),p.z);
+    static Mesh SculptHull(SculptProfile profile,int slices=36,int around=28)
+    {
+        var g=new G();
+        // The terminal rings sit just inside the outline; single cap vertices
+        // avoid collapsed rings and the normals/triangles they used to produce.
+        for(int row=0;row<=slices;row++)for(int j=0;j<around;j++)
+        {float t=Mathf.Lerp(.001f,.999f,row/(float)slices);g.Add(SculptNative(profile.At(t,j*Mathf.PI*2/around)),new Vector2(t,j/(float)around));}
+        for(int row=0;row<slices;row++)for(int j=0;j<around;j++)
+        {int k=(j+1)%around;g.Quad(row*around+j,row*around+k,(row+1)*around+k,(row+1)*around+j);}
+        profile.Section(profile.minX,out float capTop,out float capBottom,out _);int start=g.Add(Point(new Vector2(profile.minX,(capTop+capBottom)*.5f)));
+        profile.Section(profile.maxX,out capTop,out capBottom,out _);int end=g.Add(Point(new Vector2(profile.maxX,(capTop+capBottom)*.5f)));
+        for(int j=0;j<around;j++){int k=(j+1)%around;g.Tri(start,k,j);g.Tri(end,slices*around+j,slices*around+k);}
+        return g.Finish("Continuous section-sculpted closed shell");
+    }
+    static Vector3 SculptCatmull(Vector3[] path,float t)
+    {
+        float u=Mathf.Clamp01(t)*(path.Length-1);int i=Mathf.Min(path.Length-2,Mathf.FloorToInt(u));u-=i;
+        var a=path[Mathf.Max(0,i-1)];var b=path[i];var c=path[i+1];var d=path[Mathf.Min(path.Length-1,i+2)];
+        return .5f*((2*b)+(-a+c)*u+(2*a-5*b+4*c-d)*u*u+(-a+3*b-3*c+d)*u*u*u);
+    }
+    static Vector3 SculptTubeTangent(Vector3[] path,float t)
+    {
+        // Widen the finite difference at a stationary spline point, rather
+        // than constructing an entire collapsed section from a zero tangent.
+        foreach(float step in new[]{.001f,.01f,.05f,.15f})
+        {
+            var tangent=SculptCatmull(path,Mathf.Min(1,t+step))-SculptCatmull(path,Mathf.Max(0,t-step));
+            if(tangent.sqrMagnitude>1e-10f)return tangent.normalized;
+        }
+        for(int i=1;i<path.Length;i++)if((path[i]-path[i-1]).sqrMagnitude>1e-10f)return (path[i]-path[i-1]).normalized;
+        throw new InvalidOperationException("A structural tube has no supported tangent.");
+    }
+    static Mesh SculptTube(Vector3[] path,float radius,float depth,float endRadius=-1,int segments=14,int around=12)
+    {
+        if(path==null||path.Length<2)throw new InvalidOperationException("A structural tube needs a supported path.");
+        float pathLength=0;for(int i=1;i<path.Length;i++)pathLength+=Vector3.Distance(path[i-1],path[i]);
+        if(pathLength<.01f)throw new InvalidOperationException("A structural tube cannot collapse to a zero-length path.");
+        if(endRadius<0)endRadius=radius;var g=new G();
+        for(int row=0;row<=segments;row++)
+        {
+            float t=row/(float)segments;var at=SculptCatmull(path,t);var tangent=SculptTubeTangent(path,t);
+            var cross=Vector3.Cross(tangent,Vector3.forward).normalized;if(cross.sqrMagnitude<.001f)cross=Vector3.right;
+            var normal=Vector3.Cross(tangent,cross).normalized;float r=Mathf.Lerp(radius,endRadius,t);
+            for(int j=0;j<around;j++){float angle=j*Mathf.PI*2/around;g.Add(SculptNative(at+cross*(Mathf.Cos(angle)*r)+normal*(Mathf.Sin(angle)*r*depth/Mathf.Max(.1f,radius))),new Vector2(t,j/(float)around));}
+        }
+        for(int row=0;row<segments;row++)for(int j=0;j<around;j++){int k=(j+1)%around;g.Quad(row*around+j,row*around+k,(row+1)*around+k,(row+1)*around+j);}
+        int first=g.Add(SculptNative(path[0])),last=g.Add(SculptNative(path[path.Length-1]));
+        for(int j=0;j<around;j++){int k=(j+1)%around;g.Tri(first,k,j);g.Tri(last,segments*around+j,segments*around+k);}return g.Finish("Closed continuous curved structural member");
+    }
+    static Mesh SculptCuff(Vector3 a,Vector3 b,float across,float depth,float wall)
+    {
+        var axis=(b-a).normalized;var cross=Vector3.Cross(axis,Vector3.forward).normalized;if(cross.sqrMagnitude<.001f)cross=Vector3.right;
+        var normal=Vector3.Cross(axis,cross).normalized;var g=new G();const int n=28;
+        float bevel=Mathf.Min(.9f,wall*.3f);float length=Vector3.Distance(a,b);
+        var axial=new[]{0f,bevel,Mathf.Max(bevel,length-bevel),length,length,0f};
+        var radial=new[]{-.35f,0f,0f,-.35f,-wall,-wall};
+        for(int r=0;r<6;r++)for(int j=0;j<n;j++)
+        {float angle=j*Mathf.PI*2/n;g.Add(SculptNative(a+axis*axial[r]+cross*(Mathf.Cos(angle)*(across+radial[r]))+normal*(Mathf.Sin(angle)*(depth+radial[r]))));}
+        for(int r=0;r<6;r++)for(int j=0;j<n;j++)g.Quad(r*n+j,r*n+(j+1)%n,((r+1)%6)*n+(j+1)%n,((r+1)%6)*n+j);
+        return g.Finish("Hollow bevelled mechanical coupling collar");
+    }
+    static Mesh SculptSpindle(Vector2 at,float z,float radius,float halfDepth,float inner=0)
+    {
+        if(inner>0)return SculptCuff(new Vector3(at.x,at.y,z-halfDepth),new Vector3(at.x,at.y,z+halfDepth),radius,radius,Mathf.Max(.5f,radius-inner));
+        var g=new G();const int n=28;float bevel=Mathf.Min(1,halfDepth*.35f);
+        float[] radii={radius-.8f,radius,radius,radius-.8f},zs={z-halfDepth,z-halfDepth+bevel,z+halfDepth-bevel,z+halfDepth};
+        for(int r=0;r<4;r++)for(int j=0;j<n;j++){float a=j*Mathf.PI*2/n;g.Add(Point(at+new Vector2(Mathf.Cos(a),Mathf.Sin(a))*radii[r],zs[r]));}
+        for(int r=0;r<3;r++)for(int j=0;j<n;j++)g.Quad(r*n+j,r*n+(j+1)%n,(r+1)*n+(j+1)%n,(r+1)*n+j);
+        int front=g.Add(Point(at,z-halfDepth)),back=g.Add(Point(at,z+halfDepth));
+        for(int j=0;j<n;j++){int k=(j+1)%n;g.Tri(front,k,j);g.Tri(back,3*n+j,3*n+k);}return g.Finish("Solid chamfered actuator spindle");
+    }
+    // Swept blade: the perimeter is an engineering taper rather than a sine-
+    // shaped leaf. Its crown, underside, leading bevel and trailing bevel form
+    // one closed airfoil section through every longitudinal row.
+    static float SculptChord(float t)
+    {
+        if(t<.16f)return Mathf.Lerp(.24f,.82f,t/.16f);
+        if(t<.34f)return Mathf.Lerp(.82f,1,(t-.16f)/.18f);
+        if(t<.58f)return Mathf.Lerp(1,.86f,(t-.34f)/.24f);
+        return Mathf.Lerp(.86f,.018f,Mathf.Pow((t-.58f)/.42f,1.06f));
+    }
+    static Vector3 SculptBladeAt(Blade b,float t,float q,float z,int side,float span,float thickness,float size=1)
+    {
+        var axis=b.tip.V-b.root.V;float length=Mathf.Max(1,axis.magnitude);var normal=new Vector2(-axis.y,axis.x)/length;
+        var at=Vector2.Lerp(b.root.V,b.tip.V,t)+normal*(b.curve*Mathf.Sin(t*Mathf.PI));
+        var p=at+normal*(q*b.width*SculptChord(t)*size);
+        float crown=Mathf.Pow(Mathf.Max(0,1-q*q),.65f)*b.width*.11f*Mathf.Sin(Mathf.PI*Mathf.Lerp(.13f,.92f,t));
+        float sweep=span*(t*t*(3-2*t))+3.3f*Mathf.Sin(t*Mathf.PI);
+        return new Vector3(p.x,p.y,z+side*(sweep+crown+thickness));
+    }
+    static Mesh SculptBlade(Blade b,float z,int side,float span,float thickness=1.1f)
+    {
+        var section=new[]{new Vector2(-1,-.12f),new Vector2(-.97f,.32f),new Vector2(-.68f,.82f),new Vector2(-.18f,1),new Vector2(.48f,.77f),new Vector2(.96f,.22f),new Vector2(1,-.10f),new Vector2(.96f,-.47f),new Vector2(.45f,-.62f),new Vector2(-.22f,-.69f),new Vector2(-.70f,-.53f),new Vector2(-.97f,-.33f)};
+        var g=new G();const int rows=14;int n=section.Length;
+        for(int r=0;r<=rows;r++)for(int j=0;j<n;j++)
+        {
+            float t=r/(float)rows,q=section[j].x;float taper=Mathf.Lerp(.72f,1,Mathf.Sin(t*Mathf.PI))*(t>.9f?Mathf.Lerp(1,.12f,(t-.9f)/.1f):1);
+            g.Add(SculptNative(SculptBladeAt(b,t,q,z,side,span,section[j].y*thickness*taper)),new Vector2(t,(q+1)*.5f));
+        }
+        for(int r=0;r<rows;r++)for(int j=0;j<n;j++)g.Quad(r*n+j,r*n+(j+1)%n,(r+1)*n+(j+1)%n,(r+1)*n+j);
+        int first=g.Add(SculptNative(SculptBladeAt(b,0,0,z,side,span,0))),last=g.Add(SculptNative(SculptBladeAt(b,1,0,z,side,span,0)));
+        for(int j=0;j<n;j++){int k=(j+1)%n;g.Tri(first,k,j);g.Tri(last,rows*n+j,rows*n+k);}return g.Finish("Closed swept cambered bevelled flight blade");
+    }
+    static float SculptAirfoilHeight(float q,bool upper)
+    {
+        var x=upper?new[]{-1f,-.97f,-.68f,-.18f,.48f,.96f,1f}:new[]{-1f,-.97f,-.70f,-.22f,.45f,.96f,1f};
+        var y=upper?new[]{-.12f,.32f,.82f,1f,.77f,.22f,-.10f}:new[]{-.12f,-.33f,-.53f,-.69f,-.62f,-.47f,-.10f};
+        for(int i=1;i<x.Length;i++)if(q<=x[i])return Mathf.Lerp(y[i-1],y[i],Mathf.InverseLerp(x[i-1],x[i],q));return y[y.Length-1];
+    }
+    static Mesh SculptBladeInlay(Blade b,float z,int side,float span,float thickness,float begin=.18f,float end=.91f,float breadth=.72f,bool reverse=false)
+    {
+        var g=new G();const int rows=10,cols=6;int stride=(rows+1)*(cols+1);
+        for(int face=0;face<2;face++)for(int row=0;row<=rows;row++)for(int col=0;col<=cols;col++)
+        {
+            float t=Mathf.Lerp(begin,end,row/(float)rows),q=Mathf.Lerp(-breadth,breadth,col/(float)cols);
+            float skin=Mathf.Lerp(.72f,1,Mathf.Sin(t*Mathf.PI))*(t>.9f?Mathf.Lerp(1,.12f,(t-.9f)/.1f):1);
+            // Crown is shared exactly with the support. This is a thin solid
+            // enamel seat, above the blade face and below its machined rim.
+            float top=SculptAirfoilHeight(q,!reverse)*thickness*skin;
+            float lift=(face==0?.36f:.16f)*(reverse?-1:1);
+            g.Add(SculptNative(SculptBladeAt(b,t,q,z,side,span,top+lift)),new Vector2(t,(q+1)*.5f));
+        }
+        for(int face=0;face<2;face++)for(int row=0;row<rows;row++)for(int col=0;col<cols;col++)
+        {
+            int a=face*stride+row*(cols+1)+col,vertB=a+1,c=vertB+cols+1,d=a+cols+1;
+            if(face==0)g.Quad(a,vertB,c,d);else g.Quad(a,d,c,vertB);
+        }
+        var edge=new List<int>();for(int c=0;c<=cols;c++)edge.Add(c);for(int r=1;r<=rows;r++)edge.Add(r*(cols+1)+cols);
+        for(int c=cols-1;c>=0;c--)edge.Add(rows*(cols+1)+c);for(int r=rows-1;r>0;r--)edge.Add(r*(cols+1));
+        for(int i=0;i<edge.Count;i++){int a=edge[i],vertB=edge[(i+1)%edge.Count];g.Quad(a,a+stride,vertB+stride,vertB);}return g.Finish("Closed seated airfoil enamel inlay");
+    }
+    static Blade SculptShortBlade(Blade source,float length,float width)
+    {return new Blade{root=source.root,tip=new P{x=Mathf.Lerp(source.root.x,source.tip.x,length),y=Mathf.Lerp(source.root.y,source.tip.y,length)},width=source.width*width,curve=source.curve*length,material=source.material,inset=source.inset};}
+    static Vector2[] SculptSlot(Vector2 center,float width,float height,float angle=0)
+    {
+        var p=new[]{new Vector2(-width*.5f+1,-height*.5f),new Vector2(width*.5f-1,-height*.5f),new Vector2(width*.5f,-height*.5f+1),new Vector2(width*.5f,height*.5f-1),new Vector2(width*.5f-1,height*.5f),new Vector2(-width*.5f+1,height*.5f),new Vector2(-width*.5f,height*.5f-1),new Vector2(-width*.5f,-height*.5f+1)};
+        float s=Mathf.Sin(angle),c=Mathf.Cos(angle);return p.Select(v=>center+new Vector2(v.x*c-v.y*s,v.x*s+v.y*c)).ToArray();
+    }
+    static void BuildEngineeredSculpt(SkyPulseNeonFinchPrototype rig)
+    {
+        RavenSupports.Clear();var d=design;bool chrome=d.id=="chrome_raven";
+        var bodyShape=new SculptProfile(d.body,d.bodyDepth*(chrome?.85f:1));
+        var helmetOutline=chrome?new[]{new P{x=333,y=175},new P{x=344,y=164},new P{x=363,y=163},new P{x=385,y=171},new P{x=405,y=184},new P{x=419,y=196},new P{x=417,y=209},new P{x=401,y=222},new P{x=382,y=226},new P{x=362,y=215},new P{x=347,y=197}}:d.head;
+        var headShape=new SculptProfile(helmetOutline,d.headDepth*(chrome?.84f:1));
+        var bc=Mean(d.body);var hc=Mean(d.head);
+        rig.body=Joint(rig.transform,SculptBodyJoint,Vector3.zero);
+        rig.head=Joint(rig.body,"02 Coupled sculpted helmet and recessed optics",Point(hc));
+        rig.tail=Joint(rig.body,"05 Sealed tail actuator and power spine",Point(d.tailRoot));
+        var fan=Vector2.zero;foreach(var b in d.tail)fan+=b.root.V;fan/=d.tail.Length;
+        rig.tailTip=Joint(rig.tail,"06 Articulated cambered tail fan",Point(fan));
+        var bodyMesh=SculptHull(bodyShape);Part(rig.body,"Continuous armoured fuselage",bodyMesh,chrome?2:d.bodyMaterial);
+        var headMesh=SculptHull(headShape,32,28);Part(rig.head,"Continuous fitted helmet",headMesh,chrome?2:d.headMaterial);
+        var bodySkinMinus=RvSupport(bodyMesh,rig.body.position,-1);var bodySkinPlus=RvSupport(bodyMesh,rig.body.position,1);
+        var headSkinMinus=RvSupport(headMesh,rig.head.position,-1);var headSkinPlus=RvSupport(headMesh,rig.head.position,1);
+        var neckA=Vector2.Lerp(bc,hc,.40f);var neckB=Vector2.Lerp(bc,hc,.86f);var neckMid=Vector2.Lerp(neckA,neckB,.5f)+new Vector2(0,2);
+        float neckRadius=Mathf.Min((bodyShape.maxX-bodyShape.minX)*.16f,(headShape.maxX-headShape.minX)*.27f);
+        float neckDepth=Mathf.Min(d.headDepth,d.bodyDepth)*.78f;
+        var neckPath=new[]{new Vector3(neckA.x,neckA.y,0),new Vector3(neckMid.x,neckMid.y,0),new Vector3(neckB.x,neckB.y,0)};
+        Part(rig.body,"Continuous supported neck casting",SculptTube(neckPath,neckRadius,neckDepth,neckRadius*.82f,18,24),d.bodyMaterial);
+        var neckAxis=(neckB-neckA).normalized;var collar=Vector2.Lerp(neckA,neckB,.70f);
+        Part(rig.body,"Neck flexible seated coupling",SculptCuff(new Vector3(collar.x-neckAxis.x*4,collar.y-neckAxis.y*4,0),new Vector3(collar.x+neckAxis.x*4,collar.y+neckAxis.y*4,0),neckRadius*.96f,neckDepth+.5f,2.4f),2);
+        var lip=collar+neckAxis*4;
+        Part(rig.head,"Fitted helmet retaining collar",SculptCuff(new Vector3(lip.x-neckAxis.x,lip.y-neckAxis.y,0),new Vector3(lip.x+neckAxis.x*2.4f,lip.y+neckAxis.y*2.4f,0),neckRadius*.98f,neckDepth+1.1f,1.8f),4);
+        foreach(int side in new[]{-1,1})
+        {
+            var bodySkin=side<0?bodySkinMinus:bodySkinPlus;var headSkin=side<0?headSkinMinus:headSkinPlus;
+            // The measured material regions become shallow conformal castings,
+            // with narrow machined edges instead of inflated overlapping domes.
+            int panelIndex=0;
+            foreach(var panel in d.panels??Array.Empty<Panel>())
+            {
+                bool onHead=panel.surface=="head";var parent=onHead?rig.head:rig.body;var skin=onHead?headSkin:bodySkin;
+                var polygon=Points(panel.outline);int material=panel.material;
+                if(material==6)
                 {
-                    var a=poly[e];var b=poly[(e+1)%poly.Length];var delta=b-a;
-                    float t=Mathf.Clamp01(Vector2.Dot(p-a,delta)/Mathf.Max(.0001f,delta.sqrMagnitude));
-                    edge=Mathf.Min(edge,Vector2.Distance(p,a+delta*t));
+                    var bed=RvSolid(polygon,p=>skin(p)+.58f,side,.68f,.5f,7);Part(parent,"Recessed source energy housing "+side+" "+panelIndex,bed,2);
+                    var seat=RvSupport(bed,parent.position,side);
+                    Part(parent,"Inset source energy aperture "+side+" "+panelIndex,RvSolid(RvInset(polygon,1.35f),p=>seat(p)+.08f,side,.32f,.3f,6),material);
                 }
-                float crown=1.4f*Mathf.Sin(Mathf.Clamp01(edge/9)*Mathf.PI*.5f);
-                return hubDepth+2.5f+index*.48f+span*6+.8f*Mathf.Sin(span*Mathf.PI)+crown;
+                else Part(parent,"Sculpted source armour casting "+side+" "+panelIndex,RvSolid(polygon,p=>skin(p)+.65f,side,.72f,.65f,8),material);
+                panelIndex++;
             }
-            var chassis=RvSolid(poly,Depth,side,1.25f,.7f);
-            Part(tip,"Primary "+(i+1)+" dark closed chassis",chassis,2);
-            var chassisSkin=RvSupport(chassis,tip.position,side);
-            var face=RvSolid(RvInset(poly,1.45f),p=>chassisSkin(p)+.15f,side,.55f,.42f);
-            Part(tip,"Primary "+(i+1)+" tapered alloy flight face",face,i==3||i==4||i==5?4:1);
-            if(i==4||i==5)
+            BuildSculptOptics(rig.head,headMesh,side);
+            // Engine gills are real slots and louvres in a fitted metal bed.
+            var ventCenter=new Vector2(Mathf.Lerp(bc.x,hc.x,.35f),bc.y+bodyShape.maxHeight*.10f);
+            var bedPoly=SculptSlot(ventCenter,23,19,-.36f);var bedMesh=RvSolid(bedPoly,p=>bodySkin(p)+.9f,side,.65f,.65f,7);
+            Part(rig.body,"Recessed cooling gill bed "+side,bedMesh,2);var bedSkin=RvSupport(bedMesh,rig.body.position,side);
+            for(int n=0;n<3;n++)
             {
-                var channel=i==4?RvPoints(279,224,265,232,245,246,225,259,208,276,227,267,247,251,266,237,280,227):RvPoints(286,234,274,246,255,260,236,269,243,267,261,255,278,241,290,229);
-                var support=RvSupport(face,tip.position,side);
-                Part(tip,"Primary "+(i+1)+" recessed blue conductor",RvSolid(channel,p=>support(p)+.1f,side,.25f,.3f,6),1);
+                var c=ventCenter+new Vector2((n-1)*6,0);var slit=SculptSlot(c,2.6f,12,-.36f);
+                Part(rig.body,"Fitted cooling louvre "+side+" "+n,RvSolid(slit,p=>bedSkin(p)+.7f,side,.7f,.45f,5),4);
             }
         }
-        // Six individually shaped short coverts armour the root, rather than
-        // scaling copies of the long primary's generic leaf shape.
-        float[][] coverts={
-            new float[]{296,185,280,184,262,189,247,197,262,195,280,192,294,191},
-            new float[]{299,191,282,191,264,198,248,208,265,204,282,200,298,199},
-            new float[]{300,198,285,199,270,208,254,220,270,215,287,208,301,205},
-            new float[]{298,206,286,210,273,221,259,233,276,226,290,217,303,211},
-            new float[]{294,216,282,222,269,235,256,247,273,239,287,228,298,221},
-            new float[]{283,227,270,236,256,249,247,259,264,251,279,240,291,231}};
-        for(int i=0;i<coverts.Length;i++)
+        foreach(var crest in d.crest??Array.Empty<Panel>())
         {
-            float depth=hubDepth+9+i*.32f;var poly=RvPoints(coverts[i]);
-            Part(tip,"Root covert "+(i+1)+" graphite gasket",RvSolid(poly,p=>depth,side,.9f,.55f),2);
-            Part(tip,"Root covert "+(i+1)+" machined blue plate",RvSolid(RvInset(poly,1),p=>depth+1,side,.5f,.35f),i%3==0?4:0);
+            var crestShape=new SculptProfile(crest.outline,Mathf.Clamp(d.headDepth*.22f,4,7));
+            Part(rig.head,"Section-sculpted crown vane "+meshes.Count,SculptHull(crestShape,18,12),crest.material);
         }
+        if(chrome)BuildChromeSegmentedCastings(rig,bodyMesh,headMesh);
+        BuildSculptBeak(rig.head);
+        BuildSculptWing(rig,-1,bodyMesh,out rig.leftWing,out rig.leftWingTip);
+        BuildSculptWing(rig,1,bodyMesh,out rig.rightWing,out rig.rightWingTip);
+        BuildSculptTail(rig,fan);BuildSculptTalons(rig,bodyShape);
     }
-    static readonly float[][] RavenTailContours={
-        new float[]{215,239,181,220,160,214,127,205,92,198,62,198,75,207,97,214,128,220,158,223,185,232},
-        new float[]{213,246,178,230,149,221,108,214,71,214,35,220,49,227,82,231,117,232,147,236,182,241},
-        new float[]{211,251,172,237,135,233,98,234,61,236,25,249,39,259,62,267,83,271,116,260,150,248,181,247},
-        new float[]{210,256,169,245,147,246,114,253,85,265,58,278,68,284,83,287,112,277,141,263,170,253,187,255}};
-    static void BuildRavenTail(SkyPulseNeonFinchPrototype rig)
+    static void BuildChromeSegmentedCastings(SkyPulseNeonFinchPrototype rig,Mesh fuselage,Mesh helmet)
     {
-        Part(rig.tail,"Connected graphite tail driveshaft",Rod(new Vector2(227,252),new Vector2(180,242),0,8),2);
-        Part(rig.tail,"Tail root mechanical collar",Ring(new Vector2(207,249),0,9,1.5f,5),0);
-        for(int i=0;i<4;i++)
-        {
-            var poly=RvPoints(RavenTailContours[i]);float z=(i-1.5f)*3.2f;
-            Part(rig.tailTip,"Tail "+(i+1)+" closed graphite load-bearing blade",RvSolid(poly,p=>z,1,1.45f,.9f),2);
-            foreach(int side in new[]{-1,1})
-                Part(rig.tailTip,"Tail "+(i+1)+" titanium face "+side,RvSolid(RvInset(poly,2),p=>side*z+1.6f,side,.55f,.6f),4);
-        }
-        float[][] cells={
-            new float[]{83,202,112,205,139,213,121,215,102,210},
-            new float[]{75,219,104,219,128,224,109,229,88,226},
-            new float[]{71,244,97,239,121,239,108,250,88,260,72,257},
-            new float[]{91,272,115,260,139,253,126,267,105,278}};
-        for(int i=0;i<cells.Length;i++)foreach(int side in new[]{-1,1})
-        {
-            float z=(i-1.5f)*3.2f;
-            Part(rig.tailTip,"Tail inset energy aperture "+(i+1)+" "+side,RvSolid(RvPoints(cells[i]),p=>side*z+2.35f,side,.4f,.45f),6);
-        }
-    }
-    static void BuildRavenTalons(SkyPulseNeonFinchPrototype rig)
-    {
+        // The source's dark load-bearing casting shows through narrow seams
+        // between broad overlapping armour courses. These fitted sections break
+        // up the continuous egg highlight while staying connected to the hull.
+        var back=new[]{
+            RvPoints(209,207,230,190,255,180,281,176,300,181,288,191,262,190,237,199,218,216),
+            RvPoints(235,201,259,191,284,191,304,184,320,193,305,207,282,210,259,209,240,216),
+            RvPoints(274,212,298,207,317,194,334,203,345,218,331,233,314,237,299,227,281,223)};
+        var neck=new[]{
+            RvPoints(329,209,341,205,354,217,365,232,367,242,356,246,346,234,336,222)};
+        var head=new[]{
+            RvPoints(335,173,346,162,362,162,381,169,399,180,412,191,402,187,386,178,365,172,348,174),
+            RvPoints(345,182,357,181,371,189,376,201,386,212,401,218,391,225,375,220,360,209,350,196)};
         foreach(int side in new[]{-1,1})
         {
-            float x=side<0?224:245,y=side<0?289:287,z=side*18;
-            Part(rig.body,"Connected landing hinge "+side,RoundSolid(new Vector2(x,y),z,5,5,4),2);
-            var shank=RvPoints(x-4,y-1,x+3,y+1,x+9,y+14,x+7,y+22,x+1,y+23,x+2,y+14,x-3,y+9);
-            Part(rig.body,"Segmented graphite landing shank "+side,RvSolid(shank,p=>side*z,side,3,1),2);
-            Part(rig.body,"Landing shank silver facing "+side,RvSolid(RvInset(shank,1.1f),p=>side*z+3.1f,side,.6f,.45f),0);
-            float[][] toes={
-                new float[]{x+5,y+17,x+11,y+24,x+10,y+33,x+3,y+39,x-7,y+42,x-13,y+40,x-5,y+35,x+1,y+29},
-                new float[]{x+8,y+18,x+16,y+23,x+17,y+31,x+14,y+36,x+6,y+36,x+11,y+31,x+11,y+27},
-                new float[]{x+2,y+17,x-5,y+21,x-9,y+28,x-8,y+33,x-3,y+35,x-3,y+29,x+1,y+25}};
-            for(int i=0;i<toes.Length;i++)
+            var skin=RvSupport(fuselage,rig.body.position,side);int i=0;
+            foreach(var contour in back)Part(rig.body,"Chrome overlapping dorsal armour course "+side+" "+i++,RvSolid(contour,p=>skin(p)+1.0f,side,.85f,.55f,7),0);
+            i=0;foreach(var contour in neck)Part(rig.body,"Chrome connected neck and keel armour course "+side+" "+i++,RvSolid(contour,p=>skin(p)+1.1f,side,.8f,.55f,7),0);
+            var headSkin=RvSupport(helmet,rig.head.position,side);i=0;
+            foreach(var contour in head)Part(rig.head,"Chrome swept fitted helmet course "+side+" "+i++,RvSolid(contour,p=>headSkin(p)+.9f,side,.75f,.5f,6),0);
+        }
+    }
+    static void BuildSculptOptics(Transform head,Mesh helmet,int side)
+    {
+        var d=design;var center=new Vector2(d.eye[0],d.eye[1]);var skin=RvSupport(helmet,head.position,side);
+        var outer=EyeContour(center,d.eye[2]*1.11f,d.eye[3]*1.12f,d.eyeShape);
+        // The stepped seat has a dark wall, metal lip and lowered fitted glass.
+        var housing=RvSolid(outer,p=>skin(p)+1.9f,side,2.25f,.75f,4);
+        Part(head,"Connected recessed optical housing "+side,housing,2);var housingSkin=RvSupport(housing,head.position,side);
+        var glassContour=EyeContour(center,d.eye[2]*.90f,d.eye[3]*.88f,d.eyeShape);
+        var glass=RvSolid(glassContour,p=>housingSkin(p)-.3f,side,.32f,.45f,3);
+        Part(head,"Seated dark optical glass "+side,glass,7);var glassSkin=RvSupport(glass,head.position,side);
+        Part(head,"Slim fitted optical retaining bezel "+side,SculptContourRim(outer,p=>housingSkin(p)+.05f,side,.95f,.65f),4);
+        var irisContour=EyeContour(center+new Vector2(d.eye[2]*.06f,0),d.eye[2]*.58f,d.eye[3]*.59f,d.eyeShape);
+        var iris=RvSolid(irisContour,p=>glassSkin(p)+.13f,side,.28f,.35f,3);Part(head,"Reference luminous iris "+side,iris,5);
+        var irisSkin=RvSupport(iris,head.position,side);
+        Part(head,"Seated optical emitter "+side,RvSolid(EyeContour(center+new Vector2(d.eye[2]*.13f,-d.eye[3]*.08f),d.eye[2]*.16f,d.eye[3]*.22f,d.eyeShape=="triangle"?"triangle":"round"),p=>irisSkin(p)+.10f,side,.20f,.18f,2),6);
+        // A separate brow casting shields the top of the sensor and ties it to
+        // the helmet. It follows the same support rather than hovering in space.
+        var brow=RvPoints(center.x-d.eye[2]*1.2f,center.y-d.eye[3]*.72f,center.x-d.eye[2]*.70f,center.y-d.eye[3]*1.23f,center.x+d.eye[2]*.30f,center.y-d.eye[3]*.92f,center.x+d.eye[2]*1.04f,center.y-d.eye[3]*.17f,center.x+d.eye[2]*.72f,center.y-d.eye[3]*.34f,center.x-d.eye[2]*.23f,center.y-d.eye[3]*.76f);
+        Part(head,"Sculpted protective sensor brow "+side,RvSolid(brow,p=>Mathf.Max(skin(p)+1.1f,housingSkin(p)-.2f),side,.8f,.65f,5),d.headMaterial==3?4:d.headMaterial);
+    }
+    static Mesh SculptContourRim(Vector2[] contour,Func<Vector2,float> skin,int side,float width,float height)
+    {
+        var p=Smooth(contour,contour.Length>10?1:4);var center=Center(p);var g=new G();int n=p.Length;
+        for(int j=0;j<8;j++)for(int i=0;i<n;i++)
+        {
+            var prev=p[(i+n-1)%n];var next=p[(i+1)%n];var tangent=(next-prev).normalized;var normal=new Vector2(-tangent.y,tangent.x);
+            if(Vector2.Dot(normal,p[i]-center)<0)normal=-normal;
+            float a=j*Mathf.PI*2/8;var at=p[i]+normal*(width*Mathf.Cos(a));g.Add(Point(at,side*(skin(at)+height*Mathf.Sin(a))));
+        }
+        for(int j=0;j<8;j++)for(int i=0;i<n;i++)g.Quad(j*n+i,j*n+(i+1)%n,((j+1)%8)*n+(i+1)%n,((j+1)%8)*n+i);
+        return g.Finish("Closed fitted recessed sensor retaining rim");
+    }
+    static void BuildSculptBeak(Transform head)
+    {
+        var d=design;var p=Points(d.beak);var beakShape=new SculptProfile(d.beak,Mathf.Clamp(d.beakDepth,4.5f,11));
+        Part(head,"Section-sculpted hooked upper beak",SculptHull(beakShape,20,16),d.beakMaterial);
+        float minX=p.Min(v=>v.x),maxX=p.Max(v=>v.x);var jaw=new List<Vector2>();
+        for(int i=0;i<=7;i++)
+        {
+            float x=Mathf.Lerp(minX,maxX-1,i/7f);beakShape.Section(x,out float top,out float bottom,out _);jaw.Add(new Vector2(x,Mathf.Lerp(top,bottom,.76f)));
+        }
+        for(int i=7;i>=0;i--)
+        {
+            float x=Mathf.Lerp(minX,maxX-1,i/7f);beakShape.Section(x,out float top,out float bottom,out _);jaw.Add(new Vector2(x,bottom+.6f));
+        }
+        foreach(int side in new[]{-1,1})
+        {
+            float Skin(Vector2 at){beakShape.Section(at.x,out float top,out float bottom,out float width);float mid=(top+bottom)*.5f,r=(at.y-mid)/Mathf.Max(1,(bottom-top)*.5f);return width*Mathf.Sqrt(Mathf.Max(0,1-r*r));}
+            Part(head,"Articulated lower mandible and mouth split "+side,RvSolid(jaw.ToArray(),p2=>Skin(p2)+.25f,side,.45f,.3f,6),2);
+            var root=new Vector2(minX+4,Center(p).y);
+            Part(head,"Seated jaw pivot "+side,SculptSpindle(root,side*(beakShape.depth*.75f),2.4f,1.1f),4);
+        }
+    }
+    static void BuildSculptWing(SkyPulseNeonFinchPrototype rig,int side,Mesh body,out Transform wing,out Transform tip)
+    {
+        var d=design;var hub=d.wingRoot.V;var skin=RvSupport(body,rig.body.position,side);float depth=skin(hub);
+        float mount=depth+6.3f;var fan=Vector2.zero;foreach(var b in d.primaries)fan+=b.root.V;fan/=d.primaries.Length;
+        wing=Joint(rig.body,(side<0?"03 Near":"04 Far")+" supported shoulder and flight arm",Point(hub,side*mount));
+        tip=Joint(wing,"Cambered distal primary fan and coverts",Point(fan,side*(mount+3)));
+        var saddle=EyeContour(hub-new Vector2(0,1),16,22,"round");
+        Part(rig.body,"Fuselage shoulder saddle mounting "+side,RvSolid(saddle,p=>skin(p)+.8f,side,1.5f,1.1f,7),2);
+        Part(rig.body,"Fitted shoulder mounting flange "+side,RvSolid(RvInset(saddle,2),p=>skin(p)+2.2f,side,.9f,.65f,7),4);
+        // The actual spindle spans the body-side mount and rotating wing yoke.
+        Part(wing,"Load-bearing shoulder spindle "+side,SculptSpindle(hub,side*(depth+3.7f),8.3f,5.0f),2);
+        Part(wing,"Outer machined shoulder housing "+side,SculptSpindle(hub,side*(mount+3),12,2.2f,7.7f),4);
+        Part(wing,"Recessed shoulder bearing seal "+side,SculptSpindle(hub,side*(mount+4.1f),8,1.3f,5.6f),2);
+        Part(wing,"Seated luminous shoulder bearing "+side,RoundSolid(hub,side*(mount+5.1f),5.4f,5.4f,1.65f),5);
+        var elbow=Vector2.Lerp(hub,fan,.67f)+new Vector2(0,2);float fanZ=side*(mount+3.4f);
+        if(Vector2.Distance(hub,fan)>6)
+        {
+            var a=new Vector3(hub.x,hub.y,side*(mount+.5f));var b=new Vector3(elbow.x,elbow.y,side*(mount+2));var c=new Vector3(fan.x,fan.y,fanZ);
+            Part(wing,"Continuous structural wing forearm "+side,SculptTube(new[]{a,b,c},6.6f,4.9f,4.9f,18,12),2);
+            Part(wing,"Sculpted forearm armour casting "+side,SculptTube(new[]{a+new Vector3(0,-1,side*1.4f),b+new Vector3(0,-1,side*1.4f),c},5,3.2f,3.5f,18,12),d.headMaterial==3?3:0);
+        }
+        Part(tip,"Distal fan load-bearing comb "+side,SculptSpindle(fan,fanZ,8.7f,3.0f),2);
+        Part(tip,"Distal fan machined retaining nut "+side,SculptSpindle(fan,fanZ+side*3,6.6f,1.2f,3.6f),4);
+        for(int i=0;i<d.primaries.Length;i++)
+        {
+            var b=d.primaries[i];float z=fanZ+side*(1.7f+i*1.35f);float span=10+Mathf.Min(11,Vector2.Distance(b.root.V,b.tip.V)*.044f);
+            if(Vector2.Distance(fan,b.root.V)>2)
+                Part(tip,"Connected feather socket spar "+side+" "+i,SculptTube(new[]{new Vector3(fan.x,fan.y,fanZ),new Vector3(b.root.x,b.root.y,z)},2.6f,2,2,6,8),2);
+            Part(tip,"Primary "+side+" "+i+" solid cambered flight blade",SculptBlade(b,z,side,span,1.1f),b.material);
+            Part(tip,"Primary "+side+" "+i+" seated enamel face",SculptBladeInlay(b,z,side,span,1.1f),b.inset);
+            // Two short overlapping rows make a continuous root mantle. Their
+            // spacing and sweep come from this bird's measured primary axes.
+            if(i<d.primaries.Length-1)
             {
-                Part(rig.body,"Hooked articulated talon "+side+" "+i,RvSolid(RvPoints(toes[i]),p=>side*z+i*3,side,2,.7f),2);
-                Part(rig.body,"Talon machined edge "+side+" "+i,RvSolid(RvInset(RvPoints(toes[i]),.9f),p=>side*z+i*3+2.1f,side,.45f,.35f),0);
+                var covert=SculptShortBlade(b,.42f,.73f);float covertZ=z+side*4.5f;
+                Part(tip,"Layered sculpted root covert "+side+" "+i,SculptBlade(covert,covertZ,side,span*.31f,.95f),i%3==0?4:d.bodyMaterial);
+                if(i%2==0)Part(tip,"Covert enamel detail "+side+" "+i,SculptBladeInlay(covert,covertZ,side,span*.31f,.95f,.18f,.77f,.54f),b.material);
+            }
+        }
+        // Machined yoke fingers physically enclose the fan root, instead of a
+        // decorative washer floating over unattached feather plates.
+        for(int n=0;n<2;n++)
+        {
+            var at=fan+new Vector2((n==0?-1:1)*6,-2);var end=fan+new Vector2((n==0?-1:1)*7,11);
+            Part(tip,"Enclosing distal bearing yoke "+side+" "+n,SculptTube(new[]{new Vector3(at.x,at.y,fanZ-3*side),new Vector3(at.x,at.y+5,fanZ+4*side),new Vector3(end.x,end.y,fanZ+6*side)},2.1f,1.8f,1.6f,8,8),4);
+        }
+    }
+    static void BuildSculptTail(SkyPulseNeonFinchPrototype rig,Vector2 fan)
+    {
+        var d=design;var a=d.tailRoot.V;var axis=fan-a;
+        if(axis.sqrMagnitude<16)
+        {
+            // Several references seat every tail blade at the actuator pivot.
+            // Give that socket a real inboard shaft, rather than sweeping a
+            // zero-length cylinder whose coincident rings have zero normals.
+            var tips=Vector2.zero;foreach(var blade in d.tail)tips+=blade.tip.V;tips/=d.tail.Length;
+            axis=tips-fan;if(axis.sqrMagnitude<.01f)axis=Vector2.left;axis.Normalize();a=fan-axis*14;
+        }
+        else axis.Normalize();
+        Part(rig.tail,"Continuous sealed tail transmission",SculptTube(new[]{new Vector3(a.x,a.y,0),new Vector3(fan.x,fan.y,0)},6.6f,8.2f,5.4f,12,12),2);
+        var collar=Vector2.Lerp(a,fan,.65f);
+        Part(rig.tail,"Machined tail retaining collar",SculptCuff(new Vector3(collar.x-axis.x*3,collar.y-axis.y*3,0),new Vector3(collar.x+axis.x*3,collar.y+axis.y*3,0),8.4f,10,2),4);
+        Part(rig.tailTip,"Tail fan supported root hub",SculptSpindle(fan,0,8,7),2);
+        for(int i=0;i<d.tail.Length;i++)
+        {
+            var b=d.tail[i];float z=(i-(d.tail.Length-1)*.5f)*3.4f;float span=(i-(d.tail.Length-1)*.5f)*3.0f;
+            if(Vector2.Distance(fan,b.root.V)>2)Part(rig.tailTip,"Tail feather root socket "+i,SculptTube(new[]{new Vector3(fan.x,fan.y,0),new Vector3(b.root.x,b.root.y,z)},2.5f,2.5f,2.2f,6,8),2);
+            Part(rig.tailTip,"Tail "+i+" closed cambered load-bearing blade",SculptBlade(b,z,1,span,1.35f),b.material);
+            Part(rig.tailTip,"Tail "+i+" seated upper enamel",SculptBladeInlay(b,z,1,span,1.35f,d.id=="chrome_raven"?.45f:.22f,.86f,.67f),b.inset);
+            // Reverse faces use the same curve with the camber mirrored around
+            // the blade's centerline; enough separation prevents coplanar faces.
+            Part(rig.tailTip,"Tail "+i+" seated reverse enamel",SculptBladeReverseInlay(b,z,span,1.35f,d.id=="chrome_raven"?.45f:.22f),b.inset);
+        }
+        if(d.jet)BuildJet(rig,fan);
+    }
+    static Mesh SculptBladeReverseInlay(Blade b,float z,float span,float thickness,float begin)
+    {return SculptBladeInlay(b,z,1,span,thickness,begin,.86f,.67f,true);}
+    static void BuildSculptTalons(SkyPulseNeonFinchPrototype rig,SculptProfile profile)
+    {
+        var d=design;var c=Mean(d.body);float lower=Points(d.body).Max(p=>p.y);
+        foreach(int side in new[]{-1,1})
+        {
+            float x=c.x-12+(side>0?13:0),z=side*d.bodyDepth*.58f;var hip=new Vector2(x,lower-12);var ankle=new Vector2(x+5,lower+14);
+            Part(rig.body,"Seated landing hip bearing "+side,SculptSpindle(hip,z,6.2f,4.7f),2);
+            Part(rig.body,"Landing hip bearing cap "+side,SculptSpindle(hip,z+side*4.3f,4.6f,1.1f),4);
+            var leg=new[]{new Vector3(hip.x,hip.y,z),new Vector3(x-3,lower+2,z),new Vector3(ankle.x,ankle.y,z)};
+            Part(rig.body,"Continuous curved landing shank "+side,SculptTube(leg,3.4f,3.0f,2.8f,12,10),2);
+            Part(rig.body,"Fitted shank armour "+side,SculptTube(new[]{leg[0]+new Vector3(0,0,side*1),leg[1]+new Vector3(0,0,side*1)},2.8f,2.2f,2.4f,8,8),d.bodyMaterial);
+            Part(rig.body,"Articulated ankle knuckle "+side,SculptSpindle(ankle,z,4.1f,4.5f),4);
+            for(int toe=0;toe<3;toe++)
+            {
+                float tz=z+(toe-1)*4.7f;float reverse=toe==2?1:-1;float reach=toe==0?21:toe==1?15:12;
+                var path=new[]{new Vector3(ankle.x,ankle.y,tz),new Vector3(ankle.x+reverse*7,ankle.y+10,tz),new Vector3(ankle.x+reverse*reach,ankle.y+17,tz),new Vector3(ankle.x+reverse*(reach+2),ankle.y+10,tz),new Vector3(ankle.x+reverse*(reach-2),ankle.y+6,tz)};
+                Part(rig.body,"Curved articulated landing claw "+side+" "+toe,SculptTube(path,2.3f,2.6f,.23f,16,8),2);
+                Part(rig.body,"Machined claw hook tip "+side+" "+toe,SculptTube(new[]{SculptCatmull(path,.63f),SculptCatmull(path,.83f),path[4]},1.15f,1.3f,.12f,8,8),4);
             }
         }
     }

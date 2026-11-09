@@ -54,7 +54,7 @@ public static class SkyPulseBirdRosterPreview
             {string art=(string)Get(Get(game,"equippedSkin"),"ArtPath");design=designs.FirstOrDefault(d=>art!=null&&art.EndsWith(d.reference,StringComparison.Ordinal));}
             string path=design==null?SkyPulseBirdPrototypeWorkshop.PrefabPath:SkyPulseBirdRosterWorkshop.PrefabPath(design);
             var prefab=AssetDatabase.LoadAssetAtPath<GameObject>(path);if(prefab==null)throw new InvalidOperationException("Create the saved roster model first: "+id);
-            holder=new GameObject("Editor 3D bird visual review"){hideFlags=HideFlags.HideAndDontSave};holder.transform.SetParent(bird,false);holder.transform.localPosition=new Vector3(0,0,-3);
+            holder=new GameObject("Editor 3D bird visual review"){hideFlags=HideFlags.HideAndDontSave};holder.transform.SetParent(bird,false);holder.transform.localPosition=Vector3.zero;
             var model=UnityEngine.Object.Instantiate(prefab,holder.transform);model.name=id+" · live visual preview";rig=model.GetComponent<SkyPulseNeonFinchPrototype>();rig.animate=false;rig.turntable=false;rig.ResetPose();
             Bounds bounds=model.GetComponentsInChildren<Renderer>()[0].bounds;foreach(var r in model.GetComponentsInChildren<Renderer>())bounds.Encapsulate(r.bounds);
             float scale=2.30f/Mathf.Max(.01f,bounds.size.x);holder.transform.localScale=Vector3.one*scale;holder.transform.localRotation=Quaternion.Euler(0,-9,0);

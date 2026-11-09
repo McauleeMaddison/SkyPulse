@@ -41,9 +41,10 @@ namespace SkyPulse.Mobile
             bool show=visibility>.0001f;
             for(int i=0;i<4;i++)
             {
-                // Neon City uses its composed architectural districts and bounded
-                // volumetric cloud field; only the fine sky beacons remain here.
-                bool layerVisible=show&&(world!=0||i==3);
+                // Detailed district meshes and bounded volumetric clouds now
+                // supply every world. Retain the authored proxy bindings for
+                // workshop compatibility; render only the fine sky beacons.
+                bool layerVisible=show&&i==3;
                 var item=layers[bank,i];if(item.gameObject.activeSelf!=layerVisible)item.gameObject.SetActive(layerVisible);
             }
             if(changed)
