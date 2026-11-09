@@ -14,5 +14,7 @@
   "artworkLedger": "mobile/Release/IdentityRights20261013/ARTWORK_LEDGER.json",
   "testFlightStatus": "Build 19 installed directly on the paired iPhone; no upload. Build 17 was last observed in TestFlight; App Store Connect was not rechecked this session.",
   "publicAppReview": "On hold pending Apple's clarification, current device/media validation and renewed owner authorization",
-  "appStoreDraftStatus": "Unchanged this session. Build 19 media, device acceptance and renewed public-submission authorization remain pending."
+  "appStoreDraftStatus": "Product copy, subtitle and privacy choices URL saved 9 November 2026; MacWebStudio credited. Prepare for Submission; historical build 15 selected. Older media still requires replacement after owner visual approval. No review requested.",
+  "storeListingMetadata": "mobile/Release/StoreListing20261109/metadata.json",
+  "publicSiteRecord": "mobile/Release/StoreListing20261109/PUBLIC_SITE_RECORD.json"
 }

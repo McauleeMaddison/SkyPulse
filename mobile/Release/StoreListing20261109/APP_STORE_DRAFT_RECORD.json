@@ -1,0 +1,45 @@
+{
+  "date": "2026-11-09",
+  "appId": "6809440803",
+  "locale": "English (U.K.)",
+  "version": "1.0",
+  "status": "Prepare for Submission",
+  "selectedHistoricalBuild": "1.0.0 (15)",
+  "latestInstalledBuildRecord": "19; direct installation, unchanged this task",
+  "developerBrand": "MacWebStudio",
+  "developerWebsite": "https://macwebstudio.com/",
+  "legalAccountAndCopyright": "Mcaulee Maddison",
+  "savedProductFields": [
+    "promotionalText",
+    "description",
+    "keywords",
+    "reviewNotes"
+  ],
+  "savedAppInfoFields": {
+    "subtitle": "Flight, Gates & Signal Heists"
+  },
+  "verifiedAppInfo": {
+    "name": "SkyPulse Arcade",
+    "primaryCategory": "Games",
+    "subcategories": [
+      "Action",
+      "Puzzle"
+    ],
+    "bundleId": "com.mcauleemaddison.skypulse",
+    "sku": "skypulse-ios-001"
+  },
+  "privacy": {
+    "policyUrl": "https://skypulse.macwebstudio.com/privacy",
+    "privacyChoicesUrl": "https://skypulse.macwebstudio.com/privacy#requests",
+    "dataCollection": "Data Not Collected; unchanged after current-source check"
+  },
+  "urls": {
+    "marketing": "https://skypulse.macwebstudio.com/",
+    "support": "https://skypulse.macwebstudio.com/support"
+  },
+  "sourceOfEvidence": "Live App Store Connect UI: product Save became disabled; App Information confirmed Saved; App Privacy displayed the saved choices URL. No Add for Review action taken.",
+  "remainingMedia": "Build 7 review attachment and older product screenshots remain historical; replace with approved matching-build captures before review. No Editor-only bird images used as released-build evidence.",
+  "publicAppReviewSubmitted": false,
+  "deviceWorkPerformed": false,
+  "appleSimilarityFinding": "Unresolved until Apple identifies its private comparison; branding/copy checks are not originality certification."
+}

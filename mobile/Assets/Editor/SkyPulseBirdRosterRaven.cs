@@ -13,8 +13,8 @@ using SkyPulse.Mobile;
 // closed, sculpted geometry. The approved Finch and source artwork are never edited.
 public static partial class SkyPulseBirdRosterWorkshop
 {
-    const string SculptRevision="SkyPulse engineered roster sculpture v3";
-    const string SculptBodyJoint="01 Sculpted continuous fuselage and flight bank v3";
+    const string SculptRevision="SkyPulse engineered roster sculpture v5";
+    const string SculptBodyJoint="01 Sculpted continuous fuselage and flight bank v5";
     static readonly Dictionary<string,string[]> SculptKnownGenerated = new Dictionary<string,string[]>
     {
         {"chrome_raven",new[]{"f4f7d5fcc4cd8b7b6d987a73b5bcea3276c9d66d853852db03c62d66f9852e92","6c0248b35bb2bb12963bcda849ea99f87137e8f4f3eb8c68e6efb47519b81de0","8bd2abe4d951bfeab37ab356e96ee9d44ce4bc182063e39d8edf9ce9f3a59e6d","e60f564ce9e950a2d706b8a3aad24aa46297b27fc4a19ff72ef9eb8a3e358dfd","2d2c7bcb9b4ce3343b3fbb89f13866a7c807eab85ac8e740018624a377eb0d54","afacabf612baf8c4d5f485149cd3b05968f00c7409ee7bd8ed61e439a595f61e","1181d9065bec6f1695bf1b9c55d1f603ada47333811af0de2c5300ecb3f9aef5","857b0b3f3f7fec17bb028df67a6039b73d18b7bcefb1f0952367dcbb588e9ba5"}},
@@ -66,7 +66,7 @@ public static partial class SkyPulseBirdRosterWorkshop
         // are never legitimised by a structural marker on an older generator.
         foreach(var d in birds)if(!SculptAlreadySaved(d))SculptGuard(d);
         foreach(var d in birds)if(!SculptAlreadySaved(d))ReviseSavedSculpture(d);
-        Debug.Log("SKYPULSE_ROSTER_SCULPTURES_V3_SAVED: fourteen closed engineered sculptures; Finch, palettes, review scenes, prefab GUIDs and all eight rig identities retained.");
+        Debug.Log("SKYPULSE_ROSTER_SCULPTURES_V5_SAVED: fourteen closed engineered sculptures; Finch, palettes, review scenes, prefab GUIDs and all eight rig identities retained.");
     }
     [MenuItem("Tools/SkyPulse/Bird Workshop/Revise Chrome Raven reference sculpture")]
     public static void ReviseChromeRaven()
@@ -87,7 +87,7 @@ public static partial class SkyPulseBirdRosterWorkshop
         var existing=AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);var files=SculptFiles(d);
         var backups=files.ToDictionary(f=>f,f=>File.ReadAllBytes(folder+"/"+f));
         var metas=files.ToDictionary(f=>f,f=>File.ReadAllBytes(folder+"/"+f+".meta"));
-        string staging="Assets/Editor/__SkyPulseSculptureV3_"+d.id;
+        string staging="Assets/Editor/__SkyPulseSculptureV5_"+d.id;
         if(Directory.Exists(staging))throw new InvalidOperationException("An unfinished sculpture staging folder is preserved: "+staging);
         Directory.CreateDirectory(staging);AssetDatabase.Refresh();GameObject root=null;bool promoted=false;
         try
@@ -110,7 +110,7 @@ public static partial class SkyPulseBirdRosterWorkshop
             AssetDatabase.ImportAsset(geometryPath,ImportAssetOptions.ForceUpdate);AssetDatabase.ImportAsset(prefabPath,ImportAssetOptions.ForceUpdate);
             foreach(string f in files)if(!File.ReadAllBytes(folder+"/"+f+".meta").SequenceEqual(metas[f]))throw new InvalidOperationException("Sculpture changed an existing asset GUID: "+d.name);
             foreach(string f in new[]{files[1],files[3]})if(!File.ReadAllBytes(folder+"/"+f).SequenceEqual(backups[f]))throw new InvalidOperationException("Sculpture changed the approved finishes or saved review scene: "+d.name);
-            Debug.Log("SKYPULSE_SCULPT_V3: "+d.id+"; vertices="+vertices+"; editable mesh parts="+meshes.Count+"; all eight joints preserved");
+            Debug.Log("SKYPULSE_SCULPT_V5: "+d.id+"; vertices="+vertices+"; editable mesh parts="+meshes.Count+"; all eight joints preserved");
         }
         catch
         {
@@ -288,10 +288,10 @@ public static partial class SkyPulseBirdRosterWorkshop
     }
     sealed class SculptProfile
     {
-        public Vector2[] boundary;public float minX,maxX,maxHeight,depth;
-        public SculptProfile(P[] outline,float depth)
+        public Vector2[] boundary;public float minX,maxX,maxHeight,depth,yExponent,zExponent,crownInset,chinInset;
+        public SculptProfile(P[] outline,float depth,float yExponent=.80f,float zExponent=.68f)
         {
-            boundary=Smooth(Points(outline),4);minX=boundary.Min(p=>p.x);maxX=boundary.Max(p=>p.x);this.depth=depth;
+            boundary=Smooth(Points(outline),4);minX=boundary.Min(p=>p.x);maxX=boundary.Max(p=>p.x);this.depth=depth;this.yExponent=yExponent;this.zExponent=zExponent;
             maxHeight=boundary.Max(p=>p.y)-boundary.Min(p=>p.y);
         }
         public void Section(float x,out float top,out float bottom,out float width)
@@ -305,15 +305,34 @@ public static partial class SkyPulseBirdRosterWorkshop
                 float y=Mathf.Lerp(a.y,b.y,(sample-a.x)/(b.x-a.x));top=Mathf.Min(top,y);bottom=Mathf.Max(bottom,y);
             }
             if(float.IsInfinity(top)){top=bottom=Center(boundary).y;}
-            float t=Mathf.InverseLerp(minX,maxX,x),h=Mathf.Max(0,bottom-top)/Mathf.Max(1,maxHeight);
+            float t=Mathf.InverseLerp(minX,maxX,x),sweep=Mathf.Max(0,Mathf.Sin(t*Mathf.PI));
+            // Reference outlines include the dorsal armour/crest envelope. The
+            // actual casting sits inside that envelope, leaving a low swept
+            // skull and a slender trunk underneath the separate armour courses.
+            top+=crownInset*sweep;bottom-=chinInset*sweep;
+            float h=Mathf.Max(0,bottom-top)/Mathf.Max(1,maxHeight);
             width=depth*Mathf.Pow(h,.56f)*Mathf.Pow(Mathf.Max(0,Mathf.Sin(t*Mathf.PI)),.19f);
+        }
+        public Vector2 Domain(Vector2 source)
+        {
+            float x=Mathf.Clamp(source.x,minX+.8f,maxX-.8f);Section(x,out float top,out float bottom,out _);
+            float mid=Mathf.Lerp(top,bottom,.49f),h=source.y<mid?mid-top:bottom-mid;
+            float c=Mathf.Clamp((mid-source.y)/Mathf.Max(.01f,h),-.985f,.985f);
+            float angle=Mathf.Acos(Mathf.Sign(c)*Mathf.Pow(Mathf.Abs(c),1/yExponent));
+            return new Vector2(x,angle*maxHeight/Mathf.PI);
+        }
+        public Vector3 FromDomain(Vector2 domain,int side,float lift)
+        {
+            float u=Mathf.Clamp01(Mathf.InverseLerp(minX,maxX,domain.x));
+            float angle=Mathf.Clamp(domain.y*Mathf.PI/maxHeight,.035f,Mathf.PI-.035f);
+            var p=At(u,angle,lift);p.z*=side;return p;
         }
         public Vector3 At(float t,float angle,float lift=0)
         {
             float x=Mathf.Lerp(minX,maxX,t);Section(x,out float top,out float bottom,out float width);
             float c=Mathf.Cos(angle),s=Mathf.Sin(angle),mid=Mathf.Lerp(top,bottom,.49f),h=c>0?mid-top:bottom-mid;
-            float y=mid-Mathf.Sign(c)*Mathf.Pow(Mathf.Abs(c),.88f)*h;
-            float z=Mathf.Sign(s)*Mathf.Pow(Mathf.Abs(s),.91f)*width;
+            float y=mid-Mathf.Sign(c)*Mathf.Pow(Mathf.Abs(c),yExponent)*h;
+            float z=Mathf.Sign(s)*Mathf.Pow(Mathf.Abs(s),zExponent)*width;
             var outward=new Vector3(0,-c,s).normalized;return new Vector3(x,y,z)+outward*lift;
         }
     }
@@ -394,45 +413,52 @@ public static partial class SkyPulseBirdRosterWorkshop
     // one closed airfoil section through every longitudinal row.
     static float SculptChord(float t)
     {
-        if(t<.16f)return Mathf.Lerp(.24f,.82f,t/.16f);
-        if(t<.34f)return Mathf.Lerp(.82f,1,(t-.16f)/.18f);
-        if(t<.58f)return Mathf.Lerp(1,.86f,(t-.34f)/.24f);
-        return Mathf.Lerp(.86f,.018f,Mathf.Pow((t-.58f)/.42f,1.06f));
+        if(t<.13f)return Mathf.Lerp(.38f,.82f,t/.13f);
+        if(t<.28f)return Mathf.Lerp(.82f,1,(t-.13f)/.15f);
+        if(t<.52f)return Mathf.Lerp(1,.72f,(t-.28f)/.24f);
+        if(t<.78f)return Mathf.Lerp(.72f,.30f,(t-.52f)/.26f);
+        return Mathf.Lerp(.30f,.012f,(t-.78f)/.22f);
     }
     static Vector3 SculptBladeAt(Blade b,float t,float q,float z,int side,float span,float thickness,float size=1)
     {
         var axis=b.tip.V-b.root.V;float length=Mathf.Max(1,axis.magnitude);var normal=new Vector2(-axis.y,axis.x)/length;
         var at=Vector2.Lerp(b.root.V,b.tip.V,t)+normal*(b.curve*Mathf.Sin(t*Mathf.PI));
         var p=at+normal*(q*b.width*SculptChord(t)*size);
-        float crown=Mathf.Pow(Mathf.Max(0,1-q*q),.65f)*b.width*.11f*Mathf.Sin(Mathf.PI*Mathf.Lerp(.13f,.92f,t));
+        float crown=Mathf.Max(0,1-Mathf.Abs(q)*1.8f)*b.width*.055f*Mathf.Sin(Mathf.PI*Mathf.Lerp(.13f,.92f,t));
         float sweep=span*(t*t*(3-2*t))+3.3f*Mathf.Sin(t*Mathf.PI);
         return new Vector3(p.x,p.y,z+side*(sweep+crown+thickness));
     }
     static Mesh SculptBlade(Blade b,float z,int side,float span,float thickness=1.1f)
     {
-        var section=new[]{new Vector2(-1,-.12f),new Vector2(-.97f,.32f),new Vector2(-.68f,.82f),new Vector2(-.18f,1),new Vector2(.48f,.77f),new Vector2(.96f,.22f),new Vector2(1,-.10f),new Vector2(.96f,-.47f),new Vector2(.45f,-.62f),new Vector2(-.22f,-.69f),new Vector2(-.70f,-.53f),new Vector2(-.97f,-.33f)};
+        var section=new[]{new Vector2(-1,-.12f),new Vector2(-.97f,.32f),new Vector2(-.68f,.82f),new Vector2(-.18f,1),new Vector2(0,1.02f),new Vector2(0,1.02f),new Vector2(.48f,.77f),new Vector2(.96f,.22f),new Vector2(1,-.10f),new Vector2(.96f,-.47f),new Vector2(.45f,-.62f),new Vector2(-.22f,-.69f),new Vector2(-.70f,-.53f),new Vector2(-.97f,-.33f)};
         var g=new G();const int rows=14;int n=section.Length;
         for(int r=0;r<=rows;r++)for(int j=0;j<n;j++)
         {
             float t=r/(float)rows,q=section[j].x;float taper=Mathf.Lerp(.72f,1,Mathf.Sin(t*Mathf.PI))*(t>.9f?Mathf.Lerp(1,.12f,(t-.9f)/.1f):1);
             g.Add(SculptNative(SculptBladeAt(b,t,q,z,side,span,section[j].y*thickness*taper)),new Vector2(t,(q+1)*.5f));
         }
-        for(int r=0;r<rows;r++)for(int j=0;j<n;j++)g.Quad(r*n+j,r*n+(j+1)%n,(r+1)*n+(j+1)%n,(r+1)*n+j);
+        for(int r=0;r<rows;r++)for(int j=0;j<n;j++)
+        {
+            if((section[j]-section[(j+1)%n]).sqrMagnitude<1e-8f)continue;
+            g.Quad(r*n+j,r*n+(j+1)%n,(r+1)*n+(j+1)%n,(r+1)*n+j);
+        }
         int first=g.Add(SculptNative(SculptBladeAt(b,0,0,z,side,span,0))),last=g.Add(SculptNative(SculptBladeAt(b,1,0,z,side,span,0)));
-        for(int j=0;j<n;j++){int k=(j+1)%n;g.Tri(first,k,j);g.Tri(last,rows*n+j,rows*n+k);}return g.Finish("Closed swept cambered bevelled flight blade");
+        for(int j=0;j<n;j++){int k=(j+1)%n;if((section[j]-section[k]).sqrMagnitude<1e-8f)continue;g.Tri(first,k,j);g.Tri(last,rows*n+j,rows*n+k);}return g.Finish("Closed swept flight blade with a machined central ridge");
     }
     static float SculptAirfoilHeight(float q,bool upper)
     {
-        var x=upper?new[]{-1f,-.97f,-.68f,-.18f,.48f,.96f,1f}:new[]{-1f,-.97f,-.70f,-.22f,.45f,.96f,1f};
-        var y=upper?new[]{-.12f,.32f,.82f,1f,.77f,.22f,-.10f}:new[]{-.12f,-.33f,-.53f,-.69f,-.62f,-.47f,-.10f};
+        var x=upper?new[]{-1f,-.97f,-.68f,-.18f,0f,.48f,.96f,1f}:new[]{-1f,-.97f,-.70f,-.22f,.45f,.96f,1f};
+        var y=upper?new[]{-.12f,.32f,.82f,1f,1.02f,.77f,.22f,-.10f}:new[]{-.12f,-.33f,-.53f,-.69f,-.62f,-.47f,-.10f};
         for(int i=1;i<x.Length;i++)if(q<=x[i])return Mathf.Lerp(y[i-1],y[i],Mathf.InverseLerp(x[i-1],x[i],q));return y[y.Length-1];
     }
-    static Mesh SculptBladeInlay(Blade b,float z,int side,float span,float thickness,float begin=.18f,float end=.91f,float breadth=.72f,bool reverse=false)
+    static Mesh SculptBladeInlay(Blade b,float z,int side,float span,float thickness,float begin=.28f,float end=.985f,float breadth=.74f,bool reverse=false)
     {
         var g=new G();const int rows=10,cols=6;int stride=(rows+1)*(cols+1);
         for(int face=0;face<2;face++)for(int row=0;row<=rows;row++)for(int col=0;col<=cols;col++)
         {
-            float t=Mathf.Lerp(begin,end,row/(float)rows),q=Mathf.Lerp(-breadth,breadth,col/(float)cols);
+            float u=row/(float)rows,t=Mathf.Lerp(begin,end,u);
+            float taper=.035f+.965f*Mathf.Pow(Mathf.Max(0,Mathf.Sin(u*Mathf.PI)),.42f);
+            float q=Mathf.Lerp(-breadth,breadth,col/(float)cols)*taper;
             float skin=Mathf.Lerp(.72f,1,Mathf.Sin(t*Mathf.PI))*(t>.9f?Mathf.Lerp(1,.12f,(t-.9f)/.1f):1);
             // Crown is shared exactly with the support. This is a thin solid
             // enamel seat, above the blade face and below its machined rim.
@@ -456,114 +482,192 @@ public static partial class SkyPulseBirdRosterWorkshop
         var p=new[]{new Vector2(-width*.5f+1,-height*.5f),new Vector2(width*.5f-1,-height*.5f),new Vector2(width*.5f,-height*.5f+1),new Vector2(width*.5f,height*.5f-1),new Vector2(width*.5f-1,height*.5f),new Vector2(-width*.5f+1,height*.5f),new Vector2(-width*.5f,height*.5f-1),new Vector2(-width*.5f,-height*.5f+1)};
         float s=Mathf.Sin(angle),c=Mathf.Cos(angle);return p.Select(v=>center+new Vector2(v.x*c-v.y*s,v.x*s+v.y*c)).ToArray();
     }
+    struct SculptIdentity
+    {
+        public float bodyDepth,headDepth,headY,headZ,covert,inlay;
+        public SculptIdentity(float bodyDepth,float headDepth,bool facialDisc=false,float covert=.43f,float inlay=.74f)
+        {this.bodyDepth=bodyDepth;this.headDepth=headDepth;headY=facialDisc?.94f:.76f;headZ=facialDisc?.88f:.64f;this.covert=covert;this.inlay=inlay;}
+    }
+    static SculptIdentity SculptIdentityFor(string id)
+    {
+        switch(id)
+        {
+            case "chrome_raven":return new SculptIdentity(.78f,.75f,false,.46f,.58f);
+            case "prism_hummingbird":return new SculptIdentity(.66f,.70f,false,.38f,.78f);
+            case "koiwing_glider":return new SculptIdentity(.72f,.80f,true,.40f,.74f);
+            case "verdant_kite":return new SculptIdentity(.72f,.88f,true,.42f,.75f);
+            case "newbird01":return new SculptIdentity(.72f,.67f,false,.43f,.74f);
+            case "newbird02":return new SculptIdentity(.68f,.66f,false,.39f,.78f);
+            case "newbird03":return new SculptIdentity(.72f,.68f,false,.42f,.74f);
+            case "newbird04":return new SculptIdentity(.74f,.68f,false,.45f,.70f);
+            case "newbird05":return new SculptIdentity(.70f,.67f,false,.46f,.72f);
+            case "newbird06":return new SculptIdentity(.70f,.63f,false,.48f,.65f);
+            case "newbird07":return new SculptIdentity(.72f,.68f,false,.45f,.72f);
+            case "newbird08":return new SculptIdentity(.72f,.66f,false,.43f,.74f);
+            case "newbird09":return new SculptIdentity(.68f,.63f,false,.44f,.70f);
+            case "newbird10":return new SculptIdentity(.76f,.90f,true,.46f,.75f);
+            default:throw new InvalidOperationException("Missing source-sculpture identity: "+id);
+        }
+    }
+    static Mesh SculptWrapCourse(SculptProfile profile,float begin,float end,float lift=1.05f)
+    {
+        // A full wrapped casting, including its inner wall and narrow rolled
+        // leading/trailing bevels. Course seams are real separated geometry.
+        var section=new List<Vector2>();float bevel=Mathf.Min(.007f,(end-begin)*.10f);
+        section.Add(new Vector2(begin,.15f));
+        const int rows=10,around=28;
+        for(int i=0;i<=rows;i++)section.Add(new Vector2(Mathf.Lerp(begin+bevel,end-bevel,i/(float)rows),lift));
+        section.Add(new Vector2(end,.15f));section.Add(new Vector2(end,-.55f));section.Add(new Vector2(begin,-.55f));
+        var g=new G();
+        foreach(var ring in section)for(int j=0;j<around;j++)
+        {
+            float angle=j*Mathf.PI*2/around;
+            float u=Mathf.Clamp(ring.x+.032f*Mathf.Cos(angle)*Mathf.Sin(ring.x*Mathf.PI),.012f,.988f);
+            g.Add(SculptNative(profile.At(u,angle,ring.y)),new Vector2(u,j/(float)around));
+        }
+        for(int r=0;r<section.Count;r++)for(int j=0;j<around;j++)g.Quad(r*around+j,r*around+(j+1)%around,((r+1)%section.Count)*around+(j+1)%around,((r+1)%section.Count)*around+j);
+        return g.Finish("Closed wrapped armour casting with recessed joint seam");
+    }
+    static Vector2[] SculptPanelDomain(SculptProfile profile,Vector2[] outline)
+    {
+        var points=new List<Vector2>();
+        foreach(var source in outline)
+        {
+            var p=profile.Domain(source);if(points.Count==0||Vector2.Distance(points[points.Count-1],p)>.05f)points.Add(p);
+        }
+        if(points.Count>2&&Vector2.Distance(points[0],points[points.Count-1])<.05f)points.RemoveAt(points.Count-1);
+        bool changed=true;
+        while(changed&&points.Count>3)
+        {
+            changed=false;
+            for(int i=0;i<points.Count;i++)
+            {
+                var a=points[(i+points.Count-1)%points.Count];var b=points[i];var c=points[(i+1)%points.Count];
+                if(Mathf.Abs(RvCross(b-a,c-b))<.025f){points.RemoveAt(i);changed=true;break;}
+            }
+        }
+        float area=0;for(int i=0;i<points.Count;i++)area+=RvCross(points[i],points[(i+1)%points.Count]);
+        return points.Count<3||Mathf.Abs(area)<1?null:points.ToArray();
+    }
+    static Mesh SculptProfilePatch(SculptProfile profile,Vector2[] outline,int side,float lift,float halfThickness=.55f,float bevel=.5f,float edgeLimit=7)
+    {
+        var domain=SculptPanelDomain(profile,outline);if(domain==null)return null;
+        // Subdivide in the supported profile domain. Unlike the v3 triangle-
+        // depth lookup this cannot fall back to Z=0 outside a shell silhouette.
+        var mesh=RvSolid(domain,p=>lift,side,halfThickness,bevel,edgeLimit);var vertices=mesh.vertices;
+        for(int i=0;i<vertices.Length;i++)
+        {
+            var p=new Vector2(vertices[i].x*100+origin.x,origin.y-vertices[i].y*100);float offset=side*vertices[i].z*100;
+            vertices[i]=SculptNative(profile.FromDomain(p,side,offset));
+        }
+        mesh.vertices=vertices;mesh.RecalculateNormals();mesh.RecalculateTangents();mesh.RecalculateBounds();return mesh;
+    }
+    static void SculptProfilePart(Transform parent,string name,SculptProfile profile,Vector2[] contour,int side,int material,float lift,float half=.55f,float bevel=.5f,float edgeLimit=7)
+    {
+        var mesh=SculptProfilePatch(profile,contour,side,lift,half,bevel,edgeLimit);if(mesh!=null)Part(parent,name,mesh,material);
+    }
     static void BuildEngineeredSculpt(SkyPulseNeonFinchPrototype rig)
     {
-        RavenSupports.Clear();var d=design;bool chrome=d.id=="chrome_raven";
-        var bodyShape=new SculptProfile(d.body,d.bodyDepth*(chrome?.85f:1));
-        var helmetOutline=chrome?new[]{new P{x=333,y=175},new P{x=344,y=164},new P{x=363,y=163},new P{x=385,y=171},new P{x=405,y=184},new P{x=419,y=196},new P{x=417,y=209},new P{x=401,y=222},new P{x=382,y=226},new P{x=362,y=215},new P{x=347,y=197}}:d.head;
-        var headShape=new SculptProfile(helmetOutline,d.headDepth*(chrome?.84f:1));
+        RavenSupports.Clear();var d=design;var identity=SculptIdentityFor(d.id);
+        var bodyShape=new SculptProfile(d.body,d.bodyDepth*identity.bodyDepth);
+        var headShape=new SculptProfile(d.head,d.headDepth*identity.headDepth,identity.headY,identity.headZ);
+        bodyShape.crownInset=bodyShape.maxHeight*.09f;bodyShape.chinInset=bodyShape.maxHeight*.04f;
+        bool facialDisc=identity.headY>.9f;
+        headShape.crownInset=headShape.maxHeight*(facialDisc?.035f:.14f);
+        headShape.chinInset=headShape.maxHeight*(facialDisc?.02f:.03f);
         var bc=Mean(d.body);var hc=Mean(d.head);
         rig.body=Joint(rig.transform,SculptBodyJoint,Vector3.zero);
-        rig.head=Joint(rig.body,"02 Coupled sculpted helmet and recessed optics",Point(hc));
+        rig.head=Joint(rig.body,"02 Seated helmet, swept cowl and inset optics",Point(hc));
         rig.tail=Joint(rig.body,"05 Sealed tail actuator and power spine",Point(d.tailRoot));
-        var fan=Vector2.zero;foreach(var b in d.tail)fan+=b.root.V;fan/=d.tail.Length;
+        var fan=Vector2.zero;foreach(var blade in d.tail)fan+=blade.root.V;fan/=d.tail.Length;
         rig.tailTip=Joint(rig.tail,"06 Articulated cambered tail fan",Point(fan));
-        var bodyMesh=SculptHull(bodyShape);Part(rig.body,"Continuous armoured fuselage",bodyMesh,chrome?2:d.bodyMaterial);
-        var headMesh=SculptHull(headShape,32,28);Part(rig.head,"Continuous fitted helmet",headMesh,chrome?2:d.headMaterial);
-        var bodySkinMinus=RvSupport(bodyMesh,rig.body.position,-1);var bodySkinPlus=RvSupport(bodyMesh,rig.body.position,1);
-        var headSkinMinus=RvSupport(headMesh,rig.head.position,-1);var headSkinPlus=RvSupport(headMesh,rig.head.position,1);
-        var neckA=Vector2.Lerp(bc,hc,.40f);var neckB=Vector2.Lerp(bc,hc,.86f);var neckMid=Vector2.Lerp(neckA,neckB,.5f)+new Vector2(0,2);
-        float neckRadius=Mathf.Min((bodyShape.maxX-bodyShape.minX)*.16f,(headShape.maxX-headShape.minX)*.27f);
-        float neckDepth=Mathf.Min(d.headDepth,d.bodyDepth)*.78f;
+        var bodyMesh=SculptHull(bodyShape);Part(rig.body,"Continuous armoured fuselage",bodyMesh,2);
+        var headMesh=SculptHull(headShape,32,28);Part(rig.head,"Continuous fitted helmet",headMesh,2);
+        float rear=d.id=="prism_hummingbird"?.30f:.34f,front=d.id=="chrome_raven"?.69f:.66f;
+        Part(rig.body,"Rear wrapped fuselage casting",SculptWrapCourse(bodyShape,.035f,rear-.006f),d.bodyMaterial);
+        Part(rig.body,"Shoulder and dorsal wrapped casting",SculptWrapCourse(bodyShape,rear+.006f,front-.006f),d.bodyMaterial);
+        Part(rig.body,"Forward chest and neck casting",SculptWrapCourse(bodyShape,front+.006f,.965f),d.bodyMaterial);
+        Part(rig.head,"Swept rear helmet casting",SculptWrapCourse(headShape,.035f,.435f,.90f),d.headMaterial);
+        Part(rig.head,"Seated forward helmet cowl",SculptWrapCourse(headShape,.447f,.965f,.90f),d.headMaterial);
+        var neckA=Vector2.Lerp(bc,hc,.43f);var neckB=Vector2.Lerp(bc,hc,.85f);var neckMid=Vector2.Lerp(neckA,neckB,.5f);
+        float neckRadius=Mathf.Min((bodyShape.maxX-bodyShape.minX)*.14f,(headShape.maxX-headShape.minX)*.24f);
+        float neckDepth=Mathf.Min(headShape.depth,bodyShape.depth)*.86f;
         var neckPath=new[]{new Vector3(neckA.x,neckA.y,0),new Vector3(neckMid.x,neckMid.y,0),new Vector3(neckB.x,neckB.y,0)};
-        Part(rig.body,"Continuous supported neck casting",SculptTube(neckPath,neckRadius,neckDepth,neckRadius*.82f,18,24),d.bodyMaterial);
-        var neckAxis=(neckB-neckA).normalized;var collar=Vector2.Lerp(neckA,neckB,.70f);
-        Part(rig.body,"Neck flexible seated coupling",SculptCuff(new Vector3(collar.x-neckAxis.x*4,collar.y-neckAxis.y*4,0),new Vector3(collar.x+neckAxis.x*4,collar.y+neckAxis.y*4,0),neckRadius*.96f,neckDepth+.5f,2.4f),2);
-        var lip=collar+neckAxis*4;
-        Part(rig.head,"Fitted helmet retaining collar",SculptCuff(new Vector3(lip.x-neckAxis.x,lip.y-neckAxis.y,0),new Vector3(lip.x+neckAxis.x*2.4f,lip.y+neckAxis.y*2.4f,0),neckRadius*.98f,neckDepth+1.1f,1.8f),4);
+        Part(rig.body,"Continuous supported neck casting",SculptTube(neckPath,neckRadius,neckDepth,neckRadius*.82f,18,20),d.bodyMaterial);
+        var neckAxis=(neckB-neckA).normalized;var collar=Vector2.Lerp(neckA,neckB,.76f);
+        Part(rig.body,"Neck flexible seated coupling",SculptCuff(new Vector3(collar.x-neckAxis.x*2.7f,collar.y-neckAxis.y*2.7f,0),new Vector3(collar.x+neckAxis.x*2.7f,collar.y+neckAxis.y*2.7f,0),neckRadius*.96f,neckDepth+.45f,1.8f),2);
+        var lip=collar+neckAxis*2.7f;
+        Part(rig.head,"Fitted helmet retaining collar",SculptCuff(new Vector3(lip.x-neckAxis.x*.7f,lip.y-neckAxis.y*.7f,0),new Vector3(lip.x+neckAxis.x*1.6f,lip.y+neckAxis.y*1.6f,0),neckRadius*.98f,neckDepth+1,1.2f),4);
         foreach(int side in new[]{-1,1})
         {
-            var bodySkin=side<0?bodySkinMinus:bodySkinPlus;var headSkin=side<0?headSkinMinus:headSkinPlus;
-            // The measured material regions become shallow conformal castings,
-            // with narrow machined edges instead of inflated overlapping domes.
             int panelIndex=0;
             foreach(var panel in d.panels??Array.Empty<Panel>())
             {
-                bool onHead=panel.surface=="head";var parent=onHead?rig.head:rig.body;var skin=onHead?headSkin:bodySkin;
+                bool onHead=panel.surface=="head";var parent=onHead?rig.head:rig.body;var profile=onHead?headShape:bodyShape;
                 var polygon=Points(panel.outline);int material=panel.material;
+                // A same-colour region is still its own measured casting; its
+                // rolled edge and joint gap carry structure under real light.
                 if(material==6)
                 {
-                    var bed=RvSolid(polygon,p=>skin(p)+.58f,side,.68f,.5f,7);Part(parent,"Recessed source energy housing "+side+" "+panelIndex,bed,2);
-                    var seat=RvSupport(bed,parent.position,side);
-                    Part(parent,"Inset source energy aperture "+side+" "+panelIndex,RvSolid(RvInset(polygon,1.35f),p=>seat(p)+.08f,side,.32f,.3f,6),material);
+                    SculptProfilePart(parent,"Recessed source energy housing "+side+" "+panelIndex,profile,polygon,side,2,1.6f,.55f,.4f);
+                    SculptProfilePart(parent,"Inset source energy aperture "+side+" "+panelIndex,profile,RvInset(polygon,1.25f),side,material,2.18f,.25f,.25f);
                 }
-                else Part(parent,"Sculpted source armour casting "+side+" "+panelIndex,RvSolid(polygon,p=>skin(p)+.65f,side,.72f,.65f,8),material);
+                else SculptProfilePart(parent,"Fitted source armour casting "+side+" "+panelIndex,profile,polygon,side,material,material==(onHead?d.headMaterial:d.bodyMaterial)?1.85f:1.42f,.60f,.45f);
                 panelIndex++;
             }
-            BuildSculptOptics(rig.head,headMesh,side);
-            // Engine gills are real slots and louvres in a fitted metal bed.
-            var ventCenter=new Vector2(Mathf.Lerp(bc.x,hc.x,.35f),bc.y+bodyShape.maxHeight*.10f);
-            var bedPoly=SculptSlot(ventCenter,23,19,-.36f);var bedMesh=RvSolid(bedPoly,p=>bodySkin(p)+.9f,side,.65f,.65f,7);
-            Part(rig.body,"Recessed cooling gill bed "+side,bedMesh,2);var bedSkin=RvSupport(bedMesh,rig.body.position,side);
-            for(int n=0;n<3;n++)
-            {
-                var c=ventCenter+new Vector2((n-1)*6,0);var slit=SculptSlot(c,2.6f,12,-.36f);
-                Part(rig.body,"Fitted cooling louvre "+side+" "+n,RvSolid(slit,p=>bedSkin(p)+.7f,side,.7f,.45f,5),4);
-            }
+            BuildSculptOptics(rig.head,headShape,side);
         }
         foreach(var crest in d.crest??Array.Empty<Panel>())
         {
-            var crestShape=new SculptProfile(crest.outline,Mathf.Clamp(d.headDepth*.22f,4,7));
-            Part(rig.head,"Section-sculpted crown vane "+meshes.Count,SculptHull(crestShape,18,12),crest.material);
+            var polygon=Points(crest.outline);float minX=polygon.Min(p=>p.x),maxX=polygon.Max(p=>p.x);
+            float center=Center(polygon).x;
+            var vane=RvSolid(polygon,p=>1.2f*Mathf.Sin(Mathf.InverseLerp(minX,maxX,p.x)*Mathf.PI),1,Mathf.Clamp(d.headDepth*.085f,1.8f,2.8f),.65f,7);
+            Part(rig.head,"Swept bevelled crown vane "+meshes.Count,vane,crest.material);
         }
-        if(chrome)BuildChromeSegmentedCastings(rig,bodyMesh,headMesh);
+        if(d.id=="chrome_raven")BuildChromeDorsalMantle(rig,bodyShape);
         BuildSculptBeak(rig.head);
         BuildSculptWing(rig,-1,bodyMesh,out rig.leftWing,out rig.leftWingTip);
         BuildSculptWing(rig,1,bodyMesh,out rig.rightWing,out rig.rightWingTip);
         BuildSculptTail(rig,fan);BuildSculptTalons(rig,bodyShape);
     }
-    static void BuildChromeSegmentedCastings(SkyPulseNeonFinchPrototype rig,Mesh fuselage,Mesh helmet)
+    static void BuildChromeDorsalMantle(SkyPulseNeonFinchPrototype rig,SculptProfile profile)
     {
-        // The source's dark load-bearing casting shows through narrow seams
-        // between broad overlapping armour courses. These fitted sections break
-        // up the continuous egg highlight while staying connected to the hull.
-        var back=new[]{
+        // Three native-reference armour feathers sweep over the back instead
+        // of exposing the large, uniformly shaded envelope underneath them.
+        var courses=new[]{
             RvPoints(209,207,230,190,255,180,281,176,300,181,288,191,262,190,237,199,218,216),
             RvPoints(235,201,259,191,284,191,304,184,320,193,305,207,282,210,259,209,240,216),
             RvPoints(274,212,298,207,317,194,334,203,345,218,331,233,314,237,299,227,281,223)};
-        var neck=new[]{
-            RvPoints(329,209,341,205,354,217,365,232,367,242,356,246,346,234,336,222)};
-        var head=new[]{
-            RvPoints(335,173,346,162,362,162,381,169,399,180,412,191,402,187,386,178,365,172,348,174),
-            RvPoints(345,182,357,181,371,189,376,201,386,212,401,218,391,225,375,220,360,209,350,196)};
-        foreach(int side in new[]{-1,1})
-        {
-            var skin=RvSupport(fuselage,rig.body.position,side);int i=0;
-            foreach(var contour in back)Part(rig.body,"Chrome overlapping dorsal armour course "+side+" "+i++,RvSolid(contour,p=>skin(p)+1.0f,side,.85f,.55f,7),0);
-            i=0;foreach(var contour in neck)Part(rig.body,"Chrome connected neck and keel armour course "+side+" "+i++,RvSolid(contour,p=>skin(p)+1.1f,side,.8f,.55f,7),0);
-            var headSkin=RvSupport(helmet,rig.head.position,side);i=0;
-            foreach(var contour in head)Part(rig.head,"Chrome swept fitted helmet course "+side+" "+i++,RvSolid(contour,p=>headSkin(p)+.9f,side,.75f,.5f,6),0);
-        }
+        foreach(int side in new[]{-1,1})for(int i=0;i<courses.Length;i++)
+            SculptProfilePart(rig.body,"Chrome swept dorsal armour feather "+side+" "+i,profile,courses[i],side,i==1?1:0,1.95f+i*.38f,.65f,.50f,6);
     }
-    static void BuildSculptOptics(Transform head,Mesh helmet,int side)
+    static void BuildSculptOptics(Transform head,SculptProfile profile,int side)
     {
-        var d=design;var center=new Vector2(d.eye[0],d.eye[1]);var skin=RvSupport(helmet,head.position,side);
-        var outer=EyeContour(center,d.eye[2]*1.11f,d.eye[3]*1.12f,d.eyeShape);
-        // The stepped seat has a dark wall, metal lip and lowered fitted glass.
-        var housing=RvSolid(outer,p=>skin(p)+1.9f,side,2.25f,.75f,4);
-        Part(head,"Connected recessed optical housing "+side,housing,2);var housingSkin=RvSupport(housing,head.position,side);
-        var glassContour=EyeContour(center,d.eye[2]*.90f,d.eye[3]*.88f,d.eyeShape);
-        var glass=RvSolid(glassContour,p=>housingSkin(p)-.3f,side,.32f,.45f,3);
-        Part(head,"Seated dark optical glass "+side,glass,7);var glassSkin=RvSupport(glass,head.position,side);
-        Part(head,"Slim fitted optical retaining bezel "+side,SculptContourRim(outer,p=>housingSkin(p)+.05f,side,.95f,.65f),4);
+        var d=design;var center=new Vector2(d.eye[0],d.eye[1]);
+        var outer=EyeContour(center,d.eye[2]*1.05f,d.eye[3]*1.06f,d.eyeShape);
+        SculptProfilePart(head,"Connected recessed optical housing "+side,profile,outer,side,2,1.7f,1.2f,.65f,4);
+        var glassContour=EyeContour(center,d.eye[2]*.91f,d.eye[3]*.89f,d.eyeShape);
+        SculptProfilePart(head,"Seated dark optical glass "+side,profile,glassContour,side,7,3.01f,.24f,.35f,3);
+        Part(head,"Slim fitted optical retaining bezel "+side,SculptProfileRim(profile,outer,side,3.55f,.55f,.45f),d.eyeShape=="round"?4:2);
         var irisContour=EyeContour(center+new Vector2(d.eye[2]*.06f,0),d.eye[2]*.58f,d.eye[3]*.59f,d.eyeShape);
-        var iris=RvSolid(irisContour,p=>glassSkin(p)+.13f,side,.28f,.35f,3);Part(head,"Reference luminous iris "+side,iris,5);
-        var irisSkin=RvSupport(iris,head.position,side);
-        Part(head,"Seated optical emitter "+side,RvSolid(EyeContour(center+new Vector2(d.eye[2]*.13f,-d.eye[3]*.08f),d.eye[2]*.16f,d.eye[3]*.22f,d.eyeShape=="triangle"?"triangle":"round"),p=>irisSkin(p)+.10f,side,.20f,.18f,2),6);
-        // A separate brow casting shields the top of the sensor and ties it to
-        // the helmet. It follows the same support rather than hovering in space.
+        // Each coloured insert has a buried mounting stem. Keep the visible
+        // face at the same offset while its back penetrates the actual glass
+        // seat; touching coplanar faces are not a mechanical attachment.
+        SculptProfilePart(head,"Reference luminous iris "+side,profile,irisContour,side,5,3.10f,.51f,.25f,3);
+        SculptProfilePart(head,"Seated optical emitter "+side,profile,EyeContour(center+new Vector2(d.eye[2]*.13f,-d.eye[3]*.08f),d.eye[2]*.16f,d.eye[3]*.22f,d.eyeShape=="triangle"?"triangle":"round"),side,6,3.40f,.45f,.15f,2);
         var brow=RvPoints(center.x-d.eye[2]*1.2f,center.y-d.eye[3]*.72f,center.x-d.eye[2]*.70f,center.y-d.eye[3]*1.23f,center.x+d.eye[2]*.30f,center.y-d.eye[3]*.92f,center.x+d.eye[2]*1.04f,center.y-d.eye[3]*.17f,center.x+d.eye[2]*.72f,center.y-d.eye[3]*.34f,center.x-d.eye[2]*.23f,center.y-d.eye[3]*.76f);
-        Part(head,"Sculpted protective sensor brow "+side,RvSolid(brow,p=>Mathf.Max(skin(p)+1.1f,housingSkin(p)-.2f),side,.8f,.65f,5),d.headMaterial==3?4:d.headMaterial);
+        SculptProfilePart(head,"Sculpted protective sensor brow "+side,profile,brow,side,d.headMaterial==3?4:d.headMaterial,3.30f,.52f,.45f,5);
+    }
+    static Mesh SculptProfileRim(SculptProfile profile,Vector2[] contour,int side,float lift,float width,float height)
+    {
+        var domain=SculptPanelDomain(profile,contour);var p=Smooth(domain,domain.Length>10?1:4);var center=Center(p);var g=new G();int n=p.Length;
+        for(int j=0;j<8;j++)for(int i=0;i<n;i++)
+        {
+            var tangent=(p[(i+1)%n]-p[(i+n-1)%n]).normalized;var normal=new Vector2(-tangent.y,tangent.x);if(Vector2.Dot(normal,p[i]-center)<0)normal=-normal;
+            float a=j*Mathf.PI*2/8;g.Add(SculptNative(profile.FromDomain(p[i]+normal*(width*Mathf.Cos(a)),side,lift+height*Mathf.Sin(a))));
+        }
+        for(int j=0;j<8;j++)for(int i=0;i<n;i++)g.Quad(j*n+i,j*n+(i+1)%n,((j+1)%8)*n+(i+1)%n,((j+1)%8)*n+i);
+        return g.Finish("Closed profile-fitted optical retaining rim");
     }
     static Mesh SculptContourRim(Vector2[] contour,Func<Vector2,float> skin,int side,float width,float height)
     {
@@ -600,7 +704,7 @@ public static partial class SkyPulseBirdRosterWorkshop
     }
     static void BuildSculptWing(SkyPulseNeonFinchPrototype rig,int side,Mesh body,out Transform wing,out Transform tip)
     {
-        var d=design;var hub=d.wingRoot.V;var skin=RvSupport(body,rig.body.position,side);float depth=skin(hub);
+        var d=design;var identity=SculptIdentityFor(d.id);var hub=d.wingRoot.V;var skin=RvSupport(body,rig.body.position,side);float depth=skin(hub);
         float mount=depth+6.3f;var fan=Vector2.zero;foreach(var b in d.primaries)fan+=b.root.V;fan/=d.primaries.Length;
         wing=Joint(rig.body,(side<0?"03 Near":"04 Far")+" supported shoulder and flight arm",Point(hub,side*mount));
         tip=Joint(wing,"Cambered distal primary fan and coverts",Point(fan,side*(mount+3)));
@@ -616,8 +720,13 @@ public static partial class SkyPulseBirdRosterWorkshop
         if(Vector2.Distance(hub,fan)>6)
         {
             var a=new Vector3(hub.x,hub.y,side*(mount+.5f));var b=new Vector3(elbow.x,elbow.y,side*(mount+2));var c=new Vector3(fan.x,fan.y,fanZ);
-            Part(wing,"Continuous structural wing forearm "+side,SculptTube(new[]{a,b,c},6.6f,4.9f,4.9f,18,12),2);
-            Part(wing,"Sculpted forearm armour casting "+side,SculptTube(new[]{a+new Vector3(0,-1,side*1.4f),b+new Vector3(0,-1,side*1.4f),c},5,3.2f,3.5f,18,12),d.headMaterial==3?3:0);
+            Part(wing,"Continuous structural wing forearm "+side,SculptTube(new[]{a,b,c},4.6f,3.8f,3.8f,18,12),2);
+            // The casing must enclose the load-bearing member. In v4 its
+            // smaller radius buried it inside the chassis and exposed a rod.
+            Part(wing,"Enclosing tapered forearm armour casting "+side,SculptTube(new[]{a+new Vector3(0,-.5f,side*1.5f),b+new Vector3(0,-.5f,side*1.5f),c},7.1f,5.6f,5.7f,18,14),d.headMaterial==3?3:0);
+            var shoulderDirection=(b-a).normalized;var wristDirection=(c-b).normalized;
+            Part(wing,"Forearm seated shoulder ferrule "+side,SculptCuff(a+shoulderDirection*2,a+shoulderDirection*5,7.3f,6.2f,1.4f),4);
+            Part(wing,"Forearm wrist retaining ferrule "+side,SculptCuff(c-wristDirection*5,c-wristDirection*2,6.1f,5.2f,1.2f),4);
         }
         Part(tip,"Distal fan load-bearing comb "+side,SculptSpindle(fan,fanZ,8.7f,3.0f),2);
         Part(tip,"Distal fan machined retaining nut "+side,SculptSpindle(fan,fanZ+side*3,6.6f,1.2f,3.6f),4);
@@ -626,15 +735,15 @@ public static partial class SkyPulseBirdRosterWorkshop
             var b=d.primaries[i];float z=fanZ+side*(1.7f+i*1.35f);float span=10+Mathf.Min(11,Vector2.Distance(b.root.V,b.tip.V)*.044f);
             if(Vector2.Distance(fan,b.root.V)>2)
                 Part(tip,"Connected feather socket spar "+side+" "+i,SculptTube(new[]{new Vector3(fan.x,fan.y,fanZ),new Vector3(b.root.x,b.root.y,z)},2.6f,2,2,6,8),2);
-            Part(tip,"Primary "+side+" "+i+" solid cambered flight blade",SculptBlade(b,z,side,span,1.1f),b.material);
-            Part(tip,"Primary "+side+" "+i+" seated enamel face",SculptBladeInlay(b,z,side,span,1.1f),b.inset);
+            Part(tip,"Primary "+side+" "+i+" solid cambered flight blade",SculptBlade(b,z,side,span,.82f),b.material);
+            Part(tip,"Primary "+side+" "+i+" seated enamel face",SculptBladeInlay(b,z,side,span,.82f,.28f,.985f,identity.inlay),b.inset);
             // Two short overlapping rows make a continuous root mantle. Their
             // spacing and sweep come from this bird's measured primary axes.
             if(i<d.primaries.Length-1)
             {
-                var covert=SculptShortBlade(b,.42f,.73f);float covertZ=z+side*4.5f;
-                Part(tip,"Layered sculpted root covert "+side+" "+i,SculptBlade(covert,covertZ,side,span*.31f,.95f),i%3==0?4:d.bodyMaterial);
-                if(i%2==0)Part(tip,"Covert enamel detail "+side+" "+i,SculptBladeInlay(covert,covertZ,side,span*.31f,.95f,.18f,.77f,.54f),b.material);
+                var covert=SculptShortBlade(b,identity.covert,.68f);float covertZ=z+side*3.4f;
+                Part(tip,"Layered sculpted root covert "+side+" "+i,SculptBlade(covert,covertZ,side,span*.31f,.72f),i%3==0?4:d.bodyMaterial);
+                if(i%2==0)Part(tip,"Covert enamel detail "+side+" "+i,SculptBladeInlay(covert,covertZ,side,span*.31f,.72f,.27f,.95f,.61f),b.material);
             }
         }
         // Machined yoke fingers physically enclose the fan root, instead of a
@@ -677,10 +786,10 @@ public static partial class SkyPulseBirdRosterWorkshop
     {return SculptBladeInlay(b,z,1,span,thickness,begin,.86f,.67f,true);}
     static void BuildSculptTalons(SkyPulseNeonFinchPrototype rig,SculptProfile profile)
     {
-        var d=design;var c=Mean(d.body);float lower=Points(d.body).Max(p=>p.y);
+        var d=design;var c=Mean(d.body);profile.Section(c.x-12,out _,out float lower,out _);
         foreach(int side in new[]{-1,1})
         {
-            float x=c.x-12+(side>0?13:0),z=side*d.bodyDepth*.58f;var hip=new Vector2(x,lower-12);var ankle=new Vector2(x+5,lower+14);
+            float x=c.x-12+(side>0?13:0),z=side*profile.depth*.58f;var hip=new Vector2(x,lower-12);var ankle=new Vector2(x+5,lower+14);
             Part(rig.body,"Seated landing hip bearing "+side,SculptSpindle(hip,z,6.2f,4.7f),2);
             Part(rig.body,"Landing hip bearing cap "+side,SculptSpindle(hip,z+side*4.3f,4.6f,1.1f),4);
             var leg=new[]{new Vector3(hip.x,hip.y,z),new Vector3(x-3,lower+2,z),new Vector3(ankle.x,ankle.y,z)};

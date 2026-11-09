@@ -18,10 +18,25 @@ public static class SkyPulseRosterChecks
     const BindingFlags F=BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic;
     static readonly List<string> checks=new List<string>();
     static readonly List<BirdReport> birds=new List<BirdReport>();
+    const string Revision5Body="01 Sculpted continuous fuselage and flight bank v5";
+    static readonly float[] PhaseTimes={0,.4125f,.825f,1.2375f,1.65f};
+    static readonly float[] TurntableTimes={0,1,5,15,30};
     static string outputOverride;
     static string Output=>outputOverride??Path.Combine(Environment.GetEnvironmentVariable("SKYPULSE_QA_OUTPUT"),"roster");
     [Serializable] sealed class BirdReport{public string id,name,reference,sourceSha256;public int meshParts,vertices,triangles,openEdges,nonManifoldEdges;public float depth;public long warmAllocatedBytes;public string[] views;}
     [Serializable] sealed class Report{public string result,scope;public BirdReport[] birds;public string[] checks;public bool deviceTested;}
+    [Serializable] sealed class Stamp{public string path,sha256;}
+    [Serializable] sealed class RevisionChange{public string id,geometryBefore,geometryAfter,prefabBefore,prefabAfter;public bool alreadyRevision5;}
+    [Serializable] sealed class GenerationReport{public string result,revision,scope;public Stamp[] generatorSources,protectedInputs;public RevisionChange[] birds;public string[] checks;public bool deviceTested;}
+    [Serializable] sealed class MotionSample{public float time;public Quaternion rootDelta;public Vector3 rootPosition;public Quaternion[] jointDeltas;}
+    [Serializable] sealed class MotionBird{public string id,sourcePrefabSha256;public float flapPeriod,flapDegrees,bankDegrees,turntableDegreesPerSecond;public MotionSample[] phases,turntable;}
+    [Serializable] sealed class MotionReport{public string result,scope,baselineId;public MotionBird[] birds;public string[] checks;public bool deviceTested;}
+    sealed class Pose
+    {
+        public Quaternion root;public Vector3 rootPosition;public Quaternion[] rotations;public Vector3[] positions;
+        public Pose(SkyPulseNeonFinchPrototype rig,Transform[] joints)
+        {root=rig.transform.localRotation;rootPosition=rig.transform.localPosition;rotations=joints.Select(t=>t.localRotation).ToArray();positions=joints.Select(t=>t.localPosition).ToArray();}
+    }
     static object Get(object o,string n)=>o.GetType().GetField(n,F).GetValue(o);
     static void Set(object o,string n,object v)=>o.GetType().GetField(n,F).SetValue(o,v);
     static object Call(object o,string n,params object[] args)=>o.GetType().GetMethod(n,F).Invoke(o,args);
@@ -43,6 +58,123 @@ public static class SkyPulseRosterChecks
             EditorSceneManager.OpenScene("Assets/Scenes/SkyPulse.unity");PlayerPrefs.DeleteAll();PlayerPrefs.Save();SessionState.SetBool("Roster.GameQA",true);EditorApplication.EnterPlaymode();
         }
         catch(Exception e){Fail(e);}
+    }
+    // Explicit migration followed by disk readback; never enters gameplay or resets a save.
+    public static void RunRevision5Review()
+    {
+        if(Application.companyName!="SkyPulseQA20261006"||!Application.isBatchMode)throw new Exception("Disposable batch QA product required");
+        outputOverride=Path.Combine(Environment.GetEnvironmentVariable("SKYPULSE_QA_OUTPUT"),"roster-v5");
+        Directory.CreateDirectory(Output);checks.Clear();birds.Clear();SessionState.SetBool("Roster.GameQA",false);
+        foreach(string previous in new[]{"REVISION5-GENERATION.json","STUDIO-VALIDATION.json","MOTION-VALIDATION.json","FAILURE.txt"})
+        {string path=Path.Combine(Output,previous);if(File.Exists(path))File.Delete(path);}
+        try
+        {
+            EditorSceneManager.OpenScene("Assets/Scenes/SkyPulse.unity");
+            var designs=SkyPulseBirdRosterWorkshop.LoadDesigns();
+            Check(designs.Length==14&&designs.Select(d=>d.id).Distinct().Count()==14&&designs.All(d=>d.id!="neon_finch"),"Revision 4 migration targets exactly fourteen distinct non-Finch birds");
+            var sources=new[]{"Assets/Editor/SkyPulseBirdRosterWorkshop.cs","Assets/Editor/SkyPulseBirdRosterRaven.cs"}.ToDictionary(path=>path,Hash);
+            var protectedBefore=ProtectedSnapshot();var before=Snapshot();
+            var changes=designs.Select(d=>new RevisionChange{id=d.id,alreadyRevision5=HasRevision5Marker(d),geometryBefore=Hash(SkyPulseBirdRosterWorkshop.BirdFolder(d)+"/Geometry.asset"),prefabBefore=Hash(SkyPulseBirdRosterWorkshop.PrefabPath(d))}).ToArray();
+            SkyPulseBirdRosterWorkshop.ReviseRemainingRosterSculptures();
+            var after=Snapshot();var allowed=new HashSet<string>(designs.SelectMany(d=>new[]{SkyPulseBirdRosterWorkshop.BirdFolder(d)+"/Geometry.asset",SkyPulseBirdRosterWorkshop.PrefabPath(d)}),StringComparer.Ordinal);
+            Check(before.Count==after.Count&&before.Where(p=>!allowed.Contains(p.Key)).All(p=>after.ContainsKey(p.Key)&&after[p.Key]==p.Value),"Revision 4 changes only fourteen saved geometry/prefab files; palettes, scene bindings and every existing meta remain byte-identical");
+            Check(SameSnapshot(protectedBefore,ProtectedSnapshot()),"Revision 4 preserves every approved Finch workshop file and original roster artwork byte-for-byte");
+            // The generator has returned. Force a disk import before loading separate
+            // prefab contents and saved review scenes for all subsequent checks.
+            foreach(var d in designs)
+            {
+                AssetDatabase.ImportAsset(SkyPulseBirdRosterWorkshop.BirdFolder(d)+"/Geometry.asset",ImportAssetOptions.ForceUpdate|ImportAssetOptions.ForceSynchronousImport);
+                AssetDatabase.ImportAsset(SkyPulseBirdRosterWorkshop.PrefabPath(d),ImportAssetOptions.ForceUpdate|ImportAssetOptions.ForceSynchronousImport);
+                ReadBackRevision5(d);
+                var change=changes.Single(c=>c.id==d.id);change.geometryAfter=Hash(SkyPulseBirdRosterWorkshop.BirdFolder(d)+"/Geometry.asset");change.prefabAfter=Hash(SkyPulseBirdRosterWorkshop.PrefabPath(d));
+                Check(change.alreadyRevision5?change.geometryBefore==change.geometryAfter&&change.prefabBefore==change.prefabAfter:change.geometryBefore!=change.geometryAfter&&change.prefabBefore!=change.prefabAfter,"Saved Revision 4 geometry and prefab are "+(change.alreadyRevision5?"preserved on repeat: ":"newly generated before readback: ")+d.id);
+            }
+            var first=Snapshot();SkyPulseBirdRosterWorkshop.ReviseRemainingRosterSculptures();var second=Snapshot();
+            Check(SameSnapshot(first,second),"Repeated Revision 4 migration preserves every revised roster asset byte-for-byte and creates no duplicate");
+            Check(SameSnapshot(protectedBefore,ProtectedSnapshot()),"Repeated Revision 4 migration preserves Finch and original artwork byte-for-byte");
+            Check(sources.All(p=>Hash(p.Key)==p.Value),"Generator source bytes remain frozen through migration and saved-asset readback");
+            File.WriteAllText(Path.Combine(Output,"REVISION5-GENERATION.json"),JsonUtility.ToJson(new GenerationReport{result="PASS",revision="4",scope="Explicit guarded authoring migration and independent saved-prefab readback; source hashes identify the generator used. Appearance approval remains pending.",generatorSources=Stamps(sources),protectedInputs=Stamps(protectedBefore),birds=changes,checks=checks.ToArray(),deviceTested=false},true));
+            foreach(var d in designs)Inspect(d,true);
+            File.WriteAllText(Path.Combine(Output,"STUDIO-VALIDATION.json"),JsonUtility.ToJson(new Report{result="PASS",scope="Fourteen saved Revision 4 articulated solid-mesh candidates reopened after explicit generation. Strict geometry/optics checks and actual phase/turntable renders; owner appearance approval pending. No Play mode, save reset, build or device install.",birds=birds.ToArray(),checks=checks.ToArray(),deviceTested=false},true));
+            var motionBirds=InspectRosterMotion(designs);
+            Check(SameSnapshot(second,Snapshot())&&SameSnapshot(protectedBefore,ProtectedSnapshot()),"Readback, structural inspection, rendering and all fifteen motion checks leave saved candidates, Finch and artwork byte-identical");
+            File.WriteAllText(Path.Combine(Output,"MOTION-VALIDATION.json"),JsonUtility.ToJson(new MotionReport{result="PASS",scope="Actual saved Unity rigs sampled at shared absolute times with turntable enabled, including a full thirty-second revolution at 30/60/120 Hz. Sampling frequency is a correctness check, not measured device FPS. Appearance approval pending.",baselineId="neon_finch",birds=motionBirds,checks=checks.ToArray(),deviceTested=false},true));
+            Debug.Log("SKYPULSE_ROSTER_REVISION5_PASS: fourteen saved sculptures; fifteen Finch-matched motion rigs; appearance approval pending; "+Output);EditorApplication.Exit(0);
+        }
+        catch(Exception e){Fail(e);}
+    }
+    static Stamp[] Stamps(Dictionary<string,string> snapshot)=>snapshot.OrderBy(p=>p.Key,StringComparer.Ordinal).Select(p=>new Stamp{path=p.Key,sha256=p.Value}).ToArray();
+    static bool SameSnapshot(Dictionary<string,string> first,Dictionary<string,string> second)=>first.Count==second.Count&&first.All(p=>second.TryGetValue(p.Key,out var hash)&&hash==p.Value);
+    static Dictionary<string,string> ProtectedSnapshot()
+    {
+        string roster=SkyPulseBirdRosterWorkshop.Folder+"/";string artwork="Assets/Resources/SkyPulse/characters/roster";
+        var paths=Directory.GetFiles(SkyPulseBirdPrototypeWorkshop.Folder,"*",SearchOption.AllDirectories).Where(p=>!p.StartsWith(roster,StringComparison.Ordinal))
+            .Concat(Directory.GetFiles(artwork,"*",SearchOption.AllDirectories));
+        if(File.Exists(artwork+".meta"))paths=paths.Concat(new[]{artwork+".meta"});
+        return paths.Where(p=>Path.GetFileName(p)!=".DS_Store").OrderBy(p=>p,StringComparer.Ordinal).ToDictionary(p=>p,Hash);
+    }
+    static bool HasRevision5Marker(SkyPulseBirdRosterWorkshop.Design d)
+    {var prefab=AssetDatabase.LoadAssetAtPath<GameObject>(SkyPulseBirdRosterWorkshop.PrefabPath(d));var rig=prefab!=null?prefab.GetComponent<SkyPulseNeonFinchPrototype>():null;return rig!=null&&rig.body!=null&&rig.body.name==Revision5Body;}
+    static void ReadBackRevision5(SkyPulseBirdRosterWorkshop.Design d)
+    {
+        var root=PrefabUtility.LoadPrefabContents(SkyPulseBirdRosterWorkshop.PrefabPath(d));
+        try
+        {
+            var rig=root.GetComponent<SkyPulseNeonFinchPrototype>();
+            Check(rig!=null&&rig.body!=null&&rig.body.name==Revision5Body,"Independently reopened saved prefab has the exact Revision 4 body marker: "+d.id);
+            string geometry=SkyPulseBirdRosterWorkshop.BirdFolder(d)+"/Geometry.asset";
+            var owned=root.GetComponentsInChildren<MeshFilter>(true).Select(f=>AssetDatabase.GetAssetPath(f.sharedMesh)).Where(path=>path!=SkyPulseBirdJetWorkshop.MeshPath).ToArray();
+            Check(owned.Length>0&&owned.All(path=>path==geometry),"Saved Revision 4 prefab resolves its own canonical geometry without staging references: "+d.id);
+        }
+        finally{PrefabUtility.UnloadPrefabContents(root);}
+    }
+    static Transform[] MotionJoints(SkyPulseNeonFinchPrototype rig)=>new[]{rig.body,rig.head,rig.leftWing,rig.rightWing,rig.leftWingTip,rig.rightWingTip,rig.tail,rig.tailTip};
+    static bool SamePose(Pose first,Pose second)=>Quaternion.Angle(first.root,second.root)<.001f&&(first.rootPosition-second.rootPosition).sqrMagnitude<1e-12f&&first.rotations.Select((r,i)=>Quaternion.Angle(r,second.rotations[i])<.001f&&(first.positions[i]-second.positions[i]).sqrMagnitude<1e-12f).All(ok=>ok);
+    static bool Finite(Transform t)=>float.IsFinite(t.localPosition.x)&&float.IsFinite(t.localPosition.y)&&float.IsFinite(t.localPosition.z)&&float.IsFinite(t.localRotation.x)&&float.IsFinite(t.localRotation.y)&&float.IsFinite(t.localRotation.z)&&float.IsFinite(t.localRotation.w);
+    static MotionSample SampleMotion(SkyPulseNeonFinchPrototype rig,Transform[] joints,Pose bind,float time)
+    {
+        rig.SamplePose(time);
+        Check(Finite(rig.transform)&&joints.All(Finite),"Finite root and eight-joint pose at "+time+" seconds: "+rig.name);
+        return new MotionSample{time=time,rootDelta=Quaternion.Inverse(bind.root)*rig.transform.localRotation,rootPosition=rig.transform.localPosition,jointDeltas=joints.Select((t,i)=>Quaternion.Inverse(bind.rotations[i])*t.localRotation).ToArray()};
+    }
+    static MotionBird[] InspectRosterMotion(SkyPulseBirdRosterWorkshop.Design[] designs)
+    {
+        var sources=new[]{new KeyValuePair<string,string>("neon_finch",SkyPulseBirdPrototypeWorkshop.PrefabPath)}.Concat(designs.Select(d=>new KeyValuePair<string,string>(d.id,SkyPulseBirdRosterWorkshop.PrefabPath(d)))).ToArray();
+        var reports=new List<MotionBird>();MotionBird baseline=null;
+        foreach(var source in sources)
+        {
+            var root=PrefabUtility.LoadPrefabContents(source.Value);
+            try
+            {
+                var rig=root.GetComponent<SkyPulseNeonFinchPrototype>();Check(rig!=null,"Saved motion source has its rig: "+source.Key);
+                var joints=MotionJoints(rig);Check(joints.All(t=>t!=null)&&joints.Distinct().Count()==8,"Saved motion source has eight distinct joints: "+source.Key);
+                if(baseline==null)Check(rig.flapPeriod==1.65f&&rig.flapDegrees==28&&rig.bankDegrees==5&&rig.turntableDegreesPerSecond==12,"Approved Finch establishes the 1.65-second, 28-degree flap, 5-degree bank and 12-degree/second turntable baseline");
+                else Check(rig.flapPeriod==baseline.flapPeriod&&rig.flapDegrees==baseline.flapDegrees&&rig.bankDegrees==baseline.bankDegrees&&rig.turntableDegreesPerSecond==baseline.turntableDegreesPerSecond,"Saved flap, bank and turntable settings exactly match approved Finch: "+source.Key);
+                rig.animate=false;rig.turntable=true;rig.reducedMotion=false;rig.ResetPose();var bind=new Pose(rig,joints);
+                var report=new MotionBird{id=source.Key,sourcePrefabSha256=Hash(source.Value),flapPeriod=rig.flapPeriod,flapDegrees=rig.flapDegrees,bankDegrees=rig.bankDegrees,turntableDegreesPerSecond=rig.turntableDegreesPerSecond};
+                report.phases=PhaseTimes.Select(time=>SampleMotion(rig,joints,bind,time)).ToArray();
+                Check(Quaternion.Angle(report.phases[0].jointDeltas[2],report.phases[1].jointDeltas[2])>20&&Quaternion.Angle(report.phases[1].jointDeltas[2],report.phases[3].jointDeltas[2])>50&&Quaternion.Angle(report.phases[0].jointDeltas[2],report.phases[4].jointDeltas[2])<.001f,"Quarter-cycle phases prove a moving 28-degree wing stroke and 1.65-second return: "+source.Key);
+                Check(Quaternion.Angle(report.phases[1].jointDeltas[3],report.phases[3].jointDeltas[3])>50&&Quaternion.Angle(report.phases[0].jointDeltas[4],report.phases[1].jointDeltas[4])>1&&Quaternion.Angle(report.phases[0].jointDeltas[6],report.phases[1].jointDeltas[6])>.05f&&Quaternion.Angle(report.phases[0].jointDeltas[7],report.phases[1].jointDeltas[7])>.05f,"Both wings, distal fan and two-joint tail articulate through the shared flight phases: "+source.Key);
+                if(baseline!=null)Check(report.phases.Select((sample,p)=>sample.jointDeltas.Select((rotation,j)=>Quaternion.Angle(rotation,baseline.phases[p].jointDeltas[j])<.001f).All(ok=>ok)).All(ok=>ok),"All eight sampled joint motions match approved Finch at every shared absolute phase: "+source.Key);
+                report.turntable=TurntableTimes.Select(time=>SampleMotion(rig,joints,bind,time)).ToArray();
+                Check(report.turntable.All(sample=>Quaternion.Angle(sample.rootDelta,Quaternion.Euler(0,sample.time*12,0))<.001f&&(sample.rootPosition-bind.rootPosition).sqrMagnitude<1e-12f),"Actual turntable root yaw is 0/12/60/180/360 degrees at 0/1/5/15/30 seconds without translation: "+source.Key);
+                rig.SamplePose(30);var endpoint=new Pose(rig,joints);
+                foreach(int fps in new[]{30,60,120})
+                {
+                    rig.ResetPose();for(int frame=0;frame<=fps*30;frame++)rig.SamplePose(frame/(float)fps);
+                    Check(SamePose(endpoint,new Pose(rig,joints)),"Thirty-second absolute root/joint endpoint agrees at "+fps+" Hz: "+source.Key);
+                }
+                rig.SamplePose(1.2375f);var deterministic=new Pose(rig,joints);rig.SamplePose(5);rig.SamplePose(1.2375f);
+                Check(SamePose(deterministic,new Pose(rig,joints)),"Root and all joints sample independently of previous absolute time: "+source.Key);
+                rig.reducedMotion=true;rig.SamplePose(0);var reduced=new Pose(rig,joints);
+                Check(SamePose(bind,reduced),"Reduced Motion returns the turntable root and every joint to the captured bind pose: "+source.Key);
+                foreach(float time in PhaseTimes.Concat(TurntableTimes)){rig.SamplePose(time);Check(SamePose(reduced,new Pose(rig,joints)),"Reduced Motion holds root translation/rotation and all joints steady at "+time+" seconds: "+source.Key);}
+                reports.Add(report);if(baseline==null)baseline=report;
+            }
+            finally{PrefabUtility.UnloadPrefabContents(root);}
+        }
+        Check(reports.Count==15&&reports.Select(r=>r.id).Distinct().Count()==15,"All fifteen saved rigs pass the same approved-Finch motion and turntable checks");
+        return reports.ToArray();
     }
     // A focused local sculpture review; never enters gameplay or resets a player save.
     public static void RunRavenReview()
@@ -80,11 +212,12 @@ public static class SkyPulseRosterChecks
         File.WriteAllText(Path.Combine(Output,"WINDOW-VALIDATION.json"),"{\"result\":\"PASS\",\"scope\":\"Preview EditorWindow instantiates and resolves its Unity script identity; native UI interaction remains unverified\"}");
         Debug.Log("SKYPULSE_ROSTER_WINDOW_PASS: preview window has a valid Unity script identity");EditorApplication.Exit(0);
     }
-    static void Inspect(SkyPulseBirdRosterWorkshop.Design d)
+    static void Inspect(SkyPulseBirdRosterWorkshop.Design d,bool requireRevision5=false)
     {
         Check(Hash("Assets/Resources/SkyPulse/characters/roster/"+d.reference+".png")==d.sourceSha256,"Original source evidence unchanged: "+d.id);
         EditorSceneManager.OpenScene(SkyPulseBirdRosterWorkshop.ScenePath(d));var rig=UnityEngine.Object.FindAnyObjectByType<SkyPulseNeonFinchPrototype>();
         Check(rig!=null&&rig.GetComponentsInChildren<SpriteRenderer>().Length==0&&rig.GetComponentsInChildren<Collider2D>().Length==0,"Solid inspection rig without image-plane bird or gameplay collider: "+d.id);
+        if(requireRevision5)Check(rig.body!=null&&rig.body.name==Revision5Body,"Reopened saved review scene resolves the exact Revision 4 sculpture: "+d.id);
         rig.animate=false;rig.turntable=false;rig.reducedMotion=false;rig.ResetPose();
         var filters=rig.GetComponentsInChildren<MeshFilter>();var renderers=rig.GetComponentsInChildren<MeshRenderer>();
         var own=filters.Where(f=>AssetDatabase.GetAssetPath(f.sharedMesh).StartsWith(SkyPulseBirdRosterWorkshop.BirdFolder(d)+"/",StringComparison.Ordinal)).Select(f=>f.sharedMesh).Distinct().ToArray();
@@ -150,6 +283,10 @@ public static class SkyPulseRosterChecks
             void Frame(string file,Vector3 direction,float time)
             {rig.SamplePose(time);camera.transform.position=bounds.center+direction.normalized*cameraDistance;camera.transform.LookAt(bounds.center,Vector3.up);Save(camera,target,pixels,Path.Combine(folder,file));paths.Add(file);}
             Frame("Side.png",new Vector3(.06f,.03f,-1),0);Frame("ThreeQuarter.png",new Vector3(.8f,.35f,-1),0);Frame("Reverse.png",new Vector3(.2f,.1f,1),0);
+            for(int i=0;i<PhaseTimes.Length;i++)Frame("Phase-"+i.ToString("00")+".png",new Vector3(.15f,.08f,-1),PhaseTimes[i]);
+            rig.turntable=true;
+            foreach(float time in TurntableTimes)Frame("Turntable-"+((int)time).ToString("00")+"s.png",new Vector3(.15f,.08f,-1),time);
+            rig.turntable=false;
             var motion=Path.Combine(folder,"motion");Directory.CreateDirectory(motion);
             for(int i=0;i<60;i++){rig.SamplePose(i/30f);camera.transform.position=bounds.center+new Vector3(.15f,.08f,-1).normalized*cameraDistance;camera.transform.LookAt(bounds.center,Vector3.up);Save(camera,target,pixels,Path.Combine(motion,i.ToString("000")+".png"));}
         }
