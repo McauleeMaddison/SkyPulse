@@ -16,9 +16,12 @@ public static class SkyPulseBirdRosterPreview
     const int Layer=26;
     static readonly string[] Sprites={"birdRenderer","birdFlapRenderer","birdRiseRenderer","birdParallaxRenderer","birdSafetyRenderer","birdDepthRenderer"};
     static readonly Dictionary<SpriteRenderer,bool> originals=new Dictionary<SpriteRenderer,bool>();
-    static GameObject holder;static SkyPulseNeonFinchPrototype rig;static string loaded;static float lastSample,flapStart,lastWing;
+    static GameObject holder;static SkyPulseNeonFinchPrototype rig;static string loaded;
+    static float activeFlightTime,lastSample;static int sampledFrame=-1,observedRunSerial=int.MinValue;
+    static bool clockWasPlaying;static SkyPulseNativeGame observedGame;
     static SkyPulseBirdRosterWorkshop.Design[] designs;
     public static SkyPulseNeonFinchPrototype CurrentRig=>rig;
+    public static float CurrentFlightTime=>activeFlightTime;
     public static float TimeOverride=-1;
     public static bool Enabled=>SessionState.GetBool(ActiveKey,false);
     public static string SelectedId=>SessionState.GetString(BirdKey,"");
@@ -30,7 +33,25 @@ public static class SkyPulseBirdRosterPreview
         AssemblyReloadEvents.beforeAssemblyReload+=Clear;
     }
     public static void Select(string id,bool enabled)
-    {SessionState.SetString(BirdKey,id??"");SessionState.SetBool(ActiveKey,enabled);if(!enabled)Clear();}
+    {
+        string requested=id??"";bool changed=requested!=SelectedId||enabled!=Enabled;
+        SessionState.SetString(BirdKey,requested);SessionState.SetBool(ActiveKey,enabled);
+        // A manual selection clears any old still-capture override.
+        TimeOverride=-1;
+        if(!enabled||changed)Clear();
+    }
+    /// <summary>One active-game clock tick per rendered frame; repeated camera renders never double it.</summary>
+    public static float AdvanceFlightClock(int frame,float deltaTime,bool playing)
+    {
+        if(frame==sampledFrame){clockWasPlaying=playing;return activeFlightTime;}
+        // The first frame establishes the epoch. A resumed frame also starts
+        // from the held pose, so time spent paused never jumps the wings ahead.
+        if(sampledFrame>=0&&playing&&clockWasPlaying&&float.IsFinite(deltaTime))
+            activeFlightTime+=Mathf.Clamp(deltaTime,0f,.1f);
+        sampledFrame=frame;clockWasPlaying=playing;return activeFlightTime;
+    }
+    public static void ResetFlightClock()
+    {activeFlightTime=lastSample=0f;sampledFrame=-1;clockWasPlaying=false;}
     public static void BeforeCamera(Camera camera)
     {
         if(!Enabled||!EditorApplication.isPlaying)return;
@@ -43,12 +64,12 @@ public static class SkyPulseBirdRosterPreview
         if(!Enabled)return;
         if(forcedTime<0&&TimeOverride>=0)forcedTime=TimeOverride;
         string state=Get(game,"state").ToString();bool visible=(state=="Playing"||state=="Paused")&&(SkyPulseMode)Get(game,"activeMode")!=SkyPulseMode.BlackoutProtocol;
-        if(!visible){if(holder!=null)holder.SetActive(false);RestoreSprites();return;}
+        if(!visible){if(holder!=null)holder.SetActive(false);RestoreSprites();ResetFlightClock();return;}
         var bird=(Transform)Get(game,"bird");if(bird==null)return;
         string id=SelectedId;if(string.IsNullOrEmpty(id))id=(string)Get(Get(game,"equippedSkin"),"Id");
-        if(holder==null||loaded!=id)
+        if(holder==null||loaded!=id||holder.transform.parent!=bird)
         {
-            Clear();designs=designs??SkyPulseBirdRosterWorkshop.LoadDesigns();
+            DisposeModel();ResetFlightClock();designs=designs??SkyPulseBirdRosterWorkshop.LoadDesigns();
             var design=designs.FirstOrDefault(d=>d.id==id);
             if(design==null&&id!="neon_finch")
             {string art=(string)Get(Get(game,"equippedSkin"),"ArtPath");design=designs.FirstOrDefault(d=>art!=null&&art.EndsWith(d.reference,StringComparison.Ordinal));}
@@ -60,17 +81,24 @@ public static class SkyPulseBirdRosterPreview
             float scale=2.30f/Mathf.Max(.01f,bounds.size.x);holder.transform.localScale=Vector3.one*scale;holder.transform.localRotation=Quaternion.Euler(0,-9,0);
             foreach(var t in holder.GetComponentsInChildren<Transform>(true))t.gameObject.layer=Layer;
             CreateLight(new Vector3(-2,4,-4),1.2f);CreateLight(new Vector3(2,1,3),.65f);
-            loaded=id;flapStart=Time.unscaledTime;lastWing=0;
+            loaded=id;
         }
+        var serial=Get(game,"editorFlightRunSerial");int runSerial=serial is int value?value:0;
+        if(observedGame!=game||observedRunSerial!=runSerial)
+        {ResetFlightClock();observedGame=game;observedRunSerial=runSerial;}
         holder.SetActive(true);rig.reducedMotion=(bool)Get(game,"reduceMotionEnabled");
-        float wing=(float)Get(game,"wingTimer");if(wing<lastWing)flapStart=Time.unscaledTime;lastWing=wing;
-        if(forcedTime>=0)lastSample=forcedTime;else if(state!="Paused")lastSample=Time.unscaledTime-flapStart;
-        rig.SamplePose(lastSample);
+        // Input changes the real flight impulse. It must not restart this slow
+        // articulated cycle: frequent taps previously trapped it in upstroke.
+        lastSample=forcedTime>=0?forcedTime:AdvanceFlightClock(Time.frameCount,Time.unscaledDeltaTime,state=="Playing");
+        rig.SampleFlightPose(lastSample);
         foreach(string name in Sprites)
         {var renderer=Get(game,name) as SpriteRenderer;if(renderer==null)continue;if(!originals.ContainsKey(renderer))originals.Add(renderer,renderer.enabled);renderer.enabled=false;}
     }
     static void CreateLight(Vector3 at,float intensity)
     {var o=new GameObject("Preview-only bird studio light",typeof(Light));o.transform.SetParent(holder.transform,false);o.transform.localPosition=at;o.transform.LookAt(holder.transform.position);var light=o.GetComponent<Light>();light.type=LightType.Directional;light.cullingMask=1<<Layer;light.color=Color.white;light.intensity=intensity;light.shadows=LightShadows.None;}
     static void RestoreSprites(){foreach(var pair in originals)if(pair.Key!=null)pair.Key.enabled=pair.Value;originals.Clear();}
-    public static void Clear(){RestoreSprites();if(holder!=null)UnityEngine.Object.DestroyImmediate(holder);holder=null;rig=null;loaded=null;}
+    static void DisposeModel()
+    {RestoreSprites();if(holder!=null)UnityEngine.Object.DestroyImmediate(holder);holder=null;rig=null;loaded=null;}
+    public static void Clear()
+    {DisposeModel();ResetFlightClock();observedGame=null;observedRunSerial=int.MinValue;TimeOverride=-1;}
 }

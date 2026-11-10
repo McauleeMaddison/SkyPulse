@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace SkyPulse.Mobile
 {
-    /// <summary>Standalone art-review rig. Never installed on a gameplay bird.</summary>
+    /// <summary>Articulated art-review rig; gameplay inspection uses a separate flight-pose sampler.</summary>
     [ExecuteAlways, DisallowMultipleComponent]
     public sealed class SkyPulseNeonFinchPrototype : MonoBehaviour
     {
@@ -54,19 +54,39 @@ namespace SkyPulse.Mobile
             if (!ready) CaptureBindPose();
             // Absolute time makes the same pose reproducible at any frame rate.
             float phase = time * (Mathf.PI * 2f / Mathf.Max(.1f, flapPeriod));
-            float stroke = Mathf.Sin(phase), follow = Mathf.Sin(phase - .53f);
             float amount = reducedMotion ? 0f : 1f;
             transform.localRotation = bindRootRotation * Quaternion.Euler(0, turntable && !reducedMotion ? time * turntableDegreesPerSecond : 0, 0);
             transform.localPosition = bindRootPosition;
             Set(0, 0, 0, Mathf.Sin(phase * .31f) * bankDegrees * amount);
             Set(1, 0, Mathf.Sin(phase * .23f) * 2f * amount, -Mathf.Sin(phase * .5f) * 1.5f * amount);
+            SampleWings(phase, amount);
+            Set(6, Mathf.Sin(phase * .5f) * 3f * amount, Mathf.Sin(phase * .41f) * 4f * amount, Mathf.Sin(phase - .6f) * 4f * amount);
+            Set(7, 0, Mathf.Sin(phase * .41f - .4f) * 5f * amount, Mathf.Sin(phase - .9f) * 5f * amount);
+            SampleJet(time);
+        }
+
+        /// <summary>
+        /// Flight keeps a complete stroke between taps. Reduced Motion removes
+        /// ambient banking, head/tail motion and jet shimmer, while retaining a
+        /// restrained wing stroke as essential feedback that the bird is flying.
+        /// The Studio sampler and saved bind pose retain their existing behaviour.
+        /// </summary>
+        public void SampleFlightPose(float activeSeconds)
+        {
+            bool studioTurntable = turntable;
+            turntable = false;
+            SamplePose(activeSeconds);
+            turntable = studioTurntable;
+            if (reducedMotion)
+                SampleWings(activeSeconds * (Mathf.PI * 2f / Mathf.Max(.1f, flapPeriod)), .60f);
+        }
+        void SampleWings(float phase, float amount)
+        {
+            float stroke = Mathf.Sin(phase), follow = Mathf.Sin(phase - .53f);
             Set(2, stroke * flapDegrees * amount, Mathf.Sin(phase) * 3f * amount, 0);
             Set(3, -stroke * flapDegrees * amount, -Mathf.Sin(phase) * 3f * amount, 0);
             Set(4, follow * 13f * amount, 0, follow * 4f * amount);
             Set(5, -follow * 13f * amount, 0, follow * 4f * amount);
-            Set(6, Mathf.Sin(phase * .5f) * 3f * amount, Mathf.Sin(phase * .41f) * 4f * amount, Mathf.Sin(phase - .6f) * 4f * amount);
-            Set(7, 0, Mathf.Sin(phase * .41f - .4f) * 5f * amount, Mathf.Sin(phase - .9f) * 5f * amount);
-            SampleJet(time);
         }
 
         /// <summary>Absolute shader time, smooth flap-linked thrust, and motion amount.</summary>

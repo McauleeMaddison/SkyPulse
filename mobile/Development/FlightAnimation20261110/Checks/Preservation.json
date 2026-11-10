@@ -1,0 +1,16 @@
+{
+  "result": "PASS",
+  "baselineCommit": "2f93064",
+  "protectedArtFiles": 672,
+  "shippingGameplayOutsideEditorBlocksUnchanged": true,
+  "savedPlayerPreferencesChanged": false,
+  "geometryOrMaterialsRegenerated": false,
+  "deviceBuildPerformed": false,
+  "publicReviewSubmitted": false,
+  "sourceHashes": {
+    "mobile/Assets/Editor/SkyPulseBirdRosterPreview.cs": "8be0c3450bd1bfdd56c043765b98e6c7afa82ee47cc23d187cbc59ca549fc190",
+    "mobile/Assets/Scripts/SkyPulseNativeGame.cs": "41174c7a8920fa0ea506cfa1d8a2ec5b30a3f03642bdffda8fc34b0022546b69",
+    "mobile/Assets/Scripts/SkyPulseNeonFinchPrototype.cs": "1ec9dcbce28fcc317570cb8c9fd5c0d71028e8b68b4cc74fbf85d55dfa8462fb",
+    "mobile/Tools/SkyPulseFlapChecks.cs": "619648265e027c174feb03ab868a98c3c7b296074aeb1c630c1f1a276c1140a5"
+  }
+}

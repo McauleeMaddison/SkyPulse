@@ -6,6 +6,14 @@ Open **`mobile/` in Unity Hub** and the repository folder in VS Code. The shippi
 scene is `mobile/Assets/Scenes/SkyPulse.unity`. Start with the
 [editing map](EDITING_GUIDE.md) before changing code.
 
+## Latest local repair — 10 November 2026
+
+The [wing-flap repair](Development/FlightAnimation20261110/README.md) reproduces and
+fixes tap-triggered starvation in the Editor-only solid bird preview. It retains
+an essential stroke in Reduced Motion, holds pause poses and resets per run.
+The source-specific actual-gameplay regression passed 993 checks. No saved art or
+shipping flight forces changed. Build 19 and the owner visual-approval hold remain.
+
 ## Latest local work — 9 November 2026
 
 Start with the [current polish record](Development/GameplayPolish20261109/README.md)

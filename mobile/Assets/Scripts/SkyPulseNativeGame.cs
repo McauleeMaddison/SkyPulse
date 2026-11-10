@@ -1108,6 +1108,10 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
         private float birdVelocity;
         private float birdTilt;
         private float birdTiltVelocity;
+#if UNITY_EDITOR
+        // Visual review run identity: taps never reset the 3D wing clock.
+        private int editorFlightRunSerial;
+#endif
         private float wingTimer;
 
         // Shared gameplay wing controller for every authored bird.  The active
@@ -3786,6 +3790,9 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
 
         private void BeginFlight()
         {
+#if UNITY_EDITOR
+            unchecked { editorFlightRunSerial++; }
+#endif
             ResetFlightEnvironment();
             scoreBurstTimer = 0f;
             if (scoreBurstText != null) scoreBurstText.gameObject.SetActive(false);

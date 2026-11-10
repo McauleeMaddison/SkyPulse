@@ -1,5 +1,10 @@
 # SkyPulse Arcade
 
+The [10 November wing-flap repair](mobile/Development/FlightAnimation20261110/README.md)
+corrects the Editor 3D preview clock under repeated taps, pause/resume and retries.
+Actual gameplay regression checks now cover the camera callback instead of relying
+on forced-time art poses. New physical-device work remains on hold for visual approval.
+
 The [9 November local polish](mobile/Development/GameplayPolish20261109/README.md)
 adds Crystal Echo and Route Lens to Endless Route, with updated help and bounded
 once-only rewards. It also gives Chromaflux and Virex clearer source-specific

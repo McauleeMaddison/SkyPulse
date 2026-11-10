@@ -314,3 +314,13 @@ reference X/Y and optical front vertices are preserved. The new [3D previews](De
 include opposite-side, underside, neutral-material and wireframe inspections.
 Visual acceptance and device testing remain pending. No gameplay replacement or
 new App Store build was performed.
+
+## Live 3D flight animation
+
+The Editor roster preview uses a continuous active-flight clock sampled once per
+rendered frame. Do not reset it from `wingTimer`: each tap resets that impulse
+timer and would trap the slower mechanical stroke in its opening phase.
+`SampleFlightPose` retains essential wing movement during gameplay in Reduced
+Motion; `SamplePose` keeps the existing Studio behaviour. The Editor-only run
+serial resets the preview cleanly on retry, without adding a save key or changing
+shipping input. See `Tools/SkyPulseFlapChecks.cs` for actual input-to-camera tests.
