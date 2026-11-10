@@ -23,7 +23,19 @@ public sealed class SkyPulseBirdRosterPreviewWindow:EditorWindow
     string previewError;
 
     [MenuItem("Tools/SkyPulse/Bird Workshop/3D roster in actual gameplay")]
-    public static void Open(){ShowTab(1);}
+    public static void Open()
+    {
+        // Opening the gameplay preview must actually enable its solid bird.
+        // Keep the chosen model; gameplay stats and player preferences are untouched.
+        SkyPulseBirdRosterPreview.Select(SkyPulseBirdRosterPreview.SelectedId, true);
+        ShowTab(1);
+    }
+    [MenuItem("Tools/SkyPulse/Bird Workshop/3D roster in actual gameplay", true)]
+    static bool ValidateGameplayPreview()
+    {
+        Menu.SetChecked("Tools/SkyPulse/Bird Workshop/3D roster in actual gameplay", SkyPulseBirdRosterPreview.Enabled);
+        return true;
+    }
     [MenuItem("Tools/SkyPulse/Bird Workshop/3D bird studio")]
     public static void OpenStudio(){ShowTab(0);}
     static void ShowTab(int value)
@@ -71,7 +83,7 @@ public sealed class SkyPulseBirdRosterPreviewWindow:EditorWindow
         if(old!=selected||enabled!=SkyPulseBirdRosterPreview.Enabled)SkyPulseBirdRosterPreview.Select(gameIds[selected],enabled);
         if(GUILayout.Button("Open SkyPulse game scene"))
         {if(!EditorApplication.isPlaying&&EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())EditorSceneManager.OpenScene("Assets/Scenes/SkyPulse.unity");}
-        GUILayout.Label("Enter Endless Route or Pulse Relay and press Play.\nUse the dropdown to inspect any saved model.",EditorStyles.wordWrappedLabel);
+        GUILayout.Label("Home, Hangar and both flight modes show the saved 3D birds.\nUse the dropdown to inspect a model without changing its stats.",EditorStyles.wordWrappedLabel);
         if(GUILayout.Button("Stop 3D visual preview"))SkyPulseBirdRosterPreview.Select("",false);
     }
     void DrawStudio()

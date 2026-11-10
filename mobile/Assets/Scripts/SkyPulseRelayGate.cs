@@ -15,14 +15,20 @@ namespace SkyPulse.Mobile
         public const int RearOrder = 10, FrontOrder = 20;
         public MeshRenderer RearSurface { get; private set; }
         public MeshRenderer FrontSurface { get; private set; }
+        public MeshRenderer PassageSurface { get; private set; }
+        public float PassageProgress { get; private set; }
         public const float InnerRadius = RelaySession.ApertureHalfHeight;
         const int Segments = 96;
         static readonly Vector3 Across = new Vector3(.46f, 0, -.887919f);
         static readonly Vector3 Axis = new Vector3(.887919f, 0, .46f);
         static readonly int OpenId = Shader.PropertyToID("_Open"), ClockId = Shader.PropertyToID("_Clock"), PulseId = Shader.PropertyToID("_Pulse"), AccentId = Shader.PropertyToID("_Accent"),ChargeId=Shader.PropertyToID("_Charge");
         public float ChargeFraction { get; private set; }
-        Mesh rearMesh, frontMesh;
-        Material metal;
+        Mesh rearMesh, frontMesh, passageMesh;
+        Material metal,passageLight;
+        MaterialPropertyBlock passageProperties;
+        float passageAt;bool passageObserved;
+        const float PassageSeconds=.48f;
+        static readonly int PassageVisibilityId=Shader.PropertyToID("_Visibility");
 
         // Temporary construction buffers exist only while a course is created.
         sealed class Geometry
@@ -99,7 +105,42 @@ namespace SkyPulse.Mobile
             metal.SetColor(AccentId, exit ? new Color(.24f,1,.65f) : new Color(.12f,.58f,1));
             RearSurface = Surface("Far shell · behind pilot", rearMesh, RearOrder);
             FrontSurface = Surface("Near lip · in front of pilot", frontMesh, FrontOrder);
+            BuildPassageWave();
             SetVisual(exit, 0, 0);
+        }
+
+        void BuildPassageWave()
+        {
+            // A real annular mesh outside the bore, pooled once per gate. The
+            // visual observes a successful pass; it never controls collision.
+            var geometry=new Geometry();
+            for(int i=0;i<Segments;i++)
+            {
+                var a=Radial(i*Mathf.PI*2/Segments);var b=Radial((i+1)*Mathf.PI*2/Segments);
+                geometry.Quad(a*(InnerRadius+.10f),b*(InnerRadius+.10f),b*(InnerRadius+.135f),a*(InnerRadius+.135f),-Axis,new Color(.30f,.82f,1,1),0,-Axis);
+            }
+            passageMesh=geometry.Finish("Pooled clear-passage optical wave");
+            passageLight=new Material(Resources.Load<Shader>("SkyPulse/Shaders/HeistOptics")){name="Relay passage light",renderQueue=3000};
+            passageLight.SetColor("_BaseColor",new Color(.08f,.40f,.72f,.20f));passageLight.SetColor("_GlowColor",new Color(.24f,.80f,1));
+            passageLight.SetFloat("_Energy",.72f);passageLight.SetFloat("_Glass",1);passageLight.SetFloat("_Hologram",1);passageLight.SetFloat("_ZWrite",0);
+            PassageSurface=Surface("Clear-passage wave · outside opening",passageMesh,FrontOrder+1);PassageSurface.sharedMaterial=passageLight;
+            passageProperties=new MaterialPropertyBlock();PassageSurface.enabled=false;
+        }
+        public void SetPassage(bool passed,float clock,bool reducedMotion)
+        {
+            if(PassageSurface==null)return;
+            if(!passed){passageObserved=false;passageAt=0;PassageProgress=0;PassageSurface.enabled=false;return;}
+            if(!passageObserved){passageObserved=true;passageAt=clock;}
+            // Reducing motion consumes the visual event, preventing an old wave
+            // from reappearing if the setting is switched back later.
+            if(reducedMotion)passageAt=clock-PassageSeconds;
+            PassageProgress=Mathf.Clamp01((clock-passageAt)/PassageSeconds);
+            bool visible=!reducedMotion&&PassageProgress<1;PassageSurface.enabled=visible;
+            if(!visible)return;
+            float spread=Mathf.SmoothStep(0,1,PassageProgress);
+            PassageSurface.transform.localScale=Vector3.one*(1+spread*.18f);
+            passageProperties.Clear();passageProperties.SetFloat(PassageVisibilityId,(1-PassageProgress)*(1-PassageProgress)*.70f);
+            PassageSurface.SetPropertyBlock(passageProperties);
         }
 
         MeshRenderer Surface(string name, Mesh mesh, int order)
@@ -163,7 +204,7 @@ namespace SkyPulse.Mobile
         }
         void OnDestroy()
         {
-            if(rearMesh!=null)Destroy(rearMesh);if(frontMesh!=null)Destroy(frontMesh);if(metal!=null)Destroy(metal);
+            if(rearMesh!=null)Destroy(rearMesh);if(frontMesh!=null)Destroy(frontMesh);if(passageMesh!=null)Destroy(passageMesh);if(metal!=null)Destroy(metal);if(passageLight!=null)Destroy(passageLight);
         }
     }
 }

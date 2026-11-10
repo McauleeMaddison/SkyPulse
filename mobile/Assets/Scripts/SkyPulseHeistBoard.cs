@@ -288,9 +288,11 @@ namespace SkyPulse.Mobile
             {
                 var beam=visible.Beams[i];var a=Point(beam.From);var d=Direction(beam.Direction);var b=beam.To>=0?Point(beam.To):a+d*.68f;
                 if(beam.Blocked&&beam.To>=0)b=Vector2.Lerp(a,b,.65f);var hue=beam.Blocked?new Color(1,.36f,.26f):Preview!=null?new Color(.42f,.72f,1):Mint;
-                if(Preview!=null){for(int dash=0;dash<6;dash++)Line(Vector2.Lerp(a,b,dash/6f),Vector2.Lerp(a,b,(dash+.65f)/6f),.014f,new Color(hue.r,hue.g,hue.b,.72f));}
-                else{Line(a,b,.045f,new Color(hue.r,hue.g,hue.b,.045f));Line(a,b,.014f,new Color(hue.r,hue.g,hue.b,.55f));Line(a,b,.0045f,new Color(.32f,.85f,.76f,.46f));}
-                if(Preview==null&&!ReducedMotion&&!beam.Blocked){var at=Vector2.Lerp(a,b,Mathf.Repeat(clock*1.15f+i*.173f,1));Line(at-d*.045f,at+d*.008f,.006f,new Color(.58f,.95f,.87f,.42f));}
+                // Live fibre is continuous and brighter; planning remains a
+                // separate dashed blue route. Neither covers the optical pieces.
+                if(Preview!=null){for(int dash=0;dash<6;dash++)Line(Vector2.Lerp(a,b,dash/6f),Vector2.Lerp(a,b,(dash+.65f)/6f),.016f,new Color(hue.r,hue.g,hue.b,.76f));}
+                else{Line(a,b,.064f,new Color(hue.r,hue.g,hue.b,.070f));Line(a,b,.018f,new Color(hue.r,hue.g,hue.b,.67f));Line(a,b,.0055f,new Color(.63f,1,.90f,.62f));}
+                if(Preview==null&&!ReducedMotion&&!beam.Blocked){var at=Vector2.Lerp(a,b,Mathf.Repeat(clock*1.15f+i*.173f,1));Line(at-d*.052f,at+d*.012f,.007f,new Color(.68f,1,.92f,.55f));}
             }
             beamMesh.vertices=beamVertices;beamMesh.colors=beamColours;
         }

@@ -1,9 +1,11 @@
 # SkyPulse Arcade
 
-The [10 November wing-flap repair](mobile/Development/FlightAnimation20261110/README.md)
-corrects the Editor 3D preview clock under repeated taps, pause/resume and retries.
-Actual gameplay regression checks now cover the camera callback instead of relying
-on forced-time art poses. New physical-device work remains on hold for visual approval.
+The [10 November gameplay and presentation pass](mobile/Development/PolishPass20261110/README.md)
+connects solid bird wings to accepted taps, corrects three low shoulder mounts and
+keeps every bird's own crash artwork. Its Editor Home/Hangar review has centred,
+aspect-correct 3D displays and the original swipe controls. Relay, Blackout,
+upgrade clarity and world lighting have focused presentation improvements.
+Unity checks passed; visual approval precedes any new phone build.
 
 The [9 November local polish](mobile/Development/GameplayPolish20261109/README.md)
 adds Crystal Echo and Route Lens to Endless Route, with updated help and bounded

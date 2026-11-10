@@ -81,7 +81,7 @@ namespace SkyPulse.Mobile
             HangarTrait(glass.transform, genome, (BirdTrait)genome.primary, -190, accent);
             HangarTrait(glass.transform, genome, (BirdTrait)genome.secondary, 190, accent);
             string saving = owned
-                ? "TRAINING SAVES " + birdProgression.BirdUnlockDiscountPercent + "% ON NEW BIRDS"
+                ? HangarProgressionGoal(skin)
                 : crystals >= unlockPrice ? BirdUnlockSaving(skin)
                 : $"NEED {unlockPrice - crystals:N0} MORE ✦  /  BALANCE {crystals:N0}";
             HangarLabel(glass.transform, saving, new Vector2(0, -108), new Vector2(740, 42), 23, Hex("#accbd9"));
@@ -101,13 +101,21 @@ namespace SkyPulse.Mobile
             select.GetComponentInChildren<Text>().color=equipped?Hex("#d5e8f0"):Hex("#06232b");
             select.interactable = !equipped;
             if (!equipped) select.onClick.AddListener(() => SelectSkin(skin));
-            var train = ProgressionButton(hangarPageRoot, "TRAIN BIRD", new Vector2(-205, -550),
+            var train = ProgressionButton(hangarPageRoot, BirdLevel(skin)>=SkyPulseBirdProgression.MaxTraining?"VIEW TRAITS":"TRAIN BIRD", new Vector2(-205, -550),
                 new Vector2(380, 152), () => OpenBirdTraining(skin));
             var breed = ProgressionButton(hangarPageRoot, "BREED", new Vector2(205, -550),
                 new Vector2(380, 152), () => OpenBreeding(skin));
             train.interactable = breed.interactable = owned;
-            HangarLabel(hangarPageRoot, owned ? "TRAIN FOR STRONGER TRAITS  /  BREED A NEW BIRD" : "UNLOCK TO TRAIN AND BREED",
+            HangarLabel(hangarPageRoot, owned ? "NEW BIRD SAVINGS · "+birdProgression.BirdUnlockDiscountPercent+"%  /  ENDLESS REWARD TRAITS" : "UNLOCK TO TRAIN AND BREED",
                 new Vector2(0, -658), new Vector2(850, 42), 21, Hex("#a3c0d1"));
+        }
+
+        string HangarProgressionGoal(Skin skin)
+        {
+            var bird=birdProgression.Genome(skin.Id);
+            if(bird.level>=SkyPulseBirdProgression.MaxTraining)return "FULLY TRAINED · BOTH REWARD TRAITS ACTIVE";
+            if(bird.level>=birdProgression.TrainingCap)return "CORE "+(birdProgression.Data.core+1)+" OPENS LEVEL "+(bird.level+1)+" TRAINING";
+            return "NEXT TRAINING · LEVEL "+(bird.level+1)+" · "+birdProgression.TrainingCost(bird)+" ✦";
         }
 
         Text HangarLabel(Transform parent, string copy, Vector2 at, Vector2 size, int font, Color colour)

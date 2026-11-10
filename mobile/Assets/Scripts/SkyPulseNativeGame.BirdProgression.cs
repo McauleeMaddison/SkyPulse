@@ -199,9 +199,25 @@ namespace SkyPulse.Mobile
             int grade=next>=5?3:next>=3?2:1;
             CoreBenefit(280,"INHERITANCE","G"+grade,rank<2?"Breeding unlocks":"Maximum trait grade");
             int currentDiscount=birdProgression.UpgradeDiscountPercent,nextDiscount=SkyPulseBirdProgression.DiscountPercentForCore(next);
-            ProgressionText(birdProgressionBody,(rank<5?"UPGRADE SAVINGS · "+currentDiscount+"% → "+nextDiscount+"%":"UPGRADE SAVINGS · "+currentDiscount+"%")+"\nTech Tree · Bird training · Breeding",-308,26,95,Hex("#d2e5ed"));
+            string savings=rank<5?"UPGRADE SAVINGS · "+currentDiscount+"% → "+nextDiscount+"%\n"+CoreTrainingSavingExample(rank,next)
+                :"UPGRADE SAVINGS · "+currentDiscount+"%\nTech Tree · Bird training · Breeding";
+            ProgressionText(birdProgressionBody,savings,-308,26,95,Hex("#d2e5ed"));
             var button=ProgressionButton(birdProgressionBody,rank<5?"UPGRADE · "+birdProgression.CorePrice+" ✦":"MAXIMUM CORE",new Vector2(0,-445),new Vector2(820,152),()=>CommitBirdProgression(()=>birdProgression.UpgradeCore(revision)));
             button.interactable=rank<5&&crystals>=birdProgression.CorePrice;birdProgressionNotice.text=ProgressionBalance(rank<5?birdProgression.CorePrice:0);
+        }
+        string CoreTrainingSavingExample(int current,int next)
+        {
+            // Compare a real, currently available training choice. A completed
+            // flock does not get a fictitious level-one purchase example.
+            foreach(var skin in BirdRoster)
+            {
+                if(!IsSkinOwned(skin))continue;
+                var bird=birdProgression.Genome(skin.Id);
+                if(bird==null||bird.level>=birdProgression.TrainingCap)continue;
+                int basePrice=SkyPulseBirdProgression.TrainingPrices[bird.level-1];
+                return "TRAINING LEVEL "+(bird.level+1)+" · "+SkyPulseBirdProgression.PriceAfterCoreDiscount(basePrice,current)+" → "+SkyPulseBirdProgression.PriceAfterCoreDiscount(basePrice,next)+" ✦";
+            }
+            return "Tech Tree · Bird training · Breeding";
         }
         void CoreBenefit(float x,string heading,string value,string detail)
         {
@@ -288,7 +304,7 @@ namespace SkyPulse.Mobile
                 ProgressionStudio(new Vector2(0,270),new Vector2(820,660),new[]{ProgressionPortrait(FindBird(firstId),new Vector2(-210,175),new Vector2(250,140)),ProgressionPortrait(FindBird(secondId),new Vector2(210,175),new Vector2(250,140)),ProgressionPortrait(skin,new Vector2(0,-110),new Vector2(375,200))},true);
                 ProgressionText(birdProgressionBody,"NEW BIRD   /   GENERATION "+preview.generation,-59,23,50,Hex("#c6d6ff"));
                 InheritedTrait(preview,true,-210);InheritedTrait(preview,false,210);
-                ProgressionText(birdProgressionBody,"Unlock this offspring in your Hangar. Both parents stay.\n"+(birdProgression.Data.core<3?"Core 3 unlocks stronger inherited grades.":"Level 3+ parents can pass stronger grades."),-297,26,88,Hex("#c4dce8"));
+                ProgressionText(birdProgressionBody,"PARENT A APPEARANCE · A + B REWARD TRAITS\n"+(birdProgression.Data.core<3?"Core 3 unlocks stronger inherited grades.":"Level 3+ parents can pass stronger grades."),-297,26,88,Hex("#c4dce8"));
             }
             else
             {

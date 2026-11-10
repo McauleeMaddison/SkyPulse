@@ -19,13 +19,13 @@ namespace SkyPulse.Mobile
         readonly int[] bankTheme={-1,-1};
         readonly Texture[] reflections=new Texture[Themes];
         Mesh skyMesh;Material skyMaterial;Texture3D cloudNoise;bool ownsCloudNoise;Transform sky;SkyPulseAtmosphereDepth atmosphereDepth;
-        Transform worldScene,composite;Camera worldCamera;RenderTexture worldImage;Mesh compositeMesh;Material compositeMaterial;float viewAspect;
+        Transform worldScene,composite;Camera worldCamera;Light cityKey;RenderTexture worldImage;Mesh compositeMesh;Material compositeMaterial;float viewAspect;
         public Transform WorldScene=>worldScene;
         public Camera WorldCamera=>worldCamera;
         public RenderTexture WorldImage=>worldImage;
         public Texture3D CloudNoise=>cloudNoise;
         static int nextScene;
-        static readonly int Visibility=Shader.PropertyToID("_Visibility"), Clock=Shader.PropertyToID("_Clock"), Tint=Shader.PropertyToID("_Tint"), Haze=Shader.PropertyToID("_Haze");
+        static readonly int Visibility=Shader.PropertyToID("_Visibility"), Clock=Shader.PropertyToID("_Clock"), Tint=Shader.PropertyToID("_Tint"), Haze=Shader.PropertyToID("_Haze"), KeyTone=Shader.PropertyToID("_KeyTone"), FillTone=Shader.PropertyToID("_FillTone");
         float span; int current=-1,previous;
         float distanceOffset,clockOffset,presentationClock;bool hasPresentation,motionHeld;
         Color currentTint,currentHaze,previousTint,previousHaze;
@@ -63,6 +63,23 @@ namespace SkyPulse.Mobile
             new Vector4(.31f,8.5f,-2.0f,64),new Vector4(.31f,8.8f,-2.0f,63),
             new Vector4(.35f,8.7f,-1.9f,62),new Vector4(.34f,8.6f,-1.8f,63)
         };
+        // Architectural illumination follows each sky, while keeping solid
+        // facade colours and the authored window/beacon palette intact. Neon
+        // retains its exact existing warm key and cool fill.
+        static readonly Color[] WorldKeyLight={
+            new Color(1,.87f,.73f),new Color(.80f,.94f,1),new Color(1,.87f,.70f),
+            new Color(.72f,.85f,1),new Color(1,.82f,.90f),new Color(.82f,.90f,1),
+            new Color(.88f,1,.89f),new Color(.89f,.82f,1),new Color(.89f,.83f,.98f),
+            new Color(.78f,.88f,1),new Color(1,.86f,.66f),new Color(.82f,.97f,1)
+        };
+        public static Color KeyLightForWorld(int world)=>WorldKeyLight[Mathf.Clamp(world,0,Themes-1)];
+        public static Color FillLightForWorld(int world)
+        {
+            world=Mathf.Clamp(world,0,Themes-1);
+            var neutral=new Color(.18f,.29f,.43f);
+            return world==0?neutral:Color.Lerp(neutral,SkyPulseRouteArchitecture.Accent(world)*.52f,.28f);
+        }
+        static Color FacadeKeyForWorld(int world)=>world==0?new Color(1.05f,.91f,.75f):KeyLightForWorld(world)*1.045f;
         static readonly float[] CivicOrientation={-16,12,-12,-13,-8,-18,-12,-16,-9,-14,-10,-13};
         static readonly float[] ResidentialOrientation={14,-18,16,18,12,16,14,20,11,17,13,16};
         readonly float[] worldViewOrigins=new float[Themes];
@@ -136,7 +153,7 @@ namespace SkyPulse.Mobile
             var source=new GameObject("Architectural sun / facade and terrace relief",typeof(Light));
             source.transform.SetParent(worldScene,false);
             source.transform.localRotation=Quaternion.LookRotation(-new Vector3(-.64f,.87f,-.75f).normalized,Vector3.up);
-            var key=source.GetComponent<Light>();key.type=LightType.Directional;
+            var key=source.GetComponent<Light>();cityKey=key;key.type=LightType.Directional;
             key.cullingMask=1<<30;key.color=new Color(1,.87f,.73f);key.intensity=1;
             key.shadows=LightShadows.Hard;key.shadowStrength=.84f;
             key.shadowCustomResolution=1024;key.shadowBias=.025f;key.shadowNormalBias=.12f;
@@ -223,6 +240,11 @@ namespace SkyPulse.Mobile
             atmosphereDepth.Present(0,previous,Travel,clock,previous==world?0:(1-transition)*entry,previousTint,previousHaze);
             atmosphereDepth.Present(1,world,Travel,clock,(previous==world?1:transition)*entry,tint,haze);
             float blend=previous==world?1:Mathf.Clamp01(transition);
+            if(cityKey!=null)
+            {
+                Color keyTone=Color.Lerp(KeyLightForWorld(previous),KeyLightForWorld(world),blend);
+                if(cityKey.color!=keyTone)cityKey.color=keyTone;
+            }
             skyMaterial.SetTexture("_SkyA",reflections[previous]!=null?reflections[previous]:Texture2D.grayTexture);skyMaterial.SetTexture("_SkyB",reflections[world]!=null?reflections[world]:Texture2D.grayTexture);skyMaterial.SetFloat("_Blend",blend);
             skyMaterial.SetFloat("_WorldA",previous);skyMaterial.SetFloat("_WorldB",world);
             skyMaterial.SetColor(Tint,Color.Lerp(previousTint,tint,blend));skyMaterial.SetColor(Haze,Color.Lerp(previousHaze,haze,blend));skyMaterial.SetFloat(Clock,clock);skyMaterial.SetFloat("_World",Mathf.Lerp(previous,world,blend));
@@ -236,7 +258,9 @@ namespace SkyPulse.Mobile
             if(!worldViewOriginKnown[theme]||(changed&&bank==1))
             {worldViewOrigins[theme]=distance;worldViewOriginKnown[theme]=true;}
             float worldDistance=distance-worldViewOrigins[theme];
-            var material=surfaces[bank];material.SetFloat("_Geology",theme==0?1:0);material.SetFloat("_Design",theme);material.SetFloat(Visibility,visibility);material.SetFloat(Clock,clock);material.SetColor(Tint,tint);material.SetColor(Haze,haze);
+            var material=surfaces[bank];
+            material.SetColor(KeyTone,FacadeKeyForWorld(theme));material.SetColor(FillTone,FillLightForWorld(theme));
+            material.SetFloat("_Geology",theme==0?1:0);material.SetFloat("_Design",theme);material.SetFloat(Visibility,visibility);material.SetFloat(Clock,clock);material.SetColor(Tint,tint);material.SetColor(Haze,haze);
             if(changed)
             {
                 material.SetTexture("_Environment",reflections[theme]!=null?reflections[theme]:Texture2D.grayTexture);

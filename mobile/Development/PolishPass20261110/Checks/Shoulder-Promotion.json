@@ -1,0 +1,38 @@
+[
+  {
+    "id": "newbird01",
+    "path": "mobile/Assets/Editor/SkyPulseBirdWorkshop/Roster/Solara/Solara Rig.prefab",
+    "before": "4d2f3d174e28ed0b25138548d73f3d55c33495849bbc102ef48f1730630320fb",
+    "metaPreserved": true,
+    "geometryPreserved": true,
+    "materialsPreserved": true,
+    "testedSha256": "14f3fe9a6bbad9fb7100809ea18b08422391ef7e77b43d655772c4f698c5d000",
+    "promotedSha256": "ca83520e2ddfd19cad15a948af8cc386171f38e9f3bf1ab77eb72eae6a937ce5",
+    "semanticBlocksMatchTested": true,
+    "originalBlockOrderPreserved": true
+  },
+  {
+    "id": "newbird05",
+    "path": "mobile/Assets/Editor/SkyPulseBirdWorkshop/Roster/Virex/Virex Rig.prefab",
+    "before": "82d982b33accb6730b5cd1239bbe7d27667ed6faff78945de73d28ba29fd6583",
+    "metaPreserved": true,
+    "geometryPreserved": true,
+    "materialsPreserved": true,
+    "testedSha256": "c5f60734c1f48ff2ea36f91c039a1f56c5906c34db10862ce94f6aa7d0111ec8",
+    "promotedSha256": "c025fb05abe3721b398b19d8dd986f0ee03099e40d99cebbfbaa1ed65994bf24",
+    "semanticBlocksMatchTested": true,
+    "originalBlockOrderPreserved": true
+  },
+  {
+    "id": "newbird06",
+    "path": "mobile/Assets/Editor/SkyPulseBirdWorkshop/Roster/Borealis/Borealis Rig.prefab",
+    "before": "26159cb979f1ad907d72acdbaa351669d904605d13a1504930da2061435c6957",
+    "metaPreserved": true,
+    "geometryPreserved": true,
+    "materialsPreserved": true,
+    "testedSha256": "26df6dc13978f45b3a908b59edc115ddc4396a9bfc9ba0a9e3dd3b77b9727092",
+    "promotedSha256": "f39e5b8c68bb09e4418bae02e69b73a2b7db37ebb9943801fdf885b5a076f9b5",
+    "semanticBlocksMatchTested": true,
+    "originalBlockOrderPreserved": true
+  }
+]

@@ -6,6 +6,8 @@ Shader "SkyPulse/Flight Architecture"
         _Clock ("Motion", Float)=0
         _Tint ("World light", Color)=(.3,.8,1,1)
         _Haze ("Atmosphere", Color)=(.02,.04,.09,1)
+        _KeyTone ("World architectural key",Color)=(1.05,.91,.75,1)
+        _FillTone ("World architectural fill",Color)=(.18,.29,.43,1)
         _Environment ("Authored world reflections",2D)="gray"{}
         _Architecture("Curtain wall detail",Float)=0
         _Geology("Mineral strata",Float)=0
@@ -34,7 +36,7 @@ Shader "SkyPulse/Flight Architecture"
             #include "AutoLight.cginc"
             struct app {float4 vertex:POSITION;float3 normal:NORMAL;float4 color:COLOR;};
             struct vary {float4 pos:SV_POSITION;float3 world:TEXCOORD0;float3 normal:TEXCOORD1;float4 color:COLOR;float3 local:TEXCOORD2;SHADOW_COORDS(3)};
-            float _Visibility,_Clock,_Architecture,_Geology,_Design,_WindowGlow,_BeaconGlow,_Backdrop,_DistrictDepth;float4 _Tint,_Haze;
+            float _Visibility,_Clock,_Architecture,_Geology,_Design,_WindowGlow,_BeaconGlow,_Backdrop,_DistrictDepth;float4 _Tint,_Haze,_KeyTone,_FillTone;
             float4 _BeaconPoints[5],_BeaconColours[5];
             sampler2D _Environment,_SurfaceTex;float _SurfaceAmount,_SurfaceScale;
             vary vert(app v){vary o;o.pos=UnityObjectToClipPos(v.vertex);o.world=mul(unity_ObjectToWorld,v.vertex).xyz;o.normal=UnityObjectToWorldNormal(v.normal);o.color=v.color;o.local=v.vertex.xyz;TRANSFER_SHADOW(o);return o;}
@@ -69,7 +71,7 @@ Shader "SkyPulse/Flight Architecture"
                 float3 surfaceColour=lerp(i.color.rgb,float3(.035,.055,.085)+i.color.rgb*.04,neon);
                 // A warm key and cool sky fill expose the actual wall, sill and
                 // crown normals. Keep alloy solid rather than glowing glass.
-                float3 lighting=float3(.22,.25,.31)+float3(1.05,.91,.75)*ndl*.84+lerp(float3(.18,.29,.43),_Tint.rgb*.42,.34)*fill*.34;
+                float3 lighting=float3(.22,.25,.31)+_KeyTone.rgb*ndl*.84+lerp(_FillTone.rgb,_Tint.rgb*.42,.34)*fill*.34;
                 lighting+=float3(.075,.12,.17)*skyFill;
                 float3 colour=surfaceColour*lighting*lerp(float3(.96,.99,1.02),max(_Tint.rgb,.28),.08);
                 // Near facades retain solid readable values. Reflections belong
@@ -155,7 +157,17 @@ Shader "SkyPulse/Flight Architecture"
                 // facade reveals and island edge remain crisp and dimensional.
                 float distanceVeil=saturate(mist+_DistrictDepth*.28+_Backdrop*.20);
                 float luminance=dot(colour,float3(.2126,.7152,.0722));
-                colour=lerp(colour,luminance*.46+_Tint.rgb*.065,_DistrictDepth*.20);
+                float3 distantColour=luminance*.46+_Tint.rgb*.065;
+                if(_Design>.5)
+                {
+                    // Keep the existing aerial-depth amount. Only its colour
+                    // follows the place: rose/copper and polar scenes should
+                    // not converge on the same neutral grey distant masonry.
+                    float3 skyColour=lerp(_FillTone.rgb,_Tint.rgb,.20);
+                    float skyLuminance=max(dot(skyColour,float3(.2126,.7152,.0722)),.001);
+                    distantColour=luminance*.46*lerp(float3(1,1,1),skyColour/skyLuminance,.28)+_Tint.rgb*.065;
+                }
+                colour=lerp(colour,distantColour,_DistrictDepth*.20);
                 return lerp(colour,aerialLight,distanceVeil);
             }
             fixed4 frag(vary i):SV_Target

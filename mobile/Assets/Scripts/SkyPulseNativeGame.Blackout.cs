@@ -123,7 +123,7 @@ namespace SkyPulse.Mobile
                 blackoutObjectiveTitle=MissionText(header,"",47,35,BlackoutIce,730,50);blackoutObjectiveTitle.rectTransform.anchoredPosition+=Vector2.left*110;
                 blackoutVaultText=MissionText(header,"",-5,26,BlackoutMint,730,38);blackoutVaultText.rectTransform.anchoredPosition+=Vector2.left*110;
                 blackoutCompletionToast=MissionText(header,"",-49,24,BlackoutIce,730,35);blackoutCompletionToast.rectTransform.anchoredPosition+=Vector2.left*110;
-                blackoutPlanButton=BlackoutButton(header,"Preview",405,0,180,ToggleBlackoutPreview,150);
+                blackoutPlanButton=BlackoutButton(header,"PLAN",405,0,180,ToggleBlackoutPreview,150);
                 var telemetry=BlackoutPanel(root,"Optical telemetry",new Vector2(0,610),new Vector2(1010,112));
                 blackoutDataText=BlackoutReadout(telemetry,"Cores lit",-338,BlackoutMint);blackoutTraceText=BlackoutReadout(telemetry,"Trace left",0,BlackoutIce);blackoutUplinkText=BlackoutReadout(telemetry,"Uplink",338,Hex("#ffc478"));
                 blackoutTraceGauge=BlackoutGraphic(root,"Trace budget rail",new Vector2(0,539),new Vector2(1010,8),BlackoutSurface.Trace,false);
@@ -171,7 +171,7 @@ namespace SkyPulse.Mobile
                 char c=p.Tile(i);
                 blackoutNodeButtons[i].interactable=state==FlightState.Playing&&s.State==MissionSessionState.Playing&&p.Rotatable(i);
                 blackoutNodeLabels[i].text=c=='S'?"SOURCE":c=='E'?"UPLINK":c=='C'?"CORE "+(++core).ToString("00"):c=='R'?"RELAY A":c=='Q'?"RELAY B":c=='G'?"A":c=='H'?"B":c=='!'?"SENSOR":"";
-                blackoutNodeLabels[i].color=c=='!'?Hex("#ff8992"):s.Powered[i]?BlackoutIce:Hex("#718d9d");
+                blackoutNodeLabels[i].color=c=='!'?Hex("#ff8992"):s.Powered[i]?BlackoutIce:c=='C'||c=='E'?Hex("#b8ceda"):Hex("#718d9d");
             }
             blackoutDataText.text=s.CoresPowered+" / "+p.CoreCount;blackoutTraceText.text=s.Remaining+" / "+p.TraceLimit;blackoutUplinkText.text=s.UplinkPowered?"LIVE":"OFFLINE";blackoutUplinkText.color=s.UplinkPowered?BlackoutMint:Hex("#9bb9c6");
             blackoutTraceGauge.TraceFraction=s.Trace/(float)p.TraceLimit;blackoutTraceGauge.SetVerticesDirty();blackoutBoard.Tick(0);
@@ -209,7 +209,7 @@ namespace SkyPulse.Mobile
         void RefreshBlackoutPreviewControls()
         {
             if(blackoutPlanButton==null)return;bool selected=blackoutPlanning&&blackoutPreviewTile>=0;
-            blackoutPlanButton.GetComponentInChildren<Text>().text=blackoutPlanning?"Done":"Preview";
+            blackoutPlanButton.GetComponentInChildren<Text>().text=blackoutPlanning?"CLOSE":"PLAN";
             blackoutCommitButton.gameObject.SetActive(blackoutPlanning);
             blackoutRestartButton.gameObject.SetActive(!blackoutPlanning);
             blackoutCommitButton.interactable=selected&&state==FlightState.Playing;
@@ -243,7 +243,9 @@ namespace SkyPulse.Mobile
         void ActivateNextBlackoutPuzzle(int completed)
         {
             selectedMission=completed+1;blackoutSession=blackoutCampaign.Start(selectedMission,true);missionFinalized=false;BuildBlackoutLab();blackoutBoard.Reveal=1;
-            blackoutCompletionToast.text=SkyPulseBlackoutCampaign.Systems[completed].ToUpperInvariant()+" ONLINE";blackoutToastRemaining=1.3f;
+            int restored=0;for(int i=0;i<blackoutCampaign.Data.medals.Length;i++)if(blackoutCampaign.Data.medals[i]>0)restored++;
+            blackoutCompletionToast.text=SkyPulseBlackoutCampaign.Systems[completed].ToUpperInvariant()+" ONLINE · "+restored+" / 8";
+            blackoutToastRemaining=1.3f;
         }
         void BuildBlackoutResult(bool won,string reason,int medal)
         {

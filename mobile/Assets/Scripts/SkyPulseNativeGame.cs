@@ -4374,7 +4374,10 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
         {
             // The hit cell is visible for a short beat before the result card. It
             // makes a collision legible without interrupting the immediate retry flow.
-            var hitPose = hitBirdSprite ?? LoadPresentationPose(equippedSkin?.HitPath);
+            // Resolve the current identity even after an equip/retry or visual
+            // review switch; the path cache is already scoped to each bird.
+            var hitPose = LoadPresentationPose(equippedSkin?.HitPath);
+            hitBirdSprite = hitPose;
             if (hitPose == null || birdRenderer == null) return;
 
             birdRenderer.sprite = hitPose;

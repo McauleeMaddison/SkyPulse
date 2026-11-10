@@ -61,7 +61,7 @@ public static partial class SkyPulseBirdRosterWorkshop
         try
         {
             rig.animate=false;rig.turntable=false;
-            BuildEngineeredSculpt(rig);
+            BuildEngineeredSculpt(rig);FitShoulders(rig,design);
             // One asset contains named editable mesh sub-assets; no hundreds of loose numbered files.
             for(int i=0;i<meshes.Count;i++)
             {meshes[i].name=(i+1).ToString("000")+" "+meshes[i].name;if(i==0)AssetDatabase.CreateAsset(meshes[i],directory+"/Geometry.asset");else AssetDatabase.AddObjectToAsset(meshes[i],directory+"/Geometry.asset");}

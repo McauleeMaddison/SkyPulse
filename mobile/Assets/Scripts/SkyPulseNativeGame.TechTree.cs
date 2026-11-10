@@ -9,6 +9,8 @@ namespace SkyPulse.Mobile
         SkyPulseTechTreeView holographicTree;
         RectTransform techCoreControl, techNextControl;
         readonly List<Vector2> techAvailableLevels = new List<Vector2>(9);
+        readonly List<Vector2> techSavingLevels = new List<Vector2>(9);
+        int techReadyLevelCount;
         int techNextFocus;
         Material techBackdropMaterial;
         Material techTypographyMaterial;
@@ -26,7 +28,7 @@ namespace SkyPulse.Mobile
             if (insignia != null) insignia.gameObject.SetActive(true);
             if (techCoreControl != null) { techCoreControl.gameObject.SetActive(false); Destroy(techCoreControl.gameObject); techCoreControl = null; }
             if (techNextControl != null) { techNextControl.gameObject.SetActive(false); Destroy(techNextControl.gameObject); techNextControl = null; }
-            techAvailableLevels.Clear();
+            techAvailableLevels.Clear(); techSavingLevels.Clear(); techReadyLevelCount=0;
             if (holographicTree == null) return;
             // Disable the isolated scene now; Destroy completes at frame end.
             holographicTree.gameObject.SetActive(false);
@@ -36,7 +38,7 @@ namespace SkyPulse.Mobile
 
         private void BuildTechTree()
         {
-            techAvailableLevels.Clear(); techNextFocus = 0;
+            techAvailableLevels.Clear(); techSavingLevels.Clear(); techReadyLevelCount=0; techNextFocus = 0;
             var branches = new List<HolographicBranch>(39);
             var roots = new List<HolographicRoot>(40);
             var families = new[] { "COLLECTION", "RECOVERY", "MASTERY" };
@@ -87,7 +89,9 @@ namespace SkyPulse.Mobile
                         var labelAt=leaf+new Vector2(side*40,-3);
                         if(next)
                         {
-                            techAvailableLevels.Add(leaf + new Vector2(side * 40, 0));
+                            var target=leaf + new Vector2(side * 40, 0);
+                            if(crystals>=UpgradeCrystalPrice(upgrade,index))techAvailableLevels.Add(target);
+                            else techSavingLevels.Add(target);
                             var plaque=ProgressionSurface(customizeContent,"Next-level glass · "+upgrade.Id,labelAt+Vector2.down*8,new Vector2(198,164),SkyPulseProgressionSurface.Finish.Quiet);
                             plaque.Capsule=true;plaque.Accent=colour;plaque.rectTransform.anchorMin=plaque.rectTransform.anchorMax=new Vector2(.5f,1);
                         }
@@ -102,7 +106,9 @@ namespace SkyPulse.Mobile
                         TechLabel(done?"INSTALLED":next?"NEXT · "+UpgradeCrystalPrice(upgrade,index)+" ✦":"LOCKED",labelAt+new Vector2(0,-38),new Vector2(194,32),22,next?colour:done?Hex("#aac6d3"):Hex("#8295aa"));
                         if(next)
                         {
-                            TechLabel("VIEW UPGRADE ›",labelAt+new Vector2(0,-67),new Vector2(194,26),19,Hex("#c8e5ef"));
+                            bool affordable=crystals>=UpgradeCrystalPrice(upgrade,index);
+                            string cue=affordable?"VIEW UPGRADE ›":"NEED "+(UpgradeCrystalPrice(upgrade,index)-crystals)+" ✦";
+                            TechLabel(cue,labelAt+new Vector2(0,-67),new Vector2(194,26),19,affordable?Hex("#c8e5ef"):Hex("#d8c6a3"));
                             var marker=CreateUiGlyph(customizeContent,"Next available · "+upgrade.Id,labelAt+new Vector2(-100,1),new Vector2(26,26),colour,SkyPulseUiGlyph.Kind.UpgradePoint);
                             marker.rectTransform.anchorMin=marker.rectTransform.anchorMax=new Vector2(.5f,1);marker.raycastTarget=false;
                         }
@@ -110,6 +116,10 @@ namespace SkyPulse.Mobile
                     previous = at;
                 }
             }
+            // The locator visits usable purchases first, then saving goals. It
+            // still only focuses the map; spending stays in the quoted inspector.
+            techReadyLevelCount=techAvailableLevels.Count;
+            techAvailableLevels.AddRange(techSavingLevels);
             customizeContent.anchorMin = customizeContent.anchorMax = new Vector2(.5f, 1f);
             customizeContent.sizeDelta = new Vector2(2300, 3600);
             customizeScroll.horizontal = customizeScroll.vertical = true;
@@ -306,13 +316,21 @@ namespace SkyPulse.Mobile
                 techNextFocus = (techNextFocus + 1) % techAvailableLevels.Count;
             });
             CreateUiGlyph(techNextControl, "Next upgrade locator", new Vector2(0, 46), new Vector2(46, 46), Hex("#8ef4ff"), SkyPulseUiGlyph.Kind.UpgradePoint);
-            CreateText(techNextControl, "NEXT", new Vector2(0,10), new Vector2(168,28), 24, Hex("#d9faff"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            CreateText(techNextControl, techReadyLevelCount>0?"READY":"NEXT", new Vector2(0,10), new Vector2(168,28), 24, Hex("#d9faff"), TextAnchor.MiddleCenter, FontStyle.Bold);
         }
 
         void InspectTechLevel(Upgrade upgrade, int index)
         {
             int level = GetUpgradeLevel(upgrade.Id);
-            if (index == level && IsUpgradePrerequisiteMet(upgrade)) { SelectUpgrade(upgrade); return; }
+            if (index == level && IsUpgradePrerequisiteMet(upgrade))
+            {
+                SelectUpgrade(upgrade);
+                // Leaf and hub inspections expose the same exact current/next
+                // effect. The original price quote and confirm guard stay intact.
+                string active=level>0?upgrade.EffectAtLevel(level-1):"Not installed";
+                purchaseDetailText.text="ACTIVE · "+active+"\nNEXT · "+upgrade.EffectAtLevel(level);
+                return;
+            }
             // Installed/future levels are informational. Only the next real level
             // is purchasable, through the existing wallet transaction path.
             pendingPurchase = PendingPurchase.None; pendingUpgrade = null; pendingSkin = null;

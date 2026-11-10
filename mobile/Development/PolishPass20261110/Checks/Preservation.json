@@ -1,0 +1,13 @@
+{
+  "result": "PASS",
+  "protectedAssetFilesComparedToHEAD": 2218,
+  "uniqueUnityAssetGUIDs": 1264,
+  "allowedPrefabChanges": [
+    "mobile/Assets/Editor/SkyPulseBirdWorkshop/Roster/Solara/Solara Rig.prefab",
+    "mobile/Assets/Editor/SkyPulseBirdWorkshop/Roster/Virex/Virex Rig.prefab",
+    "mobile/Assets/Editor/SkyPulseBirdWorkshop/Roster/Borealis/Borealis Rig.prefab"
+  ],
+  "originalFinchAndAllRosterGeometryAndFinishAssetsPreserved": true,
+  "allOriginalBirdArtworkAndWorldScenesPreserved": true,
+  "installedReleaseRecordChanged": false
+}

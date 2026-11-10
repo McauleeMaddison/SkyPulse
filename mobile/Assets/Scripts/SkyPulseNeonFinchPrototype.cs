@@ -66,7 +66,7 @@ namespace SkyPulse.Mobile
         }
 
         /// <summary>
-        /// Flight keeps a complete stroke between taps. Reduced Motion removes
+        /// The one-argument sampler provides deterministic exhibition poses. Reduced Motion removes
         /// ambient banking, head/tail motion and jet shimmer, while retaining a
         /// restrained wing stroke as essential feedback that the bird is flying.
         /// The Studio sampler and saved bind pose retain their existing behaviour.
@@ -79,6 +79,19 @@ namespace SkyPulse.Mobile
             turntable = studioTurntable;
             if (reducedMotion)
                 SampleWings(activeSeconds * (Mathf.PI * 2f / Mathf.Max(.1f, flapPeriod)), .60f);
+        }
+        // Native input supplies a normalised lift, rather than restarting an
+        // autonomous exhibition cycle. The bind pose is the settled glide.
+        public void SampleFlightPose(float activeSeconds, float wingLift)
+        {
+            SampleFlightPose(activeSeconds);
+            float lift = Mathf.Clamp01(wingLift);
+            float amount = reducedMotion ? .60f : 1f;
+            float stroke = Mathf.SmoothStep(0f, 1f, lift) * amount;
+            Set(2, -stroke * flapDegrees, -stroke * 3f, -stroke * 14f);
+            Set(3, stroke * flapDegrees, stroke * 3f, -stroke * 14f);
+            Set(4, -stroke * 13f, 0f, -stroke * 4f);
+            Set(5, stroke * 13f, 0f, -stroke * 4f);
         }
         void SampleWings(float phase, float amount)
         {

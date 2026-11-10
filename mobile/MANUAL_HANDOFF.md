@@ -6,6 +6,15 @@ Open **`mobile/` in Unity Hub** and the repository folder in VS Code. The shippi
 scene is `mobile/Assets/Scenes/SkyPulse.unity`. Start with the
 [editing map](EDITING_GUIDE.md) before changing code.
 
+## Current local candidate — 10 November 2026
+
+Use the [current polish record](Development/PolishPass20261110/README.md) for
+tap-driven solid wings, selected-bird crash identity, three shoulder corrections,
+Editor Home/Hangar solids, world lighting and progression/mode feedback.
+The previous continuous wing-clock experiment below is historical; gameplay
+now follows accepted native tap strokes. Visual sign-off remains the next step.
+No new device build, installation, TestFlight upload or review submission.
+
 ## Latest local repair — 10 November 2026
 
 The [wing-flap repair](Development/FlightAnimation20261110/README.md) reproduces and

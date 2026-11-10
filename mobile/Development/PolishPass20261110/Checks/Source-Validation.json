@@ -1,0 +1,128 @@
+{
+  "result": "PASS",
+  "deviceTested": false,
+  "source": [
+    {
+      "path": "mobile/Assets/Editor/SkyPulseBirdMenuPreview.cs",
+      "sha256": "c1e9059c2bca5e85e7b9436fe9cb664719c79c7e506b697d577917b9e229f568",
+      "matchesIsolatedTestSource": true
+    },
+    {
+      "path": "mobile/Assets/Editor/SkyPulseBirdRosterPreview.cs",
+      "sha256": "24eb1f7e0bf3c46c3866cb606232b48ec10a6cda22df6d3b6db8617335a3583c",
+      "matchesIsolatedTestSource": true
+    },
+    {
+      "path": "mobile/Assets/Editor/SkyPulseBirdRosterPreviewWindow.cs",
+      "sha256": "8abdcfc0d3d0181681923c21c69f057af5fc83ac981fc6d3cda54f48f4f9d6c3",
+      "matchesIsolatedTestSource": true
+    },
+    {
+      "path": "mobile/Assets/Editor/SkyPulseBirdRosterRaven.cs",
+      "sha256": "ac7a17fb50f616c9fbbf0f93e785a2e572b32e088e629cecfbfc26f52d4e5c52",
+      "matchesIsolatedTestSource": true
+    },
+    {
+      "path": "mobile/Assets/Editor/SkyPulseBirdRosterWorkshop.cs",
+      "sha256": "f82b1da7490bd2a654a47c54235cb22c5cf542f55b942067b3c6ac83b8b4bef6",
+      "matchesIsolatedTestSource": true
+    },
+    {
+      "path": "mobile/Assets/Editor/SkyPulseBirdShoulderFit.cs",
+      "sha256": "55c7e4fc10e593c1d0f7a6a73fd74f78602c738b92842f701547a5b1a1507e78",
+      "matchesIsolatedTestSource": true
+    },
+    {
+      "path": "mobile/Assets/Resources/SkyPulse/Shaders/FlightArchitecture.shader",
+      "sha256": "f87a936518fcbc32c3f5848ec4bcd624cd706625143d69d708a33c46d4b6a69d",
+      "matchesIsolatedTestSource": true
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseFlightEnvironment.cs",
+      "sha256": "b39e44d6aaa109d253c8ab6d55972f869dbedcd574d7beb24740ccf0dbe1953b",
+      "matchesIsolatedTestSource": true
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseHeistBoard.cs",
+      "sha256": "3aa5257fe247eb3a4ec5daa366da18050c665807ff1c435533ea67f47de45db4",
+      "matchesIsolatedTestSource": true
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseNativeGame.BirdProgression.cs",
+      "sha256": "a40528c3382329027eb86edf6d176621852d7bf3e16e0db935cc663b8443b467",
+      "matchesIsolatedTestSource": true
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseNativeGame.Blackout.cs",
+      "sha256": "b43cd2f50330c0b8f0932df4313df41ec38fa964db81bfb167c7e985becb03f2",
+      "matchesIsolatedTestSource": true
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseNativeGame.Hangar.cs",
+      "sha256": "9f27b30cceb01e312ecf5a46cf6690c8a05a8bac1ea78d86b050a211ee2a014c",
+      "matchesIsolatedTestSource": true
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseNativeGame.Presentation.cs",
+      "sha256": "7f9edf06c6b4973e18c6750777597553c1059799aece5e9dff621c8d7e32f66c",
+      "matchesIsolatedTestSource": true
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseNativeGame.TechTree.cs",
+      "sha256": "ab47560fd5f8bd247ae95efdee0aa77ae6e885b117ccabf50a9f52182de466b7",
+      "matchesIsolatedTestSource": true
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseNativeGame.cs",
+      "sha256": "5f17d9094c48391ff39eb658fd2dafe75ecd14402ceb1843a1b45dcebed127a3",
+      "matchesIsolatedTestSource": true
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseNeonFinchPrototype.cs",
+      "sha256": "e107e3aed597a76ba08a8be350f56252889bf617bb479817f81edf271f21cca7",
+      "matchesIsolatedTestSource": true
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseRelayGate.cs",
+      "sha256": "010a5c4e7f3d5ea83684bd08e3266b707eef6cd4d97cecfe672ead7281413cfe",
+      "matchesIsolatedTestSource": true
+    },
+    {
+      "path": "mobile/Tools/SkyPulseModeFeedbackChecks.cs",
+      "sha256": "4a9fe5eb400fdd265c29fa6ee6ccf04bf10277c63afae82bbecdc8bbffdbf66e",
+      "matchesIsolatedTestSource": true
+    },
+    {
+      "path": "mobile/Tools/SkyPulsePolishChecks.cs",
+      "sha256": "2c1b88bd1094c116ed470e6518fbefe1da3183d1c128bd8c50473be68d5fae7b",
+      "matchesIsolatedTestSource": true
+    },
+    {
+      "path": "mobile/Tools/SkyPulseProgressionClarityChecks.cs",
+      "sha256": "ba20127d3f351a6c79374a149c81b6a06243458e537a5b0f4634cbf63375a3f1",
+      "matchesIsolatedTestSource": true
+    },
+    {
+      "path": "mobile/Tools/SkyPulseWorldLightingChecks.cs",
+      "sha256": "bc84d94554f7fca8a2e10a80002766177c9fdea58955d166eb225cc46dbae9b1",
+      "matchesIsolatedTestSource": true
+    }
+  ],
+  "checkCounts": {
+    "ONE_THUMB_CHECK": 86,
+    "MISSION_CHECK": 60,
+    "BIRD_CHECK": 75,
+    "WORLD_LIGHTING_CHECK": 91,
+    "POLISH_CHECK": 615,
+    "PROGRESSION_CLARITY_CHECK": 29,
+    "MODE_FEEDBACK_CHECK": 27,
+    "WORLD_STYLE_CHECK": 899
+  },
+  "pickupAssertions": 202,
+  "knownEditorStartupException": "UnityEditor.Search.SearchDatabase.EnumerateAll: ArgumentOutOfRangeException from copied QA Library; no game exceptions or C# errors in final logs",
+  "limitations": [
+    "30/60/120 Hz are deterministic controller/smoothing correctness cases, not measured device frame rates.",
+    "Home/Hangar solid model rollout is Editor-only pending owner approval.",
+    "No iPhone build or upload, no public review submission."
+  ]
+}

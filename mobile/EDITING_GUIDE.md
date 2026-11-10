@@ -324,3 +324,14 @@ timer and would trap the slower mechanical stroke in its opening phase.
 Motion; `SamplePose` keeps the existing Studio behaviour. The Editor-only run
 serial resets the preview cleanly on retry, without adding a save key or changing
 shipping input. See `Tools/SkyPulseFlapChecks.cs` for actual input-to-camera tests.
+
+
+### Editor Home and Hangar solid birds — 10 November
+
+`Assets/Editor/SkyPulseBirdMenuPreview.cs` owns the temporary transparent solid
+showcases; `SkyPulseBirdRosterPreview.cs` owns tap-driven flight and selected
+impact art. Enable them with **Bird Workshop → 3D roster in actual gameplay**.
+The native swipe/price/trait UI remains in `SkyPulseNativeGame.Hangar.cs`.
+Canonical meshes/materials/prefabs stay in the existing Bird Workshop folders.
+Three low shoulder prefabs were corrected without changing their geometry or
+GUIDs; keep manual structural edits in Unity. See the [current record](Development/PolishPass20261110/README.md).

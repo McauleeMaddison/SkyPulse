@@ -304,7 +304,7 @@ namespace SkyPulse.Mobile
             float motion=reduceMotionEnabled?0:protocolVisualTime;
             for(int i=0;i<relayShutters.Count;i++)
             {
-                bool open=relaySession.IsOpen(i);var gate=relayShutters[i];
+                bool open=relaySession.IsOpen(i),passed=i<relaySession.Passed;var gate=relayShutters[i];
                 if(open && relayOpeningTimes[i]<0)relayOpeningTimes[i]=protocolVisualTime;
                 float opening=!open?0:reduceMotionEnabled?1:Mathf.Clamp01((protocolVisualTime-relayOpeningTimes[i])/.28f);
                 var shutter=relayShutterArt[i];SetSpriteBlock(shutter,new Vector2(0,relaySession.Mission.RelayY[i]),new Vector2(.025f,RelaySession.ApertureHalfHeight*2*(1-opening)));shutter.color=opening>=1?Color.clear:new Color(1,.12f,.14f,.5f);
@@ -316,12 +316,17 @@ namespace SkyPulse.Mobile
                     relayLasers[i*3+beam].color=hue;hue.a*=.32f;relayLaserHalos[i*3+beam].color=hue;
                 }
                 relayPortalHardware[i].SetCharge(relaySession.GateCrystals(i),open,motion,open&&!reduceMotionEnabled?1-opening:0);
+                relayPortalHardware[i].SetPassage(passed,motion,reduceMotionEnabled);
                 var orbit=relayPortalOrbits[i];for(int emitter=0;emitter<2;emitter++){float t=motion*.6f+emitter*Mathf.PI+i*.7f;var tip=orbit.GetChild(emitter);tip.localPosition=new Vector2(Mathf.Cos(t)*1.04f,Mathf.Sin(t)*2.03f);tip.GetComponent<SpriteRenderer>().color=open?new Color(.15f,.65f,1,.65f):new Color(1,.12f,.15f,.55f);}
                 float unlockLight=open&&!reduceMotionEnabled?Mathf.Pow(1-opening,2)*.30f:0;
                 relayApertureGlow[i].color=open?new Color(.14f,.6f,1,.13f+unlockLight):new Color(1,.12f,.13f,.13f+Mathf.Sin(motion*1.8f+i)*.015f);
-                int count=relaySession.GateCrystals(i);
-                if(relayGateLabelCounts[i]!=count){relayGateLabelCounts[i]=count;relayGateLabels[i].text=(i+1).ToString("00")+" · "+count+"/2";}
-                relayGateLabels[i].color=open?Hex("#94ffe1"):Hex("#ffd078");
+                int count=relaySession.GateCrystals(i),labelState=count+(open?4:0)+(passed?8:0);
+                if(relayGateLabelCounts[i]!=labelState)
+                {
+                    relayGateLabelCounts[i]=labelState;
+                    relayGateLabels[i].text=(i+1).ToString("00")+(passed?" · CLEARED":" · "+count+"/2"+(open?" OPEN":""));
+                }
+                relayGateLabels[i].color=passed?new Color(.58f,1,.88f,.62f):open?Hex("#94ffe1"):count==1?Hex("#c5e8ff"):Hex("#ffd078");
 
             }
             if(relayDeck!=null)relayDeck.SetVisual(reduceMotionEnabled?0:relaySession.Distance,motion);
