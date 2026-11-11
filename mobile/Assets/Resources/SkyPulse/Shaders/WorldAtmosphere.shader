@@ -72,11 +72,33 @@ Shader "SkyPulse/Constructed World Atmosphere"
                 float density=saturate(body-erosion);
                 return density*density*(3-2*density)*boundary*.72;
             }
+            // Conservative ray/bank test only rejects empty sky. The existing
+            // twenty sample positions and cloud lighting remain unchanged for
+            // a ray that can reach either bank. Bounds include the density
+            // envelope's -.33 guard and the maximum cached curl displacement.
+            bool reachesCloudBank(float3 ray,float3 origin,float3 centre,float3 radii,float3 profile)
+            {
+                origin.x+=origin.y*profile.z;origin.y-=profile.x;
+                ray.x+=ray.y*profile.z;
+                float3 o=(origin-centre)/radii,d=ray/radii;
+                float a=dot(d,d),b=dot(o,d),c=dot(o,o)-1;
+                float discriminant=b*b-a*c;
+                if(discriminant<0)return false;
+                float root=sqrt(max(discriminant,0));
+                float enter=(-b-root)/max(a,.000001),leave=(-b+root)/max(a,.000001);
+                return leave>=11&&enter<=114;
+            }
             float3 cloudVolume(float3 ray,float3 origin,float3 behind)
             {
                 if(ray.y>.035)return behind;
                 float blend=saturate(_Blend);
                 float3 profile=lerp(cloudProfile(_WorldA),cloudProfile(_WorldB),blend);
+                // Curl can shift a sample by 2.1/1.0/2.1 units. The X
+                // bound additionally includes its profile-dependent shear.
+                float3 padding=float3(2.1+abs(profile.z),1.0,2.1);
+                float envelopeRadius=sqrt(1.33);
+                if(!reachesCloudBank(ray,origin,float3(-37,-17.5,66),float3(18,6.0*profile.y,26)*envelopeRadius+padding,profile)&&
+                   !reachesCloudBank(ray,origin,float3(40,-21.0,89),float3(20,6.8*profile.y,27)*envelopeRadius+padding,profile))return behind;
                 float3 za,ma,sa,la,ga,zb,mb,sb,lb,gb;
                 palette(_WorldA,za,ma,sa,la,ga);palette(_WorldB,zb,mb,sb,lb,gb);
                 float3 worldLight=lerp(la,lb,blend),worldGlow=lerp(ga,gb,blend);

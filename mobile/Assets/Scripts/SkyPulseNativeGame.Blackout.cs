@@ -180,7 +180,7 @@ namespace SkyPulse.Mobile
             blackoutNetwork.RestoredMask=mask;blackoutNetwork.ActiveVault=selectedMission;blackoutNetwork.LivePower=(s.CoresPowered/(float)p.CoreCount+(s.UplinkPowered?1:0))*.5f;blackoutNetwork.SetVerticesDirty();
             if(blackoutToastRemaining<=0)blackoutCompletionToast.text=BlackoutNetworkCaption();
             int remaining=p.CoreCount-s.CoresPowered;
-            blackoutStatusText.text=s.Alarms>0?"SENSOR TRIGGERED · ROTATION COSTS 3 TRACE":remaining==0?"ALL CORES LIVE · CONNECT THE AMBER UPLINK":s.CoresPowered>0?remaining+(remaining==1?" CORE":" CORES")+" STILL DARK · KEEP THE LIVE ROUTE CONNECTED":"KEEP "+p.CoreCount+(p.CoreCount==1?" CORE":" CORES")+" AND THE UPLINK POWERED";
+            blackoutStatusText.text=s.Alarms>0?"SENSOR LIT · CHECK THE NEXT MOVE IN PLAN":remaining==0?"ALL CORES LIVE · CONNECT THE AMBER UPLINK":s.CoresPowered>0?remaining+(remaining==1?" CORE":" CORES")+" STILL DARK · KEEP THE LIVE ROUTE CONNECTED":"KEEP "+p.CoreCount+(p.CoreCount==1?" CORE":" CORES")+" AND THE UPLINK POWERED";
             blackoutStatusText.color=s.Alarms>0?Hex("#ff8992"):BlackoutIce;
             RefreshBlackoutPreviewControls();
         }
@@ -218,8 +218,20 @@ namespace SkyPulse.Mobile
             var action=blackoutCommitButton.targetGraphic as SkyPulseProgressionSurface;action.Style=selected?SkyPulseProgressionSurface.Finish.Action:SkyPulseProgressionSurface.Finish.Inset;action.SetVerticesDirty();
             blackoutCommitButton.GetComponentInChildren<Text>().color=selected?Hex("#06281f"):BlackoutIce;
             if(!blackoutPlanning)return;
-            blackoutStatusText.text=selected?"PREVIEW · "+blackoutPreview.CoresPowered+" / "+blackoutSession.Puzzle.CoreCount+" CORES · "+(blackoutPreview.State==MissionSessionState.Succeeded?"ROUTE COMPLETE":blackoutPreview.State==MissionSessionState.Failed?"TRACE WOULD RUN OUT":blackoutPreview.Alarms>0?"SENSOR HIT · COSTS 3 TRACE":"COSTS 1 TRACE"):"FREE PREVIEW · TAP AN OPTIC TO SEE ITS NEXT ROUTE";
+            blackoutStatusText.text=selected?BlackoutPreviewCaption(blackoutSession,blackoutPreview):"FREE PREVIEW · TAP A PRISM TO SEE ITS NEXT ROUTE";
             blackoutStatusText.color=selected&&(blackoutPreview.Alarms>0||blackoutPreview.State==MissionSessionState.Failed)?Hex("#ff9b91"):Hex("#a9d8ff");
+        }
+        // Describe the proposed state, not the current alarm state: rotating
+        // away from a sensor can cost one trace even when the live board is red.
+        // Evaluation and spending still belong to the existing session methods.
+        static string BlackoutPreviewCaption(BlackoutSession live,BlackoutSession preview)
+        {
+            int delta=preview.CoresPowered-live.CoresPowered;
+            string cores=preview.CoresPowered+" / "+live.Puzzle.CoreCount+" CORES"+
+                (delta==0?"":delta>0?" (+"+delta+")":" ("+delta+")");
+            if(preview.State==MissionSessionState.Failed)return "TRACE WOULD RUN OUT · "+cores;
+            if(preview.State==MissionSessionState.Succeeded)return "ROUTE COMPLETE · "+cores+" · "+preview.Remaining+" TRACE LEFT";
+            return "PREVIEW · "+cores+" · UPLINK "+(preview.UplinkPowered?"LIVE":"DARK")+" · "+preview.Remaining+" TRACE LEFT";
         }
         void CommitBlackoutPreview()
         {

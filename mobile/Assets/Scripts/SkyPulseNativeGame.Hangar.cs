@@ -70,7 +70,9 @@ namespace SkyPulse.Mobile
                 new Vector2(0, -225), new Vector2(800, 470), SkyPulseProgressionSurface.Finish.Quiet);
             glass.Accent = accent;
             hangarInformationCanvas = glass.gameObject.AddComponent<CanvasGroup>();
-            hangarInformationCanvas.alpha = hangarInformationFadeTime >= 0 ? 0 : 1;
+            // A subtle settle retains the identity and price while the bird
+            // arrives. Never leave a fully invisible, still-clickable action.
+            hangarInformationCanvas.alpha = !reduceMotionEnabled && hangarInformationFadeTime >= 0 ? .72f : 1;
             var birdName=HangarLabel(glass.transform, skin.Name, new Vector2(0, 174), new Vector2(720, 62), 43, Hex("#effaff"));
             birdName.fontStyle=FontStyle.Bold;
             HangarLabel(glass.transform, profile.Rarity + "  /  LEVEL " + BirdLevel(skin),
@@ -99,15 +101,29 @@ namespace SkyPulse.Mobile
             select.GetComponentInChildren<Text>().fontSize = 29;
             select.GetComponentInChildren<Text>().fontStyle=FontStyle.Bold;
             select.GetComponentInChildren<Text>().color=equipped?Hex("#d5e8f0"):Hex("#06232b");
+            SetComfortHitTarget(select);
             select.interactable = !equipped;
-            if (!equipped) select.onClick.AddListener(() => SelectSkin(skin));
-            var train = ProgressionButton(hangarPageRoot, BirdLevel(skin)>=SkyPulseBirdProgression.MaxTraining?"VIEW TRAITS":"TRAIN BIRD", new Vector2(-205, -550),
-                new Vector2(380, 152), () => OpenBirdTraining(skin));
+            var actionPage=hangarPageRoot;
+            if (!equipped) select.onClick.AddListener(() => { if(HangarActionCurrent(skin,actionPage))SelectSkin(skin); });
+            bool coreLimited=BirdLevel(skin)>=birdProgression.TrainingCap && BirdLevel(skin)<SkyPulseBirdProgression.MaxTraining;
+            string trainingAction=BirdLevel(skin)>=SkyPulseBirdProgression.MaxTraining?"VIEW TRAITS":coreLimited?"EVOLVE CORE":"TRAIN BIRD";
+            var train = ProgressionButton(hangarPageRoot, trainingAction, new Vector2(-205, -550),
+                new Vector2(380, 152), () => { if(!HangarActionCurrent(skin,actionPage))return; if(coreLimited)OpenCoreProgression();else OpenBirdTraining(skin); });
             var breed = ProgressionButton(hangarPageRoot, "BREED", new Vector2(205, -550),
-                new Vector2(380, 152), () => OpenBreeding(skin));
+                new Vector2(380, 152), () => { if(HangarActionCurrent(skin,actionPage))OpenBreeding(skin); });
             train.interactable = breed.interactable = owned;
             HangarLabel(hangarPageRoot, owned ? "NEW BIRD SAVINGS · "+birdProgression.BirdUnlockDiscountPercent+"%  /  ENDLESS REWARD TRAITS" : "UNLOCK TO TRAIN AND BREED",
                 new Vector2(0, -658), new Vector2(850, 42), 21, Hex("#a3c0d1"));
+        }
+
+        // Old callbacks can survive until Destroy at frame end. They cannot
+        // equip, train or breed the outgoing bird during a carousel movement.
+        bool HangarActionCurrent(Skin skin,RectTransform page)
+        {
+            return state==FlightState.Customize && cosmeticCategory==CosmeticCategory.Birds &&
+                !hangarDragging && !hangarSwipeAnimating && !purchaseModal.activeInHierarchy &&
+                (birdProgressionScreen==null || !birdProgressionScreen.activeInHierarchy) && page!=null && page==hangarPageRoot && page.gameObject.activeInHierarchy &&
+                hangarPageIndex>=0 && hangarPageIndex<BirdRoster.Length && BirdRoster[hangarPageIndex].Id==skin.Id;
         }
 
         string HangarProgressionGoal(Skin skin)
@@ -267,7 +283,7 @@ namespace SkyPulse.Mobile
             {
                 hangarInformationFadeTime += Time.unscaledDeltaTime;
                 float progress = reduceMotionEnabled ? 1 : Mathf.Clamp01(hangarInformationFadeTime / HangarInformationFadeDuration);
-                hangarInformationCanvas.alpha = Mathf.SmoothStep(0, 1, progress);
+                hangarInformationCanvas.alpha = Mathf.Lerp(.72f,1f,Mathf.SmoothStep(0, 1, progress));
                 if (progress >= 1) hangarInformationFadeTime = -1;
             }
             if (hangarHeroAura != null)
@@ -293,7 +309,7 @@ namespace SkyPulse.Mobile
                 hangarInformationCanvas.alpha =
                     Mathf.Lerp(
                         1f,
-                        .18f,
+                        .36f,
                         progress);
             }
 

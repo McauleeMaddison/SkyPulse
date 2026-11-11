@@ -131,6 +131,11 @@ Shader "SkyPulse/Original Endless Neon Metal"
                 // A dark diffuser base and a moving white core keep motion
                 // readable without clipping every LED into a solid white line.
                 float3 diffuser=energy*(.31+packet*.67)+float3(.40,.56,.70)*pow(packet,6)*.20;
+                // A narrow moving optical core sits inside the broad coloured
+                // diffuser. Its screen-space filter prevents a sharp rail from
+                // flickering when a pipe crosses the portrait view.
+                float opticalCore=(1-smoothstep(.007,.017+channelAA,angularDistance))*(1-_Cutout);
+                diffuser+=float3(.58,.74,.88)*opticalCore*pow(packet,5)*.14;
                 colour=lerp(colour,diffuser+float3(.6,.8,1)*spec*.12,max(led,lens));
                 if(_Cutout>.5)
                 {

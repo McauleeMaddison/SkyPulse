@@ -17,6 +17,8 @@ public static class SkyPulseBirdRosterPreview
     static readonly string[] Sprites={"birdRenderer","birdFlapRenderer","birdRiseRenderer","birdParallaxRenderer","birdSafetyRenderer","birdDepthRenderer","birdEyeGlintRenderer"};
     static readonly Dictionary<SpriteRenderer,bool> originals=new Dictionary<SpriteRenderer,bool>();
     static GameObject holder;static SkyPulseNeonFinchPrototype rig;static string loaded;
+    static Light keyLight,fillLight;
+    static readonly Quaternion KeyDirection=Quaternion.Euler(35,35,0),FillDirection=Quaternion.Euler(335,215,0);
     static float activeFlightTime,lastSample;static int sampledFrame=-1,observedRunSerial=int.MinValue;
     static float flightWingLift;static int wingFrame=-1;
     static string hitIdentity;static Sprite nativeHitSprite;static Vector3 nativeHitScale;static bool hitOverride;
@@ -102,13 +104,14 @@ public static class SkyPulseBirdRosterPreview
             Bounds bounds=model.GetComponentsInChildren<Renderer>()[0].bounds;foreach(var r in model.GetComponentsInChildren<Renderer>())bounds.Encapsulate(r.bounds);
             float scale=2.30f/Mathf.Max(.01f,bounds.size.x);holder.transform.localScale=Vector3.one*scale;holder.transform.localRotation=Quaternion.Euler(0,-9,0);
             foreach(var t in holder.GetComponentsInChildren<Transform>(true))t.gameObject.layer=Layer;
-            CreateLight(new Vector3(-2,4,-4),1.2f);CreateLight(new Vector3(2,1,3),.65f);
+            keyLight=CreateLight("Preview-only bird key light",KeyDirection,1.05f);
+            fillLight=CreateLight("Preview-only bird fill light",FillDirection,.42f);
             loaded=id;
         }
         var serial=Get(game,"editorFlightRunSerial");int runSerial=serial is int value?value:0;
         if(observedGame!=game||observedRunSerial!=runSerial)
         {ResetFlightClock();observedGame=game;observedRunSerial=runSerial;}
-        holder.SetActive(true);rig.reducedMotion=(bool)Get(game,"reduceMotionEnabled");
+        holder.SetActive(true);UpdateReviewLighting(game);rig.reducedMotion=(bool)Get(game,"reduceMotionEnabled");
         // The native frame controller owns accepted taps and mid-stroke
         // reversals. Follow that state; the ambient clock never invents flaps.
         lastSample=forcedTime>=0?forcedTime:AdvanceFlightClock(Time.frameCount,Time.unscaledDeltaTime,state=="Playing");
@@ -153,11 +156,41 @@ public static class SkyPulseBirdRosterPreview
         {var renderer=Get(game,"birdRenderer") as SpriteRenderer;var art=Get(game,"birdArt") as Transform;if(renderer!=null)renderer.sprite=nativeHitSprite;if(art!=null)art.localScale=nativeHitScale;}
         hitOverride=false;hitIdentity=null;nativeHitSprite=null;
     }
-    static void CreateLight(Vector3 at,float intensity)
-    {var o=new GameObject("Preview-only bird studio light",typeof(Light));o.transform.SetParent(holder.transform,false);o.transform.localPosition=at;o.transform.LookAt(holder.transform.position);var light=o.GetComponent<Light>();light.type=LightType.Directional;light.cullingMask=1<<Layer;light.color=Color.white;light.intensity=intensity;light.shadows=LightShadows.None;}
+    // A broad warm key and restrained cool fill reveal the same machined plate
+    // shapes in Studio, Home and flight. These unsaved lights never alter source
+    // materials or the scene's RenderSettings.
+    public static void ConfigureStudioLighting(PreviewRenderUtility preview)
+    {
+        preview.ambientColor=new Color(.12f,.14f,.18f);
+        var key=preview.lights[0];key.transform.rotation=KeyDirection;key.color=new Color(1,.985f,.96f);key.intensity=1.05f;key.enabled=true;
+        var fill=preview.lights[1];fill.transform.rotation=FillDirection;fill.color=new Color(.88f,.94f,1);fill.intensity=.42f;fill.enabled=true;
+        // This isolated rim belongs to the preview scene, so it cannot light
+        // nearby pipe/world meshes or change their reflection assignments.
+        var rimObject=new GameObject("Isolated mechanical bird rim",typeof(Light));preview.AddSingleGO(rimObject);
+        var rim=rimObject.GetComponent<Light>();rim.type=LightType.Directional;rim.transform.rotation=Quaternion.Euler(18,155,0);
+        rim.color=new Color(.76f,.88f,1);rim.intensity=.48f;rim.shadows=LightShadows.None;
+    }
+    public static Color ReviewKeyForWorld(int world)=>Color.Lerp(new Color(1,.985f,.96f),SkyPulseFlightEnvironment.KeyLightForWorld(world),.18f);
+    static void UpdateReviewLighting(SkyPulseNativeGame game)
+    {
+        if(keyLight==null||fillLight==null)return;
+        int world=(SkyPulseMode)Get(game,"activeMode")==SkyPulseMode.EndlessRoute?(int)Get(game,"routeWorldIndex"):0;
+        // They are owned by the disposable holder for cleanup, but their WORLD
+        // orientation stays fixed as the bird banks. Highlights consequently
+        // travel across the real surfaces instead of being painted to the pilot.
+        keyLight.transform.rotation=KeyDirection;fillLight.transform.rotation=FillDirection;
+        keyLight.color=ReviewKeyForWorld(world);
+        fillLight.color=Color.Lerp(new Color(.88f,.94f,1),SkyPulseFlightEnvironment.FillLightForWorld(world),.12f);
+    }
+    static Light CreateLight(string name,Quaternion direction,float intensity)
+    {
+        var o=new GameObject(name,typeof(Light));o.transform.SetParent(holder.transform,false);o.transform.rotation=direction;
+        var light=o.GetComponent<Light>();light.type=LightType.Directional;light.cullingMask=1<<Layer;
+        light.intensity=intensity;light.shadows=LightShadows.None;return light;
+    }
     static void RestoreSprites(){foreach(var pair in originals)if(pair.Key!=null)pair.Key.enabled=pair.Value;originals.Clear();}
     static void DisposeModel()
-    {RestoreSprites();if(holder!=null)UnityEngine.Object.DestroyImmediate(holder);holder=null;rig=null;loaded=null;}
+    {RestoreSprites();if(holder!=null)UnityEngine.Object.DestroyImmediate(holder);holder=null;rig=null;loaded=null;keyLight=fillLight=null;}
     public static void Clear()
     {ReleaseHit(observedGame,true);DisposeModel();ResetFlightClock();observedGame=null;observedRunSerial=int.MinValue;TimeOverride=-1;}
 }

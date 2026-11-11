@@ -40,6 +40,14 @@ namespace SkyPulse.Mobile
                 homePrivacy.anchoredPosition=new Vector2(180,-870);homePrivacy.sizeDelta=new Vector2(280,144);
                 homeTasks.anchoredPosition=new Vector2(-180,-870);homeTasks.sizeDelta=new Vector2(320,144);
             }
+            // The launch is the primary action in every mode. Give its label
+            // the same readable scale as collection cards, with a taller touch
+            // surface; mode switching retains the existing position/callback.
+            var launch=(RectTransform)homeLaunchButton.transform;
+            launch.sizeDelta=new Vector2(620,152);
+            var launchLabel=homeLaunchButton.GetComponentInChildren<Text>();
+            launchLabel.fontSize=56;
+            launchLabel.rectTransform.sizeDelta=new Vector2(516,86);
             // Preserve navigation and use disjoint, generous touch targets. The mode's
             // identity comes from its world, hero and material, not extra menus.
             foreach(var face in homeScreen.GetComponentsInChildren<SkyPulseCircuitGraphic>(true))

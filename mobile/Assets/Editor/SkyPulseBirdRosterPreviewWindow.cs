@@ -136,9 +136,7 @@ public sealed class SkyPulseBirdRosterPreviewWindow:EditorWindow
             preview=new PreviewRenderUtility();preview.cameraFieldOfView=30;
             preview.camera.orthographic=false;preview.camera.clearFlags=CameraClearFlags.SolidColor;
             preview.camera.backgroundColor=new Color(.025f,.032f,.043f);
-            preview.ambientColor=new Color(.12f,.14f,.18f);
-            preview.lights[0].transform.rotation=Quaternion.Euler(35,35,0);preview.lights[0].color=new Color(1,.985f,.96f);preview.lights[0].intensity=1.1f;
-            preview.lights[1].transform.rotation=Quaternion.Euler(335,215,0);preview.lights[1].color=new Color(.88f,.94f,1);preview.lights[1].intensity=.7f;
+            SkyPulseBirdRosterPreview.ConfigureStudioLighting(preview);
             model=preview.InstantiatePrefabInScene(prefab);model.name=names[studioIndex]+" · unsaved studio preview";
             var transforms=model.GetComponentsInChildren<Transform>(true);
             for(int i=0;i<transforms.Length;i++)transforms[i].gameObject.hideFlags=HideFlags.HideAndDontSave;
@@ -148,9 +146,16 @@ public sealed class SkyPulseBirdRosterPreviewWindow:EditorWindow
             rig.flapPeriod=1.65f;rig.flapDegrees=28;rig.bankDegrees=5;rig.turntableDegreesPerSecond=12;rig.ResetPose();
             renderers=model.GetComponentsInChildren<Renderer>(true);
             if(renderers.Length==0)throw new InvalidOperationException("The saved model contains no rendered geometry.");
+            // Frame the complete articulated envelope once. Fitting only the
+            // saved rest pose can clip a crest, foot or feather on the next
+            // stroke and makes a finished model look mechanically broken.
             bounds=renderers[0].bounds;
-            for(int i=0;i<renderers.Length;i++){bounds.Encapsulate(renderers[i].bounds);renderers[i].reflectionProbeUsage=ReflectionProbeUsage.Simple;}
-            radius=Mathf.Max(.1f,bounds.extents.magnitude);
+            for(int pose=0;pose<16;pose++)
+            {
+                rig.SamplePose(pose*rig.flapPeriod/16f);
+                for(int i=0;i<renderers.Length;i++){bounds.Encapsulate(renderers[i].bounds);renderers[i].reflectionProbeUsage=ReflectionProbeUsage.Simple;}
+            }
+            rig.ResetPose();radius=Mathf.Max(.1f,bounds.extents.magnitude);
             // An instance-only local probe supplies the saved studio cubemap.
             // Active-scene RenderSettings and shared source materials are untouched.
             var reflection=AssetDatabase.LoadAssetAtPath<Cubemap>(SkyPulseBirdStudioLighting.ReflectionPath);

@@ -67,7 +67,7 @@ public static class SkyPulseBirdMenuPreview
                     var root=Get(game,roots[i]) as RectTransform;if(root==null)continue;
                     var image=root.Find(i==1?"Selected bird":"Neighbour bird")?.GetComponent<Image>();
                     if(image==null)continue;
-                    Show(root,roster.GetValue((index+i-1+roster.Length)%roster.Length),i==1?new Vector2(480,315):new Vector2(230,180),new Vector2(0,8),reduced,fresh,i==1);
+                    Show(root,roster.GetValue((index+i-1+roster.Length)%roster.Length),i==1?new Vector2(560,360):new Vector2(230,180),new Vector2(0,8),reduced,fresh,i==1);
                     Hide(image);
                     if(i==1)
                     {
@@ -109,10 +109,7 @@ public static class SkyPulseBirdMenuPreview
         {
             Path=path;var prefab=AssetDatabase.LoadAssetAtPath<GameObject>(path);
             if(prefab==null)throw new InvalidOperationException("Saved bird missing: "+path);
-            preview=new PreviewRenderUtility();preview.ambientColor=new Color(.12f,.14f,.18f);
-            preview.lights[0].transform.rotation=Quaternion.Euler(35,35,0);preview.lights[0].intensity=1.1f;
-            preview.lights[1].transform.rotation=Quaternion.Euler(335,215,0);preview.lights[1].color=new Color(.88f,.94f,1);preview.lights[1].intensity=.7f;
-            foreach(var light in preview.lights)light.enabled=true;
+            preview=new PreviewRenderUtility();SkyPulseBirdRosterPreview.ConfigureStudioLighting(preview);
             var model=preview.InstantiatePrefabInScene(prefab);rig=model.GetComponent<SkyPulseNeonFinchPrototype>();
             rig.animate=false;rig.turntable=false;rig.flapPeriod=1.65f;rig.turntableDegreesPerSecond=12;rig.ResetPose();
             var renderers=model.GetComponentsInChildren<Renderer>();var bounds=renderers[0].bounds;

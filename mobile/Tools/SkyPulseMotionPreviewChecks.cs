@@ -16,9 +16,7 @@ public static class SkyPulseMotionPreviewChecks
     }
     static PreviewRenderUtility Studio()
     {
-        var p=new PreviewRenderUtility();p.ambientColor=new Color(.12f,.14f,.18f);
-        p.lights[0].transform.rotation=Quaternion.Euler(35,35,0);p.lights[0].color=new Color(1,.985f,.96f);p.lights[0].intensity=1.1f;
-        p.lights[1].transform.rotation=Quaternion.Euler(335,215,0);p.lights[1].color=new Color(.88f,.94f,1);p.lights[1].intensity=.7f;
+        var p=new PreviewRenderUtility();SkyPulseBirdRosterPreview.ConfigureStudioLighting(p);
         p.camera.clearFlags=CameraClearFlags.SolidColor;p.camera.backgroundColor=new Color(.025f,.032f,.043f);p.cameraFieldOfView=30;
         var reflection=AssetDatabase.LoadAssetAtPath<Cubemap>(SkyPulseBirdStudioLighting.ReflectionPath);
         if(reflection!=null){var o=new GameObject("Review reflection",typeof(ReflectionProbe));p.AddSingleGO(o);var probe=o.GetComponent<ReflectionProbe>();probe.mode=ReflectionProbeMode.Custom;probe.customBakedTexture=reflection;probe.intensity=.85f;probe.size=Vector3.one*100;}

@@ -96,8 +96,14 @@ Shader "SkyPulse/Flight Architecture"
                 float2 grid=float2((i.local.x+i.local.z*.61)*9.5,i.local.y*4.1);
                 float mullion=max(facadeLine(grid.x,.015),facadeLine(grid.y,.018));
                 colour*=1-glass*mullion*.25;
-                float2 cell=frac(grid);float interior=smoothstep(.15,.23,cell.x)*(1-smoothstep(.72,.84,cell.x))*smoothstep(.18,.28,cell.y)*(1-smoothstep(.67,.78,cell.y));
-                float occupied=step(.76,hash21(floor(grid)+_Design*7.1));
+                // Filter the occupied-room mask at its projected size. Distant
+                // windows should merge into quiet warm interiors rather than
+                // sparkle as subpixel rooms cross a pixel during parallax.
+                float2 cell=frac(grid),roomAA=max(fwidth(grid),float2(.001,.001));
+                float roomDetail=1-smoothstep(.45,1.25,max(roomAA.x,roomAA.y));
+                float interior=smoothstep(.15-roomAA.x,.23+roomAA.x,cell.x)*(1-smoothstep(.72-roomAA.x,.84+roomAA.x,cell.x))*smoothstep(.18-roomAA.y,.28+roomAA.y,cell.y)*(1-smoothstep(.67-roomAA.y,.78+roomAA.y,cell.y));
+                interior=lerp(.30,interior,roomDetail);
+                float occupied=lerp(.24,step(.76,hash21(floor(grid)+_Design*7.1)),roomDetail);
                 colour+=glass*(1-neon)*interior*occupied*float3(.90,.60,.30)*(.15+.05*sin(_Clock*.10+i.local.y));
                 // Only the explicitly occupied recessed panes emit. Their
                 // colour is baked from the same palette as the pipe LEDs.
@@ -105,7 +111,7 @@ Shader "SkyPulse/Flight Architecture"
                 float windowPulse=.66+.025*sin(_Clock*.24+floor(i.local.y*2.6)*.73+_Design);
                 // Occupied rooms sit inside every world's recessed glazing.
                 // Fine dark mullions remain visible between individual lights.
-                float rooms=lerp(.24,1,step(.24,hash21(floor(grid)+17.3+_Design*2.1)));
+                float rooms=lerp(.8176,lerp(.24,1,step(.24,hash21(floor(grid)+17.3+_Design*2.1))),roomDetail);
                 float paneFalloff=.055+.945*interior*rooms;
                 float windowExposure=_Design<.5?1.85:1.5;
                 colour+=neon*_WindowGlow*i.color.rgb*(windowPulse*.78+.06*pow(facing,3))*paneFalloff*windowExposure;
