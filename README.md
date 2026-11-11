@@ -1,5 +1,12 @@
 # SkyPulse Arcade
 
+The [11 November wing and everyday-play repair](mobile/Development/EverydayPolish20261111/README.md)
+corrects the long feather fans, immediate tap strokes and stale Editor bird selection.
+It adds optional first-play hints, clearer failure/retry controls, distinct pooled
+3D pickup housings and a quieter readable HUD. The actual Unity animation preview
+and source-specific checks are saved there. Owner visual approval remains next;
+no phone build or App Store submission was made.
+
 The [10 November gameplay and presentation pass](mobile/Development/PolishPass20261110/README.md)
 connects solid bird wings to accepted taps, corrects three low shoulder mounts and
 keeps every bird's own crash artwork. Its Editor Home/Hangar review has centred,

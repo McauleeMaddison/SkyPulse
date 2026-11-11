@@ -1,0 +1,112 @@
+[
+  {
+    "id": "newbird01",
+    "path": "mobile/Assets/Editor/SkyPulseBirdWorkshop/Roster/Solara/Solara Rig.prefab",
+    "before": "ca83520e2ddfd19cad15a948af8cc386171f38e9f3bf1ab77eb72eae6a937ce5",
+    "testedSha256": "dd92a64fc6797a0b237d67a15e959df0221062a5d173cdf0ac2a8baeb4c2e54e",
+    "promotedSha256": "358f5e59e7e83c48168da0eec7fdcf1c17d7c2a9b15b26d285fae3accdba1684",
+    "changedObjectBlocks": 3,
+    "sameObjectIds": true,
+    "metaGeometryFinishesScenePreserved": true,
+    "semanticBlocksMatchTested": true
+  },
+  {
+    "id": "newbird02",
+    "path": "mobile/Assets/Editor/SkyPulseBirdWorkshop/Roster/Astra/Astra Rig.prefab",
+    "before": "084f0302646dd229c6e30acebac2b6fd7e4456478711a9d7b08c7b9cb0301b48",
+    "testedSha256": "a734eb91d75cbaff3f958f0ae7ccbad092a25933ed1b59d1a611652d92dd1e1d",
+    "promotedSha256": "b487d7df049529ddcdb25278ea411602fad91611e3d1ddd82b5c0c4f70dbaac1",
+    "changedObjectBlocks": 3,
+    "sameObjectIds": true,
+    "metaGeometryFinishesScenePreserved": true,
+    "semanticBlocksMatchTested": true
+  },
+  {
+    "id": "newbird03",
+    "path": "mobile/Assets/Editor/SkyPulseBirdWorkshop/Roster/Voltcrest/Voltcrest Rig.prefab",
+    "before": "866616674a36ce15328d86554647a514f9fd9ca02904ed4516893921463dbcb3",
+    "testedSha256": "cc017c5dee771842bf57c0edbaf1ddb2063a05d29eaeddc964f9de6ac7726033",
+    "promotedSha256": "fb643b9ff2a7e9afc1f049e782f815e9fc4de1609b27fe58e8682bacc2911130",
+    "changedObjectBlocks": 3,
+    "sameObjectIds": true,
+    "metaGeometryFinishesScenePreserved": true,
+    "semanticBlocksMatchTested": true
+  },
+  {
+    "id": "newbird04",
+    "path": "mobile/Assets/Editor/SkyPulseBirdWorkshop/Roster/Chromaflux/Chromaflux Rig.prefab",
+    "before": "54184bf272c5a2c5e82ac8c8808513dd3e7d341fc6646e4bee9a52feabdfe877",
+    "testedSha256": "2529ac6d435eb421425506f78301ca810a8d1865ceefaf50ac8616556eb24b8f",
+    "promotedSha256": "ba7ee635ef3c2ff593ada4fb6e7a41594102fc789b1ad32aeddc889ab1406cd8",
+    "changedObjectBlocks": 3,
+    "sameObjectIds": true,
+    "metaGeometryFinishesScenePreserved": true,
+    "semanticBlocksMatchTested": true
+  },
+  {
+    "id": "newbird05",
+    "path": "mobile/Assets/Editor/SkyPulseBirdWorkshop/Roster/Virex/Virex Rig.prefab",
+    "before": "c025fb05abe3721b398b19d8dd986f0ee03099e40d99cebbfbaa1ed65994bf24",
+    "testedSha256": "b4becc8c82d2f15bfbf1ad622fe22a7f79279020a804fe04c17cdbf4a043b40c",
+    "promotedSha256": "97634498319ea4c2108bac98a39476762c86f4e155682637042a3cd317ac7554",
+    "changedObjectBlocks": 3,
+    "sameObjectIds": true,
+    "metaGeometryFinishesScenePreserved": true,
+    "semanticBlocksMatchTested": true
+  },
+  {
+    "id": "newbird06",
+    "path": "mobile/Assets/Editor/SkyPulseBirdWorkshop/Roster/Borealis/Borealis Rig.prefab",
+    "before": "f39e5b8c68bb09e4418bae02e69b73a2b7db37ebb9943801fdf885b5a076f9b5",
+    "testedSha256": "7b49093e7103df26d8c1f829e74b2cd4dd5bccd07770203f0d4b2952ca174ccd",
+    "promotedSha256": "c2c6760ddf87dddb78df00e9684e77d3dddfa35358e868e8b856a416b7c44d74",
+    "changedObjectBlocks": 3,
+    "sameObjectIds": true,
+    "metaGeometryFinishesScenePreserved": true,
+    "semanticBlocksMatchTested": true
+  },
+  {
+    "id": "newbird07",
+    "path": "mobile/Assets/Editor/SkyPulseBirdWorkshop/Roster/Roselight/Roselight Rig.prefab",
+    "before": "921766915c750dfde7c394d540019e273d7ddadd0dfb065688c3abe2d8423d79",
+    "testedSha256": "feecbc36c5d8ea0f1e5daf6a85346ed919bd799cbfe428ae502b0669db8cc4e1",
+    "promotedSha256": "cfb1b305d68657c30bacc9ccd6ff27554c216c7782a08c6c94923e30f7eb819f",
+    "changedObjectBlocks": 3,
+    "sameObjectIds": true,
+    "metaGeometryFinishesScenePreserved": true,
+    "semanticBlocksMatchTested": true
+  },
+  {
+    "id": "newbird08",
+    "path": "mobile/Assets/Editor/SkyPulseBirdWorkshop/Roster/Pyrestorm/Pyrestorm Rig.prefab",
+    "before": "58dff895041ccaf47a4b7c3bc75c10b5bb984e9cc41b73b07d39b9c1f2f9f001",
+    "testedSha256": "4c99bb5793420e006189a9a69d60e1276c27a1058a7050310f873879b5fbfb25",
+    "promotedSha256": "80a3e5f7d7a27a7d2892944edb48bf71696633cadccf386cb08c28851b0ccbfc",
+    "changedObjectBlocks": 3,
+    "sameObjectIds": true,
+    "metaGeometryFinishesScenePreserved": true,
+    "semanticBlocksMatchTested": true
+  },
+  {
+    "id": "newbird09",
+    "path": "mobile/Assets/Editor/SkyPulseBirdWorkshop/Roster/Nightveil/Nightveil Rig.prefab",
+    "before": "59ca35a6893f34007bbba781702fb772c5c8cb40c7b498bc7d7937dfbec9c35e",
+    "testedSha256": "a9d30af8e338cd4df73ba0e860a1ec472bfb0f0ad83adec4209598edbed4fcaf",
+    "promotedSha256": "e6702455d914d737f7c83742d1561252497e9cdbfc5fc40da864ac02385c7da6",
+    "changedObjectBlocks": 3,
+    "sameObjectIds": true,
+    "metaGeometryFinishesScenePreserved": true,
+    "semanticBlocksMatchTested": true
+  },
+  {
+    "id": "newbird10",
+    "path": "mobile/Assets/Editor/SkyPulseBirdWorkshop/Roster/Ionwing/Ionwing Rig.prefab",
+    "before": "421da24a8657ea207752e2f73c55c8497c5ab7d1ba914a8ba68294af1adf2898",
+    "testedSha256": "af7b1a953ee0bb8e630935758315d704e4871f82754cfc9d8c4121b67b87223b",
+    "promotedSha256": "18c6141a316109e26d7bf73d3b7fdba20e2199f8143c4890048740e89a6d33a2",
+    "changedObjectBlocks": 3,
+    "sameObjectIds": true,
+    "metaGeometryFinishesScenePreserved": true,
+    "semanticBlocksMatchTested": true
+  }
+]

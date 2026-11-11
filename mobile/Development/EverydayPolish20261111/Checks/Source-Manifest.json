@@ -1,0 +1,456 @@
+{
+  "baseCommit": "1608bd0416a88a915b2b6aec02ca6e9bc53f6fe6",
+  "unityVersion": "6000.6.0f1",
+  "sources": [
+    {
+      "path": "mobile/Assets/Editor/SkyPulseBackgroundAuthoringInspector.cs",
+      "sha256": "a43971ed2ff8c84458801f6887637bb5819198b7d7694bc8916bfcecb61fa4e7"
+    },
+    {
+      "path": "mobile/Assets/Editor/SkyPulseBackgroundWorkshop.cs",
+      "sha256": "1d69fe892fae807839442825423fd9165ce3b65289b08c955f99071cb74da4e7"
+    },
+    {
+      "path": "mobile/Assets/Editor/SkyPulseBirdEdgeCleanup.cs",
+      "sha256": "16815450d75a18df335ef2a1b5816fb5b0154c430568861ecddada3246eb3814"
+    },
+    {
+      "path": "mobile/Assets/Editor/SkyPulseBirdJetWorkshop.cs",
+      "sha256": "ac6c71ed398a4b5c0311ab1164f6d3f8b400b70dfffb803daac689d7fb551ede"
+    },
+    {
+      "path": "mobile/Assets/Editor/SkyPulseBirdMenuPreview.cs",
+      "sha256": "57342039eeabd568aa4740b38d0a6367382d92f9662d35f259a7b83f938ed322"
+    },
+    {
+      "path": "mobile/Assets/Editor/SkyPulseBirdPrototypeWorkshop.cs",
+      "sha256": "15f70f62548993db156fefef416d79d4e89813ef19dc8362ec9624099b2cfa8f"
+    },
+    {
+      "path": "mobile/Assets/Editor/SkyPulseBirdRosterPreview.cs",
+      "sha256": "05b84009fd2558ab75ca329bcfb0eecef633591a5f901c5217ef05c11c3c3739"
+    },
+    {
+      "path": "mobile/Assets/Editor/SkyPulseBirdRosterPreviewWindow.cs",
+      "sha256": "8dbf3bcd8e31072cb7a479acd151378e0eaad5a7d2ddab5d351c041c3b624270"
+    },
+    {
+      "path": "mobile/Assets/Editor/SkyPulseBirdRosterRaven.cs",
+      "sha256": "105fe464674838b068e9efac210498a9eec463abf3f3f2b8987f31e809964439"
+    },
+    {
+      "path": "mobile/Assets/Editor/SkyPulseBirdRosterRuntimeBaker.cs",
+      "sha256": "ff2bc15f9201487d270bca6b5b6e03e78eb932577180903efe8cc0e9c50c0d9c"
+    },
+    {
+      "path": "mobile/Assets/Editor/SkyPulseBirdRosterWorkshop.cs",
+      "sha256": "f8e194b70043d8e9a062d166a1d3eeb36a93dd5b916a3b22343b78f52c2f2f57"
+    },
+    {
+      "path": "mobile/Assets/Editor/SkyPulseBirdShoulderFit.cs",
+      "sha256": "9fcf713913299e6ff2a303546daf128c512ea1f5ca08f56894d40ec392426997"
+    },
+    {
+      "path": "mobile/Assets/Editor/SkyPulseBirdStudioLighting.cs",
+      "sha256": "09283c97e1ed7397c46a1bbb49fd996bab4bd68bb6bfbcd4d464077bd969d7c9"
+    },
+    {
+      "path": "mobile/Assets/Editor/SkyPulseDistrictDesignWorkshop.cs",
+      "sha256": "4a2533c58b8d554da4ad4a427d7561f44b7aaa3aed996d569f69f3b8f208f8b0"
+    },
+    {
+      "path": "mobile/Assets/Editor/SkyPulseIosPostprocess.cs",
+      "sha256": "74d6b2b044f02efff534ed4b0ee9eea4fc0244aa93a982eedd361b743251fe46"
+    },
+    {
+      "path": "mobile/Assets/Editor/SkyPulseMobileArtSetup.cs",
+      "sha256": "c6caf49778f7a7f97366ca5a26e3d8939a2e3fc4c6086a6bba02ebf8a85cdd09"
+    },
+    {
+      "path": "mobile/Assets/Editor/SkyPulsePipeWorkshop.cs",
+      "sha256": "379fee8386076f135c33a706d68433948693dc6f28e41ffeeaf82e4557102bf1"
+    },
+    {
+      "path": "mobile/Assets/Editor/SkyPulsePlanetWorkshop.cs",
+      "sha256": "cf13198ba0947fcf6a2aab46acccac04a5f9a7132217d45791acea2c75323e8e"
+    },
+    {
+      "path": "mobile/Assets/Editor/SkyPulsePlaySessionGuard.cs",
+      "sha256": "b819efc1c24163c6a876b9cbf636ab0829b144a72e86ae7f825e0beaffe36d90"
+    },
+    {
+      "path": "mobile/Assets/Editor/SkyPulsePlaytestChecklist.cs",
+      "sha256": "aa15c9a23013a92b437d4659ed62bd0665cca479f57c8e654b2e26435cbf0d24"
+    },
+    {
+      "path": "mobile/Assets/Editor/SkyPulseReleaseBuild.cs",
+      "sha256": "c3a8f01c07908bea27056312189c2551b663fb0def1f0e2bdb4b25ea4444b149"
+    },
+    {
+      "path": "mobile/Assets/Editor/SkyPulseTactilePluginSetup.cs",
+      "sha256": "078ea0d39d1b06245112275ef1a5d12d52ccf24ab0dce274563ff279a5247a0a"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseAtmosphereDepth.cs",
+      "sha256": "d95f7f1a9e0b9e55ef2edc01a195850c681f5aa1470bbddf53463af8557e09fb"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseBackgroundAuthoring.cs",
+      "sha256": "488eb5e2bc7ab0d1b23bcc4faf49914853cabed03c662f700999522898eca91f"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseBackgroundLighting.cs",
+      "sha256": "57fbc80fd28d8fe92400fa23e53f63db998bc711038ed59f00a72589712bf66e"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseBirdProgression.cs",
+      "sha256": "1a1c01342e7b24452835109d624ac88d1d392067284ac0cd9be358a68465ccc0"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseBirdRig.cs",
+      "sha256": "87eda130680e5f86d1fe6f895cb1d8061a3a3b492ac4acdaa032c341d2dbe3aa"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseBlackoutCampaign.cs",
+      "sha256": "37e6fdc0b2dce5c978a0cb1d075e53bfae1f48dfb4a76e4685e17408f815d083"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseBlackoutGraphic.cs",
+      "sha256": "4204390f78dec8d7e7329757c701dd662df6cceec82a77c50f25f4a5b9d7ad46"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseBootstrap.cs",
+      "sha256": "0ce105931d8e6dbe60096b0b29e5bc0b5fecd03aa3db4115460cae155a5d3b94"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseButtonFeedback.cs",
+      "sha256": "d61cfd21b8b37a1cc73217e5a1ac8aaed9b1843f0fb8deaebc76108f9f8cd6df"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseCircuitGraphic.cs",
+      "sha256": "52b3d35c9e2bbbbd1b4e8d7aa694bf5b07fc17cb60e871f8ccd7c8077837bf85"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseDailyMissions.cs",
+      "sha256": "10157b808de4de3ee309b00a019ee43b4faeb11be50f8276f46d2c105b7ea8be"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseDailyRelay.cs",
+      "sha256": "ad7eb4a45b75de015cb1c3ecbd4dc5169765a9293613ada55042f23d9eebf2e2"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseDepthStage.cs",
+      "sha256": "22f89a7b50786404febccbe595b616617bd7728311a7e69fc3c66bfd7a4ce862"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseFlightEffects.cs",
+      "sha256": "4b8bf951efd78b814939cfa73566285151c953132e18ae546a8a0948c491d197"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseFlightEnvironment.cs",
+      "sha256": "b39e44d6aaa109d253c8ab6d55972f869dbedcd574d7beb24740ccf0dbe1953b"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseHeistBoard.cs",
+      "sha256": "3aa5257fe247eb3a4ec5daa366da18050c665807ff1c435533ea67f47de45db4"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseHolographicText.cs",
+      "sha256": "9e95ba55720431817ede483d700b561e410d23b5e63a63072956b226b3d2296e"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseInputFence.cs",
+      "sha256": "ccf585a47e7bb3d401c4358d792209b548185f755b27b494a368ce7838ec7b25"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseMissionModels.cs",
+      "sha256": "2966173db2cd29644df19e99126a13d93f528897bf7153a0ff80938efc874605"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseNativeGame.Audio.cs",
+      "sha256": "2c7c55f4a39cad2c6404cc2e42d24e8f09ff67465837184e93e78bc64b6327cd"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseNativeGame.BirdProgression.cs",
+      "sha256": "a40528c3382329027eb86edf6d176621852d7bf3e16e0db935cc663b8443b467"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseNativeGame.Blackout.cs",
+      "sha256": "232bedb0facd7cf180698bd8dd376c66d1a8eb76f530a2906fbce8ceec923bb3"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseNativeGame.Cinematic.cs",
+      "sha256": "952100f196c9a3cddc6d23e38af5d3eef43fbdf9d4d7ff5819a2835376ec1a03"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseNativeGame.Controls.cs",
+      "sha256": "aef0ce193704ce5c88fa32bf43883dd506a9f04f2b08ae79a9469efc5027c9e1"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseNativeGame.Depth.cs",
+      "sha256": "b2d7e3f6c4c7e1b42a2ea7f04fdb9473cf59606fe1312c60307b8c61e523e707"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseNativeGame.Environment.cs",
+      "sha256": "c5fa883bbfe7b46ea45f556e25e23e6d4c730c38b453d625e91243c6e620fbb9"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseNativeGame.FailureClarity.cs",
+      "sha256": "4846f864040f54642a02eb4640a5583c6cf806c3814eba533759aa61fa66cc45"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseNativeGame.FirstPlay.cs",
+      "sha256": "f0a6115e7bc63938b27e097b4b10c0ff0f48f85146fb5a4d50c44bbd6bb72f36"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseNativeGame.Guide.cs",
+      "sha256": "6637858ee92ceb6ea2068d7c9d8bd59328cee578874ef749666fbb0c688f4573"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseNativeGame.Hangar.cs",
+      "sha256": "9f27b30cceb01e312ecf5a46cf6690c8a05a8bac1ea78d86b050a211ee2a014c"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseNativeGame.Home.cs",
+      "sha256": "752cc54a421faf7d9a8e8dd168cb2e39a80b076b7ba2a6404b6ea4cb4589b247"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseNativeGame.Missions.cs",
+      "sha256": "4d4c150b3f6470d620d64fca249bb45e998e7480826437fd79182b50fddb3ee0"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseNativeGame.PickupBoosts.cs",
+      "sha256": "bf0848d10736d42e4477038950b4dd750b3df8bb5d0269ee951da9811f7d442a"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseNativeGame.PipeVisuals.cs",
+      "sha256": "220ad836e8fd35437db921692adc9c131b63e01ad052ce956fce25cd6237a8b3"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseNativeGame.Presentation.cs",
+      "sha256": "7f9edf06c6b4973e18c6750777597553c1059799aece5e9dff621c8d7e32f66c"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseNativeGame.Readability.cs",
+      "sha256": "fb874bd0dc1b10057792421681ac6db910d0133384aee57afa95f905f7417354"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseNativeGame.Results.cs",
+      "sha256": "56693f9fcc61bb86f529feabf4f74f53cff509aabf100ed1f03f7950b8bfa0b8"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseNativeGame.TechTree.cs",
+      "sha256": "ab47560fd5f8bd247ae95efdee0aa77ae6e885b117ccabf50a9f52182de466b7"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseNativeGame.cs",
+      "sha256": "1e21088d0affe7606cd5849795a9e5ed50c9d3c026ac9e61ad82c1e6941ea147"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseNeonFinchPrototype.cs",
+      "sha256": "a3499704526284cf6b1aed0c1ff039448778489c819cf26990fea6da327fc519"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseOrbitalGeometry.cs",
+      "sha256": "d19312d1794666b90dc56ba6b0fe2a1bd3ecaa2abe34a0d6ede1214116f6d725"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseOrbitalWorld.cs",
+      "sha256": "b43c835ef6069dffe17be70470b2e54df644649986404ce9acdd28576a17face"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulsePickupDisplay.cs",
+      "sha256": "8d81a88ff97c27c2bd913d952d5c431af636675eeac080d75d834c454fa461f8"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulsePipeAuthoring.cs",
+      "sha256": "11389a160f3ef9563786d444caa9e3da8c67efc5da35a899507c3fceadcb59e8"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulsePipeTheme.cs",
+      "sha256": "272afb0296aa30a4b9533129b39e41ca2913484507d520e147664c66dcdb9042"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulsePressTarget.cs",
+      "sha256": "c796bcf41af73bb8198709a13d6b43605fe38a9636cd9645e28616e64831d73d"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulsePrism.cs",
+      "sha256": "4deaf7efad3c3d589e37a20f3dcca1f8c0db3b86d7fd555a78fa67fb70d55a38"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseProgressionStage.cs",
+      "sha256": "b0c8993c5bedf2c18885dfae24c5e318fb3a6fee3add7fe4756e03d8178d1fff"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseProgressionSurface.cs",
+      "sha256": "fae7611677b1df140d690e8941ed54bb4073f7b339b62aca8c984be069f3adbe"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulsePublicLinks.cs",
+      "sha256": "8427bb1103414ea4610f23293834270c4f230b9335ebd550f79c6d80e198b3b0"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseRelayBackgroundEdits.cs",
+      "sha256": "5f879419b91fdd69fba53915a3e5a4dbe56908469d8e704f3d8675a26b6760e3"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseRelayDeck.cs",
+      "sha256": "15c604b231e0b62ad199b1772350b75a2573ce5f591b163d8bdf78e745f7571e"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseRelayEnvironment.cs",
+      "sha256": "31ebcc002ea5035685e77c6fe2ff1b65fda66f68541b9c45ab26fed100390815"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseRelayGate.cs",
+      "sha256": "010a5c4e7f3d5ea83684bd08e3266b707eef6cd4d97cecfe672ead7281413cfe"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseRoundStartSurface.cs",
+      "sha256": "379650ff3d28470bf3eae7abbdb0eada594ce98b865ba97d1149265fa68e4671"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseRouteArchitecture.cs",
+      "sha256": "6724a79753e41f4fca3e606f944592aefc7a86316992c6946391b70f640fc35b"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseScoreGlass.cs",
+      "sha256": "2b0541c3abd4e03a21d6b29da36803b19ee8f49062ff3978dd267df386f80677"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseTactileFeedback.cs",
+      "sha256": "3105b951b1175612a7700335fc72c4b465ec18fc4f66ef153d736d3feaa947f2"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseTechTreeView.cs",
+      "sha256": "b75de3e2df3f0baecfeec3ebd4ac35a8e467e296359bea7fc914b0ae161352d4"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseTreePanInput.cs",
+      "sha256": "f41ebf56abc259d66d777f919cf6308c35839171b132bb0e8abc6d18e00a22db"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseTreeTouchFeedback.cs",
+      "sha256": "a8a0c101b3f285cea358677bb62297a6c391801f9c1aa8da449582c65df292ca"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseUiGlyph.cs",
+      "sha256": "53e22a71da5f9f651c61afa05a4201579be880be620e74f294358d19a7928088"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseWorldArchitecture.cs",
+      "sha256": "c0df414fb03fbc80a984d72267ec674f4751d46abe43933af1b82e72ba6192ac"
+    }
+  ],
+  "changedAndTestedSources": [
+    {
+      "path": "mobile/Assets/Editor/SkyPulseBirdMenuPreview.cs",
+      "sha256": "57342039eeabd568aa4740b38d0a6367382d92f9662d35f259a7b83f938ed322"
+    },
+    {
+      "path": "mobile/Assets/Editor/SkyPulseBirdRosterPreview.cs",
+      "sha256": "05b84009fd2558ab75ca329bcfb0eecef633591a5f901c5217ef05c11c3c3739"
+    },
+    {
+      "path": "mobile/Assets/Editor/SkyPulseBirdRosterPreviewWindow.cs",
+      "sha256": "8dbf3bcd8e31072cb7a479acd151378e0eaad5a7d2ddab5d351c041c3b624270"
+    },
+    {
+      "path": "mobile/Assets/Editor/SkyPulseBirdRosterRaven.cs",
+      "sha256": "105fe464674838b068e9efac210498a9eec463abf3f3f2b8987f31e809964439"
+    },
+    {
+      "path": "mobile/Assets/Editor/SkyPulseBirdRosterWorkshop.cs",
+      "sha256": "f8e194b70043d8e9a062d166a1d3eeb36a93dd5b916a3b22343b78f52c2f2f57"
+    },
+    {
+      "path": "mobile/Assets/Editor/SkyPulseBirdShoulderFit.cs",
+      "sha256": "9fcf713913299e6ff2a303546daf128c512ea1f5ca08f56894d40ec392426997"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseNativeGame.Audio.cs",
+      "sha256": "2c7c55f4a39cad2c6404cc2e42d24e8f09ff67465837184e93e78bc64b6327cd"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseNativeGame.Blackout.cs",
+      "sha256": "232bedb0facd7cf180698bd8dd376c66d1a8eb76f530a2906fbce8ceec923bb3"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseNativeGame.Cinematic.cs",
+      "sha256": "952100f196c9a3cddc6d23e38af5d3eef43fbdf9d4d7ff5819a2835376ec1a03"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseNativeGame.Controls.cs",
+      "sha256": "aef0ce193704ce5c88fa32bf43883dd506a9f04f2b08ae79a9469efc5027c9e1"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseNativeGame.FailureClarity.cs",
+      "sha256": "4846f864040f54642a02eb4640a5583c6cf806c3814eba533759aa61fa66cc45"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseNativeGame.FirstPlay.cs",
+      "sha256": "f0a6115e7bc63938b27e097b4b10c0ff0f48f85146fb5a4d50c44bbd6bb72f36"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseNativeGame.Guide.cs",
+      "sha256": "6637858ee92ceb6ea2068d7c9d8bd59328cee578874ef749666fbb0c688f4573"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseNativeGame.Missions.cs",
+      "sha256": "4d4c150b3f6470d620d64fca249bb45e998e7480826437fd79182b50fddb3ee0"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseNativeGame.Readability.cs",
+      "sha256": "fb874bd0dc1b10057792421681ac6db910d0133384aee57afa95f905f7417354"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseNativeGame.Results.cs",
+      "sha256": "56693f9fcc61bb86f529feabf4f74f53cff509aabf100ed1f03f7950b8bfa0b8"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseNativeGame.cs",
+      "sha256": "1e21088d0affe7606cd5849795a9e5ed50c9d3c026ac9e61ad82c1e6941ea147"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulseNeonFinchPrototype.cs",
+      "sha256": "a3499704526284cf6b1aed0c1ff039448778489c819cf26990fea6da327fc519"
+    },
+    {
+      "path": "mobile/Assets/Scripts/SkyPulsePickupDisplay.cs",
+      "sha256": "8d81a88ff97c27c2bd913d952d5c431af636675eeac080d75d834c454fa461f8"
+    },
+    {
+      "path": "mobile/Tools/SkyPulseEverydayControlsChecks.cs",
+      "sha256": "1594cbcc6f9c988bcd32ba3b55f2e4db07f342440de5125b19ef5033380e26a5"
+    },
+    {
+      "path": "mobile/Tools/SkyPulseEverydayPassChecks.cs",
+      "sha256": "a011a95f62fc6834621f37a377767baaca0003a9848d4725c893472664dc0d41"
+    },
+    {
+      "path": "mobile/Tools/SkyPulseFailureClarityChecks.cs",
+      "sha256": "efe1f55d2c52843c828b832f2a34d5a328c6e258612082940efa29875ae7e377"
+    },
+    {
+      "path": "mobile/Tools/SkyPulseFirstPlayChecks.cs",
+      "sha256": "bb5471d8d3b3b002232dfb3c8de8bbc189ac0f776ff24b5017be56b6b18e7f1f"
+    },
+    {
+      "path": "mobile/Tools/SkyPulseMotionPreviewChecks.cs",
+      "sha256": "8c25e99874540fbbbd96264880004b40135087746d9b7bfd0011ee64b9d7b179"
+    },
+    {
+      "path": "mobile/Tools/SkyPulsePickupDisplayChecks.cs",
+      "sha256": "7f1f0e0dcce9ff8e10af8243a455cbe22ab4ec12d4754b05f490e18ecaf4958d"
+    },
+    {
+      "path": "mobile/Tools/SkyPulseReadabilityChecks.cs",
+      "sha256": "f97d55a9749642bbbbb0fe1e2010caabd7f3921db79e929a5fcc6b185c21343f"
+    },
+    {
+      "path": "mobile/Tools/SkyPulseWingClearanceChecks.cs",
+      "sha256": "82d37020f1114a2824968900c38931ec559a043ccc6f3b5d8cebd7e9f7e682f2"
+    }
+  ]
+}

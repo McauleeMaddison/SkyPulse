@@ -131,7 +131,7 @@ namespace SkyPulse.Mobile
             var relayRoot=(RectTransform)relayHudScreen.transform;relayRoot.SetParent(safeAreaRoot,false);
             relayRoot.anchorMin=Vector2.zero;relayRoot.anchorMax=Vector2.one;relayRoot.offsetMin=relayRoot.offsetMax=Vector2.zero;
             missionResultScreen=MissionScreen("Protocol result");
-            SetupModeHomeControls();
+            SetupModeHomeControls();InitializeFailureClarity();
         }
         private void ClearScreen(GameObject root)
         {
@@ -245,7 +245,7 @@ namespace SkyPulse.Mobile
                 state=FlightState.Playing;bird.gameObject.SetActive(false);blackoutSession=blackoutCampaign.Start(index);
                 HideOriginalWorld(false);BuildBlackoutBoard();
             }
-            RefreshScreens();
+            RefreshScreens();BeginFirstPlayGuidance();
         }
         private void HideOriginalWorld(bool keepBird)
         {
@@ -443,7 +443,7 @@ namespace SkyPulse.Mobile
             state=FlightState.GameOver;bird.gameObject.SetActive(false);if(birdBodyCollider!=null)birdBodyCollider.enabled=false;
             relayHudScreen.SetActive(false);blackoutScreen.SetActive(false);pauseScreen.SetActive(false);
             ClearScreen(missionResultScreen);missionResultScreen.SetActive(true);missionResultScreen.transform.SetAsLastSibling();
-            if(activeMode==SkyPulseMode.BlackoutProtocol){BuildBlackoutResult(won,reason,medal);Play(won?unlockSound:crashSound);return;}
+            if(activeMode==SkyPulseMode.BlackoutProtocol){BuildBlackoutResult(won,reason,medal);ApplyMissionFailureClarity(won,reason);Play(won?unlockSound:crashSound);return;}
             var colour=won?Hex("#65ff9d"):Hex("#ffc34d");
             var architecture=missionResultScreen.GetComponentInChildren<SkyPulseCircuitGraphic>();architecture.Variant=1;architecture.CinematicUnderlay=true;var backing=architecture.transform.parent.GetComponent<Image>();backing.sprite=LoadSprite(RelayStationPath);backing.color=Color.white;
             MissionText(missionResultScreen.transform,"PULSE RELAY",840,48,Hex("#ffd078"));
@@ -459,7 +459,7 @@ namespace SkyPulse.Mobile
             MissionButton(missionResultScreen.transform,"RETRY MISSION",0,won&&mission<3?-240:-90,850,()=>LaunchMission(mode,mission),colour,112);
             MissionButton(missionResultScreen.transform,"DAILY CIRCUITS",0,-405,850,()=>OpenMissionSelection(mode));
             MissionButton(missionResultScreen.transform,"MAIN MENU",0,-550,850,ResetToMenu);
-            Play(won?unlockSound:crashSound);
+            ApplyMissionFailureClarity(won,reason);Play(won?unlockSound:crashSound);
         }
         private void OpenMissionControl()
         {

@@ -6,7 +6,19 @@ Open **`mobile/` in Unity Hub** and the repository folder in VS Code. The shippi
 scene is `mobile/Assets/Scenes/SkyPulse.unity`. Start with the
 [editing map](EDITING_GUIDE.md) before changing code.
 
-## Current local candidate — 10 November 2026
+## Current local candidate — 11 November 2026
+
+The [current repair record](Development/EverydayPolish20261111/README.md) contains
+the corrected distal feather fans, actual tap-edge strokes, stale reviewer/equip
+repair, refined Hangar cradle, first-play guidance, failure/retry fixes and five
+pooled 3D pickup housings. Its animated Chromaflux preview is an actual Unity render.
+The owner project has been refreshed and the Studio is open on Chromaflux.
+770 combined assertion lines and the separate 202-assertion pickup regression pass;
+1,800 sampled wing poses report no wing/foot surface crossings. The audit is finite
+and does not replace visual review or device tests. Solid birds remain Editor-only.
+No phone build, installation, TestFlight upload or public submission occurred.
+
+## Previous local candidate — 10 November 2026
 
 Use the [current polish record](Development/PolishPass20261110/README.md) for
 tap-driven solid wings, selected-bird crash identity, three shoulder corrections,

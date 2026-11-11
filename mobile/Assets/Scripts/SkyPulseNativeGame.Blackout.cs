@@ -104,8 +104,9 @@ namespace SkyPulse.Mobile
         }
         void RestartBlackoutVault()
         {
+            CloseAuxiliaryScreens();
             blackoutSession=blackoutCampaign.Start(selectedMission,true);missionFinalized=false;state=FlightState.Playing;BuildBlackoutLab();RefreshScreens();
-            SaveBlackoutAttempt();
+            SaveBlackoutAttempt();BeginFirstPlayGuidance();
         }
         void SaveBlackoutAttempt()
         {
@@ -232,7 +233,7 @@ namespace SkyPulse.Mobile
             if(activeMode!=SkyPulseMode.BlackoutProtocol||state!=FlightState.Playing||blackoutSession==null)return;var s=blackoutSession;int cores=s.CoresPowered;
             if(!s.Rotate(tile))return;blackoutPlanning=false;blackoutPreviewTile=-1;blackoutBoard.SetPreview(null,-1);blackoutBoard.Hit(tile);RefreshBlackoutLab();Play(s.Alarms>0?sensorSound:s.CoresPowered>cores?crystalSound:prismSound);
             if(s.CoresPowered>cores||s.Alarms>0)PulseHaptic(.12f);
-            SaveBlackoutAttempt();
+            SaveBlackoutAttempt();NotifyFirstPlayBlackoutMove(s);
             if(s.State==MissionSessionState.Succeeded||s.State==MissionSessionState.Failed)FinalizeMission();
         }
         void UpdateBlackoutActionAnimation(float dt)

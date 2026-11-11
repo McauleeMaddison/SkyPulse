@@ -131,7 +131,7 @@ public static partial class SkyPulseBirdRosterWorkshop
         {
             design=d;origin=Mean(d.body);directory=folder;meshes.Clear();finishes=SculptExistingFinishes(d);
             root=new GameObject(d.name+" · "+SculptRevision);var rig=root.AddComponent<SkyPulseNeonFinchPrototype>();
-            rig.animate=false;rig.turntable=false;BuildEngineeredSculpt(rig);FitShoulders(rig,design);
+            rig.animate=false;rig.turntable=false;BuildEngineeredSculpt(rig);FitShoulders(rig,design);FitWingFans(rig,design);
             int vertices=meshes.Sum(m=>m.vertexCount);
             if(vertices>40000)throw new InvalidOperationException(d.name+" exceeded its 40,000 authored-vertex mobile budget: "+vertices);
             string tempGeometry=staging+"/Geometry.asset",tempPrefab=staging+"/"+d.name+" Rig.prefab";

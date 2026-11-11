@@ -48,29 +48,7 @@ namespace SkyPulse.Mobile
 
         static AudioClip LoadAudioCue(string id,AudioClip fallback)=>Resources.Load<AudioClip>("SkyPulse/audio/"+id)??fallback;
 
-        private void Play(AudioClip clip)
-        {
-            if (clip==null || audioSource==null || audioSource.mute || !soundEnabled) return;
-            int cue=-1;
-            for (int i=0; i<effectClips.Length; i++) if (effectClips[i]==clip) { cue=i; break; }
-            double now=AudioSettings.dspTime;
-            if (cue>=0 && now<nextEffectAt[cue]) return;
-            bool result=clip==crashSound || clip==unlockSound;
-            for (int i=result?0:1; i<effectVoices.Length; i++)
-            {
-                var voice=effectVoices[i];
-                if (voice==null || voice.isPlaying) continue;
-                // Small deterministic timbre movement never consumes gameplay RNG.
-                float variation=(effectSequence++ % 3 - 1f)*.012f;
-                voice.pitch=clip==flapSound || clip==prismSound?1f+variation:1f;
-                voice.volume=EffectGain*audioSource.volume;
-                voice.mute=false; voice.panStereo=0; voice.clip=clip; voice.Play();
-                if (cue>=0) nextEffectAt[cue]=now+.035;
-                return;
-            }
-            // Saturated low-priority taps stay silent rather than hard-cutting a
-            // ringing voice or raising the mix above its fixed headroom budget.
-        }
+        private void Play(AudioClip clip){PlayReadableEffect(clip);}
 
         void StopGameSounds()
         {

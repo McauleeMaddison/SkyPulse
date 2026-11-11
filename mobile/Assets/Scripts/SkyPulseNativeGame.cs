@@ -340,6 +340,7 @@ namespace SkyPulse.Mobile
             public SpriteRenderer Artwork;
             public SpriteRenderer Spark;
             public PowerUpKind Kind;
+            public SkyPulsePickupDisplay Display;
             public PipePair Gate;
             public float X;
             public float Y;
@@ -1111,6 +1112,8 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
 #if UNITY_EDITOR
         // Visual review run identity: taps never reset the 3D wing clock.
         private int editorFlightRunSerial;
+        // A real Hangar equip wins over an Editor art-review override.
+        public static System.Action<string> EditorBirdEquipped;
 #endif
         private float wingTimer;
 
@@ -1591,7 +1594,9 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
 
         private PowerUpPickup CreatePowerUp(int index)
         {
-            return CreatePickup($"Power-up pickup {index + 1}");
+            var pickup=CreatePickup($"Power-up pickup {index + 1}");
+            pickup.Display=pickup.Root.AddComponent<SkyPulsePickupDisplay>();pickup.Display.Build();
+            return pickup;
         }
 
         private PowerUpPickup CreateCrystalPickup(int index)
@@ -2122,6 +2127,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             hudPowerUpText.gameObject.SetActive(false);
             hudCoachText = CreateText(root.transform, "", new Vector2(0f, 617f), new Vector2(760f, 36f), 18, Hex("#b4f4ff"), TextAnchor.MiddleCenter, FontStyle.Bold);
             hudCoachText.gameObject.SetActive(false);
+            InitializePickupReadability(root.transform);
             return root;
         }
 
@@ -2522,7 +2528,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
 
             if (state != FlightState.Playing) return;
 
-            if (WasTapped() && !PointerOverUi()) BufferFlapInput();
+            PollEndlessGameplayPress();
 
             // Simulating the same short steps at 30, 60, and 120 FPS makes the flight
             // path repeatable. Rendering remains frame-rate independent and smooth.
@@ -2542,7 +2548,6 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
                 UpdateBirdWingMotion();
             }
 
-            UpdateFlightCoach();
 
 #if UNITY_EDITOR || UNITY_ENABLE_CHECKS
             UpdateCollisionDebug();
@@ -3162,6 +3167,12 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
                 pickup.Depth.color = depthColour;
                 pickup.Spark.transform.localPosition = reduceMotionEnabled ? new Vector3(-.20f, .34f, 0f) : new Vector3(Mathf.Cos(ambientTime * 4.3f + pickup.Phase) * .46f, Mathf.Sin(ambientTime * 4.3f + pickup.Phase) * .46f, 0f);
 
+                if(pickup.Display!=null)
+                {
+                    pickup.Artwork.enabled=pickup.Depth.enabled=false;
+                    pickup.Display.Present((int)pickup.Kind,ambientTime+pickup.Phase,reduceMotionEnabled,pickup.Glow.color,pickup.Spark.color);
+                }
+
                 if (Vector2.Distance(new Vector2(BirdX, birdY), new Vector2(pickup.X, pickup.Y + bob)) <= ActiveTuning().CollisionRadius + PickupRadius)
                 {
                     CollectPowerUp(pickup);
@@ -3528,6 +3539,8 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             pickup.Depth.color = new Color(colour.r, colour.g, colour.b, .15f);
             pickup.Spark.color = new Color(secondary.r, secondary.g, secondary.b, .92f);
             pickup.Transform.localPosition = new Vector3(pickup.X, pickup.Y, 0f);
+            pickup.Artwork.enabled=pickup.Depth.enabled=false;
+            pickup.Display?.Present((int)pickup.Kind,ambientTime+pickup.Phase,reduceMotionEnabled,colour,secondary);
         }
 
         private static string PowerUpArtworkPath(PowerUpKind kind)
@@ -3595,37 +3608,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             return shieldCharges > 0 || shieldImmunityTimer > 0f || slowFieldTimer > 0f || magnetHaloTimer > 0f || crystalEchoTimer > 0f || routeLensTimer > 0f;
         }
 
-        private void UpdatePowerUpHud()
-        {
-            if (hudPowerUpText == null) return;
-            var code = -1;
-            var timer = 0f;
-            var label = string.Empty;
-            var colour = Hex("#f4fbff");
-            if (crystalEchoTimer > 0f) { code = 4; timer = crystalEchoTimer; label = "◈  CRYSTAL ECHO"; colour = Hex("#ba9bff"); }
-            else if (routeLensTimer > 0f) { code = 5; timer = routeLensTimer; label = "⌁  ROUTE LENS"; colour = Hex("#65e8ff"); }
-            else if (slowFieldTimer > 0f) { code = 0; timer = slowFieldTimer; label = "◌  TIME PULSE"; colour = Hex("#b17cff"); }
-            else if (magnetHaloTimer > 0f) { code = 1; timer = magnetHaloTimer; label = "◌  CRYSTAL MAGNET"; colour = Hex("#45eaff"); }
-            else if (shieldImmunityTimer > 0f) { code = 2; timer = shieldImmunityTimer; label = "◈  AEGIS RECOVERY"; colour = Hex("#61f5b3"); }
-            else if (shieldCharges > 0) { code = 3; label = "◈  AEGIS READY"; colour = Hex("#61f5b3"); }
-            else
-            {
-                hudPowerUpText.gameObject.SetActive(false);
-                displayedSlowTenths = -1;
-                displayedPowerUpCode = -1;
-                return;
-            }
-
-            var remainingTenths = timer > 0f ? Mathf.CeilToInt(timer * 10f) : 0;
-            if (code != displayedPowerUpCode || remainingTenths != displayedSlowTenths || !hudPowerUpText.gameObject.activeSelf)
-            {
-                hudPowerUpText.text = timer > 0f ? $"{label}  {remainingTenths / 10f:0.0}s" : label;
-                displayedPowerUpCode = code;
-                displayedSlowTenths = remainingTenths;
-            }
-            hudPowerUpText.color = colour;
-            hudPowerUpText.gameObject.SetActive(true);
-        }
+        private void UpdatePowerUpHud(){UpdateReadablePowerUpHud();}
 
         private bool UseShield()
         {
@@ -3864,6 +3847,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             }
             // PLAY and RETRY only begin a run. The bird remains settled until an
             // actual gameplay tap requests its first flap.
+            if(activeMode==SkyPulseMode.EndlessRoute)BeginFirstPlayGuidance();
         }
 
         private void ResetToMenu()
@@ -4303,10 +4287,11 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             {
                 if (gameplayWingState == GameplayWingState.Settled)
                 {
-                    // Start at the authored glide pose. The first visible move
-                    // will be its adjacent upstroke frame, never a frame-one snap.
-                    gameplayWingFrameIndex = flapFrameBirdSprites.Length - 1;
-                    gameplayWingFrameTimer = 0f;
+                    // Show the adjacent raised pose on this accepted edge. Hold
+                    // its first interval in place of the former static glide
+                    // interval, preserving the existing 0.40-second cadence.
+                    gameplayWingFrameIndex = Mathf.Max(0,flapFrameBirdSprites.Length - 2);
+                    gameplayWingFrameTimer = -GameplayWingAnimationSeconds / ((flapFrameBirdSprites.Length * 2) - 2);
                     gameplayWingState = GameplayWingState.Upstroke;
                 }
                 else if (gameplayWingState == GameplayWingState.Downstroke)
@@ -4321,7 +4306,10 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
                 // smooth upstroke going. The bird still receives lift.
             }
 
-            Play(flapSound);
+            // Presentation responds to this press before another simulation
+            // step or artwork tick; physics still uses the original impulse.
+            UpdateBirdWingMotion();
+            Play(flapSound);NotifyFirstPlayFlap();
         }
         private void EndFlight()
         {
@@ -5084,6 +5072,9 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
         {
             ResetWorldTransition();
             if (equippedSkin == null) equippedSkin = Skins[0];
+#if UNITY_EDITOR
+            EditorBirdEquipped?.Invoke(equippedSkin.Id);
+#endif
             if (equippedTrail == null) equippedTrail = GetTrailForSkin(equippedSkin);
             if (equippedWorld == null) equippedWorld = Worlds[0];
             if (equippedPipe == null) equippedPipe = PipeStyles[0];
@@ -5706,22 +5697,6 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             if (hudBestText != null) hudBestText.text = $"BEST  {best}";
         }
 
-        private void UpdateFlightCoach()
-        {
-            if (hudCoachText == null) return;
-            var showCoach = false; // Controls are explained in the guide, not repeated over gameplay.
-            hudCoachText.gameObject.SetActive(showCoach);
-            if (!showCoach) return;
-
-            var firstStep = flightCoachStage == 0;
-            hudCoachText.text = firstStep
-                ? "TAP TO FLAP  ·  CLEAR THE GLOWING GATE"
-                : "CRYSTALS UNLOCK BIRDS  ·  IMPROVE COLLECTION";
-            var colour = firstStep ? Hex("#45eaff") : Hex("#ffc34d");
-            colour.a = .66f + Mathf.Sin(ambientTime * 2.4f) * .12f;
-            hudCoachText.color = colour;
-        }
-
         private void AdvanceFlightCoach()
         {
             if (flightCoachStage >= 2) return;
@@ -5752,6 +5727,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
 
         private void RefreshScreens()
         {
+            FenceGameplayBoundary();
             if (RefreshMissionScreens()) return;
             homeScreen.SetActive(state == FlightState.Menu);
             hudScreen.SetActive(state == FlightState.Playing || state == FlightState.Impact);

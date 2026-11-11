@@ -1,0 +1,203 @@
+PICKUP_CHECK: Existing pickup enum identities remain stable
+PICKUP_CHECK: A fresh run starts with neither new effect or latent charge
+PICKUP_CHECK: The fixed-seed normal pooled random selection includes both new pickups and all three existing powers
+PICKUP_CHECK: All five normal spawn kinds use their own nonempty cached icon, including two distinct new emblems
+PICKUP_CHECK: Rendered CrystalEcho emblem has readable opaque material coverage, not a nearly transparent placeholder
+PICKUP_CHECK: Rendered CrystalEcho emblem retains transparent outer corners
+PICKUP_CHECK: Rendered RouteLens emblem has readable opaque material coverage, not a nearly transparent placeholder
+PICKUP_CHECK: Rendered RouteLens emblem retains transparent outer corners
+PICKUP_CHECK: Normal random spawn supplies CrystalEcho for contact-path test
+PICKUP_CHECK: Actual playable-area distance collection activates CrystalEcho without a button
+PICKUP_CHECK: Next physical update cannot recollect CrystalEcho
+PICKUP_CHECK: Actual crystal contact banks one base plus one Echo crystal
+PICKUP_CHECK: Consecutive contact updates cannot double-pay the collected crystal
+PICKUP_CHECK: Normal random spawn supplies RouteLens for contact-path test
+PICKUP_CHECK: Actual playable-area distance collection activates RouteLens without a button
+PICKUP_CHECK: Next physical update cannot recollect RouteLens
+PICKUP_CHECK: Crystal Echo starts a six-second, six-crystal bounded effect
+PICKUP_CHECK: A duplicate power-up callback cannot refresh its consumed pickup
+PICKUP_CHECK: Consumed crystal callback is idempotent at collection 1
+PICKUP_CHECK: Consumed crystal callback is idempotent at collection 2
+PICKUP_CHECK: Consumed crystal callback is idempotent at collection 3
+PICKUP_CHECK: Consumed crystal callback is idempotent at collection 4
+PICKUP_CHECK: Consumed crystal callback is idempotent at collection 5
+PICKUP_CHECK: Consumed crystal callback is idempotent at collection 6
+PICKUP_CHECK: Consumed crystal callback is idempotent at collection 7
+PICKUP_CHECK: Consumed crystal callback is idempotent at collection 8
+PICKUP_CHECK: Eight real pickups bank exactly eight base plus six Echo crystals once
+PICKUP_CHECK: Echo bonus crystals do not inflate daily collection objectives
+PICKUP_CHECK: Echo ends immediately when its sixth bonus is spent
+PICKUP_CHECK: A separately configured Echo refreshes to six; duration and budget never stack
+PICKUP_CHECK: Paused collision callbacks neither grant nor consume either pickup
+PICKUP_CHECK: Resume accepts one still-live crystal and Lens pickup
+PICKUP_CHECK: Tech and bird percentage rewards exclude all Echo awards from their base
+PICKUP_CHECK: Repeated result refresh cannot pay Echo or other rewards twice
+PICKUP_CHECK: Normal flap-driven production simulation remains in flight at 30 rendered Hz
+PICKUP_CHECK: Two seconds through production simulation and late presentation agree at 30 rendered Hz (correctness, not measured device FPS)
+PICKUP_CHECK: Pause freezes both real timers at 30 Hz
+PICKUP_CHECK: Both effects expire without negative time or retained budget at 30 Hz
+PICKUP_CHECK: Normal flap-driven production simulation remains in flight at 60 rendered Hz
+PICKUP_CHECK: Two seconds through production simulation and late presentation agree at 60 rendered Hz (correctness, not measured device FPS)
+PICKUP_CHECK: Pause freezes both real timers at 60 Hz
+PICKUP_CHECK: Both effects expire without negative time or retained budget at 60 Hz
+PICKUP_CHECK: Normal flap-driven production simulation remains in flight at 120 rendered Hz
+PICKUP_CHECK: Two seconds through production simulation and late presentation agree at 120 rendered Hz (correctness, not measured device FPS)
+PICKUP_CHECK: Pause freezes both real timers at 120 Hz
+PICKUP_CHECK: Both effects expire without negative time or retained budget at 120 Hz
+PICKUP_CHECK: Focus loss preserves both effects and requires explicit resume
+PICKUP_CHECK: Retry resets timers, charge budget and per-run Echo accounting
+PICKUP_CHECK: Each reusable pipe has eight pooled Lens edges: 0
+PICKUP_CHECK: Lens marker adds no 3D or 2D colliders: 0
+PICKUP_CHECK: Each reusable pipe has eight pooled Lens edges: 1
+PICKUP_CHECK: Lens marker adds no 3D or 2D colliders: 1
+PICKUP_CHECK: Each reusable pipe has eight pooled Lens edges: 2
+PICKUP_CHECK: Lens marker adds no 3D or 2D colliders: 2
+PICKUP_CHECK: Each reusable pipe has eight pooled Lens edges: 3
+PICKUP_CHECK: Lens marker adds no 3D or 2D colliders: 3
+PICKUP_CHECK: Lens highlights only the two nearest eligible upcoming gaps
+PICKUP_CHECK: Lens marker follows its actual gap without changing the path: 0
+PICKUP_CHECK: Lens marker follows its actual gap without changing the path: 1
+PICKUP_CHECK: Production LateUpdate tracks final pipe drift and horizontal movement without a stale gap marker
+PICKUP_CHECK: A passed gate cannot keep a stale marker; the next gap is selected
+PICKUP_CHECK: Lens hides during a world transition rather than showing obsolete gates
+PICKUP_CHECK: Reduced Motion keeps Lens visual geometry and brightness steady
+PICKUP_CHECK: Pause preserves readable markers while freezing effect time
+PICKUP_CHECK: Lens never changes existing pipe collider dimensions: 0
+PICKUP_CHECK: Lens never changes existing pipe collider dimensions: 1
+PICKUP_CHECK: Lens never changes existing pipe collider dimensions: 2
+PICKUP_CHECK: Lens never changes existing pipe collider dimensions: 3
+PICKUP_CHECK: Warmed pooled Lens visual update allocates zero managed bytes across 300 ticks
+PICKUP_CHECK: Retry reuses the existing marker objects without duplicates: 0
+PICKUP_CHECK: Retry reuses the existing marker objects without duplicates: 1
+PICKUP_CHECK: Retry reuses the existing marker objects without duplicates: 2
+PICKUP_CHECK: Retry reuses the existing marker objects without duplicates: 3
+PICKUP_CHECK: Relay cannot consume a stale Endless Echo charge
+PICKUP_CHECK: Relay rejects stale Endless crystal and power-up callbacks
+PICKUP_CHECK: Relay still opens exactly its assigned gate from its own two crystals with no Endless effects
+PICKUP_CHECK: Blackout puzzle resources are unaffected by either flight pickup
+PICKUP_CHECK: Actual guide raycast reaches SURVIVAL tab at (640, 1136)
+PICKUP_CHECK: Guide tab is interactive UI and cannot become a gameplay tap at (640, 1136)
+PICKUP_CHECK: Guide effective touch target is at least 44 logical points: PREVIOUS / (640, 1136) = 50.11765 × 49.00394
+PICKUP_CHECK: Padded guide touch edge reaches the correct control: PREVIOUS / (640, 1136)
+PICKUP_CHECK: Guide touch areas do not overlap: PREVIOUS / (640, 1136)
+PICKUP_CHECK: Guide effective touch target is at least 44 logical points: NEXT / (640, 1136) = 50.11766 × 49.00394
+PICKUP_CHECK: Padded guide touch edge reaches the correct control: NEXT / (640, 1136)
+PICKUP_CHECK: Guide touch areas do not overlap: NEXT / (640, 1136)
+PICKUP_CHECK: Guide effective touch target is at least 44 logical points: SURVIVAL / (640, 1136) = 108.5882 × 49.00394
+PICKUP_CHECK: Padded guide touch edge reaches the correct control: SURVIVAL / (640, 1136)
+PICKUP_CHECK: Guide touch areas do not overlap: SURVIVAL / (640, 1136)
+PICKUP_CHECK: Guide effective touch target is at least 44 logical points: DISCOVERY / (640, 1136) = 108.5882 × 49.00394
+PICKUP_CHECK: Padded guide touch edge reaches the correct control: DISCOVERY / (640, 1136)
+PICKUP_CHECK: Guide touch areas do not overlap: DISCOVERY / (640, 1136)
+PICKUP_CHECK: Guide effective touch target is at least 44 logical points: BACK TO HOME / (640, 1136) = 167.0588 × 49.00395
+PICKUP_CHECK: Padded guide touch edge reaches the correct control: BACK TO HOME / (640, 1136)
+PICKUP_CHECK: Guide touch areas do not overlap: BACK TO HOME / (640, 1136)
+PICKUP_CHECK: Guide group lists every SURVIVAL pickup at (640, 1136)
+PICKUP_CHECK: All visible world/pickup guide lettering fits its rectangle at (640, 1136) / SURVIVAL; overflow=
+PICKUP_CHECK: Guide shows distinct cached non-blocking emblems at (640, 1136) / SURVIVAL
+PICKUP_CHECK: Actual guide raycast reaches DISCOVERY tab at (640, 1136)
+PICKUP_CHECK: Guide tab is interactive UI and cannot become a gameplay tap at (640, 1136)
+PICKUP_CHECK: Guide effective touch target is at least 44 logical points: PREVIOUS / (640, 1136) = 50.11765 × 49.00394
+PICKUP_CHECK: Padded guide touch edge reaches the correct control: PREVIOUS / (640, 1136)
+PICKUP_CHECK: Guide touch areas do not overlap: PREVIOUS / (640, 1136)
+PICKUP_CHECK: Guide effective touch target is at least 44 logical points: NEXT / (640, 1136) = 50.11766 × 49.00394
+PICKUP_CHECK: Padded guide touch edge reaches the correct control: NEXT / (640, 1136)
+PICKUP_CHECK: Guide touch areas do not overlap: NEXT / (640, 1136)
+PICKUP_CHECK: Guide effective touch target is at least 44 logical points: SURVIVAL / (640, 1136) = 108.5882 × 49.00394
+PICKUP_CHECK: Padded guide touch edge reaches the correct control: SURVIVAL / (640, 1136)
+PICKUP_CHECK: Guide touch areas do not overlap: SURVIVAL / (640, 1136)
+PICKUP_CHECK: Guide effective touch target is at least 44 logical points: DISCOVERY / (640, 1136) = 108.5882 × 49.00394
+PICKUP_CHECK: Padded guide touch edge reaches the correct control: DISCOVERY / (640, 1136)
+PICKUP_CHECK: Guide touch areas do not overlap: DISCOVERY / (640, 1136)
+PICKUP_CHECK: Guide effective touch target is at least 44 logical points: BACK TO HOME / (640, 1136) = 167.0588 × 49.00395
+PICKUP_CHECK: Padded guide touch edge reaches the correct control: BACK TO HOME / (640, 1136)
+PICKUP_CHECK: Guide touch areas do not overlap: BACK TO HOME / (640, 1136)
+PICKUP_CHECK: Guide group lists every DISCOVERY pickup at (640, 1136)
+PICKUP_CHECK: All visible world/pickup guide lettering fits its rectangle at (640, 1136) / DISCOVERY; overflow=
+PICKUP_CHECK: Guide shows distinct cached non-blocking emblems at (640, 1136) / DISCOVERY
+PICKUP_CHECK: Actual guide raycast reaches SURVIVAL tab at (1320, 2868)
+PICKUP_CHECK: Guide tab is interactive UI and cannot become a gameplay tap at (1320, 2868)
+PICKUP_CHECK: Guide effective touch target is at least 44 logical points: PREVIOUS / (1320, 2868) = 73.33333 × 71.7037
+PICKUP_CHECK: Padded guide touch edge reaches the correct control: PREVIOUS / (1320, 2868)
+PICKUP_CHECK: Guide touch areas do not overlap: PREVIOUS / (1320, 2868)
+PICKUP_CHECK: Guide effective touch target is at least 44 logical points: NEXT / (1320, 2868) = 73.33335 × 71.7037
+PICKUP_CHECK: Padded guide touch edge reaches the correct control: NEXT / (1320, 2868)
+PICKUP_CHECK: Guide touch areas do not overlap: NEXT / (1320, 2868)
+PICKUP_CHECK: Guide effective touch target is at least 44 logical points: SURVIVAL / (1320, 2868) = 158.8889 × 71.7037
+PICKUP_CHECK: Padded guide touch edge reaches the correct control: SURVIVAL / (1320, 2868)
+PICKUP_CHECK: Guide touch areas do not overlap: SURVIVAL / (1320, 2868)
+PICKUP_CHECK: Guide effective touch target is at least 44 logical points: DISCOVERY / (1320, 2868) = 158.8889 × 71.7037
+PICKUP_CHECK: Padded guide touch edge reaches the correct control: DISCOVERY / (1320, 2868)
+PICKUP_CHECK: Guide touch areas do not overlap: DISCOVERY / (1320, 2868)
+PICKUP_CHECK: Guide effective touch target is at least 44 logical points: BACK TO HOME / (1320, 2868) = 244.4444 × 71.7037
+PICKUP_CHECK: Padded guide touch edge reaches the correct control: BACK TO HOME / (1320, 2868)
+PICKUP_CHECK: Guide touch areas do not overlap: BACK TO HOME / (1320, 2868)
+PICKUP_CHECK: Guide group lists every SURVIVAL pickup at (1320, 2868)
+PICKUP_CHECK: All visible world/pickup guide lettering fits its rectangle at (1320, 2868) / SURVIVAL; overflow=
+PICKUP_CHECK: Guide shows distinct cached non-blocking emblems at (1320, 2868) / SURVIVAL
+PICKUP_CHECK: Actual guide raycast reaches DISCOVERY tab at (1320, 2868)
+PICKUP_CHECK: Guide tab is interactive UI and cannot become a gameplay tap at (1320, 2868)
+PICKUP_CHECK: Guide effective touch target is at least 44 logical points: PREVIOUS / (1320, 2868) = 73.33333 × 71.7037
+PICKUP_CHECK: Padded guide touch edge reaches the correct control: PREVIOUS / (1320, 2868)
+PICKUP_CHECK: Guide touch areas do not overlap: PREVIOUS / (1320, 2868)
+PICKUP_CHECK: Guide effective touch target is at least 44 logical points: NEXT / (1320, 2868) = 73.33335 × 71.7037
+PICKUP_CHECK: Padded guide touch edge reaches the correct control: NEXT / (1320, 2868)
+PICKUP_CHECK: Guide touch areas do not overlap: NEXT / (1320, 2868)
+PICKUP_CHECK: Guide effective touch target is at least 44 logical points: SURVIVAL / (1320, 2868) = 158.8889 × 71.7037
+PICKUP_CHECK: Padded guide touch edge reaches the correct control: SURVIVAL / (1320, 2868)
+PICKUP_CHECK: Guide touch areas do not overlap: SURVIVAL / (1320, 2868)
+PICKUP_CHECK: Guide effective touch target is at least 44 logical points: DISCOVERY / (1320, 2868) = 158.8889 × 71.7037
+PICKUP_CHECK: Padded guide touch edge reaches the correct control: DISCOVERY / (1320, 2868)
+PICKUP_CHECK: Guide touch areas do not overlap: DISCOVERY / (1320, 2868)
+PICKUP_CHECK: Guide effective touch target is at least 44 logical points: BACK TO HOME / (1320, 2868) = 244.4444 × 71.7037
+PICKUP_CHECK: Padded guide touch edge reaches the correct control: BACK TO HOME / (1320, 2868)
+PICKUP_CHECK: Guide touch areas do not overlap: BACK TO HOME / (1320, 2868)
+PICKUP_CHECK: Guide group lists every DISCOVERY pickup at (1320, 2868)
+PICKUP_CHECK: All visible world/pickup guide lettering fits its rectangle at (1320, 2868) / DISCOVERY; overflow=
+PICKUP_CHECK: Guide shows distinct cached non-blocking emblems at (1320, 2868) / DISCOVERY
+PICKUP_CHECK: Actual guide raycast reaches SURVIVAL tab at (1640, 2360)
+PICKUP_CHECK: Guide tab is interactive UI and cannot become a gameplay tap at (1640, 2360)
+PICKUP_CHECK: Guide effective touch target is at least 44 logical points: PREVIOUS / (1640, 2360) = 104.1176 × 101.8039
+PICKUP_CHECK: Padded guide touch edge reaches the correct control: PREVIOUS / (1640, 2360)
+PICKUP_CHECK: Guide touch areas do not overlap: PREVIOUS / (1640, 2360)
+PICKUP_CHECK: Guide effective touch target is at least 44 logical points: NEXT / (1640, 2360) = 104.1177 × 101.8039
+PICKUP_CHECK: Padded guide touch edge reaches the correct control: NEXT / (1640, 2360)
+PICKUP_CHECK: Guide touch areas do not overlap: NEXT / (1640, 2360)
+PICKUP_CHECK: Guide effective touch target is at least 44 logical points: SURVIVAL / (1640, 2360) = 225.5883 × 101.8039
+PICKUP_CHECK: Padded guide touch edge reaches the correct control: SURVIVAL / (1640, 2360)
+PICKUP_CHECK: Guide touch areas do not overlap: SURVIVAL / (1640, 2360)
+PICKUP_CHECK: Guide effective touch target is at least 44 logical points: DISCOVERY / (1640, 2360) = 225.5883 × 101.8039
+PICKUP_CHECK: Padded guide touch edge reaches the correct control: DISCOVERY / (1640, 2360)
+PICKUP_CHECK: Guide touch areas do not overlap: DISCOVERY / (1640, 2360)
+PICKUP_CHECK: Guide effective touch target is at least 44 logical points: BACK TO HOME / (1640, 2360) = 347.0589 × 101.8039
+PICKUP_CHECK: Padded guide touch edge reaches the correct control: BACK TO HOME / (1640, 2360)
+PICKUP_CHECK: Guide touch areas do not overlap: BACK TO HOME / (1640, 2360)
+PICKUP_CHECK: Guide group lists every SURVIVAL pickup at (1640, 2360)
+PICKUP_CHECK: All visible world/pickup guide lettering fits its rectangle at (1640, 2360) / SURVIVAL; overflow=
+PICKUP_CHECK: Guide shows distinct cached non-blocking emblems at (1640, 2360) / SURVIVAL
+PICKUP_CHECK: Actual guide raycast reaches DISCOVERY tab at (1640, 2360)
+PICKUP_CHECK: Guide tab is interactive UI and cannot become a gameplay tap at (1640, 2360)
+PICKUP_CHECK: Guide effective touch target is at least 44 logical points: PREVIOUS / (1640, 2360) = 104.1176 × 101.8039
+PICKUP_CHECK: Padded guide touch edge reaches the correct control: PREVIOUS / (1640, 2360)
+PICKUP_CHECK: Guide touch areas do not overlap: PREVIOUS / (1640, 2360)
+PICKUP_CHECK: Guide effective touch target is at least 44 logical points: NEXT / (1640, 2360) = 104.1177 × 101.8039
+PICKUP_CHECK: Padded guide touch edge reaches the correct control: NEXT / (1640, 2360)
+PICKUP_CHECK: Guide touch areas do not overlap: NEXT / (1640, 2360)
+PICKUP_CHECK: Guide effective touch target is at least 44 logical points: SURVIVAL / (1640, 2360) = 225.5883 × 101.8039
+PICKUP_CHECK: Padded guide touch edge reaches the correct control: SURVIVAL / (1640, 2360)
+PICKUP_CHECK: Guide touch areas do not overlap: SURVIVAL / (1640, 2360)
+PICKUP_CHECK: Guide effective touch target is at least 44 logical points: DISCOVERY / (1640, 2360) = 225.5883 × 101.8039
+PICKUP_CHECK: Padded guide touch edge reaches the correct control: DISCOVERY / (1640, 2360)
+PICKUP_CHECK: Guide touch areas do not overlap: DISCOVERY / (1640, 2360)
+PICKUP_CHECK: Guide effective touch target is at least 44 logical points: BACK TO HOME / (1640, 2360) = 347.0589 × 101.8039
+PICKUP_CHECK: Padded guide touch edge reaches the correct control: BACK TO HOME / (1640, 2360)
+PICKUP_CHECK: Guide touch areas do not overlap: BACK TO HOME / (1640, 2360)
+PICKUP_CHECK: Guide group lists every DISCOVERY pickup at (1640, 2360)
+PICKUP_CHECK: All visible world/pickup guide lettering fits its rectangle at (1640, 2360) / DISCOVERY; overflow=
+PICKUP_CHECK: Guide shows distinct cached non-blocking emblems at (1640, 2360) / DISCOVERY
+PICKUP_CHECK: Browsing both pickup guide groups never spends or rewards crystals
+PICKUP_CHECK: Returning Home leaves no hidden effect active
+PICKUP_CHECK: Existing Aegis effect retains its original behaviour
+PICKUP_CHECK: Existing TimePulse effect retains its original behaviour
+PICKUP_CHECK: Existing CrystalMagnet effect retains its original behaviour
+SKYPULSE_PICKUP_PASS: 202 assertions; /private/tmp/skypulse-everyday-20261111/captures/pickups

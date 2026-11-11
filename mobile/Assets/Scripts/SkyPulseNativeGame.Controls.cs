@@ -61,6 +61,30 @@ namespace SkyPulse.Mobile
             // Relay poll never also feeds buffered touch/mouse or UI buttons.
             Flap();return true;
         }
+        bool SubmitEndlessPress(int pointer,int frame,float now,bool touch,Vector2 position)
+        {
+            if(activeMode!=SkyPulseMode.EndlessRoute || state!=FlightState.Playing || AuxiliaryScreenOpen ||
+                privacyScreen.activeSelf || flightGuideScreen.activeSelf || InteractiveUiAt(position) || !flightCamera.pixelRect.Contains(position))return false;
+            if(!gameplayInput.Press(pointer,frame,now,touch))return false;
+            // Deliberate edges already passed the shared fence. Apply the same
+            // impulse now; a fixed-step buffer must not replay this press later.
+            lastFlapInputTime=now;bufferedFlapUntil=-1f;Flap();return true;
+        }
+        void PollEndlessGameplayPress()
+        {
+            if(Input.touchCount>0)
+            {
+                for(int i=0;i<Input.touchCount;i++)
+                {
+                    var touch=Input.GetTouch(i);
+                    if(touch.phase==TouchPhase.Began && SubmitEndlessPress(touch.fingerId,Time.frameCount,Time.unscaledTime,true,touch.position))break;
+                }
+                return;
+            }
+            if(Input.GetMouseButtonDown(0))SubmitEndlessPress(-1,Time.frameCount,Time.unscaledTime,false,Input.mousePosition);
+            if(!AuxiliaryScreenOpen && !privacyScreen.activeSelf && !flightGuideScreen.activeSelf && (Input.GetKeyDown(KeyCode.Space)||Input.GetKeyDown(KeyCode.UpArrow)))
+            {if(state==FlightState.Playing && gameplayInput.Press(-99,Time.frameCount,Time.unscaledTime,false)){bufferedFlapUntil=-1f;Flap();}gameplayInput.Release(-99);}
+        }
         void PollRelayGameplayPress()
         {
             if(Input.touchCount>0)

@@ -1,0 +1,49 @@
+{
+  "origin": "Actual Unity Editor rendering of this candidate; not iPhone footage or generated concept art.",
+  "files": [
+    {
+      "path": "Previews/Chromaflux-Wing-Cycle.gif",
+      "sha256": "e56eb61aa91419f790609e110861b815c4af19a307d2e352af4cf8b67b5aeb32"
+    },
+    {
+      "path": "Previews/Endless-First-Play.png",
+      "sha256": "78bec2b36df0c6000f043f71aed49b2654742ba6d382a0f7b89dc41b13e148be"
+    },
+    {
+      "path": "Previews/Hangar.png",
+      "sha256": "8f3dd9ad926a7c6dc984980fd679ae7959ec5ded82f81ea31bb03f283bbe5f07"
+    },
+    {
+      "path": "Previews/Heist-First-Play.png",
+      "sha256": "fbaca90f28b398554bad5b4d10037be0fe5cae0ff193c037cfdae09c9613c00c"
+    },
+    {
+      "path": "Previews/Home.png",
+      "sha256": "3e9e7ffbe2640f5d9cba171dd60230b5ed6dc1f515106cb0f6db8feb4ef170a8"
+    },
+    {
+      "path": "Previews/Pickup-aegis.png",
+      "sha256": "beee3643e2243b7a0a50d48b86c9863c809d910c80de21b52ef55737c7924bc0"
+    },
+    {
+      "path": "Previews/Pickup-crystal-echo.png",
+      "sha256": "12ebfc9630a34d735273d4be9e268d85fe9b6d065c7654df5a300e9b8b7dd169"
+    },
+    {
+      "path": "Previews/Pickup-magnet.png",
+      "sha256": "ec64602559bfe3f723eaa81bba3730fa2b324d4128ddc94cfb8ffcb9b76e6b46"
+    },
+    {
+      "path": "Previews/Pickup-route-lens.png",
+      "sha256": "9d3a35fc4c7497a6472d56f6bc231a69b4dcf6465f554588bda33daafe8d87f2"
+    },
+    {
+      "path": "Previews/Pickup-time-pulse.png",
+      "sha256": "664a370e9549c36d82f1a4fcdeb7e52ccbeea08799d958e7a4214ec8ec144c59"
+    },
+    {
+      "path": "Previews/Relay-First-Play.png",
+      "sha256": "12a4ab9414e8cf00d50d2d2c90f6144ed63897c87445dbefa99f78edc5f1bb1b"
+    }
+  ]
+}

@@ -27,7 +27,7 @@ public sealed class SkyPulseBirdRosterPreviewWindow:EditorWindow
     {
         // Opening the gameplay preview must actually enable its solid bird.
         // Keep the chosen model; gameplay stats and player preferences are untouched.
-        SkyPulseBirdRosterPreview.Select(SkyPulseBirdRosterPreview.SelectedId, true);
+        SkyPulseBirdRosterPreview.Select("", true);
         ShowTab(1);
     }
     [MenuItem("Tools/SkyPulse/Bird Workshop/3D roster in actual gameplay", true)]
@@ -46,7 +46,7 @@ public sealed class SkyPulseBirdRosterPreviewWindow:EditorWindow
         EditorApplication.update+=Tick;AssemblyReloadEvents.beforeAssemblyReload+=DisposePreview;
     }
     void OnDisable()
-    {EditorApplication.update-=Tick;AssemblyReloadEvents.beforeAssemblyReload-=DisposePreview;DisposePreview();}
+    {if(tab==1)SkyPulseBirdRosterPreview.Select("",SkyPulseBirdRosterPreview.Enabled);EditorApplication.update-=Tick;AssemblyReloadEvents.beforeAssemblyReload-=DisposePreview;DisposePreview();}
     void OnDestroy(){DisposePreview();}
     void OnProjectChange(){DisposePreview();previewError=null;Repaint();}
     void LoadRoster()
@@ -77,7 +77,7 @@ public sealed class SkyPulseBirdRosterPreviewWindow:EditorWindow
     void DrawGame()
     {
         GUILayout.Label("Live 3D bird review",EditorStyles.boldLabel);
-        EditorGUILayout.HelpBox("Play the normal SkyPulse scene. This changes only the Editor bird visual; the equipped bird's stats, controls and player save stay in use.",MessageType.Info);
+        EditorGUILayout.HelpBox("Play the normal SkyPulse scene. Normal play follows the equipped bird. A model override lasts only while this reviewer is open; equipping in Hangar returns to the real selection.",MessageType.Info);
         int old=Array.IndexOf(gameIds,SkyPulseBirdRosterPreview.SelectedId),selected=EditorGUILayout.Popup("Model",Mathf.Max(0,old),gameNames);
         bool enabled=EditorGUILayout.Toggle("Show 3D model",SkyPulseBirdRosterPreview.Enabled);
         if(old!=selected||enabled!=SkyPulseBirdRosterPreview.Enabled)SkyPulseBirdRosterPreview.Select(gameIds[selected],enabled);

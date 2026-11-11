@@ -1,0 +1,84 @@
+{
+  "result": "PASS_WITH_REVIEW_PENDING",
+  "date": "2026-11-11",
+  "baseCommit": "1608bd0416a88a915b2b6aec02ca6e9bc53f6fe6",
+  "unityVersion": "6000.6.0f1",
+  "environment": "Private disposable Unity Editor clone; Metal offscreen renders. Owner save was not reset.",
+  "suites": [
+    {
+      "log": "everyday-final.log",
+      "sha256": "8ee0c3e456c5bfa8e76b13a53da7f6f1a001c746b09d5e5c0cf9b6ef64fae11a",
+      "assertionLines": 770,
+      "passMarkers": [
+        "SKYPULSE_ONE_THUMB_PURE_PASS",
+        "SKYPULSE_PICKUP_DISPLAY_PURE_PASS",
+        "SKYPULSE_EVERYDAY_INPUT_PASS",
+        "SKYPULSE_FIRST_PLAY_PASS",
+        "SKYPULSE_FAILURE_CLARITY_PASS",
+        "SKYPULSE_READABILITY_PASS",
+        "SKYPULSE_PICKUP_DISPLAY_LIVE_PASS",
+        "SKYPULSE_ONE_THUMB_LIVE_PASS",
+        "SKYPULSE_PROGRESSION_CLARITY_PASS",
+        "SKYPULSE_MODE_FEEDBACK_PASS",
+        "SKYPULSE_EVERYDAY_PASS"
+      ]
+    },
+    {
+      "log": "pickups-final.log",
+      "sha256": "cf279c10bdeeb76492bb690978edb016f055e168bb8bc81624e6c6174349a19c",
+      "assertionLines": 202,
+      "passMarkers": [
+        "SKYPULSE_PICKUP_PASS: 202 assertions; /private/tmp/skypulse-everyday-20261111/captures/pickups"
+      ]
+    },
+    {
+      "log": "wing-corrected.log",
+      "sha256": "c8275f716dac9f922a4b71215c6d87bbf3638e049e50cce4b4661929a54bbc34",
+      "assertionLines": 0,
+      "passMarkers": [
+        "SKYPULSE_WING_CORRECTION_PASS"
+      ]
+    },
+    {
+      "log": "motion-review.log",
+      "sha256": "d361802f412495a9ed7a93b0e71c2294d5c46d00879097d1b714c8ddac923d9b",
+      "assertionLines": 0,
+      "passMarkers": [
+        "SKYPULSE_MOTION_PREVIEW_PASS"
+      ]
+    }
+  ],
+  "changedCSharpMatchesQA": 27,
+  "wingAudit": {
+    "beforeContactPoses": 347,
+    "afterContactPoses": 0,
+    "birds": 15,
+    "sampledPoses": 1800,
+    "limitations": "Finite triangle-surface sampling with AABB broadphase; not an all-time, coplanar or containment proof, and not visual approval."
+  },
+  "preserved": {
+    "trackedTexturesGeometryMaterialsScenesAndExistingMetas": 2194,
+    "approvedFinchAndFirstFourPrefabs": true,
+    "wingPrefabObjectIds": true,
+    "newScriptMetaGuidsUnique": true,
+    "existingEconomyAndRewardRegressionPassed": true
+  },
+  "ownerUnity": {
+    "project": "mobile",
+    "assetsRefreshed": true,
+    "reviewWindow": "3D Bird Review / Studio / Chromaflux",
+    "observedViaCUA": "2026-11-11",
+    "newRuntimeAndEditorAssembliesCompiled": true
+  },
+  "deviceTested": false,
+  "phoneBuildCreated": false,
+  "uploadedToTestFlight": false,
+  "submittedForPublicReview": false,
+  "installedBuildRecordUnchanged": 19,
+  "solidBirdsRemainEditorVisualReview": true,
+  "limits": [
+    "Owner appearance approval pending.",
+    "No measured mobile FPS, thermals, memory or real-device touch/audio validation.",
+    "Unity Editor SearchDatabase indexing exception appears in isolated startup logs; gameplay suites and compilation passed."
+  ]
+}

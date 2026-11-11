@@ -1,0 +1,19 @@
+{
+    "result": "PASS",
+    "scope": "Disposable Unity Editor real input/selection, optional first-play learning, result controls, retry, readable HUD/audio, all five actual pooled pickup housings, gate/puzzle/progression regression. Mobile performance and owner visual acceptance pending.",
+    "deviceTested": false,
+    "checks": [
+        "First real equip clears a stale green reviewer override even without an observed initial equip",
+        "Home solid follows the actual Hangar equip: newbird04",
+        "Actual flight loads the same selected identity: newbird04",
+        "Equipped identity keeps its own hit image: newbird04",
+        "Home solid follows the actual Hangar equip: neon_finch",
+        "Actual flight loads the same selected identity: neon_finch",
+        "Equipped identity keeps its own hit image: neon_finch",
+        "Home solid follows the actual Hangar equip: chrome_raven",
+        "Actual flight loads the same selected identity: chrome_raven",
+        "Equipped identity keeps its own hit image: chrome_raven",
+        "Actual Hangar EQUIP callback owns the selected identity and clears art overrides",
+        "Equipping owned birds during preview never charges the wallet"
+    ]
+}

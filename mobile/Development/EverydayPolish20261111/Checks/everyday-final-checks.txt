@@ -1,0 +1,781 @@
+ONE_THUMB_CHECK: Fresh finger down accepted
+ONE_THUMB_CHECK: Held finger cannot repeat
+ONE_THUMB_CHECK: Simulated mouse cannot duplicate a touch
+ONE_THUMB_CHECK: Next deliberate finger down accepted
+ONE_THUMB_CHECK: Completion-frame queued press fenced
+ONE_THUMB_CHECK: Next frame fresh press accepted
+ONE_THUMB_CHECK: Two event sources in one frame cannot double-act
+ONE_THUMB_CHECK: Real mouse works after touch suppression window
+ONE_THUMB_CHECK: One crystal cannot open an assigned gate
+ONE_THUMB_CHECK: A complete pair opens only its assigned gate, even out of order
+ONE_THUMB_CHECK: Duplicate crystal cannot spend or award again
+ONE_THUMB_CHECK: Paused relay rejects pickups
+ONE_THUMB_CHECK: Next gate spends exactly its own two collected charges
+ONE_THUMB_CHECK: Retry creates clean gate accounting
+READABILITY_CHECK: Saturated ordinary taps cannot use the reserved critical voice
+READABILITY_CHECK: A free reserved voice accepts both unlock and crash
+READABILITY_CHECK: A full pool replaces its oldest ordinary voice for either critical event
+READABILITY_CHECK: A newer ordinary voice is replaced before a critical cue
+READABILITY_CHECK: A crash remains audible even when every voice carries a critical cue
+READABILITY_CHECK: Missing audio sources are never selected
+READABILITY_CHECK: The existing ordinary pool reuses a free voice without growing
+READABILITY_CHECK: Flap, collection and unlock have distinct balanced mix roles
+READABILITY_CHECK: Cue gains retain the existing fixed master headroom: 0
+READABILITY_CHECK: Cue gains retain the existing fixed master headroom: 1
+READABILITY_CHECK: Cue gains retain the existing fixed master headroom: 2
+READABILITY_CHECK: Cue gains retain the existing fixed master headroom: 3
+READABILITY_CHECK: Cue gains retain the existing fixed master headroom: 4
+READABILITY_CHECK: Cue gains retain the existing fixed master headroom: 5
+READABILITY_CHECK: Cue gains retain the existing fixed master headroom: 6
+READABILITY_CHECK: A live sub-tenth effect never incorrectly reads zero seconds
+READABILITY_CHECK: Invalid presentation times cannot overflow the timer label
+READABILITY_CHECK: Echo explains its exact remaining bonus budget and stable decimal time
+READABILITY_CHECK: A charged shield shows readiness instead of an invented timer
+PICKUP_DISPLAY_CHECK: All five housings and their two surfaces are built once
+PICKUP_DISPLAY_CHECK: Ten surfaces share only two supported finish materials
+PICKUP_DISPLAY_CHECK: All pickup finish shaders are supported
+PICKUP_DISPLAY_CHECK: Presentation contributes no pickup or flight colliders
+PICKUP_DISPLAY_CHECK: Power has its own structural and light geometry: 0
+PICKUP_DISPLAY_CHECK: True-depth geometry fits the 1.3-unit display envelope on every axis: 0 / (0.92, 0.98, 0.37)
+PICKUP_DISPLAY_CHECK: Pickup construction stays inside its bounded mesh budget: 0
+PICKUP_DISPLAY_CHECK: Exactly the requested power is visible: 0
+PICKUP_DISPLAY_CHECK: Absolute presentation time matches at 30 Hz: 0
+PICKUP_DISPLAY_CHECK: Absolute presentation time matches at 60 Hz: 0
+PICKUP_DISPLAY_CHECK: Absolute presentation time matches at 120 Hz: 0
+PICKUP_DISPLAY_CHECK: Reduced Motion holds a stable readable pose: 0
+PICKUP_DISPLAY_CHECK: Repeated time has no frame-history drift: 0
+PICKUP_DISPLAY_CHECK: Power has its own structural and light geometry: 1
+PICKUP_DISPLAY_CHECK: True-depth geometry fits the 1.3-unit display envelope on every axis: 1 / (0.91, 0.72, 0.25)
+PICKUP_DISPLAY_CHECK: Pickup construction stays inside its bounded mesh budget: 1
+PICKUP_DISPLAY_CHECK: Exactly the requested power is visible: 1
+PICKUP_DISPLAY_CHECK: Absolute presentation time matches at 30 Hz: 1
+PICKUP_DISPLAY_CHECK: Absolute presentation time matches at 60 Hz: 1
+PICKUP_DISPLAY_CHECK: Absolute presentation time matches at 120 Hz: 1
+PICKUP_DISPLAY_CHECK: Reduced Motion holds a stable readable pose: 1
+PICKUP_DISPLAY_CHECK: Repeated time has no frame-history drift: 1
+PICKUP_DISPLAY_CHECK: Power has its own structural and light geometry: 2
+PICKUP_DISPLAY_CHECK: True-depth geometry fits the 1.3-unit display envelope on every axis: 2 / (1.07, 1.07, 0.71)
+PICKUP_DISPLAY_CHECK: Pickup construction stays inside its bounded mesh budget: 2
+PICKUP_DISPLAY_CHECK: Exactly the requested power is visible: 2
+PICKUP_DISPLAY_CHECK: Absolute presentation time matches at 30 Hz: 2
+PICKUP_DISPLAY_CHECK: Absolute presentation time matches at 60 Hz: 2
+PICKUP_DISPLAY_CHECK: Absolute presentation time matches at 120 Hz: 2
+PICKUP_DISPLAY_CHECK: Reduced Motion holds a stable readable pose: 2
+PICKUP_DISPLAY_CHECK: Repeated time has no frame-history drift: 2
+PICKUP_DISPLAY_CHECK: Power has its own structural and light geometry: 3
+PICKUP_DISPLAY_CHECK: True-depth geometry fits the 1.3-unit display envelope on every axis: 3 / (0.73, 0.95, 0.49)
+PICKUP_DISPLAY_CHECK: Pickup construction stays inside its bounded mesh budget: 3
+PICKUP_DISPLAY_CHECK: Exactly the requested power is visible: 3
+PICKUP_DISPLAY_CHECK: Absolute presentation time matches at 30 Hz: 3
+PICKUP_DISPLAY_CHECK: Absolute presentation time matches at 60 Hz: 3
+PICKUP_DISPLAY_CHECK: Absolute presentation time matches at 120 Hz: 3
+PICKUP_DISPLAY_CHECK: Reduced Motion holds a stable readable pose: 3
+PICKUP_DISPLAY_CHECK: Repeated time has no frame-history drift: 3
+PICKUP_DISPLAY_CHECK: Power has its own structural and light geometry: 4
+PICKUP_DISPLAY_CHECK: True-depth geometry fits the 1.3-unit display envelope on every axis: 4 / (1.03, 1.03, 0.24)
+PICKUP_DISPLAY_CHECK: Pickup construction stays inside its bounded mesh budget: 4
+PICKUP_DISPLAY_CHECK: Exactly the requested power is visible: 4
+PICKUP_DISPLAY_CHECK: Absolute presentation time matches at 30 Hz: 4
+PICKUP_DISPLAY_CHECK: Absolute presentation time matches at 60 Hz: 4
+PICKUP_DISPLAY_CHECK: Absolute presentation time matches at 120 Hz: 4
+PICKUP_DISPLAY_CHECK: Reduced Motion holds a stable readable pose: 4
+PICKUP_DISPLAY_CHECK: Repeated time has no frame-history drift: 4
+PICKUP_DISPLAY_CHECK: All five pickup silhouettes have distinct saved construction signatures
+PICKUP_DISPLAY_CHECK: Repeated Build cannot duplicate model children
+PICKUP_DISPLAY_CHECK: Warmed model switches and presentation allocate no managed memory
+PICKUP_DISPLAY_CHECK: Animations retain the original pooled geometry
+PICKUP_DISPLAY_CHECK: Presentation creates no material instances
+EVERYDAY_INPUT_CHECK: Launch keeps the bird settled until an input: EndlessRoute / neon_finch
+EVERYDAY_INPUT_CHECK: Fresh play-area finger is accepted: EndlessRoute / neon_finch
+EVERYDAY_INPUT_CHECK: Accepted edge applies the original impulse before simulation: EndlessRoute
+EVERYDAY_INPUT_CHECK: Adjacent native drawing and solid-wing target change on the input edge: EndlessRoute / neon_finch
+EVERYDAY_INPUT_CHECK: Held contact cannot generate another impulse
+EVERYDAY_INPUT_CHECK: Simulated mouse cannot duplicate the touch
+EVERYDAY_INPUT_CHECK: A separately released tap stays responsive inside the old 70ms polling lockout
+EVERYDAY_INPUT_CHECK: Fixed-step input cannot replay an already applied edge
+EVERYDAY_INPUT_CHECK: Launch keeps the bird settled until an input: EndlessRoute / chrome_raven
+EVERYDAY_INPUT_CHECK: Fresh play-area finger is accepted: EndlessRoute / chrome_raven
+EVERYDAY_INPUT_CHECK: Accepted edge applies the original impulse before simulation: EndlessRoute
+EVERYDAY_INPUT_CHECK: Adjacent native drawing and solid-wing target change on the input edge: EndlessRoute / chrome_raven
+EVERYDAY_INPUT_CHECK: Held contact cannot generate another impulse
+EVERYDAY_INPUT_CHECK: Simulated mouse cannot duplicate the touch
+EVERYDAY_INPUT_CHECK: A separately released tap stays responsive inside the old 70ms polling lockout
+EVERYDAY_INPUT_CHECK: Fixed-step input cannot replay an already applied edge
+EVERYDAY_INPUT_CHECK: Launch keeps the bird settled until an input: EndlessRoute / prism_hummingbird
+EVERYDAY_INPUT_CHECK: Fresh play-area finger is accepted: EndlessRoute / prism_hummingbird
+EVERYDAY_INPUT_CHECK: Accepted edge applies the original impulse before simulation: EndlessRoute
+EVERYDAY_INPUT_CHECK: Adjacent native drawing and solid-wing target change on the input edge: EndlessRoute / prism_hummingbird
+EVERYDAY_INPUT_CHECK: Held contact cannot generate another impulse
+EVERYDAY_INPUT_CHECK: Simulated mouse cannot duplicate the touch
+EVERYDAY_INPUT_CHECK: A separately released tap stays responsive inside the old 70ms polling lockout
+EVERYDAY_INPUT_CHECK: Fixed-step input cannot replay an already applied edge
+EVERYDAY_INPUT_CHECK: Launch keeps the bird settled until an input: EndlessRoute / koiwing_glider
+EVERYDAY_INPUT_CHECK: Fresh play-area finger is accepted: EndlessRoute / koiwing_glider
+EVERYDAY_INPUT_CHECK: Accepted edge applies the original impulse before simulation: EndlessRoute
+EVERYDAY_INPUT_CHECK: Adjacent native drawing and solid-wing target change on the input edge: EndlessRoute / koiwing_glider
+EVERYDAY_INPUT_CHECK: Held contact cannot generate another impulse
+EVERYDAY_INPUT_CHECK: Simulated mouse cannot duplicate the touch
+EVERYDAY_INPUT_CHECK: A separately released tap stays responsive inside the old 70ms polling lockout
+EVERYDAY_INPUT_CHECK: Fixed-step input cannot replay an already applied edge
+EVERYDAY_INPUT_CHECK: Launch keeps the bird settled until an input: EndlessRoute / verdant_kite
+EVERYDAY_INPUT_CHECK: Fresh play-area finger is accepted: EndlessRoute / verdant_kite
+EVERYDAY_INPUT_CHECK: Accepted edge applies the original impulse before simulation: EndlessRoute
+EVERYDAY_INPUT_CHECK: Adjacent native drawing and solid-wing target change on the input edge: EndlessRoute / verdant_kite
+EVERYDAY_INPUT_CHECK: Held contact cannot generate another impulse
+EVERYDAY_INPUT_CHECK: Simulated mouse cannot duplicate the touch
+EVERYDAY_INPUT_CHECK: A separately released tap stays responsive inside the old 70ms polling lockout
+EVERYDAY_INPUT_CHECK: Fixed-step input cannot replay an already applied edge
+EVERYDAY_INPUT_CHECK: Launch keeps the bird settled until an input: EndlessRoute / newbird01
+EVERYDAY_INPUT_CHECK: Fresh play-area finger is accepted: EndlessRoute / newbird01
+EVERYDAY_INPUT_CHECK: Accepted edge applies the original impulse before simulation: EndlessRoute
+EVERYDAY_INPUT_CHECK: Adjacent native drawing and solid-wing target change on the input edge: EndlessRoute / newbird01
+EVERYDAY_INPUT_CHECK: Held contact cannot generate another impulse
+EVERYDAY_INPUT_CHECK: Simulated mouse cannot duplicate the touch
+EVERYDAY_INPUT_CHECK: A separately released tap stays responsive inside the old 70ms polling lockout
+EVERYDAY_INPUT_CHECK: Fixed-step input cannot replay an already applied edge
+EVERYDAY_INPUT_CHECK: Launch keeps the bird settled until an input: EndlessRoute / newbird02
+EVERYDAY_INPUT_CHECK: Fresh play-area finger is accepted: EndlessRoute / newbird02
+EVERYDAY_INPUT_CHECK: Accepted edge applies the original impulse before simulation: EndlessRoute
+EVERYDAY_INPUT_CHECK: Adjacent native drawing and solid-wing target change on the input edge: EndlessRoute / newbird02
+EVERYDAY_INPUT_CHECK: Held contact cannot generate another impulse
+EVERYDAY_INPUT_CHECK: Simulated mouse cannot duplicate the touch
+EVERYDAY_INPUT_CHECK: A separately released tap stays responsive inside the old 70ms polling lockout
+EVERYDAY_INPUT_CHECK: Fixed-step input cannot replay an already applied edge
+EVERYDAY_INPUT_CHECK: Launch keeps the bird settled until an input: EndlessRoute / newbird03
+EVERYDAY_INPUT_CHECK: Fresh play-area finger is accepted: EndlessRoute / newbird03
+EVERYDAY_INPUT_CHECK: Accepted edge applies the original impulse before simulation: EndlessRoute
+EVERYDAY_INPUT_CHECK: Adjacent native drawing and solid-wing target change on the input edge: EndlessRoute / newbird03
+EVERYDAY_INPUT_CHECK: Held contact cannot generate another impulse
+EVERYDAY_INPUT_CHECK: Simulated mouse cannot duplicate the touch
+EVERYDAY_INPUT_CHECK: A separately released tap stays responsive inside the old 70ms polling lockout
+EVERYDAY_INPUT_CHECK: Fixed-step input cannot replay an already applied edge
+EVERYDAY_INPUT_CHECK: Launch keeps the bird settled until an input: EndlessRoute / newbird04
+EVERYDAY_INPUT_CHECK: Fresh play-area finger is accepted: EndlessRoute / newbird04
+EVERYDAY_INPUT_CHECK: Accepted edge applies the original impulse before simulation: EndlessRoute
+EVERYDAY_INPUT_CHECK: Adjacent native drawing and solid-wing target change on the input edge: EndlessRoute / newbird04
+EVERYDAY_INPUT_CHECK: Held contact cannot generate another impulse
+EVERYDAY_INPUT_CHECK: Simulated mouse cannot duplicate the touch
+EVERYDAY_INPUT_CHECK: A separately released tap stays responsive inside the old 70ms polling lockout
+EVERYDAY_INPUT_CHECK: Fixed-step input cannot replay an already applied edge
+EVERYDAY_INPUT_CHECK: Launch keeps the bird settled until an input: EndlessRoute / newbird05
+EVERYDAY_INPUT_CHECK: Fresh play-area finger is accepted: EndlessRoute / newbird05
+EVERYDAY_INPUT_CHECK: Accepted edge applies the original impulse before simulation: EndlessRoute
+EVERYDAY_INPUT_CHECK: Adjacent native drawing and solid-wing target change on the input edge: EndlessRoute / newbird05
+EVERYDAY_INPUT_CHECK: Held contact cannot generate another impulse
+EVERYDAY_INPUT_CHECK: Simulated mouse cannot duplicate the touch
+EVERYDAY_INPUT_CHECK: A separately released tap stays responsive inside the old 70ms polling lockout
+EVERYDAY_INPUT_CHECK: Fixed-step input cannot replay an already applied edge
+EVERYDAY_INPUT_CHECK: Launch keeps the bird settled until an input: EndlessRoute / newbird06
+EVERYDAY_INPUT_CHECK: Fresh play-area finger is accepted: EndlessRoute / newbird06
+EVERYDAY_INPUT_CHECK: Accepted edge applies the original impulse before simulation: EndlessRoute
+EVERYDAY_INPUT_CHECK: Adjacent native drawing and solid-wing target change on the input edge: EndlessRoute / newbird06
+EVERYDAY_INPUT_CHECK: Held contact cannot generate another impulse
+EVERYDAY_INPUT_CHECK: Simulated mouse cannot duplicate the touch
+EVERYDAY_INPUT_CHECK: A separately released tap stays responsive inside the old 70ms polling lockout
+EVERYDAY_INPUT_CHECK: Fixed-step input cannot replay an already applied edge
+EVERYDAY_INPUT_CHECK: Launch keeps the bird settled until an input: EndlessRoute / newbird07
+EVERYDAY_INPUT_CHECK: Fresh play-area finger is accepted: EndlessRoute / newbird07
+EVERYDAY_INPUT_CHECK: Accepted edge applies the original impulse before simulation: EndlessRoute
+EVERYDAY_INPUT_CHECK: Adjacent native drawing and solid-wing target change on the input edge: EndlessRoute / newbird07
+EVERYDAY_INPUT_CHECK: Held contact cannot generate another impulse
+EVERYDAY_INPUT_CHECK: Simulated mouse cannot duplicate the touch
+EVERYDAY_INPUT_CHECK: A separately released tap stays responsive inside the old 70ms polling lockout
+EVERYDAY_INPUT_CHECK: Fixed-step input cannot replay an already applied edge
+EVERYDAY_INPUT_CHECK: Launch keeps the bird settled until an input: EndlessRoute / newbird08
+EVERYDAY_INPUT_CHECK: Fresh play-area finger is accepted: EndlessRoute / newbird08
+EVERYDAY_INPUT_CHECK: Accepted edge applies the original impulse before simulation: EndlessRoute
+EVERYDAY_INPUT_CHECK: Adjacent native drawing and solid-wing target change on the input edge: EndlessRoute / newbird08
+EVERYDAY_INPUT_CHECK: Held contact cannot generate another impulse
+EVERYDAY_INPUT_CHECK: Simulated mouse cannot duplicate the touch
+EVERYDAY_INPUT_CHECK: A separately released tap stays responsive inside the old 70ms polling lockout
+EVERYDAY_INPUT_CHECK: Fixed-step input cannot replay an already applied edge
+EVERYDAY_INPUT_CHECK: Launch keeps the bird settled until an input: EndlessRoute / newbird09
+EVERYDAY_INPUT_CHECK: Fresh play-area finger is accepted: EndlessRoute / newbird09
+EVERYDAY_INPUT_CHECK: Accepted edge applies the original impulse before simulation: EndlessRoute
+EVERYDAY_INPUT_CHECK: Adjacent native drawing and solid-wing target change on the input edge: EndlessRoute / newbird09
+EVERYDAY_INPUT_CHECK: Held contact cannot generate another impulse
+EVERYDAY_INPUT_CHECK: Simulated mouse cannot duplicate the touch
+EVERYDAY_INPUT_CHECK: A separately released tap stays responsive inside the old 70ms polling lockout
+EVERYDAY_INPUT_CHECK: Fixed-step input cannot replay an already applied edge
+EVERYDAY_INPUT_CHECK: Launch keeps the bird settled until an input: EndlessRoute / newbird10
+EVERYDAY_INPUT_CHECK: Fresh play-area finger is accepted: EndlessRoute / newbird10
+EVERYDAY_INPUT_CHECK: Accepted edge applies the original impulse before simulation: EndlessRoute
+EVERYDAY_INPUT_CHECK: Adjacent native drawing and solid-wing target change on the input edge: EndlessRoute / newbird10
+EVERYDAY_INPUT_CHECK: Held contact cannot generate another impulse
+EVERYDAY_INPUT_CHECK: Simulated mouse cannot duplicate the touch
+EVERYDAY_INPUT_CHECK: A separately released tap stays responsive inside the old 70ms polling lockout
+EVERYDAY_INPUT_CHECK: Fixed-step input cannot replay an already applied edge
+EVERYDAY_INPUT_CHECK: Launch keeps the bird settled until an input: PulseRelay / neon_finch
+EVERYDAY_INPUT_CHECK: Fresh play-area finger is accepted: PulseRelay / neon_finch
+EVERYDAY_INPUT_CHECK: Accepted edge applies the original impulse before simulation: PulseRelay
+EVERYDAY_INPUT_CHECK: Adjacent native drawing and solid-wing target change on the input edge: PulseRelay / neon_finch
+EVERYDAY_INPUT_CHECK: Held contact cannot generate another impulse
+EVERYDAY_INPUT_CHECK: Simulated mouse cannot duplicate the touch
+EVERYDAY_INPUT_CHECK: A separately released tap stays responsive inside the old 70ms polling lockout
+EVERYDAY_INPUT_CHECK: Fixed-step input cannot replay an already applied edge
+EVERYDAY_INPUT_CHECK: Launch keeps the bird settled until an input: PulseRelay / chrome_raven
+EVERYDAY_INPUT_CHECK: Fresh play-area finger is accepted: PulseRelay / chrome_raven
+EVERYDAY_INPUT_CHECK: Accepted edge applies the original impulse before simulation: PulseRelay
+EVERYDAY_INPUT_CHECK: Adjacent native drawing and solid-wing target change on the input edge: PulseRelay / chrome_raven
+EVERYDAY_INPUT_CHECK: Held contact cannot generate another impulse
+EVERYDAY_INPUT_CHECK: Simulated mouse cannot duplicate the touch
+EVERYDAY_INPUT_CHECK: A separately released tap stays responsive inside the old 70ms polling lockout
+EVERYDAY_INPUT_CHECK: Fixed-step input cannot replay an already applied edge
+EVERYDAY_INPUT_CHECK: Launch keeps the bird settled until an input: PulseRelay / prism_hummingbird
+EVERYDAY_INPUT_CHECK: Fresh play-area finger is accepted: PulseRelay / prism_hummingbird
+EVERYDAY_INPUT_CHECK: Accepted edge applies the original impulse before simulation: PulseRelay
+EVERYDAY_INPUT_CHECK: Adjacent native drawing and solid-wing target change on the input edge: PulseRelay / prism_hummingbird
+EVERYDAY_INPUT_CHECK: Held contact cannot generate another impulse
+EVERYDAY_INPUT_CHECK: Simulated mouse cannot duplicate the touch
+EVERYDAY_INPUT_CHECK: A separately released tap stays responsive inside the old 70ms polling lockout
+EVERYDAY_INPUT_CHECK: Fixed-step input cannot replay an already applied edge
+EVERYDAY_INPUT_CHECK: Launch keeps the bird settled until an input: PulseRelay / koiwing_glider
+EVERYDAY_INPUT_CHECK: Fresh play-area finger is accepted: PulseRelay / koiwing_glider
+EVERYDAY_INPUT_CHECK: Accepted edge applies the original impulse before simulation: PulseRelay
+EVERYDAY_INPUT_CHECK: Adjacent native drawing and solid-wing target change on the input edge: PulseRelay / koiwing_glider
+EVERYDAY_INPUT_CHECK: Held contact cannot generate another impulse
+EVERYDAY_INPUT_CHECK: Simulated mouse cannot duplicate the touch
+EVERYDAY_INPUT_CHECK: A separately released tap stays responsive inside the old 70ms polling lockout
+EVERYDAY_INPUT_CHECK: Fixed-step input cannot replay an already applied edge
+EVERYDAY_INPUT_CHECK: Launch keeps the bird settled until an input: PulseRelay / verdant_kite
+EVERYDAY_INPUT_CHECK: Fresh play-area finger is accepted: PulseRelay / verdant_kite
+EVERYDAY_INPUT_CHECK: Accepted edge applies the original impulse before simulation: PulseRelay
+EVERYDAY_INPUT_CHECK: Adjacent native drawing and solid-wing target change on the input edge: PulseRelay / verdant_kite
+EVERYDAY_INPUT_CHECK: Held contact cannot generate another impulse
+EVERYDAY_INPUT_CHECK: Simulated mouse cannot duplicate the touch
+EVERYDAY_INPUT_CHECK: A separately released tap stays responsive inside the old 70ms polling lockout
+EVERYDAY_INPUT_CHECK: Fixed-step input cannot replay an already applied edge
+EVERYDAY_INPUT_CHECK: Launch keeps the bird settled until an input: PulseRelay / newbird01
+EVERYDAY_INPUT_CHECK: Fresh play-area finger is accepted: PulseRelay / newbird01
+EVERYDAY_INPUT_CHECK: Accepted edge applies the original impulse before simulation: PulseRelay
+EVERYDAY_INPUT_CHECK: Adjacent native drawing and solid-wing target change on the input edge: PulseRelay / newbird01
+EVERYDAY_INPUT_CHECK: Held contact cannot generate another impulse
+EVERYDAY_INPUT_CHECK: Simulated mouse cannot duplicate the touch
+EVERYDAY_INPUT_CHECK: A separately released tap stays responsive inside the old 70ms polling lockout
+EVERYDAY_INPUT_CHECK: Fixed-step input cannot replay an already applied edge
+EVERYDAY_INPUT_CHECK: Launch keeps the bird settled until an input: PulseRelay / newbird02
+EVERYDAY_INPUT_CHECK: Fresh play-area finger is accepted: PulseRelay / newbird02
+EVERYDAY_INPUT_CHECK: Accepted edge applies the original impulse before simulation: PulseRelay
+EVERYDAY_INPUT_CHECK: Adjacent native drawing and solid-wing target change on the input edge: PulseRelay / newbird02
+EVERYDAY_INPUT_CHECK: Held contact cannot generate another impulse
+EVERYDAY_INPUT_CHECK: Simulated mouse cannot duplicate the touch
+EVERYDAY_INPUT_CHECK: A separately released tap stays responsive inside the old 70ms polling lockout
+EVERYDAY_INPUT_CHECK: Fixed-step input cannot replay an already applied edge
+EVERYDAY_INPUT_CHECK: Launch keeps the bird settled until an input: PulseRelay / newbird03
+EVERYDAY_INPUT_CHECK: Fresh play-area finger is accepted: PulseRelay / newbird03
+EVERYDAY_INPUT_CHECK: Accepted edge applies the original impulse before simulation: PulseRelay
+EVERYDAY_INPUT_CHECK: Adjacent native drawing and solid-wing target change on the input edge: PulseRelay / newbird03
+EVERYDAY_INPUT_CHECK: Held contact cannot generate another impulse
+EVERYDAY_INPUT_CHECK: Simulated mouse cannot duplicate the touch
+EVERYDAY_INPUT_CHECK: A separately released tap stays responsive inside the old 70ms polling lockout
+EVERYDAY_INPUT_CHECK: Fixed-step input cannot replay an already applied edge
+EVERYDAY_INPUT_CHECK: Launch keeps the bird settled until an input: PulseRelay / newbird04
+EVERYDAY_INPUT_CHECK: Fresh play-area finger is accepted: PulseRelay / newbird04
+EVERYDAY_INPUT_CHECK: Accepted edge applies the original impulse before simulation: PulseRelay
+EVERYDAY_INPUT_CHECK: Adjacent native drawing and solid-wing target change on the input edge: PulseRelay / newbird04
+EVERYDAY_INPUT_CHECK: Held contact cannot generate another impulse
+EVERYDAY_INPUT_CHECK: Simulated mouse cannot duplicate the touch
+EVERYDAY_INPUT_CHECK: A separately released tap stays responsive inside the old 70ms polling lockout
+EVERYDAY_INPUT_CHECK: Fixed-step input cannot replay an already applied edge
+EVERYDAY_INPUT_CHECK: Launch keeps the bird settled until an input: PulseRelay / newbird05
+EVERYDAY_INPUT_CHECK: Fresh play-area finger is accepted: PulseRelay / newbird05
+EVERYDAY_INPUT_CHECK: Accepted edge applies the original impulse before simulation: PulseRelay
+EVERYDAY_INPUT_CHECK: Adjacent native drawing and solid-wing target change on the input edge: PulseRelay / newbird05
+EVERYDAY_INPUT_CHECK: Held contact cannot generate another impulse
+EVERYDAY_INPUT_CHECK: Simulated mouse cannot duplicate the touch
+EVERYDAY_INPUT_CHECK: A separately released tap stays responsive inside the old 70ms polling lockout
+EVERYDAY_INPUT_CHECK: Fixed-step input cannot replay an already applied edge
+EVERYDAY_INPUT_CHECK: Launch keeps the bird settled until an input: PulseRelay / newbird06
+EVERYDAY_INPUT_CHECK: Fresh play-area finger is accepted: PulseRelay / newbird06
+EVERYDAY_INPUT_CHECK: Accepted edge applies the original impulse before simulation: PulseRelay
+EVERYDAY_INPUT_CHECK: Adjacent native drawing and solid-wing target change on the input edge: PulseRelay / newbird06
+EVERYDAY_INPUT_CHECK: Held contact cannot generate another impulse
+EVERYDAY_INPUT_CHECK: Simulated mouse cannot duplicate the touch
+EVERYDAY_INPUT_CHECK: A separately released tap stays responsive inside the old 70ms polling lockout
+EVERYDAY_INPUT_CHECK: Fixed-step input cannot replay an already applied edge
+EVERYDAY_INPUT_CHECK: Launch keeps the bird settled until an input: PulseRelay / newbird07
+EVERYDAY_INPUT_CHECK: Fresh play-area finger is accepted: PulseRelay / newbird07
+EVERYDAY_INPUT_CHECK: Accepted edge applies the original impulse before simulation: PulseRelay
+EVERYDAY_INPUT_CHECK: Adjacent native drawing and solid-wing target change on the input edge: PulseRelay / newbird07
+EVERYDAY_INPUT_CHECK: Held contact cannot generate another impulse
+EVERYDAY_INPUT_CHECK: Simulated mouse cannot duplicate the touch
+EVERYDAY_INPUT_CHECK: A separately released tap stays responsive inside the old 70ms polling lockout
+EVERYDAY_INPUT_CHECK: Fixed-step input cannot replay an already applied edge
+EVERYDAY_INPUT_CHECK: Launch keeps the bird settled until an input: PulseRelay / newbird08
+EVERYDAY_INPUT_CHECK: Fresh play-area finger is accepted: PulseRelay / newbird08
+EVERYDAY_INPUT_CHECK: Accepted edge applies the original impulse before simulation: PulseRelay
+EVERYDAY_INPUT_CHECK: Adjacent native drawing and solid-wing target change on the input edge: PulseRelay / newbird08
+EVERYDAY_INPUT_CHECK: Held contact cannot generate another impulse
+EVERYDAY_INPUT_CHECK: Simulated mouse cannot duplicate the touch
+EVERYDAY_INPUT_CHECK: A separately released tap stays responsive inside the old 70ms polling lockout
+EVERYDAY_INPUT_CHECK: Fixed-step input cannot replay an already applied edge
+EVERYDAY_INPUT_CHECK: Launch keeps the bird settled until an input: PulseRelay / newbird09
+EVERYDAY_INPUT_CHECK: Fresh play-area finger is accepted: PulseRelay / newbird09
+EVERYDAY_INPUT_CHECK: Accepted edge applies the original impulse before simulation: PulseRelay
+EVERYDAY_INPUT_CHECK: Adjacent native drawing and solid-wing target change on the input edge: PulseRelay / newbird09
+EVERYDAY_INPUT_CHECK: Held contact cannot generate another impulse
+EVERYDAY_INPUT_CHECK: Simulated mouse cannot duplicate the touch
+EVERYDAY_INPUT_CHECK: A separately released tap stays responsive inside the old 70ms polling lockout
+EVERYDAY_INPUT_CHECK: Fixed-step input cannot replay an already applied edge
+EVERYDAY_INPUT_CHECK: Launch keeps the bird settled until an input: PulseRelay / newbird10
+EVERYDAY_INPUT_CHECK: Fresh play-area finger is accepted: PulseRelay / newbird10
+EVERYDAY_INPUT_CHECK: Accepted edge applies the original impulse before simulation: PulseRelay
+EVERYDAY_INPUT_CHECK: Adjacent native drawing and solid-wing target change on the input edge: PulseRelay / newbird10
+EVERYDAY_INPUT_CHECK: Held contact cannot generate another impulse
+EVERYDAY_INPUT_CHECK: Simulated mouse cannot duplicate the touch
+EVERYDAY_INPUT_CHECK: A separately released tap stays responsive inside the old 70ms polling lockout
+EVERYDAY_INPUT_CHECK: Fixed-step input cannot replay an already applied edge
+EVERYDAY_INPUT_CHECK: Endless pause hit target cannot also flap
+EVERYDAY_INPUT_CHECK: Off-viewport press cannot flap
+EVERYDAY_INPUT_CHECK: Paused Endless ignores gameplay input
+EVERYDAY_INPUT_CHECK: Resume-frame queued input is fenced
+EVERYDAY_PASS_CHECK: First real equip clears a stale green reviewer override even without an observed initial equip
+EVERYDAY_PASS_CHECK: Home solid follows the actual Hangar equip: newbird04
+EVERYDAY_PASS_CHECK: Actual flight loads the same selected identity: newbird04
+EVERYDAY_PASS_CHECK: Equipped identity keeps its own hit image: newbird04
+EVERYDAY_PASS_CHECK: Home solid follows the actual Hangar equip: neon_finch
+EVERYDAY_PASS_CHECK: Actual flight loads the same selected identity: neon_finch
+EVERYDAY_PASS_CHECK: Equipped identity keeps its own hit image: neon_finch
+EVERYDAY_PASS_CHECK: Home solid follows the actual Hangar equip: chrome_raven
+EVERYDAY_PASS_CHECK: Actual flight loads the same selected identity: chrome_raven
+EVERYDAY_PASS_CHECK: Equipped identity keeps its own hit image: chrome_raven
+EVERYDAY_PASS_CHECK: Actual Hangar EQUIP callback owns the selected identity and clears art overrides
+EVERYDAY_PASS_CHECK: Equipping owned birds during preview never charges the wallet
+POLISH_CHECK: Home displays a single solid bird surface
+POLISH_CHECK: Home replaces its old bird artwork without blocking touch input
+POLISH_CHECK: Hangar retains three actual roster bays with solid birds
+POLISH_CHECK: Featured solid bird remains inside the native swipe carousel
+POLISH_CHECK: The previous flat-art studio and its cradle are disabled behind the solid hero
+POLISH_CHECK: Each carousel texture preserves its actual UI aspect ratio
+POLISH_CHECK: Solid carousel bird stays framed across a complete turn and wing cycle; viewport=0.04310879..0.9599999
+POLISH_CHECK: Each carousel texture preserves its actual UI aspect ratio
+POLISH_CHECK: Solid carousel bird stays framed across a complete turn and wing cycle; viewport=0.1198371..0.8261305
+POLISH_CHECK: Each carousel texture preserves its actual UI aspect ratio
+POLISH_CHECK: Solid carousel bird stays framed across a complete turn and wing cycle; viewport=0.04000005..0.9551312
+POLISH_CHECK: Swiping selection disposes old view surfaces instead of duplicating bays
+POLISH_CHECK: Stopping visual review releases its menu cameras, render targets and overlays
+FIRST_PLAY_CHECK: First real Endless run exposes a readable, touch-transparent tap instruction
+FIRST_PLAY_CHECK: Showing instructions cannot mark a mode learned or write player progress
+FIRST_PLAY_CHECK: Pause hides the coach and preserves its reading time
+FIRST_PLAY_CHECK: An accepted flap advances teaching without pretending the gate was cleared
+FIRST_PLAY_CHECK: Actual flap plus authoritative passed-gate count completes and dismisses Endless teaching
+FIRST_PLAY_CHECK: Repeated completion observations cannot award or write teaching completion twice
+FIRST_PLAY_CHECK: Learned Endless tips stay hidden on retry
+FIRST_PLAY_CHECK: Relay begins with the existing transparent header hint, not an extra gameplay modal
+FIRST_PLAY_CHECK: Relay teaches its required matching pair after the first accepted flap
+FIRST_PLAY_CHECK: The first assigned crystal produces correct remaining-charge guidance
+FIRST_PLAY_CHECK: A logically open gate immediately changes the instruction to passage
+FIRST_PLAY_CHECK: A real first-gate passage completes only the Relay teaching key
+FIRST_PLAY_CHECK: Blackout teaching sits in the existing objective briefing without covering the board
+FIRST_PLAY_CHECK: PLAN and speculative rotations cannot teach a move, spend live trace or complete guidance
+FIRST_PLAY_CHECK: Success is recorded before immediate next-puzzle activation; no tutorial NEXT modal is introduced
+FIRST_PLAY_CHECK: Held callbacks from the cleared puzzle cannot re-arm tips on its successor
+FIRST_PLAY_CHECK: Player can opt out without altering any learned-mode key
+FIRST_PLAY_CHECK: Opting out preserves all demonstrated completions
+FIRST_PLAY_CHECK: Guide owns generous explicit replay and optional-tip controls
+FIRST_PLAY_CHECK: PLAY WITH TIPS starts an explicitly requested normal run without buying anything
+FIRST_PLAY_CHECK: Replaying teaching does not erase a previously earned completion
+FIRST_PLAY_CHECK: A queued guide replay callback cannot restart the new run or rewrite preferences
+FIRST_PLAY_CHECK: Quiet time budget dismisses tips without changing earned progress
+FAILURE_CLARITY_CHECK: Actual terminal flow remains visible: EndlessRoute
+FAILURE_CLARITY_CHECK: Failure explains the actual cause: EndlessRoute
+FAILURE_CLARITY_CHECK: 44 pt terminal action: Button · RETRY
+FAILURE_CLARITY_CHECK: Terminal action remains inside safe area: Button · RETRY
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · RETRY / Button · BIRD HANGAR
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · RETRY / Button · TECH TREE
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · RETRY / Button · SHARE
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · RETRY / Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Centre raycast reaches terminal action: Button · RETRY
+FAILURE_CLARITY_CHECK: 44 pt terminal action: Button · BIRD HANGAR
+FAILURE_CLARITY_CHECK: Terminal action remains inside safe area: Button · BIRD HANGAR
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · BIRD HANGAR / Button · TECH TREE
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · BIRD HANGAR / Button · SHARE
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · BIRD HANGAR / Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Centre raycast reaches terminal action: Button · BIRD HANGAR
+FAILURE_CLARITY_CHECK: 44 pt terminal action: Button · TECH TREE
+FAILURE_CLARITY_CHECK: Terminal action remains inside safe area: Button · TECH TREE
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · TECH TREE / Button · SHARE
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · TECH TREE / Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Centre raycast reaches terminal action: Button · TECH TREE
+FAILURE_CLARITY_CHECK: 44 pt terminal action: Button · SHARE
+FAILURE_CLARITY_CHECK: Terminal action remains inside safe area: Button · SHARE
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · SHARE / Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Centre raycast reaches terminal action: Button · SHARE
+FAILURE_CLARITY_CHECK: 44 pt terminal action: Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Terminal action remains inside safe area: Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Centre raycast reaches terminal action: Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Repeated completion/presentation cannot duplicate rewards or controls: EndlessRoute
+FAILURE_CLARITY_CHECK: Failure explanation fits: GROUND CONTACT · Tap sooner to climb
+FAILURE_CLARITY_CHECK: Retry immediately exposes playable mode and rejects queued menu: EndlessRoute
+FAILURE_CLARITY_CHECK: Retired pause cannot navigate after Resume: EndlessRoute
+FAILURE_CLARITY_CHECK: Main Menu works immediately and rejects a retired retry: EndlessRoute
+FAILURE_CLARITY_CHECK: Actual terminal flow remains visible: PulseRelay
+FAILURE_CLARITY_CHECK: Failure explains the actual cause: PulseRelay
+FAILURE_CLARITY_CHECK: 44 pt terminal action: Button · RETRY MISSION
+FAILURE_CLARITY_CHECK: Terminal action remains inside safe area: Button · RETRY MISSION
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · RETRY MISSION / Button · DAILY CIRCUITS
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · RETRY MISSION / Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Centre raycast reaches terminal action: Button · RETRY MISSION
+FAILURE_CLARITY_CHECK: 44 pt terminal action: Button · DAILY CIRCUITS
+FAILURE_CLARITY_CHECK: Terminal action remains inside safe area: Button · DAILY CIRCUITS
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · DAILY CIRCUITS / Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Centre raycast reaches terminal action: Button · DAILY CIRCUITS
+FAILURE_CLARITY_CHECK: 44 pt terminal action: Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Terminal action remains inside safe area: Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Centre raycast reaches terminal action: Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Repeated completion/presentation cannot duplicate rewards or controls: PulseRelay
+FAILURE_CLARITY_CHECK: Failure explanation fits: GATE 01 LOCKED · 1 / 2 CRYSTALS
+FAILURE_CLARITY_CHECK: Retry immediately exposes playable mode and rejects queued menu: PulseRelay
+FAILURE_CLARITY_CHECK: Old retry callback cannot replace the new session: PulseRelay
+FAILURE_CLARITY_CHECK: Retired pause cannot navigate after Resume: PulseRelay
+FAILURE_CLARITY_CHECK: Main Menu works immediately and rejects a retired retry: PulseRelay
+FAILURE_CLARITY_CHECK: Actual terminal flow remains visible: BlackoutProtocol
+FAILURE_CLARITY_CHECK: Failure explains the actual cause: BlackoutProtocol
+FAILURE_CLARITY_CHECK: 44 pt terminal action: Button · RETRY VAULT
+FAILURE_CLARITY_CHECK: Terminal action remains inside safe area: Button · RETRY VAULT
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · RETRY VAULT / Button · VAULT MAP
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · RETRY VAULT / Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Centre raycast reaches terminal action: Button · RETRY VAULT
+FAILURE_CLARITY_CHECK: 44 pt terminal action: Button · VAULT MAP
+FAILURE_CLARITY_CHECK: Terminal action remains inside safe area: Button · VAULT MAP
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · VAULT MAP / Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Centre raycast reaches terminal action: Button · VAULT MAP
+FAILURE_CLARITY_CHECK: 44 pt terminal action: Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Terminal action remains inside safe area: Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Centre raycast reaches terminal action: Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Repeated completion/presentation cannot duplicate rewards or controls: BlackoutProtocol
+FAILURE_CLARITY_CHECK: Failure explanation fits: TRACE EXHAUSTED · 0 / 1 CORES LIT
+FAILURE_CLARITY_CHECK: Retry immediately exposes playable mode and rejects queued menu: BlackoutProtocol
+FAILURE_CLARITY_CHECK: Old retry callback cannot replace the new session: BlackoutProtocol
+FAILURE_CLARITY_CHECK: Retired pause cannot navigate after Resume: BlackoutProtocol
+FAILURE_CLARITY_CHECK: Main Menu works immediately and rejects a retired retry: BlackoutProtocol
+FAILURE_CLARITY_CHECK: Actual terminal flow remains visible: EndlessRoute
+FAILURE_CLARITY_CHECK: Failure explains the actual cause: EndlessRoute
+FAILURE_CLARITY_CHECK: 44 pt terminal action: Button · RETRY
+FAILURE_CLARITY_CHECK: Terminal action remains inside safe area: Button · RETRY
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · RETRY / Button · BIRD HANGAR
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · RETRY / Button · TECH TREE
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · RETRY / Button · SHARE
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · RETRY / Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Centre raycast reaches terminal action: Button · RETRY
+FAILURE_CLARITY_CHECK: 44 pt terminal action: Button · BIRD HANGAR
+FAILURE_CLARITY_CHECK: Terminal action remains inside safe area: Button · BIRD HANGAR
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · BIRD HANGAR / Button · TECH TREE
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · BIRD HANGAR / Button · SHARE
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · BIRD HANGAR / Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Centre raycast reaches terminal action: Button · BIRD HANGAR
+FAILURE_CLARITY_CHECK: 44 pt terminal action: Button · TECH TREE
+FAILURE_CLARITY_CHECK: Terminal action remains inside safe area: Button · TECH TREE
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · TECH TREE / Button · SHARE
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · TECH TREE / Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Centre raycast reaches terminal action: Button · TECH TREE
+FAILURE_CLARITY_CHECK: 44 pt terminal action: Button · SHARE
+FAILURE_CLARITY_CHECK: Terminal action remains inside safe area: Button · SHARE
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · SHARE / Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Centre raycast reaches terminal action: Button · SHARE
+FAILURE_CLARITY_CHECK: 44 pt terminal action: Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Terminal action remains inside safe area: Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Centre raycast reaches terminal action: Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Repeated completion/presentation cannot duplicate rewards or controls: EndlessRoute
+FAILURE_CLARITY_CHECK: Failure explanation fits: GROUND CONTACT · Tap sooner to climb
+FAILURE_CLARITY_CHECK: Retry immediately exposes playable mode and rejects queued menu: EndlessRoute
+FAILURE_CLARITY_CHECK: Retired pause cannot navigate after Resume: EndlessRoute
+FAILURE_CLARITY_CHECK: Main Menu works immediately and rejects a retired retry: EndlessRoute
+FAILURE_CLARITY_CHECK: Actual terminal flow remains visible: PulseRelay
+FAILURE_CLARITY_CHECK: Failure explains the actual cause: PulseRelay
+FAILURE_CLARITY_CHECK: 44 pt terminal action: Button · RETRY MISSION
+FAILURE_CLARITY_CHECK: Terminal action remains inside safe area: Button · RETRY MISSION
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · RETRY MISSION / Button · DAILY CIRCUITS
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · RETRY MISSION / Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Centre raycast reaches terminal action: Button · RETRY MISSION
+FAILURE_CLARITY_CHECK: 44 pt terminal action: Button · DAILY CIRCUITS
+FAILURE_CLARITY_CHECK: Terminal action remains inside safe area: Button · DAILY CIRCUITS
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · DAILY CIRCUITS / Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Centre raycast reaches terminal action: Button · DAILY CIRCUITS
+FAILURE_CLARITY_CHECK: 44 pt terminal action: Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Terminal action remains inside safe area: Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Centre raycast reaches terminal action: Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Repeated completion/presentation cannot duplicate rewards or controls: PulseRelay
+FAILURE_CLARITY_CHECK: Failure explanation fits: GATE 01 LOCKED · 1 / 2 CRYSTALS
+FAILURE_CLARITY_CHECK: Retry immediately exposes playable mode and rejects queued menu: PulseRelay
+FAILURE_CLARITY_CHECK: Old retry callback cannot replace the new session: PulseRelay
+FAILURE_CLARITY_CHECK: Retired pause cannot navigate after Resume: PulseRelay
+FAILURE_CLARITY_CHECK: Main Menu works immediately and rejects a retired retry: PulseRelay
+FAILURE_CLARITY_CHECK: Actual terminal flow remains visible: BlackoutProtocol
+FAILURE_CLARITY_CHECK: Failure explains the actual cause: BlackoutProtocol
+FAILURE_CLARITY_CHECK: 44 pt terminal action: Button · RETRY VAULT
+FAILURE_CLARITY_CHECK: Terminal action remains inside safe area: Button · RETRY VAULT
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · RETRY VAULT / Button · VAULT MAP
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · RETRY VAULT / Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Centre raycast reaches terminal action: Button · RETRY VAULT
+FAILURE_CLARITY_CHECK: 44 pt terminal action: Button · VAULT MAP
+FAILURE_CLARITY_CHECK: Terminal action remains inside safe area: Button · VAULT MAP
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · VAULT MAP / Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Centre raycast reaches terminal action: Button · VAULT MAP
+FAILURE_CLARITY_CHECK: 44 pt terminal action: Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Terminal action remains inside safe area: Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Centre raycast reaches terminal action: Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Repeated completion/presentation cannot duplicate rewards or controls: BlackoutProtocol
+FAILURE_CLARITY_CHECK: Failure explanation fits: TRACE EXHAUSTED · 0 / 1 CORES LIT
+FAILURE_CLARITY_CHECK: Retry immediately exposes playable mode and rejects queued menu: BlackoutProtocol
+FAILURE_CLARITY_CHECK: Old retry callback cannot replace the new session: BlackoutProtocol
+FAILURE_CLARITY_CHECK: Retired pause cannot navigate after Resume: BlackoutProtocol
+FAILURE_CLARITY_CHECK: Main Menu works immediately and rejects a retired retry: BlackoutProtocol
+FAILURE_CLARITY_CHECK: Actual terminal flow remains visible: EndlessRoute
+FAILURE_CLARITY_CHECK: Failure explains the actual cause: EndlessRoute
+FAILURE_CLARITY_CHECK: 44 pt terminal action: Button · RETRY
+FAILURE_CLARITY_CHECK: Terminal action remains inside safe area: Button · RETRY
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · RETRY / Button · BIRD HANGAR
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · RETRY / Button · TECH TREE
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · RETRY / Button · SHARE
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · RETRY / Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Centre raycast reaches terminal action: Button · RETRY
+FAILURE_CLARITY_CHECK: 44 pt terminal action: Button · BIRD HANGAR
+FAILURE_CLARITY_CHECK: Terminal action remains inside safe area: Button · BIRD HANGAR
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · BIRD HANGAR / Button · TECH TREE
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · BIRD HANGAR / Button · SHARE
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · BIRD HANGAR / Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Centre raycast reaches terminal action: Button · BIRD HANGAR
+FAILURE_CLARITY_CHECK: 44 pt terminal action: Button · TECH TREE
+FAILURE_CLARITY_CHECK: Terminal action remains inside safe area: Button · TECH TREE
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · TECH TREE / Button · SHARE
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · TECH TREE / Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Centre raycast reaches terminal action: Button · TECH TREE
+FAILURE_CLARITY_CHECK: 44 pt terminal action: Button · SHARE
+FAILURE_CLARITY_CHECK: Terminal action remains inside safe area: Button · SHARE
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · SHARE / Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Centre raycast reaches terminal action: Button · SHARE
+FAILURE_CLARITY_CHECK: 44 pt terminal action: Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Terminal action remains inside safe area: Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Centre raycast reaches terminal action: Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Repeated completion/presentation cannot duplicate rewards or controls: EndlessRoute
+FAILURE_CLARITY_CHECK: Failure explanation fits: GROUND CONTACT · Tap sooner to climb
+FAILURE_CLARITY_CHECK: Retry immediately exposes playable mode and rejects queued menu: EndlessRoute
+FAILURE_CLARITY_CHECK: Retired pause cannot navigate after Resume: EndlessRoute
+FAILURE_CLARITY_CHECK: Main Menu works immediately and rejects a retired retry: EndlessRoute
+FAILURE_CLARITY_CHECK: Actual terminal flow remains visible: PulseRelay
+FAILURE_CLARITY_CHECK: Failure explains the actual cause: PulseRelay
+FAILURE_CLARITY_CHECK: 44 pt terminal action: Button · RETRY MISSION
+FAILURE_CLARITY_CHECK: Terminal action remains inside safe area: Button · RETRY MISSION
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · RETRY MISSION / Button · DAILY CIRCUITS
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · RETRY MISSION / Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Centre raycast reaches terminal action: Button · RETRY MISSION
+FAILURE_CLARITY_CHECK: 44 pt terminal action: Button · DAILY CIRCUITS
+FAILURE_CLARITY_CHECK: Terminal action remains inside safe area: Button · DAILY CIRCUITS
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · DAILY CIRCUITS / Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Centre raycast reaches terminal action: Button · DAILY CIRCUITS
+FAILURE_CLARITY_CHECK: 44 pt terminal action: Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Terminal action remains inside safe area: Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Centre raycast reaches terminal action: Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Repeated completion/presentation cannot duplicate rewards or controls: PulseRelay
+FAILURE_CLARITY_CHECK: Failure explanation fits: GATE 01 LOCKED · 1 / 2 CRYSTALS
+FAILURE_CLARITY_CHECK: Retry immediately exposes playable mode and rejects queued menu: PulseRelay
+FAILURE_CLARITY_CHECK: Old retry callback cannot replace the new session: PulseRelay
+FAILURE_CLARITY_CHECK: Retired pause cannot navigate after Resume: PulseRelay
+FAILURE_CLARITY_CHECK: Main Menu works immediately and rejects a retired retry: PulseRelay
+FAILURE_CLARITY_CHECK: Actual terminal flow remains visible: BlackoutProtocol
+FAILURE_CLARITY_CHECK: Failure explains the actual cause: BlackoutProtocol
+FAILURE_CLARITY_CHECK: 44 pt terminal action: Button · RETRY VAULT
+FAILURE_CLARITY_CHECK: Terminal action remains inside safe area: Button · RETRY VAULT
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · RETRY VAULT / Button · VAULT MAP
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · RETRY VAULT / Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Centre raycast reaches terminal action: Button · RETRY VAULT
+FAILURE_CLARITY_CHECK: 44 pt terminal action: Button · VAULT MAP
+FAILURE_CLARITY_CHECK: Terminal action remains inside safe area: Button · VAULT MAP
+FAILURE_CLARITY_CHECK: Terminal actions do not overlap: Button · VAULT MAP / Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Centre raycast reaches terminal action: Button · VAULT MAP
+FAILURE_CLARITY_CHECK: 44 pt terminal action: Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Terminal action remains inside safe area: Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Centre raycast reaches terminal action: Button · MAIN MENU
+FAILURE_CLARITY_CHECK: Repeated completion/presentation cannot duplicate rewards or controls: BlackoutProtocol
+FAILURE_CLARITY_CHECK: Failure explanation fits: TRACE EXHAUSTED · 0 / 1 CORES LIT
+FAILURE_CLARITY_CHECK: Retry immediately exposes playable mode and rejects queued menu: BlackoutProtocol
+FAILURE_CLARITY_CHECK: Old retry callback cannot replace the new session: BlackoutProtocol
+FAILURE_CLARITY_CHECK: Retired pause cannot navigate after Resume: BlackoutProtocol
+FAILURE_CLARITY_CHECK: Main Menu works immediately and rejects a retired retry: BlackoutProtocol
+FAILURE_CLARITY_CHECK: Pipe-contact advice is stable at 30 FPS
+FAILURE_CLARITY_CHECK: Pipe-contact advice is stable at 60 FPS
+FAILURE_CLARITY_CHECK: Pipe-contact advice is stable at 120 FPS
+FAILURE_CLARITY_CHECK: Intermediate puzzle advances immediately without a failure/report overlay
+FAILURE_CLARITY_CHECK: Terminal polish never inserts an intermediate progression modal
+READABILITY_CHECK: Normal flight has no empty pickup panel
+READABILITY_CHECK: One active pickup uses one compact row and shows its remaining reward
+READABILITY_CHECK: All six simultaneous states fit at most three rows in one panel
+READABILITY_CHECK: Pickup text never shrinks back to tiny seventeen-unit print
+READABILITY_CHECK: Every part of the status panel is transparent to gameplay input
+READABILITY_CHECK: The former single status label cannot duplicate the new HUD
+READABILITY_CHECK: The maximum panel remains outside score, next-world goal and flight-coach bands
+READABILITY_CHECK: World identification has a separate clear top-center slot
+READABILITY_CHECK: Actual status copy fits one line without overflow: ECHO 4.2s · +4 LEFT
+READABILITY_CHECK: Actual status copy fits one line without overflow: LENS 4.2s
+READABILITY_CHECK: Actual status copy fits one line without overflow: AEGIS READY
+READABILITY_CHECK: Actual status copy fits one line without overflow: RECOVERY 4.2s
+READABILITY_CHECK: Actual status copy fits one line without overflow: MAGNET 4.2s
+READABILITY_CHECK: Actual status copy fits one line without overflow: TIME PULSE 4.2s
+READABILITY_CHECK: Render-frequency refresh does not spend or accelerate pickups at 30 Hz
+READABILITY_CHECK: Render-frequency refresh does not spend or accelerate pickups at 60 Hz
+READABILITY_CHECK: Render-frequency refresh does not spend or accelerate pickups at 120 Hz
+READABILITY_CHECK: Reduced Motion preserves readable states and the observer never changes haptic preferences
+READABILITY_CHECK: Spending an Echo charge refreshes its budget even within the same timer tenth
+READABILITY_CHECK: An unchanged warm HUD refresh allocates no managed memory or new objects
+READABILITY_CHECK: Critical rescue respects the existing source mute
+READABILITY_CHECK: Critical rescue respects the player's Sound Off setting
+READABILITY_CHECK: Zero user volume neither starts a cue nor consumes a voice
+READABILITY_CHECK: Audio routing never enables haptics as a replacement for muted sound
+READABILITY_CHECK: Retry/reset values remove every expired status immediately
+PICKUP_DISPLAY_CHECK: Actual power pool owns the true-depth display component
+PICKUP_DISPLAY_CHECK: Actual production presentation selects power identity: 0
+PICKUP_DISPLAY_CHECK: Power model replaces both flat artwork layers: 0
+PICKUP_DISPLAY_CHECK: The native pool hides the entire display when the pickup is deferred
+PICKUP_DISPLAY_CHECK: Actual production presentation selects power identity: 1
+PICKUP_DISPLAY_CHECK: Power model replaces both flat artwork layers: 1
+PICKUP_DISPLAY_CHECK: The native pool hides the entire display when the pickup is deferred
+PICKUP_DISPLAY_CHECK: Actual production presentation selects power identity: 2
+PICKUP_DISPLAY_CHECK: Power model replaces both flat artwork layers: 2
+PICKUP_DISPLAY_CHECK: The native pool hides the entire display when the pickup is deferred
+PICKUP_DISPLAY_CHECK: Actual production presentation selects power identity: 3
+PICKUP_DISPLAY_CHECK: Power model replaces both flat artwork layers: 3
+PICKUP_DISPLAY_CHECK: The native pool hides the entire display when the pickup is deferred
+PICKUP_DISPLAY_CHECK: Actual production presentation selects power identity: 4
+PICKUP_DISPLAY_CHECK: Power model replaces both flat artwork layers: 4
+PICKUP_DISPLAY_CHECK: The native pool hides the entire display when the pickup is deferred
+ONE_THUMB_CHECK: Same-frame crystal + gate succeeds at 30 FPS before opening animation
+ONE_THUMB_CHECK: Logical opening is immediate at animation start
+ONE_THUMB_CHECK: A gate with 0/2 crystals cannot be passed, even under shield immunity, at 30 FPS
+ONE_THUMB_CHECK: A gate with 1/2 crystals cannot be passed, even under shield immunity, at 30 FPS
+ONE_THUMB_CHECK: Normal tap pilot reaches automatic crystals and all gates: 0 at 30 FPS
+ONE_THUMB_CHECK: Normal tap pilot reaches automatic crystals and all gates: 1 at 30 FPS
+ONE_THUMB_CHECK: Normal tap pilot reaches automatic crystals and all gates: 2 at 30 FPS
+ONE_THUMB_CHECK: Normal tap pilot reaches automatic crystals and all gates: 3 at 30 FPS
+ONE_THUMB_CHECK: Same-frame crystal + gate succeeds at 60 FPS before opening animation
+ONE_THUMB_CHECK: Logical opening is immediate at animation start
+ONE_THUMB_CHECK: A gate with 0/2 crystals cannot be passed, even under shield immunity, at 60 FPS
+ONE_THUMB_CHECK: A gate with 1/2 crystals cannot be passed, even under shield immunity, at 60 FPS
+ONE_THUMB_CHECK: Normal tap pilot reaches automatic crystals and all gates: 0 at 60 FPS
+ONE_THUMB_CHECK: Normal tap pilot reaches automatic crystals and all gates: 1 at 60 FPS
+ONE_THUMB_CHECK: Normal tap pilot reaches automatic crystals and all gates: 2 at 60 FPS
+ONE_THUMB_CHECK: Normal tap pilot reaches automatic crystals and all gates: 3 at 60 FPS
+ONE_THUMB_CHECK: Same-frame crystal + gate succeeds at 120 FPS before opening animation
+ONE_THUMB_CHECK: Logical opening is immediate at animation start
+ONE_THUMB_CHECK: A gate with 0/2 crystals cannot be passed, even under shield immunity, at 120 FPS
+ONE_THUMB_CHECK: A gate with 1/2 crystals cannot be passed, even under shield immunity, at 120 FPS
+ONE_THUMB_CHECK: Normal tap pilot reaches automatic crystals and all gates: 0 at 120 FPS
+ONE_THUMB_CHECK: Normal tap pilot reaches automatic crystals and all gates: 1 at 120 FPS
+ONE_THUMB_CHECK: Normal tap pilot reaches automatic crystals and all gates: 2 at 120 FPS
+ONE_THUMB_CHECK: Normal tap pilot reaches automatic crystals and all gates: 3 at 120 FPS
+ONE_THUMB_CHECK: Relay has no manual-action buttons
+ONE_THUMB_CHECK: Actual pause button raycast excludes gameplay
+ONE_THUMB_CHECK: Pause-area finger cannot flap
+ONE_THUMB_CHECK: Decorative crystal HUD does not block flight input
+ONE_THUMB_CHECK: Playable-area fresh tap applies flap immediately
+ONE_THUMB_CHECK: Simulated mouse cannot flap again
+ONE_THUMB_CHECK: Paused gameplay ignores touches
+ONE_THUMB_CHECK: Real pointer-down rotates the optic immediately
+ONE_THUMB_CHECK: Visual rotation target updates before animation finishes
+ONE_THUMB_CHECK: Held pointer cannot rotate twice
+ONE_THUMB_CHECK: Fresh released/repressed pointer responds during the effect
+ONE_THUMB_CHECK: Next vault activates in the completion call
+ONE_THUMB_CHECK: Stale previous-vault generation cannot act
+ONE_THUMB_CHECK: Queued completion-frame press cannot enter next vault
+ONE_THUMB_CHECK: Rotations are not queued in click-on-release callbacks
+ONE_THUMB_CHECK: Rotation settles without extra turns at 30 FPS: angle=90 target=1 trace=1 paused=False
+ONE_THUMB_CHECK: Rotation settles without extra turns at 60 FPS: angle=89.99999 target=1 trace=1 paused=False
+ONE_THUMB_CHECK: Rotation settles without extra turns at 120 FPS: angle=89.99998 target=1 trace=1 paused=False
+ONE_THUMB_CHECK: 3D feedback leaves puzzle touch targets fixed
+ONE_THUMB_CHECK: Reduced Motion keeps real 3D beam geometry stationary
+ONE_THUMB_CHECK: Eight random crystals retain premium highlights without an imposed guide path
+ONE_THUMB_CHECK: Warmed Relay crystal and gate animation creates no managed allocations
+ONE_THUMB_CHECK: Pause freezes Relay crystal animation
+ONE_THUMB_CHECK: Reduced Motion keeps Relay crystal glints stationary while gates remain usable
+ONE_THUMB_CHECK: Tech Tree appears only in relevant Home
+ONE_THUMB_CHECK: Blackout Home has no Bird Hangar
+ONE_THUMB_CHECK: How to Play is available for every mode
+ONE_THUMB_CHECK: World map is reached through the Endless guide without a duplicate Home button
+ONE_THUMB_CHECK: Tech Tree appears only in relevant Home
+ONE_THUMB_CHECK: Blackout Home has no Bird Hangar
+ONE_THUMB_CHECK: How to Play is available for every mode
+ONE_THUMB_CHECK: World map is reached through the Endless guide without a duplicate Home button
+ONE_THUMB_CHECK: Tech Tree appears only in relevant Home
+ONE_THUMB_CHECK: Blackout Home has no Bird Hangar
+ONE_THUMB_CHECK: How to Play is available for every mode
+ONE_THUMB_CHECK: World map is reached through the Endless guide without a duplicate Home button
+ONE_THUMB_CHECK: Tech Tree appears only in relevant Home
+ONE_THUMB_CHECK: Blackout Home has no Bird Hangar
+ONE_THUMB_CHECK: How to Play is available for every mode
+ONE_THUMB_CHECK: World map is reached through the Endless guide without a duplicate Home button
+ONE_THUMB_CHECK: Tech Tree appears only in relevant Home
+ONE_THUMB_CHECK: Blackout Home has no Bird Hangar
+ONE_THUMB_CHECK: How to Play is available for every mode
+ONE_THUMB_CHECK: World map is reached through the Endless guide without a duplicate Home button
+ONE_THUMB_CHECK: Warmed Backdrop geometry has no managed array allocations
+ONE_THUMB_CHECK: Warmed Backdrop geometry has no managed array allocations
+ONE_THUMB_CHECK: Warmed Backdrop geometry has no managed array allocations
+ONE_THUMB_CHECK: Warmed Trace geometry has no managed array allocations
+ONE_THUMB_CHECK: Warmed Network geometry has no managed array allocations
+PROGRESSION_CLARITY_CHECK: Empty wallet does not label unaffordable Tech as ready
+PROGRESSION_CLARITY_CHECK: Saving-goal locator keeps its clear NEXT state
+PROGRESSION_CLARITY_CHECK: Each initially unlocked saving goal has an exact crystal shortfall
+PROGRESSION_CLARITY_CHECK: New progression copy fits: NEED 150 ✦
+PROGRESSION_CLARITY_CHECK: New progression copy fits: NEED 200 ✦
+PROGRESSION_CLARITY_CHECK: New progression copy fits: NEED 250 ✦
+PROGRESSION_CLARITY_CHECK: READY count uses real Core-adjusted prices and current balance
+PROGRESSION_CLARITY_CHECK: The locator identifies a purchase the player can afford
+PROGRESSION_CLARITY_CHECK: Ready locator only focuses the tree and cannot spend
+PROGRESSION_CLARITY_CHECK: READY locator brings the actual affordable leaf into the viewport
+PROGRESSION_CLARITY_CHECK: Direct leaf inspection presents the current and next effect together
+PROGRESSION_CLARITY_CHECK: Presentation preserves the exact affordable quote and confirm guard
+PROGRESSION_CLARITY_CHECK: New progression copy fits: ACTIVE · Not installed / NEXT · Attract crystals within 8% of screen width
+PROGRESSION_CLARITY_CHECK: Core example shows an eligible owned bird's actual training costs at rank 1
+PROGRESSION_CLARITY_CHECK: New progression copy fits: UPGRADE SAVINGS · 0% → 5% / TRAINING LEVEL 2 · 120 → 114 ✦
+PROGRESSION_CLARITY_CHECK: Core example shows an eligible owned bird's actual training costs at rank 2
+PROGRESSION_CLARITY_CHECK: New progression copy fits: UPGRADE SAVINGS · 5% → 10% / TRAINING LEVEL 2 · 114 → 108 ✦
+PROGRESSION_CLARITY_CHECK: Core example shows an eligible owned bird's actual training costs at rank 3
+PROGRESSION_CLARITY_CHECK: New progression copy fits: UPGRADE SAVINGS · 10% → 15% / TRAINING LEVEL 2 · 108 → 102 ✦
+PROGRESSION_CLARITY_CHECK: Core example shows an eligible owned bird's actual training costs at rank 4
+PROGRESSION_CLARITY_CHECK: New progression copy fits: UPGRADE SAVINGS · 15% → 20% / TRAINING LEVEL 2 · 102 → 96 ✦
+PROGRESSION_CLARITY_CHECK: Owned starter exposes the exact next training action and price
+PROGRESSION_CLARITY_CHECK: New progression copy fits: NEXT TRAINING · LEVEL 2 · 120 ✦
+PROGRESSION_CLARITY_CHECK: New progression copy fits: NEW BIRD SAVINGS · 0%  /  ENDLESS REWARD TRAITS
+PROGRESSION_CLARITY_CHECK: Core-limited bird states the exact next Core prerequisite
+PROGRESSION_CLARITY_CHECK: Maximum training becomes an honest trait-inspection action
+PROGRESSION_CLARITY_CHECK: New progression copy fits: PARENT A APPEARANCE · A + B REWARD TRAITS / Core 3 unlocks stronger inherited grades.
+PROGRESSION_CLARITY_CHECK: Breeding explains appearance inheritance separately from its useful reward traits
+PROGRESSION_CLARITY_CHECK: Browsing all progression explanations never debits or commits a purchase
+MODE_FEEDBACK_CHECK: Each Relay gate starts with one inactive pooled passage wave
+MODE_FEEDBACK_CHECK: Passage graphics add no competing colliders
+MODE_FEEDBACK_CHECK: Passage wave is a bounded real-depth mesh with a supported existing shader
+MODE_FEEDBACK_CHECK: Uncharged visual still corresponds to a logically closed gate
+MODE_FEEDBACK_CHECK: First assigned crystal shows a partial circuit and clear 1/2 label
+MODE_FEEDBACK_CHECK: Second assigned crystal opens logically before the visual release and turns its laser blue
+MODE_FEEDBACK_CHECK: Unlocking alone cannot falsely trigger a passed-gate wave
+MODE_FEEDBACK_CHECK: An actual resolved passage triggers one wave and marks the gate cleared
+MODE_FEEDBACK_CHECK: Passage expands smoothly inside its bounded presentation interval at 30 Hz
+MODE_FEEDBACK_CHECK: Holding presentation time freezes the passage during pause at 30 Hz
+MODE_FEEDBACK_CHECK: Expired passage cannot be retriggered by repeated presentation callbacks at 30 Hz
+MODE_FEEDBACK_CHECK: Passage expands smoothly inside its bounded presentation interval at 60 Hz
+MODE_FEEDBACK_CHECK: Holding presentation time freezes the passage during pause at 60 Hz
+MODE_FEEDBACK_CHECK: Expired passage cannot be retriggered by repeated presentation callbacks at 60 Hz
+MODE_FEEDBACK_CHECK: Passage expands smoothly inside its bounded presentation interval at 120 Hz
+MODE_FEEDBACK_CHECK: Holding presentation time freezes the passage during pause at 120 Hz
+MODE_FEEDBACK_CHECK: Expired passage cannot be retriggered by repeated presentation callbacks at 120 Hz
+MODE_FEEDBACK_CHECK: Reduced Motion consumes the event without a delayed replay after the setting changes
+MODE_FEEDBACK_CHECK: A fresh gate state can start a new passage wave
+MODE_FEEDBACK_CHECK: Warm passage presentation reuses its mesh/material/property block with zero managed allocations
+MODE_FEEDBACK_CHECK: Blackout plan control matches its in-game guide wording
+MODE_FEEDBACK_CHECK: Planning is visibly distinct and inspecting a route spends no trace
+MODE_FEEDBACK_CHECK: Required unpowered cores retain readable target labels
+MODE_FEEDBACK_CHECK: City restoration immediately leaves the next puzzle playable
+MODE_FEEDBACK_CHECK: Completion feedback names the restored system and the actual persistent campaign total
+MODE_FEEDBACK_CHECK: The local feedback does not create another restoration or an intermediate modal
+MODE_FEEDBACK_CHECK: Toast expiry restores quiet campaign status without spending the next puzzle's trace
+SKYPULSE_ONE_THUMB_PURE_PASS
+SKYPULSE_PICKUP_DISPLAY_PURE_PASS
+SKYPULSE_EVERYDAY_INPUT_PASS
+SKYPULSE_FIRST_PLAY_PASS
+SKYPULSE_FAILURE_CLARITY_PASS
+SKYPULSE_READABILITY_PASS
+SKYPULSE_PICKUP_DISPLAY_LIVE_PASS
+SKYPULSE_ONE_THUMB_LIVE_PASS
+SKYPULSE_PROGRESSION_CLARITY_PASS
+SKYPULSE_MODE_FEEDBACK_PASS
+SKYPULSE_EVERYDAY_PASS

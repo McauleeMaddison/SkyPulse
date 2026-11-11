@@ -21,7 +21,7 @@ public static class SkyPulseBirdRosterPreview
     static float flightWingLift;static int wingFrame=-1;
     static string hitIdentity;static Sprite nativeHitSprite;static Vector3 nativeHitScale;static bool hitOverride;
     static bool clockWasPlaying;static SkyPulseNativeGame observedGame;
-    static SkyPulseBirdRosterWorkshop.Design[] designs;
+    static SkyPulseBirdRosterWorkshop.Design[] designs;static string lastEquippedId;
     public static SkyPulseNeonFinchPrototype CurrentRig=>rig;
     public static float CurrentFlightTime=>activeFlightTime;
     public static float TimeOverride=-1;
@@ -30,6 +30,13 @@ public static class SkyPulseBirdRosterPreview
     static object Get(object value,string name)=>value?.GetType().GetField(name,Flags)?.GetValue(value);
     static SkyPulseBirdRosterPreview()
     {
+        // A past review selection must never pin normal play to that bird.
+        SessionState.SetString(BirdKey,"");
+        SkyPulseNativeGame.EditorBirdEquipped+=id=>
+        {
+            if(lastEquippedId!=id)Select("",Enabled);
+            lastEquippedId=id;
+        };
         Camera.onPreCull+=BeforeCamera;
         EditorApplication.playModeStateChanged+=state=>{if(state==PlayModeStateChange.ExitingPlayMode||state==PlayModeStateChange.EnteredEditMode)Clear();};
         AssemblyReloadEvents.beforeAssemblyReload+=Clear;

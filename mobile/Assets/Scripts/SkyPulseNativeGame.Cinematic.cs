@@ -31,6 +31,7 @@ namespace SkyPulse.Mobile
             // Flight has now advanced every pipe and timer for this rendered frame.
             UpdateRouteLensVisuals();
             SkyPulseBirdRig.FlushPending();
+            UpdateFirstPlayGuidance(Mathf.Min(Time.unscaledDeltaTime,MaximumSimulationCatchup));
         }
         void UpdateCinematicPresentation(float dt)
         {

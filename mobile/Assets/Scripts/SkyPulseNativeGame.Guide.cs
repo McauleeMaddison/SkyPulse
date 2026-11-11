@@ -69,7 +69,7 @@ namespace SkyPulse.Mobile
             content.SetParent(field, false); content.sizeDelta = new Vector2(940, 860); modeGuideBody = content;
             MissionText(modeGuideScreen.transform, "Crystals are earned in play. No real-money purchases.", -620, 25, Hex("#a9c3d0"), 870, 70);
             MissionButton(modeGuideScreen.transform, "BACK", 0, -815, 850, () => modeGuideScreen.SetActive(false), accent, 148);
-            ShowModeGuidePage(0);
+            ShowModeGuidePage(0);AddFirstPlayGuideControls();
         }
         void ShowModeGuidePage(int page)
         {

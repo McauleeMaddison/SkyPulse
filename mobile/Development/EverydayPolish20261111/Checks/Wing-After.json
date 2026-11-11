@@ -1,0 +1,317 @@
+{
+  "result": "AUDITED",
+  "scope": "Actual saved articulated mesh surfaces sampled through Studio, exhibition flight, tap-driven flight and Reduced Motion. Bounds reject noncandidates only; reported contacts require intersecting wing/landing mesh triangles. Separate front/side renders expose visual droop even where meshes remain physically separated. This is a geometric audit, not appearance approval or device performance certification.",
+  "deviceTested": false,
+  "assetsChanged": false,
+  "candidateInstanceOnly": false,
+  "candidateSpread": 0.0,
+  "candidateDistalOnly": true,
+  "birds": [
+    {
+      "id": "neon_finch",
+      "name": "Neon Finch",
+      "prefab": "Assets/Editor/SkyPulseBirdWorkshop/Prefabs/Neon Finch Rig.prefab",
+      "wingParts": 64,
+      "landingParts": 8,
+      "sampledPoses": 120,
+      "contactPoses": 0,
+      "leftShoulderY": 0.2199999988079071,
+      "rightShoulderY": 0.2199999988079071,
+      "lowestWingY": -0.24375620484352112,
+      "lowestFootY": -0.8502951860427856,
+      "highestFootY": -0.2999999523162842,
+      "outboardWingExtent": 1.6634461879730225,
+      "contacts": [],
+      "captures": [
+        "neon_finch-spread0-distal-front-0.25.png",
+        "neon_finch-spread0-distal-side-0.25.png"
+      ]
+    },
+    {
+      "id": "chrome_raven",
+      "name": "Chrome Raven",
+      "prefab": "Assets/Editor/SkyPulseBirdWorkshop/Roster/Chrome Raven/Chrome Raven Rig.prefab",
+      "wingParts": 94,
+      "landingParts": 18,
+      "sampledPoses": 120,
+      "contactPoses": 0,
+      "leftShoulderY": 0.25,
+      "rightShoulderY": 0.25,
+      "lowestWingY": -0.7026168704032898,
+      "lowestFootY": -0.8611825704574585,
+      "highestFootY": -0.4113936424255371,
+      "outboardWingExtent": 1.077752709388733,
+      "contacts": [],
+      "captures": [
+        "chrome_raven-spread0-distal-front-0.25.png",
+        "chrome_raven-spread0-distal-side-0.25.png"
+      ]
+    },
+    {
+      "id": "prism_hummingbird",
+      "name": "Prism Hummingbird",
+      "prefab": "Assets/Editor/SkyPulseBirdWorkshop/Roster/Prism Hummingbird/Prism Hummingbird Rig.prefab",
+      "wingParts": 82,
+      "landingParts": 18,
+      "sampledPoses": 120,
+      "contactPoses": 0,
+      "leftShoulderY": 0.19166670739650726,
+      "rightShoulderY": 0.19166670739650726,
+      "lowestWingY": 0.0640890896320343,
+      "lowestFootY": -0.6959028244018555,
+      "highestFootY": -0.24611401557922363,
+      "outboardWingExtent": 1.2093225717544556,
+      "contacts": [],
+      "captures": [
+        "prism_hummingbird-spread0-distal-front-0.25.png",
+        "prism_hummingbird-spread0-distal-side-0.25.png"
+      ]
+    },
+    {
+      "id": "koiwing_glider",
+      "name": "Koiwing Glider",
+      "prefab": "Assets/Editor/SkyPulseBirdWorkshop/Roster/Koiwing Glider/Koiwing Glider Rig.prefab",
+      "wingParts": 92,
+      "landingParts": 18,
+      "sampledPoses": 120,
+      "contactPoses": 0,
+      "leftShoulderY": 0.13923080265522003,
+      "rightShoulderY": 0.13923080265522003,
+      "lowestWingY": -0.07863763719797134,
+      "lowestFootY": -0.7600734233856201,
+      "highestFootY": -0.3102845549583435,
+      "outboardWingExtent": 1.2605793476104736,
+      "contacts": [],
+      "captures": [
+        "koiwing_glider-spread0-distal-front-0.25.png",
+        "koiwing_glider-spread0-distal-side-0.25.png"
+      ]
+    },
+    {
+      "id": "verdant_kite",
+      "name": "Verdant Kite",
+      "prefab": "Assets/Editor/SkyPulseBirdWorkshop/Roster/Verdant Kite/Verdant Kite Rig.prefab",
+      "wingParts": 84,
+      "landingParts": 18,
+      "sampledPoses": 120,
+      "contactPoses": 0,
+      "leftShoulderY": 0.19538451731204987,
+      "rightShoulderY": 0.19538451731204987,
+      "lowestWingY": 0.0678068995475769,
+      "lowestFootY": -0.6704831123352051,
+      "highestFootY": -0.2206944227218628,
+      "outboardWingExtent": 1.1918659210205078,
+      "contacts": [],
+      "captures": [
+        "verdant_kite-spread0-distal-front-0.25.png",
+        "verdant_kite-spread0-distal-side-0.25.png"
+      ]
+    },
+    {
+      "id": "newbird01",
+      "name": "Solara",
+      "prefab": "Assets/Editor/SkyPulseBirdWorkshop/Roster/Solara/Solara Rig.prefab",
+      "wingParts": 102,
+      "landingParts": 18,
+      "sampledPoses": 120,
+      "contactPoses": 0,
+      "leftShoulderY": 0.044707730412483215,
+      "rightShoulderY": 0.044707730412483215,
+      "lowestWingY": -1.253258466720581,
+      "lowestFootY": -0.8808529376983643,
+      "highestFootY": -0.4310644268989563,
+      "outboardWingExtent": 2.064943790435791,
+      "contacts": [],
+      "captures": [
+        "newbird01-spread0-distal-front-0.25.png",
+        "newbird01-spread0-distal-side-0.25.png"
+      ]
+    },
+    {
+      "id": "newbird02",
+      "name": "Astra",
+      "prefab": "Assets/Editor/SkyPulseBirdWorkshop/Roster/Astra/Astra Rig.prefab",
+      "wingParts": 102,
+      "landingParts": 18,
+      "sampledPoses": 120,
+      "contactPoses": 0,
+      "leftShoulderY": 0.06384612619876862,
+      "rightShoulderY": 0.06384612619876862,
+      "lowestWingY": -1.2923070192337036,
+      "lowestFootY": -0.7681622505187988,
+      "highestFootY": -0.3183392286300659,
+      "outboardWingExtent": 2.043055772781372,
+      "contacts": [],
+      "captures": [
+        "newbird02-spread0-distal-front-0.25.png",
+        "newbird02-spread0-distal-side-0.25.png"
+      ]
+    },
+    {
+      "id": "newbird03",
+      "name": "Voltcrest",
+      "prefab": "Assets/Editor/SkyPulseBirdWorkshop/Roster/Voltcrest/Voltcrest Rig.prefab",
+      "wingParts": 82,
+      "landingParts": 18,
+      "sampledPoses": 120,
+      "contactPoses": 0,
+      "leftShoulderY": 0.039230652153491974,
+      "rightShoulderY": 0.039230652153491974,
+      "lowestWingY": -1.2882661819458008,
+      "lowestFootY": -0.6769866943359375,
+      "highestFootY": -0.22719818353652954,
+      "outboardWingExtent": 2.0580241680145264,
+      "contacts": [],
+      "captures": [
+        "newbird03-spread0-distal-front-0.25.png",
+        "newbird03-spread0-distal-side-0.25.png"
+      ]
+    },
+    {
+      "id": "newbird04",
+      "name": "Chromaflux",
+      "prefab": "Assets/Editor/SkyPulseBirdWorkshop/Roster/Chromaflux/Chromaflux Rig.prefab",
+      "wingParts": 80,
+      "landingParts": 18,
+      "sampledPoses": 120,
+      "contactPoses": 0,
+      "leftShoulderY": 0.04153839126229286,
+      "rightShoulderY": 0.04153839126229286,
+      "lowestWingY": -1.1345043182373047,
+      "lowestFootY": -0.8408263921737671,
+      "highestFootY": -0.39103782176971436,
+      "outboardWingExtent": 1.903897762298584,
+      "contacts": [],
+      "captures": [
+        "newbird04-spread0-distal-front-0.00.png",
+        "newbird04-spread0-distal-side-0.00.png",
+        "newbird04-spread0-distal-front-0.25.png",
+        "newbird04-spread0-distal-side-0.25.png",
+        "newbird04-spread0-distal-front-0.50.png",
+        "newbird04-spread0-distal-side-0.50.png",
+        "newbird04-spread0-distal-front-0.75.png",
+        "newbird04-spread0-distal-side-0.75.png"
+      ]
+    },
+    {
+      "id": "newbird05",
+      "name": "Virex",
+      "prefab": "Assets/Editor/SkyPulseBirdWorkshop/Roster/Virex/Virex Rig.prefab",
+      "wingParts": 90,
+      "landingParts": 18,
+      "sampledPoses": 120,
+      "contactPoses": 0,
+      "leftShoulderY": -0.007415488362312317,
+      "rightShoulderY": -0.007415488362312317,
+      "lowestWingY": -1.2235310077667236,
+      "lowestFootY": -0.6903856992721558,
+      "highestFootY": -0.24059730768203735,
+      "outboardWingExtent": 1.9605374336242676,
+      "contacts": [],
+      "captures": [
+        "newbird05-spread0-distal-front-0.25.png",
+        "newbird05-spread0-distal-side-0.25.png"
+      ]
+    },
+    {
+      "id": "newbird06",
+      "name": "Borealis",
+      "prefab": "Assets/Editor/SkyPulseBirdWorkshop/Roster/Borealis/Borealis Rig.prefab",
+      "wingParts": 100,
+      "landingParts": 18,
+      "sampledPoses": 120,
+      "contactPoses": 0,
+      "leftShoulderY": 0.0658334270119667,
+      "rightShoulderY": 0.0658334270119667,
+      "lowestWingY": -1.1543424129486084,
+      "lowestFootY": -0.8209408521652222,
+      "highestFootY": -0.371152400970459,
+      "outboardWingExtent": 1.9267103672027588,
+      "contacts": [],
+      "captures": [
+        "newbird06-spread0-distal-front-0.25.png",
+        "newbird06-spread0-distal-side-0.25.png"
+      ]
+    },
+    {
+      "id": "newbird07",
+      "name": "Roselight",
+      "prefab": "Assets/Editor/SkyPulseBirdWorkshop/Roster/Roselight/Roselight Rig.prefab",
+      "wingParts": 92,
+      "landingParts": 18,
+      "sampledPoses": 120,
+      "contactPoses": 0,
+      "leftShoulderY": 0.05928558111190796,
+      "rightShoulderY": 0.05928558111190796,
+      "lowestWingY": -1.1825071573257446,
+      "lowestFootY": -0.9689944982528687,
+      "highestFootY": -0.5192055702209473,
+      "outboardWingExtent": 1.9517674446105957,
+      "contacts": [],
+      "captures": [
+        "newbird07-spread0-distal-front-0.25.png",
+        "newbird07-spread0-distal-side-0.25.png"
+      ]
+    },
+    {
+      "id": "newbird08",
+      "name": "Pyrestorm",
+      "prefab": "Assets/Editor/SkyPulseBirdWorkshop/Roster/Pyrestorm/Pyrestorm Rig.prefab",
+      "wingParts": 100,
+      "landingParts": 18,
+      "sampledPoses": 120,
+      "contactPoses": 0,
+      "leftShoulderY": 0.11538451910018921,
+      "rightShoulderY": 0.11538451910018921,
+      "lowestWingY": -1.0725479125976562,
+      "lowestFootY": -0.7503869533538818,
+      "highestFootY": -0.3005984425544739,
+      "outboardWingExtent": 1.8861349821090698,
+      "contacts": [],
+      "captures": [
+        "newbird08-spread0-distal-front-0.25.png",
+        "newbird08-spread0-distal-side-0.25.png"
+      ]
+    },
+    {
+      "id": "newbird09",
+      "name": "Nightveil",
+      "prefab": "Assets/Editor/SkyPulseBirdWorkshop/Roster/Nightveil/Nightveil Rig.prefab",
+      "wingParts": 90,
+      "landingParts": 18,
+      "sampledPoses": 120,
+      "contactPoses": 0,
+      "leftShoulderY": 0.04785705357789993,
+      "rightShoulderY": 0.04785705357789993,
+      "lowestWingY": -1.2655237913131714,
+      "lowestFootY": -0.8699454069137573,
+      "highestFootY": -0.4201568365097046,
+      "outboardWingExtent": 2.0174012184143066,
+      "contacts": [],
+      "captures": [
+        "newbird09-spread0-distal-front-0.25.png",
+        "newbird09-spread0-distal-side-0.25.png"
+      ]
+    },
+    {
+      "id": "newbird10",
+      "name": "Ionwing",
+      "prefab": "Assets/Editor/SkyPulseBirdWorkshop/Roster/Ionwing/Ionwing Rig.prefab",
+      "wingParts": 104,
+      "landingParts": 18,
+      "sampledPoses": 120,
+      "contactPoses": 0,
+      "leftShoulderY": 0.12214294075965881,
+      "rightShoulderY": 0.12214294075965881,
+      "lowestWingY": -1.5097616910934448,
+      "lowestFootY": -0.8758331537246704,
+      "highestFootY": -0.4260101914405823,
+      "outboardWingExtent": 2.386838912963867,
+      "contacts": [],
+      "captures": [
+        "newbird10-spread0-distal-front-0.25.png",
+        "newbird10-spread0-distal-side-0.25.png"
+      ]
+    }
+  ]
+}

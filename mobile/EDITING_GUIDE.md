@@ -6,6 +6,14 @@ is newer than installed iPhone build 19 (`f6221f6`) and has not been installed o
 uploaded. Use its source-specific records when reviewing previews. Physical
 phone acceptance remains pending; public App Review remains on hold.
 
+The [11 November repair](Development/EverydayPolish20261111/README.md) is the latest
+local code/wing candidate. `SkyPulseNativeGame.FirstPlay.cs`, `.FailureClarity.cs`
+and `.Readability.cs` extend the existing game component; they are not additional
+game components to attach. `SkyPulsePickupDisplay.cs` builds the five pooled pickup
+housings. For reference-rig anatomy, inspect the saved left/right wing-tip joints
+and `SkyPulseBirdShoulderFit.cs`; preserve manual edits and do not regenerate over
+them. Choosing **Equip Bird** clears a temporary Editor appearance override.
+
 ## Open the right scene
 
 Paths below are relative to `mobile/`. Open an existing scene rather than

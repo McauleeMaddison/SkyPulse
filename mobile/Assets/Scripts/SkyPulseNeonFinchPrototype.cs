@@ -88,10 +88,10 @@ namespace SkyPulse.Mobile
             float lift = Mathf.Clamp01(wingLift);
             float amount = reducedMotion ? .60f : 1f;
             float stroke = Mathf.SmoothStep(0f, 1f, lift) * amount;
-            Set(2, -stroke * flapDegrees, -stroke * 3f, -stroke * 14f);
-            Set(3, stroke * flapDegrees, stroke * 3f, -stroke * 14f);
-            Set(4, -stroke * 13f, 0f, -stroke * 4f);
-            Set(5, stroke * 13f, 0f, -stroke * 4f);
+            Set(2, stroke * flapDegrees, stroke * 3f, -stroke * 14f);
+            Set(3, -stroke * flapDegrees, -stroke * 3f, -stroke * 14f);
+            Set(4, stroke * 13f, 0f, stroke * 4f);
+            Set(5, -stroke * 13f, 0f, stroke * 4f);
         }
         void SampleWings(float phase, float amount)
         {

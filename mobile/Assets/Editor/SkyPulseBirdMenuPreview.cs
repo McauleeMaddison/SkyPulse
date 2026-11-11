@@ -104,7 +104,7 @@ public static class SkyPulseBirdMenuPreview
         readonly PreviewRenderUtility preview;readonly RenderTexture texture;readonly RawImage surface;
         readonly SkyPulseNeonFinchPrototype rig;readonly Transform turntable;
         readonly List<UnityEngine.Object> owned=new List<UnityEngine.Object>();static readonly int ClockId=Shader.PropertyToID("_Clock");
-        Material guide;
+        Material guide;Transform dockStatusMarkers;
         public View(RectTransform parent,string path,Vector2 size,Vector2 at,Color accent,bool dock)
         {
             Path=path;var prefab=AssetDatabase.LoadAssetAtPath<GameObject>(path);
@@ -140,6 +140,14 @@ public static class SkyPulseBirdMenuPreview
                 guide=new Material(metal);owned.Add(guide);guide.SetColor("_GlowColor",accent);guide.SetFloat("_Energy",.42f);
                 AddRing(platform.transform,metal,new[]{new Vector2(.70f,-.035f),new Vector2(.96f,-.035f),new Vector2(1,-.015f),new Vector2(1,.025f),new Vector2(.97f,.05f),new Vector2(.72f,.05f),new Vector2(.70f,.025f),new Vector2(.70f,-.035f)});
                 AddRing(platform.transform,guide,new[]{new Vector2(.81f,.051f),new Vector2(.825f,.051f),new Vector2(.825f,.055f),new Vector2(.81f,.055f),new Vector2(.81f,.051f)});
+                // Real inset machining gives the dock a manufactured scale. The
+                // short status arcs occupy a separate lane, so they neither
+                // cross the pilot nor depth-fight with the continuous light rail.
+                AddDockSegments(platform.transform,metal,24,15f,1.8f,.892f,.944f,.0502f,.053f,"Machined radial index inlays");
+                AddDockSegments(platform.transform,metal,4,90f,2.4f,.869f,.948f,.0502f,.053f,"Quarter-turn precision index inlays");
+                AddRing(platform.transform,metal,new[]{new Vector2(.837f,.049f),new Vector2(.861f,.049f),new Vector2(.861f,.052f),new Vector2(.837f,.052f),new Vector2(.837f,.049f)});
+                var markerRoot=new GameObject("Paired travelling cradle status lights").transform;markerRoot.SetParent(platform.transform,false);dockStatusMarkers=markerRoot;
+                AddDockSegments(markerRoot,guide,2,180f,9f,.842f,.856f,.0525f,.055f,"Inset travelling optical markers");
                 dockRenderers=platform.GetComponentsInChildren<Renderer>();
             }
             // RawImage fills its native rectangle. Matching its aspect avoids stretching the same
@@ -158,6 +166,9 @@ public static class SkyPulseBirdMenuPreview
             rig.reducedMotion=reduced;rig.SamplePose(time);
             turntable.localRotation=Quaternion.Euler(0,reduced?0:time*rig.turntableDegreesPerSecond,0);
             if(guide!=null)guide.SetFloat(ClockId,reduced?0:time);
+            // The shared showcase clock pauses with settings/overlays. A
+            // reduced-motion render holds the current marker orientation.
+            if(dockStatusMarkers!=null&&!reduced)dockStatusMarkers.localRotation=Quaternion.Euler(0,time*9f,0);
             preview.camera.Render();
         }
         void FitCamera(Renderer[] birdRenderers,Renderer[] dockRenderers)
@@ -197,6 +208,32 @@ public static class SkyPulseBirdMenuPreview
                     top=Mathf.Max(top,p.y/tanY-p.z);bottom=Mathf.Max(bottom,-p.y/tanY-p.z);
                 }
             }
+        }
+        void AddDockSegments(Transform parent,Material material,int count,float separation,float sweep,float inner,float outer,float bottom,float top,string name)
+        {
+            const int steps=6;
+            var profile=new[]{new Vector2(inner,bottom),new Vector2(outer,bottom),new Vector2(outer,top-.0006f),new Vector2(outer-.0015f,top),new Vector2(inner+.0015f,top),new Vector2(inner,top-.0006f),new Vector2(inner,bottom)};
+            int stride=profile.Length,span=(steps+1)*stride;
+            var vertices=new Vector3[count*span];var triangles=new int[count*(steps*(stride-1)*6+(stride-3)*6)];int next=0;
+            for(int segment=0;segment<count;segment++)
+            {
+                for(int i=0;i<=steps;i++)
+                {
+                    float angle=(segment*separation-sweep*.5f+sweep*i/steps)*Mathf.Deg2Rad;
+                    for(int j=0;j<stride;j++)vertices[segment*span+i*stride+j]=new Vector3(Mathf.Cos(angle)*profile[j].x,profile[j].y,Mathf.Sin(angle)*profile[j].x);
+                    if(i==steps)continue;
+                    for(int j=0;j<stride-1;j++)
+                    {int a=segment*span+i*stride+j,b=a+stride;triangles[next++]=a;triangles[next++]=b;triangles[next++]=a+1;triangles[next++]=a+1;triangles[next++]=b;triangles[next++]=b+1;}
+                }
+                // Both swept ends are capped, retaining real physical depth
+                // rather than leaving an open illuminated ribbon.
+                int first=segment*span,last=first+steps*stride;
+                for(int j=1;j<stride-2;j++)
+                {triangles[next++]=first;triangles[next++]=first+j+1;triangles[next++]=first+j;triangles[next++]=last;triangles[next++]=last+j;triangles[next++]=last+j+1;}
+            }
+            var mesh=new Mesh{name=name,vertices=vertices,triangles=triangles};mesh.RecalculateNormals();mesh.RecalculateBounds();owned.Add(mesh);
+            var part=new GameObject(name,typeof(MeshFilter),typeof(MeshRenderer));part.transform.SetParent(parent,false);
+            part.GetComponent<MeshFilter>().sharedMesh=mesh;part.GetComponent<MeshRenderer>().sharedMaterial=material;
         }
         void AddRing(Transform parent,Material material,Vector2[] profile)
         {
