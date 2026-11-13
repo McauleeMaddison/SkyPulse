@@ -8,12 +8,13 @@ scene is `mobile/Assets/Scenes/SkyPulse.unity`. Start with the
 
 ## Build 21 update — 13 November 2026
 
-[Build 21](Release/DeviceBuild21/README.md) carries the owner-requested Voltcrest
+[Build 21](Release/DeviceBuild21/README.md) is installed and launched on the paired
+iPhone. It carries the owner-requested Voltcrest
 Hangar wing profile, three additional permanent upgrade families and two automatic
-Endless pickups. See its QA record and refreshed weekend checklist. Its physical
-installation and owner acceptance are recorded separately.
+Endless pickups. See its QA record and refreshed weekend checklist. All 41 saved preference values survived installation and launch unchanged. Use its
+[weekend checklist](Release/DeviceBuild21/DEVICE_CHECKLIST.md); manual acceptance remains pending.
 
-## Installed Build 20 — 13 November 2026
+## Historical installed Build 20 — 13 November 2026
 
 [Build 20](Release/DeviceBuild20/README.md) is installed and launched with the latest visuals for the
 owner's Saturday/Sunday manual test. Native Home, Hangar and flight now load the
@@ -132,7 +133,7 @@ traits and retains its parents. Read the authoritative pricing and transaction
 functions in the editing guide before changing costs or rewards.
 
 The installed-build metadata lives at the path in `Release/CURRENT_RELEASE.json`.
-Its export/QA hashes describe build 20; newer source needs its own renewed checks.
+Its export/QA hashes describe build 21; newer source needs its own renewed checks.
 Local metadata checks cannot certify global uniqueness or settle Apple's
 unidentified similarity allegation. Keep original art/generation evidence;
 generated artwork is not evidence of exclusive rights by itself.

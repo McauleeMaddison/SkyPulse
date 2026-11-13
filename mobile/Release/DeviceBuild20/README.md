@@ -1,5 +1,7 @@
 # SkyPulse private device candidate — Build 20
 
+Superseded on the paired iPhone by [Build 21](../DeviceBuild21/README.md).
+
 This candidate is installed and launched on the paired iPhone, ready for the owner's 14–15 November 2026 manual test.
 Use [DEVICE_CHECKLIST.md](DEVICE_CHECKLIST.md) for the updated full checklist.
 

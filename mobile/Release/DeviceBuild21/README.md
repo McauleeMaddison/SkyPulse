@@ -1,7 +1,6 @@
 # SkyPulse private device candidate — Build 21
 
-Prepared for the owner’s 14–15 November 2026 weekend tests. The installation
-record and source manifest identify the exact phone candidate when completed.
+Installed and launched on the paired iPhone for the owner’s 14–15 November 2026 weekend tests. The [installation record](RELEASE_RECORD.json) and source manifest identify the exact phone candidate.
 Public App Review remains on hold.
 
 - All rotating Hangar views use Voltcrest’s 1.65-second / 28-degree display

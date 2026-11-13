@@ -1,20 +1,21 @@
 # Editing SkyPulse in VS Code
 
 Open the **SkyPulse** repository in VS Code and `mobile/` in Unity Hub.
-This is the main editing guide. The [current local design candidate](Development/DesignUpgrade20261031/README.md)
-is newer than installed iPhone build 19 (`f6221f6`) and has not been installed or
-uploaded. Use its source-specific records when reviewing previews. Physical
-phone acceptance remains pending; public App Review remains on hold.
+This is the main editing guide. [Build 21](Release/DeviceBuild21/README.md) is installed
+on the paired iPhone for the 14–15 November weekend checklist. Follow
+`Release/CURRENT_RELEASE.json` to the exact runtime commit, QA and deployment
+record. Physical appearance/gameplay/performance acceptance remains pending.
+Public App Review remains on hold; older dated design records describe their own source.
 
-The [11 November repair](Development/EverydayPolish20261111/README.md) is the latest
-local code/wing candidate. `SkyPulseNativeGame.FirstPlay.cs`, `.FailureClarity.cs`
+The [11 November repair](Development/EverydayPolish20261111/README.md) records the earlier
+local code/wing repair. `SkyPulseNativeGame.FirstPlay.cs`, `.FailureClarity.cs`
 and `.Readability.cs` extend the existing game component; they are not additional
-game components to attach. `SkyPulsePickupDisplay.cs` builds the five pooled pickup
+game components to attach. `SkyPulsePickupDisplay.cs` builds the seven pooled pickup
 housings. For reference-rig anatomy, inspect the saved left/right wing-tip joints
 and `SkyPulseBirdShoulderFit.cs`; preserve manual edits and do not regenerate over
 them. Choosing **Equip Bird** clears a temporary Editor appearance override.
 
-The latest [Build 20 candidate](Release/DeviceBuild20/README.md) promotes the
+The [Build 20 native-roster pass](Release/DeviceBuild20/README.md) promotes the
 solid roster into the mobile runtime for the requested private device tests.
 The editable workshop prefabs remain canonical; generated combined assets live
 under `Assets/Resources/SkyPulse/Birds3D`. Do not edit those generated copies.
@@ -248,8 +249,8 @@ constants at its top; do not create another game component or save system.
 Echo rewards are excluded from percentage/daily reward bases and recorded
 separately in results. Lens brackets are pooled presentation only; never alter
 pipe colliders to fit them. Runtime emblems are cached once and disposed with
-the game. The Survival/Discovery groups in `CreateFlightGuideScreen` explain all
-five pickups. Keep the guide and public player page aligned after rule changes.
+the game. The Survival/Discovery/Rewards groups in `CreateFlightGuideScreen` explain all
+seven pickups. Keep the guide and public player page aligned after rule changes.
 
 ## How to Play and world crossfades
 

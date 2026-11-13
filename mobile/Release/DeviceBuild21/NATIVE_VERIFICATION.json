@@ -1,0 +1,10 @@
+{
+  "build": "21",
+  "codeSignatureDeepStrictVerified": true,
+  "profileExpiresUtc": "2027-09-16T10:41:32Z",
+  "identityPrivacyAndLinksVerified": true,
+  "matchingBinaryAndDsymUUIDs": {
+    "SkyPulse": "2D69A18D-63AF-3AD5-AB1B-08D6AA14E04A",
+    "UnityFramework": "F07D62F2-85ED-3CD2-A411-7BC05B71F44F"
+  }
+}

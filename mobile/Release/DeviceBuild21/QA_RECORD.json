@@ -106,8 +106,8 @@
     "contactPoses": 0,
     "limit": "Finite noncoplanar mesh-surface samples; not an all-time, coplanar or containment proof."
   },
-  "handingPreservation": "Native gravity, flap impulse, pipe spacing, hitboxes and tap stroke state machine unchanged from installed build 20. Input, pause/retry and all fifteen native tap strokes passed regression.",
   "deviceTesting": "Build 21 physical appearance, gameplay, retained-progress and sustained-performance acceptance pending.",
-  "nativeBuild": "Pending fresh export, signing and device installation",
-  "publicReviewSubmitted": false
+  "nativeBuild": "Unity iOS export, Xcode Release build, deep strict signature, provisioning expiry, identity/privacy/links and app/UnityFramework dSYM UUID checks passed. Build 21 installed and launched on paired iPhone.",
+  "publicReviewSubmitted": false,
+  "handlingPreservation": "Native gravity, flap impulse, pipe spacing, hitboxes and tap stroke state machine unchanged from installed build 20. Input, pause/retry and all fifteen native tap strokes passed regression."
 }

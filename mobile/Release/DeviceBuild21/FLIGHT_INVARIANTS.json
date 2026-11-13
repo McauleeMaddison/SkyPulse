@@ -1,0 +1,13 @@
+{
+  "baselineCommit": "082783b6a39e24d6cba51774eb3ab1f03b8ed7fb",
+  "unchangedMethodsSha256": {
+    "Flap": "2eaba18735b37ca1149f884d7ba31e4d57bab8238b97367552374c9d29a9e09f",
+    "ActiveFlapVelocity": "0097fd4c421392d7bb569640cc628f447de4f0c7e32ba265a0f0a1d869f1329e",
+    "ActiveGravity": "2cb04a4193eb848ce3e8fb12242d883a0694a2c171aa2b85eef3e3838657c700",
+    "ActiveMaxFallVelocity": "9e79c3359b18305c0ba23e10baf096c141397fba5326520e925f8b47e150c07c",
+    "UpdateGameplayWingState": "5da39ef8b3f8965a09cd9cde8c62b3c6fd73419356e594e95921efb7ac8d4982",
+    "BirdCollidesWithPipe": "6cadc010df5471c012522e463ddd693eb0520beb40cf9e2a9a197becd0539978"
+  },
+  "unchangedInputPartialSha256": "aef0ce193704ce5c88fa32bf43883dd506a9f04f2b08ae79a9469efc5027c9e1",
+  "meaning": "Hangar display retargeting and field equipment do not alter accepted taps, lift, gravity, wing state cadence or collision query rules."
+}

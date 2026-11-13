@@ -1,0 +1,42 @@
+{
+  "candidate": "SkyPulse 1.0.0 (21)",
+  "verifiedRuntimeCommit": "e38c10eee81611377a64485d21b7f3cf8c72bf7b",
+  "branch": "main",
+  "recordedUtc": "2026-11-13T10:26:20.804305+00:00",
+  "installation": "Direct signed development install over existing SkyPulse, without uninstall",
+  "previousPhoneBuild": "20",
+  "installedPhoneBuild": "21",
+  "phoneModel": "iPhone 17 Pro Max",
+  "deviceInstallSucceeded": true,
+  "deviceLaunchSucceeded": true,
+  "processObservedRunning": true,
+  "ownerTestingStatus": "Ready for owner weekend tests on 14\u201315 November 2026; appearance, gameplay and sustained-performance acceptance pending.",
+  "savedProgressAcceptance": "All 41 preference values unchanged across installation and after launch. In-game visual acceptance remains with owner.",
+  "privateSaveBackup": "Retained in ignored local artifacts, never committed",
+  "unityExportExitCode": 0,
+  "xcodeBuildExitCode": 0,
+  "codeSignatureDeepStrictVerified": true,
+  "profileExpiresUtc": "2027-09-16T10:41:32Z",
+  "binarySha256": {
+    "SkyPulse": "59c696b91c6bdfc132ee24584ec1091c8993da4b0f0a0106cdabf863f693682a",
+    "Frameworks/UnityFramework.framework/UnityFramework": "ea40258efd60929496bb8c9e77ee0fc217c35877ea1e3533fa70b39b75e28a1f"
+  },
+  "matchingBinaryAndDsymUUIDs": {
+    "SkyPulse": "2D69A18D-63AF-3AD5-AB1B-08D6AA14E04A",
+    "UnityFramework": "F07D62F2-85ED-3CD2-A411-7BC05B71F44F"
+  },
+  "allExportedSourceHashesMatch": true,
+  "exportedSourceEntries": 2549,
+  "packagedIdentityPrivacyAndBrandedLinksVerified": true,
+  "testFlightUploaded": false,
+  "lastObservedTestFlightBuild": "17",
+  "publicReviewSubmitted": false,
+  "appStoreConnectChangedThisSession": false,
+  "nativeWarnings": "Unity-generated libc++ deployment availability, deprecation and script-output warnings remain; native build succeeded.",
+  "localArtifactFolder": "artifacts/device-build21/",
+  "logSha256": {
+    "candidate-qa.log": "3bafde6311e528b2825a31210261275689f02fdd0fa60222e15f0951a29d1dc0",
+    "unity-export.log": "96f180bdc4c3b0ff0592e18bad81ebabfd3026e4549dcbc83aeac86413e8cbb5",
+    "xcode-build.log": "88cc542f3c6ea939f50e9f86346fe5bccc6753142d7a8758a84959c80d289e7b"
+  }
+}

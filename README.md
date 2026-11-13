@@ -43,8 +43,8 @@ Open `mobile/` in Unity Hub and the **SkyPulse** repository in VS Code. Start wi
 code map and preservation rules. [The handoff](mobile/MANUAL_HANDOFF.md) records
 the installed build and the work awaiting review.
 
-**Installed on the paired iPhone: version 1.0.0, build 20**, from source
-`082783b6a39e24d6cba51774eb3ab1f03b8ed7fb`. It was installed directly; build 17 was
+**Installed on the paired iPhone: version 1.0.0, build 21**, from source
+`e38c10eee81611377a64485d21b7f3cf8c72bf7b`. It was installed directly; build 17 was
 last observed in TestFlight. Follow [the current release record](mobile/Release/CURRENT_RELEASE.json)
 for its build, QA and device checklist. Owner device acceptance remains open.
 
@@ -77,8 +77,8 @@ Endless keeps fixed handling for all 15 catalogue birds. Each passed gate awards
 one point. Its twelve worlds change every 15 gates: Neon City, Aurora Rise,
 Solar Drift, Midnight Tide, Velvet Dawn, Crystal Night, Jade Horizon, Violet Rain,
 Eclipse, Cobalt Storm, Amber Skies and Polar Glow; Neon City returns at score 180.
-Crystals bank during the run. Nine upgrade families have three connected level
-branches; temporary pickups provide Aegis, Time Pulse, Crystal Magnet, Crystal Echo and Route Lens.
+Crystals bank during the run. Twelve upgrade families have three connected level
+branches; temporary pickups provide Aegis, Time Pulse, Crystal Magnet, Crystal Echo, Route Lens, Supply Cache and Gate Link.
 
 Pulse Relay has four finite circuits refreshed each UTC day; crystals open the
 matching gates automatically. Blackout has eight authored Signal Heist vaults,
@@ -110,7 +110,7 @@ in their disposable QA project. Useful read-only checks include
 `python3 mobile/Tools/check_player_copy.py` and
 `python3 mobile/Tools/verify_bird_registration.py`.
 
-The installed release contract describes build 20. New source changes need
+The installed release contract describes build 21. New source changes need
 fresh source-specific QA and a signed candidate tested on physical devices before
 updating that contract. Keep App Review submission on hold; local tests cannot
 promise Apple acceptance. The earlier [4.3(a) audit](APPLE_4_3A_AUDIT.md) and
