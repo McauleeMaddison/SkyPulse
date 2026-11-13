@@ -8,7 +8,7 @@ scene is `mobile/Assets/Scenes/SkyPulse.unity`. Start with the
 
 ## Current device candidate — 13 November 2026
 
-[Build 20](Release/DeviceBuild20/README.md) prepares the latest visuals for the
+[Build 20](Release/DeviceBuild20/README.md) is installed and launched with the latest visuals for the
 owner's Saturday/Sunday manual test. Native Home, Hangar and flight now load the
 combined fifteen-bird roster; the old Editor overlay yields to that presenter.
 Accepted taps have a full physical upstroke/downstroke, roughly -27° to +28° in
@@ -96,7 +96,7 @@ from `Assets/Scenes/SkyPulse.unity`; workshop Play remains model inspection.
 The Editor stops Play before C# recompilation. Wait for compilation, then start
 a fresh Play session. No owner save reset or App Store action is part of this work.
 
-## Installed iPhone build 19
+## Historical installed iPhone build 19
 
 - Runtime source: `f6221f68314a864b898a7c7bbe9693bb528316e2`; Unity 6000.6.0f1.
 - **SkyPulse 1.0.0 (19) is installed and launched on the paired iPhone.** It replaced the phone's Build 17 directly; TestFlight was not uploaded.
@@ -125,7 +125,7 @@ traits and retains its parents. Read the authoritative pricing and transaction
 functions in the editing guide before changing costs or rewards.
 
 The installed-build metadata lives at the path in `Release/CURRENT_RELEASE.json`.
-Its export/QA hashes describe build 19; newer source needs its own renewed checks.
+Its export/QA hashes describe build 20; newer source needs its own renewed checks.
 Local metadata checks cannot certify global uniqueness or settle Apple's
 unidentified similarity allegation. Keep original art/generation evidence;
 generated artwork is not evidence of exclusive rights by itself.

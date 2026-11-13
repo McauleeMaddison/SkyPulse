@@ -1,6 +1,6 @@
 # SkyPulse private device candidate — Build 20
 
-This candidate is prepared for the owner's 14–15 November 2026 manual test.
+This candidate is installed and launched on the paired iPhone, ready for the owner's 14–15 November 2026 manual test.
 Use [DEVICE_CHECKLIST.md](DEVICE_CHECKLIST.md) for the updated full checklist.
 
 It includes the latest twelve-world/pipe and mode polish, the native fifteen-bird
@@ -19,7 +19,7 @@ physical acceptance. [RUNTIME_PROMOTION.json](RUNTIME_PROMOTION.json) records
 source preservation. [metadata.json](metadata.json) is a local factual copy draft;
 it was not sent to App Store Connect.
 
-Build/sign/install results will be recorded in RELEASE_RECORD.json. Do not treat
+Build/sign/install results are recorded in [RELEASE_RECORD.json](RELEASE_RECORD.json). Do not treat
 a successful installation as completed gameplay, visual or sustained performance
 acceptance. Public App Review remains on hold pending Apple's clarification and
 renewed owner authorization.

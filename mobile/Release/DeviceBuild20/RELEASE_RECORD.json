@@ -1,0 +1,44 @@
+{
+  "candidate": "SkyPulse 1.0.0 (20)",
+  "verifiedRuntimeCommit": "082783b6a39e24d6cba51774eb3ab1f03b8ed7fb",
+  "branch": "main",
+  "recordedUtc": "2026-11-13T10:00:18.738204+00:00",
+  "installation": "Direct signed development install over existing SkyPulse, without uninstall",
+  "previousPhoneBuild": "19",
+  "installedPhoneBuild": "20",
+  "phoneModel": "iPhone 17 Pro Max",
+  "deviceInstallSucceeded": true,
+  "deviceLaunchSucceeded": true,
+  "processObservedRunning": true,
+  "ownerTestingStatus": "Owner confirms new build is on phone; full weekend manual acceptance pending. Owner requests Voltcrest Hangar motion and additional upgrades/pickups for build 21.",
+  "savedProgressAcceptance": "Preferences unchanged across installation; 33 existing values unchanged after launch, with four daily-journal values refreshed. In-game acceptance remains with owner.",
+  "privateSaveBackup": "Retained in ignored local artifact folder; no preference values committed",
+  "unityExportExitCode": 0,
+  "xcodeBuildExitCode": 0,
+  "codeSignatureDeepStrictVerified": true,
+  "profileExpiresUtc": "2027-09-16T10:41:32Z",
+  "binarySha256": {
+    "SkyPulse": "0246ddab0a3824a80868fe3e182bb3a329cfd7bef6c9359773089a2bd447bc30",
+    "Frameworks/UnityFramework.framework/UnityFramework": "f18a3340310fa119b238a124501a936880cce2141191dc07ca289502e077f2bf"
+  },
+  "symbols": {
+    "SkyPulseUUID": "2D69A18D-63AF-3AD5-AB1B-08D6AA14E04A",
+    "UnityFrameworkUUID": "FD13F512-2C8E-31DC-8F71-E8173643CE9F",
+    "bothBinaryAndDSYMUUIDsMatch": true
+  },
+  "allExportedSourceHashesMatch": true,
+  "exportedSourceEntries": 2547,
+  "packagedIdentityPrivacyAndBrandedLinksVerified": true,
+  "testFlightUploaded": false,
+  "lastObservedTestFlightBuild": "17",
+  "publicReviewSubmitted": false,
+  "appStoreConnectChangedThisSession": false,
+  "nativeWarnings": "Unity-generated libc++ deployment availability, deprecation and script-output warnings remain; native compilation succeeded.",
+  "packagingNote": "Desktop Finder reattached FinderInfo to the generated .app. An identical-content app staged with ditto --noextattr --norsrc outside Desktop passed deep strict signature verification and was installed.",
+  "localArtifactFolder": "artifacts/device-build20/",
+  "logSha256": {
+    "unity-export.log": "bab75276e2afa7bc56dab0f87beb9eaffd76ef080a2510f462d89ddda355a2f7",
+    "xcode-build.log": "f74489ab78cfbaa81cba6d064b269b8414da89ac23a4a3acbf0639f19a33de0e",
+    "candidate-qa.log": "015369dc82dfbd7bfed2db4d8a88bcb04959120e751bbbf08dd625c47022357a"
+  }
+}

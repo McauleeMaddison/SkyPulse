@@ -38,14 +38,14 @@ Open `mobile/` in Unity Hub and the **SkyPulse** repository in VS Code. Start wi
 code map and preservation rules. [The handoff](mobile/MANUAL_HANDOFF.md) records
 the installed build and the work awaiting review.
 
-**Installed on the paired iPhone: version 1.0.0, build 19**, from source
-`f6221f68314a864b898a7c7bbe9693bb528316e2`. It was installed directly; build 17 was
+**Installed on the paired iPhone: version 1.0.0, build 20**, from source
+`082783b6a39e24d6cba51774eb3ab1f03b8ed7fb`. It was installed directly; build 17 was
 last observed in TestFlight. Follow [the current release record](mobile/Release/CURRENT_RELEASE.json)
 for its build, QA and device checklist. Owner device acceptance remains open.
 
-**Newer local source: [31 October design candidate](mobile/Development/DesignUpgrade20261031/README.md).**
-This includes world and Relay presentation, Home labels, Hangar and Tech Tree
-finishes, and native tactile feedback work. It has not been installed or uploaded.
+**Historical source: [31 October design candidate](mobile/Development/DesignUpgrade20261031/README.md).**
+That dated record covers world and Relay presentation, Home labels, Hangar and
+Tech Tree finishes. Build 20 now includes the later, tested native candidate.
 Its source manifests and dated checks apply to that local candidate, not the
 installed build. The separate Neon Finch 3D workshop is an art-review prototype;
 the Finch appearance has since been approved, while the remaining roster
@@ -105,7 +105,7 @@ in their disposable QA project. Useful read-only checks include
 `python3 mobile/Tools/check_player_copy.py` and
 `python3 mobile/Tools/verify_bird_registration.py`.
 
-The installed release contract still describes build 19. New source changes need
+The installed release contract describes build 20. New source changes need
 fresh source-specific QA and a signed candidate tested on physical devices before
 updating that contract. Keep App Review submission on hold; local tests cannot
 promise Apple acceptance. The earlier [4.3(a) audit](APPLE_4_3A_AUDIT.md) and

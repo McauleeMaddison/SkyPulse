@@ -112,6 +112,6 @@
     "SKYPULSE_RUNTIME_BIRDS_PASS"
   ],
   "deviceTesting": "Owner visual, gameplay, save-retention and sustained performance acceptance pending on this exact candidate.",
-  "nativeBuild": "Pending export and signing",
+  "nativeBuild": "Unity iOS export and signed Xcode Release build passed; deep strict signature, profile expiry, app identity/privacy/links and both dSYM UUIDs verified. Installed and launched on paired iPhone.",
   "publicReviewSubmitted": false
 }
