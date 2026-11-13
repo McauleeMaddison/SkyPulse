@@ -44,14 +44,14 @@ public static class SkyPulseWingClearanceChecks
     {
         Guard();try{InspectAll(0,true);InspectAll(60,true);InspectAll(70,true);EditorApplication.Exit(0);}catch(Exception e){Directory.CreateDirectory(Output);File.WriteAllText(Path.Combine(Output,"FAILURE.txt"),e.ToString());Debug.LogException(e);EditorApplication.Exit(1);}
     }
-    public static Report InspectAll(float candidateSpread=0,bool captures=true,bool candidateDistalOnly=true)
+    public static Report InspectAll(float candidateSpread=0,bool captures=true,bool candidateDistalOnly=true,bool voltcrestDisplay=false)
     {
         Guard();Directory.CreateDirectory(Output);var results=new List<Bird>();
         Inspect("neon_finch","Neon Finch",SkyPulseBirdPrototypeWorkshop.PrefabPath);
         foreach(var d in SkyPulseBirdRosterWorkshop.LoadDesigns())Inspect(d.id,d.name,SkyPulseBirdRosterWorkshop.PrefabPath(d));
         var report=new Report{result="AUDITED",deviceTested=false,assetsChanged=false,candidateInstanceOnly=candidateSpread!=0,candidateSpread=candidateSpread,candidateDistalOnly=candidateDistalOnly,
             scope="Actual saved articulated mesh surfaces sampled through Studio, exhibition flight, tap-driven flight and Reduced Motion. Bounds reject noncandidates only; reported contacts require intersecting wing/landing mesh triangles. Separate front/side renders expose visual droop even where meshes remain physically separated. This is a geometric audit, not appearance approval or device performance certification.",birds=results.ToArray()};
-        File.WriteAllText(Path.Combine(Output,"CLEARANCE-"+candidateSpread.ToString("0")+(candidateDistalOnly?"-distal":"-root")+".json"),JsonUtility.ToJson(report,true));
+        File.WriteAllText(Path.Combine(Output,(voltcrestDisplay?"HANGAR-":"CLEARANCE-")+candidateSpread.ToString("0")+(candidateDistalOnly?"-distal":"-root")+".json"),JsonUtility.ToJson(report,true));
         Debug.Log("SKYPULSE_WING_AUDIT: birds="+results.Count+"; contact poses="+results.Sum(r=>r.contactPoses)+"; "+Output);return report;
 
         void Inspect(string id,string name,string path)
@@ -79,6 +79,7 @@ public static class SkyPulseWingClearanceChecks
                     }
                 }
                 SetSpread(longFan?candidateSpread:0);
+                if(voltcrestDisplay)SkyPulseSolidBirdStudio.MatchVoltcrestDisplayWings(rig);
                 var filters=model.GetComponentsInChildren<MeshFilter>(true);
                 var wings=filters.Where(f=>f.sharedMesh!=null&&(f.transform.IsChildOf(rig.leftWing)||f.transform.IsChildOf(rig.rightWing))).Select(f=>new Part(f)).ToArray();
                 var feet=filters.Where(f=>f.sharedMesh!=null&&Landing(f.transform,rig.body)).Select(f=>new Part(f)).ToArray();

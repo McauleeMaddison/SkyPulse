@@ -34,7 +34,7 @@ namespace SkyPulse.Mobile
         // These are tactical pickup effects only.  The permanent economy is kept
         // deliberately separate so no purchase can change score potential or
         // flight handling.
-        private enum PowerUpKind { Aegis, TimePulse, CrystalMagnet, CrystalEcho, RouteLens }
+        private enum PowerUpKind { Aegis, TimePulse, CrystalMagnet, CrystalEcho, RouteLens, SupplyCache, GateLink }
         private enum PendingPurchase { None, Skin, Upgrade }
 
         /// <summary>
@@ -854,6 +854,17 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
                 "Reach 10 gates for +30% result crystals",
                 "Reach 10 gates for +50% result crystals",
             }, new [] { 800, 1600, 2500 }, "#b17cff", "MASTERY", "streak_capacitor", 2, 3),
+            // Fourth tiers extend equipment, never flight forces or collision geometry.
+            new Upgrade("pulse_matrix", "PULSE MATRIX", new []
+            { "+1 second to timed pickups", "+2 seconds to timed pickups", "+3 seconds to timed pickups" },
+                new [] { 700, 1400, 2300 }, "#65e8ff", "COLLECTION", "gravity_well", 2, 4),
+            new Upgrade("supply_decoder", "SUPPLY DECODER", new []
+            { "Supply Cache grants 7 crystals", "Supply Cache grants 9 crystals", "Supply Cache grants 11 crystals" },
+                new [] { 650, 1250, 2100 }, "#ffd166", "RECOVERY", "archive_engine", 2, 4),
+            new Upgrade("link_reactor", "LINK REACTOR", new []
+            { "Gate Link grants 3 crystals per clean gate", "Gate Link grants 4 crystals per clean gate", "Gate Link grants 5 crystals per clean gate" },
+                new [] { 750, 1450, 2400 }, "#b8a0ff", "MASTERY", "apex_matrix", 2, 4),
+
         };
 
         private static readonly TrailStyle[] Trails =
@@ -2019,9 +2030,9 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             refreshPage();
             CreateText(card, "Next world every 15 gates · full route repeats", new Vector2(0f, 22f), new Vector2(850f, 36f), 23, Hex("#adc6dd"), TextAnchor.MiddleCenter, FontStyle.Normal);
             CreateText(card, "COLLECT POWER-UPS IN FLIGHT", new Vector2(0f, -30f), new Vector2(850f, 48f), 30, Hex("#ffc34d"), TextAnchor.MiddleCenter, FontStyle.Bold);
-            var kinds = new[] { PowerUpKind.Aegis, PowerUpKind.TimePulse, PowerUpKind.CrystalMagnet, PowerUpKind.CrystalEcho, PowerUpKind.RouteLens };
-            var names = new[] { "AEGIS", "TIME PULSE", "CRYSTAL MAGNET", "CRYSTAL ECHO", "ROUTE LENS" };
-            var details = new[] { "Absorbs one collision", "Slows flight for 4 seconds", "Draws in crystals for 6 seconds", "+1 per crystal for 6s · up to 6 extra", "Highlights the next openings for 8s" };
+            var kinds = new[] { PowerUpKind.Aegis, PowerUpKind.TimePulse, PowerUpKind.CrystalMagnet, PowerUpKind.CrystalEcho, PowerUpKind.RouteLens, PowerUpKind.SupplyCache, PowerUpKind.GateLink };
+            var names = new[] { "AEGIS", "TIME PULSE", "CRYSTAL MAGNET", "CRYSTAL ECHO", "ROUTE LENS", "SUPPLY CACHE", "GATE LINK" };
+            var details = new[] { "Absorbs one collision", "Slows flight for 4s · Matrix adds up to 3s", "Draws crystals for 6s · Matrix adds up to 3s", "+1 per crystal for 6s · max 6 · Matrix adds time", "Marks openings for 8s · Matrix adds up to 3s", "Grants 5 crystals · Tech adds up to 6", "Next 3 clean gates: +2 each · Tech adds up to 3" };
             var pickupRows = new RectTransform[3];
             var pickupIcons = new Image[3];
             var pickupTitles = new Text[3];
@@ -2037,27 +2048,32 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
                 pickupTitles[index] = CreateText(row, "", new Vector2(68f, 23f), new Vector2(650f, 38f), 27, Hex("#8eeeff"), TextAnchor.MiddleLeft, FontStyle.Bold);
                 pickupDetails[index] = CreateText(row, "", new Vector2(68f, -22f), new Vector2(650f, 38f), 25, Hex("#d2def0"), TextAnchor.MiddleLeft, FontStyle.Normal);
             }
-            var survival = CreateNeonButton(card, "SURVIVAL", new Vector2(-215f, -125f), new Vector2(390f, 112f), Hex("#45eaff"));
-            var discovery = CreateNeonButton(card, "DISCOVERY", new Vector2(215f, -125f), new Vector2(390f, 112f), Hex("#ba9bff"));
+            var survival = CreateNeonButton(card, "SURVIVAL", new Vector2(-280f, -125f), new Vector2(260f, 112f), Hex("#45eaff"));
+            var discovery = CreateNeonButton(card, "DISCOVERY", new Vector2(0f, -125f), new Vector2(260f, 112f), Hex("#ba9bff"));
+            var rewards = CreateNeonButton(card, "REWARDS", new Vector2(280f, -125f), new Vector2(260f, 112f), Hex("#ffd166"));
+            SetComfortHitTarget(rewards);
             SetComfortHitTarget(survival);
             SetComfortHitTarget(discovery);
             Action<int> showPickupGroup = group =>
             {
-                int start = group == 0 ? 0 : 3;
+                int start = group == 0 ? 0 : group == 1 ? 3 : 5;
+                int end = group == 0 ? 3 : group == 1 ? 5 : kinds.Length;
                 for (var slot = 0; slot < pickupRows.Length; slot++)
                 {
                     int index = start + slot;
-                    pickupRows[slot].gameObject.SetActive(index < kinds.Length);
-                    if (index >= kinds.Length) continue;
+                    pickupRows[slot].gameObject.SetActive(index < end);
+                    if (index >= end) continue;
                     pickupIcons[slot].sprite = PowerUpArtwork(kinds[index]);
                     pickupTitles[slot].text = names[index];
                     pickupDetails[slot].text = details[index];
                 }
                 survival.interactable = group != 0;
                 discovery.interactable = group != 1;
+                rewards.interactable = group != 2;
             };
             survival.onClick.AddListener(() => showPickupGroup(0));
             discovery.onClick.AddListener(() => showPickupGroup(1));
+            rewards.onClick.AddListener(() => showPickupGroup(2));
             showPickupGroup(0);
             CreateText(card, "EVERY RUN BUILDS YOUR COLLECTION", new Vector2(0f, -558f), new Vector2(850f, 40f), 27, Hex("#ffc34d"), TextAnchor.MiddleCenter, FontStyle.Bold);
             var progression = CreateText(card, "Train and breed birds in the Hangar. Evolve the Core for lower costs and higher training limits.", new Vector2(0f, -630f), new Vector2(822f, 86f), 25, Hex("#d2def0"), TextAnchor.MiddleCenter, FontStyle.Normal);
@@ -3059,6 +3075,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
                     hudScoreText.text = score.ToString();
                     AdvanceFlightCoach();
                     ShowScoreBurst(1, perfect);
+                    AwardGateLinkPass(score);
                     TriggerFlightFeedback(perfect ? equippedSkin.Accent : Hex("#45eaff"), perfect ? .26f : .13f);
                     if (perfect) PulseHaptic(.10f);
                     Play(scoreSound);
@@ -3499,7 +3516,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             pickup.GapOffset = RouteRange(-safeGapOffset, safeGapOffset);
             pickup.Y = gate.GapCenter + pickup.GapOffset;
             pickup.Phase = RouteRange(0f, Mathf.PI * 2f);
-            pickup.Kind = (PowerUpKind)RouteRange(0, 5);
+            pickup.Kind = (PowerUpKind)RouteRange(0, SkyPulsePickupDisplay.KindCount);
             var colour = Hex("#8f64ff");
             var secondary = Hex("#45eaff");
             switch (pickup.Kind)
@@ -3520,6 +3537,10 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
                     colour = Hex("#ba9bff");
                     secondary = Hex("#e2eeff");
                     break;
+                case PowerUpKind.SupplyCache:
+                    colour = Hex("#ffd166"); secondary = Hex("#fff4cf"); break;
+                case PowerUpKind.GateLink:
+                    colour = Hex("#a995ff"); secondary = Hex("#65e8ff"); break;
                 case PowerUpKind.RouteLens:
                     colour = Hex("#65e8ff");
                     secondary = Hex("#fff0ba");
@@ -3571,23 +3592,27 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
                     Play(unlockSound);
                     break;
                 case PowerUpKind.CrystalMagnet:
-                    magnetHaloTimer = 6f;
+                    magnetHaloTimer = PickupDuration(6f);
                     Play(unlockSound);
                     break;
                 case PowerUpKind.CrystalEcho:
-                    crystalEchoTimer = CrystalEchoSeconds;
+                    crystalEchoTimer = PickupDuration(CrystalEchoSeconds);
                     crystalEchoBudget = CrystalEchoMaxBonus;
                     ShowEndlessPickupBanner("CRYSTAL ECHO · +1 PER CRYSTAL", Hex("#ba9bff"));
                     Play(unlockSound);
                     break;
                 case PowerUpKind.RouteLens:
-                    routeLensTimer = RouteLensSeconds;
+                    routeLensTimer = PickupDuration(RouteLensSeconds);
                     UpdateRouteLensVisuals();
                     ShowEndlessPickupBanner("ROUTE LENS · OPENINGS MARKED", Hex("#65e8ff"));
                     Play(unlockSound);
                     break;
+                case PowerUpKind.SupplyCache:
+                    AwardSupplyCache(); Play(unlockSound); break;
+                case PowerUpKind.GateLink:
+                    BeginGateLink(); Play(unlockSound); break;
                 case PowerUpKind.TimePulse:
-                    slowFieldTimer = 4f;
+                    slowFieldTimer = PickupDuration(4f);
                     Play(crystalSound);
                     break;
             }
@@ -3606,7 +3631,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
 
         private bool HasActivePowerEffect()
         {
-            return shieldCharges > 0 || shieldImmunityTimer > 0f || slowFieldTimer > 0f || magnetHaloTimer > 0f || crystalEchoTimer > 0f || routeLensTimer > 0f;
+            return shieldCharges > 0 || shieldImmunityTimer > 0f || slowFieldTimer > 0f || magnetHaloTimer > 0f || crystalEchoTimer > 0f || routeLensTimer > 0f || gateLinkRemaining > 0;
         }
 
         private void UpdatePowerUpHud(){UpdateReadablePowerUpHud();}
@@ -4841,7 +4866,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
 
             // Percentage bonuses share the same pre-result reward base, so stacking
             // never compounds a bonus on top of another bonus by accident.
-            var rewardBase = Mathf.Max(0, runCrystalsCollected - runEchoPickupBonus);
+            var rewardBase = Mathf.Max(0, runCrystalsCollected - runEchoPickupBonus - runFieldPickupBonus);
             var salvageBonus = Mathf.FloorToInt(rewardBase * SalvageCodecBonusFraction() + .0001f);
             var apexBonus = score >= 10
                 ? Mathf.FloorToInt(rewardBase * ApexMatrixBonusFraction() + .0001f)
@@ -4878,8 +4903,9 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             ApplyResultTechBonuses();
             if (resultCrystalsText != null)
             {
-                int finds = Mathf.Max(0, runCrystalsCollected-runTechPickupBonus-runBirdPickupBonus-runEchoPickupBonus);
-                resultCrystalsText.text = runEchoPickupBonus > 0 ? $"PICKUPS · {finds}   ECHO +{runEchoPickupBonus}" : $"PICKUPS  ·  {finds}";
+                int finds = Mathf.Max(0, runCrystalsCollected-runTechPickupBonus-runBirdPickupBonus-runEchoPickupBonus-runFieldPickupBonus);
+                int boosts = runEchoPickupBonus + runFieldPickupBonus;
+                resultCrystalsText.text = boosts > 0 ? $"PICKUPS · {finds}   BOOSTS +{boosts}" : $"PICKUPS  ·  {finds}";
             }
             if (resultBonusText != null) resultBonusText.text = $"TECH  ·  +{runTechPickupBonus+runTechResultBonus} ✦";
             if (resultBirdBonusText != null) resultBirdBonusText.text = $"BIRD TRAITS  ·  +{runBirdPickupBonus+runBirdResultBonus} ✦";

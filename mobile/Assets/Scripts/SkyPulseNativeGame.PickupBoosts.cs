@@ -29,6 +29,7 @@ namespace SkyPulse.Mobile
         {
             crystalEchoTimer = routeLensTimer = 0f;
             crystalEchoBudget = runEchoPickupBonus = 0;
+            gateLinkRemaining = gateLinkReward = runFieldPickupBonus = 0; gateLinkLastScore = -1;
             UpdateRouteLensVisuals();
         }
         void TickEndlessPickupBoosts(float dt)
@@ -97,6 +98,8 @@ namespace SkyPulse.Mobile
 
         Sprite PowerUpArtwork(PowerUpKind kind)
         {
+            if (kind == PowerUpKind.SupplyCache) return supplyCacheSprite;
+            if (kind == PowerUpKind.GateLink) return gateLinkSprite;
             if (kind == PowerUpKind.CrystalEcho) return crystalEchoSprite;
             if (kind == PowerUpKind.RouteLens) return routeLensSprite;
             return LoadSprite(PowerUpArtworkPath(kind));
@@ -107,9 +110,12 @@ namespace SkyPulse.Mobile
             // Faceted cores and a machined aperture distinguish these from currency.
             crystalEchoSprite = CreateEndlessPickupSprite(true);
             routeLensSprite = CreateEndlessPickupSprite(false);
+            supplyCacheSprite = CreateFieldPickupSprite(false); gateLinkSprite = CreateFieldPickupSprite(true);
         }
         void DisposeEndlessPickupSprites()
         {
+            if (supplyCacheSprite != null) { Destroy(supplyCacheSprite.texture); Destroy(supplyCacheSprite); }
+            if (gateLinkSprite != null) { Destroy(gateLinkSprite.texture); Destroy(gateLinkSprite); }
             if (crystalEchoSprite != null) { Destroy(crystalEchoSprite.texture); Destroy(crystalEchoSprite); }
             if (routeLensSprite != null) { Destroy(routeLensSprite.texture); Destroy(routeLensSprite); }
         }

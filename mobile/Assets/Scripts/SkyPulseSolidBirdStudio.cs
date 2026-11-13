@@ -19,13 +19,14 @@ namespace SkyPulse.Mobile
         readonly SkyPulseNeonFinchPrototype rig;readonly Transform turntable;
         readonly List<UnityEngine.Object> owned=new List<UnityEngine.Object>();static readonly int ClockId=Shader.PropertyToID("_Clock");
         Material guide;Transform dockStatusMarkers;
-        public SkyPulseSolidBirdStudio(RectTransform parent,string path,Vector2 size,Vector2 at,Color accent,bool dock)
+        public SkyPulseSolidBirdStudio(RectTransform parent,string path,Vector2 size,Vector2 at,Color accent,bool dock,bool hangarMotion=false)
         {
             Path=path;var prefab=Resources.Load<GameObject>(path);
             if(prefab==null)throw new InvalidOperationException("Saved bird missing: "+path);
             preview=new StudioScene();
             var model=preview.InstantiatePrefabInScene(prefab);rig=model.GetComponent<SkyPulseNeonFinchPrototype>();
             rig.animate=false;rig.turntable=false;rig.flapPeriod=1.65f;rig.turntableDegreesPerSecond=12;rig.ResetPose();
+            if(hangarMotion)MatchVoltcrestDisplayWings(rig);
             var renderers=model.GetComponentsInChildren<Renderer>();var bounds=renderers[0].bounds;
             foreach(var r in renderers)bounds.Encapsulate(r.bounds);
             // Keep the saved rig root untouched: its sampler restores that bind pose on every frame.
@@ -71,6 +72,18 @@ namespace SkyPulse.Mobile
             var camera=preview.camera;camera.clearFlags=CameraClearFlags.SolidColor;camera.backgroundColor=Color.clear;
             camera.orthographic=false;camera.fieldOfView=26;camera.aspect=width/(float)height;camera.nearClipPlane=.01f;camera.farClipPlane=100;camera.targetTexture=texture;
             FitCamera(renderers,dockRenderers);preview.Place();
+        }
+        // Shared display profile, independent of accepted-tap flight. Keep the
+        // bird's own shoulder positions, meshes, palette and saved prefab intact.
+        public static void MatchVoltcrestDisplayWings(SkyPulseNeonFinchPrototype target)
+        {
+            var reference=Resources.Load<GameObject>("SkyPulse/Birds3D/newbird03").GetComponent<SkyPulseNeonFinchPrototype>();
+            target.ResetPose();
+            target.flapPeriod=reference.flapPeriod;target.flapDegrees=reference.flapDegrees;
+            target.bankDegrees=reference.bankDegrees;target.turntableDegreesPerSecond=reference.turntableDegreesPerSecond;
+            target.leftWingTip.localRotation=reference.leftWingTip.localRotation;
+            target.rightWingTip.localRotation=reference.rightWingTip.localRotation;
+            target.CaptureBindPose();
         }
         public void Render(float time,bool reduced)
         {

@@ -137,7 +137,7 @@ namespace SkyPulse.Mobile
         {
             if(root==null||skin==null)return;string id=SolidBirdId(skin);
             if(solidMenuViews.TryGetValue(root,out var entry)&&entry.Id!=id){entry.View.Dispose();solidMenuViews.Remove(root);entry=null;}
-            if(entry==null){entry=new SolidMenuView{Id=id,View=new SkyPulseSolidBirdStudio(root,"SkyPulse/Birds3D/"+id,size,at,skin.Accent,dock)};solidMenuViews.Add(root,entry);render=true;}
+            if(entry==null){entry=new SolidMenuView{Id=id,View=new SkyPulseSolidBirdStudio(root,"SkyPulse/Birds3D/"+id,size,at,skin.Accent,dock,state==FlightState.Customize)};solidMenuViews.Add(root,entry);render=true;}
             if(render)entry.View.Render(solidShowcaseTime,reduceMotionEnabled);
         }
         void HideSolidUi(Behaviour component)

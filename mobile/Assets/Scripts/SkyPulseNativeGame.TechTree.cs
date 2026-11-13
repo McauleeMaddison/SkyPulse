@@ -17,9 +17,9 @@ namespace SkyPulse.Mobile
         // Authored space, not a row/column grid: the three uninterrupted limbs
         // sweep through a shared free-pan field with room for their level fans.
         static readonly Vector2[] TechFamilyPositions = {
-            new Vector2(-520,-780), new Vector2(-680,-1630), new Vector2(-470,-2460),
-            new Vector2(80,-700), new Vector2(-90,-1570), new Vector2(70,-2480),
-            new Vector2(650,-830), new Vector2(490,-1660), new Vector2(680,-2500)
+            new Vector2(-520,-780), new Vector2(-680,-1630), new Vector2(-470,-2460), new Vector2(-650,-3320),
+            new Vector2(80,-700), new Vector2(-90,-1570), new Vector2(70,-2480), new Vector2(-70,-3340),
+            new Vector2(650,-830), new Vector2(490,-1660), new Vector2(680,-2500), new Vector2(520,-3360)
         };
 
         void ClearHolographicTree()
@@ -65,7 +65,7 @@ namespace SkyPulse.Mobile
                 foreach (var upgrade in Upgrades)
                 {
                     if (upgrade.Branch != families[family]) continue;
-                    var at = TechFamilyPositions[family * 3 + upgrade.Tier - 1];
+                    var at = TechFamilyPositions[family * 4 + upgrade.Tier - 1];
                     int level = GetUpgradeLevel(upgrade.Id);
                     bool unlocked = IsUpgradePrerequisiteMet(upgrade);
                     branches.Add(new HolographicBranch { From = previous, To = at, Colour = colour, Powered = unlocked, Trunk = true });
@@ -121,7 +121,7 @@ namespace SkyPulse.Mobile
             techReadyLevelCount=techAvailableLevels.Count;
             techAvailableLevels.AddRange(techSavingLevels);
             customizeContent.anchorMin = customizeContent.anchorMax = new Vector2(.5f, 1f);
-            customizeContent.sizeDelta = new Vector2(2300, 3600);
+            customizeContent.sizeDelta = new Vector2(2300, 4500);
             customizeScroll.horizontal = customizeScroll.vertical = true;
             customizeScroll.movementType = ScrollRect.MovementType.Clamped;
             customizeScroll.inertia = true;
@@ -155,6 +155,9 @@ namespace SkyPulse.Mobile
             // inspector retain the full catalogue name and exact effect.
             switch (upgrade.Id)
             {
+                case "pulse_matrix": return "PULSE MATRIX";
+                case "supply_decoder": return "DECODER";
+                case "link_reactor": return "LINK REACTOR";
                 case "crystal_resonator": return "RESONATOR";
                 case "prism_conduit": return "CONDUIT";
                 case "gravity_well": return "GRAVITY WELL";

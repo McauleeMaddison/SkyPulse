@@ -34,6 +34,7 @@ public static class SkyPulseRuntimeBirdChecks
     }
     static IEnumerator Execute()
     {
+        Directory.CreateDirectory(Output);
         var g=UnityEngine.Object.FindAnyObjectByType<SkyPulseNativeGame>();g.enabled=false;Set(g,"hapticsEnabled",false);Set(g,"reduceMotionEnabled",false);((AudioSource)Get(g,"audioSource")).mute=true;
         var camera=(Camera)Get(g,"flightCamera");var target=RenderTexture.GetTemporary(750,1334,24);camera.targetTexture=target;camera.rect=new Rect(0,0,1,1);
         var canvas=((GameObject)Get(g,"uiRoot")).GetComponent<Canvas>();canvas.renderMode=RenderMode.ScreenSpaceCamera;canvas.worldCamera=camera;canvas.planeDistance=1;

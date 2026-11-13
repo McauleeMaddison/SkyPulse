@@ -13,10 +13,10 @@ namespace SkyPulse.Mobile
         const float PickupStatusRow = 34f;
         const float PickupStatusWidth = 900f;
         RectTransform readablePickupPanel;
-        readonly Text[] readablePickupLabels = new Text[6];
-        readonly int[] readablePickupCodes = new int[6];
-        readonly int[] readablePickupTenths = new int[6];
-        readonly int[] readablePickupBudgets = new int[6];
+        readonly Text[] readablePickupLabels = new Text[7];
+        readonly int[] readablePickupCodes = new int[7];
+        readonly int[] readablePickupTenths = new int[7];
+        readonly int[] readablePickupBudgets = new int[7];
         int readablePickupCount, readablePickupVisibleCount = -1;
         static readonly Color PickupInk = new Color(.95f, .98f, 1f);
         static readonly Color EchoInk = new Color(.81f, .73f, 1f);
@@ -80,6 +80,8 @@ namespace SkyPulse.Mobile
             if (hudPowerUpText != null && hudPowerUpText.gameObject.activeSelf)
                 hudPowerUpText.gameObject.SetActive(false);
             readablePickupCount = 0;
+            if (gateLinkRemaining > 0)
+                AddReadablePickup(6, 0f, -gateLinkRemaining, gateLinkHudLabel, EchoInk);
             if (crystalEchoTimer > 0f && crystalEchoBudget > 0)
                 AddReadablePickup(4, crystalEchoTimer, crystalEchoBudget, "ECHO", EchoInk);
             if (routeLensTimer > 0f)
@@ -131,6 +133,7 @@ namespace SkyPulse.Mobile
         static string ReadablePickupCopy(string label, int tenths, int budget)
         {
             string timer = tenths > 0 ? " " + (tenths * .1f).ToString("0.0", CultureInfo.InvariantCulture) + "s" : string.Empty;
+            if (budget < 0) return label + " · " + (-budget).ToString(CultureInfo.InvariantCulture) + " GATES";
             return budget > 0 ? label + timer + " · +" + budget.ToString(CultureInfo.InvariantCulture) + " LEFT" : label + timer;
         }
 

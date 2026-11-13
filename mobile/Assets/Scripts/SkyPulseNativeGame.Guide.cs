@@ -120,7 +120,7 @@ namespace SkyPulse.Mobile
                 case 1:
                     GuideStep(0, "EXPLORE THE CONNECTED TREE", "Open Tech Tree from Home. Drag in any direction to follow its Collection, Recovery and Mastery branches. Installed, NEXT and locked levels show your path.");
                     GuideStep(1, "INSPECT, THEN UPGRADE", "Tap an available level to inspect its exact crystal cost and effect, then confirm to buy. Reach level two in the preceding upgrade to open the next family.");
-                    GuideStep(2, "BUILD YOUR ENDLESS REWARDS", "There are nine upgrade families with three levels each. Their collection and reward benefits apply to Endless Route. Core savings are already included in the shown price.");
+                    GuideStep(2, "BUILD YOUR ENDLESS REWARDS", "Twelve families have three levels each. Pulse Matrix extends timed pickups; Supply Decoder and Link Reactor increase the two new pickup rewards. Benefits apply to Endless Route. Core savings are already included in the shown price.");
                     break;
                 case 2:
                     GuideStep(0, "EVOLVE THE CENTRAL CORE", "Tap the central SkyPulse Core in Tech Tree, then inspect the next level. Its colour and halo change as it evolves from ION through JADE, PRISM and SOLAR to NOVA.");

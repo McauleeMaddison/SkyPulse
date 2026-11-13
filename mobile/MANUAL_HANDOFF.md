@@ -6,7 +6,14 @@ Open **`mobile/` in Unity Hub** and the repository folder in VS Code. The shippi
 scene is `mobile/Assets/Scenes/SkyPulse.unity`. Start with the
 [editing map](EDITING_GUIDE.md) before changing code.
 
-## Current device candidate — 13 November 2026
+## Build 21 update — 13 November 2026
+
+[Build 21](Release/DeviceBuild21/README.md) carries the owner-requested Voltcrest
+Hangar wing profile, three additional permanent upgrade families and two automatic
+Endless pickups. See its QA record and refreshed weekend checklist. Its physical
+installation and owner acceptance are recorded separately.
+
+## Installed Build 20 — 13 November 2026
 
 [Build 20](Release/DeviceBuild20/README.md) is installed and launched with the latest visuals for the
 owner's Saturday/Sunday manual test. Native Home, Hangar and flight now load the

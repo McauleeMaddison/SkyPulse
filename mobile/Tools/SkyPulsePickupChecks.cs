@@ -89,8 +89,8 @@ public static class SkyPulsePickupChecks
             if(icon!=null)iconIds[kind]=icon;
         }
         UnityEngine.Random.state=randomState;
-        Check(spawned.SetEquals(new[]{"Aegis","TimePulse","CrystalMagnet","CrystalEcho","RouteLens"}),"The fixed-seed normal pooled random selection includes both new pickups and all three existing powers");
-        Check(matchingIcons&&iconIds.Values.Distinct().Count()==5,"All five normal spawn kinds use their own nonempty cached icon, including two distinct new emblems");
+        Check(spawned.SetEquals(new[]{"Aegis","TimePulse","CrystalMagnet","CrystalEcho","RouteLens","SupplyCache","GateLink"}),"The fixed-seed normal pooled random selection includes both new pickups and all three existing powers");
+        Check(matchingIcons&&iconIds.Values.Distinct().Count()==7,"All seven normal spawn kinds use their own nonempty cached icon, including two distinct new emblems");
         InspectIcon(game,"CrystalEcho");InspectIcon(game,"RouteLens");
         PhysicalCollection(game);Fresh(game);
         var echo=CollectPower(game,"CrystalEcho");float duration=Timer(game,"crystalEchoTimer");int budget=Count(game,"crystalEchoBudget");
@@ -211,7 +211,7 @@ public static class SkyPulsePickupChecks
         {
             var target=RenderTexture.GetTemporary(size.x,size.y,24);camera.targetTexture=target;camera.rect=new Rect(0,0,1,1);
             Call(game,"RefreshViewportDecor");Call(game,"OpenWorldGuide");
-            foreach(string group in new[]{"SURVIVAL","DISCOVERY"})
+            foreach(string group in new[]{"SURVIVAL","DISCOVERY","REWARDS"})
             {
                 var button=root.GetComponentsInChildren<Button>().Single(b=>b.GetComponentInChildren<Text>().text==group);
                 var other=root.GetComponentsInChildren<Button>().Single(b=>b.GetComponentInChildren<Text>().text==(group=="SURVIVAL"?"DISCOVERY":"SURVIVAL"));
@@ -222,7 +222,7 @@ public static class SkyPulsePickupChecks
                 Check((bool)Call(game,"InteractiveUiAt",at),"Guide tab is interactive UI and cannot become a gameplay tap at "+size);
                 ExecuteEvents.Execute<IPointerClickHandler>(button.gameObject,new PointerEventData(EventSystem.current){position=at,button=PointerEventData.InputButton.Left},ExecuteEvents.pointerClickHandler);
                 yield return null;Canvas.ForceUpdateCanvases();
-                string[] expected=group=="SURVIVAL"?new[]{"AEGIS","TIME PULSE","CRYSTAL MAGNET"}:new[]{"CRYSTAL ECHO","ROUTE LENS"};
+                string[] expected=group=="SURVIVAL"?new[]{"AEGIS","TIME PULSE","CRYSTAL MAGNET"}:group=="DISCOVERY"?new[]{"CRYSTAL ECHO","ROUTE LENS"}:new[]{"SUPPLY CACHE","GATE LINK"};
                 var labels=root.GetComponentsInChildren<Text>();
                 var rects=new List<Rect>();
                 foreach(var control in root.GetComponentsInChildren<Button>())

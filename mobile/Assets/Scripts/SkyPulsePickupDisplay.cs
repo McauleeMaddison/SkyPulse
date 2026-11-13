@@ -2,12 +2,12 @@ using UnityEngine;
 
 namespace SkyPulse.Mobile
 {
-    /// <summary>Five prebuilt, collider-free power housings. The existing pickup
+    /// <summary>Seven prebuilt, collider-free power housings. The existing pickup
     /// pool/session owns availability and rewards; this component only presents it.</summary>
     [DisallowMultipleComponent]
     public sealed class SkyPulsePickupDisplay : MonoBehaviour
     {
-        public const int KindCount=5;
+        public const int KindCount=7;
         readonly Transform[] models=new Transform[KindCount];
         readonly Mesh[] meshes=new Mesh[KindCount*2];
         readonly MeshRenderer[] shells=new MeshRenderer[KindCount],lights=new MeshRenderer[KindCount];
@@ -33,12 +33,12 @@ namespace SkyPulse.Mobile
             optic=new Material(shader){name="Pickup cut optical cores · shared"};
             optic.SetColor(BaseId,new Color(.12f,.31f,.38f));optic.SetFloat("_OpticFinish",1);optic.SetFloat("_Glass",.25f);optic.SetFloat("_Roughness",.22f);optic.SetFloat(EnergyId,.56f);
             metalProperties=new MaterialPropertyBlock();lightProperties=new MaterialPropertyBlock();
-            string[] names={"Aegis · shield casting","Crystal Magnet · open horseshoe","Time Pulse · orbital clock","Crystal Echo · twin quartz","Route Lens · optical aperture"};
+            string[] names={"Aegis · shield casting","Time Pulse · orbital clock","Crystal Magnet · open horseshoe","Crystal Echo · twin quartz","Route Lens · optical aperture","Supply Cache · faceted capsule","Gate Link · three circuit rings"};
             for(int i=0;i<KindCount;i++)
             {
                 var model=new GameObject(names[i]);model.layer=gameObject.layer;model.transform.SetParent(transform,false);models[i]=model.transform;
                 var body=new SkyPulseMeshBuilder();var energy=new SkyPulseMeshBuilder();
-                switch(i){case 0:Shield(body,energy);break;case 1:Magnet(body,energy);break;case 2:Clock(body,energy);break;case 3:Echo(body,energy);break;default:Lens(body,energy);break;}
+                switch(i){case 0:Shield(body,energy);break;case 1:Clock(body,energy);break;case 2:Magnet(body,energy);break;case 3:Echo(body,energy);break;case 4:Lens(body,energy);break;case 5:Cache(body,energy);break;default:Link(body,energy);break;}
                 meshes[i*2]=body.Finish(names[i]+" · closed alloy");meshes[i*2+1]=energy.Finish(names[i]+" · recessed light");
                 shells[i]=SkyPulseMeshBuilder.Surface(model.transform,"Machined shell",meshes[i*2],metal,13);
                 lights[i]=SkyPulseMeshBuilder.Surface(model.transform,"Optical core",meshes[i*2+1],optic,14);
@@ -109,6 +109,23 @@ namespace SkyPulse.Mobile
                 var chip=new[]{new Vector2(-.035f,-.06f),new Vector2(.035f,-.06f),new Vector2(.035f,.06f),new Vector2(-.035f,.06f)};
                 Bevel(energy,chip,.013f,at,Quaternion.Euler(0,0,45+i*90));
             }
+        }
+        static void Cache(SkyPulseMeshBuilder body,SkyPulseMeshBuilder energy)
+        {
+            var hex=new Vector2[6];for(int i=0;i<6;i++){float a=(i*60+30)*Mathf.Deg2Rad;hex[i]=new Vector2(Mathf.Cos(a)*.47f,Mathf.Sin(a)*.47f);}
+            Bevel(body,hex,.16f,Vector3.zero,Quaternion.identity);
+            for(int i=0;i<6;i++)Tube(energy,.373f,.018f,7,i*60+6,40,Quaternion.identity,new Vector3(0,0,-.169f));
+            for(int i=0;i<3;i++)Facet(energy,new Vector3((i-1)*.16f,0,-.18f),.085f,.19f,6);
+        }
+        static void Link(SkyPulseMeshBuilder body,SkyPulseMeshBuilder energy)
+        {
+            for(int i=0;i<3;i++)
+            {
+                var at=new Vector3((i-1)*.28f,(i==1?-.06f:.06f),(i-1)*.035f);
+                Tube(body,.20f,.047f,40,0,360,Quaternion.identity,at);
+                Tube(energy,.20f,.014f,34,5,290,Quaternion.identity,at+Vector3.back*.047f);
+            }
+            Facet(energy,new Vector3(0,-.06f,-.055f),.065f,.13f,6);
         }
         static void Facet(SkyPulseMeshBuilder mesh,Vector3 centre,float radius,float halfHeight,int sides)
         {

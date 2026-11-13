@@ -1,5 +1,10 @@
 # SkyPulse Arcade
 
+[Build 21](mobile/Release/DeviceBuild21/README.md) adds Voltcrest-style Hangar motion,
+Pulse Matrix, Supply Decoder and Link Reactor, plus pooled Supply Cache and Gate Link
+pickups. The three branches now contain 36 upgrade levels. Focused and full Editor
+checks passed; its release record tracks signing, installation and owner acceptance.
+
 
 The [Build 20 device candidate](mobile/Release/DeviceBuild20/README.md) adds the
 native fifteen-bird 3D roster to Home, Hangar and both flight modes, with a full

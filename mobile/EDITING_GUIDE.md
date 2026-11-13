@@ -354,3 +354,17 @@ The native swipe/price/trait UI remains in `SkyPulseNativeGame.Hangar.cs`.
 Canonical meshes/materials/prefabs stay in the existing Bird Workshop folders.
 Three low shoulder prefabs were corrected without changing their geometry or
 GUIDs; keep manual structural edits in Unity. See the [current record](Development/PolishPass20261110/README.md).
+
+
+## Build 21 field equipment and Hangar motion
+
+`SkyPulseNativeGame.FieldTech.cs` owns Supply Cache / Gate Link rewards and timed-pickup
+duration bonuses. The existing catalogue, collection, gate-pass, HUD, save and purchase
+handlers call it. New fourth-tier families live in the existing three tree branches;
+keep their stable IDs and the old IDs. `SkyPulsePickupDisplay.cs` builds all seven
+pooled silhouettes once. Use the shared enum order when adding another display.
+
+`SkyPulseSolidBirdStudio.MatchVoltcrestDisplayWings` retargets only instantiated
+rotating Hangar rigs. It retains each shoulder position, mesh and source prefab.
+Accepted-tap gameplay remains in `SkyPulseNativeGame.SolidBirds.cs` and the existing
+wing state machine; do not replace it with the continuous showcase clock.

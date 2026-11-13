@@ -68,6 +68,7 @@ public static class SkyPulseFinalPolishChecks
         SkyPulseBirdRosterPreview.Select("",false);Call(g,"ResetToMenu");camera.targetTexture=null;RenderTexture.ReleaseTemporary(target);
         File.WriteAllText(Path.Combine(Output,"VALIDATION.json"),JsonUtility.ToJson(new Report{result="PASS",checks=checks.ToArray(),deviceTested=false,scope="Isolated Unity Editor: existing full bird/controls/UI/progression/gate/puzzle/pipe/world suites plus final lighting/UI changes and all eight exact free-plan outcomes. Rendered review candidate, owner visual acceptance and runtime solid promotion pending."},true));
         Debug.Log("SKYPULSE_FINAL_POLISH_PASS");
+        if(Environment.GetEnvironmentVariable("SKYPULSE_INCLUDE_FIELD_TECH")=="1")yield return SkyPulseFieldTechChecks.Live(g,camera,target);
         if(Environment.GetEnvironmentVariable("SKYPULSE_INCLUDE_RUNTIME")=="1")
         {
             SkyPulseNativeGame.ReviewOriginalBirdArtwork=false;SkyPulseBirdRosterPreview.Select("",false);

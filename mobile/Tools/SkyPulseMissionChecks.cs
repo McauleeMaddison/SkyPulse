@@ -155,7 +155,7 @@ public static class SkyPulseMissionChecks
         Check(skins.Length==15 && paths.Count==120,"Exactly fifteen birds and 120 unique frame paths");
         var tech=(Array)typeof(SkyPulseNativeGame).GetField("Upgrades",BindingFlags.Static|BindingFlags.NonPublic).GetValue(null);
         var ids=new HashSet<string>();foreach(var node in tech)Check(ids.Add((string)Get(node,"Id")) && (int)node.GetType().GetProperty("MaxLevel").GetValue(node)==3,"Stable unique three-level Tech Tree node");
-        Check(tech.Length==9,"Exactly nine Tech Tree nodes");
+        Check(tech.Length==12,"Twelve unique Tech Tree families");
         foreach(var node in tech){string prerequisite=(string)Get(node,"PrerequisiteId");Check(string.IsNullOrEmpty(prerequisite)||ids.Contains(prerequisite),"Tech prerequisite resolves to a stable node");}
         ((HashSet<string>)Get(game,"ownedSkinIds")).Clear();((IDictionary)Get(game,"upgradeLevels")).Clear();((HashSet<string>)Get(game,"ownedUpgradeIds")).Clear();
         foreach(var node in tech)PlayerPrefs.DeleteKey("skypulse.native.upgrade."+Get(node,"Id"));

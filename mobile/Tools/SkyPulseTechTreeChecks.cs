@@ -47,7 +47,7 @@ public static class SkyPulseTechTreeChecks
         Check(scroll.horizontal&&scroll.vertical&&content.rect.width>scroll.viewport.rect.width&&content.rect.height>scroll.viewport.rect.height,"The tree supports one-finger/mouse panning on both axes");
         Check(scroll.verticalScrollbar==null&&!scroll.viewport.Find("Collection scroll track").gameObject.activeSelf&&scroll.scrollSensitivity==0,"No visible scrollbar or mouse-wheel scrolling remains in the free-pan tree");
         var beforeWheel=content.anchoredPosition;scroll.OnScroll(new PointerEventData(EventSystem.current){scrollDelta=new Vector2(0,10)});Check(content.anchoredPosition==beforeWheel,"Mouse wheel cannot move the drag-only tree");
-        Check(tree.SculptureCount==10,"The core and all nine upgrade roots have animated 3D optical sculptures");
+        Check(tree.SculptureCount==13,"The core and all twelve upgrade roots have animated 3D optical sculptures");
         var projector=tree.TreeCamera.transform.parent.Find("Living SkyPulse core projector");
         var rotating=projector.Find("Levitating upgrade prism");var fixedPoint=projector.localPosition;var oldRotation=rotating.localRotation;tree.Tick(.2f);
         Check(Quaternion.Angle(oldRotation,rotating.localRotation)>.1f&&projector.localPosition==fixedPoint,"The 3D projector animates while its connected branch root remains fixed");
@@ -69,7 +69,7 @@ public static class SkyPulseTechTreeChecks
         nextControl.GetComponent<Button>().onClick.Invoke();tree.Tick(1);
         Check(!tree.IsFocusing&&content.anchoredPosition!=Vector2.zero&&(int)Get(game,"crystals")==beforeFocus&&!((GameObject)Get(game,"purchaseModal")).activeSelf,"Next locator centres an available upgrade without opening or spending");
         var identities=content.GetComponentsInChildren<Text>().Where(t=>t.name.EndsWith(" identity")).ToArray();
-        Check(identities.Length==27&&identities.All(t=>t.fontSize==26&&t.preferredWidth<=t.rectTransform.rect.width+1&&t.preferredHeight<=t.rectTransform.rect.height+1),"All 27 concise upgrade identities fit at a readable single-line size");
+        Check(identities.Length==36&&identities.All(t=>t.fontSize==26&&t.preferredWidth<=t.rectTransform.rect.width+1&&t.preferredHeight<=t.rectTransform.rect.height+1),"All 36 concise upgrade identities fit at a readable single-line size");
         foreach(int fps in new[]{30,60,120})
         {
             tree.FocusCore();tree.Tick(1);tree.FocusPoint(new Vector2(-690,-1070));
@@ -91,8 +91,8 @@ public static class SkyPulseTechTreeChecks
         touch.OnPointerDown(new PointerEventData(EventSystem.current){button=PointerEventData.InputButton.Left});
         Check((int)Get(game,"crystals")==originalBalance&&!((GameObject)Get(game,"purchaseModal")).activeSelf,"Immediate visual press feedback cannot purchase an upgrade");
         pan.OnBeginDrag(new PointerEventData(EventSystem.current));
-        Check(tree.BranchCount==39&&tree.SocketCount==37,"One core feeds three trunks, nine families and all 27 upgrade levels");
-        Check(content.GetComponentsInChildren<Text>().Count(t=>t.text.StartsWith("LEVEL "))==27&&content.GetComponentsInChildren<Text>().Any(t=>t.text.StartsWith("NEXT · "))&&content.GetComponentsInChildren<Text>().Any(t=>t.text=="LOCKED"),"Every upgrade point has a prominent level label and an explicit next/locked state");
+        Check(tree.BranchCount==51&&tree.SocketCount==49,"One core feeds three trunks, twelve families and all 36 upgrade levels");
+        Check(content.GetComponentsInChildren<Text>().Count(t=>t.text.StartsWith("LEVEL "))==36&&content.GetComponentsInChildren<Text>().Any(t=>t.text.StartsWith("NEXT · "))&&content.GetComponentsInChildren<Text>().Any(t=>t.text=="LOCKED"),"Every upgrade point has a prominent level label and an explicit next/locked state");
         var lettering=content.GetComponentsInChildren<SkyPulseHolographicText>();
         Check(lettering.Length==content.GetComponentsInChildren<Text>().Length&&lettering.All(t=>t.GetComponent<Text>().material==tree.TypographyMaterial),"All tree lettering shares one optical material instead of duplicated glow text");
         Check(Resources.Load<Shader>("SkyPulse/Shaders/HolographicText").isSupported&&tree.TypographyMaterial.shader.name=="SkyPulse/Holographic Lettering","Holographic font shader compiles with the font atlas and UI clipping");
@@ -106,7 +106,7 @@ public static class SkyPulseTechTreeChecks
         var reachable=new HashSet<Vector2>{new Vector2(0,-250)};
         for(int pass=0;pass<40;pass++)foreach(var b in tree.Branches)if(reachable.Contains(b.From))reachable.Add(b.To);
         Check(tree.Roots.All(r=>reachable.Contains(r.At)),"Every family and level remains connected to the single core");
-        Check(content.GetComponentsInChildren<Button>().Length==37&&!content.GetComponentsInChildren<Image>().Any(i=>i.color.a>.001f),"No separate opaque upgrade cards; fixed generous touch areas overlay the continuous tree");
+        Check(content.GetComponentsInChildren<Button>().Length==49&&!content.GetComponentsInChildren<Image>().Any(i=>i.color.a>.001f),"No separate opaque upgrade cards; fixed generous touch areas overlay the continuous tree");
         Check(content.GetComponentsInChildren<Button>().All(b=>((RectTransform)b.transform).rect.width>=200&&((RectTransform)b.transform).rect.height>=180),"Every root/level has a generous stationary touch target");
         var targets=content.GetComponentsInChildren<Button>();
         for(int i=0;i<targets.Length;i++)for(int j=i+1;j<targets.Length;j++)

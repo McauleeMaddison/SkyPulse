@@ -17,8 +17,8 @@ public static class SkyPulsePickupDisplayChecks
         try
         {
             display.Build();int children=root.transform.childCount;var surfaces=root.GetComponentsInChildren<MeshRenderer>(true);var meshes=root.GetComponentsInChildren<MeshFilter>(true).Select(f=>f.sharedMesh).ToArray();
-            Check(display.BuildCount==1&&children==5&&surfaces.Length==10&&meshes.Length==10,"All five housings and their two surfaces are built once");
-            Check(display.MaterialCount==2&&surfaces.Select(r=>r.sharedMaterial).Distinct().Count()==2,"Ten surfaces share only two supported finish materials");
+            Check(display.BuildCount==1&&children==7&&surfaces.Length==14&&meshes.Length==14,"All seven housings and their two surfaces are built once");
+            Check(display.MaterialCount==2&&surfaces.Select(r=>r.sharedMaterial).Distinct().Count()==2,"Fourteen surfaces share only two supported finish materials");
             Check(surfaces.All(r=>r.sharedMaterial!=null&&r.sharedMaterial.shader.isSupported),"All pickup finish shaders are supported");
             Check(root.GetComponentsInChildren<Collider>(true).Length==0&&root.GetComponentsInChildren<Collider2D>(true).Length==0,"Presentation contributes no pickup or flight colliders");
             var signatures=new HashSet<string>();
@@ -31,7 +31,7 @@ public static class SkyPulsePickupDisplayChecks
                 Check(shell.vertexCount+light.vertexCount<16000,"Pickup construction stays inside its bounded mesh budget: "+kind);
                 signatures.Add(shell.vertexCount+"/"+light.vertexCount+"/"+bounds.size);
                 display.Present(kind,2.25f,false,Color.cyan,Color.white);
-                Check(display.CurrentKind==kind&&Enumerable.Range(0,5).Count(i=>display.Model(i).gameObject.activeSelf)==1,"Exactly the requested power is visible: "+kind);
+                Check(display.CurrentKind==kind&&Enumerable.Range(0,SkyPulsePickupDisplay.KindCount).Count(i=>display.Model(i).gameObject.activeSelf)==1,"Exactly the requested power is visible: "+kind);
                 var rotation=display.Model(kind).localRotation;
                 foreach(int hz in new[]{30,60,120})
                 {
@@ -45,10 +45,10 @@ public static class SkyPulsePickupDisplayChecks
                 display.Present(kind,2.25f,false,Color.cyan,Color.white);
                 Check(Quaternion.Angle(rotation,display.Model(kind).localRotation)<.001f,"Repeated time has no frame-history drift: "+kind);
             }
-            Check(signatures.Count==5,"All five pickup silhouettes have distinct saved construction signatures");
+            Check(signatures.Count==7,"All seven pickup silhouettes have distinct saved construction signatures");
             display.Build();Check(display.BuildCount==1&&root.transform.childCount==children,"Repeated Build cannot duplicate model children");
-            for(int i=0;i<30;i++)display.Present(i%5,4.5f,false,Color.cyan,Color.white);
-            long before=GC.GetAllocatedBytesForCurrentThread();for(int i=0;i<180;i++)display.Present(i%5,4.5f,false,Color.cyan,Color.white);
+            for(int i=0;i<30;i++)display.Present(i%SkyPulsePickupDisplay.KindCount,4.5f,false,Color.cyan,Color.white);
+            long before=GC.GetAllocatedBytesForCurrentThread();for(int i=0;i<180;i++)display.Present(i%SkyPulsePickupDisplay.KindCount,4.5f,false,Color.cyan,Color.white);
             Check(GC.GetAllocatedBytesForCurrentThread()==before,"Warmed model switches and presentation allocate no managed memory");
             Check(root.transform.childCount==children&&root.GetComponentsInChildren<MeshFilter>(true).Select(f=>f.sharedMesh).SequenceEqual(meshes),"Animations retain the original pooled geometry");
             Check(surfaces.Select(r=>r.sharedMaterial).Distinct().Count()==2,"Presentation creates no material instances");
@@ -67,7 +67,7 @@ public static class SkyPulsePickupDisplayChecks
         var display=root.GetComponent<SkyPulsePickupDisplay>()??root.GetComponentInChildren<SkyPulsePickupDisplay>(true);
         Check(display!=null,"Actual power pool owns the true-depth display component");
         var enumType=pickup.GetType().GetField("Kind",flags).FieldType;
-        for(int kind=0;kind<5;kind++)
+        for(int kind=0;kind<SkyPulsePickupDisplay.KindCount;kind++)
         {
             Call(game,"ConfigurePowerUp",pickup,gate);Set(pickup,"Kind",Enum.ToObject(enumType,kind));Set(pickup,"Active",true);
             Call(game,"UpdatePowerUps",0f);yield return null;
