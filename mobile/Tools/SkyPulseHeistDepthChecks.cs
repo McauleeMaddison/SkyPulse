@@ -125,7 +125,7 @@ public static class SkyPulseHeistDepthChecks
         var optics=(Array)Get(liveBoard,"modules");var moving=optics.GetValue(6);
         var housing=(MeshRenderer)Get(moving,"Collar");var mirror=(MeshRenderer)Get(moving,"MirrorRenderer");
         Check(housing.GetComponent<MeshFilter>().sharedMesh.bounds.size.z>.10f,"Fine retaining clamps have genuine depth without a bulky annular sleeve");
-        var smoked=mirror.sharedMaterial.GetColor("_BaseColor");Check(smoked.a<.6f&&smoked.r<.10f,"Interactive mirror is smoked optical glass rather than an opaque pearl bar");
+        var smoked=mirror.sharedMaterial.GetColor("_BaseColor");Check(smoked.a>.65f&&smoked.a<1&&mirror.sharedMaterial.GetFloat("_Glass")==1,"Interactive optic retains translucent glass and a separate physical frame");
         var frame=(MeshRenderer)Get(moving,"MirrorFrame");Check(frame.GetComponent<MeshFilter>().sharedMesh.bounds.size.z>.15f,"A separate narrow titanium frame defines the prism edges");
         CheckInactiveOpticContrast(liveBoard,new[]{frame,mirror,(MeshRenderer)Get(moving,"Collar"),(MeshRenderer)Get(moving,"Base")},"inactive-prism",80);
         int uplink=Enumerable.Range(0,first.Puzzle.Count).First(t=>first.Puzzle.Tile(t)=='E');

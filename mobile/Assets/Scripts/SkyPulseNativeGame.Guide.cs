@@ -95,7 +95,7 @@ namespace SkyPulse.Mobile
                 }
                 else
                 {
-                    GuideStep(0, "RESTORE EIGHT CITY SYSTEMS", "Each vault restores a named city system. The skyline ribbon responds to live core power; a cleared district stays online in your saved campaign.");
+                    GuideStep(0, "RESTORE EIGHT CITY SYSTEMS", "The 3D island responds to live core power. Cleared systems add window, beacon or transit lighting to all twelve flight worlds. Your restored systems stay saved.");
                     GuideStep(1, "PROTECT YOUR TRACE", "Each turn costs 1 trace, or 3 while a red sensor is powered. Light every core and the uplink before the budget runs out, or restart the vault.");
                     GuideStep(2, "CHASE GOLD, KEEP MOVING", "Meet the displayed Gold trace target for the top medal. Cleared vaults save once and activate the next puzzle immediately; the eighth completes the network.");
                 }

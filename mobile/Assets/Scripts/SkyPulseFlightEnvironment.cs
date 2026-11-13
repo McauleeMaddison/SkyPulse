@@ -16,7 +16,8 @@ namespace SkyPulse.Mobile
         readonly MeshRenderer[,] districtRenderers=new MeshRenderer[2,Layers*PerLayer];
         readonly MaterialPropertyBlock[,] districtFinish=new MaterialPropertyBlock[2,Layers*PerLayer];
         readonly Material[] surfaces=new Material[2];
-        readonly int[] bankTheme={-1,-1};
+        readonly int[] bankTheme={-1,-1},bankRestoration={-1,-1};
+        public int RestoredMask {get;set;}
         readonly Texture[] reflections=new Texture[Themes];
         Mesh skyMesh;Material skyMaterial;Texture3D cloudNoise;bool ownsCloudNoise;Transform sky;SkyPulseAtmosphereDepth atmosphereDepth;
         Transform worldScene,composite;Camera worldCamera;Light cityKey;RenderTexture worldImage;Mesh compositeMesh;Material compositeMaterial;float viewAspect;
@@ -251,7 +252,7 @@ namespace SkyPulse.Mobile
         }
         void SetBank(int bank,int theme,float distance,float clock,float visibility,Color tint,Color haze)
         {
-            bool changed=bankTheme[bank]!=theme;bankTheme[bank]=theme;
+            bool changed=bankTheme[bank]!=theme;bool lightingChanged=bankRestoration[bank]!=(RestoredMask&255);bankTheme[bank]=theme;bankRestoration[bank]=RestoredMask&255;
             // Theme-owned origins keep the outgoing bank registered with the
             // incoming bank it replaces. A new world's authored arrival starts
             // at its actual route-entry distance, even at a nonzero run score.
@@ -276,7 +277,7 @@ namespace SkyPulse.Mobile
                 int districtCount=layer==0?1:layer==1?2:0;bool show=visible&&slot<districtCount;
                 if(item.gameObject.activeSelf!=show)item.gameObject.SetActive(show);
                 int variant=layer==1&&slot==1?1:0;
-                if(changed&&slot<districtCount)
+                if((changed||lightingChanged)&&slot<districtCount)
                 {
                     item.GetComponent<MeshFilter>().sharedMesh=variant==0?silhouettes[theme]:residential[theme];
                     var renderer=districtRenderers[bank,i];var finish=districtFinish[bank,i];
@@ -285,6 +286,7 @@ namespace SkyPulse.Mobile
                     finish.SetFloat("_WindowGlow",layer==0?.18f:slot==0?.84f:.48f);
                     finish.SetFloat("_BeaconGlow",layer==0?.10f:slot==0?.50f:.25f);
                     finish.SetFloat("_Backdrop",layer==0?.05f:0);
+                    SkyPulseWorldRestoration.Apply(finish,RestoredMask);
                     renderer.SetPropertyBlock(finish);
                 }
                 if(!show)continue;

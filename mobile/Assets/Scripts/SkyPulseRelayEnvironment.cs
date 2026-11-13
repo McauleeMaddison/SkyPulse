@@ -50,7 +50,22 @@ namespace SkyPulse.Mobile
             foreach(var item in scene.GetComponentsInChildren<Transform>(true))item.gameObject.layer=30;
             SetVisual(0,0);
             LoadAuthoredStructures();
+            ApplyTitaniumSkyport();
             if(authored!=null)SetVisual(0,0);
+        }
+        void ApplyTitaniumSkyport()
+        {
+            // Preserve both towers and their connected middle/lower/arrival
+            // decks. Clear only the competing overhead scenery chosen in A.
+            foreach(var item in scene.GetComponentsInChildren<Transform>(true))
+            {
+                string n=item.name;
+                bool quiet=n.Contains("recycler")||n.Contains("launch hub")||n.Contains("Overhead optical")||n.Contains("Inner orbital")||n.Contains("Outer orbital")||n.Contains("Lower distant moon")||n.Contains("upper concourse")||n.Contains("Upper transit")||n=="Distant service spire 2"||n=="Distant service spire 4"||n=="Autonomous maintenance drone 1";
+                if(quiet)item.gameObject.SetActive(false);
+                var renderer=item.GetComponent<MeshRenderer>();if(renderer==null)continue;
+                var finish=renderer.sharedMaterial;
+                if(finish!=null&&finish.HasProperty("_TitaniumFinish")){finish.SetFloat("_TitaniumFinish",1);finish.SetColor("_Tint",new Color(.24f,.69f,.96f));}
+            }
         }
         void LoadAuthoredStructures()
         {

@@ -67,6 +67,7 @@ namespace SkyPulse.Mobile
             float blend=worldTransitionTimer>0?Mathf.SmoothStep(0,1,1-worldTransitionTimer/WorldTransitionSeconds):1;
             var world=routeWorld??equippedWorld;
             if(flightEnvironment.ReflectionWorld!=routeWorldIndex)flightEnvironment.SetReflection(routeWorldIndex,LoadSprite(world.BackgroundPath).texture);
+            flightEnvironment.RestoredMask=blackoutCampaign!=null?blackoutCampaign.RestoredMask:0;
             flightEnvironment.Present(routeWorldIndex,home?sceneryHomeTravel:sceneryViewOrigin+sceneryTravel,cinematicClock,blend,world.Accent,world.Floor,reduceMotionEnabled,home||reduceMotionEnabled?1:Mathf.SmoothStep(0,1,sceneryEntry));
             sceneryLastDistance=flightEnvironment.Travel;sceneryLastWorld=routeWorldIndex;sceneryHasView=true;sceneryWasHome=home;
             flightEnvironment.SetViewport(GetViewportWidth());flightEnvironment.Render();

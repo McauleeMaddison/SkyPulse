@@ -13,6 +13,11 @@ Shader "SkyPulse/Flight Architecture"
         _Geology("Mineral strata",Float)=0
         _Design("District identity",Float)=0
         _WindowGlow("Occupied window illumination",Range(0,1))=1
+        _RestoredWindows("Blackout occupied rooms",Float)=0
+        _RestorePulse("Completed restoration scan",Float)=0
+        _RestoredBeacons("Blackout dock and shield LEDs",Float)=0
+        _RestoredTransit("Blackout transit lighting",Float)=0
+        _TitaniumFinish("Relay titanium finish",Float)=0
         _Backdrop("Distant skyline haze",Range(0,1))=0
         _DistrictDepth("Composed aerial perspective",Range(0,1))=0
         _BeaconGlow("Star LED light spill",Range(0,1))=1
@@ -36,6 +41,7 @@ Shader "SkyPulse/Flight Architecture"
             #include "AutoLight.cginc"
             struct app {float4 vertex:POSITION;float3 normal:NORMAL;float4 color:COLOR;};
             struct vary {float4 pos:SV_POSITION;float3 world:TEXCOORD0;float3 normal:TEXCOORD1;float4 color:COLOR;float3 local:TEXCOORD2;SHADOW_COORDS(3)};
+            float _RestorePulse,_RestoredWindows,_RestoredBeacons,_RestoredTransit,_TitaniumFinish;
             float _Visibility,_Clock,_Architecture,_Geology,_Design,_WindowGlow,_BeaconGlow,_Backdrop,_DistrictDepth;float4 _Tint,_Haze,_KeyTone,_FillTone;
             float4 _BeaconPoints[5],_BeaconColours[5];
             sampler2D _Environment,_SurfaceTex;float _SurfaceAmount,_SurfaceScale;
@@ -68,6 +74,8 @@ Shader "SkyPulse/Flight Architecture"
                 // the frame and glass have separate roughness and reflectance.
                 float softbox=pow(saturate(1-abs(reflection.x*.72+reflection.y*.32-.19)*1.75),22);
                 float spec=pow(saturate(dot(n,halfway)),lerp(52,126,glass));
+                float alloyMask=(1-step(.25,i.color.a))*_TitaniumFinish;
+                i.color.rgb=lerp(i.color.rgb,float3(.32,.43,.53)*clamp(.68+dot(i.color.rgb,float3(.299,.587,.114))*.60,.70,1.1),alloyMask);
                 float3 surfaceColour=lerp(i.color.rgb,float3(.035,.055,.085)+i.color.rgb*.04,neon);
                 // A warm key and cool sky fill expose the actual wall, sill and
                 // crown normals. Keep alloy solid rather than glowing glass.
@@ -125,8 +133,13 @@ Shader "SkyPulse/Flight Architecture"
                 colour*=1-masonry*mortar*.18;
                 colour*=lerp(1,.95+hash21(floor(courses))*.10,masonry);
                 float floorShade=lerp(.72,1,smoothstep(-.10,.50,i.local.y));colour*=floorShade;
+                // Each completed network adds light to existing physical geometry.
+                // The zero-progress shader remains identical to the original.
+                colour+=i.color.rgb*neon*_RestoredWindows*.65;
+                float restoreBand=pow(saturate(1-abs(i.local.y-(1-_RestorePulse)*11)*1.8),3);
+                colour+=float3(.16,.65,.95)*restoreBand*_RestorePulse*.18*saturate(neon+light);
                 float pulse=.88+.08*sin(_Clock*.46-i.local.y*1.7+_Design);
-                colour=lerp(colour,i.color.rgb*pulse*.88+ambient*.05,light);
+                colour=lerp(colour,i.color.rgb*pulse*(.88+(i.local.y<0?_RestoredBeacons:_RestoredTransit)*.65)+ambient*.05,light);
                 // Local LED spill is evaluated on the real cliff/foundation,
                 // not on a transparent square. Shared mesh-space positions keep
                 // it attached during parallax, rotation and nonuniform scaling.
@@ -141,7 +154,7 @@ Shader "SkyPulse/Flight Architecture"
                         float ledPulse=.90+.07*sin(_Clock*.80+beacon*.63+_Design);
                         spill+=_BeaconColours[beacon].rgb*exp2(-distanceToLed*distanceToLed*1.35)*ledPulse*step(.01,radius);
                     }
-                    colour+=spill*_BeaconGlow*.58;
+                    colour+=spill*(_BeaconGlow+_RestoredBeacons)*.58;
                 }
                 if(_Design<.5)
                 {

@@ -63,14 +63,18 @@ Shader "SkyPulse/Heist Optical Materials"
                     float softbox=pow(saturate(1-abs(reflection.x*.78+reflection.y*.36+.18)*1.9),18);
                     float secondary=pow(saturate(1-abs(reflection.x-.48)*2.7),28);
                     float edge=pow(1-saturate(dot(n,v)),4);
+                    // A broad overhead card complements the narrow reflected
+                    // strip: the fixed desk angle must not leave its optics
+                    // outside every highlight. Real bevel normals vary the fill.
+                    float overhead=pow(saturate(dot(n,normalize(float3(-.23,.56,-.80)))),18);
                     // A neutral environmental fill keeps dark titanium readable on
                     // phones without adding a broad white/plastic reflection.
                     float diffuseOptic=.55+.50*saturate(dot(n,light))+.15*saturate(dot(n,fill));
-                    float3 alloy=_BaseColor.rgb*i.color.rgb*diffuseOptic+float3(.67,.79,.90)*(softbox*.23+spec*.50+edge*.10)+float3(.15,.30,.37)*secondary*.20;
+                    float3 alloy=_BaseColor.rgb*i.color.rgb*diffuseOptic+float3(.67,.79,.90)*(softbox*.23+spec*.50+edge*.10+overhead*.18)+float3(.15,.30,.37)*secondary*.20;
                     float brushAA=saturate(1-fwidth(i.local.y*94));
                     alloy*=1+sin(i.local.y*94)*sin(i.local.x*117)*brushAA*.004;
                     float glassEdge=pow(edge,.55);
-                    float3 opticGlass=_BaseColor.rgb*i.color.rgb*(.40+diffuseOptic*.35)+float3(.70,.89,1)*(spec*.65+softbox*.35+glassEdge*.18);
+                    float3 opticGlass=_BaseColor.rgb*i.color.rgb*(.40+diffuseOptic*.35)+float3(.70,.89,1)*(spec*.65+softbox*.35+glassEdge*.18+overhead*.22);
                     float ledMask=smoothstep(.70,.95,i.color.a);
                     float3 emission=_GlowColor.rgb*_Energy*(ledMask*.90+_Glass*.24);
                     tint=lerp(alloy,opticGlass,_Glass)+emission;

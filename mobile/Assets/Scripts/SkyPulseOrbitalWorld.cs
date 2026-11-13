@@ -28,7 +28,7 @@ namespace SkyPulse.Mobile
                 metal.SetFloat("_SurfaceScale",.65f);habitat.SetFloat("_SurfaceScale",.45f);
             }
             Add("Orbital atmosphere",sphere,sky,new Vector3(0,0,-18),Vector3.one*145,Quaternion.identity,-48);
-            planetTransform=Add("Distant blue planet",sphere,planet,new Vector3(7,12,85),Vector3.one*15,Quaternion.Euler(0,0,-18),-46);
+            planetTransform=Add("Distant blue planet",sphere,planet,new Vector3(8,14,96),Vector3.one*12,Quaternion.Euler(0,0,-18),-46);
             Add("West distant moon",sphere,rockMoon,new Vector3(-18,-10,85),Vector3.one*4,Quaternion.Euler(0,17,0),-46);
             Add("Lower distant moon",sphere,iceMoon,new Vector3(-5,-15,92),Vector3.one*3,Quaternion.Euler(0,71,0),-46);
             Add("Orbital LED star field",beacons,beaconMaterial,new Vector3(0,0,100),Vector3.one*1.35f,Quaternion.identity,-44);

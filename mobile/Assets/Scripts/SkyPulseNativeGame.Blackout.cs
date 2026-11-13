@@ -13,8 +13,9 @@ namespace SkyPulse.Mobile
         readonly List<Text> blackoutNodeLabels=new List<Text>();
         readonly List<SkyPulsePressTarget> blackoutPressTargets=new List<SkyPulsePressTarget>();
         readonly Vector2[] blackoutPositions=new Vector2[49];
-        SkyPulseBlackoutGraphic blackoutTraceGauge,blackoutHomeBackdrop,blackoutNetwork;
+        SkyPulseBlackoutGraphic blackoutTraceGauge,blackoutHomeBackdrop;
         SkyPulseHeistBoard blackoutBoard;
+        SkyPulseRestorationDisplay blackoutRestoration;RectTransform blackoutOpticalArea;Text blackoutRestorationCaption;
         Text blackoutVaultText,blackoutBriefing,blackoutCompletionToast,blackoutObjectiveTitle;
         Button blackoutPlanButton,blackoutCommitButton,blackoutRestartButton;
         BlackoutSession blackoutPreview;
@@ -72,6 +73,7 @@ namespace SkyPulse.Mobile
             FitBlackoutToSafeArea();
             if(state==FlightState.Paused&&blackoutPlanning)CancelBlackoutPreview();
             if(blackoutBoard!=null){blackoutBoard.ReducedMotion=reduceMotionEnabled;blackoutBoard.MotionPaused=state==FlightState.Paused;}
+            if(blackoutRestoration!=null){blackoutRestoration.ReducedMotion=reduceMotionEnabled;blackoutRestoration.MotionPaused=state==FlightState.Paused;}
             for(int i=blackoutGraphics.Count-1;i>=0;i--){var g=blackoutGraphics[i];if(g==null){blackoutGraphics.RemoveAt(i);continue;}g.ReducedMotion=reduceMotionEnabled;g.MotionPaused=state==FlightState.Paused;}
         }
         void FitBlackoutToSafeArea()
@@ -80,7 +82,7 @@ namespace SkyPulse.Mobile
             var r=(RectTransform)blackoutScreen.transform;
             // Compact portrait layout fits seven 150-unit targets at the safe
             // width even on 320-point phones; the board is not shrunk with menus.
-            r.localScale=Vector3.one*Mathf.Min(safeAreaRoot.rect.width/1080,safeAreaRoot.rect.height/1680);
+            r.localScale=Vector3.one*Mathf.Min(safeAreaRoot.rect.width/1080,safeAreaRoot.rect.height/1820);
             foreach(Transform child in r)if(child is RectTransform backing&&interfaceBackdrops.Contains(backing)){backing.sizeDelta=((RectTransform)uiRoot.transform).rect.size/r.localScale.x;backing.position=uiRoot.transform.position;}
         }
         void ResetBlackoutEffects(){blackoutGeneration++;FenceGameplayBoundary();blackoutPlanning=false;blackoutPreviewTile=-1;blackoutToastRemaining=0;if(blackoutBoard!=null){blackoutBoard.Clear();blackoutBoard.Reveal=0;}}
@@ -119,7 +121,7 @@ namespace SkyPulse.Mobile
             blackoutPlanning=false;blackoutPreviewTile=-1;blackoutPreview=new BlackoutSession(p);
             if(!blackoutLabBuilt)
             {
-                blackoutLabBuilt=true;var root=(RectTransform)blackoutScreen.transform;root.SetParent(safeAreaRoot,false);root.anchorMin=root.anchorMax=new Vector2(.5f,.5f);root.sizeDelta=new Vector2(1080,1680);
+                blackoutLabBuilt=true;var root=(RectTransform)blackoutScreen.transform;root.SetParent(safeAreaRoot,false);root.anchorMin=root.anchorMax=new Vector2(.5f,.5f);root.sizeDelta=new Vector2(1080,1820);
                 var header=BlackoutPanel(root,"Signal heist command deck",new Vector2(0,747),new Vector2(1010,160));
                 blackoutObjectiveTitle=MissionText(header,"",47,35,BlackoutIce,730,50);blackoutObjectiveTitle.rectTransform.anchoredPosition+=Vector2.left*110;
                 blackoutVaultText=MissionText(header,"",-5,26,BlackoutMint,730,38);blackoutVaultText.rectTransform.anchoredPosition+=Vector2.left*110;
@@ -127,22 +129,24 @@ namespace SkyPulse.Mobile
                 blackoutPlanButton=BlackoutButton(header,"PLAN",405,0,180,ToggleBlackoutPreview,150);
                 var telemetry=BlackoutPanel(root,"Optical telemetry",new Vector2(0,610),new Vector2(1010,112));
                 blackoutDataText=BlackoutReadout(telemetry,"Cores lit",-338,BlackoutMint);blackoutTraceText=BlackoutReadout(telemetry,"Trace left",0,BlackoutIce);blackoutUplinkText=BlackoutReadout(telemetry,"Uplink",338,Hex("#ffc478"));
-                blackoutTraceGauge=BlackoutGraphic(root,"Trace budget rail",new Vector2(0,539),new Vector2(1010,8),BlackoutSurface.Trace,false);
-                var viewObject=new GameObject("Rendered 3D optical console",typeof(RectTransform),typeof(CanvasRenderer),typeof(RawImage),typeof(SkyPulseHeistBoard));viewObject.transform.SetParent(root,false);
+                blackoutTraceGauge=BlackoutGraphic(root,"Trace budget rail",new Vector2(0,565),new Vector2(1010,8),BlackoutSurface.Trace,false);
+                blackoutOpticalArea=new GameObject("Optical assembly and fixed touch plane",typeof(RectTransform)).GetComponent<RectTransform>();blackoutOpticalArea.SetParent(root,false);blackoutOpticalArea.sizeDelta=new Vector2(1080,1080);blackoutOpticalArea.anchoredPosition=new Vector2(0,-105);
+                var goal=new GameObject("Live Endless district",typeof(RectTransform),typeof(CanvasRenderer),typeof(RawImage),typeof(SkyPulseRestorationDisplay));goal.transform.SetParent(root,false);var goalView=goal.GetComponent<RawImage>();goalView.rectTransform.sizeDelta=new Vector2(400,145);goalView.rectTransform.anchoredPosition=new Vector2(-270,482);blackoutRestoration=goal.GetComponent<SkyPulseRestorationDisplay>();blackoutRestoration.Build(goalView);
+                blackoutRestorationCaption=MissionText(root,"",482,24,BlackoutIce,500,100);blackoutRestorationCaption.rectTransform.anchoredPosition=new Vector2(210,482);
+                var viewObject=new GameObject("Rendered 3D optical console",typeof(RectTransform),typeof(CanvasRenderer),typeof(RawImage),typeof(SkyPulseHeistBoard));viewObject.transform.SetParent(blackoutOpticalArea,false);
                 var view=viewObject.GetComponent<RawImage>();view.rectTransform.sizeDelta=new Vector2(1080,1080);blackoutBoard=viewObject.GetComponent<SkyPulseHeistBoard>();blackoutBoard.Build(view);
                 for(int i=0;i<49;i++)
                 {
-                    var hit=CreatePanel(root,"Optical socket "+i,Vector2.zero,new Vector2(150,150),Color.clear);
+                    var hit=CreatePanel(blackoutOpticalArea,"Optical socket "+i,Vector2.zero,new Vector2(150,150),Color.clear);
                     var label=CreateText(hit,"",new Vector2(0,-59),new Vector2(142,40),29,BlackoutIce,TextAnchor.MiddleCenter,FontStyle.Bold);label.raycastTarget=false;blackoutNodeLabels.Add(label);
                     var button=hit.gameObject.AddComponent<Button>();button.targetGraphic=hit.GetComponent<Image>();button.transition=Selectable.Transition.None;blackoutNodeButtons.Add(button);
                     var press=hit.gameObject.AddComponent<SkyPulsePressTarget>();press.Tile=i;press.Press=HandleBlackoutPress;press.Release=ReleaseGameplayPointer;blackoutPressTargets.Add(press);
                 }
-                blackoutStatusText=MissionText(root,"",-560,26,BlackoutIce,1010,42);
-                blackoutNetwork=BlackoutGraphic(root,"City restoration network",new Vector2(0,-616),new Vector2(1000,58),BlackoutSurface.Network);
-                blackoutBriefing=MissionText(root,"",-678,24,Hex("#9fc1ca"),1010,54);
-                blackoutRestartButton=BlackoutButton(root,"Restart",-260,-760,490,RestartBlackoutVault,150);
-                blackoutCommitButton=BlackoutButton(root,"SELECT A PRISM",-260,-760,490,CommitBlackoutPreview,150);
-                BlackoutButton(root,"Pause",260,-760,490,PauseFlight,150);
+                blackoutStatusText=MissionText(root,"",-680,26,BlackoutIce,1010,42);
+                blackoutBriefing=MissionText(root,"",-730,24,Hex("#9fc1ca"),1010,54);
+                blackoutRestartButton=BlackoutButton(root,"Restart",-260,-825,490,RestartBlackoutVault,150);
+                blackoutCommitButton=BlackoutButton(root,"SELECT A PRISM",-260,-825,490,CommitBlackoutPreview,150);
+                BlackoutButton(root,"Pause",260,-825,490,PauseFlight,150);
             }
             float stride=155,vertical=160,top=(p.Height-1)*vertical*.5f;
             blackoutObjectiveTitle.text=(blackoutCampaign.Data.medals[selectedMission]>0?"REFINE ":"RESTORE ")+SkyPulseBlackoutCampaign.Systems[selectedMission].ToUpperInvariant();
@@ -176,8 +180,9 @@ namespace SkyPulse.Mobile
             }
             blackoutDataText.text=s.CoresPowered+" / "+p.CoreCount;blackoutTraceText.text=s.Remaining+" / "+p.TraceLimit;blackoutUplinkText.text=s.UplinkPowered?"LIVE":"OFFLINE";blackoutUplinkText.color=s.UplinkPowered?BlackoutMint:Hex("#9bb9c6");
             blackoutTraceGauge.TraceFraction=s.Trace/(float)p.TraceLimit;blackoutTraceGauge.SetVerticesDirty();blackoutBoard.Tick(0);
-            int mask=0;for(int i=0;i<8;i++)if(blackoutCampaign.Data.medals[i]>0)mask|=1<<i;
-            blackoutNetwork.RestoredMask=mask;blackoutNetwork.ActiveVault=selectedMission;blackoutNetwork.LivePower=(s.CoresPowered/(float)p.CoreCount+(s.UplinkPowered?1:0))*.5f;blackoutNetwork.SetVerticesDirty();
+            int mask=blackoutCampaign.RestoredMask;
+            blackoutRestoration.Present(mask,selectedMission,(s.CoresPowered/(float)p.CoreCount+(s.UplinkPowered?1:0))*.5f);
+            blackoutRestorationCaption.text=(mask&(1<<selectedMission))!=0?"RESTORED IN YOUR FLIGHT WORLDS":"POWER THE ISLAND\n"+SkyPulseBlackoutCampaign.Systems[selectedMission].ToUpperInvariant();
             if(blackoutToastRemaining<=0)blackoutCompletionToast.text=BlackoutNetworkCaption();
             int remaining=p.CoreCount-s.CoresPowered;
             blackoutStatusText.text=s.Alarms>0?"SENSOR LIT · CHECK THE NEXT MOVE IN PLAN":remaining==0?"ALL CORES LIVE · CONNECT THE AMBER UPLINK":s.CoresPowered>0?remaining+(remaining==1?" CORE":" CORES")+" STILL DARK · KEEP THE LIVE ROUTE CONNECTED":"KEEP "+p.CoreCount+(p.CoreCount==1?" CORE":" CORES")+" AND THE UPLINK POWERED";

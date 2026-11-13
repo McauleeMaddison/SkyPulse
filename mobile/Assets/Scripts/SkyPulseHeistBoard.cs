@@ -13,7 +13,7 @@ namespace SkyPulse.Mobile
         sealed class Module
         {
             public Transform Root,Rotor,Mirror,Splitter,Core,Lens,LeftDoor,RightDoor,Sensor,Emitter,Receiver;
-            public MeshRenderer Ring,Glass,Base,Collar,LensRenderer,MirrorRenderer,SplitterRenderer,EmitterRenderer,ReceiverRenderer,MirrorFrame,Ripple;
+            public MeshRenderer Ring,Glass,Base,Collar,LensRenderer,MirrorRenderer,SplitterRenderer,EmitterRenderer,ReceiverRenderer,MirrorFrame,Ripple,Bearing;
             public float Angle,TargetAngle,Power,Hit,Door,LastPower,Charge;
             public bool WasPreview;
             public int Target;
@@ -25,12 +25,12 @@ namespace SkyPulse.Mobile
         readonly Module[] modules=new Module[49];
         readonly Vector3[] beamVertices=new Vector3[Capacity];readonly Color[] beamColours=new Color[Capacity];
         readonly List<Mesh> meshes=new List<Mesh>();readonly List<Material> materials=new List<Material>();
-        readonly Mesh[] platens=new Mesh[8],channels=new Mesh[8];
+        readonly Mesh[] platens=new Mesh[8];
         MaterialPropertyBlock properties;
         static readonly int EnergyId=Shader.PropertyToID("_Energy"),GlowId=Shader.PropertyToID("_GlowColor"),VisibilityId=Shader.PropertyToID("_Visibility"),RevealId=Shader.PropertyToID("_Reveal");
-        Transform scene,console,projectionField;Camera opticalCamera;RenderTexture texture;Mesh beamMesh;Material metal,accent,glass,dark,light,mirrorGlass,contact,projection;
-        Mesh baseMesh,ringMesh,signalRingMesh,rippleMesh,mirrorMesh,mirrorFrameMesh,splitterMesh,coreMesh,lensMesh,doorMesh,sensorMesh,contactMesh,emitterMesh,receiverMesh;
-        MeshRenderer platenRenderer,channelRenderer;
+        Transform scene,console;Camera opticalCamera;RenderTexture texture;Mesh beamMesh;Material metal,accent,glass,dark,light,mirrorGlass,contact;
+        Mesh baseMesh,ringMesh,signalRingMesh,rippleMesh,mirrorMesh,mirrorFrameMesh,splitterMesh,coreMesh,lensMesh,doorMesh,sensorMesh,contactMesh,emitterMesh,receiverMesh,bearingMesh;
+        MeshRenderer platenRenderer;
         int beamUsed;float clock,pitch=1.55f;RectInt layout;
         public bool ReducedMotion,MotionPaused;
         public BlackoutSession Circuit {get;private set;}
@@ -58,10 +58,9 @@ namespace SkyPulse.Mobile
             var composite=new Material(Resources.Load<Shader>("SkyPulse/Shaders/TechTreeField")){name="Optical console premultiplied compositing"};materials.Add(composite);view.material=composite;
             var cameraObject=new GameObject("Optical console camera",typeof(Camera));opticalCamera=cameraObject.GetComponent<Camera>();cameraObject.transform.SetParent(scene,false);cameraObject.transform.localPosition=new Vector3(0,0,-20);
             opticalCamera.orthographic=true;opticalCamera.orthographicSize=5.5f;opticalCamera.nearClipPlane=.1f;opticalCamera.farClipPlane=40;opticalCamera.cullingMask=1<<Layer;opticalCamera.clearFlags=CameraClearFlags.SolidColor;opticalCamera.backgroundColor=Color.clear;opticalCamera.targetTexture=texture;opticalCamera.allowHDR=false;opticalCamera.allowMSAA=true;
-            metal=Material("Satin black titanium edges",new Color(.26f,.36f,.44f),.38f);accent=Material("Recessed optical guides",new Color(.045f,.16f,.18f),.38f);dark=Material("Smoked ceramic mounts",new Color(.055f,.078f,.10f),.72f);
-            glass=Material("Smoked holographic optical glass",new Color(.045f,.25f,.29f,.40f),.12f,true);glass.SetFloat("_Hologram",.48f);
-            mirrorGlass=Material("Smoked glass mirror prism",new Color(.075f,.18f,.22f,.48f),.08f,true);mirrorGlass.SetFloat("_Hologram",.16f);
-            projection=Material("Suspended holographic field",new Color(.025f,.13f,.18f,.028f),.18f,true);projection.SetFloat("_Hologram",1);projection.SetColor("_GlowColor",new Color(.14f,.72f,.92f));
+            metal=Material("Satin black titanium edges",new Color(.38f,.49f,.59f),.32f);accent=Material("Recessed optical guides",new Color(.045f,.16f,.18f),.38f);dark=Material("Smoked ceramic mounts",new Color(.045f,.065f,.09f),.58f);
+            glass=Material("Smoked holographic optical glass",new Color(.19f,.48f,.63f,.78f),.16f,true);glass.SetFloat("_Hologram",.10f);
+            mirrorGlass=Material("Smoked glass mirror prism",new Color(.28f,.49f,.65f,.88f),.13f,true);mirrorGlass.SetFloat("_Hologram",.06f);
             light=new Material(Resources.Load<Shader>("SkyPulse/Shaders/HeistBeam")){name="Feathered live optical fibre"};materials.Add(light);
             var receiverMetal=Material("Titanium uplink frame",new Color(.25f,.31f,.34f),.40f);
             var sourceGuide=Material("Source directional projection",new Color(.02f,.18f,.20f,.40f),.20f,true);sourceGuide.SetFloat("_Hologram",1);
@@ -73,9 +72,6 @@ namespace SkyPulse.Mobile
             BuildMeshes();
             var platenMaterial=Material("Obsidian optical worktop",new Color(.042f,.062f,.078f),.76f);platenMaterial.SetFloat("_BoardDeck",1);
             platenRenderer=Part(console,"Raised optical console chassis",platens[0],platenMaterial);
-            var channelMaterial=Material("Recessed signal guides",new Color(.021f,.042f,.055f),.85f);
-            channelRenderer=Part(console,"Etched possible signal channels",channels[0],channelMaterial);channelRenderer.transform.localPosition=new Vector3(0,0,.215f);
-            var field=new SkyPulseMeshBuilder();field.BevelBox(9.7f,9.7f,.020f);projectionField=Part(console,"Transparent suspended projection field",Keep(field,"Optical field with bevelled depth"),projection).transform;projectionField.localPosition=new Vector3(0,0,.225f);
             for(int i=0;i<49;i++)
             {
                 var m=new Module();m.Root=new GameObject("Optical module "+i).transform;m.Root.SetParent(console,false);
@@ -84,6 +80,7 @@ namespace SkyPulse.Mobile
                 m.Ring=Part(m.Root,"Recessed luminous circuit gasket",signalRingMesh,accent);m.Ring.transform.localPosition=new Vector3(0,0,-.255f);
                 m.Ripple=Part(m.Root,"Pooled charge impulse",rippleMesh,pulse);m.Ripple.transform.localPosition=new Vector3(0,0,-.33f);m.Ripple.enabled=false;
                 m.Rotor=new GameObject("Optical rotor").transform;m.Rotor.SetParent(m.Root,false);m.Rotor.localPosition=Vector3.back*.10f;
+                m.Bearing=Part(m.Root,"Machined gimbal bearing and calibration indexes",bearingMesh,metal);
                 m.MirrorRenderer=Part(m.Rotor,"Faceted smoked-glass mirror prism",mirrorMesh,mirrorGlass);m.Mirror=m.MirrorRenderer.transform;m.Mirror.localRotation=Quaternion.Euler(0,0,45);
                 m.MirrorFrame=Part(m.Rotor,"Fine titanium prism edge frame",mirrorFrameMesh,metal);m.MirrorFrame.transform.localRotation=Quaternion.Euler(0,0,45);
                 m.SplitterRenderer=Part(m.Rotor,"Triangular beam splitter",splitterMesh,glass);m.Splitter=m.SplitterRenderer.transform;
@@ -113,7 +110,13 @@ namespace SkyPulse.Mobile
             // A low smoked mount leaves the light-bending glass, rather than a
             // thick control knob, as the player's visible interactive object.
             var mount=new[]{new Vector2(-.37f,-.22f),new Vector2(.37f,-.22f),new Vector2(.44f,-.12f),new Vector2(.44f,.12f),new Vector2(.37f,.22f),new Vector2(-.37f,.22f),new Vector2(-.44f,.12f),new Vector2(-.44f,-.12f)};
-            b.ExtrudePrism(mount,-.065f,.13f);baseMesh=Keep(b,"Low-profile smoked ceramic prism mount");
+            b.ExtrudePrism(mount,-.08f,.18f);
+            b.Box(new Vector3(0,0,.19f),new Vector3(.66f,.30f,.07f),new Color(.50f,.65f,.76f,0));
+            for(int side=-1;side<=1;side+=2)
+            {
+                b.Box(new Vector3(side*.40f,0,.055f),new Vector3(.026f,.27f,.11f),new Color(.70f,.82f,.90f,0));
+                for(int vent=0;vent<3;vent++)b.Box(new Vector3(side*.418f,(vent-1)*.063f,.04f),new Vector3(.010f,.028f,.055f),new Color(.08f,.12f,.17f,0));
+            }baseMesh=Keep(b,"Vented ceramic carrier with alloy shoulders");
             b=new SkyPulseMeshBuilder();
             // Four short clamps establish physical depth without enclosing the
             // optic in a bulky white annular sleeve.
@@ -122,20 +125,29 @@ namespace SkyPulse.Mobile
                 var at=new Vector3(side*.365f,end*.225f,-.065f);
                 b.Box(at,new Vector3(.075f,.028f,.12f),new Color(.60f,.75f,.82f,0));
                 b.Box(at+new Vector3(side*.026f,-end*.024f,0),new Vector3(.024f,.060f,.12f),new Color(.36f,.53f,.62f,0));
+                b.Box(at+Vector3.back*.068f,new Vector3(.032f,.012f,.012f),new Color(.72f,.85f,.92f,0));
             }
             ringMesh=Keep(b,"Four narrow titanium retaining clamps");
             b=new SkyPulseMeshBuilder();
             for(int i=0;i<4;i++)b.RingArc(.37f,.0055f,12,i*90+24,36,new Color(.45f,.78f,.87f,1));
             signalRingMesh=Keep(b,"Minimal broken optical alignment guides");
+            b=new SkyPulseMeshBuilder();
+            b.Profile(new[]{new Vector2(.205f,-.11f),new Vector2(.245f,-.11f),new Vector2(.282f,-.15f),new Vector2(.282f,-.20f),new Vector2(.245f,-.235f),new Vector2(.205f,-.235f),new Vector2(.205f,-.11f)});
+            for(int i=0;i<8;i++)
+            {
+                float a=i*Mathf.PI*.25f;var at=new Vector3(Mathf.Cos(a)*.31f,Mathf.Sin(a)*.31f,-.17f);
+                b.Box(at,new Vector3(.020f,.020f,.014f),new Color(.65f,.81f,.93f,i%2==0?1:0));
+            }
+            bearingMesh=Keep(b,"Stepped annular titanium gimbal / eight calibration contacts");
             b=new SkyPulseMeshBuilder();b.Torus(.43f,.0055f,48,new Color(.35f,.82f,.90f,1));rippleMesh=Keep(b,"Restrained pooled optical impulse");
             var contour=new[]{new Vector2(-.43f,-.052f),new Vector2(-.36f,-.105f),new Vector2(.36f,-.105f),new Vector2(.43f,-.052f),new Vector2(.43f,.052f),new Vector2(.36f,.105f),new Vector2(-.36f,.105f),new Vector2(-.43f,.052f)};
-            b=new SkyPulseMeshBuilder();b.ExtrudePrism(contour,-.345f,-.185f);mirrorMesh=Keep(b,"Slim faceted smoked-glass light-bending prism");
+            b=new SkyPulseMeshBuilder();CutPrism(b,contour,-.47f,-.17f);mirrorMesh=Keep(b,"Slim faceted smoked-glass light-bending prism");
             b=new SkyPulseMeshBuilder();
             for(int i=0;i<contour.Length;i++)
             {
                 var a=contour[i];var c=contour[(i+1)%contour.Length];var innerA=Vector2.Scale(a,new Vector2(.975f,.77f));var innerC=Vector2.Scale(c,new Vector2(.975f,.77f));
-                b.Quad(new Vector3(a.x,a.y,-.352f),new Vector3(c.x,c.y,-.352f),new Vector3(innerC.x,innerC.y,-.352f),new Vector3(innerA.x,innerA.y,-.352f),new Color(.78f,.90f,1,0));
-                b.Quad(new Vector3(a.x,a.y,-.352f),new Vector3(a.x,a.y,-.182f),new Vector3(c.x,c.y,-.182f),new Vector3(c.x,c.y,-.352f),new Color(.34f,.48f,.60f,0));
+                b.Quad(new Vector3(a.x,a.y,-.427f),new Vector3(c.x,c.y,-.427f),new Vector3(innerC.x,innerC.y,-.427f),new Vector3(innerA.x,innerA.y,-.427f),new Color(.78f,.90f,1,0));
+                b.Quad(new Vector3(a.x,a.y,-.427f),new Vector3(a.x,a.y,-.167f),new Vector3(c.x,c.y,-.167f),new Vector3(c.x,c.y,-.427f),new Color(.34f,.48f,.60f,0));
             }
             mirrorFrameMesh=Keep(b,"Narrow titanium edges around the glass prism");
             b=new SkyPulseMeshBuilder();b.ExtrudePrism(new[]{new Vector2(-.29f,-.25f),new Vector2(-.29f,.25f),new Vector2(.34f,0)},-.44f,-.08f);
@@ -167,7 +179,11 @@ namespace SkyPulse.Mobile
                 b=new SkyPulseMeshBuilder();
                 float halfWidth=((bounds.width-1)*step+1.15f)*.5f,halfHeight=((bounds.height-1)*step*VerticalPitch+1.15f)*.5f,cut=.18f;
                 var rim=new[]{new Vector2(-halfWidth+cut,-halfHeight),new Vector2(halfWidth-cut,-halfHeight),new Vector2(halfWidth,-halfHeight+cut),new Vector2(halfWidth,halfHeight-cut),new Vector2(halfWidth-cut,halfHeight),new Vector2(-halfWidth+cut,halfHeight),new Vector2(-halfWidth,halfHeight-cut),new Vector2(-halfWidth,-halfHeight+cut)};
-                b.ExtrudePrism(rim,.24f,.72f);
+                for(int side=-1;side<=1;side+=2)
+                {
+                    b.Box(new Vector3(side*halfWidth,0,.49f),new Vector3(.065f,halfHeight*2-cut,.48f),new Color(.40f,.55f,.68f,0));
+                    b.Box(new Vector3(0,side*halfHeight,.49f),new Vector3(halfWidth*2-cut,.065f,.48f),new Color(.40f,.55f,.68f,0));
+                }
                 for(int edge=0;edge<8;edge++)
                 {
                     var a=rim[edge];var c=rim[(edge+1)%8];var insideA=a-new Vector2(Mathf.Sign(a.x)*.045f,Mathf.Sign(a.y)*.045f);var insideC=c-new Vector2(Mathf.Sign(c.x)*.045f,Mathf.Sign(c.y)*.045f);
@@ -181,14 +197,20 @@ namespace SkyPulse.Mobile
                 }
                 for(int indicator=0;indicator<8;indicator++)b.Box(new Vector3((indicator-3.5f)*.17f,-halfHeight+.032f,.205f),new Vector3(.10f,.016f,.016f),new Color(.45f,.85f,1,1));
                 platens[vault]=Keep(b,"Raised vault chassis / bevelled rim and service vents "+vault);
-                b=new SkyPulseMeshBuilder();
-                for(int tile=0;tile<p.Count;tile++)
-                {
-                    if(p.Tile(tile)=='#')continue;var point=Point(bounds,p.Width,tile,step);
-                    if(tile%p.Width<p.Width-1&&p.Tile(tile+1)!='#')b.Box(new Vector3(point.x+step*.5f,point.y,0),new Vector3(step,.009f,.007f),new Color(.6f,.8f,1,0));
-                    if(tile/p.Width<p.Height-1&&p.Tile(tile+p.Width)!='#')b.Box(new Vector3(point.x,point.y-step*VerticalPitch*.5f,0),new Vector3(.009f,step*VerticalPitch,.007f),new Color(.6f,.8f,1,0));
-                }
-                channels[vault]=Keep(b,"Recessed route channels "+vault);
+
+            }
+        }
+        // A cut crown, angled bevel and deep side wall reflect separately.
+        // Unlike an extruded flat bar, the optic reads as a solid instrument
+        // at the portrait gameplay camera, not only in a modelling close-up.
+        static void CutPrism(SkyPulseMeshBuilder b,Vector2[] contour,float front,float back)
+        {
+            for(int i=0;i<contour.Length;i++)
+            {
+                var a=contour[i];var c=contour[(i+1)%contour.Length];var innerA=Vector2.Scale(a,new Vector2(.94f,.68f));var innerC=Vector2.Scale(c,new Vector2(.94f,.68f));float shoulder=front+.075f;
+                b.Face(new Vector3(0,0,front),new Vector3(innerC.x,innerC.y,front),new Vector3(innerA.x,innerA.y,front),new Color(.84f,.94f,1,.10f));
+                b.Quad(new Vector3(innerA.x,innerA.y,front),new Vector3(innerC.x,innerC.y,front),new Vector3(c.x,c.y,shoulder),new Vector3(a.x,a.y,shoulder),new Color(.64f,.82f,1,.32f));
+                b.Quad(new Vector3(a.x,a.y,shoulder),new Vector3(c.x,c.y,shoulder),new Vector3(c.x,c.y,back),new Vector3(a.x,a.y,back),new Color(.38f,.58f,.74f,.25f));
             }
         }
         public void Bind(BlackoutSession session,Vector2[] positions)
@@ -196,14 +218,13 @@ namespace SkyPulse.Mobile
             Circuit=session;Preview=null;PreviewTile=-1;var p=session.Puzzle;
             layout=ActiveBounds(p);pitch=Pitch(layout);OpticScale=Mathf.Min(1.3f,pitch/1.55f);
             int vault=System.Array.IndexOf(SkyPulseBlackoutCampaign.Stages,p);if(vault<0)vault=0;
-            platenRenderer.GetComponent<MeshFilter>().sharedMesh=platens[vault];channelRenderer.GetComponent<MeshFilter>().sharedMesh=channels[vault];
-            projectionField.localScale=new Vector3(platens[vault].bounds.size.x/9.7f,platens[vault].bounds.size.y/9.7f,1);
+            platenRenderer.GetComponent<MeshFilter>().sharedMesh=platens[vault];
             for(int i=0;i<49;i++)
             {
                 var m=modules[i];bool on=i<p.Count&&p.Tile(i)!='#'&&p.Tile(i)!='.';m.Root.gameObject.SetActive(on);if(!on)continue;
                 var at=Point(i);m.Kind=p.Tile(i);m.Root.localPosition=new Vector3(at.x,at.y,0);m.Root.localScale=Vector3.one*OpticScale;m.Target=session.Rotations[i];m.Angle=m.TargetAngle=m.Target*90;m.Power=0;m.Hit=m.Door=m.Charge=0;m.LastPower=session.Powered[i]?1:0;m.WasPreview=false;m.Ripple.enabled=false;
-                float socketScale=p.Rotatable(i)?1:.68f;m.Base.transform.localScale=m.Collar.transform.localScale=Vector3.one*socketScale;m.Ring.transform.localScale=Vector3.one*socketScale;
-                m.Mirror.gameObject.SetActive(m.Kind=='M');m.MirrorFrame.gameObject.SetActive(m.Kind=='M');m.Splitter.gameObject.SetActive(m.Kind=='Y');m.Core.gameObject.SetActive(m.Kind=='C'||m.Kind=='R'||m.Kind=='Q');m.Lens.gameObject.SetActive(m.Kind=='S'||m.Kind=='E');m.Sensor.gameObject.SetActive(m.Kind=='!');m.LeftDoor.gameObject.SetActive(m.Kind=='G'||m.Kind=='H');m.RightDoor.gameObject.SetActive(m.Kind=='G'||m.Kind=='H');
+                float socketScale=p.Rotatable(i)?1:.68f;m.Base.transform.localScale=m.Collar.transform.localScale=Vector3.one*socketScale;m.Ring.transform.localScale=Vector3.one*(socketScale*.68f);
+                m.Bearing.gameObject.SetActive(p.Rotatable(i));m.Mirror.gameObject.SetActive(m.Kind=='M');m.MirrorFrame.gameObject.SetActive(m.Kind=='M');m.Splitter.gameObject.SetActive(m.Kind=='Y');m.Core.gameObject.SetActive(m.Kind=='C'||m.Kind=='R'||m.Kind=='Q');m.Lens.gameObject.SetActive(m.Kind=='S'||m.Kind=='E');m.Sensor.gameObject.SetActive(m.Kind=='!');m.LeftDoor.gameObject.SetActive(m.Kind=='G'||m.Kind=='H');m.RightDoor.gameObject.SetActive(m.Kind=='G'||m.Kind=='H');
                 m.Core.localScale=Vector3.one*1.10f;m.Lens.localScale=Vector3.one*1.08f;
                 m.Emitter.gameObject.SetActive(m.Kind=='S');m.Emitter.localRotation=Quaternion.Euler(0,0,p.SourceDirection*90);m.Receiver.gameObject.SetActive(m.Kind=='E');
             }
@@ -223,7 +244,7 @@ namespace SkyPulse.Mobile
         public void Tick(float dt)
         {
             if(Circuit==null||MotionPaused)return;dt=Mathf.Max(0,dt);if(!ReducedMotion)clock+=dt;Reveal=Mathf.Max(0,Reveal-dt*3);
-            glass.SetFloat("_Clock",clock);projection.SetFloat("_Clock",clock);
+            glass.SetFloat("_Clock",clock);
             var visible=Preview??Circuit;var p=visible.Puzzle;float smooth=1-Mathf.Exp(-dt*30),powerSmooth=1-Mathf.Exp(-dt*15);
             metal.SetFloat("_Clock",clock);mirrorGlass.SetFloat("_Clock",clock);
             for(int i=0;i<p.Count;i++)
@@ -250,13 +271,13 @@ namespace SkyPulse.Mobile
                 if(!previewing)m.LastPower=target;
                 m.Power=ReducedMotion?target:Mathf.Lerp(m.Power,target,powerSmooth);m.Hit=Mathf.Max(0,m.Hit-dt*5);m.Charge=Mathf.Max(0,m.Charge-dt*2.8f);
                 m.Rotor.localRotation=Quaternion.Euler(0,0,m.Angle);m.Rotor.localScale=Vector3.one*(1+(ReducedMotion?0:Mathf.Sin(m.Hit*Mathf.PI)*.009f));
-                var hue=i==PreviewTile?new Color(.7f,.85f,1):Tint(m.Kind);properties.Clear();properties.SetColor(GlowId,hue);properties.SetFloat(EnergyId,.04f+m.Power*.53f+(ReducedMotion?0:m.Hit*.10f)+(i==PreviewTile?.27f:0));m.Ring.SetPropertyBlock(properties);m.Glass.SetPropertyBlock(properties);
+                var hue=i==PreviewTile?new Color(.7f,.85f,1):p.Rotatable(i)?Color.Lerp(new Color(.23f,.58f,.90f),Mint,m.Power):Tint(m.Kind);properties.Clear();properties.SetColor(GlowId,hue);properties.SetFloat(EnergyId,.04f+m.Power*.53f+(ReducedMotion?0:m.Hit*.10f)+(i==PreviewTile?.27f:0));m.Ring.SetPropertyBlock(properties);m.Glass.SetPropertyBlock(properties);
                 m.LensRenderer.SetPropertyBlock(properties);m.MirrorRenderer.SetPropertyBlock(properties);m.SplitterRenderer.SetPropertyBlock(properties);
                 m.EmitterRenderer.SetPropertyBlock(properties);
                 // An unpowered amber receiver remains a discoverable destination;
                 // this is a small optical indicator, never a full-board glow.
                 properties.SetFloat(EnergyId,.12f+m.Power*.48f);m.ReceiverRenderer.SetPropertyBlock(properties);
-                properties.SetFloat(EnergyId,p.Rotatable(i)?.025f:.010f);m.Collar.SetPropertyBlock(properties);m.MirrorFrame.SetPropertyBlock(properties);
+                properties.SetFloat(EnergyId,p.Rotatable(i)?.025f:.010f);m.Collar.SetPropertyBlock(properties);m.MirrorFrame.SetPropertyBlock(properties);m.Bearing.SetPropertyBlock(properties);
                 float impulse=Mathf.Max(m.Hit,m.Charge);m.Ripple.enabled=!ReducedMotion&&impulse>.001f;
                 if(m.Ripple.enabled)
                 {

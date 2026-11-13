@@ -143,6 +143,7 @@ namespace SkyPulse.Mobile
         const string PreviousKey="skypulse.blackout-campaign.v2";
         readonly IMissionStore store;readonly int inheritedAccess;
         public BlackoutCampaignSave Data { get; private set; }
+        public int RestoredMask { get {int mask=0;for(int i=0;i<8;i++)if(Data.medals[i]>0)mask|=1<<i;return mask;} }
         public int Unlocked { get {int n=0;while(n<7&&Data.medals[n]>0)n++;return Math.Max(inheritedAccess,n);} }
         public bool CanPlay(int i)=>i>=0&&i<8&&i<=Unlocked;
         public BlackoutCampaignProgress(IMissionStore store)

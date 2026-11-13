@@ -1,6 +1,6 @@
 Shader "SkyPulse/Orbital Station Hardware"
 {
-    Properties { _Tint("Station light",Color)=(.23,.66,.82,1) _Haze("Distance haze",Color)=(.02,.07,.11,1) _Environment("Station reflections",2D)="gray"{} _Clock("Presentation clock",Float)=0 _Apron("Polished arrival floor",Float)=0 _SurfaceTex("Machined alloy surface",2D)="gray"{} _SurfaceAmount("Surface detail",Range(0,1))=0 _SurfaceScale("Surface scale",Float)=.3 _LightDirection("Shared station sun",Vector)=(-.66,.58,-.42,0) }
+    Properties { _TitaniumFinish("Titanium skyport finish",Float)=0 _Tint("Station light",Color)=(.23,.66,.82,1) _Haze("Distance haze",Color)=(.02,.07,.11,1) _Environment("Station reflections",2D)="gray"{} _Clock("Presentation clock",Float)=0 _Apron("Polished arrival floor",Float)=0 _SurfaceTex("Machined alloy surface",2D)="gray"{} _SurfaceAmount("Surface detail",Range(0,1))=0 _SurfaceScale("Surface scale",Float)=.3 _LightDirection("Shared station sun",Vector)=(-.66,.58,-.42,0) }
     SubShader
     {
         Tags {"Queue"="Transparent" "RenderType"="Opaque"}
@@ -12,7 +12,7 @@ Shader "SkyPulse/Orbital Station Hardware"
             #pragma fragment frag
             #pragma target 3.0
             #include "UnityCG.cginc"
-            sampler2D _Environment,_SurfaceTex;float4 _Tint,_Haze,_LightDirection;float _Clock,_Apron,_SurfaceAmount,_SurfaceScale;
+            sampler2D _Environment,_SurfaceTex;float4 _Tint,_Haze,_LightDirection;float _TitaniumFinish,_Clock,_Apron,_SurfaceAmount,_SurfaceScale;
             struct app {float4 vertex:POSITION;float3 normal:NORMAL;float4 colour:COLOR;};
             struct vary {float4 pos:SV_POSITION;float3 normal:TEXCOORD0;float3 world:TEXCOORD1;float3 local:TEXCOORD2;float4 colour:COLOR;};
             vary vert(app v){vary o;o.pos=UnityObjectToClipPos(v.vertex);o.normal=UnityObjectToWorldNormal(v.normal);o.world=mul(unity_ObjectToWorld,v.vertex).xyz;o.local=v.vertex.xyz;o.colour=v.colour;return o;}
@@ -30,6 +30,8 @@ Shader "SkyPulse/Orbital Station Hardware"
                 // distance keep the station from becoming one grey material.
                 float3 lighting=float3(.25,.28,.35)+float3(1,.86,.66)*ndl*.92+float3(.10,.40,.47)*fill*.40;
                 lighting+=float3(.045,.070,.14)*skyFill;
+                float alloyMask=(1-step(.25,i.colour.a))*_TitaniumFinish;
+                i.colour.rgb=lerp(i.colour.rgb,float3(.32,.43,.53)*clamp(.68+dot(i.colour.rgb,float3(.299,.587,.114))*.60,.70,1.1),alloyMask);
                 float3 metal=i.colour.rgb*lighting+reflected*(.055+fresnel*.075);
                 metal+=float3(.60,.73,.84)*(broad*.14+spec*.24)+_Tint.rgb*fresnel*.08;
                 float seam=1-smoothstep(.012,.024+fwidth(i.local.z*2),abs(frac(i.local.z*2)-.5));

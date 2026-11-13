@@ -30,7 +30,7 @@ public static class SkyPulsePurposeChecks
         if(Application.companyName!="SkyPulseQA20261006")throw new Exception("Disposable QA required");
         Call(game,"ResetToMenu");var store=new Store();var campaign=new BlackoutCampaignProgress(store);Set(game,"blackoutCampaign",campaign);
         Call(game,"LaunchMission",SkyPulseMode.BlackoutProtocol,0);yield return null;
-        var board=(SkyPulseHeistBoard)Get(game,"blackoutBoard");var network=(SkyPulseBlackoutGraphic)Get(game,"blackoutNetwork");
+        var board=(SkyPulseHeistBoard)Get(game,"blackoutBoard");var network=(SkyPulseRestorationDisplay)Get(game,"blackoutRestoration");
         var controls=(List<Button>)Get(game,"blackoutNodeButtons");
         Check(board.OpticScale>1.25f&&((RectTransform)controls[6].transform).rect.width>=190,"Opening vault has larger optics and generous touch targets");
         Check(network.RestoredMask==0&&network.LivePower==0,"New city network is dark until actual cores are powered");

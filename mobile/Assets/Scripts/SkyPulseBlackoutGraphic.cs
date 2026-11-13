@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 namespace SkyPulse.Mobile
 {
-    public enum BlackoutSurface { Backdrop, Deck=2, Trace=5, MiniMap, Network }
+    public enum BlackoutSurface { Backdrop, Deck=2, Trace=5, MiniMap }
     public sealed class SkyPulseBlackoutGraphic : MaskableGraphic
     {
         public BlackoutSurface Surface;
@@ -11,8 +11,6 @@ namespace SkyPulse.Mobile
         public float TraceFraction;
         // Assigned by the menu at runtime; puzzle definitions are not scene data.
         [System.NonSerialized] public BlackoutPuzzle Miniature;
-        public int RestoredMask,ActiveVault;
-        public float LivePower;
         public float Phase { get; private set; }
         bool previousReduced;
         float Clock=>ReducedMotion?0:Phase;
@@ -30,7 +28,6 @@ namespace SkyPulse.Mobile
                 case BlackoutSurface.Backdrop:Backdrop(vh,r);break;
                 case BlackoutSurface.Deck:Deck(vh,r);break;
                 case BlackoutSurface.Trace:Trace(vh,r);break;
-                case BlackoutSurface.Network:Network(vh,r);break;
                 default:MiniMap(vh,r);break;
             }
         }
@@ -82,78 +79,6 @@ namespace SkyPulse.Mobile
                 if(c=='M')Line(vh,p-new Vector2(step*.23f,step*.23f),p+new Vector2(step*.23f,step*.23f),1.5f,hue);else Diamond(vh,p,step*.22f,A(hue,c=='.'?.15f:.7f));
             }
         }
-        void Network(VertexHelper vh,Rect r)
-        {
-            // Distinct infrastructure glyphs make the campaign's eight real
-            // restoration targets visible. Only persisted medals light a whole
-            // system; live core/uplink power illuminates the current target.
-            float step=r.width/8;
-            for(int i=0;i<8;i++)
-            {
-                bool restored=(RestoredMask&(1<<i))!=0,active=i==ActiveVault;
-                var centre=new Vector2(r.xMin+step*(i+.5f),0);
-                Color hue=restored?Mint:active?Amber:Ice;
-                float power=restored?1:active?.18f+LivePower*.62f:.06f;
-                if(i<7)
-                {
-                    var a=centre+Vector2.right*29;var b=centre+Vector2.right*(step-29);
-                    Line(vh,a,b,1.2f,A(restored?Mint:Ice,restored?.34f:.065f));
-                    if(restored&&!ReducedMotion)
-                    {
-                        var at=Vector2.Lerp(a,b,Mathf.Repeat(Clock+i*.13f,1));Glow(vh,at,5,A(Mint,.16f));
-                        Quad(vh,new Rect(at.x-1,at.y-1,2,2),A(Mint,.65f));
-                    }
-                }
-                if(active)
-                {
-                    Ellipse(vh,centre,25,1,1,A(hue,.47f),24,312);
-                    if(!ReducedMotion)Glow(vh,centre,29,A(hue,.025f+.025f*Mathf.Sin(Clock*6.283f)));
-                }
-                SystemGlyph(vh,centre,i,hue,power);
-                Line(vh,centre+new Vector2(-17,-20),centre+new Vector2(17,-20),1.2f,A(hue,.08f+power*.50f));
-            }
-        }
-        static void SystemGlyph(VertexHelper vh,Vector2 p,int system,Color hue,float power)
-        {
-            Color line=A(hue,.20f+power*.62f),dark=A(hue,.05f+power*.12f),lit=A(hue,.18f+power*.78f);
-            switch(system)
-            {
-                case 0: // Dock beacons: three towers, each with a lens.
-                    for(int i=-1;i<=1;i++)
-                    {
-                        float h=i==0?17:10;var at=p+new Vector2(i*11,0);
-                        Line(vh,at+Vector2.down*14,at+Vector2.up*h,1.4f,line);
-                        Diamond(vh,at+Vector2.up*h,2.8f,lit);
-                        Line(vh,at+new Vector2(-3,-14),at+new Vector2(3,-14),1,line);
-                    }break;
-                case 1: // Cargo link: paired secured containers.
-                    for(int i=-1;i<=1;i++)
-                    {
-                        var box=new Rect(p.x+i*11-4,p.y-10,8,i==0?24:18);Quad(vh,box,dark);Border(vh,box,1,1,line);
-                        Line(vh,new Vector2(box.center.x,box.yMin+3),new Vector2(box.center.x,box.yMax-3),1,lit);
-                    }break;
-                case 2: // Transit grid.
-                    for(int i=-1;i<=1;i++)Line(vh,p+new Vector2(-18,i*9),p+new Vector2(18,i*9),1.3f,line);
-                    for(int i=-1;i<=1;i++)Line(vh,p+new Vector2(i*12,-13),p+new Vector2(i*12,13),1,line);
-                    Diamond(vh,p,3,lit);break;
-                case 3: // Relay station dish and centre mast.
-                    Ellipse(vh,p+Vector2.up*3,14,.62f,1.4f,line,0,360);Line(vh,p+Vector2.down*15,p+Vector2.up*15,1.2f,line);
-                    Diamond(vh,p+Vector2.up*3,3,lit);Line(vh,p+new Vector2(-11,-16),p+new Vector2(11,-16),1,line);break;
-                case 4: // Power exchange: three coupled cores.
-                    Diamond(vh,p,10,dark);Diamond(vh,p,5,lit);
-                    for(int i=-1;i<=1;i+=2){Diamond(vh,p+Vector2.right*i*15,4,line);Line(vh,p+Vector2.right*i*5,p+Vector2.right*i*11,1.2f,line);}break;
-                case 5: // Skyway bridge.
-                    for(int i=-1;i<=1;i+=2)Line(vh,p+new Vector2(i*14,-15),p+new Vector2(i*14,16),1.5f,line);
-                    Line(vh,p+new Vector2(-20,-3),p+new Vector2(20,-3),2,lit);Line(vh,p+new Vector2(-14,14),p+new Vector2(0,-3),1,line);Line(vh,p+new Vector2(14,14),p+new Vector2(0,-3),1,line);break;
-                case 6: // City shield.
-                    Ellipse(vh,p+Vector2.down*7,19,1,1.4f,line,0,180);Line(vh,p+new Vector2(-20,-8),p+new Vector2(20,-8),1.5f,lit);
-                    for(int i=-1;i<=1;i++)Line(vh,p+new Vector2(i*9,-8),p+new Vector2(i*9,5-Mathf.Abs(i)*3),2,line);break;
-                default: // SkyPulse uplink satellite.
-                    Diamond(vh,p,5,lit);Line(vh,p+Vector2.down*15,p+Vector2.up*15,1.2f,line);
-                    for(int i=-1;i<=1;i+=2){var box=new Rect(p.x+i*13-6,p.y-8,12,16);Quad(vh,box,dark);Border(vh,box,1,1,line);Line(vh,p+Vector2.right*i*5,p+Vector2.right*i*8,1,line);}break;
-            }
-        }
-
         static void Vert(VertexHelper vh,Vector2 p,Color c){var v=UIVertex.simpleVert;v.position=p;v.color=c;vh.AddVert(v);}
         static void Polygon(VertexHelper vh,Vector2 a,Vector2 b,Vector2 c,Vector2 d,Color tint){int n=vh.currentVertCount;Vert(vh,a,tint);Vert(vh,b,tint);Vert(vh,c,tint);Vert(vh,d,tint);vh.AddTriangle(n,n+1,n+2);vh.AddTriangle(n,n+2,n+3);}
         static Vector2 Corner(Rect r,float cut,int i){switch(i){case 0:return new Vector2(r.xMin,r.yMin+cut);case 1:return new Vector2(r.xMin,r.yMax);case 2:return new Vector2(r.xMax-cut,r.yMax);case 3:return new Vector2(r.xMax,r.yMax-cut);case 4:return new Vector2(r.xMax,r.yMin);default:return new Vector2(r.xMin+cut,r.yMin);}}
