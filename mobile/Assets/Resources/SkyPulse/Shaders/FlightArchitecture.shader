@@ -13,10 +13,10 @@ Shader "SkyPulse/Flight Architecture"
         _Geology("Mineral strata",Float)=0
         _Design("District identity",Float)=0
         _WindowGlow("Occupied window illumination",Range(0,1))=1
-        _RestoredWindows("Blackout occupied rooms",Float)=0
+        _RestoredA("Dock / cargo / transit / relay",Vector)=(0,0,0,0)
+        _RestoredB("Power / skyway / shield / uplink",Vector)=(0,0,0,0)
+        _RestorationHeight("Authored district roof height",Float)=6
         _RestorePulse("Completed restoration scan",Float)=0
-        _RestoredBeacons("Blackout dock and shield LEDs",Float)=0
-        _RestoredTransit("Blackout transit lighting",Float)=0
         _TitaniumFinish("Relay titanium finish",Float)=0
         _Backdrop("Distant skyline haze",Range(0,1))=0
         _DistrictDepth("Composed aerial perspective",Range(0,1))=0
@@ -41,7 +41,7 @@ Shader "SkyPulse/Flight Architecture"
             #include "AutoLight.cginc"
             struct app {float4 vertex:POSITION;float3 normal:NORMAL;float4 color:COLOR;};
             struct vary {float4 pos:SV_POSITION;float3 world:TEXCOORD0;float3 normal:TEXCOORD1;float4 color:COLOR;float3 local:TEXCOORD2;SHADOW_COORDS(3)};
-            float _RestorePulse,_RestoredWindows,_RestoredBeacons,_RestoredTransit,_TitaniumFinish;
+            float4 _RestoredA,_RestoredB;float _RestorePulse,_RestorationHeight,_TitaniumFinish;
             float _Visibility,_Clock,_Architecture,_Geology,_Design,_WindowGlow,_BeaconGlow,_Backdrop,_DistrictDepth;float4 _Tint,_Haze,_KeyTone,_FillTone;
             float4 _BeaconPoints[5],_BeaconColours[5];
             sampler2D _Environment,_SurfaceTex;float _SurfaceAmount,_SurfaceScale;
@@ -135,11 +135,28 @@ Shader "SkyPulse/Flight Architecture"
                 float floorShade=lerp(.72,1,smoothstep(-.10,.50,i.local.y));colour*=floorShade;
                 // Each completed network adds light to existing physical geometry.
                 // The zero-progress shader remains identical to the original.
-                colour+=i.color.rgb*neon*_RestoredWindows*.65;
+                float altitude=saturate(i.local.y/max(_RestorationHeight,.25));
+                // Distinct infrastructure zones, not eight copies of one boost.
+                float dock=light*(1-smoothstep(.18,.65,abs(i.local.y-.12)));
+                float cargo=neon*(1-smoothstep(.28,.40,altitude));
+                float transit=neon*(1-smoothstep(.06,.16,abs(frac(altitude*4)-.5)));
+                float relay=neon*(1-smoothstep(.10,.24,abs(frac((i.local.x+i.local.z*.61)*.82)-.5)))*smoothstep(.30,.52,altitude);
+                float powerBank=neon*smoothstep(.30,.44,altitude)*(1-smoothstep(.80,.94,altitude));
+                float skyway=light*smoothstep(-.05,.08,i.local.y)*(1-smoothstep(.65,1.3,i.local.y));
+                float shield=light*(1-smoothstep(-.10,.02,i.local.y));
+                float uplink=max(light,neon*.48)*smoothstep(.76,.91,altitude);
                 float restoreBand=pow(saturate(1-abs(i.local.y-(1-_RestorePulse)*11)*1.8),3);
                 colour+=float3(.16,.65,.95)*restoreBand*_RestorePulse*.18*saturate(neon+light);
                 float pulse=.88+.08*sin(_Clock*.46-i.local.y*1.7+_Design);
-                colour=lerp(colour,i.color.rgb*pulse*(.88+(i.local.y<0?_RestoredBeacons:_RestoredTransit)*.65)+ambient*.05,light);
+                colour=lerp(colour,i.color.rgb*pulse*(.88)+ambient*.05,light);
+                colour+=lerp(i.color.rgb,float3(1,.63,.24),.22)*dock*_RestoredA.x*.70;
+                colour+=i.color.rgb*cargo*_RestoredA.y*.85;
+                colour+=lerp(i.color.rgb,float3(.16,.82,1),.20)*transit*_RestoredA.z*.85;
+                colour+=lerp(i.color.rgb,float3(.22,.65,1),.22)*relay*_RestoredA.w*.85;
+                colour+=i.color.rgb*powerBank*_RestoredB.x*.85;
+                colour+=lerp(i.color.rgb,float3(.12,1,.72),.18)*skyway*_RestoredB.y*.75;
+                colour+=lerp(i.color.rgb,float3(.68,.44,1),.22)*shield*_RestoredB.z*.65;
+                colour+=lerp(i.color.rgb,float3(.65,.90,1),.20)*uplink*_RestoredB.w*.85;
                 // Local LED spill is evaluated on the real cliff/foundation,
                 // not on a transparent square. Shared mesh-space positions keep
                 // it attached during parallax, rotation and nonuniform scaling.
@@ -154,7 +171,7 @@ Shader "SkyPulse/Flight Architecture"
                         float ledPulse=.90+.07*sin(_Clock*.80+beacon*.63+_Design);
                         spill+=_BeaconColours[beacon].rgb*exp2(-distanceToLed*distanceToLed*1.35)*ledPulse*step(.01,radius);
                     }
-                    colour+=spill*(_BeaconGlow+_RestoredBeacons)*.58;
+                    colour+=spill*(_BeaconGlow+_RestoredB.z*.58)*.58;
                 }
                 if(_Design<.5)
                 {

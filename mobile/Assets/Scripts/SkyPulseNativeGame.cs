@@ -439,6 +439,7 @@ namespace SkyPulse.Mobile
         private const float WingDownstrokeDelay = .075f;
         private const float WingDownstrokeSpan = .90f;
         private const int LaunchBirdCount = 15;
+        private const int LaunchTechFamilyCount = 12;
         private const float CosmeticCardHeight = 260f;
         private const float CosmeticCardRowStride = 286f;
 
@@ -1162,7 +1163,6 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
 #endif
         private int shieldCharges;
         private int perfectPasses;
-        private int displayedSlowTenths = -1;
         private int displayedPowerUpCode = -1;
         private bool newBest;
         private Color flightFeedbackColour;
@@ -1275,17 +1275,20 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
 
         private static void ValidateTechTreeContracts()
         {
-            if (Upgrades.Length != 9)
+            if (Upgrades.Length != LaunchTechFamilyCount)
             {
-                Debug.LogError($"SkyPulse: Tech Tree must contain exactly 9 nodes; it currently has {Upgrades.Length}.");
+                Debug.LogError($"SkyPulse: Tech Tree must contain {LaunchTechFamilyCount} upgrade families; it currently has {Upgrades.Length}.");
             }
 
             var ids = new HashSet<string>(StringComparer.Ordinal);
             foreach (var upgrade in Upgrades)
             {
-                if (upgrade == null) continue;
+                if (upgrade == null) { Debug.LogError("SkyPulse: Tech catalog contains a missing family.");continue; }
+                if (string.IsNullOrEmpty(upgrade.Id)) Debug.LogError("SkyPulse: Tech family is missing its saved identifier.");
                 if (!ids.Add(upgrade.Id)) Debug.LogError($"SkyPulse: duplicate Tech id: {upgrade.Id}");
                 if (upgrade.MaxLevel != 3) Debug.LogError($"SkyPulse: {upgrade.Name} must define exactly three levels.");
+                if (upgrade.LevelPrices != null) foreach(int price in upgrade.LevelPrices) if(price<=0) Debug.LogError($"SkyPulse: {upgrade.Name} has a non-positive upgrade price.");
+                if (upgrade.HasPrerequisite && (upgrade.PrerequisiteLevel<1||upgrade.PrerequisiteLevel>3||upgrade.PrerequisiteId==upgrade.Id)) Debug.LogError($"SkyPulse: {upgrade.Name} has an invalid Tech prerequisite.");
                 if (upgrade.HasPrerequisite && FindById(Upgrades, upgrade.PrerequisiteId) == null)
                 {
                     Debug.LogError($"SkyPulse: {upgrade.Name} requires missing Tech id {upgrade.PrerequisiteId}.");
@@ -4900,7 +4903,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
 
         private void RefreshProgressionResultLabels()
         {
-            ApplyResultTechBonuses();
+            RecordJourneyFlight();ApplyResultTechBonuses();
             if (resultCrystalsText != null)
             {
                 int finds = Mathf.Max(0, runCrystalsCollected-runTechPickupBonus-runBirdPickupBonus-runEchoPickupBonus-runFieldPickupBonus);

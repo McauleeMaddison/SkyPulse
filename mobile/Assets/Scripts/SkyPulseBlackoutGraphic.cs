@@ -3,11 +3,11 @@ using UnityEngine.UI;
 
 namespace SkyPulse.Mobile
 {
-    public enum BlackoutSurface { Backdrop, Deck=2, Trace=5, MiniMap }
+    public enum BlackoutSurface { Backdrop, Trace=5, MiniMap }
     public sealed class SkyPulseBlackoutGraphic : MaskableGraphic
     {
         public BlackoutSurface Surface;
-        public bool ReducedMotion,MotionPaused,Animate=true;
+        public bool ReducedMotion,MotionPaused,Quiet,Animate=true;
         public float TraceFraction;
         // Assigned by the menu at runtime; puzzle definitions are not scene data.
         [System.NonSerialized] public BlackoutPuzzle Miniature;
@@ -26,7 +26,6 @@ namespace SkyPulse.Mobile
             switch(Surface)
             {
                 case BlackoutSurface.Backdrop:Backdrop(vh,r);break;
-                case BlackoutSurface.Deck:Deck(vh,r);break;
                 case BlackoutSurface.Trace:Trace(vh,r);break;
                 default:MiniMap(vh,r);break;
             }
@@ -34,6 +33,16 @@ namespace SkyPulse.Mobile
         static Color A(Color c,float a){c.a=a;return c;}
         void Backdrop(VertexHelper vh,Rect r)
         {
+            if(Quiet)
+            {
+                Gradient(vh,r,new Color(.004f,.010f,.022f,1),new Color(.010f,.026f,.044f,1));
+                for(int side=-1;side<=1;side+=2)
+                {
+                    var a=new Vector2(side*r.width*.485f,r.yMin);var b=new Vector2(side*r.width*.485f,r.yMax);
+                    Line(vh,a,b,1,A(Ice,.09f));
+                }
+                return;
+            }
             Gradient(vh,r,new Color(.003f,.010f,.018f,.88f),new Color(.008f,.025f,.035f,.80f));
             Glow(vh,new Vector2(0,130),r.width*.70f,A(Mint,.055f));
             Glow(vh,new Vector2(-r.width*.45f,650),r.width*.40f,A(Ice,.045f));
@@ -55,15 +64,6 @@ namespace SkyPulse.Mobile
             }
         }
 
-        void Deck(VertexHelper vh,Rect r)
-        {
-            Bevel(vh,new Rect(r.xMin+2,r.yMin-9,r.width,r.height),14,new Color(0,0,0,.65f),new Color(0,0,0,.65f));
-            Bevel(vh,r,14,new Color(.013f,.025f,.035f,.96f),new Color(.052f,.085f,.10f,.94f));
-            Border(vh,r,14,1,A(Ice,.17f));
-            Gradient(vh,new Rect(r.xMin+8,r.yMax-r.height*.4f,r.width-16,r.height*.4f-7),A(Ice,0),A(Ice,.055f));
-            Line(vh,new Vector2(r.xMin+23,r.yMax-2),new Vector2(r.xMax-23,r.yMax-2),1,A(Ice,.25f));
-            Line(vh,new Vector2(r.xMin+23,r.yMax-2),new Vector2(r.xMin+r.width*.25f,r.yMax-2),1,A(Mint,.7f));
-        }
         void Trace(VertexHelper vh,Rect r)
         {
             Color hue=TraceFraction>.85f?Red:TraceFraction>.65f?Amber:Mint;int n=48;float step=r.width/n;
@@ -81,14 +81,10 @@ namespace SkyPulse.Mobile
         }
         static void Vert(VertexHelper vh,Vector2 p,Color c){var v=UIVertex.simpleVert;v.position=p;v.color=c;vh.AddVert(v);}
         static void Polygon(VertexHelper vh,Vector2 a,Vector2 b,Vector2 c,Vector2 d,Color tint){int n=vh.currentVertCount;Vert(vh,a,tint);Vert(vh,b,tint);Vert(vh,c,tint);Vert(vh,d,tint);vh.AddTriangle(n,n+1,n+2);vh.AddTriangle(n,n+2,n+3);}
-        static Vector2 Corner(Rect r,float cut,int i){switch(i){case 0:return new Vector2(r.xMin,r.yMin+cut);case 1:return new Vector2(r.xMin,r.yMax);case 2:return new Vector2(r.xMax-cut,r.yMax);case 3:return new Vector2(r.xMax,r.yMax-cut);case 4:return new Vector2(r.xMax,r.yMin);default:return new Vector2(r.xMin+cut,r.yMin);}}
-        static void Border(VertexHelper vh,Rect r,float cut,float width,Color c){for(int i=0;i<6;i++)Line(vh,Corner(r,cut,i),Corner(r,cut,(i+1)%6),width,c);}
-        static void Bevel(VertexHelper vh,Rect r,float cut,Color lower,Color upper){int n=vh.currentVertCount;Vert(vh,r.center,Color.Lerp(lower,upper,.5f));for(int i=0;i<6;i++){var v=Corner(r,cut,i);Vert(vh,v,Color.Lerp(lower,upper,Mathf.InverseLerp(r.yMin,r.yMax,v.y)));}for(int i=0;i<6;i++)vh.AddTriangle(n,n+1+i,n+1+(i+1)%6);}
         static void Quad(VertexHelper vh,Rect r,Color c)=>Gradient(vh,r,c,c);
         static void Gradient(VertexHelper vh,Rect r,Color lower,Color upper){int n=vh.currentVertCount;Vert(vh,new Vector2(r.xMin,r.yMin),lower);Vert(vh,new Vector2(r.xMin,r.yMax),upper);Vert(vh,new Vector2(r.xMax,r.yMax),upper);Vert(vh,new Vector2(r.xMax,r.yMin),lower);vh.AddTriangle(n,n+1,n+2);vh.AddTriangle(n,n+2,n+3);}
         static void Line(VertexHelper vh,Vector2 a,Vector2 b,float w,Color c){var n=new Vector2(-(b-a).y,(b-a).x).normalized*w*.5f;Polygon(vh,a-n,a+n,b+n,b-n,c);}
         static void Diamond(VertexHelper vh,Vector2 c,float s,Color tint)=>Polygon(vh,c+Vector2.left*s,c+Vector2.up*s,c+Vector2.right*s,c+Vector2.down*s,tint);
-        static void Ring(VertexHelper vh,Vector2 c,float radius,float width,Color tint)=>Ellipse(vh,c,radius,1,width,tint,0,360);
         static void Ellipse(VertexHelper vh,Vector2 c,float radius,float sy,float width,Color tint,float angle,float span)
         {
             int steps=Mathf.Max(3,Mathf.CeilToInt(span/7));Vector2 old=c+new Vector2(Mathf.Cos(angle*Mathf.Deg2Rad),Mathf.Sin(angle*Mathf.Deg2Rad)*sy)*radius;

@@ -2,23 +2,24 @@ using UnityEngine;
 
 namespace SkyPulse.Mobile
 {
-    // The eight existing campaign medals are the only source of truth. These
-    // additive lighting rewards never remove the flight worlds' original light.
+    // One persisted medal per system. Eight spatially distinct light groups,
+    // derived from that save, are shared by flight worlds and the city overlook.
     public static class SkyPulseWorldRestoration
     {
-        static readonly int Windows=Shader.PropertyToID("_RestoredWindows"),Beacons=Shader.PropertyToID("_RestoredBeacons"),Transit=Shader.PropertyToID("_RestoredTransit");
-        public static float WindowPower(int mask)=>((mask&2)!=0?.18f:0)+((mask&16)!=0?.26f:0)+((mask&128)!=0?.20f:0);
-        public static float BeaconPower(int mask)=>((mask&1)!=0?.20f:0)+((mask&8)!=0?.18f:0)+((mask&64)!=0?.20f:0);
-        public static float TransitPower(int mask)=>((mask&4)!=0?.22f:0)+((mask&32)!=0?.28f:0);
+        static readonly int GroupsA=Shader.PropertyToID("_RestoredA"),GroupsB=Shader.PropertyToID("_RestoredB");
+        static readonly string[] Benefits={"Dock approach lights","Cargo district windows","Transit direction markers","Relay tower beacons","Power-grid window banks","Skybridge edge lights","Cliff shield markers","Rooftop uplink LEDs"};
+        public static string Benefit(int system)=>Benefits[Mathf.Clamp(system,0,7)];
         public static void Apply(MaterialPropertyBlock finish,int mask,float activePower=0,int activeSystem=-1)
         {
-            // A live circuit previews the currently powered system on the
-            // diorama only. Failed/unfinished circuits never persist a reward.
-            int active=activeSystem>=0&&activeSystem<8?1<<activeSystem:0;
-            if((mask&active)!=0)activePower=0;
-            finish.SetFloat(Windows,WindowPower(mask)+WindowPower(active)*Mathf.Clamp01(activePower));
-            finish.SetFloat(Beacons,BeaconPower(mask)+BeaconPower(active)*Mathf.Clamp01(activePower));
-            finish.SetFloat(Transit,TransitPower(mask)+TransitPower(active)*Mathf.Clamp01(activePower));
+            // PLAN is never supplied here. Only actual core/uplink state can
+            // preview an unfinished system, and only a saved medal persists it.
+            var a=Vector4.zero;var b=Vector4.zero;
+            for(int i=0;i<8;i++)
+            {
+                float power=(mask&(1<<i))!=0?1:i==activeSystem?Mathf.Clamp01(activePower):0;
+                if(i<4)a[i]=power;else b[i-4]=power;
+            }
+            finish.SetVector(GroupsA,a);finish.SetVector(GroupsB,b);
         }
     }
 }

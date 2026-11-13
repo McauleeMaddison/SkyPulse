@@ -95,9 +95,9 @@ namespace SkyPulse.Mobile
                 }
                 else
                 {
-                    GuideStep(0, "RESTORE EIGHT CITY SYSTEMS", "The 3D island responds to live core power. Cleared systems add window, beacon or transit lighting to all twelve flight worlds. Your restored systems stay saved.");
+                    GuideStep(0, "RESTORE EIGHT CITY SYSTEMS", "The city view responds to live core power. Each vault restores a different light group in all twelve flight worlds: docks, windows, transit, beacons, skyways, shield markers or uplinks.");
                     GuideStep(1, "PROTECT YOUR TRACE", "Each turn costs 1 trace, or 3 while a red sensor is powered. Light every core and the uplink before the budget runs out, or restart the vault.");
-                    GuideStep(2, "CHASE GOLD, KEEP MOVING", "Meet the displayed Gold trace target for the top medal. Cleared vaults save once and activate the next puzzle immediately; the eighth completes the network.");
+                    GuideStep(2, "CHASE GOLD, KEEP MOVING", "Vaults advance immediately and save their lighting rewards. Optional daily cases cost no crystals. Gold in all four case designs unlocks the Archivist Hangar cradle.");
                 }
             }
             else if (relay)
@@ -140,7 +140,7 @@ namespace SkyPulse.Mobile
                 default:
                     GuideStep(0, "TAP TO TAKE FLIGHT", "Tap PLAY, then tap the flight area to flap through each pipe opening. Avoid the pipes and ground. Use the pause button to stop, resume or return to Home.");
                     GuideStep(1, "DISCOVER TWELVE WORLDS", "The flight HUD shows your next world and gates remaining. Every run begins in Neon City; a new world arrives every 15 gates. After Polar Glow, Neon City returns at score 180. Your best is saved.");
-                    GuideStep(2, "TURN FLIGHTS INTO PROGRESS", "Collect crystals and automatic power-ups in flight. Crystal Echo adds limited bonus crystals; Route Lens marks upcoming openings. Open Worlds & Power-ups for durations, then spend crystals on birds and Tech.");
+                    GuideStep(2, "TURN FLIGHTS INTO PROGRESS", "Collect crystals and automatic pickups. Pass 5, 15 or 30 gates with a bird to unlock Ion, Prism and Aurora Hangar cradle lights. The next-goal card shows your progress.");
                     break;
             }
         }

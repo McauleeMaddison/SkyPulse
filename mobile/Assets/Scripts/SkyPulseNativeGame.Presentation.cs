@@ -102,7 +102,7 @@ namespace SkyPulse.Mobile
         }
         private static Color ProtocolAccent(SkyPulseMode mode)=>mode==SkyPulseMode.BlackoutProtocol?Hex("#65ffad"):mode==SkyPulseMode.PulseRelay?Hex("#ffd078"):Hex("#b392ff");
         private void SelectHomeProtocol(SkyPulseMode mode){SetHomeProtocol(mode);ResetToMenu();}
-        private void LaunchHomeProtocol(){if(homeProtocol==SkyPulseMode.EndlessRoute)StartFlight();else LaunchMission(homeProtocol,HomeNextMission());}
+        private void LaunchHomeProtocol(){if(homeProtocol==SkyPulseMode.EndlessRoute)StartFlight();else if(homeProtocol==SkyPulseMode.BlackoutProtocol&&blackoutCampaign.RestoredMask==255)LaunchDailyBlackout();else LaunchMission(homeProtocol,HomeNextMission());}
         private void CloseProtocolDropdown(){modeDropdownOpen=false;if(reduceMotionEnabled)modeSelectionScreen.SetActive(false);}
         private void ShowProtocolDropdown()
         {

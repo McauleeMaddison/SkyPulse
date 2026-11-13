@@ -24,7 +24,7 @@ public static class SkyPulseRestorationChecks
     public static void Run()
     {
         if(!Application.isBatchMode||Application.companyName!="SkyPulseQA20261006"||Application.productName!="SkyPulseFlapQA20261110")throw new Exception("Disposable QA required");
-        Directory.CreateDirectory(Output);PlayerPrefs.DeleteAll();PlayerPrefs.Save();SkyPulseNativeGame.ReviewOriginalBirdArtwork=false;SkyPulseBirdRosterPreview.Select("",false);
+        Directory.CreateDirectory(Output);File.Delete(Path.Combine(Output,"FAILURE.txt"));PlayerPrefs.DeleteAll();PlayerPrefs.Save();SkyPulseNativeGame.ReviewOriginalBirdArtwork=false;SkyPulseBirdRosterPreview.Select("",false);
         EditorSceneManager.OpenScene("Assets/Scenes/SkyPulse.unity");SessionState.SetBool("SkyPulse.RestorationQA",true);EditorApplication.EnterPlaymode();
     }
     static void Tick(){if(!EditorApplication.isPlaying||!SessionState.GetBool("SkyPulse.RestorationQA",false))return;SessionState.SetBool("SkyPulse.RestorationQA",false);new GameObject("Restoration QA").AddComponent<SkyPulseRestorationRunner>().Begin(Execute());}
@@ -39,10 +39,10 @@ public static class SkyPulseRestorationChecks
         var g=UnityEngine.Object.FindAnyObjectByType<SkyPulseNativeGame>();g.enabled=false;Set(g,"hapticsEnabled",false);Set(g,"flightCoachStage",2);((AudioSource)Get(g,"audioSource")).mute=true;
         var camera=(Camera)Get(g,"flightCamera");var target=new RenderTexture(750,1334,24);target.Create();camera.targetTexture=target;camera.rect=new Rect(0,0,1,1);
         var canvas=((GameObject)Get(g,"uiRoot")).GetComponent<Canvas>();canvas.renderMode=RenderMode.ScreenSpaceCamera;canvas.worldCamera=camera;canvas.planeDistance=1;Fit(g);
-        SkyPulseBlackoutChecks.Pure();yield return SkyPulseBlackoutChecks.Live(g);yield return SkyPulseHeistDepthChecks.Live(g);yield return SkyPulsePurposeChecks.Live(g);
+        SkyPulseCatalogChecks.Pure();SkyPulseJourneyChecks.Pure();SkyPulseBlackoutChecks.Pure();yield return SkyPulseBlackoutChecks.Live(g);yield return SkyPulseHeistDepthChecks.Live(g);yield return SkyPulsePurposeChecks.Live(g);
         var store=new Store();var campaign=new BlackoutCampaignProgress(store);Set(g,"blackoutCampaign",campaign);
         Check(campaign.RestoredMask==0,"No restoration is granted to a new save");
-        var block=new MaterialPropertyBlock();SkyPulseWorldRestoration.Apply(block,0);Check(block.GetFloat("_RestoredWindows")==0&&block.GetFloat("_RestoredBeacons")==0&&block.GetFloat("_RestoredTransit")==0,"Original world illumination is preserved before any Blackout progress");
+        var block=new MaterialPropertyBlock();SkyPulseWorldRestoration.Apply(block,0);Check(block.GetVector("_RestoredA")==Vector4.zero&&block.GetVector("_RestoredB")==Vector4.zero,"Original world illumination is preserved before any Blackout progress");
         for(int i=0;i<8;i++)
         {
             var s=campaign.Start(i,true);foreach(int move in SkyPulseMissionChecks.Solve(s.Puzzle))s.Rotate(move);
@@ -58,7 +58,7 @@ public static class SkyPulseRestorationChecks
         {
             environment.RestoredMask=0;environment.Present(world,0,5,1,new Color(.3f,.8f,1),new Color(.02f,.04f,.09f),false,1);environment.Render();if(world==0)Save(environment.WorldImage,"endless-before-restoration.png");
             environment.RestoredMask=255;environment.Present(world,0,5,1,new Color(.3f,.8f,1),new Color(.02f,.04f,.09f),false,1);renderers[1,4].GetPropertyBlock(block);
-            Check(block.GetFloat("_RestoredWindows")>.6f&&block.GetFloat("_RestoredBeacons")>.5f&&block.GetFloat("_RestoredTransit")>.4f,"All three light families follow actual progress in world "+world);
+            Check(block.GetVector("_RestoredA")==Vector4.one&&block.GetVector("_RestoredB")==Vector4.one,"All eight light groups follow actual progress in world "+world);
             environment.Render();if(world==0)Save(environment.WorldImage,"endless-after-restoration.png");
         }
         Call(g,"LaunchMission",SkyPulseMode.PulseRelay,0);var relay=(RelaySession)Get(g,"relaySession");Set(g,"birdY",relay.Mission.RelayY[0]);relay.Move(relay.Mission.RelayX(0)-4.8f);Call(g,"UpdateRelayPresentation");Present(g,.18f);yield return null;Present(g,0);camera.Render();Save(target,"relay-titanium-skyport.png");
@@ -67,13 +67,17 @@ public static class SkyPulseRestorationChecks
         foreach(string visible in new[]{"East transit tower","West transfer tower","Middle transit bridge","Lower transit bridge","Arrival transit bridge","Angled arrival apron"})Check(scene.GetComponentsInChildren<Transform>(true).First(t=>t.name==visible).gameObject.activeInHierarchy,"Relay A retains connected structure: "+visible);
         for(int stage=0;stage<8;stage++)
         {
+            Set(g,"blackoutCampaign",typeof(SkyPulseBlackoutChecks).GetMethod("CaptureCampaign",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,new object[]{stage}));
             Call(g,"LaunchMission",SkyPulseMode.BlackoutProtocol,stage);Call(g,"RestartBlackoutVault");Present(g,.2f);yield return null;Present(g,0);
             var board=(SkyPulseHeistBoard)Get(g,"blackoutBoard");var island=(SkyPulseRestorationDisplay)Get(g,"blackoutRestoration");var live=(BlackoutSession)Get(g,"blackoutSession");
-            Check(island.RestoredMask==255,"Diorama receives saved campaign state: "+stage);Check(board.Circuit==live,"New visual renderer observes the real live puzzle: "+stage);
+            Check(island.RestoredMask==(1<<stage)-1,"City overlook receives previously earned systems: "+stage);Check(board.Circuit==live,"New visual renderer observes the real live puzzle: "+stage);
             var buttons=(List<Button>)Get(g,"blackoutNodeButtons");var points=(Vector2[])Get(g,"blackoutPositions");var wrapper=(RectTransform)Get(g,"blackoutOpticalArea");
             Check(wrapper.localScale==Vector3.one,"Board and thumb targets remain full size: "+stage);
             foreach(int tile in Enumerable.Range(0,live.Puzzle.Count).Where(live.Puzzle.Rotatable))Check(Vector2.Distance(((RectTransform)buttons[tile].transform).anchoredPosition,points[tile])<.01f,"Rendered optic and input target share projected centre "+stage+" / "+tile);
-            if(stage==0||stage==2||stage==7){camera.Render();Save(target,"blackout-vault-"+stage.ToString("00")+".png");}
+            camera.Render();Save(target,"blackout-vault-"+stage.ToString("00")+".png");Save(island.Texture,"city-system-"+stage.ToString("00")+".png");
+            var city=(RectTransform)island.transform;var cityCorners=new Vector3[4];city.GetWorldCorners(cityCorners);var targetCorners=new Vector3[4];
+            foreach(int tile in Enumerable.Range(0,live.Puzzle.Count).Where(live.Puzzle.Rotatable)){((RectTransform)buttons[tile].transform).GetWorldCorners(targetCorners);Check(targetCorners[1].y<cityCorners[0].y,"City geometry is outside every puzzle target: "+stage+" / "+tile);}
+            var districtPool=(MeshRenderer[])Get(island,"districts");Check(districtPool.Length==7&&districtPool.All(x=>x!=null),"Panorama has five real districts and two connected skyways: "+stage);
         }
         // Exercise the densest real board at the same small phone, notched
         // phone and tablet sizes used by the existing touch-comfort suite.
@@ -88,6 +92,21 @@ public static class SkyPulseRestorationChecks
             camera.targetTexture=target;RenderTexture.ReleaseTemporary(phoneTarget);
         }
         Fit(g);
+        // Each isolated reward has its own shader state and actual rendered result.
+        bool wasActive=environment.gameObject.activeSelf;environment.gameObject.SetActive(true);
+        environment.RestoredMask=0;environment.Present(0,0,5,1,new Color(.3f,.8f,1),new Color(.02f,.04f,.09f),false,1);environment.Render();
+        Save(environment.WorldImage,"endless-reward-baseline.png");
+        var baselineBytes=File.ReadAllBytes(Path.Combine(Output,"endless-reward-baseline.png"));
+        var baselineHash=Convert.ToBase64String(System.Security.Cryptography.SHA256.Create().ComputeHash(baselineBytes));
+        var signatures=new HashSet<string>{baselineHash};
+        for(int bit=0;bit<8;bit++)
+        {
+            environment.RestoredMask=1<<bit;environment.Present(0,0,5,1,new Color(.3f,.8f,1),new Color(.02f,.04f,.09f),true,1);environment.Render();
+            Save(environment.WorldImage,"endless-reward-"+bit.ToString("00")+".png");
+            var imageBytes=File.ReadAllBytes(Path.Combine(Output,"endless-reward-"+bit.ToString("00")+".png"));string signature=Convert.ToBase64String(System.Security.Cryptography.SHA256.Create().ComputeHash(imageBytes));Check(signatures.Add(signature),"Each vault produces a distinct rendered Endless lighting reward: "+bit);
+            SkyPulseWorldRestoration.Apply(block,1<<bit);var groups=new[]{block.GetVector("_RestoredA"),block.GetVector("_RestoredB")};for(int n=0;n<8;n++)Check(groups[n/4][n%4]==(n==bit?1:0),"Only the earned light group is enabled: "+bit+" / "+n);
+        }
+        environment.gameObject.SetActive(wasActive);
         // Show a genuinely new campaign, free planning and actual power. Never
         // fake campaign progress or a success animation into a marketing image.
         campaign=new BlackoutCampaignProgress(new Store());Set(g,"blackoutCampaign",campaign);Call(g,"LaunchMission",SkyPulseMode.BlackoutProtocol,0);Call(g,"RestartBlackoutVault");Present(g,.2f);camera.Render();Save(target,"blackout-new-city.png");
@@ -107,6 +126,7 @@ public static class SkyPulseRestorationChecks
         var boardClose=(SkyPulseHeistBoard)Get(g,"blackoutBoard");var boardCamera=(Camera)Get(boardClose,"opticalCamera");float oldSize=boardCamera.orthographicSize;boardCamera.orthographicSize=2.9f;boardClose.Render();Save(boardClose.Texture,"blackout-optics-detail.png");boardCamera.orthographicSize=oldSize;boardClose.Render();
         foreach(string name in new[]{"FlightArchitecture","OrbitalStructure","HeistOptics","HeistBeam"})
         {var shader=Resources.Load<Shader>("SkyPulse/Shaders/"+name);Check(shader!=null&&shader.isSupported,"Shader supported: "+name);foreach(var message in ShaderUtil.GetShaderMessages(shader))Check(message.severity.ToString()!="Error","Shader compiles: "+name+" / "+message.message);}
+        yield return SkyPulseJourneyChecks.Live(g,camera,target);
         File.WriteAllText(Path.Combine(Output,"VALIDATION.json"),JsonUtility.ToJson(new Report{result="PASS",checks=checks.ToArray(),deviceTested=false},true));Debug.Log("SKYPULSE_RESTORATION_PASS");EditorApplication.Exit(0);
     }
     static void Fit(SkyPulseNativeGame g){Canvas.ForceUpdateCanvases();Call(g,"RefreshViewportDecor");Call(g,"ApplySafeArea");Call(g,"FitInterfaceToSafeArea");Call(g,"FitBlackoutToSafeArea");Canvas.ForceUpdateCanvases();}

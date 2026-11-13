@@ -63,7 +63,7 @@ namespace SkyPulse.Mobile
             // can never hide the only way to browse the collection.
             HangarBrowseButton("‹", -390, ShowPreviousHangarBird);
             HangarBrowseButton("›", 390, ShowNextHangarBird);
-            HangarLabel(hangarPageRoot, "SWIPE TO EXPLORE", new Vector2(0, 37),
+            HangarLabel(hangarPageRoot, (playerJourney!=null?SkyPulsePlayerJourney.RankName(playerJourney.DisplayRank(skin.Id))+" CRADLE · ":"")+"SWIPE TO EXPLORE", new Vector2(0, 37),
                 new Vector2(560, 36), 21, Hex("#91b9ca"));
 
             var glass = ProgressionSurface(hangarPageRoot, "Flight profile glass",

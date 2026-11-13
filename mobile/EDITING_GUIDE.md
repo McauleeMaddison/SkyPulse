@@ -1,371 +1,86 @@
-# Editing SkyPulse in VS Code
+# Editing SkyPulse
 
-Open the **SkyPulse** repository in VS Code and `mobile/` in Unity Hub.
-This is the main editing guide. [Build 21](Release/DeviceBuild21/README.md) is installed
-on the paired iPhone for the 14–15 November weekend checklist. Follow
-`Release/CURRENT_RELEASE.json` to the exact runtime commit, QA and deployment
-record. Physical appearance/gameplay/performance acceptance remains pending.
-Public App Review remains on hold; older dated design records describe their own source.
+Open **`mobile/` in Unity Hub** and the repository in VS Code. Play
+`Assets/Scenes/SkyPulse.unity`. The installed iPhone is still **Build 21**; the
+[current local review](Development/Current/README.md) describes later source.
+Public App Review is on hold. Keep the approved tap physics and wing motion fixed.
 
-The [11 November repair](Development/EverydayPolish20261111/README.md) records the earlier
-local code/wing repair. `SkyPulseNativeGame.FirstPlay.cs`, `.FailureClarity.cs`
-and `.Readability.cs` extend the existing game component; they are not additional
-game components to attach. `SkyPulsePickupDisplay.cs` builds the seven pooled pickup
-housings. For reference-rig anatomy, inspect the saved left/right wing-tip joints
-and `SkyPulseBirdShoulderFit.cs`; preserve manual edits and do not regenerate over
-them. Choosing **Equip Bird** clears a temporary Editor appearance override.
+## Edit in Unity
 
-The [Build 20 native-roster pass](Release/DeviceBuild20/README.md) promotes the
-solid roster into the mobile runtime for the requested private device tests.
-The editable workshop prefabs remain canonical; generated combined assets live
-under `Assets/Resources/SkyPulse/Birds3D`. Do not edit those generated copies.
-`SkyPulseBirdRosterRuntimeBaker` records and protects source/output hashes.
-`SkyPulseNativeGame.SolidBirds.cs` owns selection and native tap pose; reusable
-`SkyPulseSolidBirdStudio.cs` supplies Home/Hangar displays without Editor APIs.
-`SkyPulseNeonFinchPrototype.TapStroke` defines the signed up/down pose; physical
-lift and collisions remain in the existing game. Reduced Motion retains 60%
-essential wing motion. The legacy Editor art selector now yields to native solids.
+| Work | Canonical scene/folder under `mobile/` |
+| --- | --- |
+| Complete game | `Assets/Scenes/SkyPulse.unity` |
+| Civic/residential islands and buildings | `Assets/Editor/SkyPulseBackgroundWorkshop/Scenes` |
+| Distant world atmosphere | `Assets/Editor/SkyPulseBackgroundWorkshop/Distant Scenes` |
+| Relay structures, planets and skybridges | `Assets/Editor/SkyPulseBackgroundWorkshop/Pulse Relay World/Scenes/Pulse Relay Orbital World.unity` |
+| Twelve pipe structures | `Assets/Editor/SkyPulsePipeWorkshop/Scenes` |
+| Editable bird anatomy and source models | `Assets/Editor/SkyPulseBirdWorkshop` and `Assets/Editor/SkyPulseBirdRosterWorkshop` |
 
-## Open the right scene
+Workshop Play inspects a model. Return to `SkyPulse.unity` for gameplay. Keep saved
+prefabs, material/mesh edits and `.meta` GUIDs. Do not regenerate a workshop over
+manual changes. Generated `Resources/SkyPulse/Birds3D` assets are runtime outputs;
+edit the canonical workshop model and use the existing validated bake workflow.
+The historical word `Prototype` in a rig class name is retained for serialized
+compatibility; it now also serves the accepted native roster.
 
-Paths below are relative to `mobile/`. Open an existing scene rather than
-regenerating a workshop over saved edits.
+## Edit in VS Code
 
-| Work | Scene or folder |
-|---|---|
-| Play the game | `Assets/Scenes/SkyPulse.unity` |
-| Twelve worlds, civic and residential models | `Assets/Editor/SkyPulseBackgroundWorkshop/Scenes/01 Neon City Civic.unity` and the other named Civic/Residential scenes |
-| Distant atmosphere for each world | `Assets/Editor/SkyPulseBackgroundWorkshop/Distant Scenes/01 Neon City Atmosphere.unity` and the other named atmosphere scenes |
-| Relay station, planet and moons | `Assets/Editor/SkyPulseBackgroundWorkshop/Pulse Relay World/Scenes/Pulse Relay Orbital World.unity` |
-| Twelve editable pipe themes | `Assets/Editor/SkyPulsePipeWorkshop/Scenes/01 Neon City Pipes.unity` and the other named pipe scenes |
-| First Neon Finch art review | `Assets/Editor/SkyPulseBirdWorkshop/Scenes/Neon Finch Art Review.unity` |
-| Gameplay and UI code | `Assets/Scripts/` |
-| Shared shaders and runtime resources | `Assets/Resources/SkyPulse/` |
+All paths below are inside `Assets/Scripts/` unless stated otherwise.
 
-Workshop Play is model inspection. Return to `Assets/Scenes/SkyPulse.unity` to
-test gameplay. Preserve the existing scenes, prefabs, materials, animation and
-`.meta` identities. Numbered mesh copies are local studies, not cleanup targets.
+| Change | File |
+| --- | --- |
+| Catalogue, lift, pipe collisions and run lifecycle | `SkyPulseNativeGame.cs` |
+| Mode dispatch, Relay rules integration and wallet journal | `SkyPulseNativeGame.Missions.cs` |
+| Existing four daily Relay courses | `SkyPulseDailyRelay.cs` |
+| Blackout rules, eight authored story vaults and v3 save | `SkyPulseBlackoutCampaign.cs` |
+| Four optional authored daily cases | `SkyPulseBlackoutCasebook.cs` |
+| Blackout layout and touch bindings | `SkyPulseNativeGame.Blackout.cs` |
+| Physical prisms, beams and fixed 49-module pool | `SkyPulseHeistBoard.cs` |
+| Panoramic city arrangement and connected bridges | `SkyPulseRestorationDisplay.cs` |
+| Eight reward names and saved lighting group binding | `SkyPulseWorldRestoration.cs` |
+| Reward appearance | `Resources/SkyPulse/Shaders/FlightArchitecture.shader` |
+| Home next-goal card, case launch and results | `SkyPulseNativeGame.Journey.cs` |
+| Cosmetic mastery thresholds and daily case save | `SkyPulsePlayerJourney.cs` |
+| Native equipment selection and flight pose dispatch | `SkyPulseNativeGame.SolidBirds.cs` |
+| Approved wing stroke | `SkyPulseNeonFinchPrototype.cs` |
+| Swipe Hangar layout | `SkyPulseNativeGame.Hangar.cs` |
+| Native display lighting/cradle | `SkyPulseSolidBirdStudio.cs` |
+| Bird traits, training, Core prices and breeding | `SkyPulseBirdProgression.cs`, `SkyPulseNativeGame.BirdProgression.cs` |
+| Seven pickup rewards | `SkyPulseNativeGame.FieldTech.cs`, `SkyPulsePickupDisplay.cs` |
+| How to Play | `SkyPulseNativeGame.Guide.cs` |
 
-The Finch remains an isolated prototype. The original
-`Resources/SkyPulse/characters/roster/volt-frame-04-v1.png` is its design blueprint.
-The owner approved the reconstructed Finch appearance before the remaining
-fourteen roster models were authored. Their colours are approved, but the owner
-rejected the first sculpture pass; Raven has a revised candidate awaiting review before the others.
-Their device integration remains on hold; see the [roster package](Development/BirdRoster20261104/README.md). Existing wing/tail animation,
-bones, scene and prefab remain intact; gameplay retains the original artwork.
-The generator registers source pixels at 100px per Unity unit, with source
-(285,255) at model (0,0). `HeadPixel2` includes the preserved head bind offset.
-`ReferenceWingContour` holds the traced cubic outlines and cyan regions of the
-first seven main feathers. `ReferenceBodyPixel` authors body, wing and tail landmarks inside the existing
-mesh buffers; hidden mounts and continuous keel provide real depth.
-The existing `FinchArmourFinish.shader` exposes **Feather face colour**, metallic,
-smoothness and emission. Vertex alpha separates cobalt blade faces (0) from dark
-bevels (1); vertex RGB tints cyan feather panels and emissive exhaust cores.
-The previous procedural grain/scribe controls are removed; legacy serialized
-material entries are retained to preserve asset compatibility.
-Studio settings live in the review scene and its `Lighting` folder. **Refine Finch
-sculpture and metal finish** explicitly replaces workshop buffers 001–125 and the
-eight review-material profiles; **Create Neon Finch 3D art review** preserves an
-existing rig. Edit saved meshes/materials directly in Unity for manual art changes;
-do not run the explicit refinement command over those edits.
+Files beginning `SkyPulseNativeGame.` are parts of one component. Do not attach
+another game component for each partial file. VS Code nests them under the main
+file. They remain at their established paths to preserve tooling and GUIDs.
 
-The latest Finch has smaller curved lenses seated into closed helmet pockets.
-The named **09 Volumetric blue jet fire** child under the tail is real mesh geometry.
-Its editable mesh, material and shader are in the workshop's **Effects** folder.
-Use **Blue jet fire.mat** for electric-blue colour, white-hot core and opacity;
-`SkyPulseNeonFinchPrototype.SampleJet` supplies absolute time and flap-linked
-thrust through a cached property block. **Reduced Motion** holds the flow steady.
-The jet tool preserves an existing attachment and rejects unexpected owner edits;
-it does not overwrite custom mesh/material edits or save unrelated dirty assets.
-Use the saved prefab directly rather than rerunning generation over manual edits.
-[Current eye/exhaust previews](Development/DesignUpgrade20261031/Previews/Finch-Eyes-Jet/Overview.png)
-remain an art-review candidate, separate from the installed game.
+## Validate
 
-## The full 3D bird roster
+Read-only checks from the repository root:
 
-The [4 November roster package](Development/BirdRoster20261104/README.md) contains
-all individual previews and actual-gameplay captures. The approved Finch is intact.
-The new editable prefabs/scenes are under `Assets/Editor/SkyPulseBirdWorkshop/Roster`.
-Each named folder groups its meshes and finishes into two asset containers.
+```sh
+python3 mobile/Tools/check_player_copy.py
+python3 mobile/Tools/verify_bird_registration.py
+```
 
-Use **Tools → SkyPulse → Bird Workshop → 3D roster in actual gameplay** for the
-Editor visual selector in the normal game scene. It changes model appearance only;
-normal flight rules, equipped stats and saves remain in use. This is an Editor
-review feature; it has not changed the installed iPhone build. The source data,
-authoring, Raven-specific revision, preview controller and preview window are
-the named `SkyPulseBirdRoster*` files under `Assets/Editor`. The runtime baker
-is an Editor tool; do not generate or promote unapproved release models.
-`Revise Chrome Raven reference sculpture` only accepts its known first-pass
-asset hashes and preserves saved revised models and all other birds.
+Unity helpers in `Tools/` are copied to an isolated QA product before execution.
+Some intentionally clear **that QA product's** preferences; never copy/run those
+entry points against the owner product. `SkyPulseCatalogChecks` verifies twelve
+real Tech families and negative controls. `SkyPulseRestorationChecks` and
+`SkyPulseJourneyChecks` cover lighting, authored cases, progression, saves and UI.
+The current review records which checks ran and what still needs device testing.
 
-## Where to make a code change
+The release metadata checker follows the installed Build 21 contract. Later local
+source intentionally differs from that immutable build; create a fresh numbered
+release contract when an approved candidate is actually built and installed.
+Local source checks cannot prove worldwide metadata uniqueness, exclusive AI art
+rights, device performance or future Apple acceptance.
 
-Start with `mobile/Assets/Scripts/SkyPulseNativeGame.cs`. All
-`SkyPulseNativeGame.*.cs` files extend **one partial game class**. Keep the existing
-`SkyPulseNativeGame.cs` component on the game scene; each partial supplies methods
-and fields for that same component. Follow calls across the partial files before
-changing behaviour.
+## Historical files and cleanup
 
-The `#region` sections appear in VS Code’s Outline and can be folded. On Mac,
-use **⌘P** to open a file, **⌘⇧O** to jump to a method, **F12** to follow a call,
-and **⇧F12** to find its references.
-
-| Change | File / search term |
-|---|---|
-| Bird names, original art and catalogue prices | `SkyPulseNativeGame.cs` → `Skins` |
-| Tech names, three prices and effect descriptions | `SkyPulseNativeGame.cs` → `Upgrades` |
-| Flight gravity and flap force | `SkyPulseNativeGame.cs` → `EndlessTuning` |
-| Original flight width, pipe spacing and openings | `SkyPulseNativeGame.cs` → `PortraitPlayfieldAspect`, `PipeSpacingFraction`, `RouteGapFraction` |
-| Hangar layout, profile text and swipe animation | `SkyPulseNativeGame.Hangar.cs` → `BuildBirdHangarPage` |
-| Training, Core and breeding screens | `SkyPulseNativeGame.BirdProgression.cs` → `OpenBirdTraining`, `OpenCoreProgression`, `OpenBreeding` |
-| Real training/breeding rules and costs | `SkyPulseBirdProgression.cs` |
-| Tree labels and clickable upgrade targets | `SkyPulseNativeGame.TechTree.cs` → `BuildTechTree` |
-| Connected 3D tree branches, Core and halo movement | `SkyPulseTechTreeView.cs` |
-| Glossy text finish | `Resources/SkyPulse/Shaders/HolographicText.shader` |
-| Holographic score/result cards and labels | `SkyPulseNativeGame.Results.cs`, `SkyPulseScoreGlass.cs`, `Resources/SkyPulse/Shaders/ScoreGlass.shader` |
-| Original 3D pipe material and light packets | `SkyPulseNativeGame.Depth.cs`, `Resources/SkyPulse/Shaders/EndlessRouteMetal.shader` |
-| Original pipe artwork placement / collider anchors | `SkyPulseNativeGame.PipeVisuals.cs` |
-| Tapered exhaust, soft trail and passage sparks | `SkyPulseFlightEffects.cs`, `SkyPulseNativeGame.Cinematic.cs` |
-| Pooled 3D scenery during Endless flight | `SkyPulseFlightEnvironment.cs`, `SkyPulseNativeGame.Environment.cs`, `Resources/SkyPulse/Shaders/FlightArchitecture.shader` |
-| Endless's live perspective world, sky dome and low clouds | `SkyPulseFlightEnvironment.cs` → `Build`, `SetViewport`, `Architecture`; `WorldAtmosphere.shader`, `WorldComposite.shader` under `Resources/SkyPulse/Shaders/` |
-| Mode titles, glass Home controls and footer spacing | `SkyPulseNativeGame.Home.cs` → `ApplyHomeIdentity` |
-| Relay station ribs, turbines and drones | `SkyPulseRelayEnvironment.cs` |
-| Relay's fixed ground guide and pooled 3D deck panels | `SkyPulseRelayDeck.cs`, `Resources/SkyPulse/Shaders/RelayRunway.shader` |
-| Six audio voices, optional cue fallbacks and saved sound switch | `SkyPulseNativeGame.Audio.cs` |
-| Native tactile cues and saved haptic switch | `SkyPulseTactileFeedback.cs`, `SkyPulseNativeGame.Controls.cs`, `Assets/Plugins/iOS/SkyPulseTactileFeedback.mm` |
-| How to Play topics and route-map entry | `SkyPulseNativeGame.Guide.cs` |
-| Three Home layouts and mode input | `SkyPulseNativeGame.Controls.cs`, `.Presentation.cs` |
-| Relay gate rules | `SkyPulseMissionModels.cs` → `RelaySession` |
-| Signal Heist puzzle rules / presentation | `SkyPulseBlackoutCampaign.cs`, `SkyPulseNativeGame.Blackout.cs`, `SkyPulseHeistBoard.cs` |
-| Blackout's city-restoration ribbon and objective telemetry | `SkyPulseBlackoutGraphic.cs` → `Network`, `SkyPulseNativeGame.Blackout.cs` → `BlackoutNetworkCaption` |
-
-Code paths in this table are relative to `mobile/Assets/Scripts`; shader paths
-start at `mobile/Assets`. The native plugin path starts at `mobile/`.
-
-## Prices and progression
-
-- A catalogue bird’s `Price` is its **base price**, not necessarily its current
-  payable price. Every completed training level adds 2% off future founder-bird
-  unlocks, capped at 20%. `BirdUnlockPrice()` supplies the Hangar and purchase
-  dialog with the same whole-crystal price. Do not bypass it in a new button.
-- Core savings apply separately to Tech upgrades, training and breeding.
-  `UpgradeCrystalPrice()`, `TrainingCost()` and `BreedingCost()` calculate those
-  prices. Core evolution keeps its own stated price.
-- Breeding previews the exact inherited traits, spends once, keeps both parents,
-  adds a permanent offspring and equips it. `Preview()` does not spend crystals;
-  `Breed()` performs the guarded transaction. Identical owned combinations are
-  blocked. Training offspring also contributes to Hangar unlock savings.
-- Tech `LevelEffects` are descriptions. The actual reward/collection functions
-  must agree with them. Changing the description alone does not change gameplay.
-
-## Visual edits
-
-For pipe LEDs, `packet` in `EndlessRouteMetal.shader` controls the moving bright
-section; `_Clock * .48` controls its speed. Cyan/pink masks keep the effect on
-the original coloured strips. Reduced Motion freezes the clock and keeps the
-lights on. Change the finish without changing pipe collision dimensions.
-The collar now has a modelled inclined circular mouth, annular shoulder and
-inner bore. Its mesh defines the opening and silhouette; it is not a hole painted
-onto a flat cap. The shared shader still uses `_Cutout` to distinguish collars from shafts,
-while structural meshes bypass the old artwork
-alpha cutout. `_ArtFlip` mirrors the collar for upper pipes; keep that
-orientation handling when editing the shader.
-
-The twelve Endless worlds use individually authored civic/residential district
-meshes from `Resources/SkyPulse/BackgroundEdits`, viewed by a dedicated perspective
-scenery camera behind the unchanged flight camera. Edit the workshop scenes under
-`Assets/Editor/SkyPulseBackgroundWorkshop`; bake only the world you intend to
-change. `SkyPulseFlightEnvironment` reuses two district banks with three depth
-layers. Keep absolute-distance parallax and the collider-free background.
-
-`WorldAtmosphere.shader` grades the authored upper sky and evaluates a bounded
-cloud volume below the islands. `SkyPulseFlightEnvironment.BuildCloudNoise`
-creates its shared 32-cubed density texture once. World transitions reuse it;
-Reduced Motion freezes the cloud clock. Physical iPhone GPU/thermal checks remain
-required after changing the volume sampling budget. Relay has its own editable
-station structure and materials; it does not reuse Endless's floating districts.
-
-`SkyPulseRelayDeck` draws all bevelled runway panels in one static mesh. Its
-shader wraps panel centers using `_Distance`; the front light remains fixed at
-the existing `GroundY`. Do not move that light or add collision shapes for visual
-polish. Reduced Motion supplies zero distance/clock through the existing path.
-
-Blackout's enlarged opening optics use projected, fixed touch targets. The
-city ribbon reads existing saved medals, while partial illumination reads the
-live cores and uplink. Planning must never write city completion. Budget,
-solutions, saves and immediate progression remain in the existing campaign code.
-
-For the Tech Tree, change text/cues in `BuildTechTree`, and geometry in
-`SkyPulseTechTreeView`. Keep fixed touch targets, direct two-axis dragging and
-the confirm-before-spending flow. The letters use one shared material, rather
-than overlapping text layers; their light sweep does not move the controls.
-
-## Keep existing players’ progress safe
-
-Keep catalogue `Id` values, `PlayerPrefs` keys, the app/company identity and
-existing `.meta` GUIDs stable. Unity uses the original script GUID to retain its
-scene component. Rename visible labels instead of saved identifiers. Add a
-migration deliberately if the save format ever changes.
-
-## Check an edit
-
-1. Save in VS Code, let Unity compile, and resolve Console errors.
-2. Play the affected screen/mode. Check pause, retry and Reduced Motion.
-3. For prices, test insufficient and exact balances, repeated confirmation,
-   and reopening saved progress.
-4. Run `python3 mobile/Tools/run_dimensional_qa.py --output artifacts/my-change-qa`
-   from the repository root for the isolated regression suite. Use a fresh output
-   directory. It creates its own project/save identity; do not copy its save-reset
-   helpers into the shipping project.
-5. Validate new builds on your phone. Editor renderings do not establish device
-   frame rate, thermals, battery use or touch comfort.
-
-Release evidence lives in `mobile/Release/CURRENT_RELEASE.json`. Runtime changes
-make its recorded QA/export stale until checked again. App Review submission
-remains on hold; editing or compiling locally does not submit anything.
-
-## Bird exhaust and pipe joins
-
-`SkyPulseNativeGame.Cinematic.cs` places the exhaust socket in the bird's body
-frame, so it follows the bank. `SkyPulseFlightEffects.cs` samples that socket at
-60 Hz and joins a tapered ribbon with shared edge positions. Its fixed buffers
-avoid per-frame allocations. Plume length/width are presentation values only.
-`FlightLight.shader` feathers this material; `_Soft` defaults to zero so the
-existing Signal Heist fibres keep their finish. Reduced Motion removes the
-history/sparks and leaves a compact, static, feathered plume.
-
-In `SkyPulseNativeGame.Depth.cs`, the visible shaft seats inside the collar at
-22% of its height toward the far shoulder. The hollow collar and shaft meet as
-separate 3D meshes. Collision shapes still overlap for reliable gameplay; do not
-trim those colliders when adjusting the visible join. The original cyan/pink
-artwork and animated LED material remain in use.
-
-## Endless pickup effects
-
-`SkyPulseNativeGame.PickupBoosts.cs` owns Crystal Echo (6 seconds, +1 per
-collected crystal, at most 6 extra) and Route Lens (8 seconds, two upcoming
-openings). They use the existing pool and activate automatically. Edit the
-constants at its top; do not create another game component or save system.
-Echo rewards are excluded from percentage/daily reward bases and recorded
-separately in results. Lens brackets are pooled presentation only; never alter
-pipe colliders to fit them. Runtime emblems are cached once and disposed with
-the game. The Survival/Discovery/Rewards groups in `CreateFlightGuideScreen` explain all
-seven pickups. Keep the guide and public player page aligned after rule changes.
-
-## How to Play and world crossfades
-
-`SkyPulseNativeGame.Guide.cs` owns the mode-specific guide and Endless topics for
-Tech, Core, training and breeding. The world map is reached from its Worlds &
-Power-ups control. Keep help copy aligned with the actual cost/reward functions.
-
-`EndlessRouteMetal.shader` uses `_Visibility` for depth-safe departure coverage.
-`UpdateDepthPresentation` derives it from the existing world-transition timer,
-matching the departing sprite pool. `SceneLightTint` blends the shared bird/pipe
-light across the same transition. Do not change the original flight geometry or
-world milestone rules when adjusting these presentation values.
-
-## Small-screen touch targets
-
-`SetComfortHitTarget` in `SkyPulseNativeGame.Controls.cs` gives isolated HUD pause
-icons and the Home mode badge an invisible 176-unit touch area without enlarging
-their visible artwork. It uses the existing Unity UI raycaster, so Relay excludes
-the complete target from tap-to-flap. Do not apply this indiscriminately to dense
-controls: expanded targets must not overlap. The mode list and shared Pause rows
-instead reserve explicit layout space. Their actual raycasts and safe-area bounds
-are covered by `Tools/SkyPulseTouchComfortChecks.cs` in the disposable QA product.
-
-## Bird silhouettes and safe Editor iteration
-
-SkyPulseBirdRig.PrepareSprite queues the measured flap mesh. FlushPending runs
-from LateUpdate before rendering; never invoke its native geometry operation
-from Awake or an Editor callback. Measured coverage lives in
-Resources/SkyPulse/characters/bird-silhouette-coverage.json and is reproducible
-with Tools/bake_bird_shapes.swift. Original art, registration and gameplay
-collision dimensions stay intact. Simple bird UI images use the same mesh.
-The original articulated bird artwork is the gameplay appearance. The separate
-Neon Finch workshop is separate from gameplay; its appearance is approved.
-The additional fourteen bird sculptures remain under review as described above.
-
-Assets/Editor/SkyPulsePlaySessionGuard.cs ends Editor Play before compilation.
-Wait and press Play again; existing progress loads through ordinary startup.
-Tools/SkyPulseReloadChecks.cs verifies a real compile, fresh update loop and
-reopening Hangar/Tech Tree in the isolated QA product.
-
-## Edit the actual 3D pipes in Unity
-
-Open `Assets/Editor/SkyPulsePipeWorkshop/Scenes/01 Neon City Pipes.unity`, or any
-of the other eleven named world scenes. Prefabs are beside them in `Prefabs`.
-Expand the world assembly and then:
-
-- `Collar / Structural details · v1`: **Rolled cap bezel** and **Recessed cap bore**.
-- `Barrel / Structural details · v1`: **Barrel support ribs** and **Inset light guides**.
-
-These are separate readable mesh objects. Select them with Unity's Move, Rotate
-and Scale tools; hide an object to omit it. Select the assembly root to adjust
-its two light colours, metal finish, LED speed and detail. The cap mouth and
-inner wall are real mesh surfaces: keep the bezel and bore aligned with the
-inclined collar opening, and check the complete assembly from the gameplay view.
-
-Save the scene, then select its assembly root and use **Bake this pipe theme into
-gameplay** in the Inspector. This updates only that world's reusable meshes and
-finish in `Assets/Resources/SkyPulse/PipeEdits`. Runtime uses that bake exactly;
-it does not restore hidden details. Baking fits the visible assembly back to the
-original collision dimensions, so it preserves flight width, gaps and spacing.
-The gameplay collider remains authoritative: decorative reshaping must not imply
-a new passable area.
-
-Workshop scenes are for inspecting and editing models. Pressing Play there does
-not start SkyPulse: the Editor bootstrap excludes workshop scenes so their static
-pipes and inspection cameras cannot leak into a run. Open
-`Assets/Scenes/SkyPulse.unity`, then press Play to test actual gameplay.
-
-Existing scenes are never regenerated by the Create menu. The Add missing details
-button adds only absent named children; it preserves existing objects and edits.
-
-## Inspect the Finch as a 3D model
-
-Open `Assets/Editor/SkyPulseBirdWorkshop/Scenes/Neon Finch Art Review.unity`.
-Select the Finch root to rotate the complete model in Scene view; expand its
-children to inspect the existing mesh parts and eight mechanical joints. Use the
-existing `SkyPulseNeonFinchPrototype` component to toggle animation and turntable.
-The latest structural pass closes the case behind the optics, embeds cap backs,
-adds concealed foot axles and spreads the feather assemblies in Z. Existing
-reference X/Y and optical front vertices are preserved. The new [3D previews](Development/DesignUpgrade20261031/README.md)
-include opposite-side, underside, neutral-material and wireframe inspections.
-Visual acceptance and device testing remain pending. No gameplay replacement or
-new App Store build was performed.
-
-## Live 3D flight animation
-
-The Editor roster preview uses a continuous active-flight clock sampled once per
-rendered frame. Do not reset it from `wingTimer`: each tap resets that impulse
-timer and would trap the slower mechanical stroke in its opening phase.
-`SampleFlightPose` retains essential wing movement during gameplay in Reduced
-Motion; `SamplePose` keeps the existing Studio behaviour. The Editor-only run
-serial resets the preview cleanly on retry, without adding a save key or changing
-shipping input. See `Tools/SkyPulseFlapChecks.cs` for actual input-to-camera tests.
-
-
-### Editor Home and Hangar solid birds — 10 November
-
-`Assets/Editor/SkyPulseBirdMenuPreview.cs` owns the temporary transparent solid
-showcases; `SkyPulseBirdRosterPreview.cs` owns tap-driven flight and selected
-impact art. Enable them with **Bird Workshop → 3D roster in actual gameplay**.
-The native swipe/price/trait UI remains in `SkyPulseNativeGame.Hangar.cs`.
-Canonical meshes/materials/prefabs stay in the existing Bird Workshop folders.
-Three low shoulder prefabs were corrected without changing their geometry or
-GUIDs; keep manual structural edits in Unity. See the [current record](Development/PolishPass20261110/README.md).
-
-
-## Build 21 field equipment and Hangar motion
-
-`SkyPulseNativeGame.FieldTech.cs` owns Supply Cache / Gate Link rewards and timed-pickup
-duration bonuses. The existing catalogue, collection, gate-pass, HUD, save and purchase
-handlers call it. New fourth-tier families live in the existing three tree branches;
-keep their stable IDs and the old IDs. `SkyPulsePickupDisplay.cs` builds all seven
-pooled silhouettes once. Use the shared enum order when adding another display.
-
-`SkyPulseSolidBirdStudio.MatchVoltcrestDisplayWings` retargets only instantiated
-rotating Hangar rigs. It retains each shoulder position, mesh and source prefab.
-Accepted-tap gameplay remains in `SkyPulseNativeGame.SolidBirds.cs` and the existing
-wing state machine; do not replace it with the continuous showcase clock.
+Use `Development/Archive` for older previews. They are not the current design.
+`artifacts/device-build21` retains the installed build and private save backups;
+`artifacts/rollback-build20` retains a verified signed rollback; `artifacts/Historical`
+retains older archives/logs and selected raw-frame evidence. The exact cleanup
+allowlist and moved-folder map are in `Development/Current/CLEANUP_REPORT.json`.
+Active source, original images, individual crash/unlock frames and editable Unity
+structures were preserved. Do not publish private save exports.

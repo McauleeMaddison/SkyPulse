@@ -75,7 +75,7 @@ namespace SkyPulse.Mobile
             homeBestCaption.color=Color.Lerp(accent,Hex("#b8d2dc"),.5f);
             menuBestText.color=Hex("#edfaff");
             difficultyText.color=accent;
-            ApplyHomeActionProgress();
+            ApplyHomeActionProgress();ApplyJourneyHome();
         }
         // Reuse the existing labels and action roots so callbacks, ownership and
         // navigation stay unchanged. This can run again after every mode switch.

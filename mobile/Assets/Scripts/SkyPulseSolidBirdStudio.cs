@@ -18,10 +18,16 @@ namespace SkyPulse.Mobile
         readonly StudioScene preview;readonly RenderTexture texture;readonly RawImage surface;
         readonly SkyPulseNeonFinchPrototype rig;readonly Transform turntable;
         readonly List<UnityEngine.Object> owned=new List<UnityEngine.Object>();static readonly int ClockId=Shader.PropertyToID("_Clock");
-        Material guide;Transform dockStatusMarkers;
+        Material guide;Transform dockStatusMarkers;int mastery=-1;readonly Color dockAccent;
+        public void SetMastery(int rank)
+        {
+            rank=Mathf.Clamp(rank,0,4);if(mastery==rank||guide==null)return;mastery=rank;
+            var hue=rank==4?new Color(1,.74f,.30f):rank==3?new Color(.67f,.42f,1):rank==2?new Color(.25f,.86f,1):rank==1?new Color(.16f,1,.69f):dockAccent;
+            guide.SetColor("_GlowColor",hue);guide.SetFloat("_Energy",.42f+rank*.08f);
+        }
         public SkyPulseSolidBirdStudio(RectTransform parent,string path,Vector2 size,Vector2 at,Color accent,bool dock,bool hangarMotion=false)
         {
-            Path=path;var prefab=Resources.Load<GameObject>(path);
+            dockAccent=accent;Path=path;var prefab=Resources.Load<GameObject>(path);
             if(prefab==null)throw new InvalidOperationException("Saved bird missing: "+path);
             preview=new StudioScene();
             var model=preview.InstantiatePrefabInScene(prefab);rig=model.GetComponent<SkyPulseNeonFinchPrototype>();

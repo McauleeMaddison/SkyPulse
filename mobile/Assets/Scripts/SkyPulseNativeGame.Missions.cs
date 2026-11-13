@@ -45,12 +45,13 @@ namespace SkyPulse.Mobile
             dailyMissions=new SkyPulseDailyMissions(missionStore,()=>DateTime.UtcNow);
             dailyRelay=new SkyPulseDailyRelay(missionStore,()=>DateTime.UtcNow);
             blackoutCampaign=new BlackoutCampaignProgress(missionStore);
+            playerJourney=new SkyPulsePlayerJourney(missionStore,()=>DateTime.UtcNow);
         }
         private void CheckDailyPeriod()
         {
             if(dailyMissions==null || !RecoverWalletTransaction())return;
             try {
-                dailyMissions.EnsurePeriod();crystals=missionStore.GetInt(SkyPulseDailyMissions.WalletKey,crystals);
+                long previousDay=dailyMissions.Data.day;dailyMissions.EnsurePeriod();if(previousDay!=dailyMissions.Data.day&&homeScreen!=null&&homeScreen.activeSelf)ApplyJourneyHome();crystals=missionStore.GetInt(SkyPulseDailyMissions.WalletKey,crystals);
                 if(dailyRelay!=null && dailyRelay.EnsurePeriod())
                 {
                     if(missionSelectionScreen!=null && missionSelectionScreen.activeSelf && activeMode==SkyPulseMode.PulseRelay)OpenMissionSelection(SkyPulseMode.PulseRelay);
@@ -152,7 +153,7 @@ namespace SkyPulse.Mobile
         }
         private void ClearMissionSession()
         {
-            ResetBlackoutEffects();
+            blackoutDailyActive=false;ResetBlackoutEffects();
             ClearProtocolWorldArt();
             if(activeMode!=SkyPulseMode.EndlessRoute){shieldImmunityTimer=0f;shieldHitStopTimer=0f;}
             if(missionWorld!=null){missionWorld.gameObject.SetActive(false);Destroy(missionWorld.gameObject);missionWorld=null;}
@@ -431,10 +432,10 @@ namespace SkyPulse.Mobile
             if(won)
             {
                 bool saved=true;
-                try { if(activeMode==SkyPulseMode.BlackoutProtocol)blackoutCampaign.Complete(selectedMission,medal,blackoutSession.Trace);else dailyRelay.Complete(relaySession.Mission.Day,selectedMission,medal); }
+                try { if(activeMode==SkyPulseMode.BlackoutProtocol){if(blackoutDailyActive)playerJourney.CompleteCase(blackoutDailyDay,blackoutSession);else blackoutCampaign.Complete(selectedMission,medal,blackoutSession.Trace);}else {dailyRelay.Complete(relaySession.Mission.Day,selectedMission,medal);try{playerJourney.RecordRelay(equippedSkin.Id,relaySession.Passed);}catch(Exception masteryError){Debug.LogWarning("SkyPulse cosmetic mastery save interrupted: "+masteryError.GetType().Name);}} }
                 catch(Exception e) { saved=false;Debug.LogWarning("SkyPulse medal save failed: "+e.GetType().Name);reason+=" · SAVE FAILED"; }
-                if(saved && activeMode==SkyPulseMode.BlackoutProtocol && selectedMission==0)RecordDailyEvent(DailyGameplayEvent.IntroBlackoutCompleted);
-                if(saved && activeMode==SkyPulseMode.BlackoutProtocol && selectedMission<SkyPulseBlackoutCampaign.Stages.Length-1)
+                if(saved && activeMode==SkyPulseMode.BlackoutProtocol && !blackoutDailyActive && selectedMission==0)RecordDailyEvent(DailyGameplayEvent.IntroBlackoutCompleted);
+                if(saved && activeMode==SkyPulseMode.BlackoutProtocol && !blackoutDailyActive && selectedMission<SkyPulseBlackoutCampaign.Stages.Length-1)
                 {
                     int completed=selectedMission;ActivateNextBlackoutPuzzle(completed);Play(unlockSound);PulseHaptic(.16f);return;
                 }

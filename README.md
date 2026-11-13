@@ -1,117 +1,42 @@
 # SkyPulse Arcade
 
-[Build 21](mobile/Release/DeviceBuild21/README.md) adds Voltcrest-style Hangar motion,
-Pulse Matrix, Supply Decoder and Link Reactor, plus pooled Supply Cache and Gate Link
-pickups. The three branches now contain 36 upgrade levels. Focused and full Editor
-checks passed; its release record tracks signing, installation and owner acceptance.
+A Unity mobile game developed by **MacWebStudio** — [macwebstudio.com](https://macwebstudio.com).
+Open `mobile/` in Unity Hub and this repository in VS Code.
 
+## Start here
 
-The [Build 20 device candidate](mobile/Release/DeviceBuild20/README.md) adds the
-native fifteen-bird 3D roster to Home, Hangar and both flight modes, with a full
-tap-driven upstroke/downstroke. It includes the latest mode/world/UI polish and
-passed focused native-bird and complete Editor regression checks. Use the
-[14–15 November device checklist](mobile/Release/DeviceBuild20/DEVICE_CHECKLIST.md).
-Installation and owner acceptance are recorded separately in its release record.
-Public App Review remains on hold.
+- [Editing guide](mobile/EDITING_GUIDE.md) — scenes, scripts and where to change each feature.
+- [Current visual review](mobile/Development/Current/README.md) — local source candidate, previews and verification.
+- [Installed Build 21](mobile/Release/DeviceBuild21/README.md) — the existing iPhone installation.
+- [Device checklist](mobile/Release/DeviceBuild21/DEVICE_CHECKLIST.md) — use after approving the new local visuals.
+- [Exact installed-release record](mobile/Release/CURRENT_RELEASE.json) — signing/runtime evidence for Build 21.
 
+The current local source adds the city restoration overlook, eight distinct saved
+lighting rewards, next-goal cards, cosmetic bird mastery and four optional authored
+daily heists. It also corrects the twelve-family Tech validator. This source has
+not replaced the iPhone installation. **Public App Review remains on hold.**
 
-The [11 November wing and everyday-play repair](mobile/Development/EverydayPolish20261111/README.md)
-corrects the long feather fans, immediate tap strokes and stale Editor bird selection.
-It adds optional first-play hints, clearer failure/retry controls, distinct pooled
-3D pickup housings and a quieter readable HUD. The actual Unity animation preview
-and source-specific checks are saved there. Owner visual approval remains next;
-no phone build or App Store submission was made.
+## Folder map
 
-The [10 November gameplay and presentation pass](mobile/Development/PolishPass20261110/README.md)
-connects solid bird wings to accepted taps, corrects three low shoulder mounts and
-keeps every bird's own crash artwork. Its Editor Home/Hangar review has centred,
-aspect-correct 3D displays and the original swipe controls. Relay, Blackout,
-upgrade clarity and world lighting have focused presentation improvements.
-Unity checks passed; visual approval precedes any new phone build.
+| Folder | Purpose |
+| --- | --- |
+| `mobile/Assets` | Game source, canonical editable models, scenes and runtime resources |
+| `mobile/Packages`, `mobile/ProjectSettings` | Unity dependencies and project configuration |
+| `mobile/Tools` | Isolated QA helpers, build/metadata checks; not shipping gameplay |
+| `mobile/Development/Current` | Latest review, screenshots, source hashes and cleanup record |
+| `mobile/Development/ArtSources` | Retained artwork provenance |
+| `mobile/Development/Archive` | Historical design studies and earlier review media |
+| `mobile/Release` | Versioned release records, provenance and device checklists |
+| `artifacts` | Ignored local output: current Build 21, signed Build 20 rollback and historical evidence |
+| `public-site` | Separately versioned support/privacy website checkout |
 
-The [9 November local polish](mobile/Development/GameplayPolish20261109/README.md)
-adds Crystal Echo and Route Lens to Endless Route, with updated help and bounded
-once-only rewards. It also gives Chromaflux and Virex clearer source-specific
-shapes and checks that all fifteen Studio selections load one correct model.
-The approved Finch is preserved; the other fourteen sculptures remain under
-visual review. All twelve worlds have a newer local composition candidate in
-[the world review guide](mobile/Development/BirdRoster20261104/Previews/World-Revision-2/README.md).
-Owner appearance approval and a matching device candidate remain pending.
+Unity regenerates `Library`, `Temp`, `Logs` and local build folders. VS Code hides
+these generated folders and groups the main game partial files. `.meta` files are
+asset identifiers and must stay paired with their assets; they are not App Store
+listing metadata. Do not delete artwork simply because a reference is loaded
+through a resource path rather than a scene GUID.
 
-Open `mobile/` in Unity Hub and the **SkyPulse** repository in VS Code. Start with
-[the editing guide](mobile/EDITING_GUIDE.md) for the actual game and model scenes,
-code map and preservation rules. [The handoff](mobile/MANUAL_HANDOFF.md) records
-the installed build and the work awaiting review.
-
-**Installed on the paired iPhone: version 1.0.0, build 21**, from source
-`e38c10eee81611377a64485d21b7f3cf8c72bf7b`. It was installed directly; build 17 was
-last observed in TestFlight. Follow [the current release record](mobile/Release/CURRENT_RELEASE.json)
-for its build, QA and device checklist. Owner device acceptance remains open.
-
-**Historical source: [31 October design candidate](mobile/Development/DesignUpgrade20261031/README.md).**
-That dated record covers world and Relay presentation, Home labels, Hangar and
-Tech Tree finishes. Build 20 now includes the later, tested native candidate.
-Its source manifests and dated checks apply to that local candidate, not the
-installed build. The separate Neon Finch 3D workshop is an art-review prototype;
-the Finch appearance has since been approved, while the remaining roster
-sculptures need review. That October source used articulated artwork; Build 20 now loads the combined
-solid roster natively. Older dated review records describe their own sources.
-
-**Public App Review remains on hold** pending Apple's clarification, current
-device/media validation and renewed owner authorization. Local compilation and
-Editor previews do not establish phone performance or release acceptance.
-[Review status](mobile/Release/REVIEW_STATUS.md).
-
-## Play and edit
-
-1. Open `mobile/Assets/Scenes/SkyPulse.unity`, select a portrait Game view and press Play.
-2. Home starts on Endless Route. Tap the top-left mode badge to select Endless,
-   Pulse Relay or Blackout, then press **PLAY**. Flight uses tap, Space or Up Arrow;
-   pause uses the screen control, Escape or P. **HOW TO PLAY** covers the modes,
-   progression and world map.
-3. Use the [editing guide's scene map](mobile/EDITING_GUIDE.md#open-the-right-scene)
-   for worlds, atmosphere, Relay, pipes and Finch. Workshop Play inspects models;
-   gameplay starts from `SkyPulse.unity`.
-
-Endless keeps fixed handling for all 15 catalogue birds. Each passed gate awards
-one point. Its twelve worlds change every 15 gates: Neon City, Aurora Rise,
-Solar Drift, Midnight Tide, Velvet Dawn, Crystal Night, Jade Horizon, Violet Rain,
-Eclipse, Cobalt Storm, Amber Skies and Polar Glow; Neon City returns at score 180.
-Crystals bank during the run. Twelve upgrade families have three connected level
-branches; temporary pickups provide Aegis, Time Pulse, Crystal Magnet, Crystal Echo, Route Lens, Supply Cache and Gate Link.
-
-Pulse Relay has four finite circuits refreshed each UTC day; crystals open the
-matching gates automatically. Blackout has eight authored Signal Heist vaults,
-immediate optical rotation and instant intermediate progression. Their medals
-and completion data remain separate from the Endless best. Mission Control has
-four UTC-day tasks worth five crystals each, with journaled claim recovery.
-Training, Core and breeding rules and prices are documented in the editing guide.
-Reduced Motion freezes ambient effects. Existing save identifiers and migration
-paths must remain stable. There are no logins, ads, analytics or real-money purchases.
-
-## Project folders
-
-- `mobile/Assets/`: editable Unity scenes, scripts, workshop models and runtime resources.
-- `mobile/Packages/` and `mobile/ProjectSettings/`: reproducible Unity configuration.
-- `mobile/Tools/`: isolated QA tools, excluded from the normal player.
-- `mobile/Development/DesignUpgrade20261031/`: current local previews and source-specific evidence.
-- `mobile/Release/`: installed-build records, release drafts and historical provenance.
-- `public-site/`: separately versioned privacy/support website, ignored by the game repository.
-- `artifacts/`: ignored local captures and archives; preserve release archives, symbols and owner evidence.
-
-Unity caches, logs and Xcode exports are generated outputs. Existing `.meta` files
-retain asset identities even when hidden in VS Code Explorer.
-
-## Check a change
-
-Follow [Check an edit](mobile/EDITING_GUIDE.md#check-an-edit) and
-[VISUAL_SMOKE.md](mobile/Tools/VISUAL_SMOKE.md). Run save-resetting QA helpers only
-in their disposable QA project. Useful read-only checks include
-`python3 mobile/Tools/check_player_copy.py` and
-`python3 mobile/Tools/verify_bird_registration.py`.
-
-The installed release contract describes build 21. New source changes need
-fresh source-specific QA and a signed candidate tested on physical devices before
-updating that contract. Keep App Review submission on hold; local tests cannot
-promise Apple acceptance. The earlier [4.3(a) audit](APPLE_4_3A_AUDIT.md) and
-release folders apply only to their recorded sources and builds.
+The approved bird models and wing sampler, flight dimensions, currency and current
+save keys remain part of the existing project. New mastery is cosmetic and stored
+locally; it does not sell or spend a second currency. See [NOTICE.md](NOTICE.md)
+and the [historical App Review audit](APPLE_4_3A_AUDIT.md) for provenance/review context.

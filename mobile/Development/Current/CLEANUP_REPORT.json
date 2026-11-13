@@ -1,0 +1,1132 @@
+{
+  "date": "2026-11-13",
+  "removedGenerated": [
+    {
+      "path": "artifacts/testflight-9-20261012/iOS",
+      "bytes": 867487744,
+      "reason": "Reproducible Unity/Xcode intermediate; source, release records, current build and rollback preserved"
+    },
+    {
+      "path": "artifacts/testflight-8-20261012/derived-device",
+      "bytes": 1686851584,
+      "reason": "Reproducible Unity/Xcode intermediate; source, release records, current build and rollback preserved"
+    },
+    {
+      "path": "artifacts/testflight-8-20261012/iOS",
+      "bytes": 867532800,
+      "reason": "Reproducible Unity/Xcode intermediate; source, release records, current build and rollback preserved"
+    },
+    {
+      "path": "artifacts/build-6-review-recovery/final-simulator-derived",
+      "bytes": 1773912064,
+      "reason": "Reproducible Unity/Xcode intermediate; source, release records, current build and rollback preserved"
+    },
+    {
+      "path": "artifacts/build-6-review-recovery/device-derived",
+      "bytes": 1669054464,
+      "reason": "Reproducible Unity/Xcode intermediate; source, release records, current build and rollback preserved"
+    },
+    {
+      "path": "artifacts/build-6-review-recovery/simulator-derived",
+      "bytes": 1773400064,
+      "reason": "Reproducible Unity/Xcode intermediate; source, release records, current build and rollback preserved"
+    },
+    {
+      "path": "artifacts/build18-product-media-20261022/device-derived",
+      "bytes": 1766535168,
+      "reason": "Reproducible Unity/Xcode intermediate; source, release records, current build and rollback preserved"
+    },
+    {
+      "path": "artifacts/device-build20/iOS",
+      "bytes": 983736320,
+      "reason": "Reproducible Unity/Xcode intermediate; source, release records, current build and rollback preserved"
+    },
+    {
+      "path": "artifacts/device-build20/DerivedData",
+      "bytes": 1963798528,
+      "reason": "Reproducible Unity/Xcode intermediate; source, release records, current build and rollback preserved"
+    }
+  ],
+  "removedBytes": 37222300933,
+  "archivedArtifacts": [
+    {
+      "from": "artifacts/release-2026-09-08",
+      "to": "artifacts/Historical/release-2026-09-08"
+    },
+    {
+      "from": "artifacts/qa-20261006",
+      "to": "artifacts/Historical/qa-20261006"
+    },
+    {
+      "from": "artifacts/premium-presentation-20261012",
+      "to": "artifacts/Historical/premium-presentation-20261012"
+    },
+    {
+      "from": "artifacts/neon-visual-qa",
+      "to": "artifacts/Historical/neon-visual-qa"
+    },
+    {
+      "from": "artifacts/cinematic-20261016",
+      "to": "artifacts/Historical/cinematic-20261016"
+    },
+    {
+      "from": "artifacts/one-thumb-polish-20261013",
+      "to": "artifacts/Historical/one-thumb-polish-20261013"
+    },
+    {
+      "from": "artifacts/apple-43a-audit-20260929",
+      "to": "artifacts/Historical/apple-43a-audit-20260929"
+    },
+    {
+      "from": "artifacts/solid-worlds-20261023",
+      "to": "artifacts/Historical/solid-worlds-20261023"
+    },
+    {
+      "from": "artifacts/core-bird-progression-20261021",
+      "to": "artifacts/Historical/core-bird-progression-20261021"
+    },
+    {
+      "from": "artifacts/testflight-9-20261012",
+      "to": "artifacts/Historical/testflight-9-20261012"
+    },
+    {
+      "from": "artifacts/testflight-8-20261012",
+      "to": "artifacts/Historical/testflight-8-20261012"
+    },
+    {
+      "from": "artifacts/constructed-world-20261023",
+      "to": "artifacts/Historical/constructed-world-20261023"
+    },
+    {
+      "from": "artifacts/modes-update-20261012",
+      "to": "artifacts/Historical/modes-update-20261012"
+    },
+    {
+      "from": "artifacts/archive-development-previews-20261031",
+      "to": "artifacts/Historical/archive-development-previews-20261031"
+    },
+    {
+      "from": "artifacts/identity-rights-20261013",
+      "to": "artifacts/Historical/identity-rights-20261013"
+    },
+    {
+      "from": "artifacts/orbital-polish-20261023",
+      "to": "artifacts/Historical/orbital-polish-20261023"
+    },
+    {
+      "from": "artifacts/effects-qa",
+      "to": "artifacts/Historical/effects-qa"
+    },
+    {
+      "from": "artifacts/phone-reference-20261022",
+      "to": "artifacts/Historical/phone-reference-20261022"
+    },
+    {
+      "from": "artifacts/support-site-working",
+      "to": "artifacts/Historical/support-site-working"
+    },
+    {
+      "from": "artifacts/core-value-20261021",
+      "to": "artifacts/Historical/core-value-20261021"
+    },
+    {
+      "from": "artifacts/world-finish-20261023",
+      "to": "artifacts/Historical/world-finish-20261023"
+    },
+    {
+      "from": "artifacts/player-experience-20261022",
+      "to": "artifacts/Historical/player-experience-20261022"
+    },
+    {
+      "from": "artifacts/world-identity-20261023",
+      "to": "artifacts/Historical/world-identity-20261023"
+    },
+    {
+      "from": "artifacts/tech-tree-premium-20261021",
+      "to": "artifacts/Historical/tech-tree-premium-20261021"
+    },
+    {
+      "from": "artifacts/pipe-finish-20261022",
+      "to": "artifacts/Historical/pipe-finish-20261022"
+    },
+    {
+      "from": "artifacts/holographic-polish-20261022",
+      "to": "artifacts/Historical/holographic-polish-20261022"
+    },
+    {
+      "from": "artifacts/dimensional-flight-20261022",
+      "to": "artifacts/Historical/dimensional-flight-20261022"
+    },
+    {
+      "from": "artifacts/touch-comfort-20261022",
+      "to": "artifacts/Historical/touch-comfort-20261022"
+    },
+    {
+      "from": "artifacts/neon-districts-20261023",
+      "to": "artifacts/Historical/neon-districts-20261023"
+    },
+    {
+      "from": "artifacts/build-6-review-recovery",
+      "to": "artifacts/Historical/build-6-review-recovery"
+    },
+    {
+      "from": "artifacts/build18-product-media-20261022",
+      "to": "artifacts/Historical/build18-product-media-20261022"
+    },
+    {
+      "from": "artifacts/flight-trail-polish-20261022",
+      "to": "artifacts/Historical/flight-trail-polish-20261022"
+    },
+    {
+      "from": "artifacts/release-7-20260930",
+      "to": "artifacts/Historical/release-7-20260930"
+    },
+    {
+      "from": "artifacts/mode-identity-width-20261012",
+      "to": "artifacts/Historical/mode-identity-width-20261012"
+    },
+    {
+      "from": "artifacts/blackout-local-20261012",
+      "to": "artifacts/Historical/blackout-local-20261012"
+    },
+    {
+      "from": "artifacts/review-2026-09-10",
+      "to": "artifacts/Historical/review-2026-09-10"
+    },
+    {
+      "from": "artifacts/skypulse-site-20261022",
+      "to": "artifacts/Historical/skypulse-site-20261022"
+    },
+    {
+      "from": "artifacts/premium-testflight-20261012",
+      "to": "artifacts/Historical/premium-testflight-20261012"
+    },
+    {
+      "from": "artifacts/interface-visual-qa",
+      "to": "artifacts/Historical/interface-visual-qa"
+    },
+    {
+      "from": "artifacts/progression-polish-20261021",
+      "to": "artifacts/Historical/progression-polish-20261021"
+    },
+    {
+      "from": "artifacts/daily-routes-20261013",
+      "to": "artifacts/Historical/daily-routes-20261013"
+    },
+    {
+      "from": "artifacts/device-build20",
+      "to": "artifacts/Historical/device-build20"
+    },
+    {
+      "from": "artifacts/device-build19",
+      "to": "artifacts/Historical/device-build19"
+    },
+    {
+      "from": "artifacts/pipe-cap-polish-20261022",
+      "to": "artifacts/Historical/pipe-cap-polish-20261022"
+    },
+    {
+      "from": "artifacts/signal-heist-20261021",
+      "to": "artifacts/Historical/signal-heist-20261021"
+    },
+    {
+      "from": "artifacts/guide-worlds-20261022",
+      "to": "artifacts/Historical/guide-worlds-20261022"
+    },
+    {
+      "from": "artifacts/mobile-polish-20261016",
+      "to": "artifacts/Historical/mobile-polish-20261016"
+    },
+    {
+      "from": "artifacts/relay-volume-20261016",
+      "to": "artifacts/Historical/relay-volume-20261016"
+    },
+    {
+      "from": "artifacts/local-device-20261023",
+      "to": "artifacts/Historical/local-device-20261023"
+    },
+    {
+      "from": "artifacts/relay-gate-uplift-20261012",
+      "to": "artifacts/Historical/relay-gate-uplift-20261012"
+    },
+    {
+      "from": "artifacts/testflight-17-20261021",
+      "to": "artifacts/Historical/testflight-17-20261021"
+    },
+    {
+      "from": "artifacts/blackout-complexity-20261012",
+      "to": "artifacts/Historical/blackout-complexity-20261012"
+    }
+  ],
+  "archivedReviews": [
+    {
+      "from": "mobile/Development/ConstructedWorld20261023",
+      "to": "mobile/Development/Archive/ConstructedWorld20261023"
+    },
+    {
+      "from": "mobile/Development/DesignUpgrade20261031",
+      "to": "mobile/Development/Archive/DesignUpgrade20261031"
+    },
+    {
+      "from": "mobile/Development/WorldRestoration20261113",
+      "to": "mobile/Development/Archive/WorldRestoration20261113"
+    },
+    {
+      "from": "mobile/Development/WorldDesignStudy20261113",
+      "to": "mobile/Development/Archive/WorldDesignStudy20261113"
+    },
+    {
+      "from": "mobile/Development/WorldFinish20261023",
+      "to": "mobile/Development/Archive/WorldFinish20261023"
+    },
+    {
+      "from": "mobile/Development/GameplayPolish20261109",
+      "to": "mobile/Development/Archive/GameplayPolish20261109"
+    },
+    {
+      "from": "mobile/Development/TouchComfort20261022",
+      "to": "mobile/Development/Archive/TouchComfort20261022"
+    },
+    {
+      "from": "mobile/Development/BirdRoster20261104",
+      "to": "mobile/Development/Archive/BirdRoster20261104"
+    },
+    {
+      "from": "mobile/Development/FlightAnimation20261110",
+      "to": "mobile/Development/Archive/FlightAnimation20261110"
+    },
+    {
+      "from": "mobile/Development/NeonDistricts20261023",
+      "to": "mobile/Development/Archive/NeonDistricts20261023"
+    },
+    {
+      "from": "mobile/Development/LocalDevice20261023",
+      "to": "mobile/Development/Archive/LocalDevice20261023"
+    },
+    {
+      "from": "mobile/Development/OrbitalPolish20261023",
+      "to": "mobile/Development/Archive/OrbitalPolish20261023"
+    },
+    {
+      "from": "mobile/Development/EverydayPolish20261111",
+      "to": "mobile/Development/Archive/EverydayPolish20261111"
+    },
+    {
+      "from": "mobile/Development/PipeFinish20261022",
+      "to": "mobile/Development/Archive/PipeFinish20261022"
+    },
+    {
+      "from": "mobile/Development/PolishPass20261110",
+      "to": "mobile/Development/Archive/PolishPass20261110"
+    },
+    {
+      "from": "mobile/Development/SolidWorlds20261023",
+      "to": "mobile/Development/Archive/SolidWorlds20261023"
+    },
+    {
+      "from": "mobile/Development/RelayWorld20261024",
+      "to": "mobile/Development/Archive/RelayWorld20261024"
+    },
+    {
+      "from": "mobile/Development/WorldIdentity20261023",
+      "to": "mobile/Development/Archive/WorldIdentity20261023"
+    },
+    {
+      "from": "mobile/Development/DimensionalFlight20261022",
+      "to": "mobile/Development/Archive/DimensionalFlight20261022"
+    },
+    {
+      "from": "mobile/Development/BackgroundWorkshop20261023",
+      "to": "mobile/Development/Archive/BackgroundWorkshop20261023"
+    },
+    {
+      "from": "mobile/Development/AtmospherePipes20261024",
+      "to": "mobile/Development/Archive/AtmospherePipes20261024"
+    },
+    {
+      "from": "mobile/Development/PhoneReference20261022",
+      "to": "mobile/Development/Archive/PhoneReference20261022"
+    }
+  ],
+  "removedUntrackedSidecars": [],
+  "preserved": [
+    "Entire artifacts/device-build21 including save backups",
+    "Signed Build 20 app and application dSYM under artifacts/rollback-build20",
+    "Every historical archive/log/recording and private save export not inside allowlisted intermediates",
+    "All Assets resources, canonical editable workshops, scenes, GUIDs and source artwork",
+    "Unity Library/Temp/UserSettings while the editor is active",
+    "Separately versioned public-site project"
+  ],
+  "additionalRemovedGenerated": [
+    {
+      "path": "artifacts/Historical/build-6-review-recovery/qa",
+      "kind": "Disposable Unity QA mirror",
+      "company": "SkyPulseQA",
+      "product": "SkyPulseBuild6QA",
+      "bytes": 440606720
+    },
+    {
+      "path": "artifacts/Historical/build-6-review-recovery/universal-simulator-derived",
+      "kind": "Xcode intermediate cache",
+      "bytes": 1773854720
+    }
+  ],
+  "prunedFrameSequences": [
+    {
+      "folder": "artifacts/Historical/premium-presentation-20261012/final-qa/captures/motion",
+      "removedPngFrames": 200,
+      "bytes": 142678939,
+      "retainedSamples": "artifacts/Historical/premium-presentation-20261012/final-qa/retained-frames/motion",
+      "retainedThreeFrames": [
+        "000.png",
+        "020.png",
+        "039.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/cinematic-20261016/qa-2/captures/motion",
+      "removedPngFrames": 280,
+      "bytes": 286638126,
+      "retainedSamples": "artifacts/Historical/cinematic-20261016/qa-2/retained-frames/motion",
+      "retainedThreeFrames": [
+        "000.png",
+        "020.png",
+        "039.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/cinematic-20261016/qa-2/captures/gate-volume",
+      "removedPngFrames": 420,
+      "bytes": 493779720,
+      "retainedSamples": "artifacts/Historical/cinematic-20261016/qa-2/retained-frames/gate-volume",
+      "retainedThreeFrames": [
+        "000.png",
+        "210.png",
+        "419.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/cinematic-20261016/qa-release/captures/motion",
+      "removedPngFrames": 280,
+      "bytes": 286849328,
+      "retainedSamples": "artifacts/Historical/cinematic-20261016/qa-release/retained-frames/motion",
+      "retainedThreeFrames": [
+        "000.png",
+        "020.png",
+        "039.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/cinematic-20261016/qa-release/captures/gate-volume",
+      "removedPngFrames": 420,
+      "bytes": 495579604,
+      "retainedSamples": "artifacts/Historical/cinematic-20261016/qa-release/retained-frames/gate-volume",
+      "retainedThreeFrames": [
+        "000.png",
+        "210.png",
+        "419.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/cinematic-20261016/qa-final/captures/motion",
+      "removedPngFrames": 280,
+      "bytes": 286848106,
+      "retainedSamples": "artifacts/Historical/cinematic-20261016/qa-final/retained-frames/motion",
+      "retainedThreeFrames": [
+        "000.png",
+        "020.png",
+        "039.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/cinematic-20261016/qa-final/captures/gate-volume",
+      "removedPngFrames": 420,
+      "bytes": 495555694,
+      "retainedSamples": "artifacts/Historical/cinematic-20261016/qa-final/retained-frames/gate-volume",
+      "retainedThreeFrames": [
+        "000.png",
+        "210.png",
+        "419.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/one-thumb-polish-20261013/qa-4/captures/motion",
+      "removedPngFrames": 280,
+      "bytes": 301576658,
+      "retainedSamples": "artifacts/Historical/one-thumb-polish-20261013/qa-4/retained-frames/motion",
+      "retainedThreeFrames": [
+        "000.png",
+        "020.png",
+        "039.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/one-thumb-polish-20261013/qa-release/captures/motion",
+      "removedPngFrames": 280,
+      "bytes": 300948135,
+      "retainedSamples": "artifacts/Historical/one-thumb-polish-20261013/qa-release/retained-frames/motion",
+      "retainedThreeFrames": [
+        "000.png",
+        "020.png",
+        "039.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/one-thumb-polish-20261013/qa-final/captures/motion",
+      "removedPngFrames": 280,
+      "bytes": 301199669,
+      "retainedSamples": "artifacts/Historical/one-thumb-polish-20261013/qa-final/retained-frames/motion",
+      "retainedThreeFrames": [
+        "000.png",
+        "020.png",
+        "039.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/player-experience-20261022/qa-verified/captures/motion",
+      "removedPngFrames": 280,
+      "bytes": 314105506,
+      "retainedSamples": "artifacts/Historical/player-experience-20261022/qa-verified/retained-frames/motion",
+      "retainedThreeFrames": [
+        "000.png",
+        "020.png",
+        "039.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/player-experience-20261022/qa-verified/captures/gate-volume",
+      "removedPngFrames": 420,
+      "bytes": 493430912,
+      "retainedSamples": "artifacts/Historical/player-experience-20261022/qa-verified/retained-frames/gate-volume",
+      "retainedThreeFrames": [
+        "000.png",
+        "210.png",
+        "419.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/player-experience-20261022/qa-final/captures/motion",
+      "removedPngFrames": 280,
+      "bytes": 314494229,
+      "retainedSamples": "artifacts/Historical/player-experience-20261022/qa-final/retained-frames/motion",
+      "retainedThreeFrames": [
+        "000.png",
+        "020.png",
+        "039.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/player-experience-20261022/qa-final/captures/gate-volume",
+      "removedPngFrames": 420,
+      "bytes": 493430674,
+      "retainedSamples": "artifacts/Historical/player-experience-20261022/qa-final/retained-frames/gate-volume",
+      "retainedThreeFrames": [
+        "000.png",
+        "210.png",
+        "419.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/holographic-polish-20261022/led-progression-qa/captures/motion",
+      "removedPngFrames": 280,
+      "bytes": 320251379,
+      "retainedSamples": "artifacts/Historical/holographic-polish-20261022/led-progression-qa/retained-frames/motion",
+      "retainedThreeFrames": [
+        "000.png",
+        "020.png",
+        "039.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/holographic-polish-20261022/led-progression-qa/captures/gate-volume",
+      "removedPngFrames": 420,
+      "bytes": 493431900,
+      "retainedSamples": "artifacts/Historical/holographic-polish-20261022/led-progression-qa/retained-frames/gate-volume",
+      "retainedThreeFrames": [
+        "000.png",
+        "210.png",
+        "419.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/holographic-polish-20261022/qa/captures/motion",
+      "removedPngFrames": 280,
+      "bytes": 320163910,
+      "retainedSamples": "artifacts/Historical/holographic-polish-20261022/qa/retained-frames/motion",
+      "retainedThreeFrames": [
+        "000.png",
+        "020.png",
+        "039.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/holographic-polish-20261022/qa/captures/gate-volume",
+      "removedPngFrames": 420,
+      "bytes": 493431776,
+      "retainedSamples": "artifacts/Historical/holographic-polish-20261022/qa/retained-frames/gate-volume",
+      "retainedThreeFrames": [
+        "000.png",
+        "210.png",
+        "419.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/mode-identity-width-20261012/final-qa/captures/motion",
+      "removedPngFrames": 200,
+      "bytes": 196555720,
+      "retainedSamples": "artifacts/Historical/mode-identity-width-20261012/final-qa/retained-frames/motion",
+      "retainedThreeFrames": [
+        "000.png",
+        "020.png",
+        "039.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/mode-identity-width-20261012/qa/captures/motion",
+      "removedPngFrames": 200,
+      "bytes": 146940764,
+      "retainedSamples": "artifacts/Historical/mode-identity-width-20261012/qa/retained-frames/motion",
+      "retainedThreeFrames": [
+        "000.png",
+        "020.png",
+        "039.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/blackout-local-20261012/captures/motion",
+      "removedPngFrames": 120,
+      "bytes": 114092022,
+      "retainedSamples": "artifacts/Historical/blackout-local-20261012/retained-frames/motion",
+      "retainedThreeFrames": [
+        "000.png",
+        "020.png",
+        "039.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/blackout-local-20261012/full-qa-final/captures/motion",
+      "removedPngFrames": 280,
+      "bytes": 294151826,
+      "retainedSamples": "artifacts/Historical/blackout-local-20261012/full-qa-final/retained-frames/motion",
+      "retainedThreeFrames": [
+        "000.png",
+        "020.png",
+        "039.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/premium-testflight-20261012/qa/captures/motion",
+      "removedPngFrames": 280,
+      "bytes": 318544334,
+      "retainedSamples": "artifacts/Historical/premium-testflight-20261012/qa/retained-frames/motion",
+      "retainedThreeFrames": [
+        "000.png",
+        "020.png",
+        "039.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/daily-routes-20261013/qa-release/captures/motion",
+      "removedPngFrames": 280,
+      "bytes": 299807600,
+      "retainedSamples": "artifacts/Historical/daily-routes-20261013/qa-release/retained-frames/motion",
+      "retainedThreeFrames": [
+        "000.png",
+        "020.png",
+        "039.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/daily-routes-20261013/qa-1/captures/motion",
+      "removedPngFrames": 280,
+      "bytes": 299805954,
+      "retainedSamples": "artifacts/Historical/daily-routes-20261013/qa-1/retained-frames/motion",
+      "retainedThreeFrames": [
+        "000.png",
+        "020.png",
+        "039.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/daily-routes-20261013/qa-final/captures/motion",
+      "removedPngFrames": 280,
+      "bytes": 299807983,
+      "retainedSamples": "artifacts/Historical/daily-routes-20261013/qa-final/retained-frames/motion",
+      "retainedThreeFrames": [
+        "000.png",
+        "020.png",
+        "039.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/signal-heist-20261021/qa-depth-final/captures/motion",
+      "removedPngFrames": 280,
+      "bytes": 308307960,
+      "retainedSamples": "artifacts/Historical/signal-heist-20261021/qa-depth-final/retained-frames/motion",
+      "retainedThreeFrames": [
+        "000.png",
+        "020.png",
+        "039.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/signal-heist-20261021/qa-depth-final/captures/gate-volume",
+      "removedPngFrames": 420,
+      "bytes": 493733497,
+      "retainedSamples": "artifacts/Historical/signal-heist-20261021/qa-depth-final/retained-frames/gate-volume",
+      "retainedThreeFrames": [
+        "000.png",
+        "210.png",
+        "419.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/signal-heist-20261021/qa-final-tree/captures/motion",
+      "removedPngFrames": 280,
+      "bytes": 306356453,
+      "retainedSamples": "artifacts/Historical/signal-heist-20261021/qa-final-tree/retained-frames/motion",
+      "retainedThreeFrames": [
+        "000.png",
+        "020.png",
+        "039.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/signal-heist-20261021/qa-final-tree/captures/gate-volume",
+      "removedPngFrames": 420,
+      "bytes": 493733728,
+      "retainedSamples": "artifacts/Historical/signal-heist-20261021/qa-final-tree/retained-frames/gate-volume",
+      "retainedThreeFrames": [
+        "000.png",
+        "210.png",
+        "419.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/signal-heist-20261021/qa-drag-only-final/captures/motion",
+      "removedPngFrames": 280,
+      "bytes": 306373419,
+      "retainedSamples": "artifacts/Historical/signal-heist-20261021/qa-drag-only-final/retained-frames/motion",
+      "retainedThreeFrames": [
+        "000.png",
+        "020.png",
+        "039.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/signal-heist-20261021/qa-drag-only-final/captures/gate-volume",
+      "removedPngFrames": 420,
+      "bytes": 493733233,
+      "retainedSamples": "artifacts/Historical/signal-heist-20261021/qa-drag-only-final/retained-frames/gate-volume",
+      "retainedThreeFrames": [
+        "000.png",
+        "210.png",
+        "419.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/signal-heist-20261021/qa-verified/captures/motion",
+      "removedPngFrames": 280,
+      "bytes": 306363350,
+      "retainedSamples": "artifacts/Historical/signal-heist-20261021/qa-verified/retained-frames/motion",
+      "retainedThreeFrames": [
+        "000.png",
+        "020.png",
+        "039.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/signal-heist-20261021/qa-verified/captures/gate-volume",
+      "removedPngFrames": 420,
+      "bytes": 493733625,
+      "retainedSamples": "artifacts/Historical/signal-heist-20261021/qa-verified/retained-frames/gate-volume",
+      "retainedThreeFrames": [
+        "000.png",
+        "210.png",
+        "419.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/signal-heist-20261021/qa-free-tree/captures/motion",
+      "removedPngFrames": 280,
+      "bytes": 306359205,
+      "retainedSamples": "artifacts/Historical/signal-heist-20261021/qa-free-tree/retained-frames/motion",
+      "retainedThreeFrames": [
+        "000.png",
+        "020.png",
+        "039.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/signal-heist-20261021/qa-free-tree/captures/gate-volume",
+      "removedPngFrames": 420,
+      "bytes": 493734031,
+      "retainedSamples": "artifacts/Historical/signal-heist-20261021/qa-free-tree/retained-frames/gate-volume",
+      "retainedThreeFrames": [
+        "000.png",
+        "210.png",
+        "419.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/signal-heist-20261021/qa-hologram-final/captures/motion",
+      "removedPngFrames": 280,
+      "bytes": 306360143,
+      "retainedSamples": "artifacts/Historical/signal-heist-20261021/qa-hologram-final/retained-frames/motion",
+      "retainedThreeFrames": [
+        "000.png",
+        "020.png",
+        "039.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/signal-heist-20261021/qa-hologram-final/captures/gate-volume",
+      "removedPngFrames": 420,
+      "bytes": 493733728,
+      "retainedSamples": "artifacts/Historical/signal-heist-20261021/qa-hologram-final/retained-frames/gate-volume",
+      "retainedThreeFrames": [
+        "000.png",
+        "210.png",
+        "419.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/signal-heist-20261021/qa-release/captures/motion",
+      "removedPngFrames": 280,
+      "bytes": 308380366,
+      "retainedSamples": "artifacts/Historical/signal-heist-20261021/qa-release/retained-frames/motion",
+      "retainedThreeFrames": [
+        "000.png",
+        "020.png",
+        "039.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/signal-heist-20261021/qa-release/captures/gate-volume",
+      "removedPngFrames": 420,
+      "bytes": 493733755,
+      "retainedSamples": "artifacts/Historical/signal-heist-20261021/qa-release/retained-frames/gate-volume",
+      "retainedThreeFrames": [
+        "000.png",
+        "210.png",
+        "419.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/signal-heist-20261021/qa-spectral-tree/captures/motion",
+      "removedPngFrames": 280,
+      "bytes": 306354667,
+      "retainedSamples": "artifacts/Historical/signal-heist-20261021/qa-spectral-tree/retained-frames/motion",
+      "retainedThreeFrames": [
+        "000.png",
+        "020.png",
+        "039.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/signal-heist-20261021/qa-spectral-tree/captures/gate-volume",
+      "removedPngFrames": 420,
+      "bytes": 493733728,
+      "retainedSamples": "artifacts/Historical/signal-heist-20261021/qa-spectral-tree/retained-frames/gate-volume",
+      "retainedThreeFrames": [
+        "000.png",
+        "210.png",
+        "419.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/signal-heist-20261021/qa-final/captures/gate-volume",
+      "removedPngFrames": 420,
+      "bytes": 493733241,
+      "retainedSamples": "artifacts/Historical/signal-heist-20261021/qa-final/retained-frames/gate-volume",
+      "retainedThreeFrames": [
+        "000.png",
+        "210.png",
+        "419.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/signal-heist-20261021/qa-second/captures/motion",
+      "removedPngFrames": 280,
+      "bytes": 283694917,
+      "retainedSamples": "artifacts/Historical/signal-heist-20261021/qa-second/retained-frames/motion",
+      "retainedThreeFrames": [
+        "000.png",
+        "020.png",
+        "039.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/signal-heist-20261021/qa-second/captures/gate-volume",
+      "removedPngFrames": 420,
+      "bytes": 493733808,
+      "retainedSamples": "artifacts/Historical/signal-heist-20261021/qa-second/retained-frames/gate-volume",
+      "retainedThreeFrames": [
+        "000.png",
+        "210.png",
+        "419.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/mobile-polish-20261016/qa-1/captures/motion",
+      "removedPngFrames": 280,
+      "bytes": 299884782,
+      "retainedSamples": "artifacts/Historical/mobile-polish-20261016/qa-1/retained-frames/motion",
+      "retainedThreeFrames": [
+        "000.png",
+        "020.png",
+        "039.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/mobile-polish-20261016/qa-final/captures/motion",
+      "removedPngFrames": 280,
+      "bytes": 299902334,
+      "retainedSamples": "artifacts/Historical/mobile-polish-20261016/qa-final/retained-frames/motion",
+      "retainedThreeFrames": [
+        "000.png",
+        "020.png",
+        "039.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/relay-volume-20261016/qa-random-crystals/captures/motion",
+      "removedPngFrames": 280,
+      "bytes": 287471470,
+      "retainedSamples": "artifacts/Historical/relay-volume-20261016/qa-random-crystals/retained-frames/motion",
+      "retainedThreeFrames": [
+        "000.png",
+        "020.png",
+        "039.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/relay-volume-20261016/qa-random-crystals/captures/gate-volume",
+      "removedPngFrames": 420,
+      "bytes": 485332939,
+      "retainedSamples": "artifacts/Historical/relay-volume-20261016/qa-random-crystals/retained-frames/gate-volume",
+      "retainedThreeFrames": [
+        "000.png",
+        "210.png",
+        "419.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/relay-volume-20261016/qa-build14-final/captures/motion",
+      "removedPngFrames": 280,
+      "bytes": 287376598,
+      "retainedSamples": "artifacts/Historical/relay-volume-20261016/qa-build14-final/retained-frames/motion",
+      "retainedThreeFrames": [
+        "000.png",
+        "020.png",
+        "039.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/relay-volume-20261016/qa-build14-final/captures/gate-volume",
+      "removedPngFrames": 420,
+      "bytes": 484611260,
+      "retainedSamples": "artifacts/Historical/relay-volume-20261016/qa-build14-final/retained-frames/gate-volume",
+      "retainedThreeFrames": [
+        "000.png",
+        "210.png",
+        "419.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/relay-volume-20261016/qa-wide-view-top-hud/captures/motion",
+      "removedPngFrames": 280,
+      "bytes": 288733756,
+      "retainedSamples": "artifacts/Historical/relay-volume-20261016/qa-wide-view-top-hud/retained-frames/motion",
+      "retainedThreeFrames": [
+        "000.png",
+        "020.png",
+        "039.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/relay-volume-20261016/qa-wide-view-top-hud/captures/gate-volume",
+      "removedPngFrames": 420,
+      "bytes": 499695989,
+      "retainedSamples": "artifacts/Historical/relay-volume-20261016/qa-wide-view-top-hud/retained-frames/gate-volume",
+      "retainedThreeFrames": [
+        "000.png",
+        "210.png",
+        "419.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/relay-volume-20261016/qa-revision-final/captures/motion",
+      "removedPngFrames": 280,
+      "bytes": 287277408,
+      "retainedSamples": "artifacts/Historical/relay-volume-20261016/qa-revision-final/retained-frames/motion",
+      "retainedThreeFrames": [
+        "000.png",
+        "020.png",
+        "039.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/relay-volume-20261016/qa-revision-final/captures/gate-volume",
+      "removedPngFrames": 240,
+      "bytes": 276382236,
+      "retainedSamples": "artifacts/Historical/relay-volume-20261016/qa-revision-final/retained-frames/gate-volume",
+      "retainedThreeFrames": [
+        "000.png",
+        "120.png",
+        "239.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/relay-volume-20261016/qa-1/captures/motion",
+      "removedPngFrames": 280,
+      "bytes": 291687806,
+      "retainedSamples": "artifacts/Historical/relay-volume-20261016/qa-1/retained-frames/motion",
+      "retainedThreeFrames": [
+        "000.png",
+        "020.png",
+        "039.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/relay-volume-20261016/qa-1/captures/gate-volume",
+      "removedPngFrames": 60,
+      "bytes": 46021507,
+      "retainedSamples": "artifacts/Historical/relay-volume-20261016/qa-1/retained-frames/gate-volume",
+      "retainedThreeFrames": [
+        "000.png",
+        "030.png",
+        "059.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/relay-volume-20261016/qa-final/captures/motion",
+      "removedPngFrames": 280,
+      "bytes": 291899428,
+      "retainedSamples": "artifacts/Historical/relay-volume-20261016/qa-final/retained-frames/motion",
+      "retainedThreeFrames": [
+        "000.png",
+        "020.png",
+        "039.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/relay-volume-20261016/qa-final/captures/gate-volume",
+      "removedPngFrames": 60,
+      "bytes": 46512083,
+      "retainedSamples": "artifacts/Historical/relay-volume-20261016/qa-final/retained-frames/gate-volume",
+      "retainedThreeFrames": [
+        "000.png",
+        "030.png",
+        "059.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/relay-gate-uplift-20261012/qa/captures/motion",
+      "removedPngFrames": 280,
+      "bytes": 318002174,
+      "retainedSamples": "artifacts/Historical/relay-gate-uplift-20261012/qa/retained-frames/motion",
+      "retainedThreeFrames": [
+        "000.png",
+        "020.png",
+        "039.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/blackout-complexity-20261012/qa-verified/captures/motion",
+      "removedPngFrames": 280,
+      "bytes": 294976198,
+      "retainedSamples": "artifacts/Historical/blackout-complexity-20261012/qa-verified/retained-frames/motion",
+      "retainedThreeFrames": [
+        "000.png",
+        "020.png",
+        "039.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/blackout-complexity-20261012/qa/captures/motion",
+      "removedPngFrames": 280,
+      "bytes": 294799501,
+      "retainedSamples": "artifacts/Historical/blackout-complexity-20261012/qa/retained-frames/motion",
+      "retainedThreeFrames": [
+        "000.png",
+        "020.png",
+        "039.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    },
+    {
+      "folder": "artifacts/Historical/blackout-complexity-20261012/qa-final/captures/motion",
+      "removedPngFrames": 280,
+      "bytes": 294975966,
+      "retainedSamples": "artifacts/Historical/blackout-complexity-20261012/qa-final/retained-frames/motion",
+      "retainedThreeFrames": [
+        "000.png",
+        "020.png",
+        "039.png"
+      ],
+      "note": "Encoded videos and all non-PNG reports remain untouched"
+    }
+  ]
+}

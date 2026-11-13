@@ -25,7 +25,7 @@ namespace SkyPulse.Mobile
         readonly Module[] modules=new Module[49];
         readonly Vector3[] beamVertices=new Vector3[Capacity];readonly Color[] beamColours=new Color[Capacity];
         readonly List<Mesh> meshes=new List<Mesh>();readonly List<Material> materials=new List<Material>();
-        readonly Mesh[] platens=new Mesh[8];
+        readonly Mesh[] platens=new Mesh[12];
         MaterialPropertyBlock properties;
         static readonly int EnergyId=Shader.PropertyToID("_Energy"),GlowId=Shader.PropertyToID("_GlowColor"),VisibilityId=Shader.PropertyToID("_Visibility"),RevealId=Shader.PropertyToID("_Reveal");
         Transform scene,console;Camera opticalCamera;RenderTexture texture;Mesh beamMesh;Material metal,accent,glass,dark,light,mirrorGlass,contact;
@@ -173,9 +173,9 @@ namespace SkyPulse.Mobile
             receiverMesh=Keep(b,"Titanium uplink frame with eight optical contacts");
             // Eight fixed work surfaces are cached once. Smaller opening vaults
             // use larger optics and the same camera, rather than a tiny diagram.
-            for(int vault=0;vault<8;vault++)
+            for(int vault=0;vault<platens.Length;vault++)
             {
-                var p=SkyPulseBlackoutCampaign.Stages[vault];var bounds=ActiveBounds(p);float step=Pitch(bounds);
+                var p=vault<8?SkyPulseBlackoutCampaign.Stages[vault]:SkyPulseBlackoutCasebook.All[vault-8];var bounds=ActiveBounds(p);float step=Pitch(bounds);
                 b=new SkyPulseMeshBuilder();
                 float halfWidth=((bounds.width-1)*step+1.15f)*.5f,halfHeight=((bounds.height-1)*step*VerticalPitch+1.15f)*.5f,cut=.18f;
                 var rim=new[]{new Vector2(-halfWidth+cut,-halfHeight),new Vector2(halfWidth-cut,-halfHeight),new Vector2(halfWidth,-halfHeight+cut),new Vector2(halfWidth,halfHeight-cut),new Vector2(halfWidth-cut,halfHeight),new Vector2(-halfWidth+cut,halfHeight),new Vector2(-halfWidth,halfHeight-cut),new Vector2(-halfWidth,-halfHeight+cut)};
@@ -217,7 +217,7 @@ namespace SkyPulse.Mobile
         {
             Circuit=session;Preview=null;PreviewTile=-1;var p=session.Puzzle;
             layout=ActiveBounds(p);pitch=Pitch(layout);OpticScale=Mathf.Min(1.3f,pitch/1.55f);
-            int vault=System.Array.IndexOf(SkyPulseBlackoutCampaign.Stages,p);if(vault<0)vault=0;
+            int vault=System.Array.IndexOf(SkyPulseBlackoutCampaign.Stages,p);if(vault<0){int optional=Array.IndexOf(SkyPulseBlackoutCasebook.All,p);vault=optional<0?0:8+optional;}
             platenRenderer.GetComponent<MeshFilter>().sharedMesh=platens[vault];
             for(int i=0;i<49;i++)
             {
@@ -228,7 +228,7 @@ namespace SkyPulse.Mobile
                 m.Core.localScale=Vector3.one*1.10f;m.Lens.localScale=Vector3.one*1.08f;
                 m.Emitter.gameObject.SetActive(m.Kind=='S');m.Emitter.localRotation=Quaternion.Euler(0,0,p.SourceDirection*90);m.Receiver.gameObject.SetActive(m.Kind=='E');
             }
-            Tick(0);
+            bool paused=MotionPaused;MotionPaused=false;Tick(0);MotionPaused=paused;
             // Touch sockets follow the true camera projection of the angled desk.
             // The hit rectangles themselves stay still during all optical effects.
             for(int i=0;i<p.Count;i++)
@@ -236,6 +236,10 @@ namespace SkyPulse.Mobile
                 var point=Point(i);var v=opticalCamera.WorldToViewportPoint(console.TransformPoint(new Vector3(point.x,point.y,-.20f)));
                 positions[i]=new Vector2((v.x-.5f)*1080,(v.y-.5f)*1080);
             }
+            // Publish the new optical picture with its new touch map. Waiting
+            // for the camera's next scheduled render can show the old case
+            // beneath the new labels for one frame at an instant handoff.
+            Render();
         }
         public void SetPreview(BlackoutSession preview,int tile){Preview=preview;PreviewTile=preview==null?-1:tile;Tick(0);}
         public void Clear(){Circuit=Preview=null;PreviewTile=-1;Array.Clear(beamColours,0,beamColours.Length);if(beamMesh!=null)beamMesh.colors=beamColours;}

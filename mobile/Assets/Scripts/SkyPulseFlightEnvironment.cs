@@ -286,6 +286,7 @@ namespace SkyPulse.Mobile
                     finish.SetFloat("_WindowGlow",layer==0?.18f:slot==0?.84f:.48f);
                     finish.SetFloat("_BeaconGlow",layer==0?.10f:slot==0?.50f:.25f);
                     finish.SetFloat("_Backdrop",layer==0?.05f:0);
+                    finish.SetFloat("_RestorationHeight",(variant==0?silhouettes[theme]:residential[theme]).bounds.max.y);
                     SkyPulseWorldRestoration.Apply(finish,RestoredMask);
                     renderer.SetPropertyBlock(finish);
                 }
