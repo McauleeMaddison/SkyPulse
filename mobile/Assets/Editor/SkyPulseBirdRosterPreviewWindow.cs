@@ -27,6 +27,7 @@ public sealed class SkyPulseBirdRosterPreviewWindow:EditorWindow
     {
         // Opening the gameplay preview must actually enable its solid bird.
         // Keep the chosen model; gameplay stats and player preferences are untouched.
+        SkyPulseNativeGame.ReviewOriginalBirdArtwork=false;
         SkyPulseBirdRosterPreview.Select("", true);
         ShowTab(1);
     }
@@ -77,6 +78,14 @@ public sealed class SkyPulseBirdRosterPreviewWindow:EditorWindow
     void DrawGame()
     {
         GUILayout.Label("Live 3D bird review",EditorStyles.boldLabel);
+        var live=UnityEngine.Object.FindAnyObjectByType<SkyPulseNativeGame>();
+        if(live!=null&&live.RuntimeSolidBirdsActive)
+        {
+            EditorGUILayout.HelpBox("Native 3D birds are active in this build. Equip owned birds in Hangar; flight follows that identity. Use Studio to inspect any saved model. The older art override is inactive, so it cannot duplicate or pin the gameplay bird.",MessageType.Info);
+            if(GUILayout.Button("Open SkyPulse game scene")&&!EditorApplication.isPlaying&&EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+                EditorSceneManager.OpenScene("Assets/Scenes/SkyPulse.unity");
+            return;
+        }
         EditorGUILayout.HelpBox("Play the normal SkyPulse scene. Normal play follows the equipped bird. A model override lasts only while this reviewer is open; equipping in Hangar returns to the real selection.",MessageType.Info);
         int old=Array.IndexOf(gameIds,SkyPulseBirdRosterPreview.SelectedId),selected=EditorGUILayout.Popup("Model",Mathf.Max(0,old),gameNames);
         bool enabled=EditorGUILayout.Toggle("Show 3D model",SkyPulseBirdRosterPreview.Enabled);

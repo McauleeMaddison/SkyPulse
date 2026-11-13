@@ -25,6 +25,7 @@ public static class SkyPulseFinalPolishChecks
     public static void Run()
     {
         if(!Application.isBatchMode||Application.companyName!="SkyPulseQA20261006"||Application.productName!="SkyPulseFlapQA20261110")throw new Exception("Disposable batch QA product required");
+        SkyPulseNativeGame.ReviewOriginalBirdArtwork=true;
         Directory.CreateDirectory(Output);Directory.CreateDirectory(Path.Combine(Environment.GetEnvironmentVariable("SKYPULSE_QA_OUTPUT"),"polish"));
         foreach(string stale in new[]{"FAILURE.txt","VALIDATION.json"})if(File.Exists(Path.Combine(Output,stale)))File.Delete(Path.Combine(Output,stale));
         PlayerPrefs.DeleteAll();PlayerPrefs.Save();SkyPulseBirdRosterPreview.Select("",false);
@@ -66,7 +67,13 @@ public static class SkyPulseFinalPolishChecks
         yield return Review(g,camera,target);
         SkyPulseBirdRosterPreview.Select("",false);Call(g,"ResetToMenu");camera.targetTexture=null;RenderTexture.ReleaseTemporary(target);
         File.WriteAllText(Path.Combine(Output,"VALIDATION.json"),JsonUtility.ToJson(new Report{result="PASS",checks=checks.ToArray(),deviceTested=false,scope="Isolated Unity Editor: existing full bird/controls/UI/progression/gate/puzzle/pipe/world suites plus final lighting/UI changes and all eight exact free-plan outcomes. Rendered review candidate, owner visual acceptance and runtime solid promotion pending."},true));
-        Debug.Log("SKYPULSE_FINAL_POLISH_PASS");EditorApplication.Exit(0);
+        Debug.Log("SKYPULSE_FINAL_POLISH_PASS");
+        if(Environment.GetEnvironmentVariable("SKYPULSE_INCLUDE_RUNTIME")=="1")
+        {
+            SkyPulseNativeGame.ReviewOriginalBirdArtwork=false;SkyPulseBirdRosterPreview.Select("",false);
+            yield return (IEnumerator)typeof(SkyPulseRuntimeBirdChecks).GetMethod("Execute",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,null);
+        }
+        EditorApplication.Exit(0);
     }
     static void PreviewTruth(SkyPulseNativeGame game)
     {

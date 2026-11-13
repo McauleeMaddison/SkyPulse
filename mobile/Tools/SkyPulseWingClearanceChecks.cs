@@ -86,12 +86,13 @@ public static class SkyPulseWingClearanceChecks
                 foreach(var foot in feet)foot.Pose(rig.body);
                 var bird=new Bird{id=id,name=name,prefab=path,wingParts=wings.Length,landingParts=feet.Length,leftShoulderY=rig.body.InverseTransformPoint(rig.leftWing.position).y,rightShoulderY=rig.body.InverseTransformPoint(rig.rightWing.position).y,lowestWingY=float.PositiveInfinity,lowestFootY=feet.Min(f=>f.bounds.min.y),highestFootY=feet.Max(f=>f.bounds.max.y)};
                 var hits=new List<Contact>();
-                foreach(string sampler in new[]{"Studio","ExhibitionFlight","TapFlight","ReducedMotionStudio","ReducedMotionFlight"})
+                foreach(string sampler in new[]{"Studio","ExhibitionFlight","TapFlight","ReducedMotionStudio","ReducedMotionFlight","TapSigned","ReducedMotionSigned"})
                 for(int phase=0;phase<24;phase++)
                 {
                     float fraction=phase/24f,time=fraction*rig.flapPeriod;rig.reducedMotion=sampler.StartsWith("ReducedMotion",StringComparison.Ordinal);
                     if(sampler=="Studio"||sampler=="ReducedMotionStudio")rig.SamplePose(time);
                     else if(sampler=="ExhibitionFlight")rig.SampleFlightPose(time);
+                    else if(sampler=="TapSigned"||sampler=="ReducedMotionSigned")rig.SampleFlightStroke(time,Mathf.Sin(fraction*Mathf.PI*2));
                     else rig.SampleFlightPose(time,(Mathf.Sin(fraction*Mathf.PI*2)+1)*.5f);
                     foreach(var wing in wings)wing.Pose(rig.body);
                     bird.lowestWingY=Mathf.Min(bird.lowestWingY,wings.Min(w=>w.bounds.min.y));

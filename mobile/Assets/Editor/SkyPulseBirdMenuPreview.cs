@@ -35,7 +35,7 @@ public static class SkyPulseBirdMenuPreview
     {
         if(rendering)return;
         if(!EditorApplication.isPlaying||!SkyPulseBirdRosterPreview.Enabled){Clear();return;}
-        var game=UnityEngine.Object.FindAnyObjectByType<SkyPulseNativeGame>();if(game==null){Clear();return;}
+        var game=UnityEngine.Object.FindAnyObjectByType<SkyPulseNativeGame>();if(game==null||game.RuntimeSolidBirdsActive){Clear();return;}
         rendering=true;
         hidden.Clear();
         try

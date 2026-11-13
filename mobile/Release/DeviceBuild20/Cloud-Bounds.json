@@ -1,0 +1,11 @@
+{
+  "result": "PASS",
+  "seed": 20261111,
+  "profilesIncludingAdjacentBlends": 24,
+  "rayFixtures": 48000,
+  "sampledPointsPerRay": 20,
+  "falseRejectionsAgainstOriginalSampleGuard": 0,
+  "emptyRayEarlyExits": 38096,
+  "raysReachingOriginalGuard": 7903,
+  "scope": "Double-precision conservative-bound negative-control audit; shader compilation, actual Metal image parity and device performance remain root validation."
+}

@@ -28,6 +28,7 @@ namespace SkyPulse.Mobile
         void LateUpdate()
         {
             UpdateCinematicPresentation(Mathf.Min(Time.unscaledDeltaTime,MaximumSimulationCatchup));
+            UpdateSolidBirds(Mathf.Min(Time.unscaledDeltaTime,MaximumSimulationCatchup));
             // Flight has now advanced every pipe and timer for this rendered frame.
             UpdateRouteLensVisuals();
             SkyPulseBirdRig.FlushPending();

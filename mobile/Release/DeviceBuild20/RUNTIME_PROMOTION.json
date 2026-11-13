@@ -1,0 +1,10 @@
+{
+  "candidate": "1.0.0 (20)",
+  "purpose": "Private physical-device visual/gameplay testing, explicitly requested 13 November; public App Review stays on hold.",
+  "editableSourcesPreserved": true,
+  "birds": 15,
+  "sourceRenderers": 2604,
+  "runtimeRenderers": 517,
+  "runtimeTriangles": 952782,
+  "inputDigest": "717c9962bb43408ad8c923095f86481bdb4681d3bbf41e6fe8ce8daacf662075"
+}

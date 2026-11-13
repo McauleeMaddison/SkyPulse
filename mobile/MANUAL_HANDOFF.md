@@ -6,7 +6,19 @@ Open **`mobile/` in Unity Hub** and the repository folder in VS Code. The shippi
 scene is `mobile/Assets/Scenes/SkyPulse.unity`. Start with the
 [editing map](EDITING_GUIDE.md) before changing code.
 
-## Current local candidate — 11 November 2026
+## Current device candidate — 13 November 2026
+
+[Build 20](Release/DeviceBuild20/README.md) prepares the latest visuals for the
+owner's Saturday/Sunday manual test. Native Home, Hangar and flight now load the
+combined fifteen-bird roster; the old Editor overlay yields to that presenter.
+Accepted taps have a full physical upstroke/downstroke, roughly -27° to +28° in
+30/60/120 Hz tests. No lift, spacing, collider, catalogue or economy changes.
+The full regression and 261 native-bird assertions passed; device acceptance
+is still pending. Check RELEASE_RECORD.json for actual installation evidence
+and use the refreshed DEVICE_CHECKLIST.md rather than the old Build 18 checklist.
+No public submission is authorized.
+
+## Previous local candidate — 11 November 2026
 
 The [current repair record](Development/EverydayPolish20261111/README.md) contains
 the corrected distal feather fans, actual tap-edge strokes, stale reviewer/equip

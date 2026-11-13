@@ -14,6 +14,17 @@ housings. For reference-rig anatomy, inspect the saved left/right wing-tip joint
 and `SkyPulseBirdShoulderFit.cs`; preserve manual edits and do not regenerate over
 them. Choosing **Equip Bird** clears a temporary Editor appearance override.
 
+The latest [Build 20 candidate](Release/DeviceBuild20/README.md) promotes the
+solid roster into the mobile runtime for the requested private device tests.
+The editable workshop prefabs remain canonical; generated combined assets live
+under `Assets/Resources/SkyPulse/Birds3D`. Do not edit those generated copies.
+`SkyPulseBirdRosterRuntimeBaker` records and protects source/output hashes.
+`SkyPulseNativeGame.SolidBirds.cs` owns selection and native tap pose; reusable
+`SkyPulseSolidBirdStudio.cs` supplies Home/Hangar displays without Editor APIs.
+`SkyPulseNeonFinchPrototype.TapStroke` defines the signed up/down pose; physical
+lift and collisions remain in the existing game. Reduced Motion retains 60%
+essential wing motion. The legacy Editor art selector now yields to native solids.
+
 ## Open the right scene
 
 Paths below are relative to `mobile/`. Open an existing scene rather than

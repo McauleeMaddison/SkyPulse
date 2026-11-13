@@ -1,5 +1,15 @@
 # SkyPulse Arcade
 
+
+The [Build 20 device candidate](mobile/Release/DeviceBuild20/README.md) adds the
+native fifteen-bird 3D roster to Home, Hangar and both flight modes, with a full
+tap-driven upstroke/downstroke. It includes the latest mode/world/UI polish and
+passed focused native-bird and complete Editor regression checks. Use the
+[14–15 November device checklist](mobile/Release/DeviceBuild20/DEVICE_CHECKLIST.md).
+Installation and owner acceptance are recorded separately in its release record.
+Public App Review remains on hold.
+
+
 The [11 November wing and everyday-play repair](mobile/Development/EverydayPolish20261111/README.md)
 corrects the long feather fans, immediate tap strokes and stale Editor bird selection.
 It adds optional first-play hints, clearer failure/retry controls, distinct pooled
@@ -39,8 +49,8 @@ finishes, and native tactile feedback work. It has not been installed or uploade
 Its source manifests and dated checks apply to that local candidate, not the
 installed build. The separate Neon Finch 3D workshop is an art-review prototype;
 the Finch appearance has since been approved, while the remaining roster
-sculptures need review. Gameplay continues to use the original articulated
-bird artwork by default; the solid-model selector is Editor-only.
+sculptures need review. That October source used articulated artwork; Build 20 now loads the combined
+solid roster natively. Older dated review records describe their own sources.
 
 **Public App Review remains on hold** pending Apple's clarification, current
 device/media validation and renewed owner authorization. Local compilation and

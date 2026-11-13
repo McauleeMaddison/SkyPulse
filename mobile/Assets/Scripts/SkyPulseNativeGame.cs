@@ -2932,6 +2932,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
 
         private void ResetGameplayWingState()
         {
+            ResetSolidFlightPose();
             gameplayWingState = GameplayWingState.Settled;
             gameplayWingFrameTimer = 0f;
             gameplayWingFrameIndex =
@@ -4309,7 +4310,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             // Presentation responds to this press before another simulation
             // step or artwork tick; physics still uses the original impulse.
             UpdateBirdWingMotion();
-            Play(flapSound);NotifyFirstPlayFlap();
+            PresentSolidTap();Play(flapSound);NotifyFirstPlayFlap();
         }
         private void EndFlight()
         {

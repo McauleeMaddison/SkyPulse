@@ -73,6 +73,7 @@ public static class SkyPulseBirdRosterPreview
     public static void UpdateNow(SkyPulseNativeGame game,float forcedTime=-1)
     {
         if(!Enabled)return;
+        if(game.RuntimeSolidBirdsActive){if(holder!=null)Clear();return;}
         if(forcedTime<0&&TimeOverride>=0)forcedTime=TimeOverride;
         string state=Get(game,"state").ToString();bool visible=(state=="Playing"||state=="Paused")&&(SkyPulseMode)Get(game,"activeMode")!=SkyPulseMode.BlackoutProtocol;
         if(!visible)

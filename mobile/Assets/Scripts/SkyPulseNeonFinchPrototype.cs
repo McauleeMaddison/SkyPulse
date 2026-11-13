@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace SkyPulse.Mobile
 {
-    /// <summary>Articulated art-review rig; gameplay inspection uses a separate flight-pose sampler.</summary>
+    /// <summary>Articulated mechanical bird with separate showcase and accepted-tap flight samplers.</summary>
     [ExecuteAlways, DisallowMultipleComponent]
     public sealed class SkyPulseNeonFinchPrototype : MonoBehaviour
     {
@@ -92,6 +92,24 @@ namespace SkyPulse.Mobile
             Set(3, -stroke * flapDegrees, -stroke * 3f, -stroke * 14f);
             Set(4, stroke * 13f, 0f, stroke * 4f);
             Set(5, -stroke * 13f, 0f, stroke * 4f);
+        }
+        // A committed flap travels above AND below glide before settling. This
+        // sampler accepts a signed pose; controls still own every stroke event.
+        public void SampleFlightStroke(float activeSeconds,float signedStroke)
+        {
+            SampleFlightPose(activeSeconds);
+            float stroke=Mathf.Clamp(signedStroke,-1f,1f)*(reducedMotion?.60f:1f);
+            Set(2,stroke*flapDegrees,stroke*3f,-stroke*14f);
+            Set(3,-stroke*flapDegrees,-stroke*3f,-stroke*14f);
+            Set(4,stroke*13f,0,stroke*4f);Set(5,-stroke*13f,0,stroke*4f);
+        }
+        public static float TapStroke(float lift,bool downstroke)
+        {
+            lift=Mathf.Clamp01(lift);
+            if(!downstroke)return Mathf.SmoothStep(0,1,lift);
+            float t=1-lift;
+            return t<=.66f?Mathf.Lerp(1,-1,Mathf.SmoothStep(0,1,t/.66f)):
+                Mathf.Lerp(-1,0,Mathf.SmoothStep(0,1,(t-.66f)/.34f));
         }
         void SampleWings(float phase, float amount)
         {
