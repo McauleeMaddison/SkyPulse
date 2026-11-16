@@ -94,6 +94,12 @@ namespace SkyPulse.Mobile
             else if(homeProtocol==SkyPulseMode.PulseRelay)
             {
                 SetHomeRect(modeHomeMap,new Vector2(-240,-440),new Vector2(448,156));homeHangar.anchoredPosition=new Vector2(240,-440);homeHangar.sizeDelta=new Vector2(448,156);
+                // Final Relay layout owns both the visible face and its lettering,
+                // not just a larger invisible hit area over the former small card.
+                HomeActionLabel(homeHangarTitle,Vector2.zero,new Vector2(416,116),40,Hex("#eefbff"),FontStyle.Bold);
+                HomeActionLabel(modeHomeMap.GetComponentInChildren<Text>(),Vector2.zero,new Vector2(416,116),40,Hex("#eefbff"),FontStyle.Bold);
+                HomeActionSurface(modeHomeMap,ProtocolAccent(homeProtocol));
+                HomeActionSurface(homeHangar.GetComponent<Button>(),ProtocolAccent(homeProtocol));
                 int next=HomeNextMission();journeyTitle.text="TODAY · "+dailyRelay.Missions[next].Name;journeyDetail.text="Clear this circuit · build your bird's cradle mastery";journeyAction=LaunchHomeProtocol;
             }
             else

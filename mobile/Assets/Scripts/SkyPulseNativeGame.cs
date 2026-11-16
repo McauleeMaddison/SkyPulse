@@ -1163,7 +1163,6 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
 #endif
         private int shieldCharges;
         private int perfectPasses;
-        private int displayedPowerUpCode = -1;
         private bool newBest;
         private Color flightFeedbackColour;
         private SpriteRenderer flightFeedbackRenderer;

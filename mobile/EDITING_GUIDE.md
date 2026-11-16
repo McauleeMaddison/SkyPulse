@@ -87,3 +87,14 @@ retains older archives/logs and selected raw-frame evidence. The exact cleanup
 allowlist and moved-folder map are in `Development/Current/CLEANUP_REPORT.json`.
 Active source, original images, individual crash/unlock frames and editable Unity
 structures were preserved. Do not publish private save exports.
+
+## Live Unity acceptance
+
+Use **SkyPulse → Play Main Game** to open the actual game scene, not the separate
+3D Bird Review. It retains the owner save and clears only the Editor artwork
+preview override. **SkyPulse → Playtest Checklist** opens the current review summary.
+`SkyPulseFlightEnvironment.CityFrame` composes the eight district placements; its
+three cached city links reuse `SkyPulseWorldArchitecture.BuildDistrictLink`. The
+canonical district model workshops still own building/island structural edits.
+See `Development/Current/UnityAcceptance` for current native views and the manual
+acceptance checklist; no visual approval or device build is inferred from QA passes.

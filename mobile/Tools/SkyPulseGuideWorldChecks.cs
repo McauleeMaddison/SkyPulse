@@ -44,7 +44,7 @@ public static class SkyPulseGuideWorldChecks
                     if(mode==SkyPulseMode.EndlessRoute&&page==4)Check(Labels(root).Contains("Both parents stay")||Labels(root).Contains("keep both parents"),"Breeding guide explains parent retention");
                     if(mode==SkyPulseMode.PulseRelay&&page==0)Check(Labels(root).Contains("opens immediately")&&Labels(root).Contains("UTC"),"Relay guide covers automatic gates and daily refresh");
                     if(mode==SkyPulseMode.BlackoutProtocol&&page==0)Check(Labels(root).Contains("PLAN")&&Labels(root).Contains("Closing Plan leaves"),"Routing guide explains non-spending planning and unchanged live state");
-                    if(mode==SkyPulseMode.BlackoutProtocol&&page==1)Check(Labels(root).Contains("immediately")&&Labels(root).Contains("Gold")&&Labels(root).Contains("city system"),"Mission guide covers city restoration, trace, Gold and instant progression");
+                    if(mode==SkyPulseMode.BlackoutProtocol&&page==1)Check(Labels(root).Contains("immediately")&&Labels(root).Contains("Gold")&&Labels(root).Contains("different light group")&&Labels(root).Contains("all twelve flight worlds"),"Mission guide covers city restoration, trace, Gold and instant progression");
                     if(size.x==640)SkyPulsePlayerExperienceChecks.CaptureUi(game,"guide-"+mode+"-"+page);
                 }
                 if(mode==SkyPulseMode.EndlessRoute)

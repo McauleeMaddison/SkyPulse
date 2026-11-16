@@ -11,6 +11,10 @@ Open `mobile/` in Unity Hub and this repository in VS Code.
 - [Device checklist](mobile/Release/DeviceBuild21/DEVICE_CHECKLIST.md) — use after approving the new local visuals.
 - [Exact installed-release record](mobile/Release/CURRENT_RELEASE.json) — signing/runtime evidence for Build 21.
 
+The [current Unity acceptance gallery](mobile/Development/Current/UnityAcceptance/README.md)
+shows the fuller twelve-world connected city compositions, native birds and updated
+Home layouts. Owner visual approval and device profiling remain pending.
+
 The latest result polish exposes earned bird cradles and fixes daily save recovery
 and midnight Relay continuation. The [local acceptance checklist](mobile/Development/Current/ACCEPTANCE_CHECKLIST.md)
 is ready for owner review.

@@ -4,7 +4,27 @@
 Public App Review remains on hold. These previews are actual Unity renders,
 with no AI repainting. Open [the gallery](index.html).
 
-## Final polish — 16 November
+## Unity acceptance and fuller cities — 16 November
+
+The owner's live Blackout city viewport is the composition reference. Endless
+previously enabled only three districts, with one barely visible. All twelve
+worlds now use eight detailed district placements and three joining skyways,
+reusing their own themed editable models. Connected parts move together; supporting
+upper/lower quarters fill the depth without adding gameplay colliders.
+
+- [Twelve current worlds](UnityAcceptance/Twelve-Worlds.png).
+- [Current native gameplay, Homes and upgrade views](UnityAcceptance/README.md).
+- [Live manual acceptance checklist](ACCEPTANCE_CHECKLIST.md).
+
+This pass also fixed Relay Home card faces/labels that still used an older narrow
+layout, removed an unused HUD field warning, and replaced the stale Unity menu
+checklist with a safe **SkyPulse → Play Main Game** entry point. Existing save,
+physics, pipes, native bird assets and the accepted wing sampler are retained.
+Editor checks passed (366 visual/density, 670 Home, 846 touch and 8,561 guide/world
+assertions), plus the wider regression and focused save/result suites. Owner visual
+approval and phone profiling are still pending; Build 21 is unchanged.
+
+## Earlier result polish — 16 November
 
 - Endless and Relay result cards now show the tier actually earned by that bird.
   A replay shows its next real mode-specific target instead of granting or
@@ -17,7 +37,7 @@ with no AI repainting. Open [the gallery](index.html).
   recovery saves that extraction without replaying or switching puzzles. This
   does not promise persistence if the operating system terminates an unsaved app.
 - [New result previews](Results-Polish.png) and the [acceptance checklist](ACCEPTANCE_CHECKLIST.md).
-  The world, Home and Hangar captures below are the unchanged 13 November designs.
+  The new UnityAcceptance gallery supersedes earlier world/Home captures.
 - This pass passed 38 focused acceptance assertions, 86 journey assertions,
   244 input, 221 terminal-flow and 846 touch-comfort checks. The broader run also
   passed 3,424 final-polish, 188 Field Tech and 261 native-bird assertions, plus

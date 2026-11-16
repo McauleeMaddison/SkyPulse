@@ -1,10 +1,10 @@
 {
-  "candidate": "SkyPulse local final-result and daily-recovery polish",
+  "candidate": "SkyPulse connected twelve-world cities and Unity visual acceptance",
   "date": "2026-11-16",
   "unity": "6000.6.0f1",
   "result": "PASS",
-  "baselineCommit": "a1e4dde",
-  "baselineReport": "https://github.com/McauleeMaddison/SkyPulse/blob/a1e4dde/mobile/Development/Current/QA_REPORT.json",
+  "baselineCommit": "b579846",
+  "baselineReport": "https://github.com/McauleeMaddison/SkyPulse/blob/b579846/mobile/Development/Current/QA_REPORT.json",
   "installedPhoneBuild": 21,
   "newCandidateInstalled": false,
   "publicReviewSubmitted": false,
@@ -131,7 +131,7 @@
     },
     {
       "path": "mobile/Assets/Scripts/SkyPulseFlightEnvironment.cs",
-      "sha256": "85727ab9458ddf5702a297225afb392421deb9575ac490f982d2089a952a2203"
+      "sha256": "7dd49f7620f5f233238ea2210ff5670fcddcda84ae0d4f278b3adf2f0fc55527"
     },
     {
       "path": "mobile/Assets/Scripts/SkyPulseFlightEnvironment.cs.meta",
@@ -275,7 +275,7 @@
     },
     {
       "path": "mobile/Assets/Scripts/SkyPulseNativeGame.Journey.cs",
-      "sha256": "9bfe51138c5c810b617e9a61646da4287f306d3dff3ab78781c2cde313434804"
+      "sha256": "7514876cf4c2ef2c12584a068c754f5d555cc79ee2bd73f38f57c1d375b197a4"
     },
     {
       "path": "mobile/Assets/Scripts/SkyPulseNativeGame.Journey.cs.meta",
@@ -347,7 +347,7 @@
     },
     {
       "path": "mobile/Assets/Scripts/SkyPulseNativeGame.cs",
-      "sha256": "979f830fff4cf72f30ad828355bd90b62743e9212f413b34933950fc7572e975"
+      "sha256": "dba46cd599ae121c7fe8fc16352c0dc3eb1669ee697f9a23e2a137243b7c11b8"
     },
     {
       "path": "mobile/Assets/Scripts/SkyPulseNativeGame.cs.meta",
@@ -563,7 +563,7 @@
     },
     {
       "path": "mobile/Assets/Scripts/SkyPulseWorldArchitecture.cs",
-      "sha256": "c0df414fb03fbc80a984d72267ec674f4751d46abe43933af1b82e72ba6192ac"
+      "sha256": "173e593c16e2922eb5b79fa8cdcf4f1bb080616b8050b622cb55cd4a3bb611a2"
     },
     {
       "path": "mobile/Assets/Scripts/SkyPulseWorldArchitecture.cs.meta",
@@ -868,7 +868,7 @@
     "passed": true,
     "sourceFiles": 71,
     "resourceJsonFiles": 5,
-    "stringsChecked": 4709,
+    "stringsChecked": 4712,
     "negativeControlsPassed": 5,
     "legitimateCopyControlsPassed": 4,
     "findings": [],
@@ -879,10 +879,20 @@
   "originalBirdRegistration": "PASS: all 90 flight frames across 15 birds have valid registration and unchanged source artwork.",
   "editorDiagnostic": "Unity 6000.6.0f1 SearchDatabase.EnumerateAll/GetDefaultSearchDatabase still throws an editor-only ArgumentOutOfRangeException in batch QA after its cache was regenerated. Not hidden or fixed in engine source. No C# compiler errors/warnings were reported by the final broad run.",
   "remainingChecks": [
-    "Owner visual acceptance in Unity",
-    "New numbered iPhone/iPad candidate and manual acceptance after approval",
-    "Measured device frame pacing, memory, heat, audio and retained progress",
-    "Public App Review remains on hold pending owner instruction and Apple clarification"
+    "Owner visual acceptance in the live Unity game",
+    "New numbered iPhone/iPad candidate and manual testing after visual approval",
+    "Measured device frame pacing, memory and heat for the fuller city composition",
+    "Real-device audio/haptic comfort",
+    "Public App Review remains on hold"
   ],
-  "evidenceNote": "QA uses a separate company/product identity and simulated progress. It does not certify phone behavior or global metadata uniqueness. The 13 November city/render report is retained in Git at baselineReport; its unchanged scene captures remain in this gallery."
+  "evidenceNote": "QA uses a separate company/product identity and simulated progress. It does not certify phone behavior or global metadata uniqueness. The 13 November city/render report is retained in Git at baselineReport; its unchanged scene captures remain in this gallery.",
+  "visualAcceptanceReport": "UnityAcceptance/REPORT.json",
+  "visualAcceptanceChecks": 366,
+  "ownerVisualApproval": false,
+  "currentVisualSuiteCounts": {
+    "VISUAL_ACCEPTANCE_CHECK": 366,
+    "HOME_PROGRESS_CHECK": 670,
+    "TOUCH_COMFORT_CHECK": 846,
+    "GUIDE_WORLD_CHECK": 8561
+  }
 }

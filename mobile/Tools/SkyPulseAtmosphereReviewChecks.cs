@@ -177,7 +177,7 @@ public static class SkyPulseAtmosphereReviewChecks
         Check(key.shadows==LightShadows.Hard&&key.shadowStrength>0&&key.shadowCustomResolution<=1024,"Architectural sun has bounded hard-shadow configuration");
         var renderers=(MeshRenderer[,])Get(environment,"districtRenderers");
         Check(renderers.Cast<MeshRenderer>().All(r=>r.gameObject.layer==30&&r.receiveShadows&&r.shadowCastingMode==UnityEngine.Rendering.ShadowCastingMode.TwoSided&&r.sharedMaterial.renderQueue<=2500&&r.sharedMaterial.FindPass("District shadows")>=0),"Only pooled district renderers opt into real casting/receiving and opaque camera depth");
-        Check(renderers.Cast<MeshRenderer>().Count(r=>r.gameObject.activeInHierarchy)==3,"Exactly three complete pooled districts compose a fully visible world");
+        Check(renderers.Cast<MeshRenderer>().Count(r=>r.gameObject.activeInHierarchy)==11,"Eight complete pooled districts and three connected skyways compose a fully visible world");
         Check(environment.WorldScene.GetComponentsInChildren<MeshRenderer>(true).Where(r=>r.name.StartsWith("Distant skyline ")||r.name.StartsWith("Far cloud layer ")||r.name.StartsWith("Middle cloud layer ")).All(r=>!r.gameObject.activeInHierarchy),"Obsolete skyline and ribbon cloud proxies stay hidden behind coherent districts");
         var density=Resources.Load<Texture3D>("SkyPulse/WorldCloudDensity");
         Check(density!=null&&environment.CloudNoise==density&&density.width==64&&density.height==64&&density.depth==64&&density.format==TextureFormat.RGBA32&&density.mipmapCount==1,"Live world uses the cached 1 MiB coherent RGBA64 density asset, with no runtime fallback");

@@ -993,6 +993,13 @@ namespace SkyPulse.Mobile
             }
             CapturePart("Garden terrace",b,false);
         }
+        // Reuse the same framed, glazed skyway craft as each authored district.
+        // Only the cached assembly endpoints differ between world layouts.
+        internal static Mesh BuildDistrictLink(int world,Vector3 from,Vector3 to)
+        {
+            var b=new SkyPulseMeshBuilder();Skyway(b,from,to,.45f,world);
+            return b.Finish(Styles[world]+" / connected district skyway");
+        }
         static void Skyway(SkyPulseMeshBuilder b,Vector3 from,Vector3 to,float width,int world)
         {
             CapturePart("Sky bridge",b,true);

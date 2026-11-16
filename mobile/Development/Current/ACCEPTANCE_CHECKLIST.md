@@ -10,9 +10,26 @@ wing, world, UI, pickup and upgrade regressions passed in the isolated QA produc
 See QA_REPORT.json for exact counts and source hashes. The Unity Editor-only
 SearchDatabase indexing exception is still recorded; it was not hidden or patched.
 
+## Editor review completed — owner sign-off stays separate
+
+- [x] Native 3D presenter and selected identity captured for all 15 birds; approved rig files unchanged.
+- [x] All 12 worlds captured with fuller connected city groups and theme-specific pipes.
+- [x] Eight district placements and three connected skyways per world use the existing bounded renderer pool; sampled parallax preserves landing attachments.
+- [x] Relay collection hides the collected crystals, opens the matching gate and accepts actual passage through the opening.
+- [x] Blackout live/Plan/instant-next views captured with the city above the board.
+- [x] Home, guide and touch suites passed; the Relay narrow-face/label mismatch was corrected.
+- [x] All 12 world transitions checked at simulated 30/60/120 Hz, including pause/retry.
+- [x] Exact-source save/result and broader controls, bird, pickup and upgrade suites passed.
+- [x] Current C# compilation has no warnings/errors; unused legacy HUD field removed.
+
+These checkmarks are Editor evidence only, not an assertion that the owner has
+approved the art or played every flow. [Preview sheets and report](UnityAcceptance/README.md).
+The known Unity Editor search-index exception is still recorded. Audio/haptics,
+real-device performance and every owner item below remain unapproved.
+
 ## First: owner visual acceptance in Unity
 
-Open `mobile/Assets/Scenes/SkyPulse.unity`, use a portrait Game view and press Play.
+Use **SkyPulse → Play Main Game** in Unity (it opens `Assets/Scenes/SkyPulse.unity` and preserves your save). Use the portrait Game/Simulator view. **SkyPulse → Playtest Checklist** opens the matching review summary.
 
 - [ ] Endless: selected 3D bird is correct; every tap visibly drives its full wing stroke.
 - [ ] Endless: pipes/collars have no duplicates, black patches or gaps; all 12 worlds remain readable.

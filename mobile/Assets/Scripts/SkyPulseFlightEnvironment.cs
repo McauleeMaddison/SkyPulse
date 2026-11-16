@@ -11,6 +11,7 @@ namespace SkyPulse.Mobile
         const int Themes=12, Layers=3, PerLayer=4;
         readonly Mesh[] silhouettes=new Mesh[Themes];
         readonly Mesh[] residential=new Mesh[Themes];
+        readonly Mesh[,] cityLinks=new Mesh[Themes,3];
         readonly MaterialPropertyBlock[,] authoredLighting=new MaterialPropertyBlock[Themes,2];
         readonly Transform[,] scenery=new Transform[2,Layers*PerLayer];
         readonly MeshRenderer[,] districtRenderers=new MeshRenderer[2,Layers*PerLayer];
@@ -30,9 +31,10 @@ namespace SkyPulse.Mobile
         float span; int current=-1,previous;
         float distanceOffset,clockOffset,presentationClock;bool hasPresentation,motionHeld;
         Color currentTint,currentHaze,previousTint,previousHaze;
-        // One authored composition per place: a civic landmark, a lower
-        // residential counterpoint and one quiet distant marker. Complete
-        // silhouettes live at staggered depths; there is no cropped near clone.
+        // Each world is a connected four-district city, not two isolated props.
+        // Three upper-distance districts and one lower quarter fill its depth.
+        // The existing twelve-renderer bank also holds three shared skyways;
+        // no objects or meshes are created while flying or changing worlds.
         // Vector4 stores uniform scale, X, ground height and physical depth.
         static readonly Vector4[] CivicFraming={
             new Vector4(1.18f,3.15f,-3.85f,26.5f), // Neon / connected civic triplet
@@ -55,14 +57,6 @@ namespace SkyPulse.Mobile
             new Vector4(.68f,-6.50f,-4.10f,39),new Vector4(.58f,-6.60f,-4.10f,43),
             new Vector4(.64f,-6.40f,-3.90f,42),new Vector4(.63f,-6.60f,-3.90f,41),
             new Vector4(.68f,-6.40f,-3.80f,40),new Vector4(.66f,-6.50f,-3.70f,41)
-        };
-        static readonly Vector4[] DistantFraming={
-            new Vector4(.32f,8.8f,-1.9f,61),new Vector4(.30f,8.4f,-1.8f,61),
-            new Vector4(.29f,9.0f,-1.9f,63),new Vector4(.28f,8.8f,-2.0f,65),
-            new Vector4(.34f,8.6f,-1.8f,63),new Vector4(.29f,8.5f,-2.1f,65),
-            new Vector4(.36f,8.8f,-2.2f,61),new Vector4(.28f,8.7f,-2.2f,66),
-            new Vector4(.31f,8.5f,-2.0f,64),new Vector4(.31f,8.8f,-2.0f,63),
-            new Vector4(.35f,8.7f,-1.9f,62),new Vector4(.34f,8.6f,-1.8f,63)
         };
         // Architectural illumination follows each sky, while keeping solid
         // facade colours and the authored window/beacon palette intact. Neon
@@ -101,6 +95,9 @@ namespace SkyPulse.Mobile
             for(int theme=0;theme<Themes;theme++)
             {
                 silhouettes[theme]=Architecture(theme);residential[theme]=Architecture(theme,1);
+                cityLinks[theme,0]=CityLink(theme,5,4);
+                cityLinks[theme,1]=CityLink(theme,4,6);
+                cityLinks[theme,2]=CityLink(theme,7,5);
                 for(int variant=0;variant<2;variant++)
                 {
                     var data=Resources.Load<SkyPulseBackgroundLighting>("SkyPulse/BackgroundEdits/world-"+theme.ToString("00")+"-"+(variant==0?"civic":"residential")+"-lighting");
@@ -271,36 +268,69 @@ namespace SkyPulse.Mobile
             {
                 var item=scenery[bank,i];bool visible=visibility>.0001f;
                 int layer=i/PerLayer,slot=i%PerLayer;
-                // Exactly three districts occupy the fixed twelve-item pool.
-                // The complete near layer is dormant; no giant cropped tower
-                // rises from the screen edge or repeats the landmark at full size.
-                int districtCount=layer==0?1:layer==1?2:0;bool show=visible&&slot<districtCount;
+                bool link=i>=9;
+                bool occupied=layer==0?slot<3:layer==1||i==8||link;
+                bool show=visible&&occupied;
                 if(item.gameObject.activeSelf!=show)item.gameObject.SetActive(show);
-                int variant=layer==1&&slot==1?1:0;
-                if((changed||lightingChanged)&&slot<districtCount)
+                int variant=i==4||i==0||i==2?0:1;
+                var mesh=link?cityLinks[theme,i-9]:variant==0?silhouettes[theme]:residential[theme];
+                if((changed||lightingChanged)&&occupied)
                 {
-                    item.GetComponent<MeshFilter>().sharedMesh=variant==0?silhouettes[theme]:residential[theme];
+                    item.GetComponent<MeshFilter>().sharedMesh=mesh;
                     var renderer=districtRenderers[bank,i];var finish=districtFinish[bank,i];
-                    renderer.SetPropertyBlock(authoredLighting[theme,variant]);renderer.GetPropertyBlock(finish);
-                    finish.SetFloat("_DistrictDepth",layer==0?.45f:slot==0?.08f:.23f);
-                    finish.SetFloat("_WindowGlow",layer==0?.18f:slot==0?.84f:.48f);
-                    finish.SetFloat("_BeaconGlow",layer==0?.10f:slot==0?.50f:.25f);
-                    finish.SetFloat("_Backdrop",layer==0?.05f:0);
-                    finish.SetFloat("_RestorationHeight",(variant==0?silhouettes[theme]:residential[theme]).bounds.max.y);
+                    renderer.SetPropertyBlock(link?null:authoredLighting[theme,variant]);renderer.GetPropertyBlock(finish);
+                    finish.SetFloat("_DistrictDepth",layer==0?.38f:i==4?.08f:i==8?.24f:.16f);
+                    finish.SetFloat("_WindowGlow",layer==0?.30f:i==4?.84f:.62f);
+                    finish.SetFloat("_BeaconGlow",layer==0?.12f:i==4?.50f:.28f);
+                    finish.SetFloat("_Backdrop",layer==0?.035f:0);
+                    finish.SetFloat("_RestorationHeight",Mathf.Max(1,mesh.bounds.max.y));
                     SkyPulseWorldRestoration.Apply(finish,RestoredMask);
                     renderer.SetPropertyBlock(finish);
                 }
                 if(!show)continue;
-                Vector4 frame=layer==0?DistantFraming[theme]:slot==0?CivicFraming[theme]:ResidentialFraming[theme];
-                float speed=layer==0?.032f:slot==0?.095f:.062f;
-                float spacing=span*(layer==0?2.8f:2.2f);
-                float x=WrapDistrict(frame.y-worldDistance*speed,spacing);
+                // All connected districts and their links move as one assembly.
+                // Independent motion here would pull the bridge ends off their
+                // actual authored landing terraces.
+                float cityDrift=WrapDistrict(-worldDistance*.052f,span*1.9f);
+                if(link)
+                {
+                    item.localPosition=Vector3.right*cityDrift;
+                    item.localScale=Vector3.one;item.localRotation=Quaternion.identity;
+                    continue;
+                }
+                Vector4 frame=CityFrame(theme,i);
+                float x=layer==1?frame.y+cityDrift:
+                    WrapDistrict(frame.y-worldDistance*(layer==0?.018f:.034f),span*(layer==0?2.3f:1.6f));
                 item.localPosition=new Vector3(x,frame.z,frame.w);
                 item.localScale=Vector3.one*frame.x;
-                float orientation=layer==0?CivicOrientation[theme]+8:slot==0?CivicOrientation[theme]:ResidentialOrientation[theme];
-                item.localRotation=Quaternion.Euler(0,orientation,0);
+                item.localRotation=Quaternion.Euler(0,CityYaw(theme,i),0);
             }
         }
+        static Vector4 CityFrame(int theme,int district)
+        {
+            var civic=CivicFraming[theme];float size=ResidentialFraming[theme].x;
+            switch(district)
+            {
+                case 0:return new Vector4(size*1.25f,-11.8f,2.4f,55);
+                case 1:return new Vector4(size*1.10f,.6f,6.0f,64);
+                case 2:return new Vector4(size*1.30f,12.2f,1.4f,59);
+                case 4:return civic;
+                case 5:return new Vector4(size*1.25f,civic.y-6.7f,civic.z+.65f,civic.w+3);
+                case 6:return new Vector4(size*1.40f,civic.y+6.3f,civic.z-.20f,civic.w+2);
+                case 7:return new Vector4(size*1.12f,civic.y-13.8f,civic.z-.70f,civic.w+5);
+                default:return new Vector4(size*1.45f,-2.6f,-10.5f,44);
+            }
+        }
+        static float CityYaw(int theme,int district)=>district==4?CivicOrientation[theme]:
+            district==0?CivicOrientation[theme]+8:district==6?-ResidentialOrientation[theme]:ResidentialOrientation[theme];
+        static Vector3 CityLanding(int theme,int district,float side)
+        {
+            var f=CityFrame(theme,district);
+            return Matrix4x4.TRS(new Vector3(f.y,f.z,f.w),Quaternion.Euler(0,CityYaw(theme,district),0),Vector3.one*f.x)
+                .MultiplyPoint3x4(new Vector3(side,.29f,0));
+        }
+        static Mesh CityLink(int theme,int from,int to)=>SkyPulseWorldArchitecture.BuildDistrictLink(theme,
+            CityLanding(theme,from,1.8f),CityLanding(theme,to,-1.8f));
         static float WrapDistrict(float position,float spacing)=>Mathf.Repeat(position+spacing*.5f,spacing)-spacing*.5f;
         // Geometry construction is kept separate from the runtime camera/pool.
         static Mesh Architecture(int theme,int variant=0)
@@ -313,6 +343,7 @@ namespace SkyPulse.Mobile
         {
             foreach(var mesh in silhouettes)if(mesh!=null)Destroy(mesh);
             foreach(var mesh in residential)if(mesh!=null)Destroy(mesh);
+            foreach(var mesh in cityLinks)if(mesh!=null)Destroy(mesh);
             foreach(var material in surfaces)if(material!=null)Destroy(material);
             if(skyMesh!=null)Destroy(skyMesh);if(skyMaterial!=null)Destroy(skyMaterial);if(ownsCloudNoise&&cloudNoise!=null)Destroy(cloudNoise);
             if(worldScene!=null)Destroy(worldScene.gameObject);if(worldImage!=null){worldImage.Release();Destroy(worldImage);}if(compositeMesh!=null)Destroy(compositeMesh);if(compositeMaterial!=null)Destroy(compositeMaterial);
