@@ -104,8 +104,8 @@ Shader "SkyPulse/Constructed World Atmosphere"
                 float3 worldLight=lerp(la,lb,blend),worldGlow=lerp(ga,gb,blend);
                 // Deep coloured interiors and a lit edge retain the world's
                 // palette. Neutral grey scattering washed the whole scene out.
-                float3 ambient=float3(.015,.030,.065)+worldGlow*.025+behind*.09;
-                float3 sunlight=worldLight*.62+worldGlow*.15;
+                float3 ambient=float3(.015,.030,.065)+worldGlow*.045+behind*.09;
+                float3 sunlight=worldLight*.72+worldGlow*.17;
                 float3 wind=float3(_Clock*.00046,0,_Clock*.00015);
                 float3 densityScale=float3(.019,.025,.019);
                 float3 sunDirection=normalize(float3(-.48,.81,-.34));
@@ -141,12 +141,15 @@ Shader "SkyPulse/Constructed World Atmosphere"
                             // Minimum multiple-scattered sky light keeps deep
                             // billows luminous; shadows cannot become ink holes.
                             float3 colour=ambient*(.72+height*.28)+sunlight*(direct*.43+crown*.24);
-                            colour+=worldGlow*crown*.025;
+                            // Directional coloured rims separate successive
+                            // billows without adding a grey veil over the city.
+                            float rim=pow(saturate(1-density*2.4),2)*direct;
+                            colour+=worldGlow*crown*.035+worldLight*rim*.08;
                             float airFade=smoothstep(-.025,.16,-ray.y);
                             float opacity=(1-exp2(-density*stepLength*.105))*airFade;
-                            // A cloud never replaces more than 42% of the clear sky.
+                            // A cloud never replaces more than 32% of the clear sky.
                             // The space between separate islands stays open air.
-                            opacity=min(opacity,max(0,(transmittance-.58)/max(transmittance,.001)));
+                            opacity=min(opacity,max(0,(transmittance-.68)/max(transmittance,.001)));
                             scattering+=colour*transmittance*opacity;
                             transmittance*=1-opacity;
                         }

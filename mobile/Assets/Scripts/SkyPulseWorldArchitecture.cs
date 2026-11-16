@@ -102,8 +102,9 @@ namespace SkyPulse.Mobile
             // random. Alpha .48 identifies lit glazing in the shared shader;
             // the RGB is the same primary/secondary palette as the pipe LEDs.
             int seed=world*947+building*173+side*43+(row/2)*97;
-            if(Hash(seed)<.70f)return Glass(world);
+            if(Hash(seed)<.58f)return Glass(world);
             var colour=Hash(seed+side*239+row*29)>.72f?SkyPulseRouteArchitecture.Secondary(world%12):SkyPulseRouteArchitecture.Accent(world%12);
+            if(Hash(seed+67)>.82f)colour=Color.Lerp(colour,new Color(1,.69f,.40f),.55f);
             colour.a=.48f;return colour;
         }
         static Color Shell(int world)
@@ -601,8 +602,8 @@ namespace SkyPulse.Mobile
             b.Quad(p+new Vector3(-w*.5f,0,-.012f),p+new Vector3(w*.5f,0,-.012f),p+new Vector3(w*.5f,h,-.012f),p+new Vector3(-w*.5f,h,-.012f),Glass(world));
             Beam(b,p+new Vector3(-w*.58f,0,-.04f),p+new Vector3(-w*.58f,h,-.04f),.035f,.045f,Edge);
             Beam(b,p+new Vector3(w*.58f,0,-.04f),p+new Vector3(w*.58f,h,-.04f),.035f,.045f,Edge);
-            RoundedSlab(b,p+new Vector3(0,h+.025f,-.08f),w*1.66f,.26f,.055f,Shell(world));
-            Beam(b,p+new Vector3(-w*.78f,h-.015f,-.19f),p+new Vector3(w*.78f,h-.015f,-.19f),.014f,.014f,Light(world));
+            RoundedSlab(b,p+new Vector3(0,h+.025f,-.08f),w*1.95f,.31f,.065f,Shell(world));
+            Beam(b,p+new Vector3(-w*.90f,h-.015f,-.22f),p+new Vector3(w*.90f,h-.015f,-.22f),.014f,.014f,Light(world));
             RoundedSlab(b,p+new Vector3(0,-.01f,-.13f),w*1.70f,.33f,.055f,Frame);
             RoundedSlab(b,p+new Vector3(0,-.045f,-.22f),w*1.98f,.37f,.030f,Shell(world));
         }
@@ -614,7 +615,7 @@ namespace SkyPulse.Mobile
                 Beam(b,at+new Vector3(side*width*.43f,.10f,-depth*.38f),at+new Vector3(side*width*.43f,.10f,depth*.38f),.030f,.10f,Frame);
                 Beam(b,at+new Vector3(-width*.43f,.10f,side*depth*.38f),at+new Vector3(width*.43f,.10f,side*depth*.38f),.030f,.10f,Frame);
             }
-            for(int i=0;i<3;i++)Beam(b,at+new Vector3(-width*.15f,.17f,(i-1)*depth*.12f),at+new Vector3(width*.15f,.17f,(i-1)*depth*.12f),.016f,.030f,Shadow);
+            for(int i=0;i<3;i++)Beam(b,at+new Vector3(-width*.20f,.17f,(i-1)*depth*.12f),at+new Vector3(width*.20f,.17f,(i-1)*depth*.12f),.022f,.035f,i==1?Light(world):Frame);
             var mast=at+new Vector3(width*.29f,.14f,depth*.22f);
             Beam(b,mast,mast+Vector3.up*.20f,.016f,.016f,Edge);
             Beam(b,mast+Vector3.up*.18f,mast+Vector3.up*.21f,.025f,.025f,Light(world));
@@ -840,6 +841,11 @@ namespace SkyPulse.Mobile
             {
                 Beam(b,new Vector3(side*1.95f,-.17f,-.87f),new Vector3(side*1.45f,-.72f,-.70f),.065f,.075f,Edge);
             }
+            for(int side=-1;side<=1;side+=2)
+            {
+                var at=new Vector3(side*1.42f,0,-.50f);
+                WindowBay(b,at,new Vector3(-.27f,-.82f,0),new Vector3(.27f,-.82f,0),new Vector3(.27f,-.46f,0),new Vector3(-.27f,-.46f,0),Vector3.back,Vector3.back,Shell(world),WindowGlass(world,241,side+1,2));
+            }
             BeaconStars(b,world);
             CapturePart("Station foundation",b,false);
         }
@@ -849,6 +855,11 @@ namespace SkyPulse.Mobile
             RoundedSlab(b,new Vector3(0,-.50f,0),rx*2,rz*2,.85f,new Color(.09f,.17f,.21f,.12f));
             RoundedSlab(b,new Vector3(0,-.03f,-.14f),rx*1.98f,rz*1.98f,.025f,new Color(.04f,.13f,.19f,.34f));
             for(int side=-1;side<=1;side+=2)RoundedSlab(b,new Vector3(side*1.65f,-1.30f,.24f),.72f,1.20f,1.12f,Frame);
+            for(int bay=0;bay<8;bay++)
+            {
+                float x=(bay-4)*.52f;
+                WindowBay(b,Vector3.zero,new Vector3(x,-.28f,-rz-.075f),new Vector3(x+.48f,-.28f,-rz-.075f),new Vector3(x+.48f,-.09f,-rz-.075f),new Vector3(x,-.09f,-rz-.075f),Vector3.back,Vector3.back,Shell(world),WindowGlass(world,251,bay,2));
+            }
             BeaconStars(b,world);
             CapturePart("Harbour foundation",b,false);
         }
@@ -867,7 +878,14 @@ namespace SkyPulse.Mobile
                 stone=Color.Lerp(stone,world==10?new Color(.55f,.38f,.23f,.18f):world==6?new Color(.29f,.43f,.33f,.18f):new Color(.43f,.48f,.55f,.18f),.12f+mineral*.30f);
                 // Hard geological planes retain physical light and dark relief.
                 // Paired triangles expose broken rock instead of a smooth bowl.
-                b.Quad(p,q,r,s,stone);
+                // Real openings replace these cliff faces: no rock polygon
+                // remains behind their recessed glazing. Upper galleries sit
+                // above the registered star mounts; lower utility rooms leave
+                // that middle band and the island silhouette untouched.
+                bool gallery=row==1&&side>=22&&side<=31;
+                bool utility=row==4&&(side==24||side==27||side==30);
+                if(gallery||utility)CliffGallery(b,a,c,t,u,rx,rz,depth,world,side,gallery);
+                else b.Quad(p,q,r,s,stone);
                 if(row==0)b.Face(new Vector3(0,-.02f,0),q,p,new Color(.18f,.22f,.24f,0));
                 if(row==rows-1)b.Face(new Vector3(.22f,-depth,0),s,r,stone);
             }
@@ -888,6 +906,38 @@ namespace SkyPulse.Mobile
             FoundationSeats(b,rx,rz,depth,world);
             BeaconStars(b,world);
             CapturePart("Cliff island",b,false);
+        }
+        static void CliffGallery(SkyPulseMeshBuilder b,float a,float c,float t,float u,float rx,float rz,float depth,int world,int bay,bool terrace)
+        {
+            var na=RockNormal(a,(t+u)*.5f,rx,rz,depth,world);var nb=RockNormal(c,(t+u)*.5f,rx,rz,depth,world);
+            var p=Rock(a,u,rx,rz,depth,world);var q=Rock(c,u,rx,rz,depth,world);
+            var r=Rock(c,t,rx,rz,depth,world);var s=Rock(a,t,rx,rz,depth,world);
+            var wall=Color.Lerp(Shell(world),Edge,.18f);wall.a=world==4||world==6||world==8||world==10?.12f:0;
+            var glass=WindowGlass(world,terrace?211:233,bay,1);
+            // A few occupied rooms make the foundations legible at flight
+            // scale. The neighbouring bays stay dark recessed glazing.
+            if(terrace?bay%3==0:bay==27)
+            {
+                glass=Color.Lerp(Light(world),new Color(1,.66f,.36f),.26f);glass.a=.48f;
+            }
+            WindowBay(b,Vector3.zero,p,q,r,s,na,nb,wall,glass);
+            // A deep cornice and supported sill follow the actual cliff curve.
+            // Only the upper gallery has a promenade rail; lower rooms stay
+            // recessed and quiet, rather than covering the rock with hardware.
+            float ledge=terrace?.14f:.075f;
+            var outerP=p+na*ledge;var outerQ=q+nb*ledge;
+            b.SmoothQuad(p,q,outerQ,outerP,Vector3.up,Vector3.up,wall);
+            b.SmoothQuad(outerP,outerQ,outerQ-Vector3.up*.045f,outerP-Vector3.up*.045f,na,nb,Frame);
+            if(!terrace)return;
+            var roofP=s+na*.095f;var roofQ=r+nb*.095f;
+            b.SmoothQuad(s,r,roofQ,roofP,Vector3.up,Vector3.up,wall);
+            b.SmoothQuad(roofP,roofQ,roofQ-Vector3.up*.04f,roofP-Vector3.up*.04f,na,nb,wall);
+            Beam(b,outerP+Vector3.up*.10f,outerQ+Vector3.up*.10f,.015f,.020f,Edge);
+            if(bay%2==0)
+            {
+                var foot=Rock(a,Mathf.Min(u+.085f,.95f),rx,rz,depth,world);
+                Beam(b,foot+na*.025f,outerP-Vector3.up*.035f,.055f,.065f,wall);
+            }
         }
         static void FoundationSeats(SkyPulseMeshBuilder b,float rx,float rz,float depth,int world)
         {

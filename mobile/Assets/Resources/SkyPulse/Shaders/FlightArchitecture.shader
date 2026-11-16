@@ -116,12 +116,12 @@ Shader "SkyPulse/Flight Architecture"
                 // Only the explicitly occupied recessed panes emit. Their
                 // colour is baked from the same palette as the pipe LEDs.
                 // Slow, restrained drift keeps interiors alive without flashes.
-                float windowPulse=.66+.025*sin(_Clock*.24+floor(i.local.y*2.6)*.73+_Design);
+                float windowPulse=.84+.025*sin(_Clock*.24+floor(i.local.y*2.6)*.73+_Design);
                 // Occupied rooms sit inside every world's recessed glazing.
                 // Fine dark mullions remain visible between individual lights.
                 float rooms=lerp(.8176,lerp(.24,1,step(.24,hash21(floor(grid)+17.3+_Design*2.1))),roomDetail);
-                float paneFalloff=.055+.945*interior*rooms;
-                float windowExposure=_Design<.5?1.85:1.5;
+                float paneFalloff=.15+.85*interior*rooms;
+                float windowExposure=_Design<.5?2.65:2.45;
                 colour+=neon*_WindowGlow*i.color.rgb*(windowPulse*.78+.06*pow(facing,3))*paneFalloff*windowExposure;
                 float surface=.94+.06*hash21(floor(i.local.xz*28));
                 colour*=lerp(1,surface,stone);
@@ -132,6 +132,19 @@ Shader "SkyPulse/Flight Architecture"
                 float mortar=max(facadeLine(courses.y,.012),facadeLine(courses.x,.017));
                 colour*=1-masonry*mortar*.18;
                 colour*=lerp(1,.95+hash21(floor(courses))*.10,masonry);
+                // Geological material is a distinct vertex channel. Filter
+                // broad mineral seams at their projected pixel size so cliff
+                // detail remains stable during parallax, including far islands.
+                float rock=step(.155,i.color.a)*(1-step(.195,i.color.a))*(1-step(-.04,i.local.y));
+                float bedding=i.local.y*8.2+sin(i.local.x*2.3+i.local.z*1.7+_Design)*.34;
+                float bedAA=max(fwidth(bedding),.012);
+                float seam=1-smoothstep(.020,.020+bedAA,abs(frac(bedding)-.5));
+                float grainDetail=1-smoothstep(.30,1.0,max(fwidth(i.local.x*13),fwidth(i.local.y*16)));
+                float grain=sin(i.local.x*13+i.local.y*16+sin(i.local.z*9))*.035;
+                colour*=1-rock*(seam*.20-grain*grainDetail);
+                // A quiet sky-facing mineral highlight exposes ledge normals;
+                // the rock remains matte and never becomes glowing plastic.
+                colour+=rock*surfaceColour*pow(saturate(n.y*.75+.25),2)*.12;
                 float floorShade=lerp(.72,1,smoothstep(-.10,.50,i.local.y));colour*=floorShade;
                 // Each completed network adds light to existing physical geometry.
                 // The zero-progress shader remains identical to the original.

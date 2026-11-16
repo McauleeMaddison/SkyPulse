@@ -1,38 +1,32 @@
-# Unity visual acceptance — 16 November 2026
+# Detailed world review — 16 November 2026
 
-**Calmer revision: Editor checks passed; owner approval and device checks remain pending.**
-The main Unity game is open for the owner. Installed iPhone Build 21 is unchanged.
+Editor checks passed. Owner requested fresh Build 22 for iPhone testing; device
+installation and visual acceptance are recorded separately. Public review stays on hold.
 
-- [All twelve fuller worlds](Twelve-Worlds.png) — each theme's own authored civic/residential models, six district placements and three joining skyways.
-- [Three gameplay views](Three-Modes.png) — actual native bird, automatic Relay gate and immediate Blackout progression.
-- [Homes](Homes.png) — Relay's final card faces and labels now match their full touch areas.
-- [Hangar, Tech Tree, training and breeding](Hangar-and-Upgrades.png).
-- [Current guides](Guide-Samples.png), with individual pages under Guides.
-- [Fifteen birds' tap phases](Bird-Tap-Phases.png) — stills at 0/80/180/320 ms, using fixed-step controller updates. Not a device-FPS video.
-- [Machine-readable report](REPORT.json) — source hashes, current checks and precise limits.
+- [Twelve actual gameplay worlds](Twelve-Worlds.png), with full-size views in Worlds.
+- [Civic district close-ups](Districts/Civic) and [residential close-ups](Districts/Residential).
+- [Three modes](Three-Modes.png), [Homes](Homes.png), [Hangar and upgrades](Hangar-and-Upgrades.png).
+- [Guides](Guide-Samples.png) and [all 15 birds' tap phases](Bird-Tap-Phases.png).
+- [Exact source/asset hashes, check counts and limits](REPORT.json).
 
-Worlds, Guides and Screens hold full-resolution views. These use simulated QA
-progress and are not App Store screenshots. No real player currency or unlocks
-were granted. The opaque-looking pipe bore is the actual hollow cap interior;
-the retained art/materials and collision dimensions were not replaced.
+The calmer four-connected-plus-two-distant city remains. The foundations now have
+real cliff openings, recessed utility rooms, supported gallery ledges, service
+bays and matte mineral seams. Window occupancy and brightness were refined after
+the owner found the previous lights unreadable at gameplay scale. Building
+entrances and existing roof details are more defined. Cloud rims use the world's
+colour and directional light; density samples and calm motion settings are retained.
 
-The connected row shares one parallax offset so its bridges do not pull apart.
-Two restrained distant districts provide depth. The existing two renderer
-banks are reused; the prototype does not spawn scenery each frame. The actual
-building structures remain in the canonical editable Unity district workshops;
-placement/camera/parallax are in SkyPulseFlightEnvironment.
+All 24 district variants remain in the existing editable Unity workshops, with
+original scene/prefab layouts, pivots and GUIDs. Bulk refresh preserves saved
+custom geometry. Maximum combined mesh size is 58,630 vertices. The two runtime
+banks and existing parallax/skyway layout remain; no gameplay colliders were added.
 
-The known SearchDatabase editor exception remains; game compilation reports no
-C# warnings/errors. Audio was muted for automated capture. Phone/iPad frame pacing,
-memory, heat, audio and haptic feel still require the approved numbered device build.
+The current logs are window-final, window-regression, window-design and
+window-inspection (.log.gz). Mesh/owner-edit preservation passed 1,666 assertions;
+window and beacon on/off GPU checks passed for all 24 variants. Inspection views
+are stills. QA progress is simulated and owner saves were not reset or seeded.
+Earlier save/result evidence remains in city-focused.log.gz at 7b3edc3.
 
-The owner found the previous fuller arrangement too chaotic. This revision removes
-the isolated lower quarter and high central district, lowers the two distant
-landmarks, and refines window/beacon readability. Jade Horizon no longer shows the
-painted bare rocks at the sides of its sky illustration. The connected main city
-and its themed structures remain. Review this revision before approving a phone build.
-
-Current evidence is in `calm-final.log.gz` and `calm-regression.log.gz`.
-`city-focused.log.gz` is the earlier save/result evidence at `7b3edc3`; it was not
-rerun for this scenery-only refinement. Runtime/shader source hashes identify the
-exact current candidate, and manual acceptance remains unchecked.
+Game C# compilation has no reported warnings/errors. The known Unity Editor
+SearchDatabase exception remains recorded. Device FPS, memory, heat, sound,
+haptic comfort and final visual approval require the new iPhone/iPad candidate.

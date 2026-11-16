@@ -98,3 +98,13 @@ three cached city links reuse `SkyPulseWorldArchitecture.BuildDistrictLink`. The
 canonical district model workshops still own building/island structural edits.
 See `Development/Current/UnityAcceptance` for current native views and the manual
 acceptance checklist; no visual approval or device build is inferred from QA passes.
+
+## Detailed islands and windows
+
+Open the civic/residential scenes under `Assets/Editor/SkyPulseBackgroundWorkshop/Scenes`.
+The first Cliff island, Station foundation or Harbour foundation object owns the
+foundation galleries. Existing Building objects own entrances and roof details.
+Use the workshop Bake action to update the cached Resources mesh after manual
+edits. Saved custom meshes remain authoritative during guarded generator refreshes.
+`SkyPulseWorldArchitecture` contains the fallback designs; `FlightArchitecture.shader`
+controls the shared material's window exposure and filtered matte mineral finish.

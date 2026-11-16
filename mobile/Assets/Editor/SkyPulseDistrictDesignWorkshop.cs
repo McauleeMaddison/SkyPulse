@@ -15,7 +15,7 @@ public static class SkyPulseDistrictDesignWorkshop
 {
     public const string BaselinePath=SkyPulseBackgroundWorkshop.Folder+"/district-design-baseline-v1.json";
     const string MeshFolder=SkyPulseBackgroundWorkshop.Folder+"/Meshes/";
-    const int CurrentDesignVersion=5;
+    const int CurrentDesignVersion=7;
     static readonly Type Factory=typeof(SkyPulseNativeGame).Assembly.GetType("SkyPulse.Mobile.SkyPulseWorldArchitecture");
     const BindingFlags Static=BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Static;
     static readonly FieldInfo CaptureField=Factory.GetField("EditorPartCapture",Static);
@@ -236,6 +236,9 @@ public static class SkyPulseDistrictDesignWorkshop
                     var replacement=parts[i].mesh;replacement.name=Path.GetFileNameWithoutExtension(path);
                     var vertices=replacement.vertices;for(int v=0;v<vertices.Length;v++)vertices[v]-=record.pivot;
                     replacement.vertices=vertices;replacement.RecalculateBounds();
+                    // A design version may only change foundations. Preserve
+                    // byte-identical authored building meshes on that refresh.
+                    if(existing.vertices.SequenceEqual(replacement.vertices)&&existing.normals.SequenceEqual(replacement.normals)&&existing.colors.SequenceEqual(replacement.colors)&&existing.triangles.SequenceEqual(replacement.triangles)){unchanged++;continue;}
                     if(!Application.isBatchMode)Undo.RecordObject(existing,"Refine original district structure");
                     EditorUtility.CopySerialized(replacement,existing);EditorUtility.SetDirty(existing);
                     // A mesh copied in the Editor can retain the previous GPU

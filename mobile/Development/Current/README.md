@@ -4,6 +4,21 @@
 Public App Review remains on hold. These previews are actual Unity renders,
 with no AI repainting. Open [the gallery](index.html).
 
+## Detailed inhabited worlds — Build 22 candidate
+
+The latest refinement adds cliff galleries and utility rooms, supported terraces,
+matte mineral seams and foundation service bays. Building entrances and roof
+features are more defined; occupied windows now read more clearly at portrait
+scale, with stable neon and warm interiors. Directional coloured cloud edges keep
+the calmer sky and clear flight path. The six-district connected composition stays.
+All 24 editable variants preserve their scene layouts, pivots and GUIDs; the largest
+combined mesh is 58,630 vertices. [Current previews and evidence](UnityAcceptance/README.md).
+
+The owner requested Build 22 for phone visual testing. Installed build, saved
+progress, signing and launch status are recorded separately under Release.
+App Store Connect metadata is prepared in Release/DeviceBuild22/metadata.json;
+a live Apple save is not inferred from the local draft. Public review stays on hold.
+
 ## Unity acceptance and fuller cities — 16 November
 
 The owner's live Blackout city viewport is the composition reference. Endless

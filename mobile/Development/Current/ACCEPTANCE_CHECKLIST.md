@@ -1,6 +1,6 @@
 # SkyPulse — final local acceptance
 
-Local source: 16 November 2026. Installed iPhone: **Build 21**, not this candidate.
+Local source: 16 November 2026. New candidate: **Build 22**, requested for iPhone visual testing; consult its release record for installation status.
 Public App Review remains on hold. All manual items below are deliberately unchecked.
 
 ## Automated verification completed
@@ -32,7 +32,7 @@ real-device performance and every owner item below remain unapproved.
 Use **SkyPulse → Play Main Game** in Unity (it opens `Assets/Scenes/SkyPulse.unity` and preserves your save). Use the portrait Game/Simulator view. **SkyPulse → Playtest Checklist** opens the matching review summary.
 
 - [ ] Endless: selected 3D bird is correct; every tap visibly drives its full wing stroke.
-- [ ] Endless: the calmer connected city is approved; no unwanted isolated island or painted bare rocks remain.
+- [ ] Endless: approve all twelve inhabited island foundations, visible window lighting, building details and sky; no unwanted isolated island remains.
 - [ ] Endless: pipes/collars have no duplicates, black patches or gaps; all 12 worlds remain readable.
 - [ ] Relay: crystals open only their matching gate immediately; the bird passes through the actual hoop opening.
 - [ ] Blackout: the city window remains separate from the board; the named restoration and live beam are clear.
@@ -46,7 +46,7 @@ Do not deliberately damage the owner's storage to test save failure. That scenar
 was exercised with injected write/flush failures in disposable QA; the screenshot
 shows the retained solved route and Retry Save action.
 
-## After visual approval: exact numbered device candidate
+## Build 22 device acceptance — requested by the owner
 
 - [ ] Create a fresh signed numbered build with source hashes and debugging symbols.
 - [ ] Install while preserving the existing save; verify scores, wallet, birds, upgrades and medals.
