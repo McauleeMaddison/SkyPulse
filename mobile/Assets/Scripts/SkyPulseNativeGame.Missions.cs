@@ -455,8 +455,9 @@ namespace SkyPulse.Mobile
             MissionText(report,"CRYSTALS  "+relaySession.Cells+" / "+(relaySession.Mission.RelayCount*2),-75,28,Hex("#aeefff"));
             MissionText(report,"GATES  "+relaySession.Passed+" / "+relaySession.Mission.RelayCount,-145,28,Hex("#94ffe1"));
             if(reason.Contains("SAVE FAILED"))MissionText(report,"MEDAL SAVE FAILED · RETRY",-240,26,Hex("#ff8595"));
+            else if(won)MissionText(report,JourneyRunSummary(),-236,32,Hex("#8dedd6"),860,64);
             var mode=activeMode;int mission=selectedMission;long day=relaySession.Mission.Day;
-            if(won && mission<3 && !reason.Contains("SAVE FAILED"))MissionButton(missionResultScreen.transform,"NEXT MISSION",0,-90,850,()=>LaunchMission(mode,day==dailyRelay.Data.day?mission+1:HomeNextMission()),colour,112);
+            if(won && mission<3 && !reason.Contains("SAVE FAILED"))MissionButton(missionResultScreen.transform,"NEXT MISSION",0,-90,850,()=>LaunchNextRelayMission(day,mission),colour,112);
             MissionButton(missionResultScreen.transform,"RETRY MISSION",0,won&&mission<3?-240:-90,850,()=>LaunchMission(mode,mission),colour,112);
             MissionButton(missionResultScreen.transform,"DAILY CIRCUITS",0,-405,850,()=>OpenMissionSelection(mode));
             MissionButton(missionResultScreen.transform,"MAIN MENU",0,-550,850,ResetToMenu);

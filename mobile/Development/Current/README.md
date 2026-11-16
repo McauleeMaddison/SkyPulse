@@ -1,10 +1,31 @@
 # SkyPulse — current local review
 
-13 November 2026. **Local Unity source candidate; iPhone Build 21 is unchanged.**
+16 November 2026. **Local Unity source candidate; iPhone Build 21 is unchanged.**
 Public App Review remains on hold. These previews are actual Unity renders,
 with no AI repainting. Open [the gallery](index.html).
 
-## Implemented
+## Final polish — 16 November
+
+- Endless and Relay result cards now show the tier actually earned by that bird.
+  A replay shows its next real mode-specific target instead of granting or
+  announcing the tier twice. These are the existing cosmetic cradles; flight
+  handling, approved wing strokes, stats and crystal prices have not changed.
+- Relay's Next Mission refreshes the UTC day before choosing a course. A report
+  left open across midnight starts today's first unfinished circuit.
+- A daily Heist write/flush failure says **Extraction Unsaved** and offers
+  **Retry Save**. It retains the completed route and original case date in memory;
+  recovery saves that extraction without replaying or switching puzzles. This
+  does not promise persistence if the operating system terminates an unsaved app.
+- [New result previews](Results-Polish.png) and the [acceptance checklist](ACCEPTANCE_CHECKLIST.md).
+  The world, Home and Hangar captures below are the unchanged 13 November designs.
+- This pass passed 38 focused acceptance assertions, 86 journey assertions,
+  244 input, 221 terminal-flow and 846 touch-comfort checks. The broader run also
+  passed 3,424 final-polish, 188 Field Tech and 261 native-bird assertions, plus
+  their supporting UI/pickup/world suites. Both completed runs reported zero C#
+  compiler errors or warnings. Details and current source hashes are in
+  [QA_REPORT.json](QA_REPORT.json). The known Editor SearchDatabase exception remains.
+
+## Implemented on 13 November
 
 - **Blackout city overlook:** five detailed authored districts and two skyways
   joined to the actual transformed landing decks. The wide city window is above
@@ -50,7 +71,10 @@ with no AI repainting. Open [the gallery](index.html).
 - [Full verification and source hashes](QA_REPORT.json)
 - [Cleanup allowlist and moved-folder lookup](CLEANUP_REPORT.json)
 
-## Verification and limits
+## Previous city verification and ongoing limits
+
+The following city/render counts describe the 13 November pass, retained in Git
+at `a1e4dde`. Current result/recovery checks are recorded above.
 
 279 city/restoration checks and 86 journey assertions passed, plus the existing
 Blackout, raised-optic, restoration-purpose and touch suites. The broader pass

@@ -7,6 +7,71 @@ namespace SkyPulse.Mobile
     {
         SkyPulsePlayerJourney playerJourney;bool blackoutDailyActive;long blackoutDailyDay;
         Button journeyButton;Text journeyTitle,journeyDetail;Action journeyAction;
+        Text resultJourneyText;
+        string journeyRunBirdId;
+        int journeyRunStartRank;
+
+        // Capture at launch, not on each result refresh: reopening a report must
+        // keep its earned tier while replaying starts a fresh comparison.
+        void BeginJourneyRun()
+        {
+            journeyRunBirdId = equippedSkin?.Id;
+            journeyRunStartRank = playerJourney == null || journeyRunBirdId == null
+                ? 0 : playerJourney.BirdRank(journeyRunBirdId);
+        }
+
+        string JourneyRunSummary()
+        {
+            if (playerJourney == null || equippedSkin == null) return "";
+            string id = equippedSkin.Id;
+            int rank = playerJourney.BirdRank(id);
+            if (id == journeyRunBirdId && rank > journeyRunStartRank)
+                return SkyPulsePlayerJourney.RankName(rank) + " CRADLE UNLOCKED";
+            if (rank >= 3) return "AURORA CRADLE EARNED";
+            bool relay = activeMode == SkyPulseMode.PulseRelay;
+            int target = relay ? (rank == 0 ? 2 : rank == 1 ? 4 : 5)
+                : (rank == 0 ? 5 : rank == 1 ? 15 : 30);
+            int bestResult = relay ? playerJourney.RelayBest(id) : playerJourney.FlightBest(id);
+            return SkyPulsePlayerJourney.RankName(rank + 1) + " CRADLE · BEST " +
+                bestResult + " / " + target + " GATES";
+        }
+
+        void LaunchNextRelayMission(long completedDay, int completedMission)
+        {
+            // Refresh before choosing the index. A result may remain open across
+            // midnight; its old course must not skip today's first circuit.
+            CheckDailyPeriod();
+            SetHomeProtocol(SkyPulseMode.PulseRelay);
+            int next = completedDay == dailyRelay.Data.day
+                ? Mathf.Min(completedMission + 1, dailyRelay.Missions.Length - 1)
+                : HomeNextMission();
+            LaunchMission(SkyPulseMode.PulseRelay, next);
+        }
+
+        // Retry the completed extraction itself after a failed persistence call.
+        // Keep the solved board, trace and date; never ask the player to solve it
+        // again or silently start a different daily design at midnight.
+        void RetryDailyBlackoutSave()
+        {
+            if (!blackoutDailyActive || activeMode != SkyPulseMode.BlackoutProtocol ||
+                state != FlightState.GameOver || blackoutSession == null ||
+                blackoutSession.State != MissionSessionState.Succeeded) return;
+            missionFinalized = false;
+            FinalizeMission();
+        }
+
+        void ReplayDailyBlackout()
+        {
+            blackoutSession = playerJourney.StartCase(true);
+            blackoutDailyDay = playerJourney.Data.day;
+            selectedMission = SkyPulseBlackoutCasebook.Index(blackoutDailyDay);
+            missionFinalized = false;
+            state = FlightState.Playing;
+            missionResultScreen.SetActive(false);
+            BuildBlackoutLab();
+            RefreshScreens();
+        }
+
         void ApplyJourneyHome()
         {
             if(playerJourney==null||homeScreen==null)return;playerJourney.EnsureDay();
@@ -53,9 +118,16 @@ namespace SkyPulse.Mobile
         }
         void BuildDailyBlackoutResult(bool won,string reason,int medal)
         {
-            BlackoutBackdrop(missionResultScreen.transform);MissionText(missionResultScreen.transform,won?"DAILY HEIST COMPLETE":"SIGNAL LOST",835,46,BlackoutIce);MissionText(missionResultScreen.transform,blackoutSession.Puzzle.Name,750,30,BlackoutMint);
-            var report=BlackoutPanel(missionResultScreen.transform,"Daily case report",new Vector2(0,360),new Vector2(930,450));MissionText(report,won?MedalName(medal)+" EXTRACTION":reason,140,36,BlackoutIce,860,85);MissionText(report,"TRACE "+blackoutSession.Trace+" / "+blackoutSession.Puzzle.TraceLimit,30,30,BlackoutIce);MissionText(report,"ARCHIVE · "+GoldCaseCount()+" / 4 GOLD CASES",-65,30,BlackoutMint);MissionText(report,"Four gold case designs unlock the Archivist cradle.",-148,25,BlackoutIce,860,75);
-            BlackoutButton(missionResultScreen.transform,"REPLAY DAILY CASE",0,-80,900,()=>{blackoutDailyActive=true;blackoutSession=playerJourney.StartCase(true);blackoutDailyDay=playerJourney.Data.day;selectedMission=SkyPulseBlackoutCasebook.Index(blackoutDailyDay);missionFinalized=false;state=FlightState.Playing;missionResultScreen.SetActive(false);BuildBlackoutLab();RefreshScreens();},160);
+            bool saveFailed = won && reason.IndexOf("SAVE FAILED", StringComparison.Ordinal) >= 0;
+            BlackoutBackdrop(missionResultScreen.transform);
+            MissionText(missionResultScreen.transform, saveFailed ? "EXTRACTION UNSAVED" : won ? "DAILY HEIST COMPLETE" : "SIGNAL LOST", 835, 46, saveFailed ? Hex("#ff8992") : BlackoutIce);
+            MissionText(missionResultScreen.transform, blackoutSession.Puzzle.Name, 750, 30, BlackoutMint);
+            var report = BlackoutPanel(missionResultScreen.transform, "Daily case report", new Vector2(0,360), new Vector2(930,450));
+            MissionText(report, saveFailed ? "PROGRESS SAVE INTERRUPTED" : won ? MedalName(medal) + " EXTRACTION" : reason, 140, 36, BlackoutIce, 860, 85);
+            MissionText(report, "TRACE " + blackoutSession.Trace + " / " + blackoutSession.Puzzle.TraceLimit, 30, 30, BlackoutIce);
+            MissionText(report, "ARCHIVE · " + GoldCaseCount() + " / 4 GOLD CASES", -65, 30, BlackoutMint);
+            MissionText(report, saveFailed ? "Your solved route is retained. Tap Retry Save." : "Four gold case designs unlock the Archivist cradle.", -148, 25, BlackoutIce, 860, 75);
+            BlackoutButton(missionResultScreen.transform, saveFailed ? "RETRY SAVE" : "REPLAY DAILY CASE", 0, -80, 900, saveFailed ? (Action)RetryDailyBlackoutSave : ReplayDailyBlackout, 160);
             BlackoutButton(missionResultScreen.transform,"VAULT MAP",0,-250,900,OpenBlackoutVaults,160);BlackoutButton(missionResultScreen.transform,"MAIN MENU",0,-420,900,ResetToMenu,160);
         }
     }

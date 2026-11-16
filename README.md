@@ -11,6 +11,10 @@ Open `mobile/` in Unity Hub and this repository in VS Code.
 - [Device checklist](mobile/Release/DeviceBuild21/DEVICE_CHECKLIST.md) — use after approving the new local visuals.
 - [Exact installed-release record](mobile/Release/CURRENT_RELEASE.json) — signing/runtime evidence for Build 21.
 
+The latest result polish exposes earned bird cradles and fixes daily save recovery
+and midnight Relay continuation. The [local acceptance checklist](mobile/Development/Current/ACCEPTANCE_CHECKLIST.md)
+is ready for owner review.
+
 The current local source adds the city restoration overlook, eight distinct saved
 lighting rewards, next-goal cards, cosmetic bird mastery and four optional authored
 daily heists. It also corrects the twelve-family Tech validator. This source has

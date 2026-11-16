@@ -2210,6 +2210,8 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             rewardRule.raycastTarget = false;
             resultBalanceText = CreateText(rewards, "TOTAL BALANCE  ·  0", new Vector2(0f, -80f), new Vector2(604f, 42f), 28, Hex("#d6e9f6"), TextAnchor.MiddleCenter, FontStyle.Bold);
             resultWorldText = CreateText(card, "ROUTE REACHED  ·  NEON CITY", new Vector2(0f, -191f), new Vector2(710f, 38f), 24, Hex("#b5c8de"), TextAnchor.MiddleCenter, FontStyle.Normal);
+            resultJourneyText = CreateText(card, "", new Vector2(0f, -237f), new Vector2(720f, 46f), 34, Hex("#8dedd6"), TextAnchor.MiddleCenter, FontStyle.Bold);
+            resultJourneyText.name = "Earned bird cradle progress";
             var flyAgain = CreateNeonButton(card, "RETRY", new Vector2(0f, -276f), new Vector2(680f, 108f), Hex("#45eaff"));
             flyAgain.onClick.AddListener(RestartFlight);
             var hangar = CreateNeonButton(card, "BIRD HANGAR", new Vector2(-177f, -397f), new Vector2(326f, 100f), Hex("#45eaff"));
@@ -3815,6 +3817,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
             perfectPasses = 0;
             newBest = false;
             BeginProgressionRun();
+            BeginJourneyRun();
             ResetEndlessPickupBoosts();
             routeWorldIndex = 0;
             routeWorld = Worlds[routeWorldIndex];
@@ -4904,6 +4907,7 @@ new WorldTheme("polar_glow", "POLAR GLOW", "SkyPulse/backgrounds/themes/polar-gl
         private void RefreshProgressionResultLabels()
         {
             RecordJourneyFlight();ApplyResultTechBonuses();
+            if (resultJourneyText != null) resultJourneyText.text = JourneyRunSummary();
             if (resultCrystalsText != null)
             {
                 int finds = Mathf.Max(0, runCrystalsCollected-runTechPickupBonus-runBirdPickupBonus-runEchoPickupBonus-runFieldPickupBonus);

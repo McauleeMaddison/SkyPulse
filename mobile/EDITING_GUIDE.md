@@ -68,6 +68,9 @@ entry points against the owner product. `SkyPulseCatalogChecks` verifies twelve
 real Tech families and negative controls. `SkyPulseRestorationChecks` and
 `SkyPulseJourneyChecks` cover lighting, authored cases, progression, saves and UI.
 The current review records which checks ran and what still needs device testing.
+`SkyPulseFinishAcceptanceChecks` adds result/mastery, midnight continuation and
+injected write/flush recovery checks. `SkyPulseNativeGame.Journey.cs` owns the
+result notices and daily Retry Save callback; it does not change the wing rig.
 
 The release metadata checker follows the installed Build 21 contract. Later local
 source intentionally differs from that immutable build; create a fresh numbered
