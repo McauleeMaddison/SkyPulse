@@ -14,12 +14,12 @@ SearchDatabase indexing exception is still recorded; it was not hidden or patche
 
 - [x] Native 3D presenter and selected identity captured for all 15 birds; approved rig files unchanged.
 - [x] All 12 worlds captured with fuller connected city groups and theme-specific pipes.
-- [x] Eight district placements and three connected skyways per world use the existing bounded renderer pool; sampled parallax preserves landing attachments.
+- [x] Six district placements and three connected skyways per world use the existing bounded renderer pool; sampled parallax preserves landing attachments.
 - [x] Relay collection hides the collected crystals, opens the matching gate and accepts actual passage through the opening.
 - [x] Blackout live/Plan/instant-next views captured with the city above the board.
 - [x] Home, guide and touch suites passed; the Relay narrow-face/label mismatch was corrected.
 - [x] All 12 world transitions checked at simulated 30/60/120 Hz, including pause/retry.
-- [x] Exact-source save/result and broader controls, bird, pickup and upgrade suites passed.
+- [x] Current controls, bird, pickup and upgrade suites passed; prior save/result checks retain their recorded source boundary.
 - [x] Current C# compilation has no warnings/errors; unused legacy HUD field removed.
 
 These checkmarks are Editor evidence only, not an assertion that the owner has
@@ -32,6 +32,7 @@ real-device performance and every owner item below remain unapproved.
 Use **SkyPulse → Play Main Game** in Unity (it opens `Assets/Scenes/SkyPulse.unity` and preserves your save). Use the portrait Game/Simulator view. **SkyPulse → Playtest Checklist** opens the matching review summary.
 
 - [ ] Endless: selected 3D bird is correct; every tap visibly drives its full wing stroke.
+- [ ] Endless: the calmer connected city is approved; no unwanted isolated island or painted bare rocks remain.
 - [ ] Endless: pipes/collars have no duplicates, black patches or gaps; all 12 worlds remain readable.
 - [ ] Relay: crystals open only their matching gate immediately; the bird passes through the actual hoop opening.
 - [ ] Blackout: the city window remains separate from the board; the named restoration and live beam are clear.

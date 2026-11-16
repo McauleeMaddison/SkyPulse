@@ -105,7 +105,10 @@ public static class SkyPulseVisualAcceptanceChecks
         Check(relay.IsOpen(0),"Both matching crystals open the gate before physical passage");
         relay.Move(relay.Mission.RelayX(0)+1f-relay.Distance);Call(g,"SimulateRelay",0f);Call(g,"UpdateRelayPresentation");Present(g,.1f);Check(relay.Passed==1&&relay.State==MissionSessionState.Playing,"The actual unlocked gate collision/pass hook accepts the bird through its centre");Save(camera,rt,"relay-passage");
         Call(g,"LaunchMission",SkyPulseMode.BlackoutProtocol,0);Call(g,"RestartBlackoutVault");Present(g,.1f);Save(camera,rt,"blackout-start");Call(g,"ToggleBlackoutPreview");Call(g,"PreviewBlackoutNode",6);Present(g,.1f);Save(camera,rt,"blackout-plan");Call(g,"CancelBlackoutPreview");var board=(BlackoutSession)Get(g,"blackoutSession");foreach(var tile in SkyPulseMissionChecks.Solve(board.Puzzle))Call(g,"TouchBlackoutNode",tile);Present(g,.1f);Save(camera,rt,"blackout-next");
-        Call(g,"ResetToMenu");yield return SkyPulseHomeProgressChecks.Live(g);yield return SkyPulseTouchComfortChecks.Live(g);yield return SkyPulseGuideWorldChecks.Live(g);File.WriteAllText(Path.Combine(Output,"VISUAL_CAPTURE.json"),JsonUtility.ToJson(new Report{result="CAPTURED",checks=notes.ToArray(),textFitFindings=overflow.ToArray(),ownerApproved=false,deviceTested=false},true));Debug.Log("SKYPULSE_VISUAL_ACCEPTANCE_CAPTURED");EditorApplication.Exit(0);
+        yield return SkyPulseHomeProgressChecks.Live(g);
+        yield return SkyPulseTouchComfortChecks.Live(g);
+        yield return SkyPulseGuideWorldChecks.Live(g);
+        Call(g,"ResetToMenu");File.WriteAllText(Path.Combine(Output,"VISUAL_CAPTURE.json"),JsonUtility.ToJson(new Report{result="CAPTURED",checks=notes.ToArray(),textFitFindings=overflow.ToArray(),ownerApproved=false,deviceTested=false},true));Debug.Log("SKYPULSE_VISUAL_ACCEPTANCE_CAPTURED");EditorApplication.Exit(0);
     }
     static void DensityChecks(SkyPulseNativeGame g)
     {
@@ -119,9 +122,9 @@ public static class SkyPulseVisualAcceptanceChecks
             foreach(float distance in new[]{0f,75f,150f})
             {
                 env.Present(world,distance,3,1,Color.cyan,new Color(.02f,.04f,.08f),false,1);
-                Check(rows.Cast<MeshRenderer>().Count(x=>x.gameObject.activeInHierarchy)==11,"Eight districts plus three skyways use the existing bounded bank: "+world+" / "+distance);
+                Check(rows.Cast<MeshRenderer>().Count(x=>x.gameObject.activeInHierarchy)==9,"Six inhabited districts plus three skyways use the existing bounded bank: "+world+" / "+distance);
                 var planes=GeometryUtility.CalculateFrustumPlanes(env.WorldCamera);int visible=0;
-                foreach(int i in new[]{0,1,2,4,5,6,7,8})if(GeometryUtility.TestPlanesAABB(planes,rows[1,i].bounds))visible++;
+                foreach(int i in new[]{0,2,4,5,6,7})if(GeometryUtility.TestPlanesAABB(planes,rows[1,i].bounds))visible++;
                 Check(visible>=5,"At least five detailed districts remain in the actual portrait frustum: "+world+" / "+distance+" / "+visible);
                 for(int link=0;link<3;link++)
                 {

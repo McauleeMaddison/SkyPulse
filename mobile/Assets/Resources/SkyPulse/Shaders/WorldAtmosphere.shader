@@ -218,7 +218,12 @@ Shader "SkyPulse/Constructed World Atmosphere"
                 float2 uv=float2(.5+d.x*(1.24/max(.3,_Aspect)),.44+d.y*1.24);
                 uv+=float2(sin(_Clock*.017)*.006,cos(_Clock*.013)*.004);
                 float artCoverage=smoothstep(.005,.075,uv.x)*(1-smoothstep(.925,.995,uv.x));
-                float3 art=tex2D(artwork,clamp(uv,float2(0,.30),float2(1,.985))).rgb;
+                // Jade's old illustration includes bare painted rocks at its
+                // side edges. Use its clear central sky band for atmosphere;
+                // the visible inhabited islands come from the real city meshes.
+                float2 skyUV=uv;
+                if(world>5.5&&world<6.5)skyUV.x=lerp(.24,.76,saturate(uv.x));
+                float3 art=tex2D(artwork,clamp(skyUV,float2(0,.30),float2(1,.985))).rgb;
                 float3 sky=lerp(zenith,middle,saturate(.50-d.y*1.5));
                 // Authored nebula, ice and storm structures retain their local
                 // colours and detail. Off-axis views fade before the crop edge.

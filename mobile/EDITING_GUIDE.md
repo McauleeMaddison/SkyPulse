@@ -93,7 +93,7 @@ structures were preserved. Do not publish private save exports.
 Use **SkyPulse → Play Main Game** to open the actual game scene, not the separate
 3D Bird Review. It retains the owner save and clears only the Editor artwork
 preview override. **SkyPulse → Playtest Checklist** opens the current review summary.
-`SkyPulseFlightEnvironment.CityFrame` composes the eight district placements; its
+`SkyPulseFlightEnvironment.CityFrame` composes the six district placements; its
 three cached city links reuse `SkyPulseWorldArchitecture.BuildDistrictLink`. The
 canonical district model workshops still own building/island structural edits.
 See `Development/Current/UnityAcceptance` for current native views and the manual

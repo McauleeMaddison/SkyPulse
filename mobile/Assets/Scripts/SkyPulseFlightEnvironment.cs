@@ -32,7 +32,7 @@ namespace SkyPulse.Mobile
         float distanceOffset,clockOffset,presentationClock;bool hasPresentation,motionHeld;
         Color currentTint,currentHaze,previousTint,previousHaze;
         // Each world is a connected four-district city, not two isolated props.
-        // Three upper-distance districts and one lower quarter fill its depth.
+        // Two restrained distant districts support the connected main row.
         // The existing twelve-renderer bank also holds three shared skyways;
         // no objects or meshes are created while flying or changing worlds.
         // Vector4 stores uniform scale, X, ground height and physical depth.
@@ -267,9 +267,9 @@ namespace SkyPulse.Mobile
             for(int i=0;i<Layers*PerLayer;i++)
             {
                 var item=scenery[bank,i];bool visible=visibility>.0001f;
-                int layer=i/PerLayer,slot=i%PerLayer;
+                int layer=i/PerLayer;
                 bool link=i>=9;
-                bool occupied=layer==0?slot<3:layer==1||i==8||link;
+                bool occupied=i==0||i==2||layer==1||link;
                 bool show=visible&&occupied;
                 if(item.gameObject.activeSelf!=show)item.gameObject.SetActive(show);
                 int variant=i==4||i==0||i==2?0:1;
@@ -279,9 +279,9 @@ namespace SkyPulse.Mobile
                     item.GetComponent<MeshFilter>().sharedMesh=mesh;
                     var renderer=districtRenderers[bank,i];var finish=districtFinish[bank,i];
                     renderer.SetPropertyBlock(link?null:authoredLighting[theme,variant]);renderer.GetPropertyBlock(finish);
-                    finish.SetFloat("_DistrictDepth",layer==0?.38f:i==4?.08f:i==8?.24f:.16f);
-                    finish.SetFloat("_WindowGlow",layer==0?.30f:i==4?.84f:.62f);
-                    finish.SetFloat("_BeaconGlow",layer==0?.12f:i==4?.50f:.28f);
+                    finish.SetFloat("_DistrictDepth",layer==0?.30f:i==4?.08f:.16f);
+                    finish.SetFloat("_WindowGlow",layer==0?.44f:i==4?.84f:.68f);
+                    finish.SetFloat("_BeaconGlow",layer==0?.18f:i==4?.50f:.30f);
                     finish.SetFloat("_Backdrop",layer==0?.035f:0);
                     finish.SetFloat("_RestorationHeight",Mathf.Max(1,mesh.bounds.max.y));
                     SkyPulseWorldRestoration.Apply(finish,RestoredMask);
@@ -300,7 +300,7 @@ namespace SkyPulse.Mobile
                 }
                 Vector4 frame=CityFrame(theme,i);
                 float x=layer==1?frame.y+cityDrift:
-                    WrapDistrict(frame.y-worldDistance*(layer==0?.018f:.034f),span*(layer==0?2.3f:1.6f));
+                    WrapDistrict(frame.y-worldDistance*.018f,span*2.3f);
                 item.localPosition=new Vector3(x,frame.z,frame.w);
                 item.localScale=Vector3.one*frame.x;
                 item.localRotation=Quaternion.Euler(0,CityYaw(theme,i),0);
@@ -311,14 +311,13 @@ namespace SkyPulse.Mobile
             var civic=CivicFraming[theme];float size=ResidentialFraming[theme].x;
             switch(district)
             {
-                case 0:return new Vector4(size*1.25f,-11.8f,2.4f,55);
-                case 1:return new Vector4(size*1.10f,.6f,6.0f,64);
-                case 2:return new Vector4(size*1.30f,12.2f,1.4f,59);
+                case 0:return new Vector4(size*1.25f,-11.8f,.3f,55);
+                case 2:return new Vector4(size*1.30f,12.2f,-.6f,59);
                 case 4:return civic;
                 case 5:return new Vector4(size*1.25f,civic.y-6.7f,civic.z+.65f,civic.w+3);
                 case 6:return new Vector4(size*1.40f,civic.y+6.3f,civic.z-.20f,civic.w+2);
                 case 7:return new Vector4(size*1.12f,civic.y-13.8f,civic.z-.70f,civic.w+5);
-                default:return new Vector4(size*1.45f,-2.6f,-10.5f,44);
+                default:return civic;
             }
         }
         static float CityYaw(int theme,int district)=>district==4?CivicOrientation[theme]:

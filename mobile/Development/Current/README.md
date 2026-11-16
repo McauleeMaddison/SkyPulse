@@ -8,9 +8,9 @@ with no AI repainting. Open [the gallery](index.html).
 
 The owner's live Blackout city viewport is the composition reference. Endless
 previously enabled only three districts, with one barely visible. All twelve
-worlds now use eight detailed district placements and three joining skyways,
+worlds now use six detailed district placements and three joining skyways,
 reusing their own themed editable models. Connected parts move together; supporting
-upper/lower quarters fill the depth without adding gameplay colliders.
+two distant landmarks add depth without scattered lower islands or gameplay colliders.
 
 - [Twelve current worlds](UnityAcceptance/Twelve-Worlds.png).
 - [Current native gameplay, Homes and upgrade views](UnityAcceptance/README.md).

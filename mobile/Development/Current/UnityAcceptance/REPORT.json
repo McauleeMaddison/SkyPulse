@@ -18,8 +18,8 @@
     "Native solid pilot is present in world 9",
     "Native solid pilot is present in world 10",
     "Native solid pilot is present in world 11",
-    "Eight districts plus three skyways use the existing bounded bank: 0 / 0",
-    "At least five detailed districts remain in the actual portrait frustum: 0 / 0 / 8",
+    "Six inhabited districts plus three skyways use the existing bounded bank: 0 / 0",
+    "At least five detailed districts remain in the actual portrait frustum: 0 / 0 / 6",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 0 / 0 / 0 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 0 / 0 / 0 / 4",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 0 / 0 / 1 / 4",
@@ -27,8 +27,8 @@
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 0 / 0 / 2 / 7",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 0 / 0 / 2 / 5",
     "Travel/theme changes only reuse cached meshes and transforms: 0 / 0",
-    "Eight districts plus three skyways use the existing bounded bank: 0 / 75",
-    "At least five detailed districts remain in the actual portrait frustum: 0 / 75 / 7",
+    "Six inhabited districts plus three skyways use the existing bounded bank: 0 / 75",
+    "At least five detailed districts remain in the actual portrait frustum: 0 / 75 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 0 / 75 / 0 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 0 / 75 / 0 / 4",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 0 / 75 / 1 / 4",
@@ -36,8 +36,8 @@
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 0 / 75 / 2 / 7",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 0 / 75 / 2 / 5",
     "Travel/theme changes only reuse cached meshes and transforms: 0 / 75",
-    "Eight districts plus three skyways use the existing bounded bank: 0 / 150",
-    "At least five detailed districts remain in the actual portrait frustum: 0 / 150 / 7",
+    "Six inhabited districts plus three skyways use the existing bounded bank: 0 / 150",
+    "At least five detailed districts remain in the actual portrait frustum: 0 / 150 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 0 / 150 / 0 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 0 / 150 / 0 / 4",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 0 / 150 / 1 / 4",
@@ -45,8 +45,8 @@
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 0 / 150 / 2 / 7",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 0 / 150 / 2 / 5",
     "Travel/theme changes only reuse cached meshes and transforms: 0 / 150",
-    "Eight districts plus three skyways use the existing bounded bank: 1 / 0",
-    "At least five detailed districts remain in the actual portrait frustum: 1 / 0 / 8",
+    "Six inhabited districts plus three skyways use the existing bounded bank: 1 / 0",
+    "At least five detailed districts remain in the actual portrait frustum: 1 / 0 / 6",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 1 / 0 / 0 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 1 / 0 / 0 / 4",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 1 / 0 / 1 / 4",
@@ -54,8 +54,8 @@
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 1 / 0 / 2 / 7",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 1 / 0 / 2 / 5",
     "Travel/theme changes only reuse cached meshes and transforms: 1 / 0",
-    "Eight districts plus three skyways use the existing bounded bank: 1 / 75",
-    "At least five detailed districts remain in the actual portrait frustum: 1 / 75 / 7",
+    "Six inhabited districts plus three skyways use the existing bounded bank: 1 / 75",
+    "At least five detailed districts remain in the actual portrait frustum: 1 / 75 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 1 / 75 / 0 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 1 / 75 / 0 / 4",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 1 / 75 / 1 / 4",
@@ -63,8 +63,8 @@
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 1 / 75 / 2 / 7",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 1 / 75 / 2 / 5",
     "Travel/theme changes only reuse cached meshes and transforms: 1 / 75",
-    "Eight districts plus three skyways use the existing bounded bank: 1 / 150",
-    "At least five detailed districts remain in the actual portrait frustum: 1 / 150 / 7",
+    "Six inhabited districts plus three skyways use the existing bounded bank: 1 / 150",
+    "At least five detailed districts remain in the actual portrait frustum: 1 / 150 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 1 / 150 / 0 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 1 / 150 / 0 / 4",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 1 / 150 / 1 / 4",
@@ -72,8 +72,8 @@
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 1 / 150 / 2 / 7",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 1 / 150 / 2 / 5",
     "Travel/theme changes only reuse cached meshes and transforms: 1 / 150",
-    "Eight districts plus three skyways use the existing bounded bank: 2 / 0",
-    "At least five detailed districts remain in the actual portrait frustum: 2 / 0 / 8",
+    "Six inhabited districts plus three skyways use the existing bounded bank: 2 / 0",
+    "At least five detailed districts remain in the actual portrait frustum: 2 / 0 / 6",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 2 / 0 / 0 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 2 / 0 / 0 / 4",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 2 / 0 / 1 / 4",
@@ -81,8 +81,8 @@
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 2 / 0 / 2 / 7",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 2 / 0 / 2 / 5",
     "Travel/theme changes only reuse cached meshes and transforms: 2 / 0",
-    "Eight districts plus three skyways use the existing bounded bank: 2 / 75",
-    "At least five detailed districts remain in the actual portrait frustum: 2 / 75 / 7",
+    "Six inhabited districts plus three skyways use the existing bounded bank: 2 / 75",
+    "At least five detailed districts remain in the actual portrait frustum: 2 / 75 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 2 / 75 / 0 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 2 / 75 / 0 / 4",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 2 / 75 / 1 / 4",
@@ -90,8 +90,8 @@
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 2 / 75 / 2 / 7",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 2 / 75 / 2 / 5",
     "Travel/theme changes only reuse cached meshes and transforms: 2 / 75",
-    "Eight districts plus three skyways use the existing bounded bank: 2 / 150",
-    "At least five detailed districts remain in the actual portrait frustum: 2 / 150 / 7",
+    "Six inhabited districts plus three skyways use the existing bounded bank: 2 / 150",
+    "At least five detailed districts remain in the actual portrait frustum: 2 / 150 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 2 / 150 / 0 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 2 / 150 / 0 / 4",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 2 / 150 / 1 / 4",
@@ -99,8 +99,8 @@
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 2 / 150 / 2 / 7",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 2 / 150 / 2 / 5",
     "Travel/theme changes only reuse cached meshes and transforms: 2 / 150",
-    "Eight districts plus three skyways use the existing bounded bank: 3 / 0",
-    "At least five detailed districts remain in the actual portrait frustum: 3 / 0 / 8",
+    "Six inhabited districts plus three skyways use the existing bounded bank: 3 / 0",
+    "At least five detailed districts remain in the actual portrait frustum: 3 / 0 / 6",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 3 / 0 / 0 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 3 / 0 / 0 / 4",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 3 / 0 / 1 / 4",
@@ -108,8 +108,8 @@
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 3 / 0 / 2 / 7",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 3 / 0 / 2 / 5",
     "Travel/theme changes only reuse cached meshes and transforms: 3 / 0",
-    "Eight districts plus three skyways use the existing bounded bank: 3 / 75",
-    "At least five detailed districts remain in the actual portrait frustum: 3 / 75 / 7",
+    "Six inhabited districts plus three skyways use the existing bounded bank: 3 / 75",
+    "At least five detailed districts remain in the actual portrait frustum: 3 / 75 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 3 / 75 / 0 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 3 / 75 / 0 / 4",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 3 / 75 / 1 / 4",
@@ -117,8 +117,8 @@
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 3 / 75 / 2 / 7",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 3 / 75 / 2 / 5",
     "Travel/theme changes only reuse cached meshes and transforms: 3 / 75",
-    "Eight districts plus three skyways use the existing bounded bank: 3 / 150",
-    "At least five detailed districts remain in the actual portrait frustum: 3 / 150 / 7",
+    "Six inhabited districts plus three skyways use the existing bounded bank: 3 / 150",
+    "At least five detailed districts remain in the actual portrait frustum: 3 / 150 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 3 / 150 / 0 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 3 / 150 / 0 / 4",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 3 / 150 / 1 / 4",
@@ -126,8 +126,8 @@
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 3 / 150 / 2 / 7",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 3 / 150 / 2 / 5",
     "Travel/theme changes only reuse cached meshes and transforms: 3 / 150",
-    "Eight districts plus three skyways use the existing bounded bank: 4 / 0",
-    "At least five detailed districts remain in the actual portrait frustum: 4 / 0 / 8",
+    "Six inhabited districts plus three skyways use the existing bounded bank: 4 / 0",
+    "At least five detailed districts remain in the actual portrait frustum: 4 / 0 / 6",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 4 / 0 / 0 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 4 / 0 / 0 / 4",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 4 / 0 / 1 / 4",
@@ -135,8 +135,8 @@
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 4 / 0 / 2 / 7",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 4 / 0 / 2 / 5",
     "Travel/theme changes only reuse cached meshes and transforms: 4 / 0",
-    "Eight districts plus three skyways use the existing bounded bank: 4 / 75",
-    "At least five detailed districts remain in the actual portrait frustum: 4 / 75 / 7",
+    "Six inhabited districts plus three skyways use the existing bounded bank: 4 / 75",
+    "At least five detailed districts remain in the actual portrait frustum: 4 / 75 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 4 / 75 / 0 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 4 / 75 / 0 / 4",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 4 / 75 / 1 / 4",
@@ -144,8 +144,8 @@
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 4 / 75 / 2 / 7",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 4 / 75 / 2 / 5",
     "Travel/theme changes only reuse cached meshes and transforms: 4 / 75",
-    "Eight districts plus three skyways use the existing bounded bank: 4 / 150",
-    "At least five detailed districts remain in the actual portrait frustum: 4 / 150 / 7",
+    "Six inhabited districts plus three skyways use the existing bounded bank: 4 / 150",
+    "At least five detailed districts remain in the actual portrait frustum: 4 / 150 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 4 / 150 / 0 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 4 / 150 / 0 / 4",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 4 / 150 / 1 / 4",
@@ -153,8 +153,8 @@
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 4 / 150 / 2 / 7",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 4 / 150 / 2 / 5",
     "Travel/theme changes only reuse cached meshes and transforms: 4 / 150",
-    "Eight districts plus three skyways use the existing bounded bank: 5 / 0",
-    "At least five detailed districts remain in the actual portrait frustum: 5 / 0 / 8",
+    "Six inhabited districts plus three skyways use the existing bounded bank: 5 / 0",
+    "At least five detailed districts remain in the actual portrait frustum: 5 / 0 / 6",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 5 / 0 / 0 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 5 / 0 / 0 / 4",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 5 / 0 / 1 / 4",
@@ -162,8 +162,8 @@
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 5 / 0 / 2 / 7",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 5 / 0 / 2 / 5",
     "Travel/theme changes only reuse cached meshes and transforms: 5 / 0",
-    "Eight districts plus three skyways use the existing bounded bank: 5 / 75",
-    "At least five detailed districts remain in the actual portrait frustum: 5 / 75 / 7",
+    "Six inhabited districts plus three skyways use the existing bounded bank: 5 / 75",
+    "At least five detailed districts remain in the actual portrait frustum: 5 / 75 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 5 / 75 / 0 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 5 / 75 / 0 / 4",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 5 / 75 / 1 / 4",
@@ -171,8 +171,8 @@
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 5 / 75 / 2 / 7",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 5 / 75 / 2 / 5",
     "Travel/theme changes only reuse cached meshes and transforms: 5 / 75",
-    "Eight districts plus three skyways use the existing bounded bank: 5 / 150",
-    "At least five detailed districts remain in the actual portrait frustum: 5 / 150 / 7",
+    "Six inhabited districts plus three skyways use the existing bounded bank: 5 / 150",
+    "At least five detailed districts remain in the actual portrait frustum: 5 / 150 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 5 / 150 / 0 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 5 / 150 / 0 / 4",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 5 / 150 / 1 / 4",
@@ -180,8 +180,8 @@
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 5 / 150 / 2 / 7",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 5 / 150 / 2 / 5",
     "Travel/theme changes only reuse cached meshes and transforms: 5 / 150",
-    "Eight districts plus three skyways use the existing bounded bank: 6 / 0",
-    "At least five detailed districts remain in the actual portrait frustum: 6 / 0 / 8",
+    "Six inhabited districts plus three skyways use the existing bounded bank: 6 / 0",
+    "At least five detailed districts remain in the actual portrait frustum: 6 / 0 / 6",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 6 / 0 / 0 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 6 / 0 / 0 / 4",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 6 / 0 / 1 / 4",
@@ -189,8 +189,8 @@
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 6 / 0 / 2 / 7",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 6 / 0 / 2 / 5",
     "Travel/theme changes only reuse cached meshes and transforms: 6 / 0",
-    "Eight districts plus three skyways use the existing bounded bank: 6 / 75",
-    "At least five detailed districts remain in the actual portrait frustum: 6 / 75 / 7",
+    "Six inhabited districts plus three skyways use the existing bounded bank: 6 / 75",
+    "At least five detailed districts remain in the actual portrait frustum: 6 / 75 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 6 / 75 / 0 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 6 / 75 / 0 / 4",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 6 / 75 / 1 / 4",
@@ -198,8 +198,8 @@
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 6 / 75 / 2 / 7",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 6 / 75 / 2 / 5",
     "Travel/theme changes only reuse cached meshes and transforms: 6 / 75",
-    "Eight districts plus three skyways use the existing bounded bank: 6 / 150",
-    "At least five detailed districts remain in the actual portrait frustum: 6 / 150 / 7",
+    "Six inhabited districts plus three skyways use the existing bounded bank: 6 / 150",
+    "At least five detailed districts remain in the actual portrait frustum: 6 / 150 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 6 / 150 / 0 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 6 / 150 / 0 / 4",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 6 / 150 / 1 / 4",
@@ -207,8 +207,8 @@
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 6 / 150 / 2 / 7",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 6 / 150 / 2 / 5",
     "Travel/theme changes only reuse cached meshes and transforms: 6 / 150",
-    "Eight districts plus three skyways use the existing bounded bank: 7 / 0",
-    "At least five detailed districts remain in the actual portrait frustum: 7 / 0 / 8",
+    "Six inhabited districts plus three skyways use the existing bounded bank: 7 / 0",
+    "At least five detailed districts remain in the actual portrait frustum: 7 / 0 / 6",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 7 / 0 / 0 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 7 / 0 / 0 / 4",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 7 / 0 / 1 / 4",
@@ -216,8 +216,8 @@
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 7 / 0 / 2 / 7",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 7 / 0 / 2 / 5",
     "Travel/theme changes only reuse cached meshes and transforms: 7 / 0",
-    "Eight districts plus three skyways use the existing bounded bank: 7 / 75",
-    "At least five detailed districts remain in the actual portrait frustum: 7 / 75 / 7",
+    "Six inhabited districts plus three skyways use the existing bounded bank: 7 / 75",
+    "At least five detailed districts remain in the actual portrait frustum: 7 / 75 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 7 / 75 / 0 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 7 / 75 / 0 / 4",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 7 / 75 / 1 / 4",
@@ -225,8 +225,8 @@
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 7 / 75 / 2 / 7",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 7 / 75 / 2 / 5",
     "Travel/theme changes only reuse cached meshes and transforms: 7 / 75",
-    "Eight districts plus three skyways use the existing bounded bank: 7 / 150",
-    "At least five detailed districts remain in the actual portrait frustum: 7 / 150 / 7",
+    "Six inhabited districts plus three skyways use the existing bounded bank: 7 / 150",
+    "At least five detailed districts remain in the actual portrait frustum: 7 / 150 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 7 / 150 / 0 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 7 / 150 / 0 / 4",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 7 / 150 / 1 / 4",
@@ -234,8 +234,8 @@
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 7 / 150 / 2 / 7",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 7 / 150 / 2 / 5",
     "Travel/theme changes only reuse cached meshes and transforms: 7 / 150",
-    "Eight districts plus three skyways use the existing bounded bank: 8 / 0",
-    "At least five detailed districts remain in the actual portrait frustum: 8 / 0 / 8",
+    "Six inhabited districts plus three skyways use the existing bounded bank: 8 / 0",
+    "At least five detailed districts remain in the actual portrait frustum: 8 / 0 / 6",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 8 / 0 / 0 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 8 / 0 / 0 / 4",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 8 / 0 / 1 / 4",
@@ -243,8 +243,8 @@
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 8 / 0 / 2 / 7",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 8 / 0 / 2 / 5",
     "Travel/theme changes only reuse cached meshes and transforms: 8 / 0",
-    "Eight districts plus three skyways use the existing bounded bank: 8 / 75",
-    "At least five detailed districts remain in the actual portrait frustum: 8 / 75 / 7",
+    "Six inhabited districts plus three skyways use the existing bounded bank: 8 / 75",
+    "At least five detailed districts remain in the actual portrait frustum: 8 / 75 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 8 / 75 / 0 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 8 / 75 / 0 / 4",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 8 / 75 / 1 / 4",
@@ -252,8 +252,8 @@
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 8 / 75 / 2 / 7",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 8 / 75 / 2 / 5",
     "Travel/theme changes only reuse cached meshes and transforms: 8 / 75",
-    "Eight districts plus three skyways use the existing bounded bank: 8 / 150",
-    "At least five detailed districts remain in the actual portrait frustum: 8 / 150 / 7",
+    "Six inhabited districts plus three skyways use the existing bounded bank: 8 / 150",
+    "At least five detailed districts remain in the actual portrait frustum: 8 / 150 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 8 / 150 / 0 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 8 / 150 / 0 / 4",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 8 / 150 / 1 / 4",
@@ -261,8 +261,8 @@
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 8 / 150 / 2 / 7",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 8 / 150 / 2 / 5",
     "Travel/theme changes only reuse cached meshes and transforms: 8 / 150",
-    "Eight districts plus three skyways use the existing bounded bank: 9 / 0",
-    "At least five detailed districts remain in the actual portrait frustum: 9 / 0 / 8",
+    "Six inhabited districts plus three skyways use the existing bounded bank: 9 / 0",
+    "At least five detailed districts remain in the actual portrait frustum: 9 / 0 / 6",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 9 / 0 / 0 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 9 / 0 / 0 / 4",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 9 / 0 / 1 / 4",
@@ -270,8 +270,8 @@
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 9 / 0 / 2 / 7",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 9 / 0 / 2 / 5",
     "Travel/theme changes only reuse cached meshes and transforms: 9 / 0",
-    "Eight districts plus three skyways use the existing bounded bank: 9 / 75",
-    "At least five detailed districts remain in the actual portrait frustum: 9 / 75 / 7",
+    "Six inhabited districts plus three skyways use the existing bounded bank: 9 / 75",
+    "At least five detailed districts remain in the actual portrait frustum: 9 / 75 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 9 / 75 / 0 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 9 / 75 / 0 / 4",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 9 / 75 / 1 / 4",
@@ -279,8 +279,8 @@
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 9 / 75 / 2 / 7",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 9 / 75 / 2 / 5",
     "Travel/theme changes only reuse cached meshes and transforms: 9 / 75",
-    "Eight districts plus three skyways use the existing bounded bank: 9 / 150",
-    "At least five detailed districts remain in the actual portrait frustum: 9 / 150 / 7",
+    "Six inhabited districts plus three skyways use the existing bounded bank: 9 / 150",
+    "At least five detailed districts remain in the actual portrait frustum: 9 / 150 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 9 / 150 / 0 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 9 / 150 / 0 / 4",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 9 / 150 / 1 / 4",
@@ -288,8 +288,8 @@
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 9 / 150 / 2 / 7",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 9 / 150 / 2 / 5",
     "Travel/theme changes only reuse cached meshes and transforms: 9 / 150",
-    "Eight districts plus three skyways use the existing bounded bank: 10 / 0",
-    "At least five detailed districts remain in the actual portrait frustum: 10 / 0 / 8",
+    "Six inhabited districts plus three skyways use the existing bounded bank: 10 / 0",
+    "At least five detailed districts remain in the actual portrait frustum: 10 / 0 / 6",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 10 / 0 / 0 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 10 / 0 / 0 / 4",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 10 / 0 / 1 / 4",
@@ -297,8 +297,8 @@
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 10 / 0 / 2 / 7",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 10 / 0 / 2 / 5",
     "Travel/theme changes only reuse cached meshes and transforms: 10 / 0",
-    "Eight districts plus three skyways use the existing bounded bank: 10 / 75",
-    "At least five detailed districts remain in the actual portrait frustum: 10 / 75 / 7",
+    "Six inhabited districts plus three skyways use the existing bounded bank: 10 / 75",
+    "At least five detailed districts remain in the actual portrait frustum: 10 / 75 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 10 / 75 / 0 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 10 / 75 / 0 / 4",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 10 / 75 / 1 / 4",
@@ -306,8 +306,8 @@
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 10 / 75 / 2 / 7",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 10 / 75 / 2 / 5",
     "Travel/theme changes only reuse cached meshes and transforms: 10 / 75",
-    "Eight districts plus three skyways use the existing bounded bank: 10 / 150",
-    "At least five detailed districts remain in the actual portrait frustum: 10 / 150 / 7",
+    "Six inhabited districts plus three skyways use the existing bounded bank: 10 / 150",
+    "At least five detailed districts remain in the actual portrait frustum: 10 / 150 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 10 / 150 / 0 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 10 / 150 / 0 / 4",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 10 / 150 / 1 / 4",
@@ -315,8 +315,8 @@
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 10 / 150 / 2 / 7",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 10 / 150 / 2 / 5",
     "Travel/theme changes only reuse cached meshes and transforms: 10 / 150",
-    "Eight districts plus three skyways use the existing bounded bank: 11 / 0",
-    "At least five detailed districts remain in the actual portrait frustum: 11 / 0 / 8",
+    "Six inhabited districts plus three skyways use the existing bounded bank: 11 / 0",
+    "At least five detailed districts remain in the actual portrait frustum: 11 / 0 / 6",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 11 / 0 / 0 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 11 / 0 / 0 / 4",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 11 / 0 / 1 / 4",
@@ -324,8 +324,8 @@
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 11 / 0 / 2 / 7",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 11 / 0 / 2 / 5",
     "Travel/theme changes only reuse cached meshes and transforms: 11 / 0",
-    "Eight districts plus three skyways use the existing bounded bank: 11 / 75",
-    "At least five detailed districts remain in the actual portrait frustum: 11 / 75 / 7",
+    "Six inhabited districts plus three skyways use the existing bounded bank: 11 / 75",
+    "At least five detailed districts remain in the actual portrait frustum: 11 / 75 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 11 / 75 / 0 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 11 / 75 / 0 / 4",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 11 / 75 / 1 / 4",
@@ -333,8 +333,8 @@
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 11 / 75 / 2 / 7",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 11 / 75 / 2 / 5",
     "Travel/theme changes only reuse cached meshes and transforms: 11 / 75",
-    "Eight districts plus three skyways use the existing bounded bank: 11 / 150",
-    "At least five detailed districts remain in the actual portrait frustum: 11 / 150 / 7",
+    "Six inhabited districts plus three skyways use the existing bounded bank: 11 / 150",
+    "At least five detailed districts remain in the actual portrait frustum: 11 / 150 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 11 / 150 / 0 / 5",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 11 / 150 / 0 / 4",
     "Cached skyway anchor stays attached to its real landing and inside bridge bounds: 11 / 150 / 1 / 4",
@@ -373,7 +373,59 @@
   "deviceTested": false,
   "date": "2026-11-16",
   "baselineCommit": "b579846",
-  "status": "EDITOR_CHECKS_PASS_OWNER_APPROVAL_PENDING",
+  "status": "EDITOR_CHECKS_PASS_CALMER_VISUAL_REVIEW_PENDING",
+  "ownerOpenedMainGame": true,
+  "ownerVisualApproval": false,
+  "phoneBuildUnchanged": 21,
+  "reviewSubmitted": false,
+  "compilerErrors": 0,
+  "compilerWarnings": 0,
+  "archivedSupersededSparseWorldViews": [
+    {
+      "from": "Current/Previews/endless-after-restoration.png",
+      "to": "Archive/WorldRestoration20261113/Previews/endless-after-restoration-eight-light-groups.png"
+    },
+    {
+      "from": "Current/Previews/endless-before-restoration.png",
+      "to": "Archive/WorldRestoration20261113/Previews/endless-before-restoration.png"
+    },
+    {
+      "from": "Current/Previews/endless-reward-00.png",
+      "to": "Archive/WorldRestoration20261113/Previews/endless-reward-00.png"
+    },
+    {
+      "from": "Current/Previews/endless-reward-01.png",
+      "to": "Archive/WorldRestoration20261113/Previews/endless-reward-01.png"
+    },
+    {
+      "from": "Current/Previews/endless-reward-02.png",
+      "to": "Archive/WorldRestoration20261113/Previews/endless-reward-02.png"
+    },
+    {
+      "from": "Current/Previews/endless-reward-03.png",
+      "to": "Archive/WorldRestoration20261113/Previews/endless-reward-03.png"
+    },
+    {
+      "from": "Current/Previews/endless-reward-04.png",
+      "to": "Archive/WorldRestoration20261113/Previews/endless-reward-04.png"
+    },
+    {
+      "from": "Current/Previews/endless-reward-05.png",
+      "to": "Archive/WorldRestoration20261113/Previews/endless-reward-05.png"
+    },
+    {
+      "from": "Current/Previews/endless-reward-06.png",
+      "to": "Archive/WorldRestoration20261113/Previews/endless-reward-06.png"
+    },
+    {
+      "from": "Current/Previews/endless-reward-07.png",
+      "to": "Archive/WorldRestoration20261113/Previews/endless-reward-07.png"
+    },
+    {
+      "from": "Current/Previews/endless-reward-baseline.png",
+      "to": "Archive/WorldRestoration20261113/Previews/endless-reward-baseline.png"
+    }
+  ],
   "sourceHashes": [
     {
       "path": "mobile/Assets/Scripts/SkyPulseAtmosphereDepth.cs",
@@ -497,7 +549,7 @@
     },
     {
       "path": "mobile/Assets/Scripts/SkyPulseFlightEnvironment.cs",
-      "sha256": "7dd49f7620f5f233238ea2210ff5670fcddcda84ae0d4f278b3adf2f0fc55527"
+      "sha256": "7baf1c40bfb574f38982ac8bee4833647b31edc7539a1848c974c577f8ae5a96"
     },
     {
       "path": "mobile/Assets/Scripts/SkyPulseFlightEnvironment.cs.meta",
@@ -1105,7 +1157,7 @@
     },
     {
       "path": "mobile/Assets/Resources/SkyPulse/Shaders/WorldAtmosphere.shader",
-      "sha256": "2ddadfa93806b839365b8a00c2ff722c4f447ea14da9cee7777ca14857c1c07c"
+      "sha256": "6017a27b5b5f7b963f2b62e0eda246ae4760caeb24a8af3216cb3f6f8d13870a"
     },
     {
       "path": "mobile/Assets/Resources/SkyPulse/Shaders/WorldAtmosphere.shader.meta",
@@ -1121,13 +1173,13 @@
     }
   ],
   "suiteCounts": {
-    "city-final": {
+    "calm-final": {
       "VISUAL_ACCEPTANCE_CHECK": 366,
       "HOME_PROGRESS_CHECK": 670,
       "TOUCH_COMFORT_CHECK": 846,
       "GUIDE_WORLD_CHECK": 8561
     },
-    "city-regression": {
+    "calm-regression": {
       "FINAL_POLISH_CHECK": 3424,
       "ONE_THUMB_CHECK": 86,
       "READABILITY_CHECK": 45,
@@ -1149,74 +1201,28 @@
       "TREE_CHECK": 97,
       "PICKUP_CHECK": 208,
       "RUNTIME_BIRD_CHECK": 261
-    },
-    "city-focused": {
+    }
+  },
+  "ownerFeedback": "Fuller cities felt chaotic; an isolated empty-looking island was out of place. Calmer revision awaits visual approval.",
+  "priorFocusedEvidence": {
+    "commit": "7b3edc3",
+    "log": "city-focused.log.gz",
+    "suiteCounts": {
       "JOURNEY_CHECK": 86,
       "FINISH_ACCEPTANCE_CHECK": 38,
       "EVERYDAY_INPUT_CHECK": 244,
       "FAILURE_CLARITY_CHECK": 221,
       "TOUCH_COMFORT_CHECK": 846
-    }
+    },
+    "scope": "Save/result fixtures passed before the scenery-only refinement. Gameplay, save and economy source files are unchanged by that refinement."
   },
-  "ownerOpenedMainGame": true,
-  "ownerVisualApproval": false,
-  "phoneBuildUnchanged": 21,
-  "reviewSubmitted": false,
-  "compilerErrors": 0,
-  "compilerWarnings": 0,
   "notes": [
-    "Eight district placements reuse each world's existing authored civic/residential assets; the layout includes three cached connected skyways.",
-    "Seven or eight district bounds intersected the actual portrait frustum at sampled view distances 0, 75 and 150 in all twelve themes. This is not a claim that every building is fully visible at every time.",
-    "New links and their connected districts share a parallax offset; cached anchors are checked against actual landing transforms and bridge mesh bounds.",
-    "No per-frame object/mesh creation or managed Present allocation in the warmed Editor check. Device performance remains unmeasured.",
-    "QA progress, ownership and mastery in captures are simulated in the disposable product; no owner saves were reset or seeded.",
-    "Known Unity Editor SearchDatabase exception remains recorded separately.",
-    "Actual phone audio/haptic feel and visual approval remain manual checks."
-  ],
-  "archivedSupersededSparseWorldViews": [
-    {
-      "from": "Current/Previews/endless-after-restoration.png",
-      "to": "Archive/WorldRestoration20261113/Previews/endless-after-restoration-eight-light-groups.png"
-    },
-    {
-      "from": "Current/Previews/endless-before-restoration.png",
-      "to": "Archive/WorldRestoration20261113/Previews/endless-before-restoration.png"
-    },
-    {
-      "from": "Current/Previews/endless-reward-00.png",
-      "to": "Archive/WorldRestoration20261113/Previews/endless-reward-00.png"
-    },
-    {
-      "from": "Current/Previews/endless-reward-01.png",
-      "to": "Archive/WorldRestoration20261113/Previews/endless-reward-01.png"
-    },
-    {
-      "from": "Current/Previews/endless-reward-02.png",
-      "to": "Archive/WorldRestoration20261113/Previews/endless-reward-02.png"
-    },
-    {
-      "from": "Current/Previews/endless-reward-03.png",
-      "to": "Archive/WorldRestoration20261113/Previews/endless-reward-03.png"
-    },
-    {
-      "from": "Current/Previews/endless-reward-04.png",
-      "to": "Archive/WorldRestoration20261113/Previews/endless-reward-04.png"
-    },
-    {
-      "from": "Current/Previews/endless-reward-05.png",
-      "to": "Archive/WorldRestoration20261113/Previews/endless-reward-05.png"
-    },
-    {
-      "from": "Current/Previews/endless-reward-06.png",
-      "to": "Archive/WorldRestoration20261113/Previews/endless-reward-06.png"
-    },
-    {
-      "from": "Current/Previews/endless-reward-07.png",
-      "to": "Archive/WorldRestoration20261113/Previews/endless-reward-07.png"
-    },
-    {
-      "from": "Current/Previews/endless-reward-baseline.png",
-      "to": "Archive/WorldRestoration20261113/Previews/endless-reward-baseline.png"
-    }
+    "Six inhabited districts: four connected main districts and two restrained distant landmarks, plus three cached skyways. The isolated lower quarter and high central district have been removed.",
+    "Five or six district bounds intersected the portrait frustum at sampled view distances 0, 75 and 150 in all twelve themes. This does not mean every building is fully visible at every time.",
+    "Distant districts sit closer to the main skyline; modest window and beacon adjustments preserve facade readability.",
+    "Jade Horizon samples the clear central sky band of the existing illustration, excluding painted bare side rocks. Original artwork and other eleven sky mappings are retained.",
+    "Skyway anchors remain attached to their landing transforms during sampled parallax. Warmed Present calls produced zero managed allocations in the Editor check.",
+    "QA captures use simulated progress in a disposable product. Owner visual acceptance and device performance remain unverified.",
+    "Known Unity Editor SearchDatabase exception remains recorded separately."
   ]
 }

@@ -1,5 +1,5 @@
 {
-  "candidate": "SkyPulse connected twelve-world cities and Unity visual acceptance",
+  "candidate": "SkyPulse calmer connected twelve-world city composition",
   "date": "2026-11-16",
   "unity": "6000.6.0f1",
   "result": "PASS",
@@ -131,7 +131,7 @@
     },
     {
       "path": "mobile/Assets/Scripts/SkyPulseFlightEnvironment.cs",
-      "sha256": "7dd49f7620f5f233238ea2210ff5670fcddcda84ae0d4f278b3adf2f0fc55527"
+      "sha256": "7baf1c40bfb574f38982ac8bee4833647b31edc7539a1848c974c577f8ae5a96"
     },
     {
       "path": "mobile/Assets/Scripts/SkyPulseFlightEnvironment.cs.meta",
@@ -739,7 +739,7 @@
     },
     {
       "path": "mobile/Assets/Resources/SkyPulse/Shaders/WorldAtmosphere.shader",
-      "sha256": "2ddadfa93806b839365b8a00c2ff722c4f447ea14da9cee7777ca14857c1c07c"
+      "sha256": "6017a27b5b5f7b963f2b62e0eda246ae4760caeb24a8af3216cb3f6f8d13870a"
     },
     {
       "path": "mobile/Assets/Resources/SkyPulse/Shaders/WorldAtmosphere.shader.meta",
@@ -885,7 +885,7 @@
     "Real-device audio/haptic comfort",
     "Public App Review remains on hold"
   ],
-  "evidenceNote": "QA uses a separate company/product identity and simulated progress. It does not certify phone behavior or global metadata uniqueness. The 13 November city/render report is retained in Git at baselineReport; its unchanged scene captures remain in this gallery.",
+  "evidenceNote": "Current visual and broad regression logs test the exact hashed runtime/shader source in the isolated QA product. Focused save/result evidence is from 7b3edc3 before the scenery-only refinement. No phone acceptance or global metadata uniqueness is inferred.",
   "visualAcceptanceReport": "UnityAcceptance/REPORT.json",
   "visualAcceptanceChecks": 366,
   "ownerVisualApproval": false,
@@ -894,5 +894,18 @@
     "HOME_PROGRESS_CHECK": 670,
     "TOUCH_COMFORT_CHECK": 846,
     "GUIDE_WORLD_CHECK": 8561
+  },
+  "ownerFeedback": "Fuller cities felt chaotic; an isolated empty-looking island was out of place. Calmer revision awaits visual approval.",
+  "priorFocusedEvidence": {
+    "commit": "7b3edc3",
+    "log": "city-focused.log.gz",
+    "suiteCounts": {
+      "JOURNEY_CHECK": 86,
+      "FINISH_ACCEPTANCE_CHECK": 38,
+      "EVERYDAY_INPUT_CHECK": 244,
+      "FAILURE_CLARITY_CHECK": 221,
+      "TOUCH_COMFORT_CHECK": 846
+    },
+    "scope": "Save/result fixtures passed before the scenery-only refinement. Gameplay, save and economy source files are unchanged by that refinement."
   }
 }
