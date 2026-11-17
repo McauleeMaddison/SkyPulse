@@ -1,0 +1,37 @@
+{
+  "date": "2026-11-17",
+  "projectId": "appgprj_6a9eb032fc0c81918e77b1bc278ab197",
+  "sourceCommit": "7e512a2b6b0fbaa702318de4c08f720eebffd877",
+  "versionNumber": 8,
+  "savedVersionId": "appgprj_6a9eb032fc0c81918e77b1bc278ab197~appgver_95b19e25873481919e4239c3d0c56329",
+  "deploymentId": "appgdep_6afc3f3478548191a78ad9ad57abab73",
+  "deploymentStatus": "succeeded",
+  "deploymentUrl": "https://skypulse-game.mcaulee19.chatgpt.site",
+  "brandedUrl": "https://skypulse.macwebstudio.com/",
+  "audience": "public",
+  "pages": [
+    "/",
+    "/guide",
+    "/support",
+    "/privacy"
+  ],
+  "changes": [
+    "Build 22 guide/support cover all seven pickups and twelve Tech families / 36 levels",
+    "City restoration, optional daily heists, cosmetic bird mastery and Retry Save explained accurately",
+    "Privacy local-storage description covers mastery, restoration and saved daily puzzle attempts; collection practices unchanged",
+    "MacWebStudio credit and confirmed single-s support email retained"
+  ],
+  "verification": [
+    "TypeScript noEmit check passed",
+    "Static Vinext build succeeded for all four routes",
+    "Generated HTML internal links and required feature text checked",
+    "Branded HTTPS Home/guide/support/privacy all returned 200 with current expected copy"
+  ],
+  "browserLayoutQA": "Not run: browser/computer controls unavailable. Existing CSS and layout preserved.",
+  "archive": "/Users/mcauleemaddison/Desktop/SkyPulse/artifacts/public-site-build22/site.tar.gz",
+  "appStoreSubmission": "No public review submitted; live App Store contact and country changes remain pending.",
+  "sourceReconciliation": "Merged current hosted source into the clean Desktop checkout, preserving both histories before editing.",
+  "archiveSha256": "593c638f84a39fa875a8eb4970b528b7bc7bda6e6caca736d2ef4cc84dfb5bc6",
+  "githubSourceRepository": "https://github.com/McauleeMaddison/public-site",
+  "githubMainSynced": true
+}

@@ -1,0 +1,30 @@
+{
+  "date": "2026-11-17",
+  "candidate": "1.0.0 (22)",
+  "publicReviewSubmitted": false,
+  "metadataGuardTests": {
+    "passed": true,
+    "tests": 16
+  },
+  "artworkCoverage": {
+    "sourceImages": 147,
+    "ledgerRows": 147,
+    "unrecorded": [],
+    "changedSinceLedger": [],
+    "hashCoveragePassed": true,
+    "exclusiveRightsCertified": false,
+    "appleSimilarityResolved": false
+  },
+  "liveAppleFormVerification": "Saved Build 22/copy evidence retained from earlier 17 November session. Subsequent contact correction, age-rating, pricing, territories and country/account declarations are not independently verified.",
+  "submissionReadiness": "HOLD",
+  "report": "APP_STORE_READINESS.md",
+  "mediaPlan": "MEDIA_CAPTURE_PLAN.md",
+  "publicSite": {
+    "version": 8,
+    "sourceTypecheck": "PASS",
+    "staticBuild": "PASS: four public routes",
+    "internalLinks": "PASS",
+    "brandedHttpsContent": "PASS: Home, guide, support, privacy",
+    "browserLayoutQA": "Not run; browser controls unavailable, existing CSS/layout retained."
+  }
+}

@@ -35,6 +35,10 @@ class CurrentReleaseCopyTests(unittest.TestCase):
     def test_retired_blackout_copy(self):
         self.rejects('description', self.current['description'] + ' Tap connected neighbours and auto-breach.')
 
+    def test_reported_contact_typo_and_missing_contact(self):
+        for value in ['macwebsstudio26@gmail.com', '', None]:
+            self.rejects('appReviewContactEmail', value)
+
     def test_wrong_creator(self):
         self.rejects('copyright', '2026 Another Developer')
 

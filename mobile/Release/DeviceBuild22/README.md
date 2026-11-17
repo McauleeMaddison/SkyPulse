@@ -5,6 +5,8 @@ Build 22 was installed over Build 21 and launched on the owner’s iPhone on
 group. Current instructions and the saved App Store draft selecting Build 22 were
 reloaded and verified on 17 November. **Public App Review remains on hold.**
 
+App Store preparation: [readiness report](APP_STORE_READINESS.md) and [media plan](MEDIA_CAPTURE_PLAN.md).
+
 Start with [DEVICE_CHECKLIST.md](DEVICE_CHECKLIST.md), then record observations in
 [TEST_RESULTS.md](TEST_RESULTS.md). No owner visual/gameplay acceptance is inferred
 from automated checks or the successful install. Do not uninstall or reset your save.

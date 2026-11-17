@@ -16,7 +16,10 @@
   "publicAppReview": "On hold pending Apple's clarification, current device/media validation and renewed owner authorization",
   "appStoreDraftStatus": "1.0.0 Prepare for Submission; current copy, review notes and selected Build 22 saved/reloaded. Current TestFlight instructions saved. Historical store media and build 7 review attachment await accepted device replacements. No review requested.",
   "storeListingMetadata": "mobile/Release/DeviceBuild22/metadata.json",
-  "publicSiteRecord": "mobile/Release/StoreListing20261109/PUBLIC_SITE_RECORD.json",
+  "publicSiteRecord": "mobile/Release/DeviceBuild22/PUBLIC_SITE_RECORD.json",
   "deviceChecklist": "mobile/Release/DeviceBuild22/DEVICE_CHECKLIST.md",
-  "appStoreDraftRecord": "mobile/Release/DeviceBuild22/APP_STORE_DRAFT_RECORD.json"
+  "appStoreDraftRecord": "mobile/Release/DeviceBuild22/APP_STORE_DRAFT_RECORD.json",
+  "appReviewContactEmail": "macwebstudio26@gmail.com",
+  "appStoreReadiness": "mobile/Release/DeviceBuild22/APP_STORE_READINESS.md",
+  "mediaCapturePlan": "mobile/Release/DeviceBuild22/MEDIA_CAPTURE_PLAN.md"
 }

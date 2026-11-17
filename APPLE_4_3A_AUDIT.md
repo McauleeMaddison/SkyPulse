@@ -1,5 +1,7 @@
 # SkyPulse Apple Guideline 4.3(a) Audit
 
+Current release follow-up, 17 November 2026: [Build 22 App Store readiness](mobile/Release/DeviceBuild22/APP_STORE_READINESS.md). Build 22 is installed, processed in TestFlight and selected in the saved draft. All 147 current image hashes match the retained artwork ledger. Owner acceptance, current media and live form checks remain pending. Apple’s unidentified similarity/account comparison is still unresolved. The dated audits below describe their historical builds.
+
 Current follow-up, 13 October 2026: [build 11 identity/metadata and artwork audit](mobile/Release/IdentityRights20261013/README.md). The 145-image ledger records ARTA and OpenAI origins, published terms, and the owner's confirmation that references were his own images/generated outputs. The current release checker rejects stale copy and verifies all 378 candidate source/configuration hashes. Build 11 is selected in the saved, unsubmitted public draft. Apple's unidentified comparator remains unresolved. The dated baseline findings below describe historical builds, not current validation or a global rights certificate.
 
 Audit date: 29 September 2026. Baseline: `edaf03da16a0c2f44f8ce67c953e3005283fbfc7`. Unity project: `mobile/` (not repository root).

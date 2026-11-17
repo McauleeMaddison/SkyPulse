@@ -26,6 +26,7 @@ def validate_copy(meta, contract, current=False):
     assert all(word not in meta['name'].casefold().split() for word in keywords), 'Keyword duplicates app name'
     assert meta['name'] == contract['appName'], 'Wrong app identity'
     if current:
+        assert meta.get('appReviewContactEmail') == contract['appReviewContactEmail'], 'App Review email differs from owner-confirmed contact'
         assert meta['copyright'] == '2026 ' + contract['creator'], 'Wrong creator copyright notice'
         assert contract['creator'] in meta['description'], 'Creator missing from current copy'
         for mode in ['ENDLESS ROUTE', 'PULSE RELAY', 'BLACKOUT PROTOCOL']:

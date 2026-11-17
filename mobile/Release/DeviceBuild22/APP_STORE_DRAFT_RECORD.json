@@ -47,7 +47,10 @@
     "supportHttp": 200,
     "privacyHttp": 200,
     "publicSupportContactPresent": true,
-    "scope": "Read-only HTTPS response/contact and canonical-link checks, not legal review or full content/guide acceptance."
+    "scope": "Read-only HTTPS response/contact and canonical-link checks, not legal review or full content/guide acceptance.",
+    "homeHttp": 200,
+    "guideHttp": 200,
+    "currentBuild22CopyVerified": true
   },
   "appReviewContactEmail": {
     "confirmedAddress": "macwebstudio26@gmail.com",
@@ -55,5 +58,6 @@
     "lastObservedLiveAddress": "macwebsstudio26@gmail.com",
     "liveCorrectionSavedAndVerified": false,
     "pendingReason": "Browser controls no longer available in this session. Existing saved Build 22/copy verification remains valid; this field has not yet been corrected."
-  }
+  },
+  "publicSiteRecord": "PUBLIC_SITE_RECORD.json"
 }
