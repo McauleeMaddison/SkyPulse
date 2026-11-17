@@ -1,0 +1,96 @@
+{
+  "date": "2026-11-17",
+  "candidate": "1.0.0 (22)",
+  "runtimeSourceCommit": "1fd3dfa62b93e35fc4d94439eea17ccfac0091ff",
+  "featureFreeze": {
+    "active": true,
+    "scope": "No new features or visual redesigns. Only confirmed defect fixes with focused retesting.",
+    "newBuildRequiredForRuntimeChanges": true,
+    "qaAndReleaseRecordChangesDoNotReplaceInstalledBinary": true
+  },
+  "currentIntegrity": {
+    "manifestEntries": 2559,
+    "qaSourceAndMetadataHashes": 186,
+    "worldAssetHashes": 1168,
+    "mismatches": 0,
+    "evidence": "Current files compared to the immutable Build 22 manifest and 16 November QA records."
+  },
+  "devicePreflight": {
+    "date": "2026-11-17",
+    "model": "iPhone 17 Pro Max",
+    "reportedOsVersion": "27.3",
+    "reportedOsReleaseType": "Beta",
+    "installedVersion": "1.0.0",
+    "installedBuild": "22",
+    "gameProcessObserved": true,
+    "scope": "Apple device-service app/process enumeration; no visual/gameplay acceptance inferred.",
+    "privateRawEvidence": "artifacts/finish-build22-20261117/",
+    "stableOsAndIpadTesting": "Pending; beta-device preflight does not establish supported-device coverage.",
+    "developerDiskImageCompatible": true,
+    "developerDiskImageUsable": true,
+    "passcodeRequiredReported": true,
+    "instrumentsDeviceState": "offline"
+  },
+  "focusedCaptureFix": {
+    "issue": "QA-CAPTURE-001",
+    "status": "FIXED / FOCUSED CHECK PASSED",
+    "nature": "Preview-capture timing, not a confirmed shipping-game duplicate-bird defect.",
+    "cause": "The old 0 ms capture rendered immediately after Flap re-enabled its fallback sprite, before completing the native presentation boundary.",
+    "fix": "Complete zero-delta presentation before the first capture. Check actual LateUpdate and disabled fallback renderers on every sampled bird frame.",
+    "birds": 15,
+    "renderedSamples": 60,
+    "assertions": 150,
+    "csharpErrors": 0,
+    "csharpWarnings": 0,
+    "normalLateUpdateHidesLegacyArtwork": true,
+    "ownerAcceptanceCompleted": false,
+    "deviceGameplayTest": false,
+    "report": "mobile/Development/Current/UnityAcceptance/BIRD_TAP_CAPTURE.json",
+    "preview": "mobile/Development/Current/UnityAcceptance/Bird-Tap-Phases.png",
+    "previewSha256": "83a51693219b465112450810668aaa38521d997dfe83f4fe06f05a1afe21f0a1",
+    "helperSha256": "04b9262722967dd8410aa95edc3bb83dba6c46571964c2d4c43ec9d979fb2202",
+    "logSha256": "6d3071e5dbe68ea9fa2eaf1f6b65642d5c7cba8c7c166f0bcf4845b744ca1df6"
+  },
+  "performance": {
+    "gameTargetFps": 60,
+    "profilingTemplateAvailable": "Game Performance Overview",
+    "perFrameMetricsAvailable": true,
+    "recordingStarted": false,
+    "measurements": null,
+    "nextAction": "No further profiling attempts during this manual session. Owner will report checklist results when ready.",
+    "requiredResults": [
+      "frame pacing and hitches by mode",
+      "memory trend over retries/mode changes",
+      "loading and background/resume",
+      "owner-observed heat, audio and haptics"
+    ],
+    "attempts": [
+      {
+        "attempt": 1,
+        "template": "Game Performance Overview",
+        "requestedDurationMinutes": 8,
+        "exitCode": 13,
+        "recordingStarted": false,
+        "measurementAvailable": false,
+        "observedFailure": "Timed out waiting for device to boot: 17 Pro Max (27.3)",
+        "connectionEvidence": "Instruments list devices placed the physical iPhone under Devices Offline; CoreDevice still returned installed app/process, passcodeRequired true and a usable compatible developer image.",
+        "interpretation": "Profiling connection/lock precondition remains unresolved; not evidence of a game crash or low FPS."
+      }
+    ],
+    "ownerChoice": "Continue manual testing without profiling"
+  },
+  "knownDiagnostics": [
+    "Editor-only SearchDatabase ArgumentOutOfRangeException remains recorded in the isolated run.",
+    "Existing nonfatal UnityRuntime.framework missing dSYM upload warning remains open."
+  ],
+  "newRuntimeDefectsConfirmedThisSession": [],
+  "publicReviewSubmitted": false,
+  "ownerChecklistCompleted": false,
+  "ownerManualTesting": {
+    "status": "NOT STARTED",
+    "ownerClarificationDate": "2026-11-17",
+    "ownerStatement": "The game has not yet been opened for these tests. Earlier quick-choice answers must not be treated as gameplay acceptance.",
+    "workflow": "Self-paced checklist in the owner’s Notes app. No timed live prompts or automatic step-by-step pass requests.",
+    "recordedGameplayPasses": []
+  }
+}

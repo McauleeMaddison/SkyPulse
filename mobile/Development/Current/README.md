@@ -1,6 +1,8 @@
 # SkyPulse — current local review
 
 17 November 2026. **Build 22 installed and launched on iPhone; processed in TestFlight.**
+**Feature freeze is active: confirmed defects and acceptance testing only.**
+[Finishing status](../../Release/DeviceBuild22/FINISHING_STATUS.json).
 Public App Review remains on hold. These previews are actual Unity renders,
 with no AI repainting. Open [the gallery](index.html).
 

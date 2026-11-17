@@ -23,13 +23,15 @@ public static class SkyPulseVisualAcceptanceChecks
     static object Call(object o,string n,params object[] a)=>o.GetType().GetMethods(F).Single(m=>m.Name==n&&m.GetParameters().Length==a.Length).Invoke(o,a);
     static void Check(bool ok,string note){if(!ok)throw new Exception(note);notes.Add(note);Debug.Log("VISUAL_ACCEPTANCE_CHECK: "+note);}
     static SkyPulseVisualAcceptanceChecks(){EditorApplication.update+=Tick;}
-    public static void Run()
+    public static void Run()=>StartReview(false);
+    public static void RunBirdTaps()=>StartReview(true);
+    static void StartReview(bool birdsOnly)
     {
         if(!Application.isBatchMode||Application.companyName!="SkyPulseQA20261006"||Application.productName!="SkyPulseFlapQA20261110")throw new Exception("Disposable QA only");
         Directory.CreateDirectory(Output);PlayerPrefs.DeleteAll();PlayerPrefs.Save();SkyPulseNativeGame.ReviewOriginalBirdArtwork=false;SkyPulseBirdRosterPreview.Select("",false);
-        EditorSceneManager.OpenScene("Assets/Scenes/SkyPulse.unity");SessionState.SetBool("SkyPulse.VisualAcceptance",true);EditorApplication.EnterPlaymode();
+        EditorSceneManager.OpenScene("Assets/Scenes/SkyPulse.unity");SessionState.SetBool("SkyPulse.VisualAcceptance.BirdsOnly",birdsOnly);SessionState.SetBool("SkyPulse.VisualAcceptance",true);EditorApplication.EnterPlaymode();
     }
-    static void Tick(){if(!EditorApplication.isPlaying||!SessionState.GetBool("SkyPulse.VisualAcceptance",false))return;SessionState.SetBool("SkyPulse.VisualAcceptance",false);new GameObject("Visual acceptance capture").AddComponent<SkyPulseVisualAcceptanceRunner>().Begin(Execute());}
+    static void Tick(){if(!EditorApplication.isPlaying||!SessionState.GetBool("SkyPulse.VisualAcceptance",false))return;SessionState.SetBool("SkyPulse.VisualAcceptance",false);new GameObject("Visual acceptance capture").AddComponent<SkyPulseVisualAcceptanceRunner>().Begin(SessionState.GetBool("SkyPulse.VisualAcceptance.BirdsOnly",false)?ExecuteBirdTaps():Execute());}
     static void Present(SkyPulseNativeGame g,float dt=.1f)
     {
         Set(g,"ambientTime",(float)Get(g,"ambientTime")+dt);Call(g,"UpdateMenuBird",dt);Call(g,"UpdateProtocolPresentation",dt);Call(g,"UpdateCinematicPresentation",dt);Call(g,"UpdateSolidBirds",dt);Call(g,"UpdateHangarHeroPresentation");
@@ -75,16 +77,7 @@ public static class SkyPulseVisualAcceptanceChecks
         }
         DensityChecks(g);
         var skins=(Array)typeof(SkyPulseNativeGame).GetField("Skins",BindingFlags.Static|BindingFlags.NonPublic).GetValue(null);
-        foreach(var skin in skins)
-        {
-            string id=(string)Get(skin,"Id");Set(g,"equippedSkin",skin);Call(g,"ApplyEquippedVisuals");Call(g,"StartFlight");Present(g,0);
-            Call(g,"Flap");float previous=0;
-            foreach(float time in new[]{0f,.08f,.18f,.32f})
-            {
-                float elapsed=time-previous;while(elapsed>0.00001f){float step=Mathf.Min(elapsed,1f/120);Call(g,"UpdateGameplayWingState",step);Present(g,step);elapsed-=step;}previous=time;Save(camera,rt,"birds/"+id+"-"+Mathf.RoundToInt(time*100).ToString("00"));
-            }
-            Check((string)Get(g,"solidPilotId")==id,"Equipped solid identity is correct in gameplay: "+id);
-        }
+        yield return CaptureBirdTaps(g,camera,rt,skins);
         Set(g,"equippedSkin",skins.GetValue(0));Call(g,"ApplyEquippedVisuals");Call(g,"ResetToMenu");Call(g,"OpenHangar");Set(g,"hangarInformationFadeTime",1f);Present(g,1);yield return null;Present(g,0);TextFit((GameObject)Get(g,"customizeScreen"),"Hangar");Save(camera,rt,"hangar");
         Call(g,"OpenUpgrades");Present(g,1);yield return null;Present(g,0);Save(camera,rt,"tech-tree");
         Call(g,"OpenCoreProgression");Present(g,1);yield return null;Present(g,0);TextFit((GameObject)Get(g,"birdProgressionScreen"),"Core");Save(camera,rt,"core");
@@ -110,6 +103,76 @@ public static class SkyPulseVisualAcceptanceChecks
         yield return SkyPulseGuideWorldChecks.Live(g);
         Call(g,"ResetToMenu");File.WriteAllText(Path.Combine(Output,"VISUAL_CAPTURE.json"),JsonUtility.ToJson(new Report{result="CAPTURED",checks=notes.ToArray(),textFitFindings=overflow.ToArray(),ownerApproved=false,deviceTested=false},true));Debug.Log("SKYPULSE_VISUAL_ACCEPTANCE_CAPTURED");EditorApplication.Exit(0);
     }
+
+    static IEnumerator ExecuteBirdTaps()
+    {
+        var g=UnityEngine.Object.FindAnyObjectByType<SkyPulseNativeGame>();g.enabled=false;
+        Set(g,"hapticsEnabled",false);Set(g,"reduceMotionEnabled",false);((AudioSource)Get(g,"audioSource")).mute=true;
+        var camera=(Camera)Get(g,"flightCamera");var rt=new RenderTexture(750,1334,24);rt.Create();camera.targetTexture=rt;camera.rect=new Rect(0,0,1,1);
+        var canvas=((GameObject)Get(g,"uiRoot")).GetComponent<Canvas>();canvas.renderMode=RenderMode.ScreenSpaceCamera;canvas.worldCamera=camera;canvas.planeDistance=1;
+        var skins=(Array)typeof(SkyPulseNativeGame).GetField("Skins",BindingFlags.Static|BindingFlags.NonPublic).GetValue(null);
+        yield return CaptureBirdTaps(g,camera,rt,skins);
+        File.WriteAllText(Path.Combine(Output,"BIRD_TAP_CAPTURE.json"),JsonUtility.ToJson(new Report{result="PASS",checks=notes.ToArray(),textFitFindings=overflow.ToArray(),ownerApproved=false,deviceTested=false},true));
+        Debug.Log("SKYPULSE_BIRD_TAP_CAPTURE_PASS");EditorApplication.Exit(0);
+    }
+    static IEnumerator CaptureBirdTaps(SkyPulseNativeGame g,Camera camera,RenderTexture rt,Array skins)
+    {
+        var crops=new List<Texture2D>();var names=new List<string>();
+        foreach(var skin in skins)
+        {
+            string id=(string)Get(skin,"Id");names.Add(((string)Get(skin,"Name")).ToUpperInvariant());
+            Set(g,"equippedSkin",skin);Call(g,"ApplyEquippedVisuals");Call(g,"StartFlight");Present(g,0);
+            Call(g,"Flap");
+            // Negative fixture: a direct Flap call updates its fallback sprite.
+            // The shipping frame completes LateUpdate before a camera renders.
+            Check(((SpriteRenderer)Get(g,"birdRenderer")).enabled,"Early capture reproduces the legacy-sprite overlap fixture: "+id);
+            Call(g,"LateUpdate");
+            Check(!((SpriteRenderer)Get(g,"birdRenderer")).enabled,"The real LateUpdate hides legacy artwork before rendering: "+id);
+            Call(g,"StartFlight");Present(g,0);Call(g,"Flap");
+            // Finish the zero-delta presentation boundary even for the first
+            // sample. Otherwise only its 0 ms image contains two whole birds.
+            Present(g,0);float previous=0;
+            foreach(float time in new[]{0f,.08f,.18f,.32f})
+            {
+                float elapsed=time-previous;while(elapsed>0.00001f){float step=Mathf.Min(elapsed,1f/120);Call(g,"UpdateGameplayWingState",step);Present(g,step);elapsed-=step;}previous=time;
+                Check(new[]{"birdRenderer","birdFlapRenderer","birdRiseRenderer","birdParallaxRenderer","birdSafetyRenderer","birdDepthRenderer","birdEyeGlintRenderer"}.All(n=>!((SpriteRenderer)Get(g,n)).enabled),"Complete-frame capture has one native pilot and no legacy overlay: "+id+" / "+time);
+                Check((string)Get(g,"solidPilotId")==id&&((GameObject)Get(g,"solidPilot")).activeInHierarchy,"Complete-frame pilot identity matches the selected bird: "+id+" / "+time);
+                Save(camera,rt,"birds/"+id+"-"+Mathf.RoundToInt(time*100).ToString("00"));
+                var centre=camera.WorldToScreenPoint(((Transform)Get(g,"bird")).position);
+                var crop=new Texture2D(330,220,TextureFormat.RGB24,false);var prior=RenderTexture.active;RenderTexture.active=rt;
+                crop.ReadPixels(new Rect(Mathf.Clamp(Mathf.RoundToInt(centre.x)-165,0,rt.width-330),Mathf.Clamp(Mathf.RoundToInt(centre.y)-110,0,rt.height-220),330,220),0,0);crop.Apply();RenderTexture.active=prior;crops.Add(crop);
+            }
+            yield return null;
+        }
+        WriteBirdSheet((Font)Get(g,"uiFont"),names,crops);
+        foreach(var crop in crops)UnityEngine.Object.DestroyImmediate(crop);
+    }
+    static void WriteBirdSheet(Font font,List<string> names,List<Texture2D> crops)
+    {
+        const int width=1440;int height=140+names.Count*260;
+        var root=new GameObject("Bird tap evidence sheet");root.layer=30;
+        var camObject=new GameObject("Bird tap evidence camera",typeof(Camera));var camera=camObject.GetComponent<Camera>();camera.cullingMask=1<<30;camera.clearFlags=CameraClearFlags.SolidColor;camera.backgroundColor=new Color(.018f,.04f,.065f);camera.orthographic=true;
+        var target=new RenderTexture(width,height,24);target.Create();camera.targetTexture=target;
+        var canvas=root.AddComponent<Canvas>();canvas.renderMode=RenderMode.ScreenSpaceCamera;canvas.worldCamera=camera;canvas.planeDistance=1;
+        var backdrop=new GameObject("Backdrop",typeof(RectTransform),typeof(Image));backdrop.layer=30;backdrop.transform.SetParent(root.transform,false);var back=(RectTransform)backdrop.transform;back.anchorMin=Vector2.zero;back.anchorMax=Vector2.one;back.offsetMin=back.offsetMax=Vector2.zero;backdrop.GetComponent<Image>().color=camera.backgroundColor;
+        SheetText(root.transform,font,"SKYPULSE / COMPLETE-FRAME TAP STROKES / ALL 15 BIRDS",20,18,1400,42,30,Color.white);
+        SheetText(root.transform,font,"Actual Unity captures / corrected first-frame boundary / QA save / owner and device acceptance pending",20,64,1400,30,20,new Color(.65f,.82f,.9f));
+        for(int column=0;column<4;column++)SheetText(root.transform,font,new[]{"FIRST RENDERED TAP","80 MS","180 MS","320 MS"}[column],20+column*350,104,330,24,17,new Color(.4f,.85f,1));
+        for(int row=0;row<names.Count;row++)
+        {
+            SheetText(root.transform,font,names[row],20,140+row*260,1380,28,21,new Color(.4f,.85f,1));
+            for(int column=0;column<4;column++)
+            {
+                var image=new GameObject("Captured bird",typeof(RectTransform),typeof(RawImage));image.layer=30;image.transform.SetParent(root.transform,false);var rect=(RectTransform)image.transform;rect.anchorMin=rect.anchorMax=rect.pivot=new Vector2(0,1);rect.anchoredPosition=new Vector2(20+column*350,-(174+row*260));rect.sizeDelta=new Vector2(330,220);image.GetComponent<RawImage>().texture=crops[row*4+column];
+            }
+        }
+        Canvas.ForceUpdateCanvases();Save(camera,target,"Bird-Tap-Phases");camera.targetTexture=null;UnityEngine.Object.DestroyImmediate(root);UnityEngine.Object.DestroyImmediate(camObject);target.Release();UnityEngine.Object.DestroyImmediate(target);
+    }
+    static void SheetText(Transform parent,Font font,string value,float x,float y,float width,float height,int size,Color colour)
+    {
+        var o=new GameObject("Evidence label",typeof(RectTransform),typeof(Text));o.layer=30;o.transform.SetParent(parent,false);var r=(RectTransform)o.transform;r.anchorMin=r.anchorMax=r.pivot=new Vector2(0,1);r.anchoredPosition=new Vector2(x,-y);r.sizeDelta=new Vector2(width,height);var text=o.GetComponent<Text>();text.font=font;text.fontSize=size;text.fontStyle=FontStyle.Bold;text.color=colour;text.text=value;
+    }
+
     static void DensityChecks(SkyPulseNativeGame g)
     {
         var env=(SkyPulseFlightEnvironment)Get(g,"flightEnvironment");var rows=(MeshRenderer[,])Get(env,"districtRenderers");var links=(Mesh[,])Get(env,"cityLinks");

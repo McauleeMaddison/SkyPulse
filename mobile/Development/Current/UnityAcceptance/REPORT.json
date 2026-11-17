@@ -5932,5 +5932,16 @@
   "deviceInstallAndLaunchVerified": true,
   "ownerAcceptanceCompleted": false,
   "releaseHandoffUpdated": "2026-11-17",
-  "releaseRecord": "../../../Release/DeviceBuild22/RELEASE_RECORD.json"
+  "releaseRecord": "../../../Release/DeviceBuild22/RELEASE_RECORD.json",
+  "completeFrameBirdFollowUp": {
+    "date": "2026-11-17",
+    "birds": 15,
+    "captures": 60,
+    "assertions": 150,
+    "passed": true,
+    "issue": "QA-CAPTURE-001",
+    "runtimeUnchanged": true,
+    "report": "BIRD_TAP_CAPTURE.json",
+    "scope": "Corrected preview timing and complete-frame native-pilot checks; not owner/device acceptance."
+  }
 }

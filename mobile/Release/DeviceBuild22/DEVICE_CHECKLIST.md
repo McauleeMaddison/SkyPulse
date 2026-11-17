@@ -5,6 +5,7 @@ Prepared 17 November 2026. Installed and launched on iPhone 17 Pro Max;
 also processed in the existing TestFlight group. [Release evidence](RELEASE_RECORD.json).
 **Public App Review remains on hold until you finish testing and approve submission.**
 
+**Feature freeze is active.** See [FINISHING_STATUS.json](FINISHING_STATUS.json).
 The game is ready to begin this checklist. Passing compilation, QA and installation
 is not a substitute for your visual/gameplay acceptance. No runtime changes are
 being slipped into this candidate while you review it. Use a new numbered build

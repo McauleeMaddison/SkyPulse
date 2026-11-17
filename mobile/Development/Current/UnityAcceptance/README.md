@@ -31,3 +31,15 @@ Earlier save/result evidence remains in city-focused.log.gz at 7b3edc3.
 Game C# compilation has no reported warnings/errors. The known Unity Editor
 SearchDatabase exception remains recorded. Device FPS, memory, heat, sound,
 haptic comfort and final visual approval remain to be checked on iPhone/iPad.
+
+## 17 November — corrected first-tap evidence
+
+The former first-tap picture was taken before the final native presentation pass,
+which could show the fallback sprite on top of the 3D bird. The capture now finishes
+that boundary before taking the picture. The real LateUpdate hides the fallback
+for all 15 birds; 60 complete-frame samples pass 150 focused checks with correct
+selected identity and no legacy overlay. The [updated tap sheet](Bird-Tap-Phases.png)
+and [focused report](BIRD_TAP_CAPTURE.json) replace that misleading preview.
+Game code and the installed Build 22 were not changed. Stills do not establish
+phone animation smoothness or FPS. The known Editor SearchDatabase diagnostic
+remains in bird-tap-capture.log.gz.

@@ -5,6 +5,9 @@ Open `mobile/` in Unity Hub and this repository in VS Code.
 
 ## Start here
 
+**Feature freeze is active.** Keep Build 22 stable for acceptance; make targeted
+changes only for confirmed defects. [Finishing status](mobile/Release/DeviceBuild22/FINISHING_STATUS.json).
+
 - [Editing guide](mobile/EDITING_GUIDE.md) — scenes, scripts and where to change each feature.
 - [Current visual review](mobile/Development/Current/README.md) — local source candidate, previews and verification.
 - [Installed Build 22](mobile/Release/DeviceBuild22/README.md) — the existing iPhone installation.

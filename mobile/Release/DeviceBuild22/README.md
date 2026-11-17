@@ -5,6 +5,8 @@ Build 22 was installed over Build 21 and launched on the owner’s iPhone on
 group. Current instructions and the saved App Store draft selecting Build 22 were
 reloaded and verified on 17 November. **Public App Review remains on hold.**
 
+**Feature freeze:** confirmed defects and acceptance testing only. [Finishing status](FINISHING_STATUS.json).
+
 App Store preparation: [readiness report](APP_STORE_READINESS.md) and [media plan](MEDIA_CAPTURE_PLAN.md).
 
 Start with [DEVICE_CHECKLIST.md](DEVICE_CHECKLIST.md), then record observations in

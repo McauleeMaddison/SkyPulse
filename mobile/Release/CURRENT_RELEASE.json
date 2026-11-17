@@ -30,5 +30,6 @@
     "ownerReportedSaved": true,
     "ownerReportedSavedDate": "2026-11-17",
     "independentlyReloadVerified": false
-  }
+  },
+  "finishingStatus": "mobile/Release/DeviceBuild22/FINISHING_STATUS.json"
 }

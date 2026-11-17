@@ -1,9 +1,36 @@
 # Build 22 — owner results and issues
 
 Candidate: SkyPulse 1.0.0 (22), runtime `1fd3dfa`.
-Prepared 17 November 2026. **Owner acceptance has not been completed.**
+Prepared 17 November 2026. **Owner gameplay testing has not started.**
+The owner clarified this explicitly; earlier quick-choice replies are not completed
+gameplay tests. Use the Notes checklist at the owner’s pace, with no timed prompts.
 Technical install/source/save evidence is in RELEASE_RECORD.json; do not copy it
 into the owner PASS column without checking the actual game.
+
+## Agent preflight — 17 November 2026
+
+These checks are separate from the owner results below.
+
+- Build 22 is still installed and its process was observed through Apple’s device service.
+- Device reports iPhone 17 Pro Max / iOS 27.3 beta. Stable-OS and physical iPad testing remain pending.
+- The existing 186 source/metadata hashes and 1,168 world asset hashes still match QA. The full 2,559-entry Build 22 manifest is retained.
+- Existing control, wing, gate, progression, world and save/regression log evidence was verified; it was not relabelled as new phone gameplay testing.
+- QA-CAPTURE-001 was reproduced and fixed in the review tool. All fifteen birds pass 150 focused complete-frame checks, with 60 updated captures and zero C# compiler errors/warnings.
+- Game Performance Overview is available with per-frame metrics. The first trace never started: Instruments listed the iPhone offline and timed out (exit 13). CoreDevice still found a compatible developer image and reported passcode required. No measured FPS/memory/performance pass is recorded. The owner chose manual testing without profiling; no further trace attempt is pending.
+- Feature freeze is active. No installed runtime or real save was altered.
+
+## Resolved QA issue: QA-CAPTURE-001
+
+Severity: minor evidence defect. Screen: the 0 ms bird tap-preview image.
+The capture bypassed the last presentation pass after Flap, so its first picture
+could show the legacy sprite over the native 3D pilot. Complete-frame rendering
+through the real LateUpdate hides it. The QA helper now completes that boundary
+and checks all fallback renderers and selected identity before each image.
+
+Status: fixed in the review tool and focused checks passed. No confirmed shipping
+runtime defect or new phone build is claimed. Evidence:
+[focused report](../../Development/Current/UnityAcceptance/BIRD_TAP_CAPTURE.json),
+[corrected sheet](../../Development/Current/UnityAcceptance/Bird-Tap-Phases.png).
 
 ## Session record
 
