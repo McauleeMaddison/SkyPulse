@@ -54,7 +54,7 @@ Status: open / fixed in build __ / retested
 - Reproducible defects resolved and affected checks repeated on the matching candidate.
 - Real iPhone/iPad usability and measured performance evidence.
 - Current approved device screenshots/preview and review walkthrough.
-- Live support/privacy/guide accuracy; confirm App Review contact spelling.
+- Live support/privacy/guide accuracy; save the confirmed single-s App Review contact macwebstudio26@gmail.com. Owner clarification is complete; live correction is pending.
 - Applicable App Store compliance notices reviewed without guessing declarations.
 - Apple’s unidentified similarity/account concern clarified and addressed.
 - Renewed explicit owner authorization to submit for App Review.
