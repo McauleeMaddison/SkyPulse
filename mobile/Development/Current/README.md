@@ -1,6 +1,6 @@
 # SkyPulse — current local review
 
-16 November 2026. **Local Unity source candidate; iPhone Build 21 is unchanged.**
+17 November 2026. **Build 22 installed and launched on iPhone; processed in TestFlight.**
 Public App Review remains on hold. These previews are actual Unity renders,
 with no AI repainting. Open [the gallery](index.html).
 
@@ -16,8 +16,9 @@ combined mesh is 58,630 vertices. [Current previews and evidence](UnityAcceptanc
 
 The owner requested Build 22 for phone visual testing. Installed build, saved
 progress, signing and launch status are recorded separately under Release.
-App Store Connect metadata is prepared in Release/DeviceBuild22/metadata.json;
-a live Apple save is not inferred from the local draft. Public review stays on hold.
+Current App Store copy, review notes and selected Build 22 are saved and reloaded.
+Use the [Build 22 device checklist](../../Release/DeviceBuild22/DEVICE_CHECKLIST.md)
+and its release record. Owner visual acceptance and replacement store media remain pending.
 
 ## Unity acceptance and fuller cities — 16 November
 
@@ -37,7 +38,7 @@ checklist with a safe **SkyPulse → Play Main Game** entry point. Existing save
 physics, pipes, native bird assets and the accepted wing sampler are retained.
 Editor checks passed (366 visual/density, 670 Home, 846 touch and 8,561 guide/world
 assertions), plus the wider regression and focused save/result suites. Owner visual
-approval and phone profiling are still pending; Build 21 is unchanged.
+approval and phone profiling are still pending; this source now ships in Build 22.
 
 ## Earlier result polish — 16 November
 
@@ -134,8 +135,9 @@ or warnings and no recurrence of the reported Tech-family error. This is not a
 claim that every Unity engine diagnostic has been resolved.
 
 Owner visual approval and subsequent iPhone/iPad acceptance/profiling remain.
-No new build was installed or uploaded, and nothing was submitted to public review.
-The installed release contract continues to describe immutable Build 21.
+Build 22 was subsequently installed and uploaded on 16 November, with processing
+and draft selection verified on 17 November. Nothing was submitted to public review.
+The installed release contract now describes Build 22.
 
 ## Clean navigation
 
@@ -143,6 +145,6 @@ Use `mobile/EDITING_GUIDE.md` and the root README. VS Code groups the main game
 partials. Older studies are under `Development/Archive`; their historical hash
 reports retain original paths, with the moved-folder lookup in the cleanup record.
 The cleanup removed approximately 34.67 GiB of
-reproducible caches and raw frame sequences. Current Build 21, the verified signed
+reproducible caches and raw frame sequences. Current Build 22, the verified signed
 Build 20 rollback, save backups, videos/reports, source artwork and editable Unity
 workshops are preserved. `Library`/`Temp` were retained while Unity was active.

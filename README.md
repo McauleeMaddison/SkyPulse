@@ -7,9 +7,9 @@ Open `mobile/` in Unity Hub and this repository in VS Code.
 
 - [Editing guide](mobile/EDITING_GUIDE.md) — scenes, scripts and where to change each feature.
 - [Current visual review](mobile/Development/Current/README.md) — local source candidate, previews and verification.
-- [Installed Build 21](mobile/Release/DeviceBuild21/README.md) — the existing iPhone installation.
-- [Device checklist](mobile/Release/DeviceBuild21/DEVICE_CHECKLIST.md) — use after approving the new local visuals.
-- [Exact installed-release record](mobile/Release/CURRENT_RELEASE.json) — signing/runtime evidence for Build 21.
+- [Installed Build 22](mobile/Release/DeviceBuild22/README.md) — the existing iPhone installation.
+- [Device checklist](mobile/Release/DeviceBuild22/DEVICE_CHECKLIST.md) — start here for owner acceptance.
+- [Exact installed-release record](mobile/Release/CURRENT_RELEASE.json) — signing/runtime evidence for Build 22.
 
 The [current Unity acceptance gallery](mobile/Development/Current/UnityAcceptance/README.md)
 shows the fuller twelve-world connected city compositions, native birds and updated
@@ -21,8 +21,9 @@ is ready for owner review.
 
 The current local source adds the city restoration overlook, eight distinct saved
 lighting rewards, next-goal cards, cosmetic bird mastery and four optional authored
-daily heists. It also corrects the twelve-family Tech validator. This source has
-not replaced the iPhone installation. **Public App Review remains on hold.**
+daily heists. It also corrects the twelve-family Tech validator. This source is
+installed on the iPhone as **1.0.0 (22)** and uploaded to TestFlight.
+**Public App Review remains on hold.**
 
 ## Folder map
 
@@ -35,7 +36,7 @@ not replaced the iPhone installation. **Public App Review remains on hold.**
 | `mobile/Development/ArtSources` | Retained artwork provenance |
 | `mobile/Development/Archive` | Historical design studies and earlier review media |
 | `mobile/Release` | Versioned release records, provenance and device checklists |
-| `artifacts` | Ignored local output: current Build 21, signed Build 20 rollback and historical evidence |
+| `artifacts` | Ignored local output: current Build 22, older rollback builds and historical evidence |
 | `public-site` | Separately versioned support/privacy website checkout |
 
 Unity regenerates `Library`, `Temp`, `Logs` and local build folders. VS Code hides

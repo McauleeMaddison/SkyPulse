@@ -1,0 +1,52 @@
+{
+  "date": "2026-11-17",
+  "version": "1.0.0",
+  "selectedBuild": "22",
+  "status": "Prepare for Submission",
+  "savedAndReloadVerified": true,
+  "currentCopy": "metadata.json",
+  "savedFields": [
+    "promotionalText",
+    "description",
+    "keywords",
+    "supportUrl",
+    "marketingUrl",
+    "version",
+    "copyright",
+    "reviewNotes",
+    "selectedBuild"
+  ],
+  "earlierVerifiedAppInformationDate": "2026-11-16",
+  "appInformation": {
+    "name": "SkyPulse Arcade",
+    "subtitle": "Flight & Signal Heist Puzzles",
+    "categories": [
+      "Games",
+      "Action",
+      "Puzzle"
+    ],
+    "privacy": "Data Not Collected",
+    "privacyUrl": "https://skypulse.macwebstudio.com/privacy",
+    "privacyChoicesUrl": "https://skypulse.macwebstudio.com/privacy#requests"
+  },
+  "developerCredit": "Mcaulee Maddison / MacWebStudio / macwebstudio.com",
+  "testFlightWhatToTest": "TESTFLIGHT_NOTES.txt",
+  "reviewNotes": "REVIEW_NOTES.txt",
+  "publicReviewSubmitted": false,
+  "existingReviewAttachment": "SkyPulse-build7-review.mp4 retained as historical, not current evidence",
+  "mediaStatus": "Existing store screenshots/preview and review attachment need accepted Build 22 device replacements before review. No new media claimed saved.",
+  "additionalReleaseChecks": [
+    "App Review contact email has a spelling discrepancy versus public support contact; verify intended address with owner before changing.",
+    "App Store Connect displays China mainland compliance notices; determine applicability and distribution scope before review. No declaration or region change made.",
+    "Apple similarity/account concern remains unresolved pending specific clarification."
+  ],
+  "agreement": "Developer portal shows agreement issued 29 October 2026 accepted 16 November 2026; build upload processed successfully.",
+  "locale": "English (U.K.)",
+  "liveLinkCheck": {
+    "date": "2026-11-17",
+    "supportHttp": 200,
+    "privacyHttp": 200,
+    "publicSupportContactPresent": true,
+    "scope": "Read-only HTTPS response/contact and canonical-link checks, not legal review or full content/guide acceptance."
+  }
+}

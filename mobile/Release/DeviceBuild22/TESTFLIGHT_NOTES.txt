@@ -1,0 +1,15 @@
+SkyPulse 1.0.0 (22) — owner acceptance testing
+
+WHAT CHANGED
+Twelve connected 3D world themes now have detailed island foundations, recessed cliff galleries, supported terraces, brighter occupied windows, defined building entrances and roof details, and restrained coloured cloud lighting. The full 3D bird roster and tap-driven wing strokes are included. City restoration rewards, bird display-cradle mastery, optional daily Signal Heist cases and clearer next-goal/result information are also included.
+
+TEST IN THIS ORDER
+1. Endless Route: isolated and rapid taps, visible full wing strokes, selected bird identity, pipe/collar joins, ground/pipe collisions, pickup feedback, pause and retry. Inspect world lighting and the flight path at actual phone brightness.
+2. Pulse Relay: randomly placed numbered crystals, automatic matching-gate unlocks, red-to-blue lasers, passage through the hoop, mission results, Next Mission and retry resets.
+3. Blackout / Signal Heist: live beam and exact PLAN cost, trace/failure rules, immediate intermediate progression, final-vault results and the named city-light restoration. Check daily-case save/restart separately.
+4. Hangar and progression: swiping/equipping, all accessible bird previews, wing placement, Tech Tree panning and purchase quotes, Core discounts, training and breeding. Use owned birds for flight tests; mark unavailable purchases as not tested.
+5. Saves and comfort: close/reopen, background/resume, sound/haptics, Reduced Motion, then a longer session to check stutter, heat and stability.
+
+Use the full Build 22 checklist supplied separately. Record each issue with mode, bird/world/vault, action, expected and actual result, and whether retry reproduces it. Include a screenshot or recording when useful. Preserve your real save.
+
+Public App Review remains on hold until the owner completes the checklist and approves the release candidate.

@@ -1,0 +1,56 @@
+{
+  "date": "2026-11-17",
+  "apps": {
+    "development": {
+      "localPath": "artifacts/device-build22/DerivedData/Build/Products/Release-iphoneos/SkyPulse.app",
+      "identity": {
+        "CFBundleVersion": "22",
+        "CFBundleShortVersionString": "1.0.0",
+        "CFBundleIdentifier": "com.mcauleemaddison.skypulse",
+        "UIDeviceFamily": [
+          1,
+          2
+        ],
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "binarySha256": {
+        "SkyPulse": "47658ad55f4a38812601d5648ad13c0cc59439155c81993bcb6128c768945bf3",
+        "Frameworks/UnityFramework.framework/UnityFramework": "694a3566da1c895b642901528034aa6eab79317e4a3bcba3bec7e15387f8a2f4",
+        "Frameworks/UnityRuntime.framework/UnityRuntime": "1d491be5d41491f74391fa8c9c51d41efad0c3647d50cb1a48cb860d84f3353b"
+      }
+    },
+    "archive": {
+      "localPath": "artifacts/device-build22/SkyPulse.xcarchive/Products/Applications/SkyPulse.app",
+      "identity": {
+        "CFBundleVersion": "22",
+        "CFBundleShortVersionString": "1.0.0",
+        "CFBundleIdentifier": "com.mcauleemaddison.skypulse",
+        "UIDeviceFamily": [
+          1,
+          2
+        ],
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "binarySha256": {
+        "SkyPulse": "4c49bae3d16f7546b93ae0b70236fbe042a18210f3f189151fabcb101a616405",
+        "Frameworks/UnityFramework.framework/UnityFramework": "6c10449063c9d1bb3cdcfafa3d8960d41fa5985cd2ecb02a64d4ed2a2e97dd4a",
+        "Frameworks/UnityRuntime.framework/UnityRuntime": "a41c46a49a4dcba159189dbd811722f9afd225ad7ee8b0c1023124ffd9e001e2"
+      }
+    }
+  },
+  "strictSignatureVerification": {
+    "passed": true,
+    "method": "codesign --verify --deep --strict --verbose=2; normal Mac trust store",
+    "artifactMaintenance": "Removed FinderInfo/ResourceFork attributes only from the two generated app copies before reverification. No source or phone save changed."
+  },
+  "matchingArchiveBinaryAndDsymUUIDs": {
+    "SkyPulse": "B677454E-9F86-3009-A256-A8207767861E",
+    "UnityFramework": "B755F713-1DA3-32E3-B794-05F10A95CF6A"
+  },
+  "missingUnityRuntimeDsym": {
+    "uuid": "B5BCB31B-E424-3C81-A0EE-2EF2ADFA93D7",
+    "status": "Nonfatal Apple upload warning; correct UnityRuntime.framework dSYM not located in installed Unity iOS support. App and UnityFramework matching symbols are retained.",
+    "resolved": false
+  },
+  "nativeWarnings": "Unity-generated script-output, deployment-availability and deprecation warnings remain; native build/archive/upload succeeded."
+}

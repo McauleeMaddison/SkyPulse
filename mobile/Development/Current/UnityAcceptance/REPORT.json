@@ -2,10 +2,10 @@
   "result": "CAPTURED",
   "checks": [
     "Review uses the real native 3D presenter without a legacy-art override",
-    "Relay visible card matches its real thumb target: Button \u00b7 CIRCUIT MAP",
-    "Relay action label fits its actual frame: Button \u00b7 CIRCUIT MAP",
-    "Relay visible card matches its real thumb target: Button \u00b7 BIRD HANGAR",
-    "Relay action label fits its actual frame: Button \u00b7 BIRD HANGAR",
+    "Relay visible card matches its real thumb target: Button · CIRCUIT MAP",
+    "Relay action label fits its actual frame: Button · CIRCUIT MAP",
+    "Relay visible card matches its real thumb target: Button · BIRD HANGAR",
+    "Relay action label fits its actual frame: Button · BIRD HANGAR",
     "Native solid pilot is present in world 0",
     "Native solid pilot is present in world 1",
     "Native solid pilot is present in world 2",
@@ -373,10 +373,9 @@
   "deviceTested": false,
   "date": "2026-11-16",
   "baselineCommit": "55557b0",
-  "status": "EDITOR_CHECKS_PASS_BUILD_22_REQUESTED",
+  "status": "EDITOR_CHECKS_PASS_BUILD_22_INSTALLED_OWNER_ACCEPTANCE_PENDING",
   "ownerOpenedMainGame": true,
   "ownerVisualApproval": false,
-  "phoneBuildUnchanged": 21,
   "reviewSubmitted": false,
   "compilerErrors": 0,
   "compilerWarnings": 0,
@@ -5928,5 +5927,10 @@
     "All 24 window-on/off and cliff-light-on/off GPU comparisons passed. Inspection views are static; phone frame pacing and visual acceptance remain manual.",
     "Gameplay and accepted native bird wing/source assets retained; iOS build number incremented to 22 at owner request.",
     "Known Unity Editor SearchDatabase diagnostic remains recorded separately."
-  ]
+  ],
+  "installedPhoneBuild": 22,
+  "deviceInstallAndLaunchVerified": true,
+  "ownerAcceptanceCompleted": false,
+  "releaseHandoffUpdated": "2026-11-17",
+  "releaseRecord": "../../../Release/DeviceBuild22/RELEASE_RECORD.json"
 }

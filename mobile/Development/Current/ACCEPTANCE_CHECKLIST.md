@@ -1,6 +1,7 @@
 # SkyPulse — final local acceptance
 
-Local source: 16 November 2026. New candidate: **Build 22**, requested for iPhone visual testing; consult its release record for installation status.
+Acceptance handoff: 17 November 2026. **1.0.0 (22) is installed and launched on iPhone**, uploaded and processed in TestFlight.
+Use the full [Build 22 device checklist](../../Release/DeviceBuild22/DEVICE_CHECKLIST.md) and [results log](../../Release/DeviceBuild22/TEST_RESULTS.md).
 Public App Review remains on hold. All manual items below are deliberately unchecked.
 
 ## Automated verification completed
@@ -48,13 +49,15 @@ shows the retained solved route and Retry Save action.
 
 ## Build 22 device acceptance — requested by the owner
 
-- [ ] Create a fresh signed numbered build with source hashes and debugging symbols.
-- [ ] Install while preserving the existing save; verify scores, wallet, birds, upgrades and medals.
+- [x] Build 22 exported, signed, archived, installed and launched; exact source manifest retained. Main app/UnityFramework symbols match. UnityRuntime dSYM warning remains in the release record.
+- [x] All 44 preference values unchanged across installation; after launch only daily refresh records and owner-confirmed skin selection changed.
+- [ ] Owner confirms scores, wallet, birds, upgrades and medals in the actual UI.
 - [ ] Repeat all three modes and the checklist above on iPhone and iPad.
 - [ ] Check today's circuit/case behavior over a natural UTC rollover and app reopen.
 - [ ] Measure sustained frame pacing, loading, memory and heat on actual devices.
 - [ ] Capture fresh screenshots/recording from that exact accepted device build.
-- [ ] Update App Store Connect copy and public guide to match the eventual release candidate.
+- [x] App Store Connect current copy, review notes and selected Build 22 saved/reloaded; public review remains on hold.
+- [ ] Review live support/privacy/guide accuracy and replace store media with accepted device captures.
 
 App Store submission is a separate later decision. Do not submit while the owner's
 hold remains active. Editor checks and preview approval do not certify device

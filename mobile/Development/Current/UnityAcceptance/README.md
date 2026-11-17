@@ -1,7 +1,8 @@
 # Detailed world review — 16 November 2026
 
-Editor checks passed. Owner requested fresh Build 22 for iPhone testing; device
-installation and visual acceptance are recorded separately. Public review stays on hold.
+Editor checks passed. Build 22 is installed and launched on iPhone and processed
+in TestFlight. [Device checklist](../../../Release/DeviceBuild22/DEVICE_CHECKLIST.md).
+Owner visual/gameplay acceptance remains pending. Public review stays on hold.
 
 - [Twelve actual gameplay worlds](Twelve-Worlds.png), with full-size views in Worlds.
 - [Civic district close-ups](Districts/Civic) and [residential close-ups](Districts/Residential).
@@ -29,4 +30,4 @@ Earlier save/result evidence remains in city-focused.log.gz at 7b3edc3.
 
 Game C# compilation has no reported warnings/errors. The known Unity Editor
 SearchDatabase exception remains recorded. Device FPS, memory, heat, sound,
-haptic comfort and final visual approval require the new iPhone/iPad candidate.
+haptic comfort and final visual approval remain to be checked on iPhone/iPad.
