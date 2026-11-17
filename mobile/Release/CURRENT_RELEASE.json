@@ -21,5 +21,14 @@
   "appStoreDraftRecord": "mobile/Release/DeviceBuild22/APP_STORE_DRAFT_RECORD.json",
   "appReviewContactEmail": "macwebstudio26@gmail.com",
   "appStoreReadiness": "mobile/Release/DeviceBuild22/APP_STORE_READINESS.md",
-  "mediaCapturePlan": "mobile/Release/DeviceBuild22/MEDIA_CAPTURE_PLAN.md"
+  "mediaCapturePlan": "mobile/Release/DeviceBuild22/MEDIA_CAPTURE_PLAN.md",
+  "appStoreDistributionPlan": {
+    "excludedTerritories": [
+      "China mainland"
+    ],
+    "ownerDecisionDate": "2026-11-17",
+    "ownerReportedSaved": true,
+    "ownerReportedSavedDate": "2026-11-17",
+    "independentlyReloadVerified": false
+  }
 }

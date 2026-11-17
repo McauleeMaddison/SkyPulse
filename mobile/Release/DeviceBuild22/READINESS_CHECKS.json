@@ -15,7 +15,7 @@
     "exclusiveRightsCertified": false,
     "appleSimilarityResolved": false
   },
-  "liveAppleFormVerification": "Saved Build 22/copy evidence retained from earlier 17 November session. Subsequent contact correction, age-rating, pricing, territories and country/account declarations are not independently verified.",
+  "liveAppleFormVerification": "Saved Build 22/copy evidence retained from earlier 17 November session. Owner now reports saving the correct email and excluding China mainland. Both owner actions await independent reload verification. Age rating, pricing and other applicable country/account declarations still require verification.",
   "submissionReadiness": "HOLD",
   "report": "APP_STORE_READINESS.md",
   "mediaPlan": "MEDIA_CAPTURE_PLAN.md",
@@ -26,5 +26,11 @@
     "internalLinks": "PASS",
     "brandedHttpsContent": "PASS: Home, guide, support, privacy",
     "browserLayoutQA": "Not run; browser controls unavailable, existing CSS/layout retained."
+  },
+  "ownerReportedContactSaved": true,
+  "chinaMainlandExclusion": {
+    "authorized": true,
+    "ownerReportedSaved": true,
+    "independentlyReloadVerified": false
   }
 }

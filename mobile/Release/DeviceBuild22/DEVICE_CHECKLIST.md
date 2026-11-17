@@ -227,7 +227,7 @@ haptics, all visual approvals and current store media are still to be assessed.
 - [ ] Verify the processed TestFlight build on the phone.
 - [ ] Confirm saved App Store copy and selected Build 22 remain current; replace historical screenshots/preview and build 7 walkthrough with accepted current device media.
 - [ ] Review Apple’s reply and address its specific concerns.
-- [ ] Verify the confirmed App Review contact macwebstudio26@gmail.com is saved live, resolve applicable country/compliance notices, then obtain renewed owner approval before public review. Do not press Add for Review during acceptance.
+- [ ] Independently verify the owner-saved App Review contact macwebstudio26@gmail.com, independently verify the owner-saved exclusion of China mainland, resolve other applicable country/compliance notices, then obtain renewed owner approval before public review. Do not press Add for Review during acceptance.
 
 ## World-by-world visual record
 

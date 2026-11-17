@@ -36,8 +36,8 @@
   "existingReviewAttachment": "SkyPulse-build7-review.mp4 retained as historical, not current evidence",
   "mediaStatus": "Existing store screenshots/preview and review attachment need accepted Build 22 device replacements before review. No new media claimed saved.",
   "additionalReleaseChecks": [
-    "Save and reload the owner-confirmed App Review contact macwebstudio26@gmail.com (single s), replacing the last observed double-s address. No further address clarification is required.",
-    "App Store Connect displays China mainland compliance notices; determine applicability and distribution scope before review. No declaration or region change made.",
+    "Independently recheck the owner-saved single-s contact when browser access returns; owner reports the correction is already saved.",
+    "Independently verify the owner-saved China mainland exclusion when browser controls return; no further availability change requested.",
     "Apple similarity/account concern remains unresolved pending specific clarification."
   ],
   "agreement": "Developer portal shows agreement issued 29 October 2026 accepted 16 November 2026; build upload processed successfully.",
@@ -55,9 +55,27 @@
   "appReviewContactEmail": {
     "confirmedAddress": "macwebstudio26@gmail.com",
     "ownerConfirmedDate": "2026-11-17",
-    "lastObservedLiveAddress": "macwebsstudio26@gmail.com",
-    "liveCorrectionSavedAndVerified": false,
-    "pendingReason": "Browser controls no longer available in this session. Existing saved Build 22/copy verification remains valid; this field has not yet been corrected."
+    "ownerReportedSaved": true,
+    "ownerReportedSavedDate": "2026-11-17",
+    "independentlyReloadVerified": false,
+    "lastIndependentlyObservedLiveAddressBeforeOwnerCorrection": "macwebsstudio26@gmail.com",
+    "verificationNote": "Owner reports saving the single-s email in App Store Connect. No further correction is requested. Independent reload verification awaits browser controls."
   },
-  "publicSiteRecord": "PUBLIC_SITE_RECORD.json"
+  "publicSiteRecord": "PUBLIC_SITE_RECORD.json",
+  "ownerReportedSavedFields": [
+    "appReviewContactEmail",
+    "availabilityExcludeChinaMainland"
+  ],
+  "distributionPlan": {
+    "ownerDecisionDate": "2026-11-17",
+    "excludedTerritories": [
+      "China mainland"
+    ],
+    "scope": "Initial release; other territories unchanged by instruction.",
+    "ownerReportedSaved": true,
+    "ownerReportedSavedDate": "2026-11-17",
+    "appliedBy": "Owner, per direct confirmation",
+    "independentlyReloadVerified": false,
+    "verificationNote": "Owner reports deselecting China mainland and saving availability without submitting for review. Independent reload verification awaits browser controls."
+  }
 }

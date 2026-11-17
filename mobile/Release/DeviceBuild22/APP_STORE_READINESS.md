@@ -25,9 +25,10 @@ change this binary’s gameplay. App Store Connect remains Prepare for Submissio
    [TEST_RESULTS.md](TEST_RESULTS.md). Resolve reproducible failures; a runtime
    change requires a new numbered build and affected retests. Include actual
    iPhone/iPad model, OS, session length and measured performance evidence.
-2. Save the owner-confirmed App Review contact **macwebstudio26@gmail.com**.
-   The last live observation had an extra s. Owner confirmation is complete;
-   independent save verification is still pending because browser control is unavailable.
+2. The owner reports saving **macwebstudio26@gmail.com** in App Review Information
+   on 17 November. No further correction is requested. Independently reload and
+   verify it when browser control returns; the owner’s save is recorded separately
+   from the earlier agent-observed draft.
 3. Verify the live **age-rating questionnaire**, content-rights declaration,
    free price, selected territories and applicable account/compliance details.
    A low age rating is not inferred from the artwork. Accessibility features are
@@ -35,9 +36,11 @@ change this binary’s gameplay. App Store Connect remains Prepare for Submissio
 4. Capture approved current media using [MEDIA_CAPTURE_PLAN.md](MEDIA_CAPTURE_PLAN.md).
    Existing store screenshots/preview and build 7 review walkthrough are historical.
    Keep their backups before replacing them. Editor QA images are not phone evidence.
-5. Resolve selected-country requirements. China mainland requires additional
-   game documentation; the owner has been asked whether to exclude it initially.
-   No territory change or AI/security declaration has been made. Vietnam game
+5. The owner reports **excluding China mainland and saving availability** for
+   the initial release on 17 November. Independently verify that saved selection
+   before submission; do not change other territories without a new instruction.
+   No AI/security declaration has been made. Check other selected-country
+   requirements separately. Vietnam game
    licensing and EU trader status also require review if those regions are selected.
    Do not enter invented registration numbers or infer legal status from a free price.
 6. Review Apple's reply about the earlier similarity/account concern alongside
