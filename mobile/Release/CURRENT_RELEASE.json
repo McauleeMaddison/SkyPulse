@@ -14,7 +14,7 @@
   "artworkLedger": "mobile/Release/IdentityRights20261013/ARTWORK_LEDGER.json",
   "testFlightStatus": "Build 22 uploaded 16 November and processed/available to SkyPulse Internal, verified 17 November. Direct Build 22 installed and launched on owner iPhone; manual acceptance pending.",
   "publicAppReview": "On hold pending Apple's clarification, current device/media validation and renewed owner authorization",
-  "appStoreDraftStatus": "1.0.0 Prepare for Submission, Build 22 selected. Paid-release copy/reviewer notes and 79p UK price saved/reloaded 18 November; China mainland excluded and verified. Paid Apps Agreement Pending User Info after owner signing; bank and tax information remain required. Current media/device acceptance and public review remain on hold.",
+  "appStoreDraftStatus": "1.0.0 Prepare for Submission, Build 22 selected. Paid-release copy/reviewer notes and 79p UK price saved/reloaded 18 November; China mainland excluded and verified. Paid Apps Agreement remains Pending User Info: banking is Processing, Tax Forms still shows Missing Tax Info after owner-reported submission and page refresh. Current media/device acceptance and public review remain on hold.",
   "storeListingMetadata": "mobile/Release/DeviceBuild22/metadata.json",
   "publicSiteRecord": "mobile/Release/DeviceBuild22/PUBLIC_SITE_RECORD.json",
   "deviceChecklist": "mobile/Release/DeviceBuild22/DEVICE_CHECKLIST.md",
@@ -46,6 +46,6 @@
     "internationalPricing": "Apple comparable prices based on UK base price",
     "ownerApproved": "2026-11-18",
     "savedAndReloadVerified": "2026-11-18",
-    "paidAppsAgreement": "Pending User Info; owner reports signing 18 November; live Business page requires bank account and tax forms"
+    "paidAppsAgreement": "Pending User Info; owner reports bank/tax submission 18 November; refreshed Business page shows banking Processing and Missing Tax Info"
   }
 }

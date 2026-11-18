@@ -32,7 +32,7 @@
   ],
   "browserLayoutQA": "Published Home inspected at actual 319 px browser width; no horizontal overflow, price copy visible. CSS unchanged; no general all-device certification.",
   "archive": "/Users/mcauleemaddison/Desktop/SkyPulse/artifacts/public-site-paid-20261118/site.tar.gz",
-  "appStoreSubmission": "Public review remains on hold. Paid copy/notes and 79p price saved; owner signed Paid Apps Agreement, now Pending User Info for bank/tax completion. Device/media acceptance pending.",
+  "appStoreSubmission": "Public review remains on hold. Paid copy/notes and 79p price saved. After owner-reported bank/tax submission, Paid Apps Agreement remains Pending User Info; banking Processing, Missing Tax Info. Device/media acceptance pending.",
   "sourceReconciliation": "Supported source helper opened the current v8 checkout, validated the text-only update, committed/pushed and packaged the exact v9 source.",
   "archiveSha256": "e7341acd55138ed4060ccfca47736bee0a21eb6c643bdae2e44822c007caa8e1",
   "githubSourceRepository": "https://github.com/McauleeMaddison/public-site",

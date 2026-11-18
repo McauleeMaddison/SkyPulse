@@ -39,7 +39,7 @@
   "mediaStatus": "Existing store screenshots/preview and review attachment need accepted Build 22 device replacements before review. No new media claimed saved.",
   "additionalReleaseChecks": [
     "Complete owner manual/device acceptance and fresh media on the accepted candidate.",
-    "Owner signed the Paid Apps Agreement; Apple shows Pending User Info and requires bank account and tax forms before activation.",
+    "Owner reports signing and submitting bank/tax information; Apple still shows Paid Apps Agreement Pending User Info, banking Processing and Missing Tax Info. Owner checks outstanding Tax Forms item; verify later activation.",
     "Owner contact value remains masked to the browser; retain the owner’s explicit single-s address confirmation.",
     "Review applicability of non-trader status and Vietnam licensing for this paid release; no declarations or extra country/platform changes made.",
     "Apple’s earlier unidentified similarity/account concern remains open."
@@ -119,11 +119,24 @@
     "allThreeModesIncluded": true,
     "paidAppsAgreementStatus": "Pending User Info",
     "paidAppsAgreementAcceptancePerformedByAgent": false,
-    "taxAndBankingReadiness": "Apple explicitly prompts Add Bank Account and Add Tax Form; missing tax information is shown. Owner must complete privately; no values collected or entered by agent.",
+    "taxAndBankingReadiness": "Owner reports bank and tax information submitted. Refreshed Business page shows banking Processing with a 24-hour notice, plus the incomplete-tax-forms banner and Missing Tax Info. Paid Apps Agreement is not yet Active. No financial values collected, retained or entered by agent.",
     "paidAppsAgreementOwnerReportedSigned": true,
     "paidAppsAgreementOwnerReportedSignedDate": "2026-11-18",
     "paidAppsAgreementStatusObservedDate": "2026-11-18",
-    "statusEvidence": "Read-only current Business page after owner confirmation; no screenshot of financial forms retained."
+    "statusEvidence": "Read-only current Business page after owner confirmation; no screenshot of financial forms retained.",
+    "businessStatusFollowUp": {
+      "date": "2026-11-18",
+      "ownerReportedBankAndTaxSubmitted": true,
+      "reloadedBeforeVerification": true,
+      "paidAppsAgreement": "Pending User Info",
+      "banking": "Processing",
+      "appleBankingNotice": "Changes should appear in 24 hours; further banking updates unavailable while processing.",
+      "taxForms": "Missing Tax Info; U.S. Tax Questionnaire and Add Tax Info displayed, with incomplete-tax-forms banner.",
+      "remainingOwnerStep": "Check Tax Forms → Add Tax Info for the outstanding item. No bank resubmission requested.",
+      "agentChangedForms": false,
+      "privateFinancialValuesRetained": false,
+      "publicReviewSubmitted": false
+    }
   },
   "appInformationRecheck": {
     "date": "2026-11-18",

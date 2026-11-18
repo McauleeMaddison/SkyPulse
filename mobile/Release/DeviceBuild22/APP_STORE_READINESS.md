@@ -102,10 +102,14 @@ Public-site version 9 is published with matching planned launch pricing and a
 privacy explanation of Apple’s payment processing. The game binary and crystal
 economy are unchanged; the 18 metadata guard tests pass.
 
-**Paid Apps Agreement: Pending User Info.** The owner reports signing it on
-18 November. The live Business page now requires a bank account and tax forms
-before activation. The owner must complete these privately. No agreement was
-accepted, financial information entered or legal status selected by the agent. Current DSA non-trader
+**Paid Apps Agreement: Pending User Info.** The owner reports signing and
+submitting bank/tax information on 18 November. After refreshing, Business shows
+banking **Processing** (Apple says changes should appear within 24 hours), while
+Tax Forms still shows **Missing Tax Info** and an incomplete-tax-forms banner.
+The owner should check **Tax Forms → Add Tax Info** for the outstanding item.
+No bank resubmission is requested. Agreement activation is not yet verified.
+No agreement was accepted, financial information entered or legal status selected
+by the agent; no private financial values were retained. Current DSA non-trader
 status and Vietnam licensing applicability also need owner review for the paid
 release. Existing Mac/Vision Pro availability remains unchanged and unverified.
 See [APP_STORE_DRAFT_RECORD.json](APP_STORE_DRAFT_RECORD.json) and its screenshots.

@@ -16,7 +16,7 @@
     "appleSimilarityResolved": false,
     "evidenceLinkCheck": "PASS after correcting one archived-note path; all 147 image hashes/sizes unchanged."
   },
-  "liveAppleFormVerification": "18 November: restored browser; saved/reloaded paid marketing copy, reviewer notes and UK 79p price. Build 22 retained. Inspected saved age questionnaire (4+), categories, content-rights declaration, standard EULA and compliance notices without changing attestations. China exclusion applied and verified; other 174 countries unchanged. Owner email remains masked; Paid Apps Agreement now Pending User Info after owner signing; Apple requires bank account and tax forms.",
+  "liveAppleFormVerification": "18 November: restored browser; saved/reloaded paid marketing copy, reviewer notes and UK 79p price. Build 22 retained. Inspected saved age questionnaire (4+), categories, content-rights declaration, standard EULA and compliance notices without changing attestations. China exclusion applied and verified; other 174 countries unchanged. Owner email remains masked; After owner-reported signing and bank/tax submission, refreshed Business page shows Paid Apps Agreement Pending User Info, banking Processing and Missing Tax Info.",
   "submissionReadiness": "HOLD",
   "report": "APP_STORE_READINESS.md",
   "mediaPlan": "MEDIA_CAPTURE_PLAN.md",
@@ -48,6 +48,10 @@
     "agentAccepted": false,
     "ownerReportedSigned": true,
     "observedDate": "2026-11-18",
-    "remainingOwnerAction": "Complete bank account and required tax forms privately in Business; activation not yet verified."
+    "remainingOwnerAction": "Check the outstanding Tax Forms → Add Tax Info item; await completion of bank processing and verify agreement activation.",
+    "ownerReportedBankAndTaxSubmitted": true,
+    "bankingObservedStatus": "Processing",
+    "taxFormsObservedStatus": "Missing Tax Info",
+    "verifiedAfterReload": true
   }
 }
