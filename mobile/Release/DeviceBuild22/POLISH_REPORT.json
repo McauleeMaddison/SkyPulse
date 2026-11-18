@@ -307,7 +307,7 @@
     "Owner manual checklist and visual approval; no passes inferred from earlier quick-choice replies",
     "Actual sustained device performance and physical iPad/stable-OS coverage",
     "Accepted current device screenshots, App Preview and review walkthrough replacing historical media",
-    "Resolve the outstanding tax-information item and verify banking processing/Paid Apps Agreement activation; review trader status, country compliance and content rights",
+    "Review trader status, country compliance and content rights; Paid Apps Agreement/banking/listed tax-form activation is now verified",
     "Clarify Apple’s earlier unidentified similarity/account comparison",
     "Renewed explicit authorization before App Review submission"
   ],
@@ -318,7 +318,7 @@
     "metadataGuardsPassed": 18,
     "savedAndReloadVerified": true,
     "websiteVersion": 9,
-    "paidAppsAgreement": "Pending User Info; owner reports bank/tax submission 18 November; refreshed Business page shows banking Processing and Missing Tax Info",
+    "paidAppsAgreement": "Active; refreshed Apple Business page verified 18 November; bank account and listed tax forms also Active",
     "record": "APP_STORE_DRAFT_RECORD.json"
   }
 }

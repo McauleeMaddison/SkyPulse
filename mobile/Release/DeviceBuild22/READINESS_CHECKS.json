@@ -16,7 +16,7 @@
     "appleSimilarityResolved": false,
     "evidenceLinkCheck": "PASS after correcting one archived-note path; all 147 image hashes/sizes unchanged."
   },
-  "liveAppleFormVerification": "18 November: restored browser; saved/reloaded paid marketing copy, reviewer notes and UK 79p price. Build 22 retained. Inspected saved age questionnaire (4+), categories, content-rights declaration, standard EULA and compliance notices without changing attestations. China exclusion applied and verified; other 174 countries unchanged. Owner email remains masked; After owner-reported signing and bank/tax submission, refreshed Business page shows Paid Apps Agreement Pending User Info, banking Processing and Missing Tax Info.",
+  "liveAppleFormVerification": "18 November: restored browser; saved/reloaded paid marketing copy, reviewer notes and UK 79p price. Build 22 retained. Inspected saved age questionnaire (4+), categories, content-rights declaration, standard EULA and compliance notices without changing attestations. China exclusion applied and verified; other 174 countries unchanged. Owner email remains masked; After owner submissions and a further page refresh, Paid Apps Agreement, bank account and listed tax forms now show Active. No incomplete-tax or banking-processing notice remains.",
   "submissionReadiness": "HOLD",
   "report": "APP_STORE_READINESS.md",
   "mediaPlan": "MEDIA_CAPTURE_PLAN.md",
@@ -43,15 +43,15 @@
     "ownerOrDeviceAcceptance": false
   },
   "paidAppsAgreement": {
-    "observedStatus": "Pending User Info",
-    "ownerActionRequired": true,
+    "observedStatus": "Active",
+    "ownerActionRequired": false,
     "agentAccepted": false,
     "ownerReportedSigned": true,
     "observedDate": "2026-11-18",
-    "remainingOwnerAction": "Check the outstanding Tax Forms → Add Tax Info item; await completion of bank processing and verify agreement activation.",
+    "remainingOwnerAction": "None displayed for the agreement, bank account and listed tax forms; public review remains on hold.",
     "ownerReportedBankAndTaxSubmitted": true,
-    "bankingObservedStatus": "Processing",
-    "taxFormsObservedStatus": "Missing Tax Info",
+    "bankingObservedStatus": "Active",
+    "taxFormsObservedStatus": "Active",
     "verifiedAfterReload": true
   }
 }

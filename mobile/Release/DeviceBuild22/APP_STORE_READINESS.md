@@ -56,7 +56,7 @@ Historical save evidence is retained in Git history.
    The owner’s save is recorded separately from agent-observed fields.
 3. The saved **age-rating questionnaire** was inspected on 18 November (calculated
    4+, no override), alongside the rights declaration and standard EULA. Complete
-   owner content/rights review, required bank/tax information for Paid Apps Agreement activation and applicable account/compliance checks.
+   owner content/rights review and applicable account/compliance checks. Paid Apps Agreement, banking and listed tax forms are now verified Active.
    A low age rating is not inferred from the artwork. Accessibility features are
    not declared supported until their published evaluation criteria are met.
 4. Capture approved current media using [MEDIA_CAPTURE_PLAN.md](MEDIA_CAPTURE_PLAN.md).
@@ -102,12 +102,11 @@ Public-site version 9 is published with matching planned launch pricing and a
 privacy explanation of Apple’s payment processing. The game binary and crystal
 economy are unchanged; the 18 metadata guard tests pass.
 
-**Paid Apps Agreement: Pending User Info.** The owner reports signing and
-submitting bank/tax information on 18 November. After refreshing, Business shows
-banking **Processing** (Apple says changes should appear within 24 hours), while
-Tax Forms still shows **Missing Tax Info** and an incomplete-tax-forms banner.
-The owner should check **Tax Forms → Add Tax Info** for the outstanding item.
-No bank resubmission is requested. Agreement activation is not yet verified.
+**Paid Apps Agreement, bank account and listed tax forms: Active.** After the
+owner's submissions and a further page refresh on 18 November, Apple now shows
+these items as Active. The incomplete-tax and banking-processing notices have
+cleared. No further action is displayed for these items. Earlier pending-status
+observations are retained as historical evidence in the draft record.
 No agreement was accepted, financial information entered or legal status selected
 by the agent; no private financial values were retained. Current DSA non-trader
 status and Vietnam licensing applicability also need owner review for the paid

@@ -39,7 +39,7 @@
   "mediaStatus": "Existing store screenshots/preview and review attachment need accepted Build 22 device replacements before review. No new media claimed saved.",
   "additionalReleaseChecks": [
     "Complete owner manual/device acceptance and fresh media on the accepted candidate.",
-    "Owner reports signing and submitting bank/tax information; Apple still shows Paid Apps Agreement Pending User Info, banking Processing and Missing Tax Info. Owner checks outstanding Tax Forms item; verify later activation.",
+    "Paid Apps Agreement, bank account and listed tax forms verified Active on 18 November; no further action displayed for these items.",
     "Owner contact value remains masked to the browser; retain the owner’s explicit single-s address confirmation.",
     "Review applicability of non-trader status and Vietnam licensing for this paid release; no declarations or extra country/platform changes made.",
     "Apple’s earlier unidentified similarity/account concern remains open."
@@ -117,9 +117,9 @@
     "effectiveDate": "2026-11-18",
     "internationalPricing": "Apple comparable prices, UK base retained",
     "allThreeModesIncluded": true,
-    "paidAppsAgreementStatus": "Pending User Info",
+    "paidAppsAgreementStatus": "Active",
     "paidAppsAgreementAcceptancePerformedByAgent": false,
-    "taxAndBankingReadiness": "Owner reports bank and tax information submitted. Refreshed Business page shows banking Processing with a 24-hour notice, plus the incomplete-tax-forms banner and Missing Tax Info. Paid Apps Agreement is not yet Active. No financial values collected, retained or entered by agent.",
+    "taxAndBankingReadiness": "After owner submissions and refresh, Apple Business shows bank account and listed tax forms Active, with no incomplete-tax or banking-processing notice. No private financial values retained or entered by agent.",
     "paidAppsAgreementOwnerReportedSigned": true,
     "paidAppsAgreementOwnerReportedSignedDate": "2026-11-18",
     "paidAppsAgreementStatusObservedDate": "2026-11-18",
@@ -135,7 +135,24 @@
       "remainingOwnerStep": "Check Tax Forms → Add Tax Info for the outstanding item. No bank resubmission requested.",
       "agentChangedForms": false,
       "privateFinancialValuesRetained": false,
-      "publicReviewSubmitted": false
+      "publicReviewSubmitted": false,
+      "historical": true,
+      "supersededBy": "businessActivationVerification"
+    },
+    "businessActivationVerification": {
+      "date": "2026-11-18",
+      "verifiedAfterPageRefresh": true,
+      "paidAppsAgreement": "Active",
+      "freeAppsAgreement": "Active",
+      "bankAccount": "Active",
+      "listedUsTaxForms": "Active",
+      "incompleteTaxInformationNoticePresent": false,
+      "bankingProcessingNoticePresent": false,
+      "furtherActionDisplayedForTheseItems": false,
+      "agentChangedForms": false,
+      "privateFinancialValuesRetained": false,
+      "publicReviewSubmitted": false,
+      "scope": "Business status verification only; not gameplay acceptance, App Review approval or a legal classification determination."
     }
   },
   "appInformationRecheck": {
