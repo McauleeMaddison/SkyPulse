@@ -11,11 +11,11 @@ change this binary’s gameplay. App Store Connect remains Prepare for Submissio
 | --- | --- | --- |
 | Version and build | 1.0.0 (22) installed/launched; processed in SkyPulse Internal; selected in saved draft, reloaded 17 November | Complete the owner's tests on this exact candidate |
 | Listing | Current English (U.K.) description, promo, keywords, branded URLs and MacWebStudio credit saved/reloaded | Recheck after any subsequent gameplay change; other localizations not audited this pass |
-| Metadata validation | All field limits pass; 16 focused guards pass; 71 runtime scripts and all 2,559 manifest entries match | No claim of global uniqueness or Apple approval |
-| App information | Name/subtitle/categories and privacy URLs verified 16 November | Live age questionnaire, content-rights declaration, price, territories and account compliance still need verification |
+| Metadata validation | All field limits pass; 18 focused guards pass; 71 runtime scripts and all 2,559 manifest entries match | No claim of global uniqueness or Apple approval |
+| App information | Name/subtitle/categories and privacy URLs verified 16 November | Saved rating/questionnaire and rights declaration observed 18 November; owner content/rights review and applicable account compliance remain open |
 | Signing/privacy archive | Correct identity, iPhone/iPad families and packaged links; required UserDefaults privacy reason; strict signatures pass | Vendor UnityRuntime dSYM warning remains; app and UnityFramework dSYMs match |
 | Saved progress | All 44 preferences identical across install; after-launch changes limited to daily rollover and owner-confirmed bird selection | Owner confirms in-game state during checklist |
-| Public pages | All four branded pages published for Build 22 and returned HTTPS 200 with expected content | Current guide covers seven pickups, 36 Tech levels, mastery, daily heists and restoration; browser layout QA remains unverified |
+| Public pages | All four branded pages published for Build 22 and returned HTTPS 200 with expected content | Current guide covers seven pickups, 36 Tech levels, mastery, daily heists and restoration. Published Home checked at 319 px with no horizontal overflow; remaining browser/device layouts need acceptance |
 | Source artwork evidence | All 147 current images match the existing evidence ledger, with no uncovered or changed image | Original generation exports/ARTA receipt not independently inspected; no exclusive-rights certificate |
 | Review status | Draft saved; no Add for Review/Submit action | Owner hold stays active; Apple's earlier private similarity/account comparison remains unidentified |
 
@@ -39,9 +39,10 @@ that link is corrected and all 147 recorded image hashes/sizes pass. Current 3D
 models still use raster material/backdrop artwork and individual crash/unlock frames.
 Their internal origin records remain accurate. Marketing fields and public pages
 contain no AI-tool attribution. Optional attribution has been removed from the
-**local reviewer-note draft**, replacing it with current Unity 3D implementation
-wording. This revision is **not yet saved to App Store Connect**; browser editing
-controls are unavailable. The 17 November live-save record is retained separately.
+reviewer-note draft, replacing it with current Unity 3D implementation
+wording. The official browser runtime was subsequently restored, and the revised
+notes plus paid-download wording were saved and compared after reload on 18 November.
+Historical save evidence is retained in Git history.
 
 ## Complete before considering submission
 
@@ -50,19 +51,21 @@ controls are unavailable. The 17 November live-save record is retained separatel
    change requires a new numbered build and affected retests. Include actual
    iPhone/iPad model, OS, session length and measured performance evidence.
 2. The owner reports saving **macwebstudio26@gmail.com** in App Review Information
-   on 17 November. No further correction is requested. Independently reload and
-   verify it when browser control returns; the owner’s save is recorded separately
-   from the earlier agent-observed draft.
-3. Verify the live **age-rating questionnaire**, content-rights declaration,
-   free price, selected territories and applicable account/compliance details.
+   on 17 November. No further correction is requested. The browser is restored,
+   but masks the Email value; independent value verification remains unavailable.
+   The owner’s save is recorded separately from agent-observed fields.
+3. The saved **age-rating questionnaire** was inspected on 18 November (calculated
+   4+, no override), alongside the rights declaration and standard EULA. Complete
+   owner content/rights review, required bank/tax information for Paid Apps Agreement activation and applicable account/compliance checks.
    A low age rating is not inferred from the artwork. Accessibility features are
    not declared supported until their published evaluation criteria are met.
 4. Capture approved current media using [MEDIA_CAPTURE_PLAN.md](MEDIA_CAPTURE_PLAN.md).
    Existing store screenshots/preview and build 7 review walkthrough are historical.
    Keep their backups before replacing them. Editor QA images are not phone evidence.
-5. The owner reports **excluding China mainland and saving availability** for
-   the initial release on 17 November. Independently verify that saved selection
-   before submission; do not change other territories without a new instruction.
+5. **China mainland is excluded and independently verified on 18 November.**
+   It was still selected when checked, so the existing owner instruction was applied.
+   All 174 other country selections were preserved. Do not change other territories
+   without a new instruction.
    No AI/security declaration has been made. Check other selected-country
    requirements separately. Vietnam game
    licensing and EU trader status also require review if those regions are selected.
@@ -75,7 +78,8 @@ controls are unavailable. The 17 November live-save record is retained separatel
 
 ## Facts prepared for live forms — not submitted answers
 
-- No player account, chat, user content feed, advertisements or real-money purchases.
+- One-time paid download; all three modes included. No player account, chat, user
+  content feed, advertisements or in-app purchases.
 - Earned crystals fund birds, training, breeding, Core and twelve Tech families.
   Random flight pickups are not a paid loot-box feature.
 - Eight Signal Heist vaults, optional daily cases and local city-light restoration.
@@ -88,6 +92,27 @@ controls are unavailable. The 17 November live-save record is retained separatel
 
 These facts help review the actual forms; they do not replace the age questionnaire,
 rights review, country documentation or the owner's device results.
+
+## Paid release and restored browser — 18 November
+
+The owner approved **£0.79** after the live UK picker showed no exact £0.80 option.
+The price was saved/reloaded with Apple comparable international prices. Current
+listing and reviewer text now say one purchase includes all three offline modes.
+Public-site version 9 is published with matching planned launch pricing and a
+privacy explanation of Apple’s payment processing. The game binary and crystal
+economy are unchanged; the 18 metadata guard tests pass.
+
+**Paid Apps Agreement: Pending User Info.** The owner reports signing it on
+18 November. The live Business page now requires a bank account and tax forms
+before activation. The owner must complete these privately. No agreement was
+accepted, financial information entered or legal status selected by the agent. Current DSA non-trader
+status and Vietnam licensing applicability also need owner review for the paid
+release. Existing Mac/Vision Pro availability remains unchanged and unverified.
+See [APP_STORE_DRAFT_RECORD.json](APP_STORE_DRAFT_RECORD.json) and its screenshots.
+
+Browser editing is restored through the already-enabled official Browser plugin.
+No Safari security setting or broad permission change was needed. Real draft
+Save/reload comparisons verified the connection. No Add for Review action occurred.
 
 ## Known diagnostics
 

@@ -1,10 +1,10 @@
 {
-  "date": "2026-11-17",
+  "date": "2026-11-18",
   "projectId": "appgprj_6a9eb032fc0c81918e77b1bc278ab197",
-  "sourceCommit": "7e512a2b6b0fbaa702318de4c08f720eebffd877",
-  "versionNumber": 8,
-  "savedVersionId": "appgprj_6a9eb032fc0c81918e77b1bc278ab197~appgver_95b19e25873481919e4239c3d0c56329",
-  "deploymentId": "appgdep_6afc3f3478548191a78ad9ad57abab73",
+  "sourceCommit": "aae91c1ff2fcf65d6a55201ce2b68a9e499847c7",
+  "versionNumber": 9,
+  "savedVersionId": "appgprj_6a9eb032fc0c81918e77b1bc278ab197~appgver_a2b6f833ac5081919b35d97f3ca4edc3",
+  "deploymentId": "appgdep_6afd771b3c20819182364001289b25f9",
   "deploymentStatus": "succeeded",
   "deploymentUrl": "https://skypulse-game.mcaulee19.chatgpt.site",
   "brandedUrl": "https://skypulse.macwebstudio.com/",
@@ -19,19 +19,27 @@
     "Build 22 guide/support cover all seven pickups and twelve Tech families / 36 levels",
     "City restoration, optional daily heists, cosmetic bird mastery and Retry Save explained accurately",
     "Privacy local-storage description covers mastery, restoration and saved daily puzzle attempts; collection practices unchanged",
-    "MacWebStudio credit and confirmed single-s support email retained"
+    "MacWebStudio credit and confirmed single-s support email retained",
+    "Planned UK launch price £0.79 for the complete game; all three modes included.",
+    "Replace no-real-money-purchases language with no-in-app-purchases; clarify Apple handles the download payment/refunds."
   ],
   "verification": [
-    "TypeScript noEmit check passed",
-    "Static Vinext build succeeded for all four routes",
-    "Generated HTML internal links and required feature text checked",
-    "Branded HTTPS Home/guide/support/privacy all returned 200 with current expected copy"
+    "TypeScript noEmit passed",
+    "Static Vinext build passed for all four routes",
+    "All four branded routes returned HTTPS 200 with expected paid-release/contact copy",
+    "Live browser Home inspection at 319 px width: pricing readable, no horizontal overflow",
+    "Exact source pushed to website GitHub main"
   ],
-  "browserLayoutQA": "Not run: browser/computer controls unavailable. Existing CSS and layout preserved.",
-  "archive": "/Users/mcauleemaddison/Desktop/SkyPulse/artifacts/public-site-build22/site.tar.gz",
-  "appStoreSubmission": "No public review submitted; live App Store contact and country changes remain pending.",
-  "sourceReconciliation": "Merged current hosted source into the clean Desktop checkout, preserving both histories before editing.",
-  "archiveSha256": "593c638f84a39fa875a8eb4970b528b7bc7bda6e6caca736d2ef4cc84dfb5bc6",
+  "browserLayoutQA": "Published Home inspected at actual 319 px browser width; no horizontal overflow, price copy visible. CSS unchanged; no general all-device certification.",
+  "archive": "/Users/mcauleemaddison/Desktop/SkyPulse/artifacts/public-site-paid-20261118/site.tar.gz",
+  "appStoreSubmission": "Public review remains on hold. Paid copy/notes and 79p price saved; owner signed Paid Apps Agreement, now Pending User Info for bank/tax completion. Device/media acceptance pending.",
+  "sourceReconciliation": "Supported source helper opened the current v8 checkout, validated the text-only update, committed/pushed and packaged the exact v9 source.",
+  "archiveSha256": "e7341acd55138ed4060ccfca47736bee0a21eb6c643bdae2e44822c007caa8e1",
   "githubSourceRepository": "https://github.com/McauleeMaddison/public-site",
-  "githubMainSynced": true
+  "githubMainSynced": true,
+  "hostedVersionArchive": {
+    "contentHash": "sha256:8b4d65b1da25280620937fe1e110cafc3a54644c579538566b146a04ab132176",
+    "sizeBytes": 2304000,
+    "scope": "Sites saved-version archive metadata for source commit aae91c1; distinct from the local compressed source export identified by archiveSha256."
+  }
 }

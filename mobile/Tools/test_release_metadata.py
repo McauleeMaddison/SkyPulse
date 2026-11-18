@@ -24,6 +24,13 @@ class CurrentReleaseCopyTests(unittest.TestCase):
     def test_current_candidate(self):
         validate_copy(self.current, self.contract, current=True)
 
+    def test_paid_download_rejects_free_mode_claims(self):
+        for text in ['Three free offline modes.', '3 free modes.', 'Free offline modes.']:
+            self.rejects('description', self.current['description'] + '\n' + text)
+
+    def test_paid_download_requires_purchase_inclusion_copy(self):
+        self.rejects('description', self.current['description'].replace('one purchase', 'normal play'))
+
     def test_stale_build9_copy(self):
         old = json.loads((ROOT / 'mobile/Release/PremiumTestFlight20261012/metadata.json').read_text())
         with self.assertRaises(AssertionError):

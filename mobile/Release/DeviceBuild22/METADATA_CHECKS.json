@@ -13,12 +13,12 @@
       "unit": "characters"
     },
     "promotionalText": {
-      "length": 159,
+      "length": 168,
       "limit": 170,
       "unit": "characters"
     },
     "description": {
-      "length": 3715,
+      "length": 3761,
       "limit": 4000,
       "unit": "characters"
     },
@@ -41,17 +41,5 @@
   "identityRetained": true,
   "advertisingAnalyticsPurchasingPackages": false,
   "archiveIdentityPrivacyAndPackagedLinks": true,
-  "passed": true,
-  "verifiedDate": "2026-11-17",
-  "localContactMatchesOwnerConfirmation": true,
-  "privacyUrl": {
-    "url": "https://skypulse.macwebstudio.com/privacy",
-    "http": 200,
-    "contactPresent": true
-  },
-  "supportUrl": {
-    "url": "https://skypulse.macwebstudio.com/support",
-    "http": 200,
-    "contactPresent": true
-  }
+  "passed": true
 }

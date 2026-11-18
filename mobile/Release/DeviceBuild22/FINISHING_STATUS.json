@@ -104,7 +104,18 @@
     "runtimeChanged": false,
     "restoredMissingCandidateTextures": 3,
     "internalEvidenceLinkRepaired": true,
-    "reviewNotesLocalRevisionPendingLiveSave": true,
+    "reviewNotesLocalRevisionPendingLiveSave": false,
     "submissionReady": false
+  },
+  "storeFollowUp": {
+    "date": "2026-11-18",
+    "browserEditingRestored": true,
+    "paidPrice": "GBP 0.79, saved/reloaded",
+    "marketingAndReviewNotesSaved": true,
+    "chinaMainlandExcludedVerified": true,
+    "metadataGuardsPassed": 18,
+    "paidAppsAgreement": "Pending User Info; owner reports signing 18 November; live Business page requires bank account and tax forms",
+    "publicReviewSubmitted": false,
+    "runtimeChanged": false
   }
 }

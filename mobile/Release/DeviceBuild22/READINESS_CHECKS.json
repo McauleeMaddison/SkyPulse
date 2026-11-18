@@ -4,7 +4,7 @@
   "publicReviewSubmitted": false,
   "metadataGuardTests": {
     "passed": true,
-    "tests": 16
+    "tests": 18
   },
   "artworkCoverage": {
     "sourceImages": 147,
@@ -16,23 +16,23 @@
     "appleSimilarityResolved": false,
     "evidenceLinkCheck": "PASS after correcting one archived-note path; all 147 image hashes/sizes unchanged."
   },
-  "liveAppleFormVerification": "Saved Build 22/copy evidence retained from earlier 17 November session. Owner now reports saving the correct email and excluding China mainland. Both owner actions await independent reload verification. Age rating, pricing and other applicable country/account declarations still require verification.",
+  "liveAppleFormVerification": "18 November: restored browser; saved/reloaded paid marketing copy, reviewer notes and UK 79p price. Build 22 retained. Inspected saved age questionnaire (4+), categories, content-rights declaration, standard EULA and compliance notices without changing attestations. China exclusion applied and verified; other 174 countries unchanged. Owner email remains masked; Paid Apps Agreement now Pending User Info after owner signing; Apple requires bank account and tax forms.",
   "submissionReadiness": "HOLD",
   "report": "APP_STORE_READINESS.md",
   "mediaPlan": "MEDIA_CAPTURE_PLAN.md",
   "publicSite": {
-    "version": 8,
+    "version": 9,
     "sourceTypecheck": "PASS",
     "staticBuild": "PASS: four public routes",
     "internalLinks": "PASS",
     "brandedHttpsContent": "PASS: Home, guide, support, privacy",
-    "browserLayoutQA": "Not run; browser controls unavailable, existing CSS/layout retained."
+    "browserLayoutQA": "Published Home checked at actual 319 px browser width; no horizontal overflow."
   },
   "ownerReportedContactSaved": true,
   "chinaMainlandExclusion": {
     "authorized": true,
     "ownerReportedSaved": true,
-    "independentlyReloadVerified": false
+    "independentlyReloadVerified": true
   },
   "currentPolishReport": "POLISH_REPORT.json",
   "automatedReleaseRegression": {
@@ -41,5 +41,13 @@
     "compilerErrors": 0,
     "compilerWarnings": 0,
     "ownerOrDeviceAcceptance": false
+  },
+  "paidAppsAgreement": {
+    "observedStatus": "Pending User Info",
+    "ownerActionRequired": true,
+    "agentAccepted": false,
+    "ownerReportedSigned": true,
+    "observedDate": "2026-11-18",
+    "remainingOwnerAction": "Complete bank account and required tax forms privately in Business; activation not yet verified."
   }
 }

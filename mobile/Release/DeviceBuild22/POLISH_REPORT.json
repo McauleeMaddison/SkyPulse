@@ -280,10 +280,10 @@
     "rawEvidence": "artifacts/release-polish-20261118/installed-app.json"
   },
   "metadataWording": {
-    "publicListingAndPages": "No AI-tool attribution found in the current local marketing fields or four live public pages.",
+    "publicListingAndPages": "Paid download accurately described as one purchase including all three offline modes; no optional AI-tool attribution in marketing fields/public pages.",
     "reviewerNotes": "Optional AI-tool attribution removed from local REVIEW_NOTES.txt; accurate Unity 3D implementation wording prepared.",
-    "liveReviewerNotesUpdated": false,
-    "reason": "Browser editing controls unavailable in this session. Last independently saved review notes remain the 17 November version.",
+    "liveReviewerNotesUpdated": true,
+    "reason": "Official browser runtime restored; paid-release reviewer notes saved and compared after reload.",
     "internalOriginsRetained": true,
     "remainingRasterUses": [
       "Per-bird crash/unlock artwork and selected UI portraits",
@@ -304,13 +304,21 @@
     "Missing UnityRuntime.framework dSYM remains the previously accepted nonfatal upload warning."
   ],
   "remainingReleaseGates": [
-    "Owner manual checklist and visual approval; no gameplay passes inferred from previous quick-choice replies",
-    "Actual sustained device frame pacing, memory, interruptions, heat and sound; physical iPad/stable-OS coverage pending",
+    "Owner manual checklist and visual approval; no passes inferred from earlier quick-choice replies",
+    "Actual sustained device performance and physical iPad/stable-OS coverage",
     "Accepted current device screenshots, App Preview and review walkthrough replacing historical media",
-    "Independently reload live Apple contact/territories, age questionnaire, content rights, pricing and applicable account/region fields; save the prepared reviewer-note revision",
-    "Clarify Apple’s prior unidentified similarity/account comparison",
+    "Owner completes required tax/banking information for Paid Apps Agreement activation; review trader status, country compliance and content rights",
+    "Clarify Apple’s earlier unidentified similarity/account comparison",
     "Renewed explicit authorization before App Review submission"
   ],
   "artifactDirectory": "artifacts/release-polish-20261118/",
-  "disposableProjectRemovedAfterPassedRuns": true
+  "disposableProjectRemovedAfterPassedRuns": true,
+  "paidPricingFollowUp": {
+    "price": "GBP 0.79",
+    "metadataGuardsPassed": 18,
+    "savedAndReloadVerified": true,
+    "websiteVersion": 9,
+    "paidAppsAgreement": "Pending User Info; owner reports signing 18 November; live Business page requires bank account and tax forms",
+    "record": "APP_STORE_DRAFT_RECORD.json"
+  }
 }

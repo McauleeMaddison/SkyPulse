@@ -17,7 +17,7 @@ WALKTHROUGH
 3. Signal Heist: tap mirrors/prisms, route energy to all cores and the uplink, manage trace, and use PLAN for a free exact route/cost preview. Splitters divide beams; powered relays open shutters. Intermediate vaults advance immediately. Blackout has no bird upgrades or Hangar.
 4. HOW TO PLAY covers the current worlds, pickups, Core, Tech, training, breeding and puzzle systems. Pause, retry, Main Menu, Reduced Motion, sound and haptic preferences are available.
 
-No player sign-in, advertising or real-money purchases. Progress stays on device.
+One-time paid download; all three modes are included. No player sign-in, advertising or in-app purchases. Progress stays on device.
 
 DEVELOPER AND IMPLEMENTATION
 Developed by Mcaulee Maddison under his MacWebStudio brand, macwebstudio.com. The game uses native Unity 3D bird prefabs, modelled island districts and world structures, and themed 3D pipes. Bundle identifier, Apple developer account and signing identity are retained. Development history and asset records are retained internally.

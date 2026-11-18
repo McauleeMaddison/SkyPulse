@@ -1,5 +1,5 @@
 {
-  "date": "2026-11-17",
+  "date": "2026-11-18",
   "version": "1.0.0",
   "selectedBuild": "22",
   "status": "Prepare for Submission",
@@ -14,7 +14,9 @@
     "version",
     "copyright",
     "reviewNotes",
-    "selectedBuild"
+    "selectedBuild",
+    "UKDownloadPrice",
+    "availabilityExcludeChinaMainland"
   ],
   "earlierVerifiedAppInformationDate": "2026-11-16",
   "appInformation": {
@@ -36,21 +38,24 @@
   "existingReviewAttachment": "SkyPulse-build7-review.mp4 retained as historical, not current evidence",
   "mediaStatus": "Existing store screenshots/preview and review attachment need accepted Build 22 device replacements before review. No new media claimed saved.",
   "additionalReleaseChecks": [
-    "Independently recheck the owner-saved single-s contact when browser access returns; owner reports the correction is already saved.",
-    "Independently verify the owner-saved China mainland exclusion when browser controls return; no further availability change requested.",
-    "Apple similarity/account concern remains unresolved pending specific clarification."
+    "Complete owner manual/device acceptance and fresh media on the accepted candidate.",
+    "Owner signed the Paid Apps Agreement; Apple shows Pending User Info and requires bank account and tax forms before activation.",
+    "Owner contact value remains masked to the browser; retain the owner’s explicit single-s address confirmation.",
+    "Review applicability of non-trader status and Vietnam licensing for this paid release; no declarations or extra country/platform changes made.",
+    "Apple’s earlier unidentified similarity/account concern remains open."
   ],
   "agreement": "Developer portal shows agreement issued 29 October 2026 accepted 16 November 2026; build upload processed successfully.",
   "locale": "English (U.K.)",
   "liveLinkCheck": {
-    "date": "2026-11-17",
+    "date": "2026-11-18",
     "supportHttp": 200,
     "privacyHttp": 200,
     "publicSupportContactPresent": true,
     "scope": "Read-only HTTPS response/contact and canonical-link checks, not legal review or full content/guide acceptance.",
     "homeHttp": 200,
     "guideHttp": 200,
-    "currentBuild22CopyVerified": true
+    "currentBuild22CopyVerified": true,
+    "currentPaidCopyVerified": true
   },
   "appReviewContactEmail": {
     "confirmedAddress": "macwebstudio26@gmail.com",
@@ -59,7 +64,7 @@
     "ownerReportedSavedDate": "2026-11-17",
     "independentlyReloadVerified": false,
     "lastIndependentlyObservedLiveAddressBeforeOwnerCorrection": "macwebsstudio26@gmail.com",
-    "verificationNote": "Owner reports saving the single-s email in App Store Connect. No further correction is requested. Independent reload verification awaits browser controls."
+    "verificationNote": "Owner-reported correction retained. Current browser masks the live Email value as <redacted>; no independent confirmation and no false mismatch inferred."
   },
   "publicSiteRecord": "PUBLIC_SITE_RECORD.json",
   "ownerReportedSavedFields": [
@@ -74,23 +79,142 @@
     "scope": "Initial release; other territories unchanged by instruction.",
     "ownerReportedSaved": true,
     "ownerReportedSavedDate": "2026-11-17",
-    "appliedBy": "Owner, per direct confirmation",
-    "independentlyReloadVerified": false,
-    "verificationNote": "Owner reports deselecting China mainland and saving availability without submitting for review. Independent reload verification awaits browser controls."
+    "appliedBy": "Agent, under the owner’s existing explicit exclusion instruction",
+    "independentlyReloadVerified": true,
+    "verificationNote": "Changed only China mainland. Confirmed Not Available; all other 174 selections unchanged; pricing overview shows 174 Available / 1 Not Available.",
+    "independentlyVerifiedDate": "2026-11-18",
+    "observedBeforeCorrection": "All 175 countries selected, including China mainland, despite the earlier owner-reported save."
   },
   "reviewNotesLastSavedAndReloadVerified": {
-    "date": "2026-11-17",
-    "sha256": "191f33cc25663947b9a4d6d14f6d3b1ab48790e32d53f7dc56760b09a82df2e8",
-    "sourceCommit": "43b7a31",
-    "scope": "Previously saved reviewer notes. The local 18 November revision has not been saved to App Store Connect."
+    "date": "2026-11-18",
+    "sha256": "661d8b7258161c22cea80ce37c4beea7e79b13707f47e00c356cb8b048de6218",
+    "characters": 3576,
+    "scope": "Exact local reviewer notes compared to live textarea after Save and reload; one-time paid download wording included. No App Review action."
   },
   "reviewNotesLocalDraft": {
     "date": "2026-11-18",
     "path": "REVIEW_NOTES.txt",
-    "sha256": "b50bd734db55ddb909a7ec59c4ce892ce42292da590159de98f0c14d4f6e6f5b",
-    "characters": 3526,
-    "liveSaved": false,
-    "reason": "Browser editing controls unavailable in this session. Prepared only; App Review remains on hold.",
-    "change": "Focus optional reviewer wording on current Unity 3D implementation; remove voluntary AI-tool attribution. No rights, originality or historical-source claims replaced."
+    "sha256": "661d8b7258161c22cea80ce37c4beea7e79b13707f47e00c356cb8b048de6218",
+    "characters": 3576,
+    "liveSaved": true,
+    "reason": "Browser runtime reconnected; exact prepared text saved and reloaded.",
+    "change": "Current Unity 3D implementation and one-time paid download, all modes included, no in-app purchases; voluntary AI-tool attribution removed while internal origins remain accurate.",
+    "savedAndReloadVerifiedDate": "2026-11-18"
+  },
+  "browserEditing": {
+    "restored": true,
+    "date": "2026-11-18",
+    "method": "Initialised the already-enabled official Browser plugin runtime through its supported Node REPL client. Verified real App Store Connect read/write and reload; no Safari security setting, plugin permission, password or cookie changed."
+  },
+  "paidDownload": {
+    "currency": "GBP",
+    "baseCountry": "United Kingdom",
+    "price": "0.79",
+    "type": "one-time download",
+    "ownerApproved": "2026-11-18",
+    "exact80pOffered": false,
+    "savedAndReloadVerified": true,
+    "effectiveDate": "2026-11-18",
+    "internationalPricing": "Apple comparable prices, UK base retained",
+    "allThreeModesIncluded": true,
+    "paidAppsAgreementStatus": "Pending User Info",
+    "paidAppsAgreementAcceptancePerformedByAgent": false,
+    "taxAndBankingReadiness": "Apple explicitly prompts Add Bank Account and Add Tax Form; missing tax information is shown. Owner must complete privately; no values collected or entered by agent.",
+    "paidAppsAgreementOwnerReportedSigned": true,
+    "paidAppsAgreementOwnerReportedSignedDate": "2026-11-18",
+    "paidAppsAgreementStatusObservedDate": "2026-11-18",
+    "statusEvidence": "Read-only current Business page after owner confirmation; no screenshot of financial forms retained."
+  },
+  "appInformationRecheck": {
+    "date": "2026-11-18",
+    "bundleId": "com.mcauleemaddison.skypulse",
+    "categories": [
+      "Games",
+      "Action",
+      "Puzzle"
+    ],
+    "standardEula": "Apple standard EULA displayed; not accepted/modified by agent",
+    "contentRightsDeclaration": "Saved setting says no third-party content; observed only, not a rights certification.",
+    "ageRating": "4+ calculated; Not Applicable override; not Made for Kids",
+    "ageQuestionnaire": [
+      {
+        "step": 1,
+        "selected": [
+          "parentalControls__false",
+          "ageAssurance__false",
+          "unrestrictedWebAccess__false",
+          "userGeneratedContent__false",
+          "socialMedia__false",
+          "socialMediaAgeRestricted__false",
+          "messagingAndChat__false",
+          "advertising__false"
+        ]
+      },
+      {
+        "step": 2,
+        "selected": [
+          "profanityOrCrudeHumor__NONE",
+          "horrorOrFearThemes__NONE",
+          "alcoholTobaccoOrDrugUseOrReferences__NONE"
+        ]
+      },
+      {
+        "step": 3,
+        "selected": [
+          "medicalOrTreatmentInformation__NONE",
+          "healthOrWellnessTopics__false"
+        ]
+      },
+      {
+        "step": 4,
+        "selected": [
+          "matureOrSuggestiveThemes__NONE",
+          "sexualContentOrNudity__NONE",
+          "sexualContentGraphicAndNudity__NONE"
+        ]
+      },
+      {
+        "step": 5,
+        "selected": [
+          "violenceCartoonOrFantasy__NONE",
+          "violenceRealistic__NONE",
+          "violenceRealisticProlongedGraphicOrSadistic__NONE",
+          "gunsOrOtherWeapons__NONE"
+        ]
+      },
+      {
+        "step": 6,
+        "selected": [
+          "gamblingSimulated__NONE",
+          "contests__NONE",
+          "gambling__false",
+          "lootBox__false"
+        ]
+      },
+      {
+        "step": 7,
+        "calculatedRating": "4+",
+        "override": "Not Applicable",
+        "changed": false
+      }
+    ],
+    "questionnaireChanged": false,
+    "ownerVisualContentAcceptancePending": true
+  },
+  "complianceObserved": {
+    "date": "2026-11-18",
+    "dsaStatus": "Developer currently identified as non-trader; owner classification review needed for paid release.",
+    "vietnam": "Selected territory with blank optional license entry; applicability not determined. Other country selections preserved.",
+    "chinaNotices": "China-specific AI/synthetic-content and security-assessment rows remain visible as Missing Info. China availability is now independently verified excluded; no false declarations submitted.",
+    "macAndVisionProAvailability": "Existing checkboxes enabled; compatibility not owner-verified. Left unchanged.",
+    "legalAcceptancePerformed": false
+  },
+  "proofScreenshots": {
+    "directory": "AppStoreEvidence",
+    "sha256": {
+      "Price-GBP-079.jpg": "ae9b1f38c9af559ab7a3fb649ed5b16e89db0a8ff8fd275345a814654a28ee46",
+      "China-Mainland-Excluded.jpg": "a86a89c64666aae41b4dee4860df9d3e0035e95d768919b7a05e0509d94e919f",
+      "Paid-Listing-Saved.jpg": "88d19a7618d8a7bd0b75f349508a3d1d4b0ff01c75c15bbd716fafe09df0ab09"
+    }
   }
 }
