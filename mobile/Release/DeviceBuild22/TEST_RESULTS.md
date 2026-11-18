@@ -32,6 +32,19 @@ runtime defect or new phone build is claimed. Evidence:
 [focused report](../../Development/Current/UnityAcceptance/BIRD_TAP_CAPTURE.json),
 [corrected sheet](../../Development/Current/UnityAcceptance/Bird-Tap-Phases.png).
 
+## Agent recheck — 18 November 2026
+
+Three isolated Unity suites passed with zero C# compiler errors/warnings. They
+include native bird strokes, touch/UI separation, matching automatic Relay gates,
+puzzle progression/finalization, save interruption recovery, and all twelve world
+transitions at simulated 30/60/120 Hz. No text-overflow findings were reported.
+Three missing sky textures were restored byte-for-byte to the Build 22 candidate.
+Source integrity, strict signatures, metadata guards and all four public links pass.
+The missing archived evidence-note link was corrected. Build 22 is still installed;
+the app was not launched, the owner save was not changed and no performance trace
+was recorded. Owner result rows below stay **NOT TESTED** until supplied.
+Full evidence: [POLISH_REPORT.json](POLISH_REPORT.json).
+
 ## Session record
 
 Date/time:

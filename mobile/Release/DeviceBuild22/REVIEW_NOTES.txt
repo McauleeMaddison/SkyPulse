@@ -1,7 +1,7 @@
-SkyPulse Arcade — version 1.0.0 / Build 22 acceptance candidate, 17 November 2026
+SkyPulse Arcade — version 1.0.0 / Build 22 acceptance candidate, 18 November 2026
 
 PUBLIC REVIEW HOLD
-The developer is completing visual/device tests and the full game checklist and is awaiting Apple's clarification of the previous similarity/account concern. This is a saved draft update, not a request for review. Do not treat the historical attachment as evidence for the current candidate.
+The developer is completing visual/device tests and the full game checklist and is awaiting Apple's clarification of the previous similarity/account concern. These notes are prepared for the existing App Store Connect draft, not a request for review. Do not treat the historical attachment as evidence for the current candidate.
 
 CURRENT CANDIDATE
 The current candidate is 1.0.0 (22), built from GitHub main source 1fd3dfa with Unity 6000.6.0f1. iOS compilation and strict signature verification passed. It was installed over the existing iPhone save and launched on 16 November, uploaded successfully and processed in TestFlight, and is selected in this saved draft. Owner visual, gameplay and sustained-performance acceptance remain pending. Existing store media and the attached build 7 walkthrough are historical and must be replaced with accepted Build 22 evidence before review.
@@ -19,8 +19,8 @@ WALKTHROUGH
 
 No player sign-in, advertising or real-money purchases. Progress stays on device.
 
-DEVELOPER AND PROVENANCE
-Developed by Mcaulee Maddison under his MacWebStudio brand, macwebstudio.com. Bundle identifier, Apple developer account and signing identity are retained. The developer reports using his own/generated references with ARTA and ChatGPT artwork and AI-assisted coding; source history and an artwork evidence ledger are retained. Exclusive legal rights to generated material are not asserted here.
+DEVELOPER AND IMPLEMENTATION
+Developed by Mcaulee Maddison under his MacWebStudio brand, macwebstudio.com. The game uses native Unity 3D bird prefabs, modelled island districts and world structures, and themed 3D pipes. Bundle identifier, Apple developer account and signing identity are retained. Development history and asset records are retained internally.
 
 The developer states he has never had another Apple developer account and has not supplied the project through another account, publisher, contractor or purchased game template. Apple's private comparison remains unidentified; this draft does not claim that concern is resolved.
 

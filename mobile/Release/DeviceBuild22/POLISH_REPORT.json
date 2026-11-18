@@ -1,0 +1,316 @@
+{
+  "date": "2026-11-18",
+  "candidate": "1.0.0 (22)",
+  "runtimeSourceCommit": "1fd3dfa62b93e35fc4d94439eea17ccfac0091ff",
+  "decision": "HOLD PUBLIC REVIEW; automated regression passed, owner acceptance and remaining release gates open",
+  "runtimeChanged": false,
+  "phoneReinstalledOrLaunched": false,
+  "ownerSaveModified": false,
+  "publicReviewSubmitted": false,
+  "tests": [
+    {
+      "entrypoint": "SkyPulseFinalPolishChecks",
+      "startedUtc": "2026-11-18T09:21:49.114395+00:00",
+      "exitCode": 0,
+      "markers": {
+        "SKYPULSE_FINAL_POLISH_PASS": true,
+        "SKYPULSE_FIELD_TECH_PASS": true,
+        "SKYPULSE_RUNTIME_BIRDS_PASS": true
+      },
+      "compilerErrors": 0,
+      "compilerWarnings": 0,
+      "checkCounts": {
+        "BIRD_CHECK": 75,
+        "BIRD_REVIEW_FINISH_CHECK": 53,
+        "EVERYDAY_INPUT_CHECK": 244,
+        "FAILURE_CLARITY_CHECK": 221,
+        "FIELD_TECH_CHECK": 188,
+        "FINAL_POLISH_CHECK": 3424,
+        "FINAL_UI_CHECK": 14,
+        "FIRST_PLAY_CHECK": 23,
+        "HOME_PROGRESS_CHECK": 670,
+        "MODE_FEEDBACK_CHECK": 27,
+        "ONE_THUMB_CHECK": 86,
+        "PICKUP_CHECK": 208,
+        "PICKUP_DISPLAY_CHECK": 94,
+        "PIPE_FINISH_CHECK": 8,
+        "POLISH_CHECK": 615,
+        "PROGRESSION_CLARITY_CHECK": 29,
+        "READABILITY_CHECK": 45,
+        "RUNTIME_BIRD_CHECK": 261,
+        "TREE_CHECK": 97,
+        "WORLD_LIGHTING_CHECK": 91,
+        "WORLD_STYLE_CHECK": 899
+      },
+      "searchDatabaseDiagnostic": true,
+      "deviceTested": false,
+      "passed": true,
+      "loggedAssertions": 7372,
+      "endedUtc": "2026-11-18T09:23:04.979263+00:00",
+      "log": {
+        "path": "mobile/Development/Current/UnityAcceptance/release-polish-20261118-final.log.gz",
+        "sha256": "2127bd6c88281adbf00458c3644222c89c516b04f8b2eb9590deecfc50e12f2e",
+        "uncompressedSha256": "114443c8c18760e0d0246a50a50d72ff71537c9254a90594b8bca4be2e397da0"
+      }
+    },
+    {
+      "entrypoint": "SkyPulseVisualAcceptanceChecks",
+      "startedUtc": "2026-11-18T09:23:05.376939+00:00",
+      "exitCode": 0,
+      "markers": {
+        "SKYPULSE_VISUAL_ACCEPTANCE_CAPTURED": true,
+        "SKYPULSE_TOUCH_COMFORT_PASS": true,
+        "SKYPULSE_GUIDE_WORLD_PASS": true
+      },
+      "compilerErrors": 0,
+      "compilerWarnings": 0,
+      "checkCounts": {
+        "GUIDE_WORLD_CHECK": 8561,
+        "HOME_PROGRESS_CHECK": 670,
+        "TOUCH_COMFORT_CHECK": 846,
+        "VISUAL_ACCEPTANCE_CHECK": 501
+      },
+      "searchDatabaseDiagnostic": true,
+      "deviceTested": false,
+      "passed": true,
+      "loggedAssertions": 10578,
+      "endedUtc": "2026-11-18T09:23:19.565009+00:00",
+      "log": {
+        "path": "mobile/Development/Current/UnityAcceptance/release-polish-20261118-visual.log.gz",
+        "sha256": "e127528307eb2762e7dc916b595cde768bebc3e07241b4f8345987901da6d979",
+        "uncompressedSha256": "4b0e2bc2ea37e92c18e5adb32d0d4a62e4b8cee343bbe91cafc541fd447a148c"
+      }
+    },
+    {
+      "entrypoint": "SkyPulseFinishAcceptanceChecks",
+      "startedUtc": "2026-11-18T09:23:19.899677+00:00",
+      "exitCode": 0,
+      "markers": {
+        "SKYPULSE_FINISH_ACCEPTANCE_PASS": true,
+        "SKYPULSE_JOURNEY_PASS": true
+      },
+      "compilerErrors": 0,
+      "compilerWarnings": 0,
+      "checkCounts": {
+        "EVERYDAY_INPUT_CHECK": 244,
+        "FAILURE_CLARITY_CHECK": 221,
+        "FINISH_ACCEPTANCE_CHECK": 38,
+        "JOURNEY_CHECK": 86,
+        "TOUCH_COMFORT_CHECK": 846
+      },
+      "searchDatabaseDiagnostic": true,
+      "deviceTested": false,
+      "passed": true,
+      "loggedAssertions": 1435,
+      "endedUtc": "2026-11-18T09:23:28.385187+00:00",
+      "log": {
+        "path": "mobile/Development/Current/UnityAcceptance/release-polish-20261118-finish.log.gz",
+        "sha256": "31e2d09708d13c24b29b538cfd45a617cdae08fb1a1d799d0b3000595614afdd",
+        "uncompressedSha256": "2360ca01d019a5917a1dc03abe3b4f24e58066951c880282f4227353c5b3ff72"
+      }
+    }
+  ],
+  "assertionCountNote": "Logged assertions repeat some suites across runs; these are not counts of distinct test cases or measured device frames.",
+  "layoutFindings": [],
+  "scope": [
+    "15 native bird identities, tap strokes, pause/resume and own hit artwork; simulated 30/60/120 Hz",
+    "Touch versus simulated mouse deduplication and interactive UI separation",
+    "Automatic matching Relay gates, charge accounting and same-frame collection/collision",
+    "Blackout planning, trace, instant intermediate progression, final results and callback protection",
+    "12 authored sky textures load; all world transitions and wrapping at simulated 30/60/120 Hz",
+    "Small/large portrait phone and iPad-size layout/guide checks in Editor",
+    "Purchase effects, pickups, progression, interrupted saves and idempotent reward handling"
+  ],
+  "metadataGuardTests": {
+    "tests": 16,
+    "passed": true
+  },
+  "releaseValidation": {
+    "metadataPath": "mobile/Release/DeviceBuild22/metadata.json",
+    "currentReleaseContract": true,
+    "limits": {
+      "name": {
+        "length": 15,
+        "limit": 30,
+        "unit": "characters"
+      },
+      "subtitle": {
+        "length": 29,
+        "limit": 30,
+        "unit": "characters"
+      },
+      "promotionalText": {
+        "length": 159,
+        "limit": 170,
+        "unit": "characters"
+      },
+      "description": {
+        "length": 3715,
+        "limit": 4000,
+        "unit": "characters"
+      },
+      "keywords": {
+        "length": 99,
+        "limit": 100,
+        "unit": "UTF-8 bytes"
+      }
+    },
+    "limitations": [
+      "No global duplication/comparator test or rights certification.",
+      "Later source, policy and live listing changes require renewed checks."
+    ],
+    "runtimeMatchesRecordedQA": 71,
+    "localEditorOnlyFilesExcludedFromCandidate": 0,
+    "sourceManifestMatchesCandidate": 2559,
+    "build": "22",
+    "uniqueUnityGuids": 1311,
+    "canonicalRuntimeLinks": true,
+    "identityRetained": true,
+    "advertisingAnalyticsPurchasingPackages": false,
+    "archiveIdentityPrivacyAndPackagedLinks": true,
+    "passed": true
+  },
+  "artworkCoverage": {
+    "passed": true,
+    "imagesCovered": 147,
+    "sha256AndSizesMatch": true,
+    "exactByteDuplicateGroups": [],
+    "ownerReferenceStatementRecorded": true,
+    "exclusiveRightsCertified": false,
+    "appleSimilarityResolved": false,
+    "limitations": [
+      "Exact byte checks do not compare against other apps or certify copyright.",
+      "Owner attestations and published terms do not authenticate every original export."
+    ]
+  },
+  "publicPages": [
+    {
+      "url": "https://skypulse.macwebstudio.com/",
+      "http": 200,
+      "skyPulsePresent": true,
+      "correctSupportEmail": true,
+      "aiToolAttributionPresent": false,
+      "currentBuild22Mentioned": true
+    },
+    {
+      "url": "https://skypulse.macwebstudio.com/guide",
+      "http": 200,
+      "skyPulsePresent": true,
+      "correctSupportEmail": true,
+      "aiToolAttributionPresent": false,
+      "currentBuild22Mentioned": true
+    },
+    {
+      "url": "https://skypulse.macwebstudio.com/support",
+      "http": 200,
+      "skyPulsePresent": true,
+      "correctSupportEmail": true,
+      "aiToolAttributionPresent": false
+    },
+    {
+      "url": "https://skypulse.macwebstudio.com/privacy",
+      "http": 200,
+      "skyPulsePresent": true,
+      "correctSupportEmail": true,
+      "aiToolAttributionPresent": false
+    }
+  ],
+  "nativeReverification": {
+    "development": {
+      "binaryHashesMatch": {
+        "SkyPulse": true,
+        "Frameworks/UnityFramework.framework/UnityFramework": true,
+        "Frameworks/UnityRuntime.framework/UnityRuntime": true
+      },
+      "removedRootFinderOrResourceForkAttributes": [
+        "com.apple.FinderInfo"
+      ],
+      "strictSignatureExitCode": 0,
+      "output": "/Users/mcauleemaddison/Desktop/SkyPulse/artifacts/device-build22/DerivedData/Build/Products/Release-iphoneos/SkyPulse.app: valid on disk\n/Users/mcauleemaddison/Desktop/SkyPulse/artifacts/device-build22/DerivedData/Build/Products/Release-iphoneos/SkyPulse.app: satisfies its Designated Requirement"
+    },
+    "archive": {
+      "binaryHashesMatch": {
+        "SkyPulse": true,
+        "Frameworks/UnityFramework.framework/UnityFramework": true,
+        "Frameworks/UnityRuntime.framework/UnityRuntime": true
+      },
+      "removedRootFinderOrResourceForkAttributes": [
+        "com.apple.FinderInfo"
+      ],
+      "strictSignatureExitCode": 0,
+      "output": "/Users/mcauleemaddison/Desktop/SkyPulse/artifacts/device-build22/SkyPulse.xcarchive/Products/Applications/SkyPulse.app: valid on disk\n/Users/mcauleemaddison/Desktop/SkyPulse/artifacts/device-build22/SkyPulse.xcarchive/Products/Applications/SkyPulse.app: satisfies its Designated Requirement"
+    }
+  },
+  "restoredMissingAssets": [
+    {
+      "path": "mobile/Assets/Resources/SkyPulse/backgrounds/themes/jade-horizon-v2.png",
+      "before": "missing",
+      "action": "restored exact tracked Build 22 bytes",
+      "sha256": "c7c81eb3c74860ae815b2096fc78c0871e28d51b41540152e7b347a0b0051d6b",
+      "bytes": 1774008
+    },
+    {
+      "path": "mobile/Assets/Resources/SkyPulse/backgrounds/themes/velvet-dawn-v2.png",
+      "before": "missing",
+      "action": "restored exact tracked Build 22 bytes",
+      "sha256": "67fc9ccce11e49a9f0a0cb2008b94d0e75fe1d205003584aeb423b403c64b856",
+      "bytes": 2110771
+    },
+    {
+      "path": "mobile/Assets/Resources/SkyPulse/backgrounds/themes/violet-rain-v2.png",
+      "before": "missing",
+      "action": "restored exact tracked Build 22 bytes",
+      "sha256": "65746466c446b77bb62f531ff5c342845376bf16ed7db699c9193f38a72d911e",
+      "bytes": 2050437
+    }
+  ],
+  "documentationRepair": "Corrected the orbital-alloy evidenceNote to its existing Development/Archive location; image hashes and origins unchanged.",
+  "playerCopyGuard": {
+    "sourceFiles": 71,
+    "resourceJsonFiles": 5,
+    "stringsChecked": 4712,
+    "negativeControls": 5,
+    "legitimateCopyControls": 4,
+    "findings": []
+  },
+  "devicePreflight": {
+    "installedVersion": "1.0.0",
+    "installedBuild": "22",
+    "scope": "Read-only devicectl app enumeration. No gameplay or performance acceptance inferred.",
+    "rawEvidence": "artifacts/release-polish-20261118/installed-app.json"
+  },
+  "metadataWording": {
+    "publicListingAndPages": "No AI-tool attribution found in the current local marketing fields or four live public pages.",
+    "reviewerNotes": "Optional AI-tool attribution removed from local REVIEW_NOTES.txt; accurate Unity 3D implementation wording prepared.",
+    "liveReviewerNotesUpdated": false,
+    "reason": "Browser editing controls unavailable in this session. Last independently saved review notes remain the 17 November version.",
+    "internalOriginsRetained": true,
+    "remainingRasterUses": [
+      "Per-bird crash/unlock artwork and selected UI portraits",
+      "Authored skies/backdrops, reflections and material surface textures"
+    ],
+    "historicalRightsClaimsChanged": false
+  },
+  "visualReview": {
+    "actualEditorImagesInspected": [
+      "home-EndlessRoute.png",
+      "relay-open.png",
+      "blackout-start.png"
+    ],
+    "scope": "Checked rendered output against regression context, not owner sign-off, device media or certification of premium visual quality."
+  },
+  "knownDiagnostics": [
+    "Unity Editor SearchDatabase ArgumentOutOfRangeException remains in all three batch logs; no C# compiler errors/warnings.",
+    "Missing UnityRuntime.framework dSYM remains the previously accepted nonfatal upload warning."
+  ],
+  "remainingReleaseGates": [
+    "Owner manual checklist and visual approval; no gameplay passes inferred from previous quick-choice replies",
+    "Actual sustained device frame pacing, memory, interruptions, heat and sound; physical iPad/stable-OS coverage pending",
+    "Accepted current device screenshots, App Preview and review walkthrough replacing historical media",
+    "Independently reload live Apple contact/territories, age questionnaire, content rights, pricing and applicable account/region fields; save the prepared reviewer-note revision",
+    "Clarify Apple’s prior unidentified similarity/account comparison",
+    "Renewed explicit authorization before App Review submission"
+  ],
+  "artifactDirectory": "artifacts/release-polish-20261118/",
+  "disposableProjectRemovedAfterPassedRuns": true
+}

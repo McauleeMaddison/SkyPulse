@@ -1618,7 +1618,7 @@
       "bytes": 2655676,
       "providerEvidence": "OpenAI built-in imagegen tool; original generated output retained in local generated_images",
       "useRightsBasis": "Provider output terms; reference is the existing owner-confirmed SkyPulse station illustration",
-      "evidenceNote": "mobile/Development/RelayWorld20261024/MATERIAL_PROVENANCE.md",
+      "evidenceNote": "mobile/Development/Archive/RelayWorld20261024/MATERIAL_PROVENANCE.md",
       "firstPathCommit": "created-2026-10-24-development-checkpoint",
       "references": "mobile/Assets/Resources/SkyPulse/backgrounds/pulse-relay-station-v1.png; owner confirmed own/generated references",
       "exclusiveRightsVerified": false

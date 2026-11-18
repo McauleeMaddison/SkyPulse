@@ -1,5 +1,5 @@
 {
-  "date": "2026-11-17",
+  "date": "2026-11-18",
   "candidate": "1.0.0 (22)",
   "runtimeSourceCommit": "1fd3dfa62b93e35fc4d94439eea17ccfac0091ff",
   "featureFreeze": {
@@ -13,7 +13,7 @@
     "qaSourceAndMetadataHashes": 186,
     "worldAssetHashes": 1168,
     "mismatches": 0,
-    "evidence": "Current files compared to the immutable Build 22 manifest and 16 November QA records."
+    "evidence": "Reverified 18 November: 2,559 Build 22 manifest entries, 186 QA source/metadata hashes and 1,168 world-asset hashes match after restoring three exact tracked textures."
   },
   "devicePreflight": {
     "date": "2026-11-17",
@@ -29,7 +29,8 @@
     "developerDiskImageCompatible": true,
     "developerDiskImageUsable": true,
     "passcodeRequiredReported": true,
-    "instrumentsDeviceState": "offline"
+    "instrumentsDeviceState": "offline",
+    "latestInstalledBuildReadOnlyRecheck": "2026-11-18: 1.0.0 (22); no app launch or new gameplay result."
   },
   "focusedCaptureFix": {
     "issue": "QA-CAPTURE-001",
@@ -90,7 +91,20 @@
     "status": "NOT STARTED",
     "ownerClarificationDate": "2026-11-17",
     "ownerStatement": "The game has not yet been opened for these tests. Earlier quick-choice answers must not be treated as gameplay acceptance.",
-    "workflow": "Self-paced checklist in the owner’s Notes app. No timed live prompts or automatic step-by-step pass requests.",
+    "workflow": "Self-paced checklist in the owner’s Notes app. No timed live prompts or automatic pass requests. No completed results supplied for this session.",
     "recordedGameplayPasses": []
+  },
+  "releasePolish": {
+    "date": "2026-11-18",
+    "report": "POLISH_REPORT.json",
+    "existingUnitySuitesPassed": 3,
+    "compilerErrors": 0,
+    "compilerWarnings": 0,
+    "layoutOverflowFindings": 0,
+    "runtimeChanged": false,
+    "restoredMissingCandidateTextures": 3,
+    "internalEvidenceLinkRepaired": true,
+    "reviewNotesLocalRevisionPendingLiveSave": true,
+    "submissionReady": false
   }
 }

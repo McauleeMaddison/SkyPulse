@@ -77,5 +77,20 @@
     "appliedBy": "Owner, per direct confirmation",
     "independentlyReloadVerified": false,
     "verificationNote": "Owner reports deselecting China mainland and saving availability without submitting for review. Independent reload verification awaits browser controls."
+  },
+  "reviewNotesLastSavedAndReloadVerified": {
+    "date": "2026-11-17",
+    "sha256": "191f33cc25663947b9a4d6d14f6d3b1ab48790e32d53f7dc56760b09a82df2e8",
+    "sourceCommit": "43b7a31",
+    "scope": "Previously saved reviewer notes. The local 18 November revision has not been saved to App Store Connect."
+  },
+  "reviewNotesLocalDraft": {
+    "date": "2026-11-18",
+    "path": "REVIEW_NOTES.txt",
+    "sha256": "b50bd734db55ddb909a7ec59c4ce892ce42292da590159de98f0c14d4f6e6f5b",
+    "characters": 3526,
+    "liveSaved": false,
+    "reason": "Browser editing controls unavailable in this session. Prepared only; App Review remains on hold.",
+    "change": "Focus optional reviewer wording on current Unity 3D implementation; remove voluntary AI-tool attribution. No rights, originality or historical-source claims replaced."
   }
 }

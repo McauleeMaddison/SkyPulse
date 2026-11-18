@@ -1,4 +1,4 @@
-# SkyPulse — App Store readiness, 17 November 2026
+# SkyPulse — App Store readiness, 18 November 2026
 
 **Decision: HOLD public review. Build 22 is ready for owner acceptance testing.**
 Candidate: 1.0.0 (22), bundle `com.mcauleemaddison.skypulse`, runtime source
@@ -18,6 +18,30 @@ change this binary’s gameplay. App Store Connect remains Prepare for Submissio
 | Public pages | All four branded pages published for Build 22 and returned HTTPS 200 with expected content | Current guide covers seven pickups, 36 Tech levels, mastery, daily heists and restoration; browser layout QA remains unverified |
 | Source artwork evidence | All 147 current images match the existing evidence ledger, with no uncovered or changed image | Original generation exports/ARTA receipt not independently inspected; no exclusive-rights certificate |
 | Review status | Draft saved; no Add for Review/Submit action | Owner hold stays active; Apple's earlier private similarity/account comparison remains unidentified |
+
+## Automated polish recheck — 18 November
+
+All three current isolated Unity runs passed: final polish/field Tech/native birds,
+full visual/layout/world transitions, and finish/save/progression acceptance fixtures.
+There were zero C# compiler errors/warnings and no reported text overflow in the
+captured screens. The existing Editor SearchDatabase exception remains recorded.
+These results do not replace owner testing or measure physical-device performance.
+See [POLISH_REPORT.json](POLISH_REPORT.json) for exact scope and retained logs.
+
+Three missing, referenced sky textures were restored from their exact Build 22
+Git blobs. All 2,559 candidate file hashes now match; no runtime redesign or new
+phone build was introduced. Strict signatures and retained native binary hashes
+were rechecked after removing Finder-added bundle attributes. Build 22 remains
+installed on the phone; the game was not launched for the owner.
+
+The artwork checker also found an obsolete link to a note moved into Development/Archive;
+that link is corrected and all 147 recorded image hashes/sizes pass. Current 3D
+models still use raster material/backdrop artwork and individual crash/unlock frames.
+Their internal origin records remain accurate. Marketing fields and public pages
+contain no AI-tool attribution. Optional attribution has been removed from the
+**local reviewer-note draft**, replacing it with current Unity 3D implementation
+wording. This revision is **not yet saved to App Store Connect**; browser editing
+controls are unavailable. The 17 November live-save record is retained separately.
 
 ## Complete before considering submission
 

@@ -5618,5 +5618,14 @@
     "runtimeUnchanged": true,
     "report": "UnityAcceptance/BIRD_TAP_CAPTURE.json",
     "scope": "Corrected preview timing and complete-frame native-pilot checks; not owner/device acceptance."
+  },
+  "preSubmissionRegression": {
+    "date": "2026-11-18",
+    "report": "../../Release/DeviceBuild22/POLISH_REPORT.json",
+    "runs": 3,
+    "passed": true,
+    "runtimeUnchanged": true,
+    "ownerAcceptance": false,
+    "devicePerformanceMeasured": false
   }
 }
